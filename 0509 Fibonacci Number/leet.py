@@ -15,3 +15,4 @@ class Solution(object):
         return memo[n]
 
 
+print(Solution().fib(10))
