@@ -1,0 +1,702 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LeetCode Performance Report — May 22, 2026</title>
+<style>
+:root {
+  --bg: #0d1117;
+  --surface: #161b22;
+  --surface2: #1c2333;
+  --border: #30363d;
+  --text: #e6edf3;
+  --text-secondary: #8b949e;
+  --accent: #58a6ff;
+  --green: #3fb950;
+  --yellow: #d29922;
+  --red: #f85149;
+  --purple: #bc8cff;
+  --orange: #f0883e;
+  --cyan: #39d2c0;
+  --green-bg: rgba(63,185,80,0.15);
+  --yellow-bg: rgba(210,153,34,0.15);
+  --red-bg: rgba(248,81,73,0.15);
+  --purple-bg: rgba(188,140,255,0.12);
+  --accent-bg: rgba(88,166,255,0.12);
+}
+[data-theme="light"] {
+  --bg: #ffffff;
+  --surface: #f6f8fa;
+  --surface2: #eef1f5;
+  --border: #d0d7de;
+  --text: #1f2328;
+  --text-secondary: #656d76;
+  --accent: #0969da;
+  --green: #1a7f37;
+  --yellow: #9a6700;
+  --red: #cf222e;
+  --purple: #8250df;
+  --orange: #bc4c00;
+  --cyan: #0e8a7e;
+  --green-bg: rgba(26,127,55,0.12);
+  --yellow-bg: rgba(154,103,0,0.12);
+  --red-bg: rgba(207,34,46,0.12);
+  --purple-bg: rgba(130,80,223,0.10);
+  --accent-bg: rgba(9,105,218,0.10);
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+  padding: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+h1 { font-size: 2rem; font-weight: 700; margin-bottom: 0.25rem; }
+h2 { font-size: 1.5rem; font-weight: 600; margin-bottom: 1rem; color: var(--text); border-bottom: 1px solid var(--border); padding-bottom: 0.5rem; }
+h3 { font-size: 1.1rem; font-weight: 600; margin-bottom: 0.5rem; color: var(--text); }
+.header { margin-bottom: 2rem; }
+.header .subtitle { color: var(--text-secondary); font-size: 1.1rem; }
+.header .date { color: var(--accent); font-weight: 600; }
+.theme-toggle {
+  position: fixed; top: 1rem; right: 1rem; z-index: 1000;
+  background: var(--surface); border: 1px solid var(--border); border-radius: 8px;
+  padding: 0.5rem 0.75rem; cursor: pointer; color: var(--text); font-size: 0.85rem;
+  display: flex; align-items: center; gap: 0.4rem; transition: all 0.2s;
+}
+.theme-toggle:hover { border-color: var(--accent); }
+.section { margin-bottom: 2.5rem; }
+
+/* Metric Cards */
+.metrics-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1rem; margin-bottom: 2rem; }
+.metric-card {
+  background: var(--surface); border: 1px solid var(--border); border-radius: 10px;
+  padding: 1.25rem; text-align: center;
+}
+.metric-card .value { font-size: 2.2rem; font-weight: 700; }
+.metric-card .label { color: var(--text-secondary); font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.05em; }
+.metric-card.green .value { color: var(--green); }
+.metric-card.yellow .value { color: var(--yellow); }
+.metric-card.red .value { color: var(--red); }
+.metric-card.accent .value { color: var(--accent); }
+.metric-card.purple .value { color: var(--purple); }
+
+/* Badges */
+.badge {
+  display: inline-block; padding: 0.15rem 0.5rem; border-radius: 12px;
+  font-size: 0.75rem; font-weight: 600; letter-spacing: 0.03em;
+}
+.badge-easy { background: var(--green-bg); color: var(--green); }
+.badge-medium { background: var(--yellow-bg); color: var(--yellow); }
+.badge-hard { background: var(--red-bg); color: var(--red); }
+.badge-topic { background: var(--accent-bg); color: var(--accent); font-size: 0.7rem; margin: 0.1rem; }
+.badge-lang { background: var(--purple-bg); color: var(--purple); font-size: 0.7rem; margin: 0.1rem; }
+
+/* Donut Chart */
+.chart-container { display: flex; align-items: center; gap: 2rem; flex-wrap: wrap; }
+.donut {
+  width: 200px; height: 200px; border-radius: 50%; position: relative;
+  background: conic-gradient(var(--green) 0deg 142.2deg, var(--yellow) 142.2deg 329deg, var(--red) 329deg 360deg);
+}
+.donut::after {
+  content: ''; position: absolute; top: 25%; left: 25%; width: 50%; height: 50%;
+  border-radius: 50%; background: var(--bg);
+}
+.donut-center {
+  position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+  z-index: 1; text-align: center; font-size: 1.8rem; font-weight: 700;
+}
+.chart-legend .legend-item { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem; }
+.legend-dot { width: 12px; height: 12px; border-radius: 3px; }
+.chart-rec { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 1rem; margin-top: 1rem; }
+.chart-rec .label { color: var(--text-secondary); font-size: 0.85rem; }
+
+/* Timeline */
+.timeline { display: flex; align-items: flex-end; gap: 3px; height: 140px; padding: 0.5rem 0; overflow-x: auto; }
+.timeline-bar {
+  flex: 0 0 auto; width: 28px; border-radius: 4px 4px 0 0; position: relative; cursor: default;
+  transition: opacity 0.2s; min-height: 4px;
+}
+.timeline-bar:hover { opacity: 0.8; }
+.timeline-bar .tip {
+  display: none; position: absolute; bottom: calc(100% + 6px); left: 50%; transform: translateX(-50%);
+  background: var(--surface2); border: 1px solid var(--border); border-radius: 6px; padding: 0.3rem 0.5rem;
+  font-size: 0.7rem; white-space: nowrap; z-index: 10;
+}
+.timeline-bar:hover .tip { display: block; }
+.timeline-labels { display: flex; gap: 3px; padding-top: 0.25rem; overflow-x: auto; }
+.timeline-labels span { flex: 0 0 auto; width: 28px; text-align: center; font-size: 0.55rem; color: var(--text-secondary); }
+
+/* Bar Chart */
+.bar-chart { margin: 1rem 0; }
+.bar-row { display: flex; align-items: center; margin-bottom: 0.4rem; }
+.bar-label { width: 140px; font-size: 0.85rem; color: var(--text-secondary); text-align: right; padding-right: 0.75rem; flex-shrink: 0; }
+.bar-track { flex: 1; height: 24px; background: var(--surface2); border-radius: 4px; overflow: hidden; position: relative; }
+.bar-fill { height: 100%; border-radius: 4px; transition: width 0.3s; }
+.bar-value { position: absolute; right: 8px; top: 50%; transform: translateY(-50%); font-size: 0.75rem; font-weight: 600; }
+
+/* Coverage Grid */
+.coverage-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 0.5rem; margin-top: 1rem; }
+.coverage-item {
+  background: var(--surface); border: 1px solid var(--border); border-radius: 8px;
+  padding: 0.6rem 0.8rem; display: flex; justify-content: space-between; align-items: center;
+}
+.coverage-item .topic { font-size: 0.85rem; font-weight: 500; }
+.coverage-item .status { font-size: 0.7rem; font-weight: 600; border-radius: 10px; padding: 0.15rem 0.5rem; }
+.status-strong { background: var(--green-bg); color: var(--green); }
+.status-moderate { background: var(--yellow-bg); color: var(--yellow); }
+.status-weak { background: var(--red-bg); color: var(--red); }
+.status-missing { background: rgba(139,148,158,0.15); color: var(--text-secondary); }
+
+/* Two Column */
+.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+@media (max-width: 768px) { .two-col { grid-template-columns: 1fr; } }
+.card {
+  background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 1.25rem;
+}
+.card h3 { display: flex; align-items: center; gap: 0.5rem; }
+.strength-icon { color: var(--green); }
+.weakness-icon { color: var(--red); }
+
+/* Quality List */
+.quality-list { list-style: none; }
+.quality-list li { padding: 0.6rem 0; border-bottom: 1px solid var(--border); font-size: 0.9rem; }
+.quality-list li:last-child { border-bottom: none; }
+.quality-list .positive::before { content: '\2713'; color: var(--green); font-weight: 700; margin-right: 0.5rem; }
+.quality-list .negative::before { content: '\2717'; color: var(--red); font-weight: 700; margin-right: 0.5rem; }
+.code-ref { font-family: 'SF Mono', 'Fira Code', Consolas, monospace; font-size: 0.8rem; background: var(--surface2); padding: 0.1rem 0.4rem; border-radius: 4px; }
+
+/* Learning Plan */
+.phase {
+  background: var(--surface); border: 1px solid var(--border); border-radius: 10px;
+  padding: 1.25rem; margin-bottom: 1rem; position: relative; overflow: hidden;
+}
+.phase::before {
+  content: ''; position: absolute; top: 0; left: 0; width: 4px; height: 100%;
+}
+.phase-1::before { background: var(--green); }
+.phase-2::before { background: var(--yellow); }
+.phase-3::before { background: var(--orange); }
+.phase-4::before { background: var(--red); }
+.phase-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem; }
+.phase-title { font-size: 1.1rem; font-weight: 600; }
+.phase-weeks { color: var(--text-secondary); font-size: 0.85rem; }
+.problem-list { list-style: none; display: flex; flex-wrap: wrap; gap: 0.4rem; }
+.problem-tag {
+  background: var(--surface2); border: 1px solid var(--border); border-radius: 6px;
+  padding: 0.2rem 0.6rem; font-size: 0.8rem;
+}
+
+/* Tables */
+.table-wrapper { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+th {
+  text-align: left; padding: 0.6rem 0.75rem; background: var(--surface2);
+  color: var(--text-secondary); font-weight: 600; font-size: 0.75rem;
+  text-transform: uppercase; letter-spacing: 0.05em; border-bottom: 1px solid var(--border);
+  position: sticky; top: 0;
+}
+td { padding: 0.5rem 0.75rem; border-bottom: 1px solid var(--border); vertical-align: middle; }
+tr:hover td { background: var(--surface); }
+.table-scroll { max-height: 500px; overflow-y: auto; border: 1px solid var(--border); border-radius: 8px; }
+
+/* Next 20 Table */
+.next-table td:nth-child(5) { font-size: 0.8rem; color: var(--text-secondary); max-width: 300px; }
+
+/* Footer */
+.footer { margin-top: 3rem; padding-top: 1.5rem; border-top: 1px solid var(--border); color: var(--text-secondary); font-size: 0.85rem; }
+.footer a { color: var(--accent); text-decoration: none; }
+.footer a:hover { text-decoration: underline; }
+</style>
+</head>
+<body>
+
+<button class="theme-toggle" onclick="toggleTheme()" id="themeBtn">
+  <span id="themeIcon"></span> <span id="themeLabel"></span>
+</button>
+
+<div class="header">
+  <h1>LeetCode Performance Report</h1>
+  <div class="subtitle">Andy Pliszka &mdash; <span class="date">May 22, 2026</span></div>
+</div>
+
+<!-- Key Metrics -->
+<div class="section">
+  <h2>Key Metrics</h2>
+  <div class="metrics-grid">
+    <div class="metric-card accent">
+      <div class="value">81</div>
+      <div class="label">Problems Solved</div>
+    </div>
+    <div class="metric-card green">
+      <div class="value">32</div>
+      <div class="label">Easy</div>
+    </div>
+    <div class="metric-card yellow">
+      <div class="value">42</div>
+      <div class="label">Medium</div>
+    </div>
+    <div class="metric-card red">
+      <div class="value">7</div>
+      <div class="label">Hard</div>
+    </div>
+    <div class="metric-card purple">
+      <div class="value">26</div>
+      <div class="label">Multi-Approach</div>
+    </div>
+    <div class="metric-card" style="border-left: 3px solid var(--cyan);">
+      <div class="value" style="color:var(--cyan);">6</div>
+      <div class="label">Languages</div>
+    </div>
+  </div>
+</div>
+
+<!-- Difficulty Distribution -->
+<div class="section">
+  <h2>Difficulty Distribution</h2>
+  <div class="chart-container">
+    <div style="position:relative;">
+      <div class="donut"></div>
+      <div class="donut-center">81</div>
+    </div>
+    <div class="chart-legend">
+      <div class="legend-item"><div class="legend-dot" style="background:var(--green);"></div> Easy &mdash; 32 (39.5%)</div>
+      <div class="legend-item"><div class="legend-dot" style="background:var(--yellow);"></div> Medium &mdash; 42 (51.9%)</div>
+      <div class="legend-item"><div class="legend-dot" style="background:var(--red);"></div> Hard &mdash; 7 (8.6%)</div>
+    </div>
+  </div>
+  <div class="chart-rec">
+    <strong>Recommendation:</strong> <span class="label">Your Easy/Medium ratio is solid. To reach interview readiness, shift focus to Medium and Hard problems. Target mix: 20% Easy / 60% Medium / 20% Hard. You need more Hard problems &mdash; aim to solve 10+ Hard problems in the next phase.</span>
+  </div>
+</div>
+
+<!-- Activity Timeline -->
+<div class="section">
+  <h2>Activity Timeline</h2>
+  <p style="color:var(--text-secondary); margin-bottom:1rem; font-size:0.9rem;">51 commits across 12 active days. Two distinct study bursts with a 12-month gap.</p>
+  <div class="timeline" id="timeline"></div>
+  <div class="timeline-labels" id="timelineLabels"></div>
+  <div style="display:flex; gap:1.5rem; margin-top:1rem; flex-wrap:wrap;">
+    <div class="card" style="flex:1; min-width:200px;">
+      <h3><span style="color:var(--green);">&#9679;</span> Burst 1: May 13&ndash;19, 2025</h3>
+      <p style="font-size:0.9rem; color:var(--text-secondary);">26 commits over 6 days. Focused on Dynamic Programming foundations &mdash; Fibonacci, stock trading series, coin change, LCS, palindrome subsequences.</p>
+    </div>
+    <div class="card" style="flex:1; min-width:200px;">
+      <h3><span style="color:var(--accent);">&#9679;</span> Burst 2: May 17&ndash;22, 2026</h3>
+      <p style="font-size:0.9rem; color:var(--text-secondary);">24 commits over 5 days. Broader coverage &mdash; sliding window, two pointers, hash maps, anagrams, linked lists, binary search. More diverse topic spread.</p>
+    </div>
+    <div class="card" style="flex:1; min-width:200px;">
+      <h3><span style="color:var(--red);">&#9679;</span> Gap: 12 Months</h3>
+      <p style="font-size:0.9rem; color:var(--text-secondary);">Only 1 commit (Oct 2025) between bursts. Consistency beats intensity &mdash; aim for 3&ndash;5 problems per week sustained rather than sprints with long breaks.</p>
+    </div>
+  </div>
+</div>
+
+<!-- Topic Coverage -->
+<div class="section">
+  <h2>Topic Coverage</h2>
+  <div class="bar-chart" id="topicChart"></div>
+  <h3 style="margin-top:1.5rem;">Coverage Assessment</h3>
+  <div class="coverage-grid">
+    <div class="coverage-item"><span class="topic">DP</span><span class="status status-strong">Strong (42)</span></div>
+    <div class="coverage-item"><span class="topic">Array</span><span class="status status-strong">Strong (47)</span></div>
+    <div class="coverage-item"><span class="topic">Sliding Window</span><span class="status status-strong">Strong (16)</span></div>
+    <div class="coverage-item"><span class="topic">String</span><span class="status status-strong">Strong (16)</span></div>
+    <div class="coverage-item"><span class="topic">Two Pointers</span><span class="status status-strong">Strong (15)</span></div>
+    <div class="coverage-item"><span class="topic">Hash Map</span><span class="status status-strong">Strong (15)</span></div>
+    <div class="coverage-item"><span class="topic">Math</span><span class="status status-moderate">Moderate (13)</span></div>
+    <div class="coverage-item"><span class="topic">Sorting</span><span class="status status-moderate">Moderate (9)</span></div>
+    <div class="coverage-item"><span class="topic">Prefix Sum</span><span class="status status-moderate">Moderate (5)</span></div>
+    <div class="coverage-item"><span class="topic">Greedy</span><span class="status status-moderate">Moderate (5)</span></div>
+    <div class="coverage-item"><span class="topic">BFS/DFS</span><span class="status status-moderate">Moderate (4)</span></div>
+    <div class="coverage-item"><span class="topic">Linked List</span><span class="status status-moderate">Moderate (4)</span></div>
+    <div class="coverage-item"><span class="topic">Graph</span><span class="status status-weak">Weak (3)</span></div>
+    <div class="coverage-item"><span class="topic">Heap</span><span class="status status-weak">Weak (3)</span></div>
+    <div class="coverage-item"><span class="topic">Design</span><span class="status status-weak">Weak (3)</span></div>
+    <div class="coverage-item"><span class="topic">Backtracking</span><span class="status status-weak">Weak (1)</span></div>
+    <div class="coverage-item"><span class="topic">Binary Search</span><span class="status status-weak">Weak (1)</span></div>
+    <div class="coverage-item"><span class="topic">Tree</span><span class="status status-weak">Weak (1)</span></div>
+    <div class="coverage-item"><span class="topic">Stack</span><span class="status status-missing">Missing (0)</span></div>
+    <div class="coverage-item"><span class="topic">Trie</span><span class="status status-missing">Missing (0)</span></div>
+    <div class="coverage-item"><span class="topic">Union-Find</span><span class="status status-missing">Missing (0)</span></div>
+    <div class="coverage-item"><span class="topic">Bit Manipulation</span><span class="status status-missing">Missing (0)</span></div>
+  </div>
+</div>
+
+<!-- Strengths & Weaknesses -->
+<div class="section">
+  <h2>Strengths &amp; Weaknesses</h2>
+  <div class="two-col">
+    <div>
+      <div class="card" style="margin-bottom:1rem; border-left: 3px solid var(--green);">
+        <h3><span class="strength-icon">&#9650;</span> Dynamic Programming Mastery</h3>
+        <p style="font-size:0.9rem; color:var(--text-secondary);">42 DP problems solved spanning 1D, 2D, state-machine, and interval DP patterns. Strong command of memoization (<code>@cache</code>) and tabulation. Excellent progression through stock trading series (121&#8594;188&#8594;309&#8594;714), paint house series (256&#8594;265&#8594;1473), and coin change (322&#8594;518). Multiple approaches on key problems show deep understanding.</p>
+      </div>
+      <div class="card" style="margin-bottom:1rem; border-left: 3px solid var(--green);">
+        <h3><span class="strength-icon">&#9650;</span> Two Pointers &amp; Sliding Window</h3>
+        <p style="font-size:0.9rem; color:var(--text-secondary);">31 combined problems across these patterns. Clean implementations of classic problems like 3Sum, Container With Most Water, and multiple sliding window variants. Progressive difficulty from Easy (Valid Palindrome) to Medium (Minimum Size Subarray Sum).</p>
+      </div>
+      <div class="card" style="margin-bottom:1rem; border-left: 3px solid var(--green);">
+        <h3><span class="strength-icon">&#9650;</span> Multi-Approach Learning Style</h3>
+        <p style="font-size:0.9rem; color:var(--text-secondary);">26 problems (32%) have multiple solution files exploring brute force, optimal, and space-optimized variants. This is excellent for building intuition &mdash; especially the <code>leet.py</code> / <code>brute.py</code> / <code>leet_short_state.py</code> pattern for DP problems.</p>
+      </div>
+      <div class="card" style="border-left: 3px solid var(--green);">
+        <h3><span class="strength-icon">&#9650;</span> Polyglot Practice</h3>
+        <p style="font-size:0.9rem; color:var(--text-secondary);">Solutions in 6 languages (Python, Go, TypeScript, Rust, JavaScript, Ruby). This builds transferable problem-solving skills. Idiomatic Go patterns (single-array anagram check in #242) show language awareness.</p>
+      </div>
+    </div>
+    <div>
+      <div class="card" style="margin-bottom:1rem; border-left: 3px solid var(--red);">
+        <h3><span class="weakness-icon">&#9660;</span> Trees &mdash; Critical Gap</h3>
+        <p style="font-size:0.9rem; color:var(--text-secondary);">Only 1 tree problem (#102 Level Order). Trees appear in ~25% of interviews. Missing classics: Max Depth, Invert Binary Tree, Validate BST, LCA, Kth Smallest, Serialize/Deserialize. This is the single highest-impact area to address.</p>
+      </div>
+      <div class="card" style="margin-bottom:1rem; border-left: 3px solid var(--red);">
+        <h3><span class="weakness-icon">&#9660;</span> Stack &mdash; Zero Coverage</h3>
+        <p style="font-size:0.9rem; color:var(--text-secondary);">No stack-specific problems solved. Missing fundamental patterns: Valid Parentheses, Min Stack, Daily Temperatures, monotonic stack. These are high-frequency interview topics with a distinct pattern that your DP/array skills don't transfer to.</p>
+      </div>
+      <div class="card" style="margin-bottom:1rem; border-left: 3px solid var(--red);">
+        <h3><span class="weakness-icon">&#9660;</span> Binary Search &mdash; Minimal</h3>
+        <p style="font-size:0.9rem; color:var(--text-secondary);">Only 1 problem (#704 basic search). Missing rotated array variants (#33, #153), matrix search (#74), and search-space problems (#875 Koko Eating Bananas). The binary search template extends naturally from #704 &mdash; a quick win.</p>
+      </div>
+      <div class="card" style="margin-bottom:1rem; border-left: 3px solid var(--red);">
+        <h3><span class="weakness-icon">&#9660;</span> Backtracking &mdash; Minimal</h3>
+        <p style="font-size:0.9rem; color:var(--text-secondary);">Only 1 problem (#22 Generate Parentheses). Missing the core trilogy: Subsets (#78), Permutations (#46), and Word Search (#79). These form a template that applies to dozens of Medium/Hard problems.</p>
+      </div>
+      <div class="card" style="border-left: 3px solid var(--red);">
+        <h3><span class="weakness-icon">&#9660;</span> Hard Problem Depth</h3>
+        <p style="font-size:0.9rem; color:var(--text-secondary);">Only 7 Hard problems (8.6%), all in DP. No Hard problems in Stack (#84), Graph (#269), Tree (#124), or Sliding Window (#76). Interview-level readiness requires comfort with Hard problems across multiple topics.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Code Quality Assessment -->
+<div class="section">
+  <h2>Code Quality Assessment</h2>
+  <div class="two-col">
+    <div class="card" style="border-left: 3px solid var(--green);">
+      <h3 style="color:var(--green);">Positives</h3>
+      <ul class="quality-list">
+        <li class="positive">Consistent DP framework comments &mdash; <span class="code-ref">func/state/rec/base</span> structure across 40+ problems documents the recurrence relation before coding</li>
+        <li class="positive">Excellent use of Python stdlib: <span class="code-ref">@cache</span>, <span class="code-ref">@lru_cache</span>, <span class="code-ref">heapq</span>, <span class="code-ref">collections.deque</span>, <span class="code-ref">bisect</span></li>
+        <li class="positive">Multi-approach exploration: brute force &#8594; optimal &#8594; space-optimized pattern demonstrates deep understanding</li>
+        <li class="positive">Clean two-pointer implementations &mdash; <span class="code-ref">0011</span>, <span class="code-ref">0015</span>, <span class="code-ref">0088</span> are textbook-quality</li>
+        <li class="positive">Space-optimized DP variants (<span class="code-ref">leet_short_state.py</span>) show understanding of state reduction</li>
+        <li class="positive">Idiomatic Go patterns &mdash; <span class="code-ref">0242/leet_array.go</span> uses single <span class="code-ref">[26]int</span> array for O(n) anagram check</li>
+      </ul>
+    </div>
+    <div class="card" style="border-left: 3px solid var(--red);">
+      <h3 style="color:var(--red);">Areas for Improvement</h3>
+      <ul class="quality-list">
+        <li class="negative"><span class="code-ref">list.pop(0)</span> used in <span class="code-ref">0102/leet.py</span> and <span class="code-ref">0346/leet.py</span> &mdash; O(n) per call, should use <span class="code-ref">collections.deque.popleft()</span></li>
+        <li class="negative"><span class="code-ref">list.insert(0, ...)</span> in <span class="code-ref">0009/leet.py</span> &mdash; O(n) prepend makes construction O(n&sup2;)</li>
+        <li class="negative">Debug <span class="code-ref">print()</span> left in 5 files: <span class="code-ref">0009</span>, <span class="code-ref">0256</span>, <span class="code-ref">0643</span>, <span class="code-ref">0125</span> (console.log), <span class="code-ref">0026</span> (puts)</li>
+        <li class="negative">Variable <span class="code-ref">sum</span> shadows Python builtin in 5 files: <span class="code-ref">0002</span>, <span class="code-ref">0523</span>, <span class="code-ref">0525</span>, <span class="code-ref">0560</span>, <span class="code-ref">0346</span></li>
+        <li class="negative">Unused variables: <span class="code-ref">0013/leet.py</span> (<span class="code-ref">right=0</span>), <span class="code-ref">1473/leet.py</span> (<span class="code-ref">memo={}</span>), <span class="code-ref">0746/leet_cache.py</span> (dp list shadowed by function)</li>
+        <li class="negative"><span class="code-ref">0004 Median of Two Sorted Arrays</span> uses O(m+n) merge instead of required O(log(m+n)) binary search</li>
+        <li class="negative">Inconsistent directory naming: <span class="code-ref">021.</span> (wrong number/period), <span class="code-ref">0303-range-sum...</span> (dashes), <span class="code-ref">0523</span>/<span class="code-ref">0560</span> (no titles)</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- Accelerated Learning Plan -->
+<div class="section">
+  <h2>Accelerated Learning Plan</h2>
+  <p style="color:var(--text-secondary); margin-bottom:1rem; font-size:0.9rem;">7-week structured plan to fill your critical gaps while building on existing strengths.</p>
+
+  <div class="phase phase-1">
+    <div class="phase-header">
+      <span class="phase-title">Phase 1: Stack &amp; Binary Search Foundations</span>
+      <span class="phase-weeks">Weeks 1&ndash;2</span>
+    </div>
+    <p style="font-size:0.9rem; color:var(--text-secondary); margin-bottom:0.75rem;">Close the two most glaring gaps. Stack and binary search have distinct templates you'll reuse everywhere.</p>
+    <ul class="problem-list">
+      <li class="problem-tag"><span class="badge badge-easy">E</span> #20 Valid Parentheses</li>
+      <li class="problem-tag"><span class="badge badge-medium">M</span> #155 Min Stack</li>
+      <li class="problem-tag"><span class="badge badge-medium">M</span> #739 Daily Temperatures</li>
+      <li class="problem-tag"><span class="badge badge-medium">M</span> #150 Evaluate Reverse Polish Notation</li>
+      <li class="problem-tag"><span class="badge badge-medium">M</span> #33 Search in Rotated Array</li>
+      <li class="problem-tag"><span class="badge badge-medium">M</span> #153 Find Min in Rotated Array</li>
+      <li class="problem-tag"><span class="badge badge-medium">M</span> #74 Search a 2D Matrix</li>
+    </ul>
+  </div>
+
+  <div class="phase phase-2">
+    <div class="phase-header">
+      <span class="phase-title">Phase 2: Trees &amp; Graph Patterns</span>
+      <span class="phase-weeks">Weeks 3&ndash;4</span>
+    </div>
+    <p style="font-size:0.9rem; color:var(--text-secondary); margin-bottom:0.75rem;">Build tree intuition from Easy to Medium, then extend to graph traversals. Your BFS knowledge from #200/#286 transfers directly.</p>
+    <ul class="problem-list">
+      <li class="problem-tag"><span class="badge badge-easy">E</span> #104 Max Depth of Binary Tree</li>
+      <li class="problem-tag"><span class="badge badge-easy">E</span> #226 Invert Binary Tree</li>
+      <li class="problem-tag"><span class="badge badge-medium">M</span> #98 Validate BST</li>
+      <li class="problem-tag"><span class="badge badge-medium">M</span> #230 Kth Smallest in BST</li>
+      <li class="problem-tag"><span class="badge badge-medium">M</span> #236 Lowest Common Ancestor</li>
+      <li class="problem-tag"><span class="badge badge-medium">M</span> #207 Course Schedule</li>
+      <li class="problem-tag"><span class="badge badge-medium">M</span> #133 Clone Graph</li>
+      <li class="problem-tag"><span class="badge badge-medium">M</span> #743 Network Delay Time</li>
+    </ul>
+  </div>
+
+  <div class="phase phase-3">
+    <div class="phase-header">
+      <span class="phase-title">Phase 3: Backtracking &amp; Advanced Structures</span>
+      <span class="phase-weeks">Weeks 5&ndash;6</span>
+    </div>
+    <p style="font-size:0.9rem; color:var(--text-secondary); margin-bottom:0.75rem;">Learn the backtracking template (it's similar to DFS), then pick up Trie and Union-Find &mdash; each has one core template.</p>
+    <ul class="problem-list">
+      <li class="problem-tag"><span class="badge badge-medium">M</span> #78 Subsets</li>
+      <li class="problem-tag"><span class="badge badge-medium">M</span> #46 Permutations</li>
+      <li class="problem-tag"><span class="badge badge-medium">M</span> #79 Word Search</li>
+      <li class="problem-tag"><span class="badge badge-medium">M</span> #208 Implement Trie</li>
+      <li class="problem-tag"><span class="badge badge-medium">M</span> #547 Number of Provinces</li>
+      <li class="problem-tag"><span class="badge badge-medium">M</span> #130 Surrounded Regions</li>
+      <li class="problem-tag"><span class="badge badge-easy">E</span> #191 Number of 1 Bits</li>
+      <li class="problem-tag"><span class="badge badge-easy">E</span> #338 Counting Bits</li>
+    </ul>
+  </div>
+
+  <div class="phase phase-4">
+    <div class="phase-header">
+      <span class="phase-title">Phase 4: Hard Challenges &amp; Interview Simulation</span>
+      <span class="phase-weeks">Week 7</span>
+    </div>
+    <p style="font-size:0.9rem; color:var(--text-secondary); margin-bottom:0.75rem;">Stretch into Hard problems across your new topics. These are interview favorites that test combined skills.</p>
+    <ul class="problem-list">
+      <li class="problem-tag"><span class="badge badge-hard">H</span> #42 Trapping Rain Water</li>
+      <li class="problem-tag"><span class="badge badge-hard">H</span> #76 Minimum Window Substring</li>
+      <li class="problem-tag"><span class="badge badge-hard">H</span> #84 Largest Rectangle in Histogram</li>
+      <li class="problem-tag"><span class="badge badge-hard">H</span> #124 Binary Tree Max Path Sum</li>
+      <li class="problem-tag"><span class="badge badge-hard">H</span> #297 Serialize and Deserialize Binary Tree</li>
+    </ul>
+  </div>
+</div>
+
+<!-- Next 20 Problems -->
+<div class="section">
+  <h2>Next 20 Problems &mdash; Priority Order</h2>
+  <p style="color:var(--text-secondary); margin-bottom:1rem; font-size:0.9rem;">Ordered by learning impact. Solve them in this order &mdash; each builds on the previous.</p>
+  <div class="table-wrapper">
+    <table class="next-table">
+      <thead>
+        <tr><th>#</th><th>Problem</th><th>Diff</th><th>Topic</th><th>Why This Problem</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>1</td><td>#20 Valid Parentheses</td><td><span class="badge badge-easy">Easy</span></td><td><span class="badge badge-topic">Stack</span></td><td>Foundation for all stack problems &mdash; learn the stack-as-matcher pattern</td></tr>
+        <tr><td>2</td><td>#155 Min Stack</td><td><span class="badge badge-medium">Med</span></td><td><span class="badge badge-topic">Stack</span> <span class="badge badge-topic">Design</span></td><td>Extends stack with auxiliary state tracking &mdash; common interview design question</td></tr>
+        <tr><td>3</td><td>#739 Daily Temperatures</td><td><span class="badge badge-medium">Med</span></td><td><span class="badge badge-topic">Stack</span></td><td>Introduces monotonic stack &mdash; the key pattern for next-greater-element problems</td></tr>
+        <tr><td>4</td><td>#104 Max Depth of Binary Tree</td><td><span class="badge badge-easy">Easy</span></td><td><span class="badge badge-topic">Tree</span> <span class="badge badge-topic">BFS/DFS</span></td><td>Simplest tree recursion &mdash; establishes the DFS-on-tree template</td></tr>
+        <tr><td>5</td><td>#226 Invert Binary Tree</td><td><span class="badge badge-easy">Easy</span></td><td><span class="badge badge-topic">Tree</span></td><td>Builds on #104's template with a twist &mdash; modify while traversing</td></tr>
+        <tr><td>6</td><td>#98 Validate BST</td><td><span class="badge badge-medium">Med</span></td><td><span class="badge badge-topic">Tree</span> <span class="badge badge-topic">BFS/DFS</span></td><td>Teaches range-passing pattern &mdash; critical for BST problems</td></tr>
+        <tr><td>7</td><td>#33 Search in Rotated Sorted Array</td><td><span class="badge badge-medium">Med</span></td><td><span class="badge badge-topic">Binary Search</span></td><td>Builds directly on #704 &mdash; extends template with sorted-half detection</td></tr>
+        <tr><td>8</td><td>#153 Find Minimum in Rotated Array</td><td><span class="badge badge-medium">Med</span></td><td><span class="badge badge-topic">Binary Search</span></td><td>Same rotated array concept as #33 but different comparison target</td></tr>
+        <tr><td>9</td><td>#78 Subsets</td><td><span class="badge badge-medium">Med</span></td><td><span class="badge badge-topic">Backtracking</span></td><td>The backtracking template problem &mdash; builds on #22's approach</td></tr>
+        <tr><td>10</td><td>#46 Permutations</td><td><span class="badge badge-medium">Med</span></td><td><span class="badge badge-topic">Backtracking</span></td><td>Extends #78's template with the include/swap pattern for ordering</td></tr>
+        <tr><td>11</td><td>#207 Course Schedule</td><td><span class="badge badge-medium">Med</span></td><td><span class="badge badge-topic">Graph</span> <span class="badge badge-topic">BFS/DFS</span></td><td>Topological sort &mdash; essential graph pattern. Extends your BFS from #200</td></tr>
+        <tr><td>12</td><td>#236 Lowest Common Ancestor</td><td><span class="badge badge-medium">Med</span></td><td><span class="badge badge-topic">Tree</span> <span class="badge badge-topic">BFS/DFS</span></td><td>Classic postorder traversal problem &mdash; tests tree recursion fluency</td></tr>
+        <tr><td>13</td><td>#208 Implement Trie</td><td><span class="badge badge-medium">Med</span></td><td><span class="badge badge-topic">Trie</span> <span class="badge badge-topic">Design</span></td><td>The only trie problem you need to internalize &mdash; all others build on this</td></tr>
+        <tr><td>14</td><td>#74 Search a 2D Matrix</td><td><span class="badge badge-medium">Med</span></td><td><span class="badge badge-topic">Binary Search</span></td><td>Apply binary search to a matrix &mdash; combines with your array skills</td></tr>
+        <tr><td>15</td><td>#79 Word Search</td><td><span class="badge badge-medium">Med</span></td><td><span class="badge badge-topic">Backtracking</span> <span class="badge badge-topic">Graph</span></td><td>Combines backtracking (#78) with grid DFS (#200) &mdash; tests both patterns</td></tr>
+        <tr><td>16</td><td>#743 Network Delay Time</td><td><span class="badge badge-medium">Med</span></td><td><span class="badge badge-topic">Graph</span> <span class="badge badge-topic">Heap</span></td><td>Dijkstra's algorithm &mdash; the weighted graph template. Uses your heap knowledge</td></tr>
+        <tr><td>17</td><td>#547 Number of Provinces</td><td><span class="badge badge-medium">Med</span></td><td><span class="badge badge-topic">Union-Find</span> <span class="badge badge-topic">Graph</span></td><td>Introduction to Union-Find &mdash; a completely new pattern for you</td></tr>
+        <tr><td>18</td><td>#42 Trapping Rain Water</td><td><span class="badge badge-hard">Hard</span></td><td><span class="badge badge-topic">Stack</span> <span class="badge badge-topic">Two Pointers</span></td><td>Combines your two-pointer strength with new monotonic stack pattern</td></tr>
+        <tr><td>19</td><td>#76 Minimum Window Substring</td><td><span class="badge badge-hard">Hard</span></td><td><span class="badge badge-topic">Sliding Window</span> <span class="badge badge-topic">Hash Map</span></td><td>Hard sliding window &mdash; directly extends your strong sliding window skills</td></tr>
+        <tr><td>20</td><td>#124 Binary Tree Max Path Sum</td><td><span class="badge badge-hard">Hard</span></td><td><span class="badge badge-topic">Tree</span> <span class="badge badge-topic">BFS/DFS</span></td><td>Combines tree DFS with global-max tracking &mdash; tests tree mastery</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Full Problem Inventory -->
+<div class="section">
+  <h2>Full Problem Inventory</h2>
+  <p style="color:var(--text-secondary); margin-bottom:1rem; font-size:0.9rem;">All 81 solved problems, sorted by number.</p>
+  <div class="table-scroll">
+    <table>
+      <thead>
+        <tr><th>No.</th><th>Title</th><th>Difficulty</th><th>Topics</th><th>Approach</th><th>Lang</th><th>Multi</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>1</td><td>Two Sum</td><td><span class="badge badge-easy">Easy</span></td><td><span class="badge badge-topic">Array</span> <span class="badge badge-topic">Hash Map</span></td><td>Hash map complement lookup</td><td><span class="badge badge-lang">py</span> <span class="badge badge-lang">ts</span></td><td>&#10003;</td></tr>
+        <tr><td>2</td><td>Add Two Numbers</td><td><span class="badge badge-medium">Med</span></td><td><span class="badge badge-topic">Linked List</span> <span class="badge badge-topic">Math</span></td><td>Traverse with carry, dummy head</td><td><span class="badge badge-lang">py</span></td><td></td></tr>
+        <tr><td>3</td><td>Longest Substring Without Repeating Chars</td><td><span class="badge badge-medium">Med</span></td><td><span class="badge badge-topic">Sliding Window</span> <span class="badge badge-topic">Hash Map</span></td><td>Sliding window with set</td><td><span class="badge badge-lang">py</span></td><td></td></tr>
+        <tr><td>4</td><td>Median of Two Sorted Arrays</td><td><span class="badge badge-hard">Hard</span></td><td><span class="badge badge-topic">Array</span> <span class="badge badge-topic">Sorting</span></td><td>Merge then find median</td><td><span class="badge badge-lang">py</span></td><td></td></tr>
+        <tr><td>5</td><td>Longest Palindromic Substring</td><td><span class="badge badge-medium">Med</span></td><td><span class="badge badge-topic">String</span> <span class="badge badge-topic">Two Pointers</span></td><td>Expand around center</td><td><span class="badge badge-lang">py</span> <span class="badge badge-lang">go</span></td><td>&#10003;</td></tr>
+        <tr><td>9</td><td>Palindrome Number</td><td><span class="badge badge-easy">Easy</span></td><td><span class="badge badge-topic">Math</span></td><td>Extract digits, two-pointer compare</td><td><span class="badge badge-lang">py</span></td><td></td></tr>
+        <tr><td>11</td><td>Container With Most Water</td><td><span class="badge badge-medium">Med</span></td><td><span class="badge badge-topic">Two Pointers</span> <span class="badge badge-topic">Array</span></td><td>Two pointers from ends</td><td><span class="badge badge-lang">py</span></td><td></td></tr>
+        <tr><td>13</td><td>Roman to Integer</td><td><span class="badge badge-easy">Easy</span></td><td><span class="badge badge-topic">Hash Map</span> <span class="badge badge-topic">String</span></td><td>Three approaches: greedy, comparison, reverse</td><td><span class="badge badge-lang">py</span></td><td>&#10003;</td></tr>
+        <tr><td>15</td><td>3Sum</td><td><span class="badge badge-medium">Med</span></td><td><span class="badge badge-topic">Two Pointers</span> <span class="badge badge-topic">Sorting</span></td><td>Sort + fix one + two pointers</td><td><span class="badge badge-lang">py</span></td><td></td></tr>
+        <tr><td>22</td><td>Generate Parentheses</td><td><span class="badge badge-medium">Med</span></td><td><span class="badge badge-topic">Backtracking</span> <span class="badge badge-topic">String</span></td><td>Backtracking with open/close counts</td><td><span class="badge badge-lang">py</span></td><td></td></tr>
+        <tr><td>26</td><td>Remove Duplicates from Sorted Array</td><td><span class="badge badge-easy">Easy</span></td><td><span class="badge badge-topic">Two Pointers</span> <span class="badge badge-topic">Array</span></td><td>Read/write pointer in-place</td><td><span class="badge badge-lang">py</span> <span class="badge badge-lang">go</span> <span class="badge badge-lang">js</span> <span class="badge badge-lang">rb</span> <span class="badge badge-lang">rs</span> <span class="badge badge-lang">ts</span></td><td>&#10003;</td></tr>
+        <tr><td>27</td><td>Remove Element</td><td><span class="badge badge-easy">Easy</span></td><td><span class="badge badge-topic">Two Pointers</span> <span class="badge badge-topic">Array</span></td><td>Read/write pointer in-place</td><td><span class="badge badge-lang">py</span> <span class="badge badge-lang">go</span> <span class="badge badge-lang">rs</span> <span class="badge badge-lang">ts</span></td><td>&#10003;</td></tr>
+        <tr><td>28</td><td>Find the Index of the First Occurrence</td><td><span class="badge badge-easy">Easy</span></td><td><span class="badge badge-topic">String</span> <span class="badge badge-topic">Two Pointers</span></td><td>Slice compare, char-by-char, sliding</td><td><span class="badge badge-lang">py</span> <span class="badge badge-lang">go</span> <span class="badge badge-lang">ts</span></td><td>&#10003;</td></tr>
+        <tr><td>45</td><td>Jump Game II</td><td><span class="badge badge-medium">Med</span></td><td><span class="badge badge-topic">Greedy</span> <span class="badge badge-topic">Array</span></td><td>BFS-like greedy, expand per level</td><td><span class="badge badge-lang">py</span></td><td></td></tr>
+        <tr><td>55</td><td>Jump Game</td><td><span class="badge badge-medium">Med</span></td><td><span class="badge badge-topic">Greedy</span> <span class="badge badge-topic">Array</span></td><td>Reverse greedy, move goal post</td><td><span class="badge badge-lang">py</span></td><td></td></tr>
+        <tr><td>56</td><td>Merge Intervals</td><td><span class="badge badge-medium">Med</span></td><td><span class="badge badge-topic">Sorting</span> <span class="badge badge-topic">Array</span></td><td>Sort by start, merge overlapping</td><td><span class="badge badge-lang">py</span></td><td></td></tr>
+        <tr><td>57</td><td>Insert Interval</td><td><span class="badge badge-medium">Med</span></td><td><span class="badge badge-topic">Sorting</span> <span class="badge badge-topic">Array</span></td><td>Sort+merge and O(n) scan</td><td><span class="badge badge-lang">py</span></td><td>&#10003;</td></tr>
+        <tr><td>62</td><td>Unique Paths</td><td><span class="badge badge-medium">Med</span></td><td><span class="badge badge-topic">DP</span> <span class="badge badge-topic">Math</span></td><td>2D DP table</td><td><span class="badge badge-lang">py</span></td><td></td></tr>
+        <tr><td>63</td><td>Unique Paths II</td><td><span class="badge badge-medium">Med</span></td><td><span class="badge badge-topic">DP</span> <span class="badge badge-topic">Array</span></td><td>2D DP with obstacle check</td><td><span class="badge badge-lang">py</span></td><td></td></tr>
+        <tr><td>64</td><td>Minimum Path Sum</td><td><span class="badge badge-medium">Med</span></td><td><span class="badge badge-topic">DP</span> <span class="badge badge-topic">Array</span></td><td>2D DP min from top and left</td><td><span class="badge badge-lang">py</span></td><td></td></tr>
+        <tr><td>70</td><td>Climbing Stairs</td><td><span class="badge badge-easy">Easy</span></td><td><span class="badge badge-topic">DP</span> <span class="badge badge-topic">Math</span></td><td>Tabulation, memoized, recursive</td><td><span class="badge badge-lang">py</span></td><td>&#10003;</td></tr>
+        <tr><td>88</td><td>Merge Sorted Array</td><td><span class="badge badge-easy">Easy</span></td><td><span class="badge badge-topic">Two Pointers</span> <span class="badge badge-topic">Sorting</span></td><td>Three pointers from end</td><td><span class="badge badge-lang">py</span></td><td></td></tr>
+        <tr><td>91</td><td>Decode Ways</td><td><span class="badge badge-medium">Med</span></td><td><span class="badge badge-topic">DP</span> <span class="badge badge-topic">String</span></td><td>Top-down memoized DP</td><td><span class="badge badge-lang">py</span></td><td></td></tr>
+        <tr><td>97</td><td>Interleaving String</td><td><span class="badge badge-medium">Med</span></td><td><span class="badge badge-topic">DP</span> <span class="badge badge-topic">String</span></td><td>Top-down @cache on (l,r)</td><td><span class="badge badge-lang">py</span></td><td></td></tr>
+        <tr><td>102</td><td>Binary Tree Level Order Traversal</td><td><span class="badge badge-medium">Med</span></td><td><span class="badge badge-topic">BFS/DFS</span> <span class="badge badge-topic">Tree</span></td><td>BFS with queue, level-by-level</td><td><span class="badge badge-lang">py</span></td><td></td></tr>
+        <tr><td>121</td><td>Best Time to Buy and Sell Stock</td><td><span class="badge badge-easy">Easy</span></td><td><span class="badge badge-topic">Array</span> <span class="badge badge-topic">Greedy</span></td><td>Track min so far + brute force</td><td><span class="badge badge-lang">py</span></td><td>&#10003;</td></tr>
+        <tr><td>125</td><td>Valid Palindrome</td><td><span class="badge badge-easy">Easy</span></td><td><span class="badge badge-topic">Two Pointers</span> <span class="badge badge-topic">String</span></td><td>Filter + two-pointer compare</td><td><span class="badge badge-lang">py</span> <span class="badge badge-lang">go</span> <span class="badge badge-lang">ts</span></td><td>&#10003;</td></tr>
+        <tr><td>139</td><td>Word Break</td><td><span class="badge badge-medium">Med</span></td><td><span class="badge badge-topic">DP</span> <span class="badge badge-topic">String</span></td><td>Top-down DP, try each word</td><td><span class="badge badge-lang">py</span></td><td></td></tr>
+        <tr><td>141</td><td>Linked List Cycle</td><td><span class="badge badge-easy">Easy</span></td><td><span class="badge badge-topic">Linked List</span> <span class="badge badge-topic">Two Pointers</span></td><td>Hash set + Floyd's fast/slow</td><td><span class="badge badge-lang">py</span></td><td>&#10003;</td></tr>
+        <tr><td>160</td><td>Intersection of Two Linked Lists</td><td><span class="badge badge-easy">Easy</span></td><td><span class="badge badge-topic">Linked List</span> <span class="badge badge-topic">Hash Map</span></td><td>Store list A in set, scan B</td><td><span class="badge badge-lang">py</span></td><td></td></tr>
+        <tr><td>167</td><td>Two Sum II</td><td><span class="badge badge-medium">Med</span></td><td><span class="badge badge-topic">Two Pointers</span> <span class="badge badge-topic">Array</span></td><td>Two pointers from both ends</td><td><span class="badge badge-lang">py</span></td><td></td></tr>
+        <tr><td>188</td><td>Best Time to Buy and Sell Stock IV</td><td><span class="badge badge-hard">Hard</span></td><td><span class="badge badge-topic">DP</span> <span class="badge badge-topic">Array</span></td><td>Top-down @lru_cache, 3 states</td><td><span class="badge badge-lang">py</span></td><td></td></tr>
+        <tr><td>198</td><td>House Robber</td><td><span class="badge badge-medium">Med</span></td><td><span class="badge badge-topic">DP</span> <span class="badge badge-topic">Array</span></td><td>Memoized recursion + tabulation</td><td><span class="badge badge-lang">py</span></td><td>&#10003;</td></tr>
+        <tr><td>200</td><td>Number of Islands</td><td><span class="badge badge-medium">Med</span></td><td><span class="badge badge-topic">BFS/DFS</span> <span class="badge badge-topic">Graph</span></td><td>BFS from each land cell</td><td><span class="badge badge-lang">py</span></td><td>&#10003;</td></tr>
+        <tr><td>202</td><td>Happy Number</td><td><span class="badge badge-easy">Easy</span></td><td><span class="badge badge-topic">Hash Map</span> <span class="badge badge-topic">Math</span></td><td>Digit square sum + cycle detection</td><td><span class="badge badge-lang">py</span></td><td></td></tr>
+        <tr><td>209</td><td>Minimum Size Subarray Sum</td><td><span class="badge badge-medium">Med</span></td><td><span class="badge badge-topic">Sliding Window</span> <span class="badge badge-topic">Prefix Sum</span></td><td>Prefix sum + two pointers</td><td><span class="badge badge-lang">py</span></td><td></td></tr>
+        <tr><td>215</td><td>Kth Largest Element</td><td><span class="badge badge-medium">Med</span></td><td><span class="badge badge-topic">Sorting</span> <span class="badge badge-topic">Heap</span></td><td>Sort descending + min-heap size k</td><td><span class="badge badge-lang">py</span></td><td>&#10003;</td></tr>
+        <tr><td>217</td><td>Contains Duplicate</td><td><span class="badge badge-easy">Easy</span></td><td><span class="badge badge-topic">Array</span> <span class="badge badge-topic">Hash Map</span></td><td>6 approaches: set, brute, sort, one-liner</td><td><span class="badge badge-lang">py</span> <span class="badge badge-lang">go</span></td><td>&#10003;</td></tr>
+        <tr><td>219</td><td>Contains Duplicate II</td><td><span class="badge badge-easy">Easy</span></td><td><span class="badge badge-topic">Sliding Window</span> <span class="badge badge-topic">Hash Map</span></td><td>Sliding window with hash map</td><td><span class="badge badge-lang">py</span></td><td></td></tr>
+        <tr><td>242</td><td>Valid Anagram</td><td><span class="badge badge-easy">Easy</span></td><td><span class="badge badge-topic">Hash Map</span> <span class="badge badge-topic">String</span> <span class="badge badge-topic">Sorting</span></td><td>Counter, defaultdict, sorted, Go array</td><td><span class="badge badge-lang">py</span> <span class="badge badge-lang">go</span></td><td>&#10003;</td></tr>
+        <tr><td>256</td><td>Paint House</td><td><span class="badge badge-medium">Med</span></td><td><span class="badge badge-topic">DP</span> <span class="badge badge-topic">Array</span></td><td>2D DP + space-optimized 1D</td><td><span class="badge badge-lang">py</span></td><td>&#10003;</td></tr>
+        <tr><td>265</td><td>Paint House II</td><td><span class="badge badge-hard">Hard</span></td><td><span class="badge badge-topic">DP</span> <span class="badge badge-topic">Array</span></td><td>Generalized k colors, 1D DP</td><td><span class="badge badge-lang">py</span></td><td></td></tr>
+        <tr><td>276</td><td>Paint Fence</td><td><span class="badge badge-medium">Med</span></td><td><span class="badge badge-topic">DP</span> <span class="badge badge-topic">Math</span></td><td>Top-down @cache recurrence</td><td><span class="badge badge-lang">py</span></td><td></td></tr>
+        <tr><td>286</td><td>Walls and Gates</td><td><span class="badge badge-medium">Med</span></td><td><span class="badge badge-topic">BFS/DFS</span> <span class="badge badge-topic">Graph</span></td><td>Multi-source BFS from gates</td><td><span class="badge badge-lang">py</span></td><td></td></tr>
+        <tr><td>295</td><td>Find Median from Data Stream</td><td><span class="badge badge-hard">Hard</span></td><td><span class="badge badge-topic">Heap</span> <span class="badge badge-topic">Design</span></td><td>Two heaps (max-heap + min-heap)</td><td><span class="badge badge-lang">py</span></td><td></td></tr>
+        <tr><td>300</td><td>Longest Increasing Subsequence</td><td><span class="badge badge-medium">Med</span></td><td><span class="badge badge-topic">DP</span> <span class="badge badge-topic">Array</span></td><td>O(n&sup2;) DP</td><td><span class="badge badge-lang">py</span></td><td></td></tr>
+        <tr><td>303</td><td>Range Sum Query &ndash; Immutable</td><td><span class="badge badge-easy">Easy</span></td><td><span class="badge badge-topic">Prefix Sum</span> <span class="badge badge-topic">Design</span></td><td>Prefix sum array, O(1) query</td><td><span class="badge badge-lang">py</span></td><td></td></tr>
+        <tr><td>309</td><td>Best Time to Buy/Sell Stock w/ Cooldown</td><td><span class="badge badge-medium">Med</span></td><td><span class="badge badge-topic">DP</span> <span class="badge badge-topic">Array</span></td><td>Top-down DP, day/holding/cooldown</td><td><span class="badge badge-lang">py</span></td><td></td></tr>
+        <tr><td>322</td><td>Coin Change</td><td><span class="badge badge-medium">Med</span></td><td><span class="badge badge-topic">DP</span> <span class="badge badge-topic">Array</span></td><td>Bottom-up DP</td><td><span class="badge badge-lang">py</span></td><td></td></tr>
+        <tr><td>346</td><td>Moving Average from Data Stream</td><td><span class="badge badge-easy">Easy</span></td><td><span class="badge badge-topic">Sliding Window</span> <span class="badge badge-topic">Design</span></td><td>Queue-based sliding window</td><td><span class="badge badge-lang">py</span></td><td>&#10003;</td></tr>
+        <tr><td>509</td><td>Fibonacci Number</td><td><span class="badge badge-easy">Easy</span></td><td><span class="badge badge-topic">DP</span> <span class="badge badge-topic">Math</span></td><td>Tabulation + space-optimized</td><td><span class="badge badge-lang">py</span></td><td>&#10003;</td></tr>
+        <tr><td>516</td><td>Longest Palindromic Subsequence</td><td><span class="badge badge-medium">Med</span></td><td><span class="badge badge-topic">DP</span> <span class="badge badge-topic">String</span></td><td>2D DP via LCS of string+reverse</td><td><span class="badge badge-lang">py</span></td><td></td></tr>
+        <tr><td>518</td><td>Coin Change II</td><td><span class="badge badge-medium">Med</span></td><td><span class="badge badge-topic">DP</span> <span class="badge badge-topic">Array</span></td><td>Top-down 2D memo</td><td><span class="badge badge-lang">py</span></td><td></td></tr>
+        <tr><td>523</td><td>Continuous Subarray Sum</td><td><span class="badge badge-medium">Med</span></td><td><span class="badge badge-topic">Prefix Sum</span> <span class="badge badge-topic">Hash Map</span> <span class="badge badge-topic">Math</span></td><td>Prefix sum mod k + hash map</td><td><span class="badge badge-lang">py</span></td><td></td></tr>
+        <tr><td>525</td><td>Contiguous Array</td><td><span class="badge badge-medium">Med</span></td><td><span class="badge badge-topic">Prefix Sum</span> <span class="badge badge-topic">Hash Map</span></td><td>Prefix sum (0&#8594;-1) + first occurrence</td><td><span class="badge badge-lang">py</span></td><td>&#10003;</td></tr>
+        <tr><td>560</td><td>Subarray Sum Equals K</td><td><span class="badge badge-medium">Med</span></td><td><span class="badge badge-topic">Prefix Sum</span> <span class="badge badge-topic">Hash Map</span></td><td>Prefix sum with count map</td><td><span class="badge badge-lang">py</span></td><td></td></tr>
+        <tr><td>594</td><td>Longest Harmonious Subsequence</td><td><span class="badge badge-easy">Easy</span></td><td><span class="badge badge-topic">Sliding Window</span> <span class="badge badge-topic">Sorting</span></td><td>Sort + two pointers, diff==1</td><td><span class="badge badge-lang">py</span></td><td></td></tr>
+        <tr><td>643</td><td>Maximum Average Subarray I</td><td><span class="badge badge-easy">Easy</span></td><td><span class="badge badge-topic">Sliding Window</span> <span class="badge badge-topic">Array</span></td><td>Sliding window + prefix sum variant</td><td><span class="badge badge-lang">py</span></td><td>&#10003;</td></tr>
+        <tr><td>704</td><td>Binary Search</td><td><span class="badge badge-easy">Easy</span></td><td><span class="badge badge-topic">Binary Search</span> <span class="badge badge-topic">Array</span></td><td>bisect.bisect_left from stdlib</td><td><span class="badge badge-lang">py</span></td><td></td></tr>
+        <tr><td>714</td><td>Best Time to Buy/Sell Stock w/ Fee</td><td><span class="badge badge-medium">Med</span></td><td><span class="badge badge-topic">DP</span> <span class="badge badge-topic">Greedy</span></td><td>Tabulation with free/hold states</td><td><span class="badge badge-lang">py</span></td><td></td></tr>
+        <tr><td>718</td><td>Maximum Length of Repeated Subarray</td><td><span class="badge badge-medium">Med</span></td><td><span class="badge badge-topic">DP</span> <span class="badge badge-topic">Array</span></td><td>2D DP table</td><td><span class="badge badge-lang">py</span></td><td></td></tr>
+        <tr><td>740</td><td>Delete and Earn</td><td><span class="badge badge-medium">Med</span></td><td><span class="badge badge-topic">DP</span> <span class="badge badge-topic">Hash Map</span></td><td>Reduce to House Robber, @cache</td><td><span class="badge badge-lang">py</span></td><td></td></tr>
+        <tr><td>746</td><td>Min Cost Climbing Stairs</td><td><span class="badge badge-easy">Easy</span></td><td><span class="badge badge-topic">DP</span> <span class="badge badge-topic">Array</span></td><td>4 approaches: memo, @cache, tab, O(1)</td><td><span class="badge badge-lang">py</span></td><td>&#10003;</td></tr>
+        <tr><td>790</td><td>Domino and Tromino Tiling</td><td><span class="badge badge-medium">Med</span></td><td><span class="badge badge-topic">DP</span> <span class="badge badge-topic">Math</span></td><td>State machine DP</td><td><span class="badge badge-lang">py</span></td><td></td></tr>
+        <tr><td>918</td><td>Maximum Sum Circular Subarray</td><td><span class="badge badge-medium">Med</span></td><td><span class="badge badge-topic">DP</span> <span class="badge badge-topic">Array</span></td><td>Kadane's max + min</td><td><span class="badge badge-lang">py</span></td><td></td></tr>
+        <tr><td>931</td><td>Minimum Falling Path Sum</td><td><span class="badge badge-medium">Med</span></td><td><span class="badge badge-topic">DP</span> <span class="badge badge-topic">Array</span></td><td>Top-down @cache, 3 directions</td><td><span class="badge badge-lang">py</span></td><td></td></tr>
+        <tr><td>983</td><td>Minimum Cost For Tickets</td><td><span class="badge badge-medium">Med</span></td><td><span class="badge badge-topic">DP</span> <span class="badge badge-topic">Array</span></td><td>Top-down @cache, try 1/7/30 day</td><td><span class="badge badge-lang">py</span></td><td></td></tr>
+        <tr><td>1137</td><td>N-th Tribonacci Number</td><td><span class="badge badge-easy">Easy</span></td><td><span class="badge badge-topic">DP</span> <span class="badge badge-topic">Math</span></td><td>Top-down memoized DP</td><td><span class="badge badge-lang">py</span></td><td></td></tr>
+        <tr><td>1143</td><td>Longest Common Subsequence</td><td><span class="badge badge-medium">Med</span></td><td><span class="badge badge-topic">DP</span> <span class="badge badge-topic">String</span></td><td>Bottom-up 2D DP</td><td><span class="badge badge-lang">py</span></td><td></td></tr>
+        <tr><td>1155</td><td>Number of Dice Rolls With Target Sum</td><td><span class="badge badge-medium">Med</span></td><td><span class="badge badge-topic">DP</span> <span class="badge badge-topic">Math</span></td><td>Top-down @cache, enumerate faces</td><td><span class="badge badge-lang">py</span></td><td></td></tr>
+        <tr><td>1176</td><td>Diet Plan Performance</td><td><span class="badge badge-easy">Easy</span></td><td><span class="badge badge-topic">Sliding Window</span> <span class="badge badge-topic">Array</span></td><td>4 iterations of sliding window</td><td><span class="badge badge-lang">py</span></td><td>&#10003;</td></tr>
+        <tr><td>1220</td><td>Count Vowels Permutation</td><td><span class="badge badge-hard">Hard</span></td><td><span class="badge badge-topic">DP</span> <span class="badge badge-topic">Math</span></td><td>Tabulation with vowel transitions</td><td><span class="badge badge-lang">py</span></td><td>&#10003;</td></tr>
+        <tr><td>1335</td><td>Minimum Difficulty of a Job Schedule</td><td><span class="badge badge-hard">Hard</span></td><td><span class="badge badge-topic">DP</span> <span class="badge badge-topic">Array</span></td><td>Top-down @lru_cache, precompute</td><td><span class="badge badge-lang">py</span></td><td></td></tr>
+        <tr><td>1473</td><td>Paint House III</td><td><span class="badge badge-hard">Hard</span></td><td><span class="badge badge-topic">DP</span> <span class="badge badge-topic">Array</span></td><td>Top-down @cache, 3 state dims</td><td><span class="badge badge-lang">py</span></td><td></td></tr>
+        <tr><td>1652</td><td>Defuse the Bomb</td><td><span class="badge badge-easy">Easy</span></td><td><span class="badge badge-topic">Sliding Window</span> <span class="badge badge-topic">Array</span></td><td>Circular sliding window</td><td><span class="badge badge-lang">py</span></td><td></td></tr>
+        <tr><td>1763</td><td>Longest Nice Substring</td><td><span class="badge badge-easy">Easy</span></td><td><span class="badge badge-topic">String</span> <span class="badge badge-topic">Hash Map</span></td><td>Brute force O(n&sup2;) with set check</td><td><span class="badge badge-lang">py</span></td><td></td></tr>
+        <tr><td>1768</td><td>Merge Strings Alternately</td><td><span class="badge badge-easy">Easy</span></td><td><span class="badge badge-topic">String</span> <span class="badge badge-topic">Two Pointers</span></td><td>Go channel-based approaches</td><td><span class="badge badge-lang">go</span></td><td>&#10003;</td></tr>
+        <tr><td>1876</td><td>Substrings of Size Three w/ Distinct Chars</td><td><span class="badge badge-easy">Easy</span></td><td><span class="badge badge-topic">Sliding Window</span> <span class="badge badge-topic">String</span></td><td>Brute force with set check</td><td><span class="badge badge-lang">py</span></td><td></td></tr>
+        <tr><td>1984</td><td>Min Diff Between Highest/Lowest of K Scores</td><td><span class="badge badge-easy">Easy</span></td><td><span class="badge badge-topic">Sliding Window</span> <span class="badge badge-topic">Sorting</span></td><td>Sort + slide window of size k</td><td><span class="badge badge-lang">py</span></td><td>&#10003;</td></tr>
+        <tr><td>3364</td><td>Minimum Positive Sum Subarray</td><td><span class="badge badge-easy">Easy</span></td><td><span class="badge badge-topic">Array</span> <span class="badge badge-topic">Sliding Window</span></td><td>Brute force nested loops</td><td><span class="badge badge-lang">py</span></td><td></td></tr>
+        <tr><td>3931</td><td>Check Adjacent Digit Differences</td><td><span class="badge badge-easy">Easy</span></td><td><span class="badge badge-topic">String</span> <span class="badge badge-topic">Math</span></td><td>Linear scan adjacent digits</td><td><span class="badge badge-lang">py</span></td><td></td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Footer -->
+<div class="footer">
+  <p>Generated by Claude Code &mdash; May 22, 2026</p>
+  <p style="margin-top:0.5rem;"><strong>Previous Reports:</strong></p>
+  <ul style="list-style:none; margin-top:0.25rem;">
+    <li><a href="reports/report-2026-05-22.html">report-2026-05-22.html</a> (current)</li>
+  </ul>
+</div>
+
+<script>
+// Theme toggle
+function toggleTheme() {
+  var html = document.documentElement;
+  var current = html.getAttribute('data-theme');
+  var next = current === 'dark' ? 'light' : 'dark';
+  html.setAttribute('data-theme', next);
+  localStorage.setItem('lc-report-theme', next);
+  updateToggleButton(next);
+}
+function updateToggleButton(theme) {
+  document.getElementById('themeIcon').textContent = theme === 'dark' ? '☀️' : '🌙';
+  document.getElementById('themeLabel').textContent = theme === 'dark' ? 'Light' : 'Dark';
+}
+(function() {
+  var saved = localStorage.getItem('lc-report-theme');
+  if (saved) {
+    document.documentElement.setAttribute('data-theme', saved);
+    updateToggleButton(saved);
+  } else {
+    updateToggleButton('dark');
+  }
+})();
+
+// Activity Timeline
+(function() {
+  var data = [
+    {date:'2025-05-13',count:3},{date:'2025-05-15',count:9},{date:'2025-05-16',count:4},
+    {date:'2025-05-17',count:3},{date:'2025-05-18',count:4},{date:'2025-05-19',count:3},
+    {date:'2025-10-23',count:1},
+    {date:'2026-05-17',count:5},{date:'2026-05-18',count:3},{date:'2026-05-20',count:4},
+    {date:'2026-05-21',count:10},{date:'2026-05-22',count:2}
+  ];
+  var max = Math.max.apply(null, data.map(function(d){return d.count;}));
+  var tl = document.getElementById('timeline');
+  var lb = document.getElementById('timelineLabels');
+  data.forEach(function(d) {
+    var h = Math.max(8, (d.count/max)*130);
+    var bar = document.createElement('div');
+    bar.className = 'timeline-bar';
+    var isBurst1 = d.date.indexOf('2025-05') === 0;
+    var isBurst2 = d.date.indexOf('2026-05') === 0;
+    var color = isBurst1 ? 'var(--green)' : isBurst2 ? 'var(--accent)' : 'var(--text-secondary)';
+    bar.style.height = h + 'px';
+    bar.style.background = color;
+    bar.innerHTML = '<div class="tip">' + d.date + ': ' + d.count + ' commits</div>';
+    tl.appendChild(bar);
+    var lbl = document.createElement('span');
+    lbl.textContent = d.date.slice(5);
+    lb.appendChild(lbl);
+  });
+})();
+
+// Topic Coverage Bar Chart
+(function() {
+  var topics = [
+    {name:'Array',count:47},{name:'DP',count:42},{name:'Sliding Window',count:16},
+    {name:'String',count:16},{name:'Two Pointers',count:15},{name:'Hash Map',count:15},
+    {name:'Math',count:13},{name:'Sorting',count:9},{name:'Prefix Sum',count:5},
+    {name:'Greedy',count:5},{name:'BFS/DFS',count:4},{name:'Linked List',count:4},
+    {name:'Graph',count:3},{name:'Heap',count:3},{name:'Design',count:3},
+    {name:'Backtracking',count:1},{name:'Binary Search',count:1},{name:'Tree',count:1},
+    {name:'Stack',count:0},{name:'Trie',count:0},{name:'Union-Find',count:0},
+    {name:'Bit Manipulation',count:0}
+  ];
+  var max = Math.max.apply(null, topics.map(function(t){return t.count;}));
+  var chart = document.getElementById('topicChart');
+  topics.forEach(function(t) {
+    var row = document.createElement('div');
+    row.className = 'bar-row';
+    var pct = max > 0 ? (t.count/max)*100 : 0;
+    var color = 'var(--green)';
+    if (t.count < 5) color = 'var(--red)';
+    else if (t.count < 10) color = 'var(--yellow)';
+    row.innerHTML = '<div class="bar-label">' + t.name + '</div>' +
+      '<div class="bar-track"><div class="bar-fill" style="width:' + pct + '%;background:' + color + ';"></div>' +
+      '<div class="bar-value" style="color:' + (t.count > 0 ? 'var(--text)' : 'var(--text-secondary)') + ';">' + t.count + '</div></div>';
+    chart.appendChild(row);
+  });
+})();
+</script>
+</body>
+</html>
