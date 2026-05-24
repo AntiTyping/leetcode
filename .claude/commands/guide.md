@@ -89,12 +89,21 @@ For each problem, the research must produce:
 
 1. **Problem statement** — brief but complete: what are the inputs, what to return, key constraints. Enough that the reader understands the problem without opening LeetCode.
 2. **Difficulty** — Easy / Medium / Hard
-3. **Key insight** — the single conceptual breakthrough that unlocks the solution. This is the most important part. It should be the "aha moment" — the one idea that, once understood, makes the solution fall into place. Examples: "at least one half is always sorted" for rotated array search, "store (value, current_min) tuples" for min stack.
-4. **Step-by-step thinking process** — how to arrive at the approach, not the code. Walk through the reasoning: what data structure to use and why, how to set up the iteration, what decisions to make at each step, how to handle transitions. This should read like a mentor walking through the problem on a whiteboard.
-5. **Why this works** — a one-paragraph explanation of *why* the algorithm is correct, not just how. This supports elaborative interrogation. Example: "Binary search works on a rotated array because the rotation preserves the sorted property in at least one half — by identifying which half is sorted, you can determine which half to discard, maintaining the O(log n) elimination guarantee."
-6. **Common pitfalls and edge cases** — specific mistakes people make on this problem. Not generic advice like "watch for edge cases" but specific things like "using `<` instead of `<=` causes an infinite loop" or "forgetting to check the stack is empty before popping."
-7. **Time and space complexity** of the optimal solution.
-8. **Python features that help** — with short code snippets showing **only the language feature**, NOT the problem solution. Include both basic Python idioms AND standard library features. Examples:
+3. **Brute force approach** — the naive/obvious solution that most people think of first. Include:
+   - A 2–4 sentence description of the approach (e.g., "Check every pair of elements" or "Generate all subsets and filter")
+   - Time and space complexity of the brute force
+   - **Why it's insufficient** — what makes it too slow? Which constraint makes it fail? (e.g., "With n up to 10⁵, O(n²) means 10¹⁰ operations — far too slow for a 1-second time limit")
+   - A short **Python implementation** (5–15 lines) showing the brute force code. This should be a complete, working solution — not pseudocode. Keep it concise but correct.
+   - A short **Go implementation** (5–15 lines) of the same brute force.
+   
+   The brute force serves two purposes: (1) it validates understanding of the problem before optimizing, and (2) it makes the efficiency gain of the optimal solution visceral — seeing O(n²) next to O(n) with concrete code makes the "why" of the optimization click.
+
+4. **Key insight** — the single conceptual breakthrough that unlocks the optimal solution. This is the most important part. It should be the "aha moment" — the one idea that, once understood, makes the solution fall into place. Frame it as: "The brute force does X repeatedly/redundantly. The insight is that Y eliminates this redundancy." Examples: "The brute force checks every pair — the insight is that a hash map lets you check complements in O(1)" or "The brute force rescans the window — the insight is that a monotonic stack resolves all pending days in one pass."
+5. **Step-by-step thinking process** — how to arrive at the optimal approach, not the code. Walk through the reasoning: what data structure to use and why, how to set up the iteration, what decisions to make at each step, how to handle transitions. This should read like a mentor walking through the problem on a whiteboard.
+6. **Why this works** — a one-paragraph explanation of *why* the algorithm is correct, not just how. This supports elaborative interrogation. Example: "Binary search works on a rotated array because the rotation preserves the sorted property in at least one half — by identifying which half is sorted, you can determine which half to discard, maintaining the O(log n) elimination guarantee."
+7. **Common pitfalls and edge cases** — specific mistakes people make on this problem. Not generic advice like "watch for edge cases" but specific things like "using `<` instead of `<=` causes an infinite loop" or "forgetting to check the stack is empty before popping."
+8. **Time and space complexity** of the optimal solution, shown side-by-side with the brute force complexity so the improvement is clear.
+9. **Python features that help** — with short code snippets showing **only the language feature**, NOT the problem solution. Include both basic Python idioms AND standard library features. Examples:
    - `bisect.bisect_left()` for binary search
    - `heapq.heappush/heappop` for priority queues
    - `collections.deque` with `popleft()` for BFS
@@ -113,7 +122,7 @@ For each problem, the research must produce:
    
    Include 3–6 of the most relevant features per problem, with a 1–3 line code snippet and a comment explaining the feature.
 
-9. **Go features that help** — equivalent Go idioms and standard library features for the same problem. Show how Go approaches the same task differently. Examples:
+10. **Go features that help** — equivalent Go idioms and standard library features for the same problem. Show how Go approaches the same task differently. Examples:
    - `sort.Search()` / `sort.SearchInts()` for binary search
    - `container/heap` interface for priority queues
    - Slices as stacks: `append()` / `s[:len(s)-1]`
@@ -131,7 +140,7 @@ For each problem, the research must produce:
    
    Include 3–6 of the most relevant features per problem, with a 1–3 line code snippet and a comment explaining the feature.
 
-10. **Connections to other problems** — when problems within a section build on each other, explicitly note the progression (e.g., "this uses the same monotonic stack pattern from #739" or "this extends the binary search template from #704 with one additional check").
+11. **Connections to other problems** — when problems within a section build on each other, explicitly note the progression (e.g., "this uses the same monotonic stack pattern from #739" or "this extends the binary search template from #704 with one additional check").
 
 ## Step 3: Generate the HTML Guide
 
@@ -165,6 +174,7 @@ Write `guide.html` with the following structure and design.
    
    **Review problem cards** (condensed format compared to new problems):
    - Problem header with number, title, difficulty, topic, and **days since last solved**
+   - **"The Problem"** — a brief 1–3 sentence description of what the problem asks. This is critical for review cards because the user may not remember the problem from its title alone. Keep it concise but complete enough to jog memory (e.g., "Given an array of integers and a target, return indices of the two numbers that add up to the target. Each input has exactly one solution, and you may not use the same element twice.").
    - "Quick Reminder" — 1-2 sentence hint about the pattern (less detail than new problems since the user has solved this before)
    - "Key Insight" callout (same as new problems)
    - "Try to recall": A challenge prompt like "Can you implement this in under 10 minutes? What's the time complexity?"
@@ -181,14 +191,22 @@ Write `guide.html` with the following structure and design.
    **Problem cards** (one per problem), each containing:
    - **Problem header**: Number, title, difficulty badge, topic badges
    - **"The Problem"**: What to solve. Brief, clear, no hints. The reader should understand *what* they need to build.
-   - **"Key Insight"**: Highlighted callout box (blue left border) with the conceptual breakthrough. This is the section the reader re-reads when stuck. Write it as a standalone paragraph that makes the "aha" click.
-   - **"How to Think About It"**: Numbered steps (with circular step indicators) walking through the reasoning process. Each step should be one concrete action or decision. 4–6 steps typical. This is *how to think*, not *what to code*.
+   - **"Brute Force"**: A collapsible/expandable section (using `<details><summary>`) showing the naive approach. Contains:
+     - A 2–4 sentence description of the brute force approach
+     - **Complete Python implementation** (5–15 lines, working code, not pseudocode)
+     - **Complete Go implementation** (5–15 lines, working code)
+     - **Complexity** (time and space) of the brute force
+     - **"Why optimize?"** — one sentence explaining what constraint makes brute force too slow (e.g., "With n up to 10⁵, the O(n²) nested loops mean ~10¹⁰ operations — 100× over the time limit.")
+     
+     The brute force section uses a distinct visual style: amber/yellow left border callout to signal "this works but isn't good enough." The code blocks here ARE full solutions (unlike the feature snippets in the optimal section which show only language features). This contrast is intentional — seeing the complete brute force code next to the optimal thinking process teaches when and why to optimize.
+   - **"Key Insight"**: Highlighted callout box (blue left border) with the conceptual breakthrough. Frame it as the bridge from brute force to optimal: what redundancy does the brute force have, and how does this insight eliminate it? This is the section the reader re-reads when stuck.
+   - **"How to Think About It"**: Numbered steps (with circular step indicators) walking through the reasoning process for the optimal solution. Each step should be one concrete action or decision. 4–6 steps typical. This is *how to think*, not *what to code*.
    - **"Why This Works"**: A callout explaining the correctness argument — why the algorithm produces the right answer. This is distinct from "how to think about it" (which is the problem-solving process). This section answers "if I implemented this correctly, why would it give the right answer?"
    - **"Watch Out For"**: Bullet list of specific pitfalls. Use a red-bordered warning callout box for the single most dangerous mistake on this problem.
    - **Alternative approaches** (when relevant): Brief mention of other valid approaches — e.g., "You can also solve this with an in-order traversal" or "A BFS approach (Kahn's algorithm) avoids recursion."
-   - **"Python Features That Help"**: A code block with 3–6 relevant Python features. Each feature gets a comment explaining what it does. The snippets show the *feature*, not the *solution*. Include both basic idioms and standard library features (`collections`, `heapq`, `bisect`, `itertools`, `functools`).
-   - **"Go Features That Help"**: A separate code block with 3–6 relevant Go features for the same problem. Show idiomatic Go — struct definitions, slice manipulation, `container/heap`, `sort`, `strings`, `unicode` packages. Each snippet should be syntactically valid Go with a comment explaining the feature.
-   - **Complexity box**: Inline display showing target time and space complexity.
+   - **"Python Features That Help"**: A code block with 3–6 relevant Python features for the **optimal** solution. Each feature gets a comment explaining what it does. The snippets show the *feature*, not the *solution*. Include both basic idioms and standard library features (`collections`, `heapq`, `bisect`, `itertools`, `functools`).
+   - **"Go Features That Help"**: A separate code block with 3–6 relevant Go features for the **optimal** solution. Show idiomatic Go — struct definitions, slice manipulation, `container/heap`, `sort`, `strings`, `unicode` packages. Each snippet should be syntactically valid Go with a comment explaining the feature.
+   - **Complexity box**: Inline display showing **both** brute force and optimal complexities side by side, making the improvement visually obvious (e.g., "Brute: O(n²) → Optimal: O(n)").
 
 ### Design Requirements
 
@@ -209,6 +227,8 @@ Write `guide.html` with the following structure and design.
 - **Insight callout**: Blue left border, slightly tinted background.
 - **Warning callout**: Red left border, slightly tinted background.
 - **"Why This Works" callout**: Green left border, slightly tinted background.
+- **"Brute Force" section**: Amber/yellow left border callout, collapsible via `<details><summary>`. Summary line shows "Brute Force — O(n²) time" (with the actual complexity). When expanded, shows description, complete Python and Go code, and a "Why optimize?" note. The code blocks here use the same styling as other code blocks but with an amber "Brute Force" badge instead of language badge.
+- **Complexity box** (enhanced): Shows brute force and optimal side by side with an arrow between them, e.g., "Brute: O(n²) → Optimal: O(n)". Use a subtle color transition (red/amber for brute → green for optimal) to make the improvement visually obvious.
 - **Review section**: Distinct visual treatment — e.g., a subtle gradient or different surface color to separate review from new material.
 - **Code blocks**: Monospace font (`SF Mono`, `Fira Code`, `Consolas`), surface2 background, subtle border, horizontal scroll for overflow. **Label each code block** with a small "Python" or "Go" badge in the top-right corner of the block.
 - **Step indicators**: Circular numbered badges (CSS counter) to the left of each step.
@@ -218,7 +238,8 @@ Write `guide.html` with the following structure and design.
 
 ### Critical Rules
 
-- **NEVER include actual problem solutions** — only the thinking process and language feature snippets that demonstrate language features in isolation.
+- **Include brute force solutions** (complete working code in both Python and Go) inside the collapsible "Brute Force" section. This is the one exception to the no-solutions rule — the brute force is a teaching tool, not a spoiler. It validates problem understanding and makes the optimization contrast visceral.
+- **NEVER include the optimal solution** — only the thinking process and language feature snippets that demonstrate language features in isolation. The reader must synthesize the optimal solution themselves from the key insight, thinking steps, and feature snippets.
 - Each section must give the reader **enough understanding** to solve the problem on their own. The test: could someone read just this section, close the guide, and write a working solution?
 - **Both Python and Go** code samples for every problem. Python samples should cover both basic idioms and the extended standard library. Go samples should show idiomatic Go with relevant standard library packages.
 - Problems within each section should be ordered by **increasing difficulty** — Easy first, then Medium, then Hard.
