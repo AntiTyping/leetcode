@@ -215,6 +215,41 @@ details.prev-solution > summary::before {
 details.prev-solution[open] > summary::before { transform: rotate(90deg); }
 details.prev-solution > .code-block-wrapper { margin: 12px 16px; }
 details.prev-solution > .code-block-wrapper:first-of-type { margin-top: 0; }
+details.optimal-solution {
+  margin-top: 12px; padding: 0; border: 1px solid var(--border); border-left: 3px solid var(--green);
+  border-radius: 8px; background: rgba(63,185,80,0.05);
+}
+details.optimal-solution > summary {
+  cursor: pointer; padding: 10px 16px; font-size: 13px; font-weight: 600;
+  color: var(--green); list-style: none; user-select: none;
+}
+details.optimal-solution > summary::before {
+  content: '\25B6'; display: inline-block; margin-right: 8px;
+  transition: transform .15s; font-size: 10px;
+}
+details.optimal-solution[open] > summary::before { transform: rotate(90deg); }
+details.optimal-solution > .code-block-wrapper { margin: 12px 16px; }
+details.optimal-solution > .code-block-wrapper:first-of-type { margin-top: 0; }
+.examples {
+  margin-top: 16px; padding: 14px 18px;
+  background: var(--surface2); border: 1px solid var(--border); border-radius: 8px;
+}
+.examples h4 {
+  font-size: 13px; color: var(--text-muted); text-transform: uppercase;
+  letter-spacing: 0.5px; margin-bottom: 10px;
+}
+.example { padding: 8px 0; border-bottom: 1px dotted var(--border); font-size: 14px; }
+.example:last-child { border-bottom: none; padding-bottom: 0; }
+.example:first-of-type { padding-top: 0; }
+.example .label {
+  display: inline-block; min-width: 90px; color: var(--text-muted);
+  font-weight: 600; font-size: 12px; text-transform: uppercase; letter-spacing: 0.4px;
+}
+.example .val { font-family: 'SF Mono', 'Fira Code', Consolas, monospace; font-size: 13px; color: var(--text); }
+.example .row { margin: 3px 0; }
+.example .row.explanation .val { color: var(--text-muted); font-family: inherit; font-size: 13px; }
+
+
 
 </style>
 </head>
@@ -294,7 +329,24 @@ details.prev-solution > .code-block-wrapper:first-of-type { margin-top: 0; }
   <div class="callout callout-recall"><h4>Try to Recall</h4><p>Can you implement this in under 12 minutes? Try Go this time.</p></div>
   <div class="complexity-box"><div><span class="label">Time:</span> <span>O(max(m, n))</span></div><div><span class="label">Space:</span> <span>O(max(m, n)) for the output list</span></div></div>
 
-  <details class="prev-solution">
+  <div class="examples">
+    <h4>Examples</h4>
+    <div class="example">
+      <div class="row"><span class="label">Input:</span> <span class="val">l1 = [2,4,3], l2 = [5,6,4]</span></div>
+      <div class="row"><span class="label">Output:</span> <span class="val">[7,0,8]</span></div>
+      <div class="row explanation"><span class="label">Explanation:</span> <span class="val">342 + 465 = 807, returned reversed.</span></div>
+    </div>
+    <div class="example">
+      <div class="row"><span class="label">Input:</span> <span class="val">l1 = [0], l2 = [0]</span></div>
+      <div class="row"><span class="label">Output:</span> <span class="val">[0]</span></div>
+    </div>
+    <div class="example">
+      <div class="row"><span class="label">Input:</span> <span class="val">l1 = [9,9,9,9,9,9,9], l2 = [9,9,9,9]</span></div>
+      <div class="row"><span class="label">Output:</span> <span class="val">[8,9,9,9,0,0,0,1]</span></div>
+      <div class="row explanation"><span class="label">Explanation:</span> <span class="val">Carry propagates past both lists into a new node.</span></div>
+    </div>
+  </div>
+<details class="prev-solution">
     <summary>Previous Solution &mdash; click to reveal (try without it first)</summary>
     <div class="code-block-wrapper lang-python"><span class="code-lang-badge python">Python &mdash; leet.py</span>
       <pre><code># Definition for singly-linked list.
@@ -328,6 +380,38 @@ class Solution(object):
 </code></pre>
     </div>
   </details>
+  <details class="optimal-solution">
+    <summary>Optimal Solution (reference) &mdash; click to reveal</summary>
+    <div class="code-block-wrapper lang-python"><span class="code-lang-badge python">Python &mdash; Optimal</span>
+      <pre><code>def addTwoNumbers(l1, l2):
+    dummy = ListNode()
+    cur, carry = dummy, 0
+    while l1 or l2 or carry:
+        s = (l1.val if l1 else 0) + (l2.val if l2 else 0) + carry
+        carry, val = divmod(s, 10)
+        cur.next = ListNode(val)
+        cur = cur.next
+        l1 = l1.next if l1 else None
+        l2 = l2.next if l2 else None
+    return dummy.next</code></pre>
+    </div>
+    <div class="code-block-wrapper lang-go"><span class="code-lang-badge go">Go &mdash; Optimal</span>
+      <pre><code>func addTwoNumbers(l1, l2 *ListNode) *ListNode {
+    dummy := &amp;ListNode{}
+    cur, carry := dummy, 0
+    for l1 != nil || l2 != nil || carry != 0 {
+        s := carry
+        if l1 != nil { s += l1.Val; l1 = l1.Next }
+        if l2 != nil { s += l2.Val; l2 = l2.Next }
+        carry = s / 10
+        cur.Next = &amp;ListNode{Val: s % 10}
+        cur = cur.Next
+    }
+    return dummy.Next
+}</code></pre>
+    </div>
+  </details>
+
 </div>
 
 <div class="problem-card review-card" id="r56">
@@ -348,7 +432,25 @@ class Solution(object):
   <div class="callout callout-recall"><h4>Try to Recall</h4><p>Can you implement this in under 10 minutes? Try Go this time.</p></div>
   <div class="complexity-box"><div><span class="label">Time:</span> <span>O(n log n)</span></div><div><span class="label">Space:</span> <span>O(n) for the output (O(log n) extra if you ignore output)</span></div></div>
 
-  <details class="prev-solution">
+  <div class="examples">
+    <h4>Examples</h4>
+    <div class="example">
+      <div class="row"><span class="label">Input:</span> <span class="val">intervals = [[1,3],[2,6],[8,10],[15,18]]</span></div>
+      <div class="row"><span class="label">Output:</span> <span class="val">[[1,6],[8,10],[15,18]]</span></div>
+      <div class="row explanation"><span class="label">Explanation:</span> <span class="val">[1,3] and [2,6] overlap and merge.</span></div>
+    </div>
+    <div class="example">
+      <div class="row"><span class="label">Input:</span> <span class="val">intervals = [[1,4],[4,5]]</span></div>
+      <div class="row"><span class="label">Output:</span> <span class="val">[[1,5]]</span></div>
+      <div class="row explanation"><span class="label">Explanation:</span> <span class="val">Intervals that just touch (end == start) still merge.</span></div>
+    </div>
+    <div class="example">
+      <div class="row"><span class="label">Input:</span> <span class="val">intervals = [[1,4],[2,3]]</span></div>
+      <div class="row"><span class="label">Output:</span> <span class="val">[[1,4]]</span></div>
+      <div class="row explanation"><span class="label">Explanation:</span> <span class="val">One interval is fully contained inside another.</span></div>
+    </div>
+  </div>
+<details class="prev-solution">
     <summary>Previous Solution &mdash; click to reveal (try without it first)</summary>
     <div class="code-block-wrapper lang-python"><span class="code-lang-badge python">Python &mdash; leet.py</span>
       <pre><code>class Solution(object):
@@ -371,6 +473,38 @@ class Solution(object):
 </code></pre>
     </div>
   </details>
+  <details class="optimal-solution">
+    <summary>Optimal Solution (reference) &mdash; click to reveal</summary>
+    <div class="code-block-wrapper lang-python"><span class="code-lang-badge python">Python &mdash; Optimal</span>
+      <pre><code>def merge(intervals):
+    intervals.sort()
+    out = [intervals[0]]
+    for s, e in intervals[1:]:
+        if s &lt;= out[-1][1]:
+            out[-1][1] = max(out[-1][1], e)
+        else:
+            out.append([s, e])
+    return out</code></pre>
+    </div>
+    <div class="code-block-wrapper lang-go"><span class="code-lang-badge go">Go &mdash; Optimal</span>
+      <pre><code>func merge(intervals [][]int) [][]int {
+    sort.Slice(intervals, func(i, j int) bool {
+        return intervals[i][0] &lt; intervals[j][0]
+    })
+    out := [][]int{intervals[0]}
+    for _, iv := range intervals[1:] {
+        last := out[len(out)-1]
+        if iv[0] &lt;= last[1] {
+            if iv[1] &gt; last[1] { last[1] = iv[1] }
+        } else {
+            out = append(out, iv)
+        }
+    }
+    return out
+}</code></pre>
+    </div>
+  </details>
+
 </div>
 
 <div class="problem-card review-card" id="r198">
@@ -390,7 +524,25 @@ class Solution(object):
   <div class="callout callout-recall"><h4>Try to Recall</h4><p>Can you implement this in under 8 minutes? Try Go this time &mdash; and bonus points if you reduce space to O(1).</p></div>
   <div class="complexity-box"><div><span class="label">Time:</span> <span>O(n)</span></div><div><span class="label">Space:</span> <span>O(n) for the table, O(1) achievable</span></div></div>
 
-  <details class="prev-solution">
+  <div class="examples">
+    <h4>Examples</h4>
+    <div class="example">
+      <div class="row"><span class="label">Input:</span> <span class="val">nums = [1,2,3,1]</span></div>
+      <div class="row"><span class="label">Output:</span> <span class="val">4</span></div>
+      <div class="row explanation"><span class="label">Explanation:</span> <span class="val">Rob houses 0 and 2: 1 + 3 = 4.</span></div>
+    </div>
+    <div class="example">
+      <div class="row"><span class="label">Input:</span> <span class="val">nums = [2,7,9,3,1]</span></div>
+      <div class="row"><span class="label">Output:</span> <span class="val">12</span></div>
+      <div class="row explanation"><span class="label">Explanation:</span> <span class="val">Rob houses 0, 2, 4: 2 + 9 + 1 = 12.</span></div>
+    </div>
+    <div class="example">
+      <div class="row"><span class="label">Input:</span> <span class="val">nums = [2,1,1,2]</span></div>
+      <div class="row"><span class="label">Output:</span> <span class="val">4</span></div>
+      <div class="row explanation"><span class="label">Explanation:</span> <span class="val">Skipping adjacent is not always optimal &mdash; rob 0 and 3.</span></div>
+    </div>
+  </div>
+<details class="prev-solution">
     <summary>Previous Solution &mdash; click to reveal (try without it first)</summary>
     <div class="code-block-wrapper lang-python"><span class="code-lang-badge python">Python &mdash; leet.py (top-down memo)</span>
       <pre><code>class Solution:
@@ -448,6 +600,26 @@ print(Solution().rob([1,2,3,1]))
 </code></pre>
     </div>
   </details>
+  <details class="optimal-solution">
+    <summary>Optimal Solution (reference) &mdash; click to reveal</summary>
+    <div class="code-block-wrapper lang-python"><span class="code-lang-badge python">Python &mdash; Optimal</span>
+      <pre><code>def rob(nums):
+    prev, cur = 0, 0
+    for n in nums:
+        prev, cur = cur, max(cur, prev + n)
+    return cur</code></pre>
+    </div>
+    <div class="code-block-wrapper lang-go"><span class="code-lang-badge go">Go &mdash; Optimal</span>
+      <pre><code>func rob(nums []int) int {
+    prev, cur := 0, 0
+    for _, n := range nums {
+        prev, cur = cur, max(cur, prev+n)
+    }
+    return cur
+}</code></pre>
+    </div>
+  </details>
+
 </div>
 
 <div class="problem-card review-card" id="r200">
@@ -468,7 +640,25 @@ print(Solution().rob([1,2,3,1]))
   <div class="callout callout-recall"><h4>Try to Recall</h4><p>Can you implement this in under 12 minutes? Try Go this time.</p></div>
   <div class="complexity-box"><div><span class="label">Time:</span> <span>O(m &times; n)</span></div><div><span class="label">Space:</span> <span>O(m &times; n) with visited set; O(min(m,n)) for BFS queue if mutating in place</span></div></div>
 
-  <details class="prev-solution">
+  <div class="examples">
+    <h4>Examples</h4>
+    <div class="example">
+      <div class="row"><span class="label">Input:</span> <span class="val">grid = [["1","1","1","1","0"],["1","1","0","1","0"],["1","1","0","0","0"],["0","0","0","0","0"]]</span></div>
+      <div class="row"><span class="label">Output:</span> <span class="val">1</span></div>
+      <div class="row explanation"><span class="label">Explanation:</span> <span class="val">All connected 1s form a single island.</span></div>
+    </div>
+    <div class="example">
+      <div class="row"><span class="label">Input:</span> <span class="val">grid = [["1","1","0","0","0"],["1","1","0","0","0"],["0","0","1","0","0"],["0","0","0","1","1"]]</span></div>
+      <div class="row"><span class="label">Output:</span> <span class="val">3</span></div>
+      <div class="row explanation"><span class="label">Explanation:</span> <span class="val">Three disconnected groups of 1s.</span></div>
+    </div>
+    <div class="example">
+      <div class="row"><span class="label">Input:</span> <span class="val">grid = [["0"]]</span></div>
+      <div class="row"><span class="label">Output:</span> <span class="val">0</span></div>
+      <div class="row explanation"><span class="label">Explanation:</span> <span class="val">No land cells.</span></div>
+    </div>
+  </div>
+<details class="prev-solution">
     <summary>Previous Solution &mdash; click to reveal (try without it first)</summary>
     <div class="code-block-wrapper lang-python"><span class="code-lang-badge python">Python &mdash; leet.py (with visited set)</span>
       <pre><code>class Solution(object):
@@ -537,6 +727,50 @@ print(Solution().rob([1,2,3,1]))
 </code></pre>
     </div>
   </details>
+  <details class="optimal-solution">
+    <summary>Optimal Solution (reference) &mdash; click to reveal</summary>
+    <div class="code-block-wrapper lang-python"><span class="code-lang-badge python">Python &mdash; Optimal</span>
+      <pre><code>def numIslands(grid):
+    if not grid: return 0
+    rows, cols = len(grid), len(grid[0])
+    def dfs(r, c):
+        if r &lt; 0 or c &lt; 0 or r &gt;= rows or c &gt;= cols or grid[r][c] != "1":
+            return
+        grid[r][c] = "0"
+        dfs(r+1, c); dfs(r-1, c); dfs(r, c+1); dfs(r, c-1)
+    count = 0
+    for r in range(rows):
+        for c in range(cols):
+            if grid[r][c] == "1":
+                count += 1
+                dfs(r, c)
+    return count</code></pre>
+    </div>
+    <div class="code-block-wrapper lang-go"><span class="code-lang-badge go">Go &mdash; Optimal</span>
+      <pre><code>func numIslands(grid [][]byte) int {
+    rows, cols := len(grid), len(grid[0])
+    var dfs func(r, c int)
+    dfs = func(r, c int) {
+        if r &lt; 0 || c &lt; 0 || r &gt;= rows || c &gt;= cols || grid[r][c] != '1' {
+            return
+        }
+        grid[r][c] = '0'
+        dfs(r+1, c); dfs(r-1, c); dfs(r, c+1); dfs(r, c-1)
+    }
+    count := 0
+    for r := 0; r &lt; rows; r++ {
+        for c := 0; c &lt; cols; c++ {
+            if grid[r][c] == '1' {
+                count++
+                dfs(r, c)
+            }
+        }
+    }
+    return count
+}</code></pre>
+    </div>
+  </details>
+
 </div>
 
 <div class="problem-card review-card" id="r295">
@@ -557,7 +791,25 @@ print(Solution().rob([1,2,3,1]))
   <div class="callout callout-recall"><h4>Try to Recall</h4><p>Can you implement this in under 15 minutes? Try Go this time &mdash; you'll need to implement <code>container/heap</code>'s interface.</p></div>
   <div class="complexity-box"><div><span class="label">Time:</span> <span>addNum: O(log n), findMedian: O(1)</span></div><div><span class="label">Space:</span> <span>O(n)</span></div></div>
 
-  <details class="prev-solution">
+  <div class="examples">
+    <h4>Examples</h4>
+    <div class="example">
+      <div class="row"><span class="label">Input:</span> <span class="val">addNum(1); addNum(2); findMedian()</span></div>
+      <div class="row"><span class="label">Output:</span> <span class="val">1.5</span></div>
+      <div class="row explanation"><span class="label">Explanation:</span> <span class="val">Two-element median averages the two values.</span></div>
+    </div>
+    <div class="example">
+      <div class="row"><span class="label">Input:</span> <span class="val">addNum(3); findMedian()</span></div>
+      <div class="row"><span class="label">Output:</span> <span class="val">2.0</span></div>
+      <div class="row explanation"><span class="label">Explanation:</span> <span class="val">Continuing from previous: stream is [1,2,3], median = 2.</span></div>
+    </div>
+    <div class="example">
+      <div class="row"><span class="label">Input:</span> <span class="val">addNum(4); findMedian()</span></div>
+      <div class="row"><span class="label">Output:</span> <span class="val">2.5</span></div>
+      <div class="row explanation"><span class="label">Explanation:</span> <span class="val">Stream [1,2,3,4]: average of middle two = (2+3)/2.</span></div>
+    </div>
+  </div>
+<details class="prev-solution">
     <summary>Previous Solution &mdash; click to reveal (try without it first)</summary>
     <div class="code-block-wrapper lang-python"><span class="code-lang-badge python">Python &mdash; leet.py</span>
       <pre><code>class MedianFinder(object):
@@ -600,6 +852,50 @@ print(Solution().rob([1,2,3,1]))
 </code></pre>
     </div>
   </details>
+  <details class="optimal-solution">
+    <summary>Optimal Solution (reference) &mdash; click to reveal</summary>
+    <div class="code-block-wrapper lang-python"><span class="code-lang-badge python">Python &mdash; Optimal</span>
+      <pre><code>import heapq
+
+class MedianFinder:
+    def __init__(self):
+        self.low = []   # max-heap (store negatives)
+        self.high = []  # min-heap
+
+    def addNum(self, num):
+        heapq.heappush(self.low, -num)
+        heapq.heappush(self.high, -heapq.heappop(self.low))
+        if len(self.high) &gt; len(self.low):
+            heapq.heappush(self.low, -heapq.heappop(self.high))
+
+    def findMedian(self):
+        if len(self.low) &gt; len(self.high):
+            return float(-self.low[0])
+        return (-self.low[0] + self.high[0]) / 2</code></pre>
+    </div>
+    <div class="code-block-wrapper lang-go"><span class="code-lang-badge go">Go &mdash; Optimal</span>
+      <pre><code>type MedianFinder struct {
+    low, high *IntHeap  // low = max-heap, high = min-heap
+}
+// IntHeap implements container/heap.Interface; max-heap inverts Less().
+
+func (m *MedianFinder) AddNum(num int) {
+    heap.Push(m.low, num)
+    heap.Push(m.high, heap.Pop(m.low))
+    if m.high.Len() &gt; m.low.Len() {
+        heap.Push(m.low, heap.Pop(m.high))
+    }
+}
+
+func (m *MedianFinder) FindMedian() float64 {
+    if m.low.Len() &gt; m.high.Len() {
+        return float64((*m.low)[0])
+    }
+    return (float64((*m.low)[0]) + float64((*m.high)[0])) / 2
+}</code></pre>
+    </div>
+  </details>
+
 </div>
 
 <div class="problem-card review-card" id="r322">
@@ -619,7 +915,25 @@ print(Solution().rob([1,2,3,1]))
   <div class="callout callout-recall"><h4>Try to Recall</h4><p>Can you implement this in under 10 minutes? Try Go this time.</p></div>
   <div class="complexity-box"><div><span class="label">Time:</span> <span>O(amount &times; len(coins))</span></div><div><span class="label">Space:</span> <span>O(amount)</span></div></div>
 
-  <details class="prev-solution">
+  <div class="examples">
+    <h4>Examples</h4>
+    <div class="example">
+      <div class="row"><span class="label">Input:</span> <span class="val">coins = [1,2,5], amount = 11</span></div>
+      <div class="row"><span class="label">Output:</span> <span class="val">3</span></div>
+      <div class="row explanation"><span class="label">Explanation:</span> <span class="val">11 = 5 + 5 + 1, three coins.</span></div>
+    </div>
+    <div class="example">
+      <div class="row"><span class="label">Input:</span> <span class="val">coins = [2], amount = 3</span></div>
+      <div class="row"><span class="label">Output:</span> <span class="val">-1</span></div>
+      <div class="row explanation"><span class="label">Explanation:</span> <span class="val">Odd amount with only even-valued coins is impossible.</span></div>
+    </div>
+    <div class="example">
+      <div class="row"><span class="label">Input:</span> <span class="val">coins = [1], amount = 0</span></div>
+      <div class="row"><span class="label">Output:</span> <span class="val">0</span></div>
+      <div class="row explanation"><span class="label">Explanation:</span> <span class="val">Zero amount needs zero coins.</span></div>
+    </div>
+  </div>
+<details class="prev-solution">
     <summary>Previous Solution &mdash; click to reveal (try without it first)</summary>
     <div class="code-block-wrapper lang-python"><span class="code-lang-badge python">Python &mdash; leet.py</span>
       <pre><code>class Solution(object):
@@ -643,6 +957,36 @@ print(Solution().rob([1,2,3,1]))
 </code></pre>
     </div>
   </details>
+  <details class="optimal-solution">
+    <summary>Optimal Solution (reference) &mdash; click to reveal</summary>
+    <div class="code-block-wrapper lang-python"><span class="code-lang-badge python">Python &mdash; Optimal</span>
+      <pre><code>def coinChange(coins, amount):
+    dp = [amount + 1] * (amount + 1)
+    dp[0] = 0
+    for a in range(1, amount + 1):
+        for c in coins:
+            if c &lt;= a:
+                dp[a] = min(dp[a], dp[a-c] + 1)
+    return dp[amount] if dp[amount] &lt;= amount else -1</code></pre>
+    </div>
+    <div class="code-block-wrapper lang-go"><span class="code-lang-badge go">Go &mdash; Optimal</span>
+      <pre><code>func coinChange(coins []int, amount int) int {
+    dp := make([]int, amount+1)
+    for i := range dp { dp[i] = amount + 1 }
+    dp[0] = 0
+    for a := 1; a &lt;= amount; a++ {
+        for _, c := range coins {
+            if c &lt;= a &amp;&amp; dp[a-c]+1 &lt; dp[a] {
+                dp[a] = dp[a-c] + 1
+            }
+        }
+    }
+    if dp[amount] &gt; amount { return -1 }
+    return dp[amount]
+}</code></pre>
+    </div>
+  </details>
+
 </div>
 
 <!-- ===================== MATH ===================== -->
