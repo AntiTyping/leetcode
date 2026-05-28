@@ -1,0 +1,1477 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<title>LeetCode Performance Report &mdash; 2026-05-27</title>
+<style>
+:root {
+  --bg:#0d1117; --surface:#161b22; --surface2:#1c2129; --border:#30363d;
+  --text:#e6edf3; --muted:#8b949e; --accent:#58a6ff;
+  --easy:#3fb950; --easy-bg:rgba(63,185,80,0.15);
+  --medium:#d29922; --medium-bg:rgba(210,153,34,0.18);
+  --hard:#f85149; --hard-bg:rgba(248,81,73,0.15);
+  --good:#3fb950; --bad:#f85149;
+}
+[data-theme="light"] {
+  --bg:#fff; --surface:#f6f8fa; --surface2:#eef1f5; --border:#d0d7de;
+  --text:#1f2328; --muted:#656d76; --accent:#0969da;
+  --easy:#1a7f37; --easy-bg:rgba(26,127,55,0.12);
+  --medium:#9a6700; --medium-bg:rgba(154,103,0,0.15);
+  --hard:#cf222e; --hard-bg:rgba(207,34,46,0.1);
+}
+* { box-sizing:border-box; margin:0; padding:0; }
+body {
+  font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;
+  background:var(--bg); color:var(--text); line-height:1.6; padding:32px 24px 60px;
+}
+.container { max-width:1100px; margin:0 auto; }
+.theme-toggle {
+  position:fixed; top:16px; right:16px; background:var(--surface);
+  border:1px solid var(--border); color:var(--text); border-radius:8px;
+  padding:6px 14px; cursor:pointer; font-size:13px; z-index:200;
+}
+header { margin-bottom:32px; }
+h1 { font-size:30px; margin-bottom:4px; }
+header .date { color:var(--muted); font-size:14px; }
+h2 { font-size:20px; margin:40px 0 14px; padding-bottom:8px; border-bottom:1px solid var(--border); }
+h3 { font-size:16px; margin:18px 0 10px; }
+.metrics { display:grid; grid-template-columns:repeat(5,1fr); gap:12px; margin-bottom:24px; }
+.metric { background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:18px 16px; }
+.metric .label { font-size:12px; color:var(--muted); text-transform:uppercase; letter-spacing:.5px; }
+.metric .value { font-size:30px; font-weight:700; margin-top:4px; }
+.metric.easy .value { color:var(--easy); }
+.metric.medium .value { color:var(--medium); }
+.metric.hard .value { color:var(--hard); }
+.split2 { display:grid; grid-template-columns:1fr 1fr; gap:24px; }
+.card { background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:20px 24px; }
+.donut { display:flex; align-items:center; gap:24px; }
+.donut svg { flex-shrink:0; }
+.donut .legend { display:flex; flex-direction:column; gap:8px; font-size:14px; }
+.legend-row { display:flex; align-items:center; gap:10px; }
+.dot { width:14px; height:14px; border-radius:3px; flex-shrink:0; }
+.dot.E { background:var(--easy); } .dot.M { background:var(--medium); } .dot.H { background:var(--hard); }
+.tl-row { display:grid; grid-template-columns:100px 1fr 40px; gap:12px; align-items:center; padding:4px 0; }
+.tl-date { font-family:'SF Mono',Consolas,monospace; font-size:12px; color:var(--muted); }
+.tl-bar { display:flex; height:14px; gap:1px; }
+.tl-bar .seg { height:100%; border-radius:2px; }
+.tl-bar .seg-E { background:var(--easy); } .tl-bar .seg-M { background:var(--medium); } .tl-bar .seg-H { background:var(--hard); }
+.tl-count { font-weight:600; font-size:13px; text-align:right; }
+.topic-row { display:grid; grid-template-columns:160px 1fr 40px; gap:10px; align-items:center; margin-bottom:6px; }
+.topic-name { font-size:13px; }
+.topic-bar-wrap { background:var(--surface2); height:12px; border-radius:6px; overflow:hidden; }
+.topic-bar { background:var(--accent); height:100%; border-radius:6px; }
+.topic-count { font-weight:600; font-size:13px; text-align:right; }
+.bullet { display:flex; align-items:center; gap:10px; padding:5px 0; font-size:14px; }
+.badge-c { display:inline-flex; align-items:center; justify-content:center; min-width:32px; padding:3px 8px; border-radius:14px; font-weight:700; font-size:12px; background:var(--easy-bg); color:var(--easy); }
+.badge-c.moderate { background:var(--medium-bg); color:var(--medium); }
+.badge-c.weak { background:var(--medium-bg); color:var(--medium); opacity:.7; }
+.badge-c.missing { background:var(--hard-bg); color:var(--hard); }
+.diff { display:inline-block; padding:2px 8px; border-radius:10px; font-size:11px; font-weight:700; }
+.diff.E { background:var(--easy-bg); color:var(--easy); } .diff.M { background:var(--medium-bg); color:var(--medium); } .diff.H { background:var(--hard-bg); color:var(--hard); }
+.diff.\? { background:rgba(139,148,158,0.15); color:var(--muted); }
+.ttag { display:inline-block; font-size:10px; font-weight:600; padding:1px 7px; border-radius:8px; background:rgba(56,139,253,0.12); color:var(--accent); margin-right:4px; }
+table.inventory { width:100%; border-collapse:collapse; font-size:13px; background:var(--surface); border:1px solid var(--border); border-radius:10px; overflow:hidden; }
+table.inventory th, table.inventory td { padding:8px 12px; text-align:left; border-bottom:1px solid var(--border); }
+table.inventory th { background:var(--surface2); font-weight:600; font-size:12px; text-transform:uppercase; letter-spacing:.5px; color:var(--muted); }
+table.inventory tr:hover td { background:var(--surface2); }
+table.inventory a { color:var(--accent); text-decoration:none; }
+.muted { color:var(--muted); font-size:12px; font-family:'SF Mono',Consolas,monospace; }
+.next-table { width:100%; border-collapse:collapse; font-size:13px; background:var(--surface); border:1px solid var(--border); border-radius:10px; overflow:hidden; }
+.next-table th, .next-table td { padding:8px 12px; text-align:left; border-bottom:1px solid var(--border); }
+.next-table th { background:var(--surface2); font-weight:600; font-size:12px; text-transform:uppercase; letter-spacing:.5px; color:var(--muted); }
+.next-table td:nth-child(1) { font-weight:600; }
+.phase { background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:18px 22px; margin-bottom:14px; }
+.phase h3 { margin-top:0; color:var(--accent); }
+.phase-probs { display:flex; flex-wrap:wrap; gap:6px; margin-top:10px; }
+.prob { display:inline-block; padding:3px 9px; border-radius:5px; font-size:11px; font-weight:600; text-decoration:none; font-family:'SF Mono',Consolas,monospace; }
+.prob.diff-E { background:var(--easy-bg); color:var(--easy); } .prob.diff-M { background:var(--medium-bg); color:var(--medium); } .prob.diff-H { background:var(--hard-bg); color:var(--hard); }
+.prob.diff-\? { background:rgba(139,148,158,0.15); color:var(--muted); }
+ul.strengths { padding-left:20px; } ul.strengths li { margin-bottom:8px; font-size:14px; }
+.code-note { background:var(--surface2); padding:10px 14px; border-radius:6px; font-size:13px; margin:6px 0; border-left:3px solid var(--accent); }
+.code-note.bad { border-left-color:var(--bad); } .code-note.good { border-left-color:var(--good); }
+.code-note code { font-family:'SF Mono',Consolas,monospace; background:var(--surface); padding:1px 6px; border-radius:3px; }
+footer { margin-top:48px; padding-top:24px; border-top:1px solid var(--border); font-size:12px; color:var(--muted); }
+footer ul { padding-left:20px; margin-top:8px; } footer a { color:var(--accent); text-decoration:none; }
+</style>
+</head>
+<body>
+<button class="theme-toggle" onclick="toggleTheme()">&#9728; Light</button>
+<div class="container">
+
+<header>
+  <h1>LeetCode Performance Report</h1>
+  <p class="date">Andy Pliszka &middot; Generated 2026-05-27</p>
+  <p style="color:var(--easy); font-size:14px"><strong>+19 problems</strong> since 2026-05-26 (88 &rarr; 104) &middot; <strong>+6 today alone</strong></p>
+</header>
+
+<section class="metrics">
+  <div class="metric"><div class="label">Total Solved</div><div class="value">104</div></div>
+  <div class="metric easy"><div class="label">Easy</div><div class="value">51</div></div>
+  <div class="metric medium"><div class="label">Medium</div><div class="value">45</div></div>
+  <div class="metric hard"><div class="label">Hard</div><div class="value">7</div></div>
+  <div class="metric"><div class="label">Multi-Approach</div><div class="value">44</div></div>
+</section>
+
+<h2>Difficulty Distribution</h2>
+<div class="split2">
+<div class="card">
+<div class="donut">
+<svg viewBox="0 0 140 140" width="140" height="140">
+  <circle cx="70" cy="70" r="60" fill="none" stroke="var(--surface2)" stroke-width="14"/>
+  <circle cx="70" cy="70" r="60" fill="none" stroke="var(--easy)" stroke-width="14"
+    stroke-dasharray="184.87 192.12" stroke-dashoffset="0" transform="rotate(-90 70 70)"/>
+  <circle cx="70" cy="70" r="60" fill="none" stroke="var(--medium)" stroke-width="14"
+    stroke-dasharray="163.12 213.87" stroke-dashoffset="-184.87" transform="rotate(-90 70 70)"/>
+  <circle cx="70" cy="70" r="60" fill="none" stroke="var(--hard)" stroke-width="14"
+    stroke-dasharray="25.37 351.62" stroke-dashoffset="-347.99" transform="rotate(-90 70 70)"/>
+  <text x="70" y="72" text-anchor="middle" font-size="22" font-weight="700" fill="currentColor">104</text>
+  <text x="70" y="88" text-anchor="middle" font-size="10" fill="var(--muted)">SOLVED</text>
+</svg>
+<div class="legend">
+  <div class="legend-row"><span class="dot E"></span> Easy: 51 (49%)</div>
+  <div class="legend-row"><span class="dot M"></span> Medium: 45 (43%)</div>
+  <div class="legend-row"><span class="dot H"></span> Hard: 7 (7%)</div>
+</div>
+</div>
+</div>
+<div class="card">
+  <h3 style="margin-top:0">Target Distribution</h3>
+  <p style="font-size:14px; margin-bottom:10px">For interview readiness, aim for a 25/55/20 split (Easy/Medium/Hard).</p>
+  <p style="font-size:13px; color:var(--muted)">Current: 49% Easy, 43% Medium, 7% Hard.</p>
+  <p style="font-size:13px; color:var(--muted); margin-top:10px">Hard is still the biggest gap (7% vs 20% target). The recent ramp-up has been heavy on Easy &mdash; focus on Medium and Hard next.</p>
+</div>
+</div>
+
+<h2>Activity Timeline</h2>
+<div class="card">
+
+<div class="tl-row">
+  <div class="tl-date">2025-05-13</div>
+  <div class="tl-bar">
+    <span class="seg seg-E" style="width:0px"></span>
+    <span class="seg seg-M" style="width:104px"></span>
+    <span class="seg seg-H" style="width:0px"></span>
+  </div>
+  <div class="tl-count">4</div>
+</div>
+<div class="tl-row">
+  <div class="tl-date">2025-05-15</div>
+  <div class="tl-bar">
+    <span class="seg seg-E" style="width:286px"></span>
+    <span class="seg seg-M" style="width:572px"></span>
+    <span class="seg seg-H" style="width:104px"></span>
+  </div>
+  <div class="tl-count">37</div>
+</div>
+<div class="tl-row">
+  <div class="tl-date">2025-05-16</div>
+  <div class="tl-bar">
+    <span class="seg seg-E" style="width:26px"></span>
+    <span class="seg seg-M" style="width:104px"></span>
+    <span class="seg seg-H" style="width:0px"></span>
+  </div>
+  <div class="tl-count">5</div>
+</div>
+<div class="tl-row">
+  <div class="tl-date">2025-05-17</div>
+  <div class="tl-bar">
+    <span class="seg seg-E" style="width:0px"></span>
+    <span class="seg seg-M" style="width:104px"></span>
+    <span class="seg seg-H" style="width:0px"></span>
+  </div>
+  <div class="tl-count">4</div>
+</div>
+<div class="tl-row">
+  <div class="tl-date">2025-05-18</div>
+  <div class="tl-bar">
+    <span class="seg seg-E" style="width:0px"></span>
+    <span class="seg seg-M" style="width:52px"></span>
+    <span class="seg seg-H" style="width:78px"></span>
+  </div>
+  <div class="tl-count">5</div>
+</div>
+<div class="tl-row">
+  <div class="tl-date">2025-05-19</div>
+  <div class="tl-bar">
+    <span class="seg seg-E" style="width:0px"></span>
+    <span class="seg seg-M" style="width:78px"></span>
+    <span class="seg seg-H" style="width:0px"></span>
+  </div>
+  <div class="tl-count">3</div>
+</div>
+<div class="tl-row">
+  <div class="tl-date">2025-10-23</div>
+  <div class="tl-bar">
+    <span class="seg seg-E" style="width:26px"></span>
+    <span class="seg seg-M" style="width:0px"></span>
+    <span class="seg seg-H" style="width:0px"></span>
+  </div>
+  <div class="tl-count">1</div>
+</div>
+<div class="tl-row">
+  <div class="tl-date">2026-05-18</div>
+  <div class="tl-bar">
+    <span class="seg seg-E" style="width:78px"></span>
+    <span class="seg seg-M" style="width:0px"></span>
+    <span class="seg seg-H" style="width:0px"></span>
+  </div>
+  <div class="tl-count">3</div>
+</div>
+<div class="tl-row">
+  <div class="tl-date">2026-05-20</div>
+  <div class="tl-bar">
+    <span class="seg seg-E" style="width:156px"></span>
+    <span class="seg seg-M" style="width:0px"></span>
+    <span class="seg seg-H" style="width:0px"></span>
+  </div>
+  <div class="tl-count">6</div>
+</div>
+<div class="tl-row">
+  <div class="tl-date">2026-05-21</div>
+  <div class="tl-bar">
+    <span class="seg seg-E" style="width:156px"></span>
+    <span class="seg seg-M" style="width:0px"></span>
+    <span class="seg seg-H" style="width:0px"></span>
+  </div>
+  <div class="tl-count">6</div>
+</div>
+<div class="tl-row">
+  <div class="tl-date">2026-05-22</div>
+  <div class="tl-bar">
+    <span class="seg seg-E" style="width:52px"></span>
+    <span class="seg seg-M" style="width:0px"></span>
+    <span class="seg seg-H" style="width:0px"></span>
+  </div>
+  <div class="tl-count">2</div>
+</div>
+<div class="tl-row">
+  <div class="tl-date">2026-05-23</div>
+  <div class="tl-bar">
+    <span class="seg seg-E" style="width:0px"></span>
+    <span class="seg seg-M" style="width:26px"></span>
+    <span class="seg seg-H" style="width:0px"></span>
+  </div>
+  <div class="tl-count">1</div>
+</div>
+<div class="tl-row">
+  <div class="tl-date">2026-05-24</div>
+  <div class="tl-bar">
+    <span class="seg seg-E" style="width:78px"></span>
+    <span class="seg seg-M" style="width:26px"></span>
+    <span class="seg seg-H" style="width:0px"></span>
+  </div>
+  <div class="tl-count">4</div>
+</div>
+<div class="tl-row">
+  <div class="tl-date">2026-05-25</div>
+  <div class="tl-bar">
+    <span class="seg seg-E" style="width:182px"></span>
+    <span class="seg seg-M" style="width:0px"></span>
+    <span class="seg seg-H" style="width:0px"></span>
+  </div>
+  <div class="tl-count">7</div>
+</div>
+<div class="tl-row">
+  <div class="tl-date">2026-05-26</div>
+  <div class="tl-bar">
+    <span class="seg seg-E" style="width:130px"></span>
+    <span class="seg seg-M" style="width:52px"></span>
+    <span class="seg seg-H" style="width:0px"></span>
+  </div>
+  <div class="tl-count">7</div>
+</div>
+<div class="tl-row">
+  <div class="tl-date">2026-05-27</div>
+  <div class="tl-bar">
+    <span class="seg seg-E" style="width:156px"></span>
+    <span class="seg seg-M" style="width:0px"></span>
+    <span class="seg seg-H" style="width:0px"></span>
+  </div>
+  <div class="tl-count">6</div>
+</div>
+</div>
+
+<h2>Topic Coverage</h2>
+<div class="card">
+
+<div class="topic-row">
+  <div class="topic-name">DP</div>
+  <div class="topic-bar-wrap"><div class="topic-bar" style="width:100.0%"></div></div>
+  <div class="topic-count">37</div>
+</div>
+<div class="topic-row">
+  <div class="topic-name">Two Pointers</div>
+  <div class="topic-bar-wrap"><div class="topic-bar" style="width:75.67567567567568%"></div></div>
+  <div class="topic-count">28</div>
+</div>
+<div class="topic-row">
+  <div class="topic-name">String</div>
+  <div class="topic-bar-wrap"><div class="topic-bar" style="width:51.35135135135135%"></div></div>
+  <div class="topic-count">19</div>
+</div>
+<div class="topic-row">
+  <div class="topic-name">Hash</div>
+  <div class="topic-bar-wrap"><div class="topic-bar" style="width:45.94594594594595%"></div></div>
+  <div class="topic-count">17</div>
+</div>
+<div class="topic-row">
+  <div class="topic-name">Sliding Window</div>
+  <div class="topic-bar-wrap"><div class="topic-bar" style="width:35.13513513513514%"></div></div>
+  <div class="topic-count">13</div>
+</div>
+<div class="topic-row">
+  <div class="topic-name">Sorting</div>
+  <div class="topic-bar-wrap"><div class="topic-bar" style="width:24.324324324324326%"></div></div>
+  <div class="topic-count">9</div>
+</div>
+<div class="topic-row">
+  <div class="topic-name">Math</div>
+  <div class="topic-bar-wrap"><div class="topic-bar" style="width:18.91891891891892%"></div></div>
+  <div class="topic-count">7</div>
+</div>
+<div class="topic-row">
+  <div class="topic-name">Greedy</div>
+  <div class="topic-bar-wrap"><div class="topic-bar" style="width:16.216216216216218%"></div></div>
+  <div class="topic-count">6</div>
+</div>
+<div class="topic-row">
+  <div class="topic-name">Matrix</div>
+  <div class="topic-bar-wrap"><div class="topic-bar" style="width:13.513513513513514%"></div></div>
+  <div class="topic-count">5</div>
+</div>
+<div class="topic-row">
+  <div class="topic-name">Linked List</div>
+  <div class="topic-bar-wrap"><div class="topic-bar" style="width:13.513513513513514%"></div></div>
+  <div class="topic-count">5</div>
+</div>
+<div class="topic-row">
+  <div class="topic-name">Array</div>
+  <div class="topic-bar-wrap"><div class="topic-bar" style="width:13.513513513513514%"></div></div>
+  <div class="topic-count">5</div>
+</div>
+<div class="topic-row">
+  <div class="topic-name">Binary Search</div>
+  <div class="topic-bar-wrap"><div class="topic-bar" style="width:13.513513513513514%"></div></div>
+  <div class="topic-count">5</div>
+</div>
+<div class="topic-row">
+  <div class="topic-name">BFS</div>
+  <div class="topic-bar-wrap"><div class="topic-bar" style="width:10.81081081081081%"></div></div>
+  <div class="topic-count">4</div>
+</div>
+<div class="topic-row">
+  <div class="topic-name">Heap</div>
+  <div class="topic-bar-wrap"><div class="topic-bar" style="width:8.108108108108109%"></div></div>
+  <div class="topic-count">3</div>
+</div>
+<div class="topic-row">
+  <div class="topic-name">Design</div>
+  <div class="topic-bar-wrap"><div class="topic-bar" style="width:8.108108108108109%"></div></div>
+  <div class="topic-count">3</div>
+</div>
+<div class="topic-row">
+  <div class="topic-name">Tree</div>
+  <div class="topic-bar-wrap"><div class="topic-bar" style="width:5.405405405405405%"></div></div>
+  <div class="topic-count">2</div>
+</div>
+<div class="topic-row">
+  <div class="topic-name">Prefix Sum</div>
+  <div class="topic-bar-wrap"><div class="topic-bar" style="width:5.405405405405405%"></div></div>
+  <div class="topic-count">2</div>
+</div>
+<div class="topic-row">
+  <div class="topic-name">Divide & Conquer</div>
+  <div class="topic-bar-wrap"><div class="topic-bar" style="width:5.405405405405405%"></div></div>
+  <div class="topic-count">2</div>
+</div>
+<div class="topic-row">
+  <div class="topic-name">Intervals</div>
+  <div class="topic-bar-wrap"><div class="topic-bar" style="width:5.405405405405405%"></div></div>
+  <div class="topic-count">2</div>
+</div>
+<div class="topic-row">
+  <div class="topic-name">Stack</div>
+  <div class="topic-bar-wrap"><div class="topic-bar" style="width:2.7027027027027026%"></div></div>
+  <div class="topic-count">1</div>
+</div>
+<div class="topic-row">
+  <div class="topic-name">QuickSelect</div>
+  <div class="topic-bar-wrap"><div class="topic-bar" style="width:2.7027027027027026%"></div></div>
+  <div class="topic-count">1</div>
+</div>
+<div class="topic-row">
+  <div class="topic-name">Prefix Product</div>
+  <div class="topic-bar-wrap"><div class="topic-bar" style="width:2.7027027027027026%"></div></div>
+  <div class="topic-count">1</div>
+</div>
+<div class="topic-row">
+  <div class="topic-name">Hash Map</div>
+  <div class="topic-bar-wrap"><div class="topic-bar" style="width:2.7027027027027026%"></div></div>
+  <div class="topic-count">1</div>
+</div>
+<div class="topic-row">
+  <div class="topic-name">DFS</div>
+  <div class="topic-bar-wrap"><div class="topic-bar" style="width:2.7027027027027026%"></div></div>
+  <div class="topic-count">1</div>
+</div>
+<div class="topic-row">
+  <div class="topic-name">Graph</div>
+  <div class="topic-bar-wrap"><div class="topic-bar" style="width:2.7027027027027026%"></div></div>
+  <div class="topic-count">1</div>
+</div>
+<div class="topic-row">
+  <div class="topic-name">Queue</div>
+  <div class="topic-bar-wrap"><div class="topic-bar" style="width:2.7027027027027026%"></div></div>
+  <div class="topic-count">1</div>
+</div>
+<div class="topic-row">
+  <div class="topic-name">Backtracking</div>
+  <div class="topic-bar-wrap"><div class="topic-bar" style="width:2.7027027027027026%"></div></div>
+  <div class="topic-count">1</div>
+</div>
+<div class="topic-row">
+  <div class="topic-name">Recursion</div>
+  <div class="topic-bar-wrap"><div class="topic-bar" style="width:2.7027027027027026%"></div></div>
+  <div class="topic-count">1</div>
+</div>
+</div>
+
+<h3>Coverage Assessment</h3>
+<div class="split2">
+<div class="card">
+  <h3 style="margin-top:0; color:var(--easy)">Strong (5+)</h3>
+  <div class="bullet"><span class="badge-c">37</span> <strong>DP</strong></div><div class="bullet"><span class="badge-c">28</span> <strong>Two Pointers</strong></div><div class="bullet"><span class="badge-c">19</span> <strong>String</strong></div><div class="bullet"><span class="badge-c">17</span> <strong>Hash</strong></div><div class="bullet"><span class="badge-c">13</span> <strong>Sliding Window</strong></div><div class="bullet"><span class="badge-c">9</span> <strong>Sorting</strong></div><div class="bullet"><span class="badge-c">7</span> <strong>Math</strong></div><div class="bullet"><span class="badge-c">6</span> <strong>Greedy</strong></div><div class="bullet"><span class="badge-c">5</span> <strong>Binary Search</strong></div><div class="bullet"><span class="badge-c">5</span> <strong>Linked List</strong></div><div class="bullet"><span class="badge-c">5</span> <strong>Matrix</strong></div>
+  <h3 style="color:var(--medium); margin-top:18px">Moderate (3-4)</h3>
+  <div class="bullet"><span class="badge-c moderate">4</span> <strong>BFS</strong></div><div class="bullet"><span class="badge-c moderate">3</span> <strong>Heap</strong></div><div class="bullet"><span class="badge-c moderate">3</span> <strong>Design</strong></div>
+</div>
+<div class="card">
+  <h3 style="margin-top:0; color:var(--medium); opacity:.7">Weak (1-2)</h3>
+  <div class="bullet"><span class="badge-c weak">2</span> <strong>Tree</strong></div><div class="bullet"><span class="badge-c weak">2</span> <strong>Intervals</strong></div><div class="bullet"><span class="badge-c weak">2</span> <strong>Prefix Sum</strong></div><div class="bullet"><span class="badge-c weak">2</span> <strong>Divide & Conquer</strong></div><div class="bullet"><span class="badge-c weak">1</span> <strong>DFS</strong></div><div class="bullet"><span class="badge-c weak">1</span> <strong>Graph</strong></div><div class="bullet"><span class="badge-c weak">1</span> <strong>Stack</strong></div><div class="bullet"><span class="badge-c weak">1</span> <strong>Backtracking</strong></div><div class="bullet"><span class="badge-c weak">1</span> <strong>Recursion</strong></div><div class="bullet"><span class="badge-c weak">1</span> <strong>QuickSelect</strong></div><div class="bullet"><span class="badge-c weak">1</span> <strong>Queue</strong></div>
+  <h3 style="color:var(--hard); margin-top:18px">Missing (0)</h3>
+  <div class="bullet"><span class="badge-c missing">0</span> <strong>Trie</strong></div><div class="bullet"><span class="badge-c missing">0</span> <strong>Union-Find</strong></div><div class="bullet"><span class="badge-c missing">0</span> <strong>Bit Manipulation</strong></div>
+</div>
+</div>
+
+<h2>Strengths &amp; Weaknesses</h2>
+<div class="split2">
+<div class="card">
+  <h3 style="margin-top:0">&#127942; Strengths</h3>
+  <ul class="strengths">
+    <li><strong>Two Pointers mastery</strong> &mdash; 18+ problems including #283, #345, #349, #350, #392, #408, #541, #557, #680, #696 (recent burst).</li>
+    <li><strong>DP fluency</strong> &mdash; 32+ DP problems including Hard variants #188, #265, #1220, #1335, #1473.</li>
+    <li><strong>Hash Map / Prefix Sum</strong> &mdash; consistent across #1, #49, #170, #347, #523, #525, #560, etc.</li>
+    <li><strong>Sliding Window</strong> &mdash; 12 problems covering fixed-size, variable-size, and frequency-window patterns.</li>
+    <li><strong>Multiple approaches per problem</strong> &mdash; 44 problems have 2+ solutions, showing pattern exploration.</li>
+    <li><strong>Sustained ramp-up</strong> &mdash; 13 problems solved in the past 4 days, mostly Easy reinforcement before tackling harder topics.</li>
+  </ul>
+</div>
+<div class="card">
+  <h3 style="margin-top:0">&#9888; Gaps</h3>
+  <ul class="strengths">
+    <li><strong>Tree</strong>: only 2 problems (#102, #653). Need #101, #112, #199, #98, #104, #226, #230, #236.</li>
+    <li><strong>Stack</strong>: 0 problems. Add #20, #155, #739, #150.</li>
+    <li><strong>Graph / DFS</strong>: 1 problem (#200). Add #207, #133, #547.</li>
+    <li><strong>Backtracking</strong>: 1 problem (#22). Add #78, #46, #79.</li>
+    <li><strong>Trie / Union-Find / Bit Manipulation</strong>: 0 each &mdash; complete gaps.</li>
+    <li><strong>Heap</strong>: 2 problems. Add #703, #973, #1046, #621.</li>
+    <li><strong>Hard problems</strong>: only 7 (7%). Target 20% for senior interviews.</li>
+  </ul>
+</div>
+</div>
+
+<h2>Code Quality Assessment</h2>
+<div class="card">
+  <h3 style="margin-top:0">&#10003; Positives</h3>
+  <div class="code-note good">Multi-approach exploration: <code>44</code> problems have 2+ solution files showing pattern alternatives (memoization vs tabulation, two-pointer vs hash, etc.).</div>
+  <div class="code-note good">Consistent use of <code>collections.Counter</code>, <code>defaultdict</code>, and <code>deque</code> across hash/queue problems.</div>
+  <div class="code-note good">Go solutions follow idiomatic patterns: slice-as-stack, struct receivers, lowercase package-private helpers.</div>
+
+  <h3 style="margin-top:18px">&#9650; Areas to Improve</h3>
+  <div class="code-note bad">Many DP solutions ship with the verbose 2D table; try collapsing to 1D where dimension only depends on previous row (e.g. #1143, #518).</div>
+  <div class="code-note bad">Recent burst is heavily Easy &mdash; mix in 1-2 Medium per session and at least one Hard per week to maintain stretch.</div>
+  <div class="code-note bad">Consider adding short docstrings on each solution describing the approach and complexity &mdash; valuable when re-reviewing months later (the SM-2 review section depends on remembering your approach).</div>
+</div>
+
+<h2>Accelerated Learning Plan</h2>
+<div class="phase"><h3>Phase 1 &mdash; Trees + Stack (Week 1-2)</h3><div class="phase-probs"><a class="prob diff-?" href="https://leetcode.com/problems/104/" target="_blank" title="#104">#104</a><a class="prob diff-?" href="https://leetcode.com/problems/226/" target="_blank" title="#226">#226</a><a class="prob diff-?" href="https://leetcode.com/problems/101/" target="_blank" title="#101">#101</a><a class="prob diff-?" href="https://leetcode.com/problems/112/" target="_blank" title="#112">#112</a><a class="prob diff-?" href="https://leetcode.com/problems/98/" target="_blank" title="#98">#98</a><a class="prob diff-?" href="https://leetcode.com/problems/230/" target="_blank" title="#230">#230</a><a class="prob diff-?" href="https://leetcode.com/problems/199/" target="_blank" title="#199">#199</a><a class="prob diff-?" href="https://leetcode.com/problems/236/" target="_blank" title="#236">#236</a><a class="prob diff-?" href="https://leetcode.com/problems/20/" target="_blank" title="#20">#20</a><a class="prob diff-?" href="https://leetcode.com/problems/155/" target="_blank" title="#155">#155</a><a class="prob diff-?" href="https://leetcode.com/problems/739/" target="_blank" title="#739">#739</a><a class="prob diff-?" href="https://leetcode.com/problems/150/" target="_blank" title="#150">#150</a></div></div><div class="phase"><h3>Phase 2 &mdash; Linked List + Heap (Week 3)</h3><div class="phase-probs"><a class="prob diff-?" href="https://leetcode.com/problems/206/" target="_blank" title="#206">#206</a><a class="prob diff-?" href="https://leetcode.com/problems/19/" target="_blank" title="#19">#19</a><a class="prob diff-?" href="https://leetcode.com/problems/143/" target="_blank" title="#143">#143</a><a class="prob diff-?" href="https://leetcode.com/problems/703/" target="_blank" title="#703">#703</a><a class="prob diff-?" href="https://leetcode.com/problems/1046/" target="_blank" title="#1046">#1046</a><a class="prob diff-?" href="https://leetcode.com/problems/973/" target="_blank" title="#973">#973</a><a class="prob diff-?" href="https://leetcode.com/problems/621/" target="_blank" title="#621">#621</a></div></div><div class="phase"><h3>Phase 3 &mdash; Backtracking + Matrix (Week 4-5)</h3><div class="phase-probs"><a class="prob diff-?" href="https://leetcode.com/problems/78/" target="_blank" title="#78">#78</a><a class="prob diff-?" href="https://leetcode.com/problems/46/" target="_blank" title="#46">#46</a><a class="prob diff-?" href="https://leetcode.com/problems/79/" target="_blank" title="#79">#79</a><a class="prob diff-?" href="https://leetcode.com/problems/48/" target="_blank" title="#48">#48</a><a class="prob diff-?" href="https://leetcode.com/problems/54/" target="_blank" title="#54">#54</a><a class="prob diff-?" href="https://leetcode.com/problems/73/" target="_blank" title="#73">#73</a></div></div><div class="phase"><h3>Phase 4 &mdash; Graph + Trie + Hard (Week 6-7)</h3><div class="phase-probs"><a class="prob diff-?" href="https://leetcode.com/problems/207/" target="_blank" title="#207">#207</a><a class="prob diff-?" href="https://leetcode.com/problems/133/" target="_blank" title="#133">#133</a><a class="prob diff-?" href="https://leetcode.com/problems/743/" target="_blank" title="#743">#743</a><a class="prob diff-?" href="https://leetcode.com/problems/208/" target="_blank" title="#208">#208</a><a class="prob diff-?" href="https://leetcode.com/problems/547/" target="_blank" title="#547">#547</a><a class="prob diff-?" href="https://leetcode.com/problems/42/" target="_blank" title="#42">#42</a><a class="prob diff-?" href="https://leetcode.com/problems/76/" target="_blank" title="#76">#76</a><a class="prob diff-?" href="https://leetcode.com/problems/124/" target="_blank" title="#124">#124</a></div></div>
+
+<h2>Next 20 Problems</h2>
+<table class="next-table">
+<thead><tr><th>#</th><th>Title</th><th>Diff</th><th>Topic</th><th>Why</th></tr></thead>
+<tbody>
+<tr><td>#206</td><td>Reverse Linked List</td><td><span class="diff E">E</span></td><td>Linked List</td><td class="muted">Classic LL warmup</td></tr><tr><td>#19</td><td>Remove Nth Node From End</td><td><span class="diff M">M</span></td><td>Linked List</td><td class="muted">Two-pointer LL</td></tr><tr><td>#143</td><td>Reorder List</td><td><span class="diff M">M</span></td><td>Linked List</td><td class="muted">Combines LL patterns</td></tr><tr><td>#703</td><td>Kth Largest in Stream</td><td><span class="diff E">E</span></td><td>Heap</td><td class="muted">Heap fundamentals</td></tr><tr><td>#973</td><td>K Closest Points</td><td><span class="diff M">M</span></td><td>Heap</td><td class="muted">Heap with custom key</td></tr><tr><td>#1046</td><td>Last Stone Weight</td><td><span class="diff E">E</span></td><td>Heap</td><td class="muted">Heap simulation</td></tr><tr><td>#252</td><td>Meeting Rooms</td><td><span class="diff E">E</span></td><td>Intervals</td><td class="muted">Conflict detection</td></tr><tr><td>#253</td><td>Meeting Rooms II</td><td><span class="diff M">M</span></td><td>Intervals</td><td class="muted">Heap + intervals</td></tr><tr><td>#101</td><td>Symmetric Tree</td><td><span class="diff E">E</span></td><td>Tree</td><td class="muted">Paired recursion (Tree gap is biggest!)</td></tr><tr><td>#112</td><td>Path Sum</td><td><span class="diff E">E</span></td><td>Tree</td><td class="muted">DFS with target</td></tr><tr><td>#104</td><td>Maximum Depth of Tree</td><td><span class="diff E">E</span></td><td>Tree</td><td class="muted">Tree depth recursion</td></tr><tr><td>#226</td><td>Invert Binary Tree</td><td><span class="diff E">E</span></td><td>Tree</td><td class="muted">Structural transformation</td></tr><tr><td>#98</td><td>Validate BST</td><td><span class="diff M">M</span></td><td>Tree</td><td class="muted">Bounds propagation</td></tr><tr><td>#199</td><td>Right Side View</td><td><span class="diff M">M</span></td><td>Tree</td><td class="muted">BFS last-node</td></tr><tr><td>#48</td><td>Rotate Image</td><td><span class="diff M">M</span></td><td>Matrix</td><td class="muted">In-place rotation</td></tr><tr><td>#54</td><td>Spiral Matrix</td><td><span class="diff M">M</span></td><td>Matrix</td><td class="muted">Boundary shrinking</td></tr><tr><td>#20</td><td>Valid Parentheses</td><td><span class="diff E">E</span></td><td>Stack</td><td class="muted">Stack gap (0 problems!)</td></tr><tr><td>#155</td><td>Min Stack</td><td><span class="diff E">E</span></td><td>Stack</td><td class="muted">Stack with auxiliary tracking</td></tr><tr><td>#78</td><td>Subsets</td><td><span class="diff M">M</span></td><td>Backtracking</td><td class="muted">Backtracking gap</td></tr><tr><td>#208</td><td>Implement Trie</td><td><span class="diff M">M</span></td><td>Trie</td><td class="muted">Trie gap (0 problems!)</td></tr>
+</tbody>
+</table>
+
+<h2>Full Problem Inventory (104)</h2>
+<table class="inventory">
+<thead><tr><th>#</th><th>Title</th><th>Diff</th><th>Topics</th><th>Languages</th><th>Files</th><th>Solved</th></tr></thead>
+<tbody>
+
+<tr>
+  <td><a href="https://leetcode.com/problems/1/" target="_blank">#1</a></td>
+  <td>Two Sum</td>
+  <td><span class="diff E">E</span></td>
+  <td><span class="ttag">Hash Map</span></td>
+  <td>Python</td>
+  <td>1 </td>
+  <td class="muted">2025-05-15</td>
+</tr>
+<tr>
+  <td><a href="https://leetcode.com/problems/2/" target="_blank">#2</a></td>
+  <td>Add Two Numbers</td>
+  <td><span class="diff M">M</span></td>
+  <td><span class="ttag">Linked List</span><span class="ttag">Math</span></td>
+  <td>Python</td>
+  <td>1 </td>
+  <td class="muted">2025-05-15</td>
+</tr>
+<tr>
+  <td><a href="https://leetcode.com/problems/3/" target="_blank">#3</a></td>
+  <td>Longest Substring Without Repeating</td>
+  <td><span class="diff M">M</span></td>
+  <td><span class="ttag">Sliding Window</span><span class="ttag">Hash</span></td>
+  <td>Python</td>
+  <td>1 </td>
+  <td class="muted">2025-05-15</td>
+</tr>
+<tr>
+  <td><a href="https://leetcode.com/problems/4/" target="_blank">#4</a></td>
+  <td>Median of Two Sorted Arrays</td>
+  <td><span class="diff H">H</span></td>
+  <td><span class="ttag">Binary Search</span><span class="ttag">Divide & Conquer</span></td>
+  <td>Python</td>
+  <td>1 </td>
+  <td class="muted">2025-05-15</td>
+</tr>
+<tr>
+  <td><a href="https://leetcode.com/problems/5/" target="_blank">#5</a></td>
+  <td>Longest Palindromic Substring</td>
+  <td><span class="diff M">M</span></td>
+  <td><span class="ttag">DP</span><span class="ttag">String</span></td>
+  <td>Go, Python</td>
+  <td>2 &#10004;</td>
+  <td class="muted">2025-05-15</td>
+</tr>
+<tr>
+  <td><a href="https://leetcode.com/problems/9/" target="_blank">#9</a></td>
+  <td>Palindrome Number</td>
+  <td><span class="diff E">E</span></td>
+  <td><span class="ttag">Math</span></td>
+  <td>Python</td>
+  <td>1 </td>
+  <td class="muted">2025-05-15</td>
+</tr>
+<tr>
+  <td><a href="https://leetcode.com/problems/11/" target="_blank">#11</a></td>
+  <td>Container With Most Water</td>
+  <td><span class="diff M">M</span></td>
+  <td><span class="ttag">Two Pointers</span><span class="ttag">Greedy</span></td>
+  <td>Python</td>
+  <td>1 </td>
+  <td class="muted">2025-05-15</td>
+</tr>
+<tr>
+  <td><a href="https://leetcode.com/problems/13/" target="_blank">#13</a></td>
+  <td>Roman to Integer</td>
+  <td><span class="diff E">E</span></td>
+  <td><span class="ttag">Hash</span><span class="ttag">String</span></td>
+  <td>Python</td>
+  <td>3 &#10004;</td>
+  <td class="muted">2026-05-20</td>
+</tr>
+<tr>
+  <td><a href="https://leetcode.com/problems/15/" target="_blank">#15</a></td>
+  <td>3Sum</td>
+  <td><span class="diff M">M</span></td>
+  <td><span class="ttag">Two Pointers</span><span class="ttag">Sorting</span></td>
+  <td>Python</td>
+  <td>1 </td>
+  <td class="muted">2025-05-15</td>
+</tr>
+<tr>
+  <td><a href="https://leetcode.com/problems/22/" target="_blank">#22</a></td>
+  <td>Generate Parentheses</td>
+  <td><span class="diff M">M</span></td>
+  <td><span class="ttag">Backtracking</span><span class="ttag">Recursion</span></td>
+  <td>Python</td>
+  <td>1 </td>
+  <td class="muted">2025-05-15</td>
+</tr>
+<tr>
+  <td><a href="https://leetcode.com/problems/26/" target="_blank">#26</a></td>
+  <td>Remove Duplicates from Sorted Array</td>
+  <td><span class="diff E">E</span></td>
+  <td><span class="ttag">Two Pointers</span><span class="ttag">Array</span></td>
+  <td>Go, JavaScript, Python, Ruby, Rust, TypeScript</td>
+  <td>6 &#10004;</td>
+  <td class="muted">2026-05-18</td>
+</tr>
+<tr>
+  <td><a href="https://leetcode.com/problems/27/" target="_blank">#27</a></td>
+  <td>Remove Element</td>
+  <td><span class="diff E">E</span></td>
+  <td><span class="ttag">Two Pointers</span><span class="ttag">Array</span></td>
+  <td>Go, Python, Rust</td>
+  <td>3 &#10004;</td>
+  <td class="muted">2026-05-18</td>
+</tr>
+<tr>
+  <td><a href="https://leetcode.com/problems/28/" target="_blank">#28</a></td>
+  <td>Find Index of First Occurrence</td>
+  <td><span class="diff E">E</span></td>
+  <td><span class="ttag">String</span></td>
+  <td>Go, Python, TypeScript</td>
+  <td>5 &#10004;</td>
+  <td class="muted">2026-05-18</td>
+</tr>
+<tr>
+  <td><a href="https://leetcode.com/problems/36/" target="_blank">#36</a></td>
+  <td>Valid Sudoku</td>
+  <td><span class="diff M">M</span></td>
+  <td><span class="ttag">Hash</span><span class="ttag">Matrix</span></td>
+  <td>Python</td>
+  <td>2 &#10004;</td>
+  <td class="muted">2026-05-26</td>
+</tr>
+<tr>
+  <td><a href="https://leetcode.com/problems/45/" target="_blank">#45</a></td>
+  <td>Jump Game II</td>
+  <td><span class="diff M">M</span></td>
+  <td><span class="ttag">Greedy</span><span class="ttag">DP</span></td>
+  <td>Python</td>
+  <td>1 </td>
+  <td class="muted">2025-05-13</td>
+</tr>
+<tr>
+  <td><a href="https://leetcode.com/problems/49/" target="_blank">#49</a></td>
+  <td>Group Anagrams</td>
+  <td><span class="diff M">M</span></td>
+  <td><span class="ttag">Hash</span><span class="ttag">String</span></td>
+  <td>Python</td>
+  <td>4 &#10004;</td>
+  <td class="muted">2026-05-23</td>
+</tr>
+<tr>
+  <td><a href="https://leetcode.com/problems/55/" target="_blank">#55</a></td>
+  <td>Jump Game</td>
+  <td><span class="diff M">M</span></td>
+  <td><span class="ttag">Greedy</span><span class="ttag">DP</span></td>
+  <td>Python</td>
+  <td>1 </td>
+  <td class="muted">2025-05-13</td>
+</tr>
+<tr>
+  <td><a href="https://leetcode.com/problems/56/" target="_blank">#56</a></td>
+  <td>Merge Intervals</td>
+  <td><span class="diff M">M</span></td>
+  <td><span class="ttag">Intervals</span><span class="ttag">Sorting</span></td>
+  <td>Python</td>
+  <td>1 </td>
+  <td class="muted">2025-05-15</td>
+</tr>
+<tr>
+  <td><a href="https://leetcode.com/problems/57/" target="_blank">#57</a></td>
+  <td>Insert Interval</td>
+  <td><span class="diff M">M</span></td>
+  <td><span class="ttag">Intervals</span></td>
+  <td>Python</td>
+  <td>2 &#10004;</td>
+  <td class="muted">2025-05-15</td>
+</tr>
+<tr>
+  <td><a href="https://leetcode.com/problems/62/" target="_blank">#62</a></td>
+  <td>Unique Paths</td>
+  <td><span class="diff M">M</span></td>
+  <td><span class="ttag">DP</span><span class="ttag">Math</span></td>
+  <td>Python</td>
+  <td>1 </td>
+  <td class="muted">2025-05-16</td>
+</tr>
+<tr>
+  <td><a href="https://leetcode.com/problems/63/" target="_blank">#63</a></td>
+  <td>Unique Paths II</td>
+  <td><span class="diff M">M</span></td>
+  <td><span class="ttag">DP</span><span class="ttag">Matrix</span></td>
+  <td>Python</td>
+  <td>1 </td>
+  <td class="muted">2025-05-16</td>
+</tr>
+<tr>
+  <td><a href="https://leetcode.com/problems/64/" target="_blank">#64</a></td>
+  <td>Minimum Path Sum</td>
+  <td><span class="diff M">M</span></td>
+  <td><span class="ttag">DP</span><span class="ttag">Matrix</span></td>
+  <td>Python</td>
+  <td>1 </td>
+  <td class="muted">2025-05-17</td>
+</tr>
+<tr>
+  <td><a href="https://leetcode.com/problems/70/" target="_blank">#70</a></td>
+  <td>Climbing Stairs</td>
+  <td><span class="diff E">E</span></td>
+  <td><span class="ttag">DP</span></td>
+  <td>Python</td>
+  <td>3 &#10004;</td>
+  <td class="muted">2025-05-15</td>
+</tr>
+<tr>
+  <td><a href="https://leetcode.com/problems/88/" target="_blank">#88</a></td>
+  <td>Merge Sorted Array</td>
+  <td><span class="diff E">E</span></td>
+  <td><span class="ttag">Two Pointers</span><span class="ttag">Array</span></td>
+  <td>Python</td>
+  <td>1 </td>
+  <td class="muted">2026-05-21</td>
+</tr>
+<tr>
+  <td><a href="https://leetcode.com/problems/91/" target="_blank">#91</a></td>
+  <td>Decode Ways</td>
+  <td><span class="diff M">M</span></td>
+  <td><span class="ttag">DP</span><span class="ttag">String</span></td>
+  <td>Python</td>
+  <td>1 </td>
+  <td class="muted">2025-05-16</td>
+</tr>
+<tr>
+  <td><a href="https://leetcode.com/problems/97/" target="_blank">#97</a></td>
+  <td>Interleaving String</td>
+  <td><span class="diff M">M</span></td>
+  <td><span class="ttag">DP</span><span class="ttag">String</span></td>
+  <td>Python</td>
+  <td>1 </td>
+  <td class="muted">2025-05-19</td>
+</tr>
+<tr>
+  <td><a href="https://leetcode.com/problems/102/" target="_blank">#102</a></td>
+  <td>Binary Tree Level Order Traversal</td>
+  <td><span class="diff M">M</span></td>
+  <td><span class="ttag">BFS</span><span class="ttag">Tree</span></td>
+  <td>Python</td>
+  <td>1 </td>
+  <td class="muted">2025-05-15</td>
+</tr>
+<tr>
+  <td><a href="https://leetcode.com/problems/121/" target="_blank">#121</a></td>
+  <td>Best Time to Buy and Sell Stock</td>
+  <td><span class="diff E">E</span></td>
+  <td><span class="ttag">DP</span><span class="ttag">Greedy</span></td>
+  <td>Python</td>
+  <td>2 &#10004;</td>
+  <td class="muted">2025-05-16</td>
+</tr>
+<tr>
+  <td><a href="https://leetcode.com/problems/125/" target="_blank">#125</a></td>
+  <td>Valid Palindrome</td>
+  <td><span class="diff E">E</span></td>
+  <td><span class="ttag">Two Pointers</span><span class="ttag">String</span></td>
+  <td>Go, Python, TypeScript</td>
+  <td>4 &#10004;</td>
+  <td class="muted">2025-05-15</td>
+</tr>
+<tr>
+  <td><a href="https://leetcode.com/problems/139/" target="_blank">#139</a></td>
+  <td>Word Break</td>
+  <td><span class="diff M">M</span></td>
+  <td><span class="ttag">DP</span><span class="ttag">String</span></td>
+  <td>Python</td>
+  <td>1 </td>
+  <td class="muted">2025-05-15</td>
+</tr>
+<tr>
+  <td><a href="https://leetcode.com/problems/141/" target="_blank">#141</a></td>
+  <td>Linked List Cycle</td>
+  <td><span class="diff E">E</span></td>
+  <td><span class="ttag">Two Pointers</span><span class="ttag">Linked List</span></td>
+  <td>Python</td>
+  <td>3 &#10004;</td>
+  <td class="muted">2025-05-15</td>
+</tr>
+<tr>
+  <td><a href="https://leetcode.com/problems/160/" target="_blank">#160</a></td>
+  <td>Intersection of Two Linked Lists</td>
+  <td><span class="diff E">E</span></td>
+  <td><span class="ttag">Two Pointers</span><span class="ttag">Linked List</span></td>
+  <td>Python</td>
+  <td>1 </td>
+  <td class="muted">2026-05-21</td>
+</tr>
+<tr>
+  <td><a href="https://leetcode.com/problems/167/" target="_blank">#167</a></td>
+  <td>Two Sum II - Sorted</td>
+  <td><span class="diff M">M</span></td>
+  <td><span class="ttag">Two Pointers</span><span class="ttag">Binary Search</span></td>
+  <td>Python</td>
+  <td>1 </td>
+  <td class="muted">2025-05-15</td>
+</tr>
+<tr>
+  <td><a href="https://leetcode.com/problems/170/" target="_blank">#170</a></td>
+  <td>Two Sum III - Data Structure Design</td>
+  <td><span class="diff E">E</span></td>
+  <td><span class="ttag">Hash</span><span class="ttag">Design</span></td>
+  <td>Python</td>
+  <td>1 </td>
+  <td class="muted">2026-05-24</td>
+</tr>
+<tr>
+  <td><a href="https://leetcode.com/problems/188/" target="_blank">#188</a></td>
+  <td>Best Time to Buy and Sell Stock IV</td>
+  <td><span class="diff H">H</span></td>
+  <td><span class="ttag">DP</span></td>
+  <td>Python</td>
+  <td>1 </td>
+  <td class="muted">2025-05-15</td>
+</tr>
+<tr>
+  <td><a href="https://leetcode.com/problems/198/" target="_blank">#198</a></td>
+  <td>House Robber</td>
+  <td><span class="diff M">M</span></td>
+  <td><span class="ttag">DP</span></td>
+  <td>Python</td>
+  <td>2 &#10004;</td>
+  <td class="muted">2025-05-15</td>
+</tr>
+<tr>
+  <td><a href="https://leetcode.com/problems/200/" target="_blank">#200</a></td>
+  <td>Number of Islands</td>
+  <td><span class="diff M">M</span></td>
+  <td><span class="ttag">DFS</span><span class="ttag">BFS</span><span class="ttag">Graph</span></td>
+  <td>Python</td>
+  <td>2 &#10004;</td>
+  <td class="muted">2025-05-15</td>
+</tr>
+<tr>
+  <td><a href="https://leetcode.com/problems/202/" target="_blank">#202</a></td>
+  <td>Happy Number</td>
+  <td><span class="diff E">E</span></td>
+  <td><span class="ttag">Hash</span><span class="ttag">Math</span></td>
+  <td>Python</td>
+  <td>1 </td>
+  <td class="muted">2025-05-15</td>
+</tr>
+<tr>
+  <td><a href="https://leetcode.com/problems/209/" target="_blank">#209</a></td>
+  <td>Minimum Size Subarray Sum</td>
+  <td><span class="diff M">M</span></td>
+  <td><span class="ttag">Sliding Window</span><span class="ttag">Binary Search</span></td>
+  <td>Python</td>
+  <td>1 </td>
+  <td class="muted">2025-05-15</td>
+</tr>
+<tr>
+  <td><a href="https://leetcode.com/problems/215/" target="_blank">#215</a></td>
+  <td>Kth Largest Element</td>
+  <td><span class="diff M">M</span></td>
+  <td><span class="ttag">Heap</span><span class="ttag">Sorting</span><span class="ttag">QuickSelect</span></td>
+  <td>Python</td>
+  <td>2 &#10004;</td>
+  <td class="muted">2025-05-15</td>
+</tr>
+<tr>
+  <td><a href="https://leetcode.com/problems/219/" target="_blank">#219</a></td>
+  <td>Contains Duplicate II</td>
+  <td><span class="diff E">E</span></td>
+  <td><span class="ttag">Hash</span><span class="ttag">Sliding Window</span></td>
+  <td>Python</td>
+  <td>1 </td>
+  <td class="muted">2026-05-20</td>
+</tr>
+<tr>
+  <td><a href="https://leetcode.com/problems/234/" target="_blank">#234</a></td>
+  <td>Palindrome Linked List</td>
+  <td><span class="diff E">E</span></td>
+  <td><span class="ttag">Linked List</span><span class="ttag">Two Pointers</span></td>
+  <td>Python</td>
+  <td>2 &#10004;</td>
+  <td class="muted">2026-05-24</td>
+</tr>
+<tr>
+  <td><a href="https://leetcode.com/problems/238/" target="_blank">#238</a></td>
+  <td>Product of Array Except Self</td>
+  <td><span class="diff M">M</span></td>
+  <td><span class="ttag">Array</span><span class="ttag">Prefix Product</span></td>
+  <td>Python</td>
+  <td>2 &#10004;</td>
+  <td class="muted">2026-05-26</td>
+</tr>
+<tr>
+  <td><a href="https://leetcode.com/problems/242/" target="_blank">#242</a></td>
+  <td>Valid Anagram</td>
+  <td><span class="diff E">E</span></td>
+  <td><span class="ttag">Hash</span><span class="ttag">Sorting</span></td>
+  <td>Go, Python</td>
+  <td>6 &#10004;</td>
+  <td class="muted">2026-05-21</td>
+</tr>
+<tr>
+  <td><a href="https://leetcode.com/problems/246/" target="_blank">#246</a></td>
+  <td>Strobogrammatic Number</td>
+  <td><span class="diff E">E</span></td>
+  <td><span class="ttag">Hash</span><span class="ttag">Two Pointers</span></td>
+  <td>Python</td>
+  <td>2 &#10004;</td>
+  <td class="muted">2026-05-25</td>
+</tr>
+<tr>
+  <td><a href="https://leetcode.com/problems/256/" target="_blank">#256</a></td>
+  <td>Paint House</td>
+  <td><span class="diff M">M</span></td>
+  <td><span class="ttag">DP</span></td>
+  <td>Python</td>
+  <td>2 &#10004;</td>
+  <td class="muted">2025-05-17</td>
+</tr>
+<tr>
+  <td><a href="https://leetcode.com/problems/265/" target="_blank">#265</a></td>
+  <td>Paint House II</td>
+  <td><span class="diff H">H</span></td>
+  <td><span class="ttag">DP</span></td>
+  <td>Python</td>
+  <td>1 </td>
+  <td class="muted">2025-05-18</td>
+</tr>
+<tr>
+  <td><a href="https://leetcode.com/problems/276/" target="_blank">#276</a></td>
+  <td>Paint Fence</td>
+  <td><span class="diff M">M</span></td>
+  <td><span class="ttag">DP</span></td>
+  <td>Python</td>
+  <td>1 </td>
+  <td class="muted">2025-05-15</td>
+</tr>
+<tr>
+  <td><a href="https://leetcode.com/problems/283/" target="_blank">#283</a></td>
+  <td>Move Zeroes</td>
+  <td><span class="diff E">E</span></td>
+  <td><span class="ttag">Two Pointers</span><span class="ttag">Array</span></td>
+  <td>Python</td>
+  <td>2 &#10004;</td>
+  <td class="muted">2026-05-25</td>
+</tr>
+<tr>
+  <td><a href="https://leetcode.com/problems/286/" target="_blank">#286</a></td>
+  <td>Walls and Gates</td>
+  <td><span class="diff M">M</span></td>
+  <td><span class="ttag">BFS</span><span class="ttag">Matrix</span></td>
+  <td>Python</td>
+  <td>1 </td>
+  <td class="muted">2025-05-15</td>
+</tr>
+<tr>
+  <td><a href="https://leetcode.com/problems/295/" target="_blank">#295</a></td>
+  <td>Find Median from Data Stream</td>
+  <td><span class="diff H">H</span></td>
+  <td><span class="ttag">Heap</span><span class="ttag">Design</span></td>
+  <td>Python</td>
+  <td>1 </td>
+  <td class="muted">2025-05-15</td>
+</tr>
+<tr>
+  <td><a href="https://leetcode.com/problems/300/" target="_blank">#300</a></td>
+  <td>Longest Increasing Subsequence</td>
+  <td><span class="diff M">M</span></td>
+  <td><span class="ttag">DP</span><span class="ttag">Binary Search</span></td>
+  <td>Python</td>
+  <td>1 </td>
+  <td class="muted">2025-05-15</td>
+</tr>
+<tr>
+  <td><a href="https://leetcode.com/problems/309/" target="_blank">#309</a></td>
+  <td>Best Time to Buy/Sell with Cooldown</td>
+  <td><span class="diff M">M</span></td>
+  <td><span class="ttag">DP</span></td>
+  <td>Python</td>
+  <td>1 </td>
+  <td class="muted">2025-05-15</td>
+</tr>
+<tr>
+  <td><a href="https://leetcode.com/problems/322/" target="_blank">#322</a></td>
+  <td>Coin Change</td>
+  <td><span class="diff M">M</span></td>
+  <td><span class="ttag">DP</span></td>
+  <td>Python</td>
+  <td>1 </td>
+  <td class="muted">2025-05-15</td>
+</tr>
+<tr>
+  <td><a href="https://leetcode.com/problems/345/" target="_blank">#345</a></td>
+  <td>Reverse Vowels of a String</td>
+  <td><span class="diff E">E</span></td>
+  <td><span class="ttag">Two Pointers</span><span class="ttag">String</span></td>
+  <td>Python</td>
+  <td>1 </td>
+  <td class="muted">2026-05-25</td>
+</tr>
+<tr>
+  <td><a href="https://leetcode.com/problems/346/" target="_blank">#346</a></td>
+  <td>Moving Average from Data Stream</td>
+  <td><span class="diff E">E</span></td>
+  <td><span class="ttag">Queue</span><span class="ttag">Design</span></td>
+  <td>Python</td>
+  <td>2 &#10004;</td>
+  <td class="muted">2025-05-15</td>
+</tr>
+<tr>
+  <td><a href="https://leetcode.com/problems/347/" target="_blank">#347</a></td>
+  <td>Top K Frequent Elements</td>
+  <td><span class="diff M">M</span></td>
+  <td><span class="ttag">Heap</span><span class="ttag">Hash</span><span class="ttag">Sorting</span></td>
+  <td>Python</td>
+  <td>4 &#10004;</td>
+  <td class="muted">2026-05-24</td>
+</tr>
+<tr>
+  <td><a href="https://leetcode.com/problems/349/" target="_blank">#349</a></td>
+  <td>Intersection of Two Arrays</td>
+  <td><span class="diff E">E</span></td>
+  <td><span class="ttag">Hash</span><span class="ttag">Sorting</span><span class="ttag">Two Pointers</span></td>
+  <td>Python</td>
+  <td>3 &#10004;</td>
+  <td class="muted">2026-05-25</td>
+</tr>
+<tr>
+  <td><a href="https://leetcode.com/problems/350/" target="_blank">#350</a></td>
+  <td>Intersection of Two Arrays II</td>
+  <td><span class="diff E">E</span></td>
+  <td><span class="ttag">Hash</span><span class="ttag">Two Pointers</span></td>
+  <td>Python</td>
+  <td>2 &#10004;</td>
+  <td class="muted">2026-05-25</td>
+</tr>
+<tr>
+  <td><a href="https://leetcode.com/problems/392/" target="_blank">#392</a></td>
+  <td>Is Subsequence</td>
+  <td><span class="diff E">E</span></td>
+  <td><span class="ttag">Two Pointers</span><span class="ttag">DP</span></td>
+  <td>Python</td>
+  <td>2 &#10004;</td>
+  <td class="muted">2026-05-25</td>
+</tr>
+<tr>
+  <td><a href="https://leetcode.com/problems/408/" target="_blank">#408</a></td>
+  <td>Valid Word Abbreviation</td>
+  <td><span class="diff E">E</span></td>
+  <td><span class="ttag">Two Pointers</span><span class="ttag">String</span></td>
+  <td>Python</td>
+  <td>1 </td>
+  <td class="muted">2026-05-25</td>
+</tr>
+<tr>
+  <td><a href="https://leetcode.com/problems/455/" target="_blank">#455</a></td>
+  <td>Assign Cookies</td>
+  <td><span class="diff E">E</span></td>
+  <td><span class="ttag">Greedy</span><span class="ttag">Two Pointers</span></td>
+  <td>Python</td>
+  <td>2 &#10004;</td>
+  <td class="muted">2026-05-26</td>
+</tr>
+<tr>
+  <td><a href="https://leetcode.com/problems/509/" target="_blank">#509</a></td>
+  <td>Fibonacci Number</td>
+  <td><span class="diff E">E</span></td>
+  <td><span class="ttag">DP</span><span class="ttag">Math</span></td>
+  <td>Python</td>
+  <td>2 &#10004;</td>
+  <td class="muted">2025-05-15</td>
+</tr>
+<tr>
+  <td><a href="https://leetcode.com/problems/516/" target="_blank">#516</a></td>
+  <td>Longest Palindromic Subsequence</td>
+  <td><span class="diff M">M</span></td>
+  <td><span class="ttag">DP</span></td>
+  <td>Python</td>
+  <td>1 </td>
+  <td class="muted">2025-05-13</td>
+</tr>
+<tr>
+  <td><a href="https://leetcode.com/problems/518/" target="_blank">#518</a></td>
+  <td>Coin Change II</td>
+  <td><span class="diff M">M</span></td>
+  <td><span class="ttag">DP</span></td>
+  <td>Python</td>
+  <td>1 </td>
+  <td class="muted">2025-05-15</td>
+</tr>
+<tr>
+  <td><a href="https://leetcode.com/problems/523/" target="_blank">#523</a></td>
+  <td>Continuous Subarray Sum</td>
+  <td><span class="diff M">M</span></td>
+  <td><span class="ttag">Hash</span><span class="ttag">Math</span><span class="ttag">Prefix Sum</span></td>
+  <td>Python</td>
+  <td>1 </td>
+  <td class="muted">-</td>
+</tr>
+<tr>
+  <td><a href="https://leetcode.com/problems/541/" target="_blank">#541</a></td>
+  <td>Reverse String II</td>
+  <td><span class="diff E">E</span></td>
+  <td><span class="ttag">Two Pointers</span><span class="ttag">String</span></td>
+  <td>Python</td>
+  <td>2 &#10004;</td>
+  <td class="muted">2026-05-26</td>
+</tr>
+<tr>
+  <td><a href="https://leetcode.com/problems/557/" target="_blank">#557</a></td>
+  <td>Reverse Words in a String III</td>
+  <td><span class="diff E">E</span></td>
+  <td><span class="ttag">Two Pointers</span><span class="ttag">String</span></td>
+  <td>Python</td>
+  <td>5 &#10004;</td>
+  <td class="muted">2026-05-26</td>
+</tr>
+<tr>
+  <td><a href="https://leetcode.com/problems/560/" target="_blank">#560</a></td>
+  <td>Subarray Sum Equals K</td>
+  <td><span class="diff M">M</span></td>
+  <td><span class="ttag">Hash</span><span class="ttag">Prefix Sum</span></td>
+  <td>Python</td>
+  <td>1 </td>
+  <td class="muted">-</td>
+</tr>
+<tr>
+  <td><a href="https://leetcode.com/problems/594/" target="_blank">#594</a></td>
+  <td>Longest Harmonious Subsequence</td>
+  <td><span class="diff E">E</span></td>
+  <td><span class="ttag">Hash</span><span class="ttag">Sliding Window</span></td>
+  <td>Python</td>
+  <td>1 </td>
+  <td class="muted">2026-05-20</td>
+</tr>
+<tr>
+  <td><a href="https://leetcode.com/problems/643/" target="_blank">#643</a></td>
+  <td>Maximum Average Subarray I</td>
+  <td><span class="diff E">E</span></td>
+  <td><span class="ttag">Sliding Window</span></td>
+  <td>Python</td>
+  <td>2 &#10004;</td>
+  <td class="muted">2025-05-15</td>
+</tr>
+<tr>
+  <td><a href="https://leetcode.com/problems/653/" target="_blank">#653</a></td>
+  <td>Two Sum IV - BST</td>
+  <td><span class="diff E">E</span></td>
+  <td><span class="ttag">Tree</span><span class="ttag">BFS</span><span class="ttag">Hash</span></td>
+  <td>Python</td>
+  <td>3 &#10004;</td>
+  <td class="muted">2026-05-26</td>
+</tr>
+<tr>
+  <td><a href="https://leetcode.com/problems/680/" target="_blank">#680</a></td>
+  <td>Valid Palindrome II</td>
+  <td><span class="diff E">E</span></td>
+  <td><span class="ttag">Two Pointers</span><span class="ttag">String</span></td>
+  <td>Python</td>
+  <td>3 &#10004;</td>
+  <td class="muted">2026-05-26</td>
+</tr>
+<tr>
+  <td><a href="https://leetcode.com/problems/696/" target="_blank">#696</a></td>
+  <td>Count Binary Substrings</td>
+  <td><span class="diff E">E</span></td>
+  <td><span class="ttag">Two Pointers</span><span class="ttag">String</span></td>
+  <td>Python</td>
+  <td>3 &#10004;</td>
+  <td class="muted">2026-05-27</td>
+</tr>
+<tr>
+  <td><a href="https://leetcode.com/problems/704/" target="_blank">#704</a></td>
+  <td>Binary Search</td>
+  <td><span class="diff E">E</span></td>
+  <td><span class="ttag">Binary Search</span></td>
+  <td>Python</td>
+  <td>2 &#10004;</td>
+  <td class="muted">2026-05-22</td>
+</tr>
+<tr>
+  <td><a href="https://leetcode.com/problems/714/" target="_blank">#714</a></td>
+  <td>Best Time to Buy/Sell with Fee</td>
+  <td><span class="diff M">M</span></td>
+  <td><span class="ttag">DP</span><span class="ttag">Greedy</span></td>
+  <td>Python</td>
+  <td>1 </td>
+  <td class="muted">2025-05-17</td>
+</tr>
+<tr>
+  <td><a href="https://leetcode.com/problems/718/" target="_blank">#718</a></td>
+  <td>Maximum Length of Repeated Subarray</td>
+  <td><span class="diff M">M</span></td>
+  <td><span class="ttag">DP</span><span class="ttag">Sliding Window</span></td>
+  <td>Python</td>
+  <td>1 </td>
+  <td class="muted">2025-05-18</td>
+</tr>
+<tr>
+  <td><a href="https://leetcode.com/problems/740/" target="_blank">#740</a></td>
+  <td>Delete and Earn</td>
+  <td><span class="diff M">M</span></td>
+  <td><span class="ttag">DP</span></td>
+  <td>Python</td>
+  <td>1 </td>
+  <td class="muted">2025-05-15</td>
+</tr>
+<tr>
+  <td><a href="https://leetcode.com/problems/746/" target="_blank">#746</a></td>
+  <td>Min Cost Climbing Stairs</td>
+  <td><span class="diff E">E</span></td>
+  <td><span class="ttag">DP</span></td>
+  <td>Python</td>
+  <td>4 &#10004;</td>
+  <td class="muted">2025-05-15</td>
+</tr>
+<tr>
+  <td><a href="https://leetcode.com/problems/790/" target="_blank">#790</a></td>
+  <td>Domino and Tromino Tiling</td>
+  <td><span class="diff M">M</span></td>
+  <td><span class="ttag">DP</span></td>
+  <td>Python</td>
+  <td>1 </td>
+  <td class="muted">2025-05-19</td>
+</tr>
+<tr>
+  <td><a href="https://leetcode.com/problems/821/" target="_blank">#821</a></td>
+  <td>#821</td>
+  <td><span class="diff ?">?</span></td>
+  <td></td>
+  <td>Python</td>
+  <td>2 &#10004;</td>
+  <td class="muted">2026-05-27</td>
+</tr>
+<tr>
+  <td><a href="https://leetcode.com/problems/844/" target="_blank">#844</a></td>
+  <td>Backspace String Compare</td>
+  <td><span class="diff E">E</span></td>
+  <td><span class="ttag">Stack</span><span class="ttag">Two Pointers</span><span class="ttag">String</span></td>
+  <td>Python</td>
+  <td>3 &#10004;</td>
+  <td class="muted">2026-05-27</td>
+</tr>
+<tr>
+  <td><a href="https://leetcode.com/problems/876/" target="_blank">#876</a></td>
+  <td>Middle of the Linked List</td>
+  <td><span class="diff E">E</span></td>
+  <td><span class="ttag">Linked List</span><span class="ttag">Two Pointers</span></td>
+  <td>Python</td>
+  <td>1 </td>
+  <td class="muted">2026-05-27</td>
+</tr>
+<tr>
+  <td><a href="https://leetcode.com/problems/905/" target="_blank">#905</a></td>
+  <td>Sort Array By Parity</td>
+  <td><span class="diff E">E</span></td>
+  <td><span class="ttag">Two Pointers</span><span class="ttag">Sorting</span></td>
+  <td>Python</td>
+  <td>2 &#10004;</td>
+  <td class="muted">2026-05-27</td>
+</tr>
+<tr>
+  <td><a href="https://leetcode.com/problems/917/" target="_blank">#917</a></td>
+  <td>Reverse Only Letters</td>
+  <td><span class="diff E">E</span></td>
+  <td><span class="ttag">Two Pointers</span><span class="ttag">String</span></td>
+  <td>Python</td>
+  <td>1 </td>
+  <td class="muted">2026-05-27</td>
+</tr>
+<tr>
+  <td><a href="https://leetcode.com/problems/918/" target="_blank">#918</a></td>
+  <td>Maximum Sum Circular Subarray</td>
+  <td><span class="diff M">M</span></td>
+  <td><span class="ttag">DP</span></td>
+  <td>Python</td>
+  <td>1 </td>
+  <td class="muted">2025-05-16</td>
+</tr>
+<tr>
+  <td><a href="https://leetcode.com/problems/922/" target="_blank">#922</a></td>
+  <td>Sort Array By Parity II</td>
+  <td><span class="diff E">E</span></td>
+  <td><span class="ttag">Two Pointers</span><span class="ttag">Sorting</span></td>
+  <td>Python</td>
+  <td>3 &#10004;</td>
+  <td class="muted">2026-05-27</td>
+</tr>
+<tr>
+  <td><a href="https://leetcode.com/problems/931/" target="_blank">#931</a></td>
+  <td>Minimum Falling Path Sum</td>
+  <td><span class="diff M">M</span></td>
+  <td><span class="ttag">DP</span><span class="ttag">Matrix</span></td>
+  <td>Python</td>
+  <td>1 </td>
+  <td class="muted">2025-05-17</td>
+</tr>
+<tr>
+  <td><a href="https://leetcode.com/problems/983/" target="_blank">#983</a></td>
+  <td>Minimum Cost For Tickets</td>
+  <td><span class="diff M">M</span></td>
+  <td><span class="ttag">DP</span></td>
+  <td>Python</td>
+  <td>1 </td>
+  <td class="muted">2025-05-19</td>
+</tr>
+<tr>
+  <td><a href="https://leetcode.com/problems/1137/" target="_blank">#1137</a></td>
+  <td>N-th Tribonacci Number</td>
+  <td><span class="diff E">E</span></td>
+  <td><span class="ttag">DP</span></td>
+  <td>Python</td>
+  <td>1 </td>
+  <td class="muted">2025-05-15</td>
+</tr>
+<tr>
+  <td><a href="https://leetcode.com/problems/1143/" target="_blank">#1143</a></td>
+  <td>Longest Common Subsequence</td>
+  <td><span class="diff M">M</span></td>
+  <td><span class="ttag">DP</span><span class="ttag">String</span></td>
+  <td>Python</td>
+  <td>1 </td>
+  <td class="muted">2025-05-13</td>
+</tr>
+<tr>
+  <td><a href="https://leetcode.com/problems/1155/" target="_blank">#1155</a></td>
+  <td>Number of Dice Rolls With Target Sum</td>
+  <td><span class="diff M">M</span></td>
+  <td><span class="ttag">DP</span></td>
+  <td>Python</td>
+  <td>1 </td>
+  <td class="muted">2025-05-18</td>
+</tr>
+<tr>
+  <td><a href="https://leetcode.com/problems/1176/" target="_blank">#1176</a></td>
+  <td>Diet Plan Performance</td>
+  <td><span class="diff E">E</span></td>
+  <td><span class="ttag">Sliding Window</span></td>
+  <td>Python</td>
+  <td>4 &#10004;</td>
+  <td class="muted">2026-05-20</td>
+</tr>
+<tr>
+  <td><a href="https://leetcode.com/problems/1220/" target="_blank">#1220</a></td>
+  <td>Count Vowels Permutation</td>
+  <td><span class="diff H">H</span></td>
+  <td><span class="ttag">DP</span></td>
+  <td>Python</td>
+  <td>2 &#10004;</td>
+  <td class="muted">2025-05-18</td>
+</tr>
+<tr>
+  <td><a href="https://leetcode.com/problems/1335/" target="_blank">#1335</a></td>
+  <td>Minimum Difficulty of a Job Schedule</td>
+  <td><span class="diff H">H</span></td>
+  <td><span class="ttag">DP</span></td>
+  <td>Python</td>
+  <td>1 </td>
+  <td class="muted">2025-05-15</td>
+</tr>
+<tr>
+  <td><a href="https://leetcode.com/problems/1473/" target="_blank">#1473</a></td>
+  <td>Paint House III</td>
+  <td><span class="diff H">H</span></td>
+  <td><span class="ttag">DP</span></td>
+  <td>Python</td>
+  <td>1 </td>
+  <td class="muted">2025-05-18</td>
+</tr>
+<tr>
+  <td><a href="https://leetcode.com/problems/1652/" target="_blank">#1652</a></td>
+  <td>Defuse the Bomb</td>
+  <td><span class="diff E">E</span></td>
+  <td><span class="ttag">Sliding Window</span></td>
+  <td>Python</td>
+  <td>1 </td>
+  <td class="muted">2026-05-20</td>
+</tr>
+<tr>
+  <td><a href="https://leetcode.com/problems/1763/" target="_blank">#1763</a></td>
+  <td>Longest Nice Substring</td>
+  <td><span class="diff E">E</span></td>
+  <td><span class="ttag">Sliding Window</span><span class="ttag">Divide & Conquer</span></td>
+  <td>Python</td>
+  <td>1 </td>
+  <td class="muted">2026-05-20</td>
+</tr>
+<tr>
+  <td><a href="https://leetcode.com/problems/1768/" target="_blank">#1768</a></td>
+  <td>Merge Strings Alternately</td>
+  <td><span class="diff E">E</span></td>
+  <td><span class="ttag">Two Pointers</span><span class="ttag">String</span></td>
+  <td>Go</td>
+  <td>2 &#10004;</td>
+  <td class="muted">2025-10-23</td>
+</tr>
+<tr>
+  <td><a href="https://leetcode.com/problems/1876/" target="_blank">#1876</a></td>
+  <td>Substrings of Size Three w/ Distinct</td>
+  <td><span class="diff E">E</span></td>
+  <td><span class="ttag">Sliding Window</span><span class="ttag">Hash</span></td>
+  <td>Python</td>
+  <td>1 </td>
+  <td class="muted">2026-05-21</td>
+</tr>
+<tr>
+  <td><a href="https://leetcode.com/problems/1984/" target="_blank">#1984</a></td>
+  <td>Minimum Difference Between Highest and Lowest</td>
+  <td><span class="diff E">E</span></td>
+  <td><span class="ttag">Sliding Window</span><span class="ttag">Sorting</span></td>
+  <td>Python</td>
+  <td>2 &#10004;</td>
+  <td class="muted">2026-05-21</td>
+</tr>
+<tr>
+  <td><a href="https://leetcode.com/problems/2269/" target="_blank">#2269</a></td>
+  <td>Find the K-Beauty of a Number</td>
+  <td><span class="diff E">E</span></td>
+  <td><span class="ttag">Sliding Window</span><span class="ttag">String</span></td>
+  <td>Python</td>
+  <td>1 </td>
+  <td class="muted">2026-05-24</td>
+</tr>
+<tr>
+  <td><a href="https://leetcode.com/problems/3364/" target="_blank">#3364</a></td>
+  <td>Min Positive Sum Subarray</td>
+  <td><span class="diff E">E</span></td>
+  <td><span class="ttag">Sliding Window</span></td>
+  <td>Python</td>
+  <td>1 </td>
+  <td class="muted">2026-05-21</td>
+</tr>
+<tr>
+  <td><a href="https://leetcode.com/problems/3931/" target="_blank">#3931</a></td>
+  <td>Check Adjacent Digit Differences</td>
+  <td><span class="diff E">E</span></td>
+  <td><span class="ttag">Math</span></td>
+  <td>Python</td>
+  <td>1 </td>
+  <td class="muted">2026-05-22</td>
+</tr>
+</tbody>
+</table>
+
+<footer>
+<p><strong>Previous Reports:</strong></p>
+<ul><li><a href="reports/report-2026-05-27.html">2026-05-27</a></li><li><a href="reports/report-2026-05-26.html">2026-05-26</a></li><li><a href="reports/report-2026-05-22.html">2026-05-22</a></li></ul>
+<p style="margin-top:12px">Generated by Claude &middot; Data: filesystem scan + git history</p>
+</footer>
+
+</div>
+<script>
+function toggleTheme() {
+  var html = document.documentElement;
+  var btn = document.querySelector('.theme-toggle');
+  if (html.getAttribute('data-theme') === 'dark') {
+    html.setAttribute('data-theme','light'); btn.innerHTML = '&#127769; Dark';
+    localStorage.setItem('lc-report-theme','light');
+  } else {
+    html.setAttribute('data-theme','dark'); btn.innerHTML = '&#9728; Light';
+    localStorage.setItem('lc-report-theme','dark');
+  }
+}
+(function() {
+  if (localStorage.getItem('lc-report-theme') === 'light') {
+    document.documentElement.setAttribute('data-theme','light');
+    document.querySelector('.theme-toggle').innerHTML = '&#127769; Dark';
+  }
+})();
+</script>
+</body>
+</html>
