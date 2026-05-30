@@ -19,12 +19,12 @@ The guide's purpose: teach the user programming concepts across **Python, Go, Ty
 4. **Update symlink**: `ln -sf lang-guides/lang-guide-YYYY-MM-DD.html lang-guide.html`.
 5. Same-day re-runs overwrite.
 
-Include generation date in header. In the footer, list **all previous guides** found by running `ls lang-guides/lang-guide-*.html | sort -r`. For each file, extract the date from the filename and compute the day number (Day 1, Day 2, ...) based on chronological order. Link each entry using a relative path (e.g., `lang-guide-2026-05-29.html` — no `lang-guides/` prefix since the current file is already inside `lang-guides/`). Mark the current day's entry with "(current)". Example footer list:
+Include generation date in header. In the footer, list **all previous guides** found by running `ls lang-guides/lang-guide-*.html | sort -r`. For each file, extract the date from the filename and compute the day number (Day 1, Day 2, ...) based on chronological order. Link each entry using `lang-guides/` prefix (e.g., `lang-guides/lang-guide-2026-05-29.html`) so links work when the file is opened via the root symlink `lang-guide.html`. Mark the current day's entry with "(current)". Example footer list:
 ```html
-<li><a href="lang-guide-2026-05-30.html">2026-05-30</a> (current &mdash; Day 2)</li>
-<li><a href="lang-guide-2026-05-29.html">2026-05-29</a> (Day 1)</li>
+<li><a href="lang-guides/lang-guide-2026-05-30.html">2026-05-30</a> (current &mdash; Day 2)</li>
+<li><a href="lang-guides/lang-guide-2026-05-29.html">2026-05-29</a> (Day 1)</li>
 ```
-Also update the footers of all existing previous guides to include links to the new guide being generated (so all guides cross-link to each other with correct relative paths).
+Also update the footers of all existing previous guides to include links to the new guide being generated (so all guides cross-link to each other).
 
 ## Step 0: Gather State
 

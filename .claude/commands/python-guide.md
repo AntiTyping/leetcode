@@ -18,11 +18,11 @@ The guide's purpose: teach the user Python programming concepts through progress
 4. **Update symlink**: `ln -sf python-guides/python-guide-YYYY-MM-DD.html python-guide.html`.
 5. Same-day re-runs overwrite.
 
-Include generation date in header. In the footer, list **all previous guides** found by running `ls python-guides/python-guide-*.html | sort -r`. For each file, extract the date from the filename and compute the day number (Day 1, Day 2, ...) based on chronological order. Link each entry using a relative path (e.g., `python-guide-2026-05-28.html` — no `python-guides/` prefix since the current file is already inside `python-guides/`). Mark the current day's entry with "(current)". Example footer list:
+Include generation date in header. In the footer, list **all previous guides** found by running `ls python-guides/python-guide-*.html | sort -r`. For each file, extract the date from the filename and compute the day number (Day 1, Day 2, ...) based on chronological order. Link each entry using `python-guides/` prefix (e.g., `python-guides/python-guide-2026-05-28.html`) so links work when the file is opened via the root symlink `python-guide.html`. Mark the current day's entry with "(current)". Example footer list:
 ```html
-<li><a href="python-guide-2026-05-30.html">2026-05-30</a> (current &mdash; Day 3)</li>
-<li><a href="python-guide-2026-05-29.html">2026-05-29</a> (Day 2)</li>
-<li><a href="python-guide-2026-05-28.html">2026-05-28</a> (Day 1)</li>
+<li><a href="python-guides/python-guide-2026-05-30.html">2026-05-30</a> (current &mdash; Day 3)</li>
+<li><a href="python-guides/python-guide-2026-05-29.html">2026-05-29</a> (Day 2)</li>
+<li><a href="python-guides/python-guide-2026-05-28.html">2026-05-28</a> (Day 1)</li>
 ```
 
 ## Step 0: Gather State

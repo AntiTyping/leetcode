@@ -23,13 +23,13 @@ Guides are saved with dates so you can track what was recommended at each point 
 4. **Update the symlink** so `guide.html` always points to the latest: `ln -sf guides/guide-YYYY-MM-DD.html guide.html`.
 5. If a guide for today's date already exists, overwrite it (same day re-runs replace, not accumulate).
 
-The guide header should display the generation date. In the footer, list **all previous guides** found by running `ls guides/guide-*.html | sort -r`. Link each entry using a relative path (e.g., `guide-2026-05-29.html` — no `guides/` prefix since the current file is already inside `guides/`). Mark the current guide's entry with "(current)". Example footer list:
+The guide header should display the generation date. In the footer, list **all previous guides** found by running `ls guides/guide-*.html | sort -r`. Link each entry using `guides/` prefix (e.g., `guides/guide-2026-05-29.html`) so links work when the file is opened via the root symlink `guide.html`. Mark the current guide's entry with "(current)". Example footer list:
 ```html
-<li><a href="guide-2026-05-30.html">2026-05-30</a> (current)</li>
-<li><a href="guide-2026-05-29.html">2026-05-29</a></li>
-<li><a href="guide-2026-05-28.html">2026-05-28</a></li>
+<li><a href="guides/guide-2026-05-30.html">2026-05-30</a> (current)</li>
+<li><a href="guides/guide-2026-05-29.html">2026-05-29</a></li>
+<li><a href="guides/guide-2026-05-28.html">2026-05-28</a></li>
 ```
-Also update the footers of all existing previous guides to include a link to the new guide being generated (so all guides cross-link to each other with correct relative paths).
+Also update the footers of all existing previous guides to include a link to the new guide being generated (so all guides cross-link to each other).
 
 ## Step 0: Gather History and Review State
 
