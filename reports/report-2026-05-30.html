@@ -1,0 +1,1651 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<title>LeetCode Performance Report &mdash; 2026-05-30</title>
+<style>
+:root {
+  --bg:#0d1117; --surface:#161b22; --surface2:#1c2129; --border:#30363d;
+  --text:#e6edf3; --muted:#8b949e; --accent:#58a6ff;
+  --easy:#3fb950; --easy-bg:rgba(63,185,80,0.15);
+  --medium:#d29922; --medium-bg:rgba(210,153,34,0.18);
+  --hard:#f85149; --hard-bg:rgba(248,81,73,0.15);
+  --good:#3fb950; --bad:#f85149;
+}
+[data-theme="light"] {
+  --bg:#fff; --surface:#f6f8fa; --surface2:#eef1f5; --border:#d0d7de;
+  --text:#1f2328; --muted:#656d76; --accent:#0969da;
+  --easy:#1a7f37; --easy-bg:rgba(26,127,55,0.12);
+  --medium:#9a6700; --medium-bg:rgba(154,103,0,0.15);
+  --hard:#cf222e; --hard-bg:rgba(207,34,46,0.1);
+}
+* { box-sizing:border-box; margin:0; padding:0; }
+body {
+  font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;
+  background:var(--bg); color:var(--text); line-height:1.6; padding:32px 24px 60px;
+}
+.container { max-width:1100px; margin:0 auto; }
+.theme-toggle {
+  position:fixed; top:16px; right:16px; background:var(--surface);
+  border:1px solid var(--border); color:var(--text); border-radius:8px;
+  padding:6px 14px; cursor:pointer; font-size:13px; z-index:200;
+}
+header { margin-bottom:32px; }
+h1 { font-size:30px; margin-bottom:4px; }
+header .date { color:var(--muted); font-size:14px; }
+h2 { font-size:20px; margin:40px 0 14px; padding-bottom:8px; border-bottom:1px solid var(--border); }
+h3 { font-size:16px; margin:18px 0 10px; }
+.metrics { display:grid; grid-template-columns:repeat(5,1fr); gap:12px; margin-bottom:24px; }
+.metric { background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:18px 16px; }
+.metric .label { font-size:12px; color:var(--muted); text-transform:uppercase; letter-spacing:.5px; }
+.metric .value { font-size:30px; font-weight:700; margin-top:4px; }
+.metric.easy .value { color:var(--easy); }
+.metric.medium .value { color:var(--medium); }
+.metric.hard .value { color:var(--hard); }
+.split2 { display:grid; grid-template-columns:1fr 1fr; gap:24px; }
+.card { background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:20px 24px; }
+.donut { display:flex; align-items:center; gap:24px; }
+.donut svg { flex-shrink:0; }
+.donut .legend { display:flex; flex-direction:column; gap:8px; font-size:14px; }
+.legend-row { display:flex; align-items:center; gap:10px; }
+.dot { width:14px; height:14px; border-radius:3px; flex-shrink:0; }
+.dot.E { background:var(--easy); } .dot.M { background:var(--medium); } .dot.H { background:var(--hard); }
+.tl-row { display:grid; grid-template-columns:100px 1fr 40px; gap:12px; align-items:center; padding:4px 0; }
+.tl-date { font-family:'SF Mono',Consolas,monospace; font-size:12px; color:var(--muted); }
+.tl-bar { display:flex; height:14px; gap:1px; }
+.tl-bar .seg { height:100%; border-radius:2px; }
+.tl-bar .seg-E { background:var(--easy); } .tl-bar .seg-M { background:var(--medium); } .tl-bar .seg-H { background:var(--hard); }
+.tl-count { font-weight:600; font-size:13px; text-align:right; }
+.topic-row { display:grid; grid-template-columns:160px 1fr 40px; gap:10px; align-items:center; margin-bottom:6px; }
+.topic-name { font-size:13px; }
+.topic-bar-wrap { background:var(--surface2); height:12px; border-radius:6px; overflow:hidden; }
+.topic-bar { background:var(--accent); height:100%; border-radius:6px; }
+.topic-count { font-weight:600; font-size:13px; text-align:right; }
+.bullet { display:flex; align-items:center; gap:10px; padding:5px 0; font-size:14px; }
+.badge-c { display:inline-flex; align-items:center; justify-content:center; min-width:32px; padding:3px 8px; border-radius:14px; font-weight:700; font-size:12px; background:var(--easy-bg); color:var(--easy); }
+.badge-c.moderate { background:var(--medium-bg); color:var(--medium); }
+.badge-c.weak { background:var(--medium-bg); color:var(--medium); opacity:.7; }
+.badge-c.missing { background:var(--hard-bg); color:var(--hard); }
+.diff { display:inline-block; padding:2px 8px; border-radius:10px; font-size:11px; font-weight:700; }
+.diff.E { background:var(--easy-bg); color:var(--easy); } .diff.M { background:var(--medium-bg); color:var(--medium); } .diff.H { background:var(--hard-bg); color:var(--hard); }
+.diff.U { background:rgba(139,148,158,0.15); color:var(--muted); }
+.ttag { display:inline-block; font-size:10px; font-weight:600; padding:1px 7px; border-radius:8px; background:rgba(56,139,253,0.12); color:var(--accent); margin-right:4px; }
+table.inventory { width:100%; border-collapse:collapse; font-size:13px; background:var(--surface); border:1px solid var(--border); border-radius:10px; overflow:hidden; }
+table.inventory th, table.inventory td { padding:8px 12px; text-align:left; border-bottom:1px solid var(--border); }
+table.inventory th { background:var(--surface2); font-weight:600; font-size:12px; text-transform:uppercase; letter-spacing:.5px; color:var(--muted); }
+table.inventory tr:hover td { background:var(--surface2); }
+table.inventory a { color:var(--accent); text-decoration:none; }
+.muted { color:var(--muted); font-size:12px; font-family:'SF Mono',Consolas,monospace; }
+.next-table { width:100%; border-collapse:collapse; font-size:13px; background:var(--surface); border:1px solid var(--border); border-radius:10px; overflow:hidden; }
+.next-table th, .next-table td { padding:8px 12px; text-align:left; border-bottom:1px solid var(--border); }
+.next-table th { background:var(--surface2); font-weight:600; font-size:12px; text-transform:uppercase; letter-spacing:.5px; color:var(--muted); }
+.next-table td:nth-child(1) { font-weight:600; }
+.phase { background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:18px 22px; margin-bottom:14px; }
+.phase h3 { margin-top:0; color:var(--accent); }
+.phase-probs { display:flex; flex-wrap:wrap; gap:6px; margin-top:10px; }
+.prob { display:inline-block; padding:3px 9px; border-radius:5px; font-size:11px; font-weight:600; text-decoration:none; font-family:'SF Mono',Consolas,monospace; }
+.prob.diff-E { background:var(--easy-bg); color:var(--easy); } .prob.diff-M { background:var(--medium-bg); color:var(--medium); } .prob.diff-H { background:var(--hard-bg); color:var(--hard); }
+ul.strengths { padding-left:20px; } ul.strengths li { margin-bottom:8px; font-size:14px; }
+.code-note { background:var(--surface2); padding:10px 14px; border-radius:6px; font-size:13px; margin:6px 0; border-left:3px solid var(--accent); }
+.code-note.bad { border-left-color:var(--bad); } .code-note.good { border-left-color:var(--good); }
+.code-note code { font-family:'SF Mono',Consolas,monospace; background:var(--surface); padding:1px 6px; border-radius:3px; }
+footer { margin-top:48px; padding-top:24px; border-top:1px solid var(--border); font-size:12px; color:var(--muted); }
+footer ul { padding-left:20px; margin-top:8px; } footer a { color:var(--accent); text-decoration:none; }
+</style>
+</head>
+<body>
+<button class="theme-toggle" onclick="toggleTheme()">&#9728; Light</button>
+<div class="container">
+
+<header>
+  <h1>LeetCode Performance Report</h1>
+  <p class="date">Andy Pliszka &middot; Generated 2026-05-30</p>
+  <p style="color:var(--easy); font-size:14px"><strong>+4 problems</strong> since 2026-05-28 (108 &rarr; 112)</p>
+</header>
+
+<h2>Key Metrics</h2>
+<section class="metrics">
+  <div class="metric"><div class="label">Total Solved</div><div class="value">112</div></div>
+  <div class="metric easy"><div class="label">Easy</div><div class="value">57</div></div>
+  <div class="metric medium"><div class="label">Medium</div><div class="value">48</div></div>
+  <div class="metric hard"><div class="label">Hard</div><div class="value">7</div></div>
+  <div class="metric"><div class="label">Multi-Approach</div><div class="value">~50</div></div>
+</section>
+
+<h2>Difficulty Distribution</h2>
+<div class="split2">
+<div class="card">
+<div class="donut">
+<svg viewBox="0 0 140 140" width="140" height="140">
+  <circle cx="70" cy="70" r="60" fill="none" stroke="var(--surface2)" stroke-width="14"/>
+  <circle cx="70" cy="70" r="60" fill="none" stroke="var(--easy)" stroke-width="14"
+    stroke-dasharray="191.89 185.10" stroke-dashoffset="0" transform="rotate(-90 70 70)"/>
+  <circle cx="70" cy="70" r="60" fill="none" stroke="var(--medium)" stroke-width="14"
+    stroke-dasharray="161.73 215.26" stroke-dashoffset="-191.89" transform="rotate(-90 70 70)"/>
+  <circle cx="70" cy="70" r="60" fill="none" stroke="var(--hard)" stroke-width="14"
+    stroke-dasharray="23.75 353.24" stroke-dashoffset="-353.62" transform="rotate(-90 70 70)"/>
+  <text x="70" y="72" text-anchor="middle" font-size="22" font-weight="700" fill="currentColor">112</text>
+  <text x="70" y="88" text-anchor="middle" font-size="10" fill="var(--muted)">SOLVED</text>
+</svg>
+<div class="legend">
+  <div class="legend-row"><span class="dot E"></span> Easy: 57 (50.9%)</div>
+  <div class="legend-row"><span class="dot M"></span> Medium: 48 (42.9%)</div>
+  <div class="legend-row"><span class="dot H"></span> Hard: 7 (6.3%)</div>
+</div>
+</div>
+</div>
+<div class="card">
+  <h3 style="margin-top:0">Target Distribution</h3>
+  <p style="font-size:14px; margin-bottom:10px">For interview readiness, aim for a 25/55/20 split (Easy/Medium/Hard).</p>
+  <p style="font-size:13px; color:var(--muted)">Current: 50.9% Easy, 42.9% Medium, 6.3% Hard.</p>
+  <p style="font-size:13px; color:var(--muted); margin-top:10px">Hard is still the biggest gap (6.3% vs 20% target). Continue ramping Medium and Hard problems.</p>
+</div>
+</div>
+
+<h2>Activity Timeline</h2>
+<div class="card">
+
+<h3 style="margin-top:0; margin-bottom:8px; color:var(--muted); font-size:13px">May 2025</h3>
+<div class="tl-row">
+  <div class="tl-date">2025-05-13</div>
+  <div class="tl-bar">
+    <span class="seg seg-E" style="width:78px"></span>
+  </div>
+  <div class="tl-count">3</div>
+</div>
+<div class="tl-row">
+  <div class="tl-date">2025-05-15</div>
+  <div class="tl-bar">
+    <span class="seg seg-E" style="width:234px"></span>
+  </div>
+  <div class="tl-count">9</div>
+</div>
+<div class="tl-row">
+  <div class="tl-date">2025-05-16</div>
+  <div class="tl-bar">
+    <span class="seg seg-E" style="width:104px"></span>
+  </div>
+  <div class="tl-count">4</div>
+</div>
+<div class="tl-row">
+  <div class="tl-date">2025-05-17</div>
+  <div class="tl-bar">
+    <span class="seg seg-E" style="width:78px"></span>
+  </div>
+  <div class="tl-count">3</div>
+</div>
+<div class="tl-row">
+  <div class="tl-date">2025-05-18</div>
+  <div class="tl-bar">
+    <span class="seg seg-E" style="width:104px"></span>
+  </div>
+  <div class="tl-count">4</div>
+</div>
+<div class="tl-row">
+  <div class="tl-date">2025-05-19</div>
+  <div class="tl-bar">
+    <span class="seg seg-E" style="width:78px"></span>
+  </div>
+  <div class="tl-count">3</div>
+</div>
+
+<div style="border-top:1px dashed var(--border); margin:10px 0"></div>
+
+<div class="tl-row">
+  <div class="tl-date">2025-10-23</div>
+  <div class="tl-bar">
+    <span class="seg seg-E" style="width:26px"></span>
+  </div>
+  <div class="tl-count">1</div>
+</div>
+
+<div style="border-top:1px dashed var(--border); margin:10px 0"></div>
+<h3 style="margin-top:0; margin-bottom:8px; color:var(--muted); font-size:13px">May 2026</h3>
+
+<div class="tl-row">
+  <div class="tl-date">2026-05-17</div>
+  <div class="tl-bar">
+    <span class="seg seg-E" style="width:130px"></span>
+  </div>
+  <div class="tl-count">5</div>
+</div>
+<div class="tl-row">
+  <div class="tl-date">2026-05-18</div>
+  <div class="tl-bar">
+    <span class="seg seg-E" style="width:78px"></span>
+  </div>
+  <div class="tl-count">3</div>
+</div>
+<div class="tl-row">
+  <div class="tl-date">2026-05-20</div>
+  <div class="tl-bar">
+    <span class="seg seg-E" style="width:104px"></span>
+  </div>
+  <div class="tl-count">4</div>
+</div>
+<div class="tl-row">
+  <div class="tl-date">2026-05-21</div>
+  <div class="tl-bar">
+    <span class="seg seg-E" style="width:260px"></span>
+  </div>
+  <div class="tl-count">10</div>
+</div>
+<div class="tl-row">
+  <div class="tl-date">2026-05-22</div>
+  <div class="tl-bar">
+    <span class="seg seg-E" style="width:130px"></span>
+  </div>
+  <div class="tl-count">5</div>
+</div>
+<div class="tl-row">
+  <div class="tl-date">2026-05-23</div>
+  <div class="tl-bar">
+    <span class="seg seg-E" style="width:52px"></span>
+  </div>
+  <div class="tl-count">2</div>
+</div>
+<div class="tl-row">
+  <div class="tl-date">2026-05-24</div>
+  <div class="tl-bar">
+    <span class="seg seg-E" style="width:130px"></span>
+  </div>
+  <div class="tl-count">5</div>
+</div>
+<div class="tl-row">
+  <div class="tl-date">2026-05-25</div>
+  <div class="tl-bar">
+    <span class="seg seg-E" style="width:234px"></span>
+  </div>
+  <div class="tl-count">9</div>
+</div>
+<div class="tl-row">
+  <div class="tl-date">2026-05-26</div>
+  <div class="tl-bar">
+    <span class="seg seg-E" style="width:260px"></span>
+  </div>
+  <div class="tl-count">10</div>
+</div>
+<div class="tl-row">
+  <div class="tl-date">2026-05-27</div>
+  <div class="tl-bar">
+    <span class="seg seg-E" style="width:208px"></span>
+  </div>
+  <div class="tl-count">8</div>
+</div>
+<div class="tl-row">
+  <div class="tl-date">2026-05-28</div>
+  <div class="tl-bar">
+    <span class="seg seg-E" style="width:130px"></span>
+  </div>
+  <div class="tl-count">5</div>
+</div>
+<div class="tl-row">
+  <div class="tl-date">2026-05-29</div>
+  <div class="tl-bar">
+    <span class="seg seg-E" style="width:156px"></span>
+  </div>
+  <div class="tl-count">6</div>
+</div>
+</div>
+
+<h2>Topic Coverage</h2>
+<div class="card">
+
+<div class="topic-row">
+  <div class="topic-name">Dynamic Programming</div>
+  <div class="topic-bar-wrap"><div class="topic-bar" style="width:100%"></div></div>
+  <div class="topic-count">34</div>
+</div>
+<div class="topic-row">
+  <div class="topic-name">Two Pointers</div>
+  <div class="topic-bar-wrap"><div class="topic-bar" style="width:52.94%"></div></div>
+  <div class="topic-count">18</div>
+</div>
+<div class="topic-row">
+  <div class="topic-name">Hash Map / Set</div>
+  <div class="topic-bar-wrap"><div class="topic-bar" style="width:44.12%"></div></div>
+  <div class="topic-count">15</div>
+</div>
+<div class="topic-row">
+  <div class="topic-name">String</div>
+  <div class="topic-bar-wrap"><div class="topic-bar" style="width:32.35%"></div></div>
+  <div class="topic-count">11</div>
+</div>
+<div class="topic-row">
+  <div class="topic-name">Sliding Window</div>
+  <div class="topic-bar-wrap"><div class="topic-bar" style="width:29.41%"></div></div>
+  <div class="topic-count">10</div>
+</div>
+<div class="topic-row">
+  <div class="topic-name">Linked List</div>
+  <div class="topic-bar-wrap"><div class="topic-bar" style="width:14.71%"></div></div>
+  <div class="topic-count">5</div>
+</div>
+<div class="topic-row">
+  <div class="topic-name">Tree / DFS</div>
+  <div class="topic-bar-wrap"><div class="topic-bar" style="width:11.76%"></div></div>
+  <div class="topic-count">4</div>
+</div>
+<div class="topic-row">
+  <div class="topic-name">Prefix Sum</div>
+  <div class="topic-bar-wrap"><div class="topic-bar" style="width:11.76%"></div></div>
+  <div class="topic-count">4</div>
+</div>
+<div class="topic-row">
+  <div class="topic-name">Design</div>
+  <div class="topic-bar-wrap"><div class="topic-bar" style="width:11.76%"></div></div>
+  <div class="topic-count">4</div>
+</div>
+<div class="topic-row">
+  <div class="topic-name">Backtracking</div>
+  <div class="topic-bar-wrap"><div class="topic-bar" style="width:8.82%"></div></div>
+  <div class="topic-count">3</div>
+</div>
+<div class="topic-row">
+  <div class="topic-name">Heap / Priority Queue</div>
+  <div class="topic-bar-wrap"><div class="topic-bar" style="width:8.82%"></div></div>
+  <div class="topic-count">3</div>
+</div>
+<div class="topic-row">
+  <div class="topic-name">Greedy</div>
+  <div class="topic-bar-wrap"><div class="topic-bar" style="width:8.82%"></div></div>
+  <div class="topic-count">3</div>
+</div>
+<div class="topic-row">
+  <div class="topic-name">Graph / BFS / DFS</div>
+  <div class="topic-bar-wrap"><div class="topic-bar" style="width:5.88%"></div></div>
+  <div class="topic-count">2</div>
+</div>
+<div class="topic-row">
+  <div class="topic-name">Intervals</div>
+  <div class="topic-bar-wrap"><div class="topic-bar" style="width:5.88%"></div></div>
+  <div class="topic-count">2</div>
+</div>
+<div class="topic-row">
+  <div class="topic-name">Binary Search</div>
+  <div class="topic-bar-wrap"><div class="topic-bar" style="width:5.88%"></div></div>
+  <div class="topic-count">2</div>
+</div>
+<div class="topic-row">
+  <div class="topic-name">Math</div>
+  <div class="topic-bar-wrap"><div class="topic-bar" style="width:5.88%"></div></div>
+  <div class="topic-count">2</div>
+</div>
+<div class="topic-row">
+  <div class="topic-name">Stack</div>
+  <div class="topic-bar-wrap"><div class="topic-bar" style="width:2.94%"></div></div>
+  <div class="topic-count">1</div>
+</div>
+<div class="topic-row">
+  <div class="topic-name">Trie</div>
+  <div class="topic-bar-wrap"><div class="topic-bar" style="width:0%"></div></div>
+  <div class="topic-count">0</div>
+</div>
+<div class="topic-row">
+  <div class="topic-name">Union-Find</div>
+  <div class="topic-bar-wrap"><div class="topic-bar" style="width:0%"></div></div>
+  <div class="topic-count">0</div>
+</div>
+<div class="topic-row">
+  <div class="topic-name">Bit Manipulation</div>
+  <div class="topic-bar-wrap"><div class="topic-bar" style="width:0%"></div></div>
+  <div class="topic-count">0</div>
+</div>
+<div class="topic-row">
+  <div class="topic-name">Monotonic Stack</div>
+  <div class="topic-bar-wrap"><div class="topic-bar" style="width:0%"></div></div>
+  <div class="topic-count">0</div>
+</div>
+</div>
+
+<h3>Coverage Assessment</h3>
+<div class="split2">
+<div class="card">
+  <h3 style="margin-top:0; color:var(--easy)">Strong (5+)</h3>
+  <div class="bullet"><span class="badge-c">34</span> <strong>Dynamic Programming</strong></div>
+  <div class="bullet"><span class="badge-c">18</span> <strong>Two Pointers</strong></div>
+  <div class="bullet"><span class="badge-c">15</span> <strong>Hash Map / Set</strong></div>
+  <div class="bullet"><span class="badge-c">11</span> <strong>String</strong></div>
+  <div class="bullet"><span class="badge-c">10</span> <strong>Sliding Window</strong></div>
+  <h3 style="color:var(--medium); margin-top:18px">Moderate (3-4)</h3>
+  <div class="bullet"><span class="badge-c moderate">5</span> <strong>Linked List</strong></div>
+  <div class="bullet"><span class="badge-c moderate">4</span> <strong>Tree / DFS</strong></div>
+  <div class="bullet"><span class="badge-c moderate">4</span> <strong>Prefix Sum</strong></div>
+  <div class="bullet"><span class="badge-c moderate">4</span> <strong>Design</strong></div>
+  <div class="bullet"><span class="badge-c moderate">3</span> <strong>Backtracking</strong></div>
+  <div class="bullet"><span class="badge-c moderate">3</span> <strong>Heap / Priority Queue</strong></div>
+  <div class="bullet"><span class="badge-c moderate">3</span> <strong>Greedy</strong></div>
+</div>
+<div class="card">
+  <h3 style="margin-top:0; color:var(--medium); opacity:.7">Weak (1-2)</h3>
+  <div class="bullet"><span class="badge-c weak">2</span> <strong>Graph / BFS / DFS</strong></div>
+  <div class="bullet"><span class="badge-c weak">2</span> <strong>Intervals</strong></div>
+  <div class="bullet"><span class="badge-c weak">2</span> <strong>Binary Search</strong></div>
+  <div class="bullet"><span class="badge-c weak">2</span> <strong>Math</strong></div>
+  <div class="bullet"><span class="badge-c weak">1</span> <strong>Stack</strong></div>
+  <h3 style="color:var(--hard); margin-top:18px">Missing (0)</h3>
+  <div class="bullet"><span class="badge-c missing">0</span> <strong>Trie</strong></div>
+  <div class="bullet"><span class="badge-c missing">0</span> <strong>Union-Find</strong></div>
+  <div class="bullet"><span class="badge-c missing">0</span> <strong>Bit Manipulation</strong></div>
+  <div class="bullet"><span class="badge-c missing">0</span> <strong>Monotonic Stack</strong></div>
+</div>
+</div>
+
+<!-- ==================== STRENGTHS & WEAKNESSES ==================== -->
+<h2>Strengths &amp; Weaknesses</h2>
+<div class="split2">
+
+  <!-- STRENGTHS -->
+  <div class="card">
+    <h3>Strengths</h3>
+    <ul class="strengths">
+      <li>
+        <strong>Dynamic Programming Mastery (34 problems)</strong>
+        <p>Deep coverage across patterns: 1D DP (Climbing Stairs, House Robber, Coin Change), 2D DP (Unique Paths, Paint House, LCS), state machine DP (Stock series with cooldown, transaction fee, unlimited transactions), and interval DP (Palindromic Subsequence). The Stock series alone covers 5 variants. Also solved Hard DP: Paint House II (#265), Paint House III (#1473), Stock IV (#188), Job Schedule (#1335).</p>
+      </li>
+      <li>
+        <strong>Two Pointers Expertise (18 problems)</strong>
+        <p>Strong coverage of fast/slow pointers (Linked List Cycle, Middle of LL, Happy Number), converging pointers (Container With Most Water, 3Sum, Valid Palindrome), and read/write pointers (Move Zeroes, Remove Duplicates, Sort By Parity). Multi-approach exploration shows deep understanding.</p>
+      </li>
+      <li>
+        <strong>Hash Map Fluency (15 problems)</strong>
+        <p>Effective use of frequency counting (Group Anagrams, Top K Frequent), prefix sum maps (Subarray Sum, Contiguous Array), and set operations (Intersection). Comfortable with defaultdict, Counter, and manual counting.</p>
+      </li>
+      <li>
+        <strong>Multi-Approach Discipline (~50 problems)</strong>
+        <p>Nearly half of all solutions explore 2+ approaches. Problems like #242 Valid Anagram (6 files!), #557 Reverse Words (5 files), and #347 Top K (4 files) show systematic exploration of brute force &rarr; optimized &rarr; alternative.</p>
+      </li>
+      <li>
+        <strong>Sliding Window Pattern (10 problems)</strong>
+        <p>Good coverage of fixed-size windows (Max Average, Diet Plan, K Scores) and variable-size windows (Min Size Subarray Sum, Longest Substring Without Repeating).</p>
+      </li>
+    </ul>
+  </div>
+
+  <!-- WEAKNESSES -->
+  <div class="card">
+    <h3>Weaknesses / Gaps</h3>
+    <ul class="strengths">
+      <li>
+        <strong>No Stack Problems</strong>
+        <p>Only #844 Backspace String Compare touches stacks, and it uses a two-pointer approach as the primary. Missing critical patterns: monotonic stack, next greater element, balanced parentheses, calculator problems. This is a TOP interview topic.</p>
+      </li>
+      <li>
+        <strong>No Trie Problems</strong>
+        <p>Tries are tested in ~5-10% of interviews. Missing: Implement Trie, Word Search II, Autocomplete.</p>
+      </li>
+      <li>
+        <strong>Only 2 Binary Search Problems (#4, #704)</strong>
+        <p>#704 is the basic template and #4 is one of the hardest problems on LeetCode. Missing the critical middle ground: search in rotated arrays, search in 2D matrix, binary search on answer.</p>
+      </li>
+      <li>
+        <strong>Only 2 Graph Problems (#200, #286)</strong>
+        <p>Missing topological sort (Course Schedule), graph cloning, connected components, shortest paths. Graphs appear in 15-20% of interviews.</p>
+      </li>
+      <li>
+        <strong>No Union-Find or Bit Manipulation</strong>
+        <p>Two commonly tested topics with zero coverage. Union-Find: critical for connected components, network connectivity. Bit manipulation: space-efficient solutions, XOR tricks.</p>
+      </li>
+      <li>
+        <strong>Tree Depth Limited (4 problems)</strong>
+        <p>Only basic traversals. Missing BST validation, LCA, serialize/deserialize, path sum variants.</p>
+      </li>
+    </ul>
+  </div>
+
+</div>
+
+<!-- ==================== CODE QUALITY ==================== -->
+<h2>Code Quality Assessment</h2>
+<div class="card">
+  <h3>Positives</h3>
+  <div class="code-note good">Clean variable naming across solutions &mdash; descriptive names like <code>best_so_far</code>, <code>quick_select</code></div>
+  <div class="code-note good">Multi-approach exploration shows growth mindset (e.g., brute &rarr; optimized for #121 Stock, #696 Count Binary Substrings)</div>
+  <div class="code-note good">Effective use of Python idioms: <code>Counter</code>, <code>defaultdict</code>, list comprehensions</div>
+  <div class="code-note good">Go solutions show growing multi-language fluency (#242, #246, #170 in Go)</div>
+  <div class="code-note good">TypeScript solutions for #26, #28, #125 demonstrate broadening language skills</div>
+
+  <h3 style="margin-top:24px">Areas for Improvement</h3>
+  <div class="code-note bad"><code>list.pop(0)</code> anti-pattern not observed (good!), but no <code>collections.deque</code> usage for queue operations either</div>
+  <div class="code-note bad">Some files have typos in names: <code>leep.go</code> (should be <code>leet.go</code>), <code>leep_oneline.py</code>, <code>leet_clean..py</code> (double dot)</div>
+  <div class="code-note bad">Inconsistent directory naming: <code>0021. Contains Duplicate</code> has a period, <code>0303-range-sum-query-immutable</code> uses hyphens, <code>0523</code> and <code>0560</code> have no titles</div>
+  <div class="code-note bad">Some solutions could benefit from type hints (Python 3.9+ style)</div>
+  <div class="code-note bad">Go solutions don't always follow <code>gofmt</code> conventions</div>
+</div>
+
+<!-- ==================== ACCELERATED LEARNING PLAN ==================== -->
+<h2>Accelerated Learning Plan</h2>
+
+<div class="phase">
+  <h3>Phase 1 &mdash; Foundation Gaps (Week 1-2): Stack &amp; Binary Search</h3>
+  <div class="phase-probs">
+    <span class="prob diff-E">#20 Valid Parentheses</span>
+    <span class="prob diff-M">#155 Min Stack</span>
+    <span class="prob diff-M">#739 Daily Temperatures</span>
+    <span class="prob diff-H">#84 Largest Rectangle in Histogram</span>
+    <span class="prob diff-M">#33 Search in Rotated Sorted Array</span>
+    <span class="prob diff-M">#153 Find Min in Rotated Sorted Array</span>
+    <span class="prob diff-M">#74 Search a 2D Matrix</span>
+  </div>
+</div>
+
+<div class="phase">
+  <h3>Phase 2 &mdash; Graph &amp; Tree (Week 3-4)</h3>
+  <div class="phase-probs">
+    <span class="prob diff-M">#133 Clone Graph</span>
+    <span class="prob diff-M">#207 Course Schedule</span>
+    <span class="prob diff-M">#547 Number of Provinces</span>
+    <span class="prob diff-E">#226 Invert Binary Tree</span>
+    <span class="prob diff-M">#236 Lowest Common Ancestor</span>
+    <span class="prob diff-M">#98 Validate BST</span>
+    <span class="prob diff-M">#105 Construct Tree from Preorder/Inorder</span>
+  </div>
+</div>
+
+<div class="phase">
+  <h3>Phase 3 &mdash; Trie, Heap &amp; Backtracking (Week 5-6)</h3>
+  <div class="phase-probs">
+    <span class="prob diff-M">#208 Implement Trie</span>
+    <span class="prob diff-M">#211 Add/Search Word</span>
+    <span class="prob diff-E">#1046 Last Stone Weight</span>
+    <span class="prob diff-M">#621 Task Scheduler</span>
+    <span class="prob diff-M">#973 K Closest Points</span>
+    <span class="prob diff-M">#78 Subsets</span>
+    <span class="prob diff-M">#79 Word Search</span>
+  </div>
+</div>
+
+<div class="phase">
+  <h3>Phase 4 &mdash; Integration &amp; Hard Problems (Week 7)</h3>
+  <div class="phase-probs">
+    <span class="prob diff-H">#76 Minimum Window Substring</span>
+    <span class="prob diff-H">#42 Trapping Rain Water</span>
+    <span class="prob diff-H">#124 Binary Tree Maximum Path Sum</span>
+    <span class="prob diff-H">#297 Serialize/Deserialize Binary Tree</span>
+    <span class="prob diff-M">#128 Longest Consecutive Sequence</span>
+  </div>
+</div>
+
+<!-- ==================== NEXT 20 PROBLEMS ==================== -->
+<h2>Next 20 Problems</h2>
+<table class="next-table">
+  <thead>
+    <tr><th>#</th><th>Problem</th><th>Diff</th><th>Topic</th><th>Rationale</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>20</td><td>Valid Parentheses</td><td><span class="diff E">E</span></td><td>Stack</td><td>Classic stack intro &mdash; zero stack coverage</td></tr>
+    <tr><td>155</td><td>Min Stack</td><td><span class="diff M">M</span></td><td>Stack / Design</td><td>Stack + design pattern, constant-time min</td></tr>
+    <tr><td>739</td><td>Daily Temperatures</td><td><span class="diff M">M</span></td><td>Monotonic Stack</td><td>Essential monotonic stack template</td></tr>
+    <tr><td>84</td><td>Largest Rectangle in Histogram</td><td><span class="diff H">H</span></td><td>Monotonic Stack</td><td>Stack mastery &mdash; common Hard interview problem</td></tr>
+    <tr><td>33</td><td>Search in Rotated Sorted Array</td><td><span class="diff M">M</span></td><td>Binary Search</td><td>Modified BS &mdash; tested very frequently</td></tr>
+    <tr><td>153</td><td>Find Min in Rotated Sorted Array</td><td><span class="diff M">M</span></td><td>Binary Search</td><td>Complements #33, same rotated pattern</td></tr>
+    <tr><td>74</td><td>Search a 2D Matrix</td><td><span class="diff M">M</span></td><td>Binary Search</td><td>BS on matrix &mdash; bridges array + BS</td></tr>
+    <tr><td>133</td><td>Clone Graph</td><td><span class="diff M">M</span></td><td>Graph / DFS</td><td>Graph traversal + deep copy fundamentals</td></tr>
+    <tr><td>207</td><td>Course Schedule</td><td><span class="diff M">M</span></td><td>Graph / Topological Sort</td><td>Topological sort &mdash; prerequisite ordering</td></tr>
+    <tr><td>547</td><td>Number of Provinces</td><td><span class="diff M">M</span></td><td>Graph / Union-Find</td><td>Connected components, introduces Union-Find</td></tr>
+    <tr><td>208</td><td>Implement Trie</td><td><span class="diff M">M</span></td><td>Trie</td><td>Build a trie from scratch &mdash; foundational</td></tr>
+    <tr><td>211</td><td>Add/Search Word</td><td><span class="diff M">M</span></td><td>Trie / DFS</td><td>Trie + DFS wildcard matching</td></tr>
+    <tr><td>226</td><td>Invert Binary Tree</td><td><span class="diff E">E</span></td><td>Tree</td><td>Quick tree confidence builder</td></tr>
+    <tr><td>236</td><td>Lowest Common Ancestor</td><td><span class="diff M">M</span></td><td>Tree / DFS</td><td>Classic tree recursion, frequently tested</td></tr>
+    <tr><td>98</td><td>Validate BST</td><td><span class="diff M">M</span></td><td>Tree / DFS</td><td>BST property validation with bounds</td></tr>
+    <tr><td>1046</td><td>Last Stone Weight</td><td><span class="diff E">E</span></td><td>Heap</td><td>Heap basics, straightforward application</td></tr>
+    <tr><td>621</td><td>Task Scheduler</td><td><span class="diff M">M</span></td><td>Heap / Greedy</td><td>Heap + greedy, scheduling pattern</td></tr>
+    <tr><td>78</td><td>Subsets</td><td><span class="diff M">M</span></td><td>Backtracking</td><td>Core backtracking template</td></tr>
+    <tr><td>79</td><td>Word Search</td><td><span class="diff M">M</span></td><td>Backtracking / DFS</td><td>Grid DFS + backtracking, very common</td></tr>
+    <tr><td>76</td><td>Minimum Window Substring</td><td><span class="diff H">H</span></td><td>Sliding Window</td><td>Hard sliding window &mdash; tests mastery</td></tr>
+  </tbody>
+</table>
+
+<!-- ==================== FULL PROBLEM INVENTORY ==================== -->
+<h2>Full Problem Inventory (112 Problems)</h2>
+<table class="inventory">
+  <thead>
+    <tr>
+      <th>#</th>
+      <th>Title</th>
+      <th>Diff</th>
+      <th>Topics</th>
+      <th>Approach</th>
+      <th>Languages</th>
+      <th>Multi?</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>1</td>
+      <td>Two Sum</td>
+      <td><span class="diff E">E</span></td>
+      <td><span class="ttag">Hash Map</span></td>
+      <td class="muted">hash lookup</td>
+      <td>Python, TS</td>
+      <td>&check;</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>Add Two Numbers</td>
+      <td><span class="diff M">M</span></td>
+      <td><span class="ttag">Linked List</span></td>
+      <td class="muted">carry simulation</td>
+      <td>Python</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>3</td>
+      <td>Longest Substring Without Repeating Characters</td>
+      <td><span class="diff M">M</span></td>
+      <td><span class="ttag">Sliding Window</span> <span class="ttag">Hash Map</span></td>
+      <td class="muted">variable window</td>
+      <td>Python</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>4</td>
+      <td>Median of Two Sorted Arrays</td>
+      <td><span class="diff H">H</span></td>
+      <td><span class="ttag">Binary Search</span></td>
+      <td class="muted">partition search</td>
+      <td>Python</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>5</td>
+      <td>Longest Palindromic Substring</td>
+      <td><span class="diff M">M</span></td>
+      <td><span class="ttag">DP</span> <span class="ttag">Two Pointers</span></td>
+      <td class="muted">expand around center / DP</td>
+      <td>Python, Go</td>
+      <td>&check;</td>
+    </tr>
+    <tr>
+      <td>9</td>
+      <td>Palindrome Number</td>
+      <td><span class="diff E">E</span></td>
+      <td><span class="ttag">Math</span></td>
+      <td class="muted">digit reversal</td>
+      <td>Python</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>11</td>
+      <td>Container With Most Water</td>
+      <td><span class="diff M">M</span></td>
+      <td><span class="ttag">Two Pointers</span></td>
+      <td class="muted">converging pointers</td>
+      <td>Python</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>13</td>
+      <td>Roman to Integer</td>
+      <td><span class="diff E">E</span></td>
+      <td><span class="ttag">Hash Map</span> <span class="ttag">String</span></td>
+      <td class="muted">map lookup</td>
+      <td>Python</td>
+      <td>&check;</td>
+    </tr>
+    <tr>
+      <td>15</td>
+      <td>3Sum</td>
+      <td><span class="diff M">M</span></td>
+      <td><span class="ttag">Two Pointers</span> <span class="ttag">Sorting</span></td>
+      <td class="muted">sort + converge</td>
+      <td>Python</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>21</td>
+      <td>Contains Duplicate</td>
+      <td><span class="diff E">E</span></td>
+      <td><span class="ttag">Hash Set</span> <span class="ttag">Sorting</span></td>
+      <td class="muted">set / sort</td>
+      <td>Python, Go</td>
+      <td>&check;</td>
+    </tr>
+    <tr>
+      <td>22</td>
+      <td>Generate Parentheses</td>
+      <td><span class="diff M">M</span></td>
+      <td><span class="ttag">Backtracking</span></td>
+      <td class="muted">recursive generation</td>
+      <td>Python</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>26</td>
+      <td>Remove Duplicates from Sorted Array</td>
+      <td><span class="diff E">E</span></td>
+      <td><span class="ttag">Two Pointers</span></td>
+      <td class="muted">read/write pointers</td>
+      <td>Python, Go, TS, JS, Rust, Ruby</td>
+      <td>&check;</td>
+    </tr>
+    <tr>
+      <td>27</td>
+      <td>Remove Element</td>
+      <td><span class="diff E">E</span></td>
+      <td><span class="ttag">Two Pointers</span></td>
+      <td class="muted">read/write pointers</td>
+      <td>Python, Go, Rust</td>
+      <td>&check;</td>
+    </tr>
+    <tr>
+      <td>28</td>
+      <td>Find Index of First Occurrence</td>
+      <td><span class="diff E">E</span></td>
+      <td><span class="ttag">String</span></td>
+      <td class="muted">substring search</td>
+      <td>Python, Go, TS</td>
+      <td>&check;</td>
+    </tr>
+    <tr>
+      <td>36</td>
+      <td>Valid Sudoku</td>
+      <td><span class="diff M">M</span></td>
+      <td><span class="ttag">Hash Map</span> <span class="ttag">Matrix</span></td>
+      <td class="muted">set validation</td>
+      <td>Python</td>
+      <td>&check;</td>
+    </tr>
+    <tr>
+      <td>45</td>
+      <td>Jump Game II</td>
+      <td><span class="diff M">M</span></td>
+      <td><span class="ttag">Greedy</span> <span class="ttag">DP</span></td>
+      <td class="muted">greedy BFS</td>
+      <td>Python</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>46</td>
+      <td>Permutations</td>
+      <td><span class="diff M">M</span></td>
+      <td><span class="ttag">Backtracking</span></td>
+      <td class="muted">recursive permute</td>
+      <td>Python</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>49</td>
+      <td>Group Anagrams</td>
+      <td><span class="diff M">M</span></td>
+      <td><span class="ttag">Hash Map</span></td>
+      <td class="muted">sorted key grouping</td>
+      <td>Python</td>
+      <td>&check;</td>
+    </tr>
+    <tr>
+      <td>55</td>
+      <td>Jump Game</td>
+      <td><span class="diff M">M</span></td>
+      <td><span class="ttag">Greedy</span> <span class="ttag">DP</span></td>
+      <td class="muted">greedy reach</td>
+      <td>Python</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>56</td>
+      <td>Merge Intervals</td>
+      <td><span class="diff M">M</span></td>
+      <td><span class="ttag">Sorting</span> <span class="ttag">Intervals</span></td>
+      <td class="muted">sort + merge</td>
+      <td>Python</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>57</td>
+      <td>Insert Interval</td>
+      <td><span class="diff M">M</span></td>
+      <td><span class="ttag">Intervals</span></td>
+      <td class="muted">linear scan merge</td>
+      <td>Python</td>
+      <td>&check;</td>
+    </tr>
+    <tr>
+      <td>62</td>
+      <td>Unique Paths</td>
+      <td><span class="diff M">M</span></td>
+      <td><span class="ttag">DP</span></td>
+      <td class="muted">2D tabulation</td>
+      <td>Python</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>63</td>
+      <td>Unique Paths II</td>
+      <td><span class="diff M">M</span></td>
+      <td><span class="ttag">DP</span></td>
+      <td class="muted">2D DP with obstacles</td>
+      <td>Python</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>64</td>
+      <td>Minimum Path Sum</td>
+      <td><span class="diff M">M</span></td>
+      <td><span class="ttag">DP</span></td>
+      <td class="muted">2D min path</td>
+      <td>Python</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>70</td>
+      <td>Climbing Stairs</td>
+      <td><span class="diff E">E</span></td>
+      <td><span class="ttag">DP</span></td>
+      <td class="muted">fibonacci variant</td>
+      <td>Python</td>
+      <td>&check;</td>
+    </tr>
+    <tr>
+      <td>88</td>
+      <td>Merge Sorted Array</td>
+      <td><span class="diff E">E</span></td>
+      <td><span class="ttag">Two Pointers</span></td>
+      <td class="muted">reverse merge</td>
+      <td>Python</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>91</td>
+      <td>Decode Ways</td>
+      <td><span class="diff M">M</span></td>
+      <td><span class="ttag">DP</span></td>
+      <td class="muted">1D DP decode</td>
+      <td>Python</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>97</td>
+      <td>Interleaving String</td>
+      <td><span class="diff M">M</span></td>
+      <td><span class="ttag">DP</span></td>
+      <td class="muted">2D interleave DP</td>
+      <td>Python</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>102</td>
+      <td>Binary Tree Level Order Traversal</td>
+      <td><span class="diff M">M</span></td>
+      <td><span class="ttag">Tree</span> <span class="ttag">BFS</span></td>
+      <td class="muted">level-by-level BFS</td>
+      <td>Python</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>104</td>
+      <td>Maximum Depth of Binary Tree</td>
+      <td><span class="diff E">E</span></td>
+      <td><span class="ttag">Tree</span> <span class="ttag">DFS</span></td>
+      <td class="muted">recursive depth</td>
+      <td>Python</td>
+      <td>&check;</td>
+    </tr>
+    <tr>
+      <td>121</td>
+      <td>Best Time to Buy and Sell Stock</td>
+      <td><span class="diff E">E</span></td>
+      <td><span class="ttag">DP</span> <span class="ttag">Array</span></td>
+      <td class="muted">track min price</td>
+      <td>Python</td>
+      <td>&check;</td>
+    </tr>
+    <tr>
+      <td>125</td>
+      <td>Valid Palindrome</td>
+      <td><span class="diff E">E</span></td>
+      <td><span class="ttag">Two Pointers</span> <span class="ttag">String</span></td>
+      <td class="muted">converging pointers</td>
+      <td>Python, Go, TS</td>
+      <td>&check;</td>
+    </tr>
+    <tr>
+      <td>139</td>
+      <td>Word Break</td>
+      <td><span class="diff M">M</span></td>
+      <td><span class="ttag">DP</span></td>
+      <td class="muted">1D DP word match</td>
+      <td>Python</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>141</td>
+      <td>Linked List Cycle</td>
+      <td><span class="diff E">E</span></td>
+      <td><span class="ttag">Linked List</span> <span class="ttag">Two Pointers</span></td>
+      <td class="muted">fast/slow pointers</td>
+      <td>Python</td>
+      <td>&check;</td>
+    </tr>
+    <tr>
+      <td>160</td>
+      <td>Intersection of Two Linked Lists</td>
+      <td><span class="diff E">E</span></td>
+      <td><span class="ttag">Linked List</span></td>
+      <td class="muted">length alignment</td>
+      <td>Python</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>167</td>
+      <td>Two Sum II</td>
+      <td><span class="diff E">E</span></td>
+      <td><span class="ttag">Two Pointers</span></td>
+      <td class="muted">converging pointers</td>
+      <td>Python</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>170</td>
+      <td>Two Sum III</td>
+      <td><span class="diff E">E</span></td>
+      <td><span class="ttag">Hash Map</span> <span class="ttag">Design</span></td>
+      <td class="muted">hash map design</td>
+      <td>Python, Go</td>
+      <td>&check;</td>
+    </tr>
+    <tr>
+      <td>188</td>
+      <td>Best Time to Buy and Sell Stock IV</td>
+      <td><span class="diff H">H</span></td>
+      <td><span class="ttag">DP</span></td>
+      <td class="muted">k-transaction DP</td>
+      <td>Python</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>198</td>
+      <td>House Robber</td>
+      <td><span class="diff M">M</span></td>
+      <td><span class="ttag">DP</span></td>
+      <td class="muted">skip/take DP</td>
+      <td>Python</td>
+      <td>&check;</td>
+    </tr>
+    <tr>
+      <td>200</td>
+      <td>Number of Islands</td>
+      <td><span class="diff M">M</span></td>
+      <td><span class="ttag">Graph</span> <span class="ttag">DFS</span> <span class="ttag">BFS</span></td>
+      <td class="muted">flood fill DFS/BFS</td>
+      <td>Python</td>
+      <td>&check;</td>
+    </tr>
+    <tr>
+      <td>202</td>
+      <td>Happy Number</td>
+      <td><span class="diff E">E</span></td>
+      <td><span class="ttag">Hash Set</span> <span class="ttag">Math</span></td>
+      <td class="muted">cycle detection</td>
+      <td>Python</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>209</td>
+      <td>Minimum Size Subarray Sum</td>
+      <td><span class="diff M">M</span></td>
+      <td><span class="ttag">Sliding Window</span></td>
+      <td class="muted">variable window</td>
+      <td>Python</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>215</td>
+      <td>Kth Largest Element</td>
+      <td><span class="diff M">M</span></td>
+      <td><span class="ttag">Heap</span> <span class="ttag">Sorting</span></td>
+      <td class="muted">quickselect / heap</td>
+      <td>Python</td>
+      <td>&check;</td>
+    </tr>
+    <tr>
+      <td>219</td>
+      <td>Contains Duplicate II</td>
+      <td><span class="diff E">E</span></td>
+      <td><span class="ttag">Hash Map</span> <span class="ttag">Sliding Window</span></td>
+      <td class="muted">index map</td>
+      <td>Python</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>234</td>
+      <td>Palindrome Linked List</td>
+      <td><span class="diff E">E</span></td>
+      <td><span class="ttag">Linked List</span></td>
+      <td class="muted">reverse half + compare</td>
+      <td>Python</td>
+      <td>&check;</td>
+    </tr>
+    <tr>
+      <td>238</td>
+      <td>Product of Array Except Self</td>
+      <td><span class="diff M">M</span></td>
+      <td><span class="ttag">Array</span> <span class="ttag">Prefix Sum</span></td>
+      <td class="muted">prefix/suffix product</td>
+      <td>Python</td>
+      <td>&check;</td>
+    </tr>
+    <tr>
+      <td>242</td>
+      <td>Valid Anagram</td>
+      <td><span class="diff E">E</span></td>
+      <td><span class="ttag">Hash Map</span></td>
+      <td class="muted">frequency count</td>
+      <td>Python, Go</td>
+      <td>&check;</td>
+    </tr>
+    <tr>
+      <td>246</td>
+      <td>Strobogrammatic Number</td>
+      <td><span class="diff E">E</span></td>
+      <td><span class="ttag">Two Pointers</span> <span class="ttag">Hash Map</span></td>
+      <td class="muted">mirror map</td>
+      <td>Python, Go</td>
+      <td>&check;</td>
+    </tr>
+    <tr>
+      <td>256</td>
+      <td>Paint House</td>
+      <td><span class="diff M">M</span></td>
+      <td><span class="ttag">DP</span></td>
+      <td class="muted">row-by-row DP</td>
+      <td>Python</td>
+      <td>&check;</td>
+    </tr>
+    <tr>
+      <td>257</td>
+      <td>Binary Tree Paths</td>
+      <td><span class="diff E">E</span></td>
+      <td><span class="ttag">Tree</span> <span class="ttag">DFS</span> <span class="ttag">Backtracking</span></td>
+      <td class="muted">DFS path collect</td>
+      <td>Python</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>265</td>
+      <td>Paint House II</td>
+      <td><span class="diff H">H</span></td>
+      <td><span class="ttag">DP</span></td>
+      <td class="muted">k-color DP optimized</td>
+      <td>Python</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>271</td>
+      <td>Encode and Decode Strings</td>
+      <td><span class="diff M">M</span></td>
+      <td><span class="ttag">Design</span> <span class="ttag">String</span></td>
+      <td class="muted">length-prefix encoding</td>
+      <td>Python</td>
+      <td>&check;</td>
+    </tr>
+    <tr>
+      <td>276</td>
+      <td>Paint Fence</td>
+      <td><span class="diff M">M</span></td>
+      <td><span class="ttag">DP</span></td>
+      <td class="muted">same/diff DP</td>
+      <td>Python</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>283</td>
+      <td>Move Zeroes</td>
+      <td><span class="diff E">E</span></td>
+      <td><span class="ttag">Two Pointers</span></td>
+      <td class="muted">read/write pointers</td>
+      <td>Python</td>
+      <td>&check;</td>
+    </tr>
+    <tr>
+      <td>286</td>
+      <td>Walls and Gates</td>
+      <td><span class="diff M">M</span></td>
+      <td><span class="ttag">BFS</span> <span class="ttag">Graph</span></td>
+      <td class="muted">multi-source BFS</td>
+      <td>Python</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>295</td>
+      <td>Find Median from Data Stream</td>
+      <td><span class="diff H">H</span></td>
+      <td><span class="ttag">Heap</span> <span class="ttag">Design</span></td>
+      <td class="muted">two-heap median</td>
+      <td>Python</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>300</td>
+      <td>Longest Increasing Subsequence</td>
+      <td><span class="diff M">M</span></td>
+      <td><span class="ttag">DP</span></td>
+      <td class="muted">O(n^2) DP / patience sort</td>
+      <td>Python</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>303</td>
+      <td>Range Sum Query</td>
+      <td><span class="diff E">E</span></td>
+      <td><span class="ttag">Prefix Sum</span></td>
+      <td class="muted">prefix sum array</td>
+      <td>Python</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>309</td>
+      <td>Stock with Cooldown</td>
+      <td><span class="diff M">M</span></td>
+      <td><span class="ttag">DP</span></td>
+      <td class="muted">state machine DP</td>
+      <td>Python</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>322</td>
+      <td>Coin Change</td>
+      <td><span class="diff M">M</span></td>
+      <td><span class="ttag">DP</span></td>
+      <td class="muted">unbounded knapsack</td>
+      <td>Python</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>345</td>
+      <td>Reverse Vowels of a String</td>
+      <td><span class="diff E">E</span></td>
+      <td><span class="ttag">Two Pointers</span></td>
+      <td class="muted">converging swap</td>
+      <td>Python</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>346</td>
+      <td>Moving Average from Data Stream</td>
+      <td><span class="diff E">E</span></td>
+      <td><span class="ttag">Queue</span> <span class="ttag">Design</span></td>
+      <td class="muted">sliding window queue</td>
+      <td>Python</td>
+      <td>&check;</td>
+    </tr>
+    <tr>
+      <td>347</td>
+      <td>Top K Frequent Elements</td>
+      <td><span class="diff M">M</span></td>
+      <td><span class="ttag">Hash Map</span> <span class="ttag">Heap</span></td>
+      <td class="muted">bucket sort / heap</td>
+      <td>Python</td>
+      <td>&check;</td>
+    </tr>
+    <tr>
+      <td>349</td>
+      <td>Intersection of Two Arrays</td>
+      <td><span class="diff E">E</span></td>
+      <td><span class="ttag">Hash Set</span></td>
+      <td class="muted">set intersection</td>
+      <td>Python</td>
+      <td>&check;</td>
+    </tr>
+    <tr>
+      <td>350</td>
+      <td>Intersection of Two Arrays II</td>
+      <td><span class="diff E">E</span></td>
+      <td><span class="ttag">Hash Map</span></td>
+      <td class="muted">counter intersection</td>
+      <td>Python</td>
+      <td>&check;</td>
+    </tr>
+    <tr>
+      <td>392</td>
+      <td>Is Subsequence</td>
+      <td><span class="diff E">E</span></td>
+      <td><span class="ttag">Two Pointers</span></td>
+      <td class="muted">greedy match</td>
+      <td>Python</td>
+      <td>&check;</td>
+    </tr>
+    <tr>
+      <td>408</td>
+      <td>Valid Word Abbreviation</td>
+      <td><span class="diff E">E</span></td>
+      <td><span class="ttag">Two Pointers</span> <span class="ttag">String</span></td>
+      <td class="muted">dual pointer parse</td>
+      <td>Python</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>455</td>
+      <td>Assign Cookies</td>
+      <td><span class="diff E">E</span></td>
+      <td><span class="ttag">Greedy</span></td>
+      <td class="muted">sort + greedy assign</td>
+      <td>Python</td>
+      <td>&check;</td>
+    </tr>
+    <tr>
+      <td>509</td>
+      <td>Fibonacci Number</td>
+      <td><span class="diff E">E</span></td>
+      <td><span class="ttag">DP</span></td>
+      <td class="muted">iterative DP</td>
+      <td>Python</td>
+      <td>&check;</td>
+    </tr>
+    <tr>
+      <td>516</td>
+      <td>Longest Palindromic Subsequence</td>
+      <td><span class="diff M">M</span></td>
+      <td><span class="ttag">DP</span></td>
+      <td class="muted">interval DP</td>
+      <td>Python</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>518</td>
+      <td>Coin Change II</td>
+      <td><span class="diff M">M</span></td>
+      <td><span class="ttag">DP</span></td>
+      <td class="muted">unbounded knapsack</td>
+      <td>Python</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>523</td>
+      <td>Continuous Subarray Sum</td>
+      <td><span class="diff M">M</span></td>
+      <td><span class="ttag">Prefix Sum</span> <span class="ttag">Hash Map</span></td>
+      <td class="muted">mod prefix map</td>
+      <td>Python</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>525</td>
+      <td>Contiguous Array</td>
+      <td><span class="diff M">M</span></td>
+      <td><span class="ttag">Prefix Sum</span> <span class="ttag">Hash Map</span></td>
+      <td class="muted">balance prefix</td>
+      <td>Python</td>
+      <td>&check;</td>
+    </tr>
+    <tr>
+      <td>541</td>
+      <td>Reverse String II</td>
+      <td><span class="diff E">E</span></td>
+      <td><span class="ttag">String</span></td>
+      <td class="muted">chunk reverse</td>
+      <td>Python</td>
+      <td>&check;</td>
+    </tr>
+    <tr>
+      <td>557</td>
+      <td>Reverse Words in a String III</td>
+      <td><span class="diff E">E</span></td>
+      <td><span class="ttag">String</span></td>
+      <td class="muted">split + reverse</td>
+      <td>Python</td>
+      <td>&check;</td>
+    </tr>
+    <tr>
+      <td>560</td>
+      <td>Subarray Sum Equals K</td>
+      <td><span class="diff M">M</span></td>
+      <td><span class="ttag">Prefix Sum</span> <span class="ttag">Hash Map</span></td>
+      <td class="muted">prefix sum count</td>
+      <td>Python</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>594</td>
+      <td>Longest Harmonious Subsequence</td>
+      <td><span class="diff E">E</span></td>
+      <td><span class="ttag">Hash Map</span></td>
+      <td class="muted">frequency map</td>
+      <td>Python</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>643</td>
+      <td>Maximum Average Subarray I</td>
+      <td><span class="diff E">E</span></td>
+      <td><span class="ttag">Sliding Window</span></td>
+      <td class="muted">fixed window</td>
+      <td>Python</td>
+      <td>&check;</td>
+    </tr>
+    <tr>
+      <td>653</td>
+      <td>Two Sum IV - Input is a BST</td>
+      <td><span class="diff E">E</span></td>
+      <td><span class="ttag">Tree</span> <span class="ttag">Hash Set</span></td>
+      <td class="muted">DFS + set lookup</td>
+      <td>Python</td>
+      <td>&check;</td>
+    </tr>
+    <tr>
+      <td>680</td>
+      <td>Valid Palindrome II</td>
+      <td><span class="diff E">E</span></td>
+      <td><span class="ttag">Two Pointers</span></td>
+      <td class="muted">skip + recheck</td>
+      <td>Python</td>
+      <td>&check;</td>
+    </tr>
+    <tr>
+      <td>696</td>
+      <td>Count Binary Substrings</td>
+      <td><span class="diff E">E</span></td>
+      <td><span class="ttag">String</span></td>
+      <td class="muted">group counting</td>
+      <td>Python</td>
+      <td>&check;</td>
+    </tr>
+    <tr>
+      <td>704</td>
+      <td>Binary Search</td>
+      <td><span class="diff E">E</span></td>
+      <td><span class="ttag">Binary Search</span></td>
+      <td class="muted">classic template</td>
+      <td>Python</td>
+      <td>&check;</td>
+    </tr>
+    <tr>
+      <td>714</td>
+      <td>Stock with Transaction Fee</td>
+      <td><span class="diff M">M</span></td>
+      <td><span class="ttag">DP</span></td>
+      <td class="muted">state machine DP</td>
+      <td>Python</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>718</td>
+      <td>Max Length of Repeated Subarray</td>
+      <td><span class="diff M">M</span></td>
+      <td><span class="ttag">DP</span></td>
+      <td class="muted">2D suffix match</td>
+      <td>Python</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>740</td>
+      <td>Delete and Earn</td>
+      <td><span class="diff M">M</span></td>
+      <td><span class="ttag">DP</span></td>
+      <td class="muted">house robber variant</td>
+      <td>Python</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>746</td>
+      <td>Min Cost Climbing Stairs</td>
+      <td><span class="diff E">E</span></td>
+      <td><span class="ttag">DP</span></td>
+      <td class="muted">1D cost DP</td>
+      <td>Python</td>
+      <td>&check;</td>
+    </tr>
+    <tr>
+      <td>790</td>
+      <td>Domino and Tromino Tiling</td>
+      <td><span class="diff M">M</span></td>
+      <td><span class="ttag">DP</span></td>
+      <td class="muted">recurrence relation</td>
+      <td>Python</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>821</td>
+      <td>Shortest Distance to Character</td>
+      <td><span class="diff E">E</span></td>
+      <td><span class="ttag">Array</span></td>
+      <td class="muted">two-pass scan</td>
+      <td>Python</td>
+      <td>&check;</td>
+    </tr>
+    <tr>
+      <td>844</td>
+      <td>Backspace String Compare</td>
+      <td><span class="diff E">E</span></td>
+      <td><span class="ttag">Stack</span> <span class="ttag">Two Pointers</span></td>
+      <td class="muted">stack build / reverse scan</td>
+      <td>Python</td>
+      <td>&check;</td>
+    </tr>
+    <tr>
+      <td>876</td>
+      <td>Middle of the Linked List</td>
+      <td><span class="diff E">E</span></td>
+      <td><span class="ttag">Linked List</span> <span class="ttag">Two Pointers</span></td>
+      <td class="muted">fast/slow pointers</td>
+      <td>Python</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>905</td>
+      <td>Sort Array By Parity</td>
+      <td><span class="diff E">E</span></td>
+      <td><span class="ttag">Two Pointers</span></td>
+      <td class="muted">partition swap</td>
+      <td>Python</td>
+      <td>&check;</td>
+    </tr>
+    <tr>
+      <td>917</td>
+      <td>Reverse Only Letters</td>
+      <td><span class="diff E">E</span></td>
+      <td><span class="ttag">Two Pointers</span></td>
+      <td class="muted">converging swap</td>
+      <td>Python</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>918</td>
+      <td>Maximum Sum Circular Subarray</td>
+      <td><span class="diff M">M</span></td>
+      <td><span class="ttag">DP</span> <span class="ttag">Kadane</span></td>
+      <td class="muted">max/min Kadane</td>
+      <td>Python</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>922</td>
+      <td>Sort Array By Parity II</td>
+      <td><span class="diff E">E</span></td>
+      <td><span class="ttag">Two Pointers</span></td>
+      <td class="muted">even/odd index swap</td>
+      <td>Python</td>
+      <td>&check;</td>
+    </tr>
+    <tr>
+      <td>925</td>
+      <td>Long Pressed Name</td>
+      <td><span class="diff E">E</span></td>
+      <td><span class="ttag">Two Pointers</span></td>
+      <td class="muted">dual pointer match</td>
+      <td>Python</td>
+      <td>&check;</td>
+    </tr>
+    <tr>
+      <td>931</td>
+      <td>Minimum Falling Path Sum</td>
+      <td><span class="diff M">M</span></td>
+      <td><span class="ttag">DP</span></td>
+      <td class="muted">2D min DP</td>
+      <td>Python</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>983</td>
+      <td>Minimum Cost For Tickets</td>
+      <td><span class="diff M">M</span></td>
+      <td><span class="ttag">DP</span></td>
+      <td class="muted">day-by-day DP</td>
+      <td>Python</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>1137</td>
+      <td>N-th Tribonacci Number</td>
+      <td><span class="diff E">E</span></td>
+      <td><span class="ttag">DP</span></td>
+      <td class="muted">iterative tribonacci</td>
+      <td>Python</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>1143</td>
+      <td>Longest Common Subsequence</td>
+      <td><span class="diff M">M</span></td>
+      <td><span class="ttag">DP</span></td>
+      <td class="muted">2D LCS table</td>
+      <td>Python</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>1155</td>
+      <td>Number of Dice Rolls</td>
+      <td><span class="diff M">M</span></td>
+      <td><span class="ttag">DP</span></td>
+      <td class="muted">dice sum DP</td>
+      <td>Python</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>1176</td>
+      <td>Diet Plan Performance</td>
+      <td><span class="diff M">M</span></td>
+      <td><span class="ttag">Sliding Window</span></td>
+      <td class="muted">fixed window score</td>
+      <td>Python</td>
+      <td>&check;</td>
+    </tr>
+    <tr>
+      <td>1220</td>
+      <td>Count Vowels Permutation</td>
+      <td><span class="diff H">H</span></td>
+      <td><span class="ttag">DP</span></td>
+      <td class="muted">state transition DP</td>
+      <td>Python</td>
+      <td>&check;</td>
+    </tr>
+    <tr>
+      <td>1335</td>
+      <td>Min Difficulty of Job Schedule</td>
+      <td><span class="diff H">H</span></td>
+      <td><span class="ttag">DP</span></td>
+      <td class="muted">partition DP</td>
+      <td>Python</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>1473</td>
+      <td>Paint House III</td>
+      <td><span class="diff H">H</span></td>
+      <td><span class="ttag">DP</span></td>
+      <td class="muted">3D DP neighborhoods</td>
+      <td>Python</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>1652</td>
+      <td>Defuse the Bomb</td>
+      <td><span class="diff E">E</span></td>
+      <td><span class="ttag">Sliding Window</span></td>
+      <td class="muted">circular window</td>
+      <td>Python</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>1763</td>
+      <td>Longest Nice Substring</td>
+      <td><span class="diff E">E</span></td>
+      <td><span class="ttag">String</span></td>
+      <td class="muted">divide and conquer</td>
+      <td>Python</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>1768</td>
+      <td>Merge Strings Alternately</td>
+      <td><span class="diff E">E</span></td>
+      <td><span class="ttag">String</span> <span class="ttag">Two Pointers</span></td>
+      <td class="muted">interleave merge</td>
+      <td>Go</td>
+      <td>&check;</td>
+    </tr>
+    <tr>
+      <td>1876</td>
+      <td>Substrings of Size Three</td>
+      <td><span class="diff E">E</span></td>
+      <td><span class="ttag">Sliding Window</span></td>
+      <td class="muted">fixed window unique</td>
+      <td>Python</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>1984</td>
+      <td>Min Diff Between Highest/Lowest</td>
+      <td><span class="diff E">E</span></td>
+      <td><span class="ttag">Sliding Window</span> <span class="ttag">Sorting</span></td>
+      <td class="muted">sort + fixed window</td>
+      <td>Python</td>
+      <td>&check;</td>
+    </tr>
+    <tr>
+      <td>2269</td>
+      <td>Find K-Beauty of a Number</td>
+      <td><span class="diff E">E</span></td>
+      <td><span class="ttag">Sliding Window</span></td>
+      <td class="muted">digit window</td>
+      <td>Python</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>3364</td>
+      <td>Minimum Positive Sum Subarray</td>
+      <td><span class="diff E">E</span></td>
+      <td><span class="ttag">Sliding Window</span></td>
+      <td class="muted">variable window min</td>
+      <td>Python</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>3931</td>
+      <td>Check Adjacent Digit Differences</td>
+      <td><span class="diff E">E</span></td>
+      <td><span class="ttag">String</span></td>
+      <td class="muted">pairwise check</td>
+      <td>Python</td>
+      <td></td>
+    </tr>
+  </tbody>
+</table>
+
+<!-- ==================== FOOTER ==================== -->
+<footer>
+  <p>Generated by Claude Code &middot; 2026-05-30</p>
+  <p style="margin-top:8px">Previous Reports:</p>
+  <ul>
+    <li><a href="reports/report-2026-05-30.html">2026-05-30</a> (current)</li>
+    <li><a href="reports/report-2026-05-28.html">2026-05-28</a></li>
+    <li><a href="reports/report-2026-05-27.html">2026-05-27</a></li>
+    <li><a href="reports/report-2026-05-26.html">2026-05-26</a></li>
+    <li><a href="reports/report-2026-05-22.html">2026-05-22</a></li>
+  </ul>
+</footer>
+
+</div><!-- container -->
+<script>
+function toggleTheme(){
+  const h=document.documentElement,b=document.querySelector('.theme-toggle');
+  if(h.getAttribute('data-theme')==='dark'){h.setAttribute('data-theme','light');b.innerHTML='&#9790; Dark';localStorage.setItem('lc-report-theme','light')}
+  else{h.setAttribute('data-theme','dark');b.innerHTML='&#9728; Light';localStorage.setItem('lc-report-theme','dark')}
+}
+(function(){
+  const t=localStorage.getItem('lc-report-theme');
+  if(t==='light'){document.documentElement.setAttribute('data-theme','light');document.querySelector('.theme-toggle').innerHTML='&#9790; Dark'}
+})();
+</script>
+</body>
+</html>
