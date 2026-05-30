@@ -1,6 +1,6 @@
 Generate a comprehensive LeetCode study guide as a dated HTML file.
 
-The guide's purpose: teach the user how to solve recommended next problems **without giving solutions**, reinforce previously learned concepts through spaced repetition, and build fluency in both **Python and Go**. The user should read a section for a particular problem *before* attempting it, and that section should give them enough understanding to solve it on their own.
+The guide's purpose: teach the user how to solve recommended next problems **without giving solutions**, reinforce previously learned concepts through spaced repetition, and build fluency in **Python, Go, TypeScript, Rust, and C++**. The user should read a section for a particular problem *before* attempting it, and that section should give them enough understanding to solve it on their own.
 
 ## Core Learning Principles
 
@@ -11,7 +11,7 @@ This guide is built on evidence-based learning science:
 3. **Blocked → Interleaved Practice**: New patterns are introduced in blocked groups (e.g., all stack problems together). Once a pattern has been seen 2-3 times, it is interleaved with other patterns in review sessions.
 4. **Elaborative Interrogation**: Each problem's "Why This Works" section asks the reader to articulate *why* the algorithm is correct — not just *how* to implement it.
 5. **Concrete-to-Abstract Progression**: Easy problems with small inputs first (concrete), then Medium/Hard problems that abstract the pattern.
-6. **Dual Language Fluency**: Code samples in both Python and Go teach idiomatic usage of each language's standard library, building transferable problem-solving skills.
+6. **Multi-Language Fluency**: Code samples in Python, Go, TypeScript, Rust, and C++ teach idiomatic usage of each language's standard library, building transferable problem-solving skills across paradigms (dynamic, compiled/GC'd, typed/compiled, ownership-based, and manual memory management).
 
 ## File Naming and History
 
@@ -95,6 +95,9 @@ For each problem, the research must produce:
    - **Why it's insufficient** — what makes it too slow? Which constraint makes it fail? (e.g., "With n up to 10⁵, O(n²) means 10¹⁰ operations — far too slow for a 1-second time limit")
    - A short **Python implementation** (5–15 lines) showing the brute force code. This should be a complete, working solution — not pseudocode. Keep it concise but correct.
    - A short **Go implementation** (5–15 lines) of the same brute force.
+   - A short **TypeScript implementation** (5–15 lines) of the same brute force.
+   - A short **Rust implementation** (5–15 lines) of the same brute force.
+   - A short **C++ implementation** (5–15 lines) of the same brute force.
    
    The brute force serves two purposes: (1) it validates understanding of the problem before optimizing, and (2) it makes the efficiency gain of the optimal solution visceral — seeing O(n²) next to O(n) with concrete code makes the "why" of the optimization click.
 
@@ -140,7 +143,54 @@ For each problem, the research must produce:
    
    Include 3–6 of the most relevant features per problem, with a 1–3 line code snippet and a comment explaining the feature.
 
-11. **Connections to other problems** — when problems within a section build on each other, explicitly note the progression (e.g., "this uses the same monotonic stack pattern from #739" or "this extends the binary search template from #704 with one additional check").
+11. **TypeScript features that help** — TypeScript idioms and patterns for the same problem. Show how TS approaches the task with its type system. Examples:
+   - `Map<K, V>` and `Set<T>` for hash-based collections
+   - Array destructuring: `const [a, ...rest] = arr`
+   - `Array.from({length: n}, (_, i) => i)` for range generation
+   - `arr.sort((a, b) => a - b)` for numeric sort (default is lexicographic!)
+   - `arr.reduce()` for accumulation, `arr.flatMap()` for flatten + map
+   - `??` (nullish coalescing) and `?.` (optional chaining)
+   - `Number.MAX_SAFE_INTEGER`, `Infinity`, `-Infinity` as sentinels
+   - `string.charCodeAt()` for character arithmetic
+   - Template literal types and `as const` for exhaustive checks
+   - `Record<string, number>` for frequency maps
+   - Stack/queue via array: `push()` / `pop()` / `shift()` (note: `shift()` is O(n))
+   
+   Include 3–6 of the most relevant features per problem, with a 1–3 line code snippet and a comment explaining the feature.
+
+12. **Rust features that help** — Rust idioms and standard library features. Show how Rust's ownership model and iterator chains approach the problem. Examples:
+   - `HashMap<K, V>` and `HashSet<T>` from `std::collections`
+   - `BinaryHeap<T>` for max-heap, `BinaryHeap<Reverse<T>>` for min-heap
+   - `entry().or_insert()` / `entry().or_default()` for map updates
+   - Iterator chains: `.iter().enumerate()`, `.filter()`, `.map()`, `.collect()`
+   - `vec![]` macro, `Vec::with_capacity(n)` for pre-allocation
+   - Pattern matching with `match` and `if let`
+   - `Option<T>` and `Result<T, E>` — `.unwrap_or()`, `.map()`, `?` operator
+   - `i32::MAX`, `i32::MIN`, `usize::MAX` as sentinels
+   - Slice patterns: `[first, rest @ ..]`
+   - `.windows(n)` and `.chunks(n)` for sliding window on slices
+   - `VecDeque<T>` for double-ended queue / BFS
+   - Ownership/borrowing: `&[T]` slices vs `Vec<T>` owned vectors
+   
+   Include 3–6 of the most relevant features per problem, with a 1–3 line code snippet and a comment explaining the feature.
+
+13. **C++ features that help** — C++ idioms and STL features. Show how C++ approaches the problem with its rich standard library. Examples:
+   - `unordered_map<K, V>` and `unordered_set<T>` for hash-based collections
+   - `priority_queue<int>` (max-heap), `priority_queue<int, vector<int>, greater<>>` (min-heap)
+   - `sort(v.begin(), v.end())` with custom comparators via lambdas
+   - `vector<int>` operations: `push_back()`, `pop_back()`, `back()`, `emplace_back()`
+   - `stack<T>`, `queue<T>`, `deque<T>` from `<stack>`, `<queue>`, `<deque>`
+   - Range-based for: `for (auto& x : vec)` and structured bindings: `auto [key, val] = pair`
+   - `INT_MAX`, `INT_MIN` from `<climits>`, or `numeric_limits<int>::max()`
+   - `string::substr()`, `string::find()`, `isalpha()`, `isdigit()` from `<cctype>`
+   - `accumulate()` from `<numeric>`, `min_element()` / `max_element()` from `<algorithm>`
+   - `pair<int,int>` and `tuple<>` for multi-value storage
+   - `bitset<N>` for fixed-size bit manipulation
+   - Lambda captures: `[&]`, `[=]`, `[&visited]` for closures
+   
+   Include 3–6 of the most relevant features per problem, with a 1–3 line code snippet and a comment explaining the feature.
+
+14. **Connections to other problems** — when problems within a section build on each other, explicitly note the progression (e.g., "this uses the same monotonic stack pattern from #739" or "this extends the binary search template from #704 with one additional check").
 
 ## Step 3: Generate the HTML Guide
 
@@ -154,7 +204,7 @@ Write `guide.html` with the following structure and design.
 
 ### Content Structure
 
-1. **Header**: Title ("LeetCode Study Guide"), one-line description, generation date.
+1. **Header**: Title ("LeetCode Study Guide"), one-line description ("Master patterns through guided problem-solving — Python, Go, TypeScript, Rust & C++"), generation date.
 
 2. **"How to Use This Guide"** box: Numbered instructions:
    - Start with the **Review Section** — re-solve these problems from memory before looking at hints
@@ -182,7 +232,7 @@ Write `guide.html` with the following structure and design.
    - Complexity box
    - **"Examples"** — 2–4 concrete input/output examples shown BEFORE any code blocks. These help the user re-anchor on the problem's exact shape (input format, edge cases, expected return type). Render as a `<div class="examples">` containing one `<div class="example">` per case. Each example shows `Input:` and `Output:` in monospace, with an optional `Explanation:` line for non-obvious cases. Include at least one normal case, one edge case (empty input, single element, all-same values, etc.), and one tricky case if the problem has a well-known gotcha. Format inputs/outputs exactly as LeetCode shows them (e.g. `nums = [2,7,11,15], target = 9` → `[0,1]`). Place this section right after the Complexity box and before the "Previous Solution" block. Style: subtle surface2 background, dotted divider, monospace font for input/output values.
    - **"Previous Solution"** — a collapsible `<details>` block (collapsed by default) containing the user's actual prior solution code from the repo. Read the solution file(s) from the corresponding problem directory (e.g. `NNNN Problem Title/leet.py`, `leet.go`, etc.) and embed the code inside a `<pre><code>` block with a language badge. If multiple language files exist, include each in its own code block. The summary line should read `Previous Solution (click to reveal — try without it first)`. This lets the user attempt from memory but check their prior approach when stuck or after solving. Use `<details class="prev-solution"><summary>...</summary>...</details>` so it can be styled with a purple border matching the review accent. The reasoning: re-solving from memory is the goal, but seeing the *exact code the user wrote before* (not a generic reference solution) is a powerful retrieval-failure recovery tool.
-   - **"Optimal Solution (Reference)"** — a SECOND collapsible `<details>` block (collapsed by default), placed immediately AFTER the "Previous Solution" block. This contains the canonical optimal solution to the problem — not the user's code, but the best-known implementation that an experienced practitioner would write. Include both Python and Go versions inside the same `<details>`, each as a `<pre><code>` block with a language badge labeled "Python — Optimal" / "Go — Optimal". The summary line should read `Optimal Solution (reference) — click to reveal`. Use `<details class="optimal-solution"><summary>...</summary>...</details>` so it can be styled with a GREEN left border (distinct from the purple "Previous Solution" border). This serves a different purpose than "Previous Solution": (a) lets the user compare their prior approach to the gold standard, (b) shows the cleanest idiomatic version even if their old code was clumsy or non-optimal, (c) for problems where the user's prior solution used a sub-optimal approach (e.g., brute force, or a different pattern), this block reveals the canonical technique. Keep each language version concise (5-20 lines) — focus on the cleanest expression of the optimal pattern, not the most verbose. This is the ONLY place in the guide where optimal solution code appears — it stays appropriate because review problems are ones the user has already attempted, so revealing the optimal is not a spoiler.
+   - **"Optimal Solution (Reference)"** — a SECOND collapsible `<details>` block (collapsed by default), placed immediately AFTER the "Previous Solution" block. This contains the canonical optimal solution to the problem — not the user's code, but the best-known implementation that an experienced practitioner would write. Include **all five languages** (Python, Go, TypeScript, Rust, C++) inside the same `<details>`, each as a `<pre><code>` block with a language badge labeled "Python — Optimal" / "Go — Optimal" / "TypeScript — Optimal" / "Rust — Optimal" / "C++ — Optimal". The summary line should read `Optimal Solution (reference) — click to reveal`. Use `<details class="optimal-solution"><summary>...</summary>...</details>` so it can be styled with a GREEN left border (distinct from the purple "Previous Solution" border). This serves a different purpose than "Previous Solution": (a) lets the user compare their prior approach to the gold standard, (b) shows the cleanest idiomatic version even if their old code was clumsy or non-optimal, (c) for problems where the user's prior solution used a sub-optimal approach (e.g., brute force, or a different pattern), this block reveals the canonical technique. Keep each language version concise (5-20 lines) — focus on the cleanest expression of the optimal pattern, not the most verbose. This is the ONLY place in the guide where optimal solution code appears — it stays appropriate because review problems are ones the user has already attempted, so revealing the optimal is not a spoiler.
 
 4. **New Problems — Topic sections**, each containing:
 
@@ -198,6 +248,9 @@ Write `guide.html` with the following structure and design.
      - A 2–4 sentence description of the brute force approach
      - **Complete Python implementation** (5–15 lines, working code, not pseudocode)
      - **Complete Go implementation** (5–15 lines, working code)
+     - **Complete TypeScript implementation** (5–15 lines, working code)
+     - **Complete Rust implementation** (5–15 lines, working code)
+     - **Complete C++ implementation** (5–15 lines, working code)
      - **Complexity** (time and space) of the brute force
      - **"Why optimize?"** — one sentence explaining what constraint makes brute force too slow (e.g., "With n up to 10⁵, the O(n²) nested loops mean ~10¹⁰ operations — 100× over the time limit.")
      
@@ -209,6 +262,9 @@ Write `guide.html` with the following structure and design.
    - **Alternative approaches** (when relevant): Brief mention of other valid approaches — e.g., "You can also solve this with an in-order traversal" or "A BFS approach (Kahn's algorithm) avoids recursion."
    - **"Python Features That Help"**: A code block with 3–6 relevant Python features for the **optimal** solution. Each feature gets a comment explaining what it does. The snippets show the *feature*, not the *solution*. Include both basic idioms and standard library features (`collections`, `heapq`, `bisect`, `itertools`, `functools`).
    - **"Go Features That Help"**: A separate code block with 3–6 relevant Go features for the **optimal** solution. Show idiomatic Go — struct definitions, slice manipulation, `container/heap`, `sort`, `strings`, `unicode` packages. Each snippet should be syntactically valid Go with a comment explaining the feature.
+   - **"TypeScript Features That Help"**: A code block with 3–6 relevant TypeScript features. Show idiomatic TS — `Map`/`Set`, array methods, destructuring, type annotations. Each snippet should be syntactically valid TypeScript.
+   - **"Rust Features That Help"**: A code block with 3–6 relevant Rust features. Show idiomatic Rust — ownership patterns, iterator chains, `std::collections` types, pattern matching. Each snippet should compile.
+   - **"C++ Features That Help"**: A code block with 3–6 relevant C++ features. Show modern C++ (C++17+) — STL containers, algorithms, lambdas, structured bindings, range-based for.
    - **Complexity box**: Inline display showing **both** brute force and optimal complexities side by side, making the improvement visually obvious (e.g., "Brute: O(n²) → Optimal: O(n)").
 
 ### Design Requirements
@@ -222,7 +278,7 @@ Write `guide.html` with the following structure and design.
   - Light mode adjusts badge/tag backgrounds for proper contrast (increase rgba opacity)
   - Set `data-theme="dark"` on the `<html>` element by default
 
-- **Language toggle for code blocks** — a small toggle (Python | Go) near each code block, or a global toggle in the header that switches all code blocks. Default: show both languages stacked. The toggle uses `localStorage` (key: `lc-guide-lang`) to persist preference.
+- **Language toggle for code blocks** — a global toggle in the header that switches all code blocks. Options: All | Python | Go | TypeScript | Rust | C++. Default: show all languages stacked. The toggle uses `localStorage` (key: `lc-guide-lang`) to persist preference. Each language's code block must have `data-lang="python"`, `data-lang="go"`, `data-lang="typescript"`, `data-lang="rust"`, or `data-lang="cpp"` attribute so the toggle can show/hide them.
 
 - **Self-contained**: Single HTML file with all CSS and JS inline. No external CDN dependencies.
 - **Difficulty badges**: Green for Easy, yellow/amber for Medium, red for Hard. Use `rgba()` backgrounds with the difficulty color at low opacity.
@@ -233,10 +289,10 @@ Write `guide.html` with the following structure and design.
 - **"Brute Force" section**: Amber/yellow left border callout, collapsible via `<details><summary>`. Summary line shows "Brute Force — O(n²) time" (with the actual complexity). When expanded, shows description, complete Python and Go code, and a "Why optimize?" note. The code blocks here use the same styling as other code blocks but with an amber "Brute Force" badge instead of language badge.
 - **"Examples" block** (review cards only): A `<div class="examples">` placed right after the complexity box and before the "Previous Solution" block. Contains 2–4 `<div class="example">` rows, each showing `Input:`, `Output:`, and optional `Explanation:`. Subtle surface2 background with a soft 1px border, no left accent border. Labels (`Input:`, `Output:`, `Explanation:`) in `var(--text-muted)` with `font-weight:600`; values in monospace (`SF Mono`, `Consolas`). Each example separated by a 1px dotted divider. The block is NOT collapsible — examples are quick reference and should be visible at a glance.
 - **"Previous Solution" block** (review cards only): Collapsed by default `<details class="prev-solution">` with a purple/violet left border (matching the review section accent). The summary line reads `Previous Solution — click to reveal (try without it first)`. When expanded, displays the actual code the user previously wrote (read from the problem's directory in the repo) inside `<pre><code>` blocks with language badges. If multiple language files exist (e.g. `leet.py` and `leet.go`), include one collapsible block per language inside the same `<details>`, OR a single block with both stacked. Style: subtle dotted divider above, low-contrast surface background so it doesn't compete visually with the "Key Insight" callout the user should read first.
-- **"Optimal Solution (Reference)" block** (review cards only): Collapsed by default `<details class="optimal-solution">` with a GREEN left border (distinct from the purple "Previous Solution"). Placed immediately after the "Previous Solution" block. The summary line reads `Optimal Solution (reference) — click to reveal`. When expanded, displays a canonical/best-known implementation in both Python and Go, each as a separate `<pre><code>` block with a language badge ("Python — Optimal", "Go — Optimal"). Background should match the "Why This Works" green-tinted callout family. The green border signals "this is the gold standard / target pattern".
+- **"Optimal Solution (Reference)" block** (review cards only): Collapsed by default `<details class="optimal-solution">` with a GREEN left border (distinct from the purple "Previous Solution"). Placed immediately after the "Previous Solution" block. The summary line reads `Optimal Solution (reference) — click to reveal`. When expanded, displays a canonical/best-known implementation in all five languages (Python, Go, TypeScript, Rust, C++), each as a separate `<pre><code>` block with a language badge ("Python — Optimal", "Go — Optimal", "TypeScript — Optimal", "Rust — Optimal", "C++ — Optimal"). Background should match the "Why This Works" green-tinted callout family. The green border signals "this is the gold standard / target pattern".
 - **Complexity box** (enhanced): Shows brute force and optimal side by side with an arrow between them, e.g., "Brute: O(n²) → Optimal: O(n)". Use a subtle color transition (red/amber for brute → green for optimal) to make the improvement visually obvious.
 - **Review section**: Distinct visual treatment — e.g., a subtle gradient or different surface color to separate review from new material.
-- **Code blocks**: Monospace font (`SF Mono`, `Fira Code`, `Consolas`), surface2 background, subtle border, horizontal scroll for overflow. **Label each code block** with a small "Python" or "Go" badge in the top-right corner of the block.
+- **Code blocks**: Monospace font (`SF Mono`, `Fira Code`, `Consolas`), surface2 background, subtle border, horizontal scroll for overflow. **Label each code block** with a small language badge ("Python", "Go", "TypeScript", "Rust", or "C++") in the top-left corner of the block.
 - **Step indicators**: Circular numbered badges (CSS counter) to the left of each step.
 - **Complexity box**: Inline-flex with time and space displayed side by side.
 - **Typography**: `-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif`. Body text ~16px, comfortable line-height (1.7).
@@ -244,10 +300,10 @@ Write `guide.html` with the following structure and design.
 
 ### Critical Rules
 
-- **Include brute force solutions** (complete working code in both Python and Go) inside the collapsible "Brute Force" section. This is the one exception to the no-solutions rule — the brute force is a teaching tool, not a spoiler. It validates problem understanding and makes the optimization contrast visceral.
-- **NEVER include the optimal solution** for NEW problems — only the thinking process and language feature snippets that demonstrate language features in isolation. The reader must synthesize the optimal solution themselves from the key insight, thinking steps, and feature snippets. (Exceptions on REVIEW cards only: each review card includes TWO collapsed `<details>` blocks at the bottom — (1) "Previous Solution" with the user's actual prior code from the repo, and (2) "Optimal Solution (reference)" with a canonical best-known implementation in Python and Go. Both are collapsed by default. This is safe because review problems are ones the user has already attempted, so revealing the optimal is a comparison tool, not a spoiler. Optimal solution code MUST NOT appear anywhere in the new-problem sections.)
+- **Include brute force solutions** (complete working code in all five languages: Python, Go, TypeScript, Rust, and C++) inside the collapsible "Brute Force" section. This is the one exception to the no-solutions rule — the brute force is a teaching tool, not a spoiler. It validates problem understanding and makes the optimization contrast visceral.
+- **NEVER include the optimal solution** for NEW problems — only the thinking process and language feature snippets that demonstrate language features in isolation. The reader must synthesize the optimal solution themselves from the key insight, thinking steps, and feature snippets. (Exceptions on REVIEW cards only: each review card includes TWO collapsed `<details>` blocks at the bottom — (1) "Previous Solution" with the user's actual prior code from the repo, and (2) "Optimal Solution (reference)" with a canonical best-known implementation in all five languages. Both are collapsed by default. This is safe because review problems are ones the user has already attempted, so revealing the optimal is a comparison tool, not a spoiler. Optimal solution code MUST NOT appear anywhere in the new-problem sections.)
 - Each section must give the reader **enough understanding** to solve the problem on their own. The test: could someone read just this section, close the guide, and write a working solution?
-- **Both Python and Go** code samples for every problem. Python samples should cover both basic idioms and the extended standard library. Go samples should show idiomatic Go with relevant standard library packages.
+- **All five languages** (Python, Go, TypeScript, Rust, C++) for code samples on every problem. Python samples should cover both basic idioms and the extended standard library. Go samples should show idiomatic Go. TypeScript samples should demonstrate modern TS with proper types. Rust samples should show idiomatic ownership patterns and iterator chains. C++ samples should use modern C++ (C++17+) with STL.
 - Problems within each section should be ordered by **increasing difficulty** — Easy first, then Medium, then Hard.
 - When two problems share a pattern, the second problem's section should reference the first (e.g., "Apply the same binary search template from #704, but add a check for which half is sorted").
 - The **Review Section always comes first** in the guide, before new material.
