@@ -24,7 +24,6 @@ class Solution:
 
         max_l = 0
         l, r = 0, 0
-        h = defaultdict(int)
         # O(n)
         while r < len(s) and l < len(s):
             counts[ord(s[r]) - ord('A')] += 1
