@@ -1,0 +1,10 @@
+class Solution(object):
+    def findMin(self, nums):
+        """
+        :type nums: List[int]
+        :rtype: int
+        """
+        m = nums[0]
+        for i in range(1, len(nums)):
+            m = min(m, nums[i])
+        return m
