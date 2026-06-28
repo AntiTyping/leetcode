@@ -1,0 +1,20 @@
+use std::collections::HashMap;
+
+impl Solution {
+    pub fn find_lonely(nums: Vec<i32>) -> Vec<i32> {
+        let mut freq: HashMap<i32, i32> = HashMap::new();
+        for &num in &nums {
+            *freq.entry(num).or_insert(0) += 1;
+        }
+
+        let mut result = Vec::new();
+
+        for &num in &nums {
+            if freq[&num] == 1 && !freq.contains_key(&(num-1)) && !freq.contains_key(&(num+1)) {
+                result.push(num);
+            }
+        }
+
+        return result;
+    }
+}
