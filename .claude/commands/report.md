@@ -22,7 +22,7 @@ Gather all of the following in parallel:
    - Number of solution files (multiple approaches?)
    - Lines of code
 
-2. **Git history**: Run `git log --pretty=format:"%h|%ad|%s" --date=short` to get commit dates and messages. Also get commit frequency by date with `git log --pretty=format:"%ad" --date=short | sort | uniq -c | sort -k2`.
+2. **Git history**: Run `git log --pretty=format:"%h|%ad|%s" --date=short` to get commit dates and messages. Also compute **problems solved per day** (not raw commits) by extracting distinct problem numbers from commit messages — match patterns like `"NNN. Title"` at the start or `"Adds NNN."` — and counting unique problem numbers per date.
 
 3. **Solution analysis**: For each problem, read the solution code and determine:
    - Difficulty (Easy/Medium/Hard) based on LeetCode problem knowledge
@@ -49,13 +49,14 @@ Generate `report.html` with a dark-themed, visually rich design containing:
 1. **Header**: Title, user name, generation date
 2. **Key Metrics**: Cards showing total solved, Easy/Medium/Hard counts, multi-approach count
 3. **Difficulty Distribution**: Visual donut/pie chart with percentages and a target recommendation
-4. **Activity Timeline**: Bar chart of commits per day, highlighting gaps and bursts
-5. **Topic Coverage**: Horizontal bar chart of problems per topic, plus a coverage assessment grid (strong/moderate/weak/missing)
-6. **Strengths & Weaknesses**: Two-column layout with detailed cards for each strength and gap
-7. **Code Quality Assessment**: Itemized list of positives and areas for improvement with specific examples
-8. **Accelerated Learning Plan**: Phased plan (3-4 phases over ~7 weeks) with specific problem numbers to solve, ordered by priority
-9. **Next 20 Problems**: Prioritized table of the most impactful problems to solve next, with difficulty, topic, and rationale
-10. **Full Problem Inventory**: Scrollable table of all solved problems with number, title, difficulty badge, topics, approach, languages, and multi-approach indicator
+4. **Activity Timeline**: Bar chart of **problems solved per day** (not commits), highlighting gaps and bursts. Use CSS grid (`grid-template-rows: 1fr auto`) on each bar group so bar height percentages are relative to the bar track only and date labels sit at a consistent baseline below.
+5. **Cumulative Progress**: Line/area chart showing the running total of solved problems over time. Plot one point per active day (x-axis = date, y-axis = cumulative count). Use an SVG `<polyline>` inside a fixed-height container. Show gridlines for y-axis milestones (e.g., 25, 50, 75, 100, 125, 150). Fill the area below the line with a translucent accent color. Label the first point, last point, and any inflection points (start of a burst or return from a gap). Include the gap periods as flat segments (no progress) to make the study gaps visually obvious. Style consistently with the rest of the report (same card container, colors, typography).
+6. **Topic Coverage**: Horizontal bar chart of problems per topic, plus a coverage assessment grid (strong/moderate/weak/missing)
+7. **Strengths & Weaknesses**: Two-column layout with detailed cards for each strength and gap
+8. **Code Quality Assessment**: Itemized list of positives and areas for improvement with specific examples
+9. **Accelerated Learning Plan**: Phased plan (3-4 phases over ~7 weeks) with specific problem numbers to solve, ordered by priority
+10. **Next 20 Problems**: Prioritized table of the most impactful problems to solve next, with difficulty, topic, and rationale
+11. **Full Problem Inventory**: Scrollable table of all solved problems with number, title, difficulty badge, topics, approach, languages, and multi-approach indicator
 
 ## Design Requirements
 
