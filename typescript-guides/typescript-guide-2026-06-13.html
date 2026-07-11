@@ -1,0 +1,2167 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TypeScript Daily Guide — 2026-06-13 (Day 13)</title>
+<style>
+:root {
+  --bg: #0d1117;
+  --surface: #161b22;
+  --surface2: #1c2129;
+  --border: #30363d;
+  --text: #e6edf3;
+  --text-muted: #8b949e;
+  --accent: #58a6ff;
+  --accent-bg: rgba(56,139,253,0.15);
+  --green: #3fb950;
+  --green-bg: rgba(63,185,80,0.08);
+  --red: #f85149;
+  --red-bg: rgba(248,81,73,0.08);
+  --yellow: #d29922;
+  --yellow-bg: rgba(210,153,34,0.1);
+  --orange: #db6d28;
+  --purple: #bc8cff;
+  --purple-bg: rgba(188,140,255,0.08);
+  --purple-border: rgba(188,140,255,0.2);
+  --link: #58a6ff;
+  --code-bg: #1c2129;
+  --output-bg: #0e1c0e;
+  --output-border: #1a3a1a;
+  --sidebar-bg: #161b22;
+  --sidebar-active: rgba(56,139,253,0.15);
+  --exercise-border: #30363d;
+}
+[data-theme="light"] {
+  --bg: #ffffff;
+  --surface: #f6f8fa;
+  --surface2: #eef1f5;
+  --border: #d0d7de;
+  --text: #1f2328;
+  --text-muted: #656d76;
+  --accent: #0969da;
+  --accent-bg: rgba(9,105,218,0.1);
+  --green: #1a7f37;
+  --green-bg: rgba(26,127,55,0.06);
+  --red: #cf222e;
+  --red-bg: rgba(207,34,46,0.06);
+  --yellow: #9a6700;
+  --yellow-bg: rgba(154,103,0,0.06);
+  --orange: #bc4c00;
+  --purple: #8250df;
+  --purple-bg: rgba(130,80,223,0.06);
+  --purple-border: rgba(130,80,223,0.15);
+  --link: #0969da;
+  --code-bg: #eef1f5;
+  --output-bg: #f0faf0;
+  --output-border: #c6e6c6;
+  --sidebar-bg: #f6f8fa;
+  --sidebar-active: rgba(9,105,218,0.1);
+  --exercise-border: #d0d7de;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;font-size:16px;line-height:1.7;color:var(--text);background:var(--bg);display:flex;min-height:100vh}
+a{color:var(--link);text-decoration:none}
+a:hover{text-decoration:underline}
+
+/* Sidebar */
+.sidebar{position:fixed;top:0;left:0;width:300px;height:100vh;background:var(--sidebar-bg);border-right:1px solid var(--border);overflow-y:auto;padding:20px 0;z-index:100}
+.sidebar-header{padding:16px 20px;border-bottom:1px solid var(--border);margin-bottom:12px}
+.sidebar-header h2{font-size:15px;font-weight:600;color:var(--text)}
+.sidebar-header .date{font-size:13px;color:var(--text-muted);margin-top:2px}
+.sidebar-section{padding:8px 20px 4px;font-size:12px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px}
+.sidebar-section.review-label{color:var(--purple)}
+.sidebar-nav{list-style:none;padding:0}
+.sidebar-nav li a{display:block;padding:6px 20px 6px 28px;font-size:14px;color:var(--text-muted);transition:all 0.15s}
+.sidebar-nav li a:hover,.sidebar-nav li a.active{color:var(--accent);background:var(--sidebar-active);text-decoration:none}
+.sidebar-nav li a .nav-id{font-size:11px;color:var(--text-muted);opacity:0.6;margin-left:6px}
+
+/* Main */
+.main{margin-left:300px;flex:1;padding:40px;max-width:1160px}
+.content{max-width:860px;margin:0 auto}
+
+/* Theme Toggle */
+.theme-toggle{position:fixed;top:16px;right:20px;z-index:200;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:8px 12px;cursor:pointer;color:var(--text);font-size:18px;line-height:1;transition:all 0.15s}
+.theme-toggle:hover{border-color:var(--accent)}
+
+/* Header */
+.guide-header{text-align:center;padding:32px 0 40px;border-bottom:1px solid var(--border);margin-bottom:40px}
+.guide-header h1{font-size:28px;font-weight:700;margin-bottom:8px}
+.guide-header .meta{font-size:15px;color:var(--text-muted)}
+.guide-header .meta span{margin:0 8px}
+.badge{display:inline-block;padding:2px 10px;border-radius:12px;font-size:13px;font-weight:500}
+.badge-blue{background:var(--accent-bg);color:var(--accent)}
+.badge-purple{background:var(--purple-bg);color:var(--purple)}
+
+/* How To Use */
+.how-to-use{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:24px 28px;margin-bottom:40px}
+.how-to-use h2{font-size:18px;margin-bottom:12px}
+.how-to-use ol{padding-left:24px}
+.how-to-use li{margin-bottom:6px;color:var(--text-muted)}
+
+/* Review Section */
+.review-section{margin-bottom:48px}
+.review-section-header{font-size:22px;font-weight:700;padding-bottom:12px;border-bottom:2px solid var(--purple);margin-bottom:28px;display:flex;align-items:center;gap:12px;color:var(--purple)}
+
+/* Review Card */
+.review-card{background:var(--purple-bg);border:1px solid var(--purple-border);border-radius:10px;padding:28px;margin-bottom:24px}
+.review-card .review-header{display:flex;align-items:center;gap:12px;margin-bottom:12px;flex-wrap:wrap}
+.review-card .review-title{font-size:18px;font-weight:700;color:var(--purple)}
+.review-card .review-meta{font-size:13px;color:var(--text-muted)}
+.review-card .review-reminder{color:var(--text-muted);font-style:italic;margin-bottom:16px;padding-left:14px;border-left:3px solid var(--purple)}
+.review-card .review-pattern{margin-bottom:16px}
+.review-card .review-pattern strong{display:block;margin-bottom:8px;font-size:14px;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px}
+.review-card .review-challenge{margin-bottom:12px}
+.review-card .review-challenge strong{display:block;margin-bottom:8px;font-size:14px;color:var(--yellow);text-transform:uppercase;letter-spacing:0.5px}
+.review-card .review-challenge p{line-height:1.6}
+.review-card .review-pitfall{background:var(--red-bg);border:1px solid rgba(248,81,73,0.15);border-radius:6px;padding:12px 16px;font-size:14px;line-height:1.6}
+.review-card .review-pitfall strong{color:var(--red);margin-right:4px}
+.review-card code{background:var(--code-bg);padding:2px 6px;border-radius:4px;font-family:'SF Mono','Fira Code','Consolas',monospace;font-size:13px}
+
+/* Topic Section */
+.topic-section{margin-bottom:48px}
+.topic-section-header{font-size:22px;font-weight:700;padding-bottom:12px;border-bottom:2px solid var(--accent);margin-bottom:28px;display:flex;align-items:center;gap:12px}
+.topic-section-header .section-num{background:var(--accent);color:#fff;width:32px;height:32px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:15px;font-weight:700;flex-shrink:0}
+
+/* Concept Card */
+.concept-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:28px;margin-bottom:32px}
+.concept-header{display:flex;align-items:center;gap:12px;margin-bottom:16px;flex-wrap:wrap}
+.concept-title{font-size:20px;font-weight:700}
+.ttag{display:inline-block;padding:2px 10px;border-radius:12px;font-size:12px;font-weight:500;background:var(--accent-bg);color:var(--accent)}
+
+.why-matters{color:var(--text-muted);font-style:italic;margin-bottom:20px;padding-left:14px;border-left:3px solid var(--accent)}
+.explanation{margin-bottom:20px;line-height:1.8}
+.explanation p{margin-bottom:12px}
+.explanation ul,.explanation ol{padding-left:24px;margin-bottom:12px}
+.explanation li{margin-bottom:4px}
+.explanation code{background:var(--code-bg);padding:2px 6px;border-radius:4px;font-family:'SF Mono','Fira Code','Consolas',monospace;font-size:14px}
+
+/* Code Examples */
+.code-example{margin-bottom:20px;border:1px solid var(--border);border-radius:8px;overflow:hidden}
+.lang-badge{background:var(--surface2);color:var(--text-muted);font-size:12px;font-weight:600;padding:6px 14px;border-bottom:1px solid var(--border);font-family:'SF Mono','Fira Code','Consolas',monospace}
+pre{margin:0;padding:16px;overflow-x:auto;background:var(--code-bg);font-family:'SF Mono','Fira Code','Consolas',monospace;font-size:13.5px;line-height:1.6;white-space:pre-wrap}
+pre code{background:none;padding:0;font-size:inherit}
+.output{background:var(--output-bg);border-top:1px solid var(--output-border);padding:12px 16px;font-family:'SF Mono','Fira Code','Consolas',monospace;font-size:13px;color:var(--green);white-space:pre-wrap}
+.output::before{content:"Output:";display:block;font-size:11px;font-weight:600;color:var(--text-muted);margin-bottom:4px;text-transform:uppercase;letter-spacing:0.5px}
+.type-result{background:var(--output-bg);border-top:1px solid var(--output-border);padding:12px 16px;font-family:'SF Mono','Fira Code','Consolas',monospace;font-size:13px;color:var(--green);white-space:pre-wrap}
+.type-result::before{content:"Type Result:";display:block;font-size:11px;font-weight:600;color:var(--text-muted);margin-bottom:4px;text-transform:uppercase;letter-spacing:0.5px}
+.type-error{background:var(--red-bg);border-top:1px solid rgba(248,81,73,0.2);padding:12px 16px;font-family:'SF Mono','Fira Code','Consolas',monospace;font-size:13px;color:var(--red);white-space:pre-wrap}
+.type-error::before{content:"Type Error:";display:block;font-size:11px;font-weight:600;color:var(--red);margin-bottom:4px;text-transform:uppercase;letter-spacing:0.5px}
+
+/* Callouts */
+.callout-warning{background:var(--yellow-bg);border:1px solid rgba(210,153,34,0.2);border-radius:8px;padding:20px;margin-bottom:20px}
+.callout-warning strong{color:var(--yellow);display:block;margin-bottom:12px;font-size:16px}
+.mistake,.correct{padding:10px 14px;border-radius:6px;margin-bottom:10px;font-size:14px;line-height:1.6}
+.mistake{background:var(--red-bg);border-left:3px solid var(--red)}
+.mistake code,.correct code{background:var(--code-bg);padding:2px 6px;border-radius:4px;font-family:'SF Mono','Fira Code','Consolas',monospace;font-size:13px}
+.correct{background:var(--green-bg);border-left:3px solid var(--green)}
+
+/* Key Rules */
+.key-rules{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:20px;margin-bottom:20px}
+.key-rules strong{display:block;margin-bottom:10px;font-size:16px}
+.key-rules ul{padding-left:20px}
+.key-rules li{margin-bottom:6px}
+.key-rules code{background:var(--code-bg);padding:2px 6px;border-radius:4px;font-family:'SF Mono','Fira Code','Consolas',monospace;font-size:13px}
+
+/* Exercises */
+.exercises{border:2px dashed var(--exercise-border);border-radius:8px;padding:20px;margin-bottom:20px;margin-left:12px}
+.exercises strong{display:block;margin-bottom:14px;font-size:16px;color:var(--purple)}
+.exercise{margin-bottom:14px;padding-left:38px;position:relative;line-height:1.6}
+.exercise:last-child{margin-bottom:0}
+.exercise-num{position:absolute;left:0;top:2px;background:var(--purple);color:#fff;width:24px;height:24px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:12px;font-weight:700}
+.exercise code{background:var(--code-bg);padding:2px 6px;border-radius:4px;font-family:'SF Mono','Fira Code','Consolas',monospace;font-size:13px}
+
+/* Connections */
+.connections{background:var(--accent-bg);border:1px solid rgba(56,139,253,0.2);border-radius:8px;padding:16px 20px;font-size:14px;color:var(--text-muted)}
+.connections strong{color:var(--accent);margin-right:6px}
+
+/* Footer */
+.guide-footer{border-top:1px solid var(--border);padding-top:32px;margin-top:48px}
+.guide-footer h2{font-size:18px;margin-bottom:16px}
+.guide-footer ul{list-style:none;padding:0}
+.guide-footer li{padding:6px 0}
+.guide-footer li a{font-weight:500}
+
+/* Responsive */
+@media(max-width:900px){
+  .sidebar{display:none}
+  .main{margin-left:0}
+  .theme-toggle{top:12px;right:12px}
+}
+</style>
+</head>
+<body>
+
+<!-- Theme Toggle -->
+<button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">&#x1F319;</button>
+
+<!-- Sidebar -->
+<nav class="sidebar">
+  <div class="sidebar-header">
+    <h2>TypeScript Daily Guide</h2>
+    <div class="date">2026-06-13 &mdash; Day 13</div>
+  </div>
+
+  <div class="sidebar-section review-label">Review (6 concepts)</div>
+  <ul class="sidebar-nav">
+    <li><a href="#review_keyof_indexed_access">keyof &amp; Indexed Access Types <span class="nav-id">R1</span></a></li>
+    <li><a href="#review_type_predicates">Type Predicates &amp; Assertion Functions <span class="nav-id">R2</span></a></li>
+    <li><a href="#review_generic_constraints">Generic Constraints &amp; Defaults <span class="nav-id">R3</span></a></li>
+    <li><a href="#review_branded_types">Branded/Opaque Types <span class="nav-id">R4</span></a></li>
+    <li><a href="#review_redux_toolkit_ts">Redux Toolkit TypeScript Patterns <span class="nav-id">R5</span></a></li>
+    <li><a href="#review_react_hooks_typing">React Hooks Typing <span class="nav-id">R6</span></a></li>
+  </ul>
+
+  <div class="sidebar-section">TypeScript 5.x New Features</div>
+  <ul class="sidebar-nav">
+    <li><a href="#const_type_parameters">const Type Parameters <span class="nav-id">#1</span></a></li>
+    <li><a href="#noinfer_utility">NoInfer Utility Type <span class="nav-id">#2</span></a></li>
+    <li><a href="#using_declarations">Using Declarations <span class="nav-id">#3</span></a></li>
+    <li><a href="#decorator_metadata">Decorator Metadata <span class="nav-id">#4</span></a></li>
+    <li><a href="#typesafe_api_client">Type-Safe API Client Patterns <span class="nav-id">#5</span></a></li>
+  </ul>
+</nav>
+
+<!-- Main Content -->
+<div class="main">
+<div class="content">
+
+<!-- Header -->
+<header class="guide-header">
+  <h1>TypeScript Daily Guide &mdash; Day 13</h1>
+  <div class="meta">
+    <span>2026-06-13</span>
+    <span>&middot;</span>
+    <span>Day 13</span>
+    <span>&middot;</span>
+    <span class="badge badge-purple">6 reviews</span>
+    <span class="badge badge-blue">5 new concepts</span>
+  </div>
+</header>
+
+<!-- How to Use -->
+<div class="how-to-use">
+  <h2>How to Use This Guide</h2>
+  <ol>
+    <li><strong>Review first</strong> &mdash; scan each purple review card; if the concept feels solid, move on; if fuzzy, re-read the code pattern</li>
+    <li><strong>Attempt the challenge exercise</strong> on any review card that felt shaky &mdash; this is your best reinforcement signal</li>
+    <li><strong>Work through new concepts</strong> top to bottom &mdash; each builds on the previous</li>
+    <li><strong>Type every code example</strong> yourself in a .ts or .tsx file &mdash; hover over types in your editor to build intuition</li>
+    <li><strong>Do at least 2 exercises per concept</strong> before moving to the next one</li>
+  </ol>
+</div>
+
+<!-- ============================================================ -->
+<!-- REVIEW SECTION                                                -->
+<!-- ============================================================ -->
+<div class="review-section">
+<div class="review-section-header">Review &mdash; 6 Concepts</div>
+
+<!-- R1: keyof & Indexed Access Types -->
+<div class="review-card" id="review_keyof_indexed_access">
+  <div class="review-header">
+    <span class="review-title">R1. keyof &amp; Indexed Access Types</span>
+    <span class="badge badge-purple">Advanced Type System</span>
+    <span class="review-meta">rep 2 &middot; 4 days overdue</span>
+  </div>
+  <div class="review-reminder"><code>keyof T</code> produces a union of all property names of <code>T</code> as string literal types. <code>T[K]</code> accesses the type of property <code>K</code> in <code>T</code>, enabling generic property lookups that stay in sync with the source type.</div>
+
+  <div class="review-pattern">
+    <strong>Key Pattern</strong>
+    <div class="code-example">
+<pre><code>interface User {
+  id: number;
+  name: string;
+  email: string;
+  age: number;
+}
+
+// keyof produces a union of literal key types
+type UserKeys = keyof User;  // "id" | "name" | "email" | "age"
+
+// Indexed access retrieves the type at a key
+type NameType = User['name'];       // string
+type IdOrAge = User['id' | 'age'];  // number
+
+// Type-safe property access function
+function getProperty&lt;T, K extends keyof T&gt;(obj: T, key: K): T[K] {
+  return obj[key];
+}
+
+const user: User = { id: 1, name: 'Alice', email: 'a@b.com', age: 30 };
+const name = getProperty(user, 'name');  // string
+const age = getProperty(user, 'age');    // number
+// getProperty(user, 'typo');            // Error: "typo" not in keyof User
+
+// Nested indexed access
+interface Config {
+  db: { host: string; port: number };
+  cache: { ttl: number; strategy: 'lru' | 'fifo' };
+}
+type DbHost = Config['db']['host'];           // string
+type CacheStrategy = Config['cache']['strategy']; // 'lru' | 'fifo'</code></pre>
+<div class="type-result">UserKeys = "id" | "name" | "email" | "age"
+NameType = string
+name: string
+age: number
+DbHost = string</div>
+    </div>
+  </div>
+
+  <div class="review-challenge">
+    <strong>Challenge Exercise</strong>
+    <p>Write a generic <code>pick</code> function that takes an object and an array of keys, and returns a new object with only those keys. The return type must be <code>Pick&lt;T, K&gt;</code>. Then write a <code>pluck</code> function that extracts a single property from an array of objects: <code>pluck(users, 'name')</code> returns <code>string[]</code>.</p>
+  </div>
+
+  <div class="review-pitfall">
+    <strong>#1 Pitfall:</strong> Using <code>keyof</code> on a union type gives you the <em>intersection</em> of keys (only keys common to all members), not the union. <code>keyof (A | B)</code> is <code>keyof A &amp; keyof B</code>. Use a distributive conditional type if you need all keys: <code>T extends any ? keyof T : never</code>.
+  </div>
+</div>
+
+<!-- R2: Type Predicates & Assertion Functions -->
+<div class="review-card" id="review_type_predicates">
+  <div class="review-header">
+    <span class="review-title">R2. Type Predicates &amp; Assertion Functions</span>
+    <span class="badge badge-purple">Advanced Type System</span>
+    <span class="review-meta">rep 2 &middot; 4 days overdue</span>
+  </div>
+  <div class="review-reminder">Type predicates (<code>x is T</code>) narrow a parameter's type inside conditional branches. Assertion functions (<code>asserts x is T</code>) narrow types after the call &mdash; if the assertion fails, it throws. Both are essential for converting runtime checks into compile-time type narrowing.</div>
+
+  <div class="review-pattern">
+    <strong>Key Pattern</strong>
+    <div class="code-example">
+<pre><code>// Type predicate — narrows inside if/else branches
+function isString(value: unknown): value is string {
+  return typeof value === 'string';
+}
+
+function process(input: unknown) {
+  if (isString(input)) {
+    console.log(input.toUpperCase());  // input: string
+  }
+}
+
+// Discriminated union guard
+interface Dog { kind: 'dog'; bark(): void; }
+interface Cat { kind: 'cat'; meow(): void; }
+type Animal = Dog | Cat;
+
+function isDog(animal: Animal): animal is Dog {
+  return animal.kind === 'dog';
+}
+
+// Assertion function — narrows AFTER the call
+function assertIsNumber(value: unknown): asserts value is number {
+  if (typeof value !== 'number') {
+    throw new Error(`Expected number, got ${typeof value}`);
+  }
+}
+
+function calculate(input: unknown) {
+  assertIsNumber(input);
+  // After this line, input is narrowed to number
+  return input * 2;  // no type error
+}
+
+// assertNonNull — very common pattern
+function assertDefined&lt;T&gt;(
+  value: T | null | undefined,
+  msg?: string
+): asserts value is T {
+  if (value == null) throw new Error(msg ?? 'Value is null/undefined');
+}</code></pre>
+    </div>
+  </div>
+
+  <div class="review-challenge">
+    <strong>Challenge Exercise</strong>
+    <p>Build a <code>isArrayOf&lt;T&gt;</code> higher-order type guard: <code>isArrayOf(isString)</code> returns a function with signature <code>(value: unknown) =&gt; value is string[]</code>. Then use it to guard an <code>unknown</code> input as <code>number[]</code> using <code>isArrayOf(isNumber)</code>.</p>
+  </div>
+
+  <div class="review-pitfall">
+    <strong>#1 Pitfall:</strong> Type predicates lie if the runtime check is wrong. TypeScript trusts the return type annotation unconditionally. If <code>isString</code> returns <code>true</code> for a number, downstream code will treat it as a string with no runtime error until you call a string method. Always ensure the runtime logic matches the type predicate.
+  </div>
+</div>
+
+<!-- R3: Generic Constraints & Defaults -->
+<div class="review-card" id="review_generic_constraints">
+  <div class="review-header">
+    <span class="review-title">R3. Generic Constraints &amp; Defaults</span>
+    <span class="badge badge-purple">Functions &amp; Patterns</span>
+    <span class="review-meta">rep 2 &middot; due today</span>
+  </div>
+  <div class="review-reminder"><code>&lt;T extends Constraint&gt;</code> limits what types can be passed as <code>T</code>, enabling you to access properties guaranteed by the constraint. Default type parameters (<code>&lt;T = string&gt;</code>) provide a fallback when the caller does not specify a type argument.</div>
+
+  <div class="review-pattern">
+    <strong>Key Pattern</strong>
+    <div class="code-example">
+<pre><code>// Constraint: T must have a 'length' property
+function longest&lt;T extends { length: number }&gt;(a: T, b: T): T {
+  return a.length &gt;= b.length ? a : b;
+}
+
+longest('abc', 'de');        // works: string has .length
+longest([1, 2], [1, 2, 3]); // works: array has .length
+// longest(10, 20);          // Error: number has no .length
+
+// Multiple constraints with intersection
+function merge&lt;T extends object, U extends object&gt;(a: T, b: U): T &amp; U {
+  return { ...a, ...b };
+}
+
+// Default type parameters
+interface ApiResponse&lt;T = unknown, E = Error&gt; {
+  data: T;
+  error: E | null;
+  status: number;
+}
+
+// Without specifying types — uses defaults
+const res1: ApiResponse = { data: 'hello', error: null, status: 200 };
+// data: unknown, error: Error | null
+
+// With explicit types
+const res2: ApiResponse&lt;User[], string&gt; = {
+  data: [{ id: 1, name: 'Alice' }],
+  error: null,
+  status: 200,
+};
+// data: User[], error: string | null</code></pre>
+<div class="type-result">longest('abc', 'de') : string
+merge({ a: 1 }, { b: 2 }) : { a: number } &amp; { b: number }
+res1.data : unknown
+res2.data : User[]</div>
+    </div>
+  </div>
+
+  <div class="review-challenge">
+    <strong>Challenge Exercise</strong>
+    <p>Write a generic <code>createStore&lt;T extends Record&lt;string, unknown&gt;, A extends Record&lt;string, Function&gt; = {}&gt;</code> function that accepts initial state and optional actions. The store should expose <code>getState(): T</code> and all actions from <code>A</code>. Verify that omitting <code>A</code> produces a store with no actions.</p>
+  </div>
+
+  <div class="review-pitfall">
+    <strong>#1 Pitfall:</strong> Defaults with constraints can conflict: <code>&lt;T extends number = string&gt;</code> is an error because the default <code>string</code> does not satisfy the constraint <code>number</code>. The default type must always satisfy the constraint.
+  </div>
+</div>
+
+<!-- R4: Branded/Opaque Types -->
+<div class="review-card" id="review_branded_types">
+  <div class="review-header">
+    <span class="review-title">R4. Branded/Opaque Types</span>
+    <span class="badge badge-purple">Functions &amp; Patterns</span>
+    <span class="review-meta">rep 2 &middot; due today</span>
+  </div>
+  <div class="review-reminder">Branded types use an invisible phantom property to make structurally identical types nominally distinct. <code>type UserId = string &amp; { readonly __brand: unique symbol }</code> prevents accidentally passing a <code>PostId</code> where a <code>UserId</code> is expected, even though both are strings at runtime.</div>
+
+  <div class="review-pattern">
+    <strong>Key Pattern</strong>
+    <div class="code-example">
+<pre><code>// Generic brand utility
+declare const __brand: unique symbol;
+type Brand&lt;T, B extends string&gt; = T &amp; { readonly [__brand]: B };
+
+// Create distinct ID types — all strings at runtime
+type UserId = Brand&lt;string, 'UserId'&gt;;
+type PostId = Brand&lt;string, 'PostId'&gt;;
+type OrderId = Brand&lt;string, 'OrderId'&gt;;
+
+// Smart constructors validate and brand
+function toUserId(id: string): UserId {
+  if (!id.startsWith('usr_')) throw new Error('Invalid UserId');
+  return id as UserId;
+}
+
+function toPostId(id: string): PostId {
+  if (!id.startsWith('post_')) throw new Error('Invalid PostId');
+  return id as PostId;
+}
+
+// Type safety: cannot mix up IDs
+function getUser(id: UserId): Promise&lt;User&gt; { /* ... */ }
+function getPost(id: PostId): Promise&lt;Post&gt; { /* ... */ }
+
+const uid = toUserId('usr_123');
+const pid = toPostId('post_456');
+
+getUser(uid);  // OK
+getPost(pid);  // OK
+// getUser(pid); // Error: PostId not assignable to UserId
+// getUser('usr_123'); // Error: string not assignable to UserId</code></pre>
+    </div>
+  </div>
+
+  <div class="review-challenge">
+    <strong>Challenge Exercise</strong>
+    <p>Create branded types for <code>Email</code>, <code>URL</code>, and <code>NonEmptyString</code>. Write smart constructor functions that validate the input (regex for email, URL parse for URL, length check for NonEmptyString) before branding. Then write a <code>sendEmail(to: Email, link: URL, subject: NonEmptyString)</code> function that requires all three branded types.</p>
+  </div>
+
+  <div class="review-pitfall">
+    <strong>#1 Pitfall:</strong> Using <code>as UserId</code> casts everywhere instead of channeling all creation through a smart constructor. This defeats the purpose of branding &mdash; invalid values slip through unchecked. Always create values through validated factory functions.
+  </div>
+</div>
+
+<!-- R5: Redux Toolkit TypeScript Patterns -->
+<div class="review-card" id="review_redux_toolkit_ts">
+  <div class="review-header">
+    <span class="review-title">R5. Redux Toolkit TypeScript Patterns</span>
+    <span class="badge badge-purple">State Management</span>
+    <span class="review-meta">rep 0 &middot; due today</span>
+  </div>
+  <div class="review-reminder"><code>createSlice</code> infers action types from reducer names. <code>PayloadAction&lt;T&gt;</code> types the payload. <code>RootState</code> and <code>AppDispatch</code>, derived from the store via <code>ReturnType</code> and <code>typeof</code>, flow through typed hooks (<code>useAppSelector</code>, <code>useAppDispatch</code>) to components for end-to-end type safety.</div>
+
+  <div class="review-pattern">
+    <strong>Key Pattern</strong>
+    <div class="code-example">
+<pre><code>import { createSlice, PayloadAction, configureStore } from '@reduxjs/toolkit';
+
+interface TodoState {
+  items: { id: string; text: string; done: boolean }[];
+  filter: 'all' | 'active' | 'done';
+}
+
+const todoSlice = createSlice({
+  name: 'todos',
+  initialState: { items: [], filter: 'all' } as TodoState,
+  reducers: {
+    addTodo(state, action: PayloadAction&lt;{ id: string; text: string }&gt;) {
+      state.items.push({ ...action.payload, done: false });
+    },
+    toggleTodo(state, action: PayloadAction&lt;string&gt;) {
+      const todo = state.items.find(t =&gt; t.id === action.payload);
+      if (todo) todo.done = !todo.done;
+    },
+    setFilter(state, action: PayloadAction&lt;TodoState['filter']&gt;) {
+      state.filter = action.payload;
+    },
+  },
+});
+
+const store = configureStore({ reducer: { todos: todoSlice.reducer } });
+type RootState = ReturnType&lt;typeof store.getState&gt;;
+type AppDispatch = typeof store.dispatch;
+
+// Typed hooks
+import { useDispatch, useSelector, TypedUseSelectorHook } from 'react-redux';
+export const useAppDispatch = () =&gt; useDispatch&lt;AppDispatch&gt;();
+export const useAppSelector: TypedUseSelectorHook&lt;RootState&gt; = useSelector;</code></pre>
+<div class="type-result">todoSlice.actions.addTodo: ActionCreatorWithPayload&lt;{ id: string; text: string }&gt;
+RootState = { todos: TodoState }
+useAppSelector(s =&gt; s.todos.filter) : "all" | "active" | "done"</div>
+    </div>
+  </div>
+
+  <div class="review-challenge">
+    <strong>Challenge Exercise</strong>
+    <p>Create a <code>createAsyncThunk</code> that fetches paginated data. Type it as <code>createAsyncThunk&lt;{ items: Item[]; total: number }, { page: number; limit: number }, { state: RootState; rejectValue: { code: number; message: string } }&gt;</code>. Handle all three cases (<code>pending</code>, <code>fulfilled</code>, <code>rejected</code>) in <code>extraReducers</code> with proper payload types.</p>
+  </div>
+
+  <div class="review-pitfall">
+    <strong>#1 Pitfall:</strong> Using raw <code>useDispatch()</code> and <code>useSelector()</code> instead of typed wrappers. Without <code>useAppDispatch</code>, thunk dispatch calls are untyped. Without <code>useAppSelector</code>, selectors return <code>any</code>. Always define typed hooks in a central <code>hooks.ts</code> file.
+  </div>
+</div>
+
+<!-- R6: React Hooks Typing -->
+<div class="review-card" id="review_react_hooks_typing">
+  <div class="review-header">
+    <span class="review-title">R6. React Hooks Typing</span>
+    <span class="badge badge-purple">React + TS</span>
+    <span class="review-meta">rep 0 &middot; 4 days overdue</span>
+  </div>
+  <div class="review-reminder"><code>useState&lt;T&gt;</code> types the state variable and setter. <code>useRef&lt;T&gt;(null)</code> returns <code>RefObject&lt;T&gt;</code> (read-only <code>.current</code>), while <code>useRef&lt;T&gt;(initialValue)</code> returns <code>MutableRefObject&lt;T&gt;</code>. <code>useReducer</code> is typed via the reducer function signature. Custom hooks should explicitly annotate return types, especially when returning tuples.</div>
+
+  <div class="review-pattern">
+    <strong>Key Pattern</strong>
+    <div class="code-example">
+<pre><code>import { useState, useRef, useReducer, useCallback } from 'react';
+
+// useState — explicit generic for complex types
+const [user, setUser] = useState&lt;User | null&gt;(null);
+//    ^? User | null
+
+// useRef — DOM ref (read-only .current)
+const inputRef = useRef&lt;HTMLInputElement&gt;(null);
+//    ^? RefObject&lt;HTMLInputElement&gt;
+// inputRef.current?.focus()
+
+// useRef — mutable instance variable
+const timerRef = useRef&lt;number&gt;(0);
+//    ^? MutableRefObject&lt;number&gt;
+timerRef.current = window.setTimeout(() =&gt; {}, 1000);
+
+// useReducer — types from reducer signature
+type State = { count: number; error: string | null };
+type Action =
+  | { type: 'increment'; payload: number }
+  | { type: 'reset' }
+  | { type: 'error'; payload: string };
+
+function reducer(state: State, action: Action): State {
+  switch (action.type) {
+    case 'increment': return { ...state, count: state.count + action.payload };
+    case 'reset': return { count: 0, error: null };
+    case 'error': return { ...state, error: action.payload };
+  }
+}
+
+const [state, dispatch] = useReducer(reducer, { count: 0, error: null });
+dispatch({ type: 'increment', payload: 5 }); // OK
+// dispatch({ type: 'increment' });           // Error: missing payload
+
+// Custom hook — explicit return type for tuple
+function useToggle(initial = false): [boolean, () =&gt; void] {
+  const [value, setValue] = useState(initial);
+  const toggle = useCallback(() =&gt; setValue(v =&gt; !v), []);
+  return [value, toggle];
+}</code></pre>
+<div class="type-result">user: User | null
+inputRef: RefObject&lt;HTMLInputElement&gt;
+timerRef: MutableRefObject&lt;number&gt;
+state: { count: number; error: string | null }
+useToggle(): [boolean, () =&gt; void]</div>
+    </div>
+  </div>
+
+  <div class="review-challenge">
+    <strong>Challenge Exercise</strong>
+    <p>Create a custom <code>useFetch&lt;T&gt;(url: string)</code> hook that returns <code>{ data: T | null; loading: boolean; error: Error | null; refetch: () =&gt; void }</code>. Use <code>useState</code>, <code>useRef</code> (for abort controller), and <code>useCallback</code>. Ensure the return type is explicitly annotated and all generic types flow correctly.</p>
+  </div>
+
+  <div class="review-pitfall">
+    <strong>#1 Pitfall:</strong> Forgetting that <code>useRef&lt;HTMLDivElement&gt;(null)</code> gives a <code>RefObject</code> (immutable <code>.current</code>) while <code>useRef&lt;number&gt;(0)</code> gives a <code>MutableRefObject</code>. The difference is whether the initial value matches <code>T</code> or <code>T | null</code>. DOM refs use <code>null</code> initial to get the read-only variant that React manages.
+  </div>
+</div>
+
+</div><!-- end review-section -->
+
+
+<!-- ============================================================ -->
+<!-- NEW CONCEPTS                                                  -->
+<!-- ============================================================ -->
+
+<!-- Section: TypeScript 5.x New Features -->
+<div class="topic-section">
+<div class="topic-section-header">
+  <span class="section-num">1</span>
+  TypeScript 5.x New Features
+</div>
+
+<!-- Concept #1: const Type Parameters -->
+<div class="concept-card" id="const_type_parameters">
+  <div class="concept-header">
+    <span class="concept-title">#1. const Type Parameters</span>
+    <span class="ttag">const_type_parameters</span>
+  </div>
+
+  <div class="why-matters">Before TypeScript 5.0, generic functions always widened inferred types &mdash; <code>['home', 'about']</code> became <code>string[]</code>. The <code>const</code> modifier on type parameters preserves literal and tuple types without requiring callers to write <code>as const</code>, making configuration objects, route definitions, and builder APIs dramatically more type-safe.</div>
+
+  <div class="explanation">
+    <p>Adding <code>const</code> before a type parameter (<code>&lt;const T&gt;</code>) tells TypeScript to infer the narrowest possible type for <code>T</code>. This means string literals stay as literals, arrays become readonly tuples, and object properties retain their literal types. It is equivalent to the caller writing <code>as const</code>, but applied automatically.</p>
+    <p>The <code>const</code> modifier works with constraints: <code>&lt;const T extends readonly string[]&gt;</code> infers a readonly tuple of string literals. The <code>readonly</code> constraint is important because <code>const</code> inference produces readonly types.</p>
+  </div>
+
+  <!-- Example 1: Before vs after -->
+  <div class="code-example">
+    <div class="lang-badge">Example 1 &mdash; Before vs after const type parameters</div>
+<pre><code>// BEFORE TS 5.0 — always widened
+function getRoutes&lt;T extends readonly string[]&gt;(paths: T): T {
+  return paths;
+}
+
+const routes = getRoutes(['home', 'about', 'contact']);
+//    ^? string[]  — literals are lost!
+
+// Caller had to add 'as const' manually
+const routes2 = getRoutes(['home', 'about', 'contact'] as const);
+//    ^? readonly ["home", "about", "contact"]  — works, but awkward
+
+// AFTER TS 5.0 — const type parameter
+function getRoutes2&lt;const T extends readonly string[]&gt;(paths: T): T {
+  return paths;
+}
+
+const routes3 = getRoutes2(['home', 'about', 'contact']);
+//    ^? readonly ["home", "about", "contact"]  — literals preserved!</code></pre>
+<div class="type-result">routes: string[]
+routes2: readonly ["home", "about", "contact"]
+routes3: readonly ["home", "about", "contact"]</div>
+  </div>
+
+  <!-- Example 2: Configuration objects -->
+  <div class="code-example">
+    <div class="lang-badge">Example 2 &mdash; Configuration objects with const T</div>
+<pre><code>// Config builder that preserves exact shape
+function defineConfig&lt;const T extends {
+  routes: Record&lt;string, { path: string; method: 'GET' | 'POST' | 'PUT' | 'DELETE' }>;
+  middleware: readonly string[];
+}&gt;(config: T): T {
+  return config;
+}
+
+const appConfig = defineConfig({
+  routes: {
+    users: { path: '/api/users', method: 'GET' },
+    createUser: { path: '/api/users', method: 'POST' },
+  },
+  middleware: ['auth', 'logging', 'cors'],
+});
+
+// Without const: method would be 'GET' | 'POST' | 'PUT' | 'DELETE'
+// With const: method is exactly 'GET' or 'POST' per route
+type UsersMethod = typeof appConfig.routes.users.method;
+//   ^? "GET"  — not the full union!
+
+type MiddlewareList = typeof appConfig.middleware;
+//   ^? readonly ["auth", "logging", "cors"]  — exact tuple</code></pre>
+<div class="type-result">UsersMethod = "GET"
+MiddlewareList = readonly ["auth", "logging", "cors"]</div>
+  </div>
+
+  <!-- Example 3: Enum-like constants -->
+  <div class="code-example">
+    <div class="lang-badge">Example 3 &mdash; Enum-like constants from const type parameters</div>
+<pre><code>// Create a type-safe enum alternative
+function createEnum&lt;const T extends readonly string[]&gt;(
+  ...values: T
+): { [K in T[number]]: K } &amp; { values: T } {
+  const result = {} as any;
+  for (const v of values) result[v] = v;
+  result.values = values;
+  return result;
+}
+
+const Status = createEnum('active', 'inactive', 'pending', 'archived');
+
+type StatusType = typeof Status.values[number];
+//   ^? "active" | "inactive" | "pending" | "archived"
+
+const s: StatusType = Status.active;  // "active"
+// const bad: StatusType = 'unknown'; // Error!
+
+// Compare with traditional enum — const T gives same safety with less ceremony
+// enum Status { Active = 'active', ... }</code></pre>
+<div class="type-result">Status.active = "active"
+Status.values = readonly ["active", "inactive", "pending", "archived"]
+StatusType = "active" | "inactive" | "pending" | "archived"</div>
+  </div>
+
+  <!-- Example 4: Builder pattern -->
+  <div class="code-example">
+    <div class="lang-badge">Example 4 &mdash; Type-safe builder pattern with const T</div>
+<pre><code>// Form builder that tracks field names at the type level
+class FormBuilder&lt;const Fields extends readonly string[] = readonly []&gt; {
+  constructor(private fields: Fields) {}
+
+  addField&lt;const F extends string&gt;(name: F): FormBuilder&lt;readonly [...Fields, F]&gt; {
+    return new FormBuilder([...this.fields, name] as any);
+  }
+
+  build(): { [K in Fields[number]]: string } {
+    const form = {} as any;
+    for (const f of this.fields) form[f] = '';
+    return form;
+  }
+}
+
+const form = new FormBuilder([] as const)
+  .addField('username')
+  .addField('email')
+  .addField('password')
+  .build();
+
+// form is typed as { username: string; email: string; password: string }
+form.username;  // OK
+form.email;     // OK
+// form.typo;   // Error: Property 'typo' does not exist</code></pre>
+<div class="type-result">form: { username: string; email: string; password: string }</div>
+  </div>
+
+  <!-- Example 5: Common mistake -->
+  <div class="code-example">
+    <div class="lang-badge">Example 5 &mdash; Common mistake: forgetting readonly constraint</div>
+<pre><code>// WRONG: const T infers readonly, but constraint expects mutable
+function badRoutes&lt;const T extends string[]&gt;(paths: T): T {
+  return paths;
+}
+// Error: readonly ["home", "about"] is not assignable to string[]
+// The inferred readonly tuple does not satisfy the mutable array constraint
+
+// CORRECT: constraint must accept readonly
+function goodRoutes&lt;const T extends readonly string[]&gt;(paths: T): T {
+  return paths;
+}
+
+const r = goodRoutes(['home', 'about']);
+//    ^? readonly ["home", "about"]  — works!
+
+// Also works with object constraints
+function defineOptions&lt;const T extends Readonly&lt;{
+  name: string;
+  version: string;
+  features: readonly string[];
+}&gt;&gt;(opts: T): T {
+  return opts;
+}
+
+const opts = defineOptions({
+  name: 'myApp',
+  version: '1.0.0',
+  features: ['dark-mode', 'i18n'],
+});
+// opts.name is "myApp", not string</code></pre>
+<div class="type-result">r: readonly ["home", "about"]
+opts.name: "myApp"
+opts.features: readonly ["dark-mode", "i18n"]</div>
+  </div>
+
+  <div class="callout-warning">
+    <strong>Common Mistakes</strong>
+    <div class="mistake">Using <code>&lt;const T extends string[]&gt;</code> &mdash; <code>const</code> infers <code>readonly</code> tuples, which are not assignable to mutable <code>string[]</code>.</div>
+    <div class="correct">Always use <code>&lt;const T extends readonly string[]&gt;</code> or <code>Readonly&lt;...&gt;</code> in the constraint.</div>
+    <div class="mistake">Applying <code>const</code> to type parameters that already receive widened types from other sources (e.g., state from external APIs) &mdash; it has no effect if the value is already widened.</div>
+    <div class="correct">Use <code>const</code> only on type parameters that receive literal values directly at the call site.</div>
+  </div>
+
+  <div class="key-rules">
+    <strong>Key Rules for const Type Parameters</strong>
+    <ul>
+    <li><a href="typescript-guides/typescript-guide-2026-07-04.html">2026-07-04</a> (Day 31)</li>
+      <li><code>&lt;const T&gt;</code> infers the narrowest possible type &mdash; equivalent to caller writing <code>as const</code></li>
+      <li>Constraints must accept <code>readonly</code> types since <code>const</code> produces them</li>
+      <li>Works with arrays (readonly tuples), objects (literal property types), and primitives (literal types)</li>
+      <li>Best for: config objects, route definitions, builder patterns, enum-like values</li>
+      <li>Available since TypeScript 5.0</li>
+    </ul>
+  </div>
+
+  <div class="exercises">
+    <strong>Exercises</strong>
+    <div class="exercise">
+      <span class="exercise-num">1</span>
+      Write a <code>defineRoutes</code> function using <code>&lt;const T&gt;</code> that accepts an object mapping route names to path strings, and returns a typed router where <code>router.navigate('routeName')</code> only accepts defined route names.
+    </div>
+    <div class="exercise">
+      <span class="exercise-num">2</span>
+      Create a <code>createEventMap&lt;const T&gt;</code> function that accepts <code>{ click: MouseHandler; keydown: KeyHandler }</code> and produces a typed <code>emit(event, data)</code> method where the event name and data type are constrained.
+    </div>
+    <div class="exercise">
+      <span class="exercise-num">3</span>
+      Build a <code>pipe</code> function that chains transformations, using <code>const</code> type parameters to track the exact types at each step: <code>pipe(1).then(x =&gt; x.toString()).then(s =&gt; s.length).value</code> should infer <code>number</code>.
+    </div>
+  </div>
+
+  <div class="connections">
+    <strong>Connections:</strong> Extends <strong>Generics</strong> (type parameter modifiers). Relates to <strong>Template Literal Types</strong> (string literal preservation). Pairs with <strong>Branded Types</strong> (literal-level type safety). Foundational for <strong>Type-Safe API Client Patterns</strong> (concept #5 today).
+  </div>
+</div>
+
+<!-- Concept #2: NoInfer Utility Type -->
+<div class="concept-card" id="noinfer_utility">
+  <div class="concept-header">
+    <span class="concept-title">#2. NoInfer Utility Type</span>
+    <span class="ttag">noinfer_utility</span>
+  </div>
+
+  <div class="why-matters">When TypeScript infers a generic type from multiple positions, it merges all candidates &mdash; which often widens the type beyond what you intended. <code>NoInfer&lt;T&gt;</code> (TS 5.4) marks a position as "do not infer from here," giving you precise control over where type inference draws its conclusions.</div>
+
+  <div class="explanation">
+    <p><code>NoInfer&lt;T&gt;</code> is a built-in utility type that wraps <code>T</code> to prevent TypeScript from using that position for type inference. The wrapped position still receives the inferred type and is checked against it &mdash; it just does not contribute to inference.</p>
+    <p>This solves a class of problems where you want inference to come from one specific argument (e.g., the initial state) while other arguments (e.g., valid states, default values) should be checked against the inferred type rather than influencing it.</p>
+  </div>
+
+  <!-- Example 1: The problem NoInfer solves -->
+  <div class="code-example">
+    <div class="lang-badge">Example 1 &mdash; The problem NoInfer solves</div>
+<pre><code>// WITHOUT NoInfer — inference comes from BOTH arguments
+function createFSM&lt;S extends string&gt;(
+  initial: S,
+  states: S[]
+) { /* ... */ }
+
+// We want S to be "idle" | "loading" | "error"
+// But inference merges both arguments:
+createFSM('idle', ['idle', 'loading', 'error', 'stale']);
+// S inferred as "idle" | "loading" | "error" | "stale"
+// No error on 'stale' — even though we wanted 'idle' to drive inference!
+
+// WITH NoInfer — inference only comes from 'initial'
+function createFSM2&lt;S extends string&gt;(
+  initial: S,
+  states: NoInfer&lt;S&gt;[]
+) { /* ... */ }
+
+createFSM2('idle', ['idle', 'loading', 'error']);
+// S inferred as "idle"
+// Error: "loading" and "error" are not assignable to "idle"!
+
+// The fix: use a union type explicitly
+createFSM2&lt;'idle' | 'loading' | 'error'&gt;('idle', ['idle', 'loading', 'error']);
+// OK — all states checked against the explicit union</code></pre>
+<div class="type-error">Argument of type '"loading"' is not assignable to parameter of type '"idle"'.
+Argument of type '"error"' is not assignable to parameter of type '"idle"'.</div>
+  </div>
+
+  <!-- Example 2: Default values -->
+  <div class="code-example">
+    <div class="lang-badge">Example 2 &mdash; Default values without widening</div>
+<pre><code>// WITHOUT NoInfer — default value widens the type
+function createSignal&lt;T&gt;(initial: T, defaultValue: T): {
+  get(): T;
+  set(v: T): void;
+} {
+  let value = initial;
+  return {
+    get: () =&gt; value,
+    set: (v) =&gt; { value = v; },
+  };
+}
+
+// We want T to be 'red' | 'blue', but 'green' in default widens it
+const signal = createSignal&lt;'red' | 'blue'&gt;('red', 'green');
+// Without explicit annotation, T = 'red' | 'blue' | 'green'
+
+// WITH NoInfer — default is checked, not inferred from
+function createSignal2&lt;T&gt;(initial: T, defaultValue: NoInfer&lt;T&gt;): {
+  get(): T;
+  set(v: T): void;
+} {
+  let value = initial;
+  return {
+    get: () =&gt; value,
+    set: (v) =&gt; { value = v; },
+  };
+}
+
+const signal2 = createSignal2('red' as 'red' | 'blue', 'green');
+// Error: 'green' is not assignable to 'red' | 'blue'
+
+const signal3 = createSignal2('red' as 'red' | 'blue', 'blue');
+// OK — 'blue' is in the inferred union</code></pre>
+<div class="type-error">Argument of type '"green"' is not assignable to parameter of type '"red" | "blue"'.</div>
+  </div>
+
+  <!-- Example 3: Event system -->
+  <div class="code-example">
+    <div class="lang-badge">Example 3 &mdash; Type-safe event emitter with NoInfer</div>
+<pre><code>// Event system where handler type is inferred from the event map, not from
+// the handler argument itself
+interface EventMap {
+  click: { x: number; y: number };
+  keydown: { key: string; code: string };
+  resize: { width: number; height: number };
+}
+
+function on&lt;E extends keyof EventMap&gt;(
+  event: E,
+  handler: (data: NoInfer&lt;EventMap[E]&gt;) =&gt; void
+): void { /* ... */ }
+
+// Handler type is inferred from EventMap, not from the callback parameter
+on('click', (data) =&gt; {
+  console.log(data.x, data.y);     // OK — data is { x: number; y: number }
+  // console.log(data.key);         // Error: 'key' does not exist
+});
+
+on('keydown', (data) =&gt; {
+  console.log(data.key, data.code); // OK — data is { key: string; code: string }
+});</code></pre>
+<div class="type-result">on('click', handler): void — data inferred as { x: number; y: number }
+on('keydown', handler): void — data inferred as { key: string; code: string }</div>
+  </div>
+
+  <!-- Example 4: Constrained selection -->
+  <div class="code-example">
+    <div class="lang-badge">Example 4 &mdash; Constrained selection from a set</div>
+<pre><code>// Select items from a typed collection — selection must be a subset
+function selectFrom&lt;T extends string&gt;(
+  all: readonly T[],
+  selected: NoInfer&lt;T&gt;[]
+): NoInfer&lt;T&gt;[] {
+  return selected.filter(s =&gt; all.includes(s));
+}
+
+const colors = ['red', 'green', 'blue', 'yellow'] as const;
+
+selectFrom(colors, ['red', 'blue']);     // OK
+selectFrom(colors, ['red', 'purple']);   // Error: 'purple' not in the set
+
+// Without NoInfer, 'purple' would widen T to include it — no error!
+
+// Real-world: form field selection
+function createForm&lt;const F extends readonly string[]&gt;(
+  fields: F,
+  required: NoInfer&lt;F[number]&gt;[]
+) { /* ... */ }
+
+createForm(
+  ['name', 'email', 'phone'] as const,
+  ['name', 'email']  // OK — subset of fields
+);
+
+createForm(
+  ['name', 'email', 'phone'] as const,
+  ['name', 'address']  // Error: 'address' not in fields
+);</code></pre>
+<div class="type-error">Argument of type '"purple"' is not assignable to parameter of type '"red" | "green" | "blue" | "yellow"'.
+Argument of type '"address"' is not assignable to parameter of type '"name" | "email" | "phone"'.</div>
+  </div>
+
+  <!-- Example 5: Before NoInfer workarounds -->
+  <div class="code-example">
+    <div class="lang-badge">Example 5 &mdash; How we solved this before NoInfer</div>
+<pre><code>// Workaround 1: Separate type parameters (verbose)
+function oldFSM&lt;S extends string, V extends S&gt;(
+  initial: S,
+  states: V[]
+): void { /* ... */ }
+
+// Workaround 2: Wrapper type that blocks inference
+type OldNoInfer&lt;T&gt; = T extends infer U ? U : never;
+// or
+type OldNoInfer2&lt;T&gt; = [T][T extends any ? 0 : never];
+
+// Workaround 3: Function overloads
+function oldCreateSignal&lt;T&gt;(initial: T, defaultValue: T): void;
+function oldCreateSignal(initial: any, defaultValue: any): void { /* ... */ }
+
+// The new way is cleaner and more readable
+function newFSM&lt;S extends string&gt;(
+  initial: S,
+  states: NoInfer&lt;S&gt;[]
+): void { /* ... */ }
+
+// NoInfer is a first-class utility type — no hacks needed</code></pre>
+  </div>
+
+  <div class="callout-warning">
+    <strong>Common Mistakes</strong>
+    <div class="mistake">Wrapping all parameters in <code>NoInfer</code> &mdash; if no position contributes to inference, TypeScript cannot infer <code>T</code> at all and it falls back to the constraint or <code>unknown</code>.</div>
+    <div class="correct">Always leave at least one parameter position unwrapped so TypeScript has a source for inference.</div>
+    <div class="mistake">Expecting <code>NoInfer</code> to change the runtime type &mdash; it is purely a compile-time directive with no runtime effect.</div>
+    <div class="correct"><code>NoInfer&lt;T&gt;</code> resolves to <code>T</code> at the type level. It only affects which positions contribute to type inference.</div>
+  </div>
+
+  <div class="exercises">
+    <strong>Exercises</strong>
+    <div class="exercise">
+      <span class="exercise-num">1</span>
+      Write a <code>createDropdown&lt;T extends string&gt;(options: readonly T[], defaultOption: NoInfer&lt;T&gt;)</code> function. Verify that passing a default not in the options array produces a type error.
+    </div>
+    <div class="exercise">
+      <span class="exercise-num">2</span>
+      Implement a <code>createTheme&lt;T&gt;(base: T, overrides: Partial&lt;NoInfer&lt;T&gt;&gt;)</code> function. The base object drives inference; overrides can only contain keys and value types from base. Test with a theme object.
+    </div>
+    <div class="exercise">
+      <span class="exercise-num">3</span>
+      Build a type-safe <code>createValidator&lt;T&gt;(schema: T, testCases: NoInfer&lt;T&gt;[])</code> where the schema defines the shape and test cases must match it exactly. Verify mismatched test cases error at compile time.
+    </div>
+  </div>
+
+  <div class="connections">
+    <strong>Connections:</strong> Complements <strong>Generic Constraints</strong> (reviewed today) for controlling inference. Pairs with <strong>const Type Parameters</strong> (concept #1) for precise type narrowing. Useful in <strong>Redux Toolkit</strong> patterns (reviewed today) where thunk types are inferred from multiple positions.
+  </div>
+</div>
+
+<!-- Concept #3: Using Declarations & Explicit Resource Management -->
+<div class="concept-card" id="using_declarations">
+  <div class="concept-header">
+    <span class="concept-title">#3. Using Declarations &amp; Explicit Resource Management</span>
+    <span class="ttag">using_declarations</span>
+  </div>
+
+  <div class="why-matters">The <code>using</code> keyword (TS 5.2) brings deterministic cleanup to JavaScript/TypeScript, replacing fragile try/finally patterns. When a <code>using</code> variable goes out of scope, its <code>[Symbol.dispose]()</code> method is called automatically &mdash; like RAII in C++ or <code>with</code> in Python. This eliminates resource leaks for database connections, file handles, locks, and temporary files.</div>
+
+  <div class="explanation">
+    <p><code>using</code> declares a variable whose resource is automatically disposed when the enclosing block exits. The resource must implement <code>Disposable</code> (with a <code>[Symbol.dispose]()</code> method) or <code>AsyncDisposable</code> (with <code>[Symbol.asyncDispose]()</code> for async cleanup, used with <code>await using</code>).</p>
+    <p><code>DisposableStack</code> and <code>AsyncDisposableStack</code> group multiple disposables so they are all cleaned up together, in reverse order of registration.</p>
+  </div>
+
+  <!-- Example 1: Basic using -->
+  <div class="code-example">
+    <div class="lang-badge">Example 1 &mdash; Basic using with Symbol.dispose</div>
+<pre><code>// A resource that implements Disposable
+class TempFile implements Disposable {
+  path: string;
+
+  constructor(name: string) {
+    this.path = `/tmp/${name}-${Date.now()}`;
+    console.log(`Created: ${this.path}`);
+    // Create the temp file on disk...
+  }
+
+  write(data: string): void {
+    console.log(`Writing to ${this.path}`);
+  }
+
+  [Symbol.dispose](): void {
+    console.log(`Deleted: ${this.path}`);
+    // Delete the temp file from disk...
+  }
+}
+
+function processData() {
+  using tmpFile = new TempFile('data');
+  tmpFile.write('some data');
+  // ... do work with the temp file ...
+
+  // When this block exits (normally or via exception),
+  // tmpFile[Symbol.dispose]() is called automatically
+}
+
+processData();
+// Output:
+// Created: /tmp/data-1718...
+// Writing to /tmp/data-1718...
+// Deleted: /tmp/data-1718...   &lt;-- automatic cleanup!</code></pre>
+<div class="output">Created: /tmp/data-1718280000000
+Writing to /tmp/data-1718280000000
+Deleted: /tmp/data-1718280000000</div>
+  </div>
+
+  <!-- Example 2: await using for async cleanup -->
+  <div class="code-example">
+    <div class="lang-badge">Example 2 &mdash; await using for database connections</div>
+<pre><code>// AsyncDisposable for resources with async cleanup
+class DatabaseConnection implements AsyncDisposable {
+  private connected = false;
+
+  static async connect(url: string): Promise&lt;DatabaseConnection&gt; {
+    const conn = new DatabaseConnection();
+    // Simulate async connection
+    await new Promise(r =&gt; setTimeout(r, 100));
+    conn.connected = true;
+    console.log(`Connected to ${url}`);
+    return conn;
+  }
+
+  async query&lt;T&gt;(sql: string): Promise&lt;T[]&gt; {
+    if (!this.connected) throw new Error('Not connected');
+    console.log(`Executing: ${sql}`);
+    return [] as T[];
+  }
+
+  async [Symbol.asyncDispose](): Promise&lt;void&gt; {
+    if (this.connected) {
+      // Gracefully close the connection
+      await new Promise(r =&gt; setTimeout(r, 50));
+      this.connected = false;
+      console.log('Connection closed');
+    }
+  }
+}
+
+async function getUsers() {
+  await using db = await DatabaseConnection.connect('postgres://...');
+  const users = await db.query&lt;{ id: number; name: string }&gt;(
+    'SELECT * FROM users'
+  );
+  return users;
+  // db[Symbol.asyncDispose]() called automatically here
+}
+
+// No more try/finally for cleanup!
+// BEFORE:
+// const db = await DatabaseConnection.connect('...');
+// try {
+//   const users = await db.query('SELECT ...');
+//   return users;
+// } finally {
+//   await db.close();  // easy to forget!
+// }</code></pre>
+  </div>
+
+  <!-- Example 3: DisposableStack -->
+  <div class="code-example">
+    <div class="lang-badge">Example 3 &mdash; DisposableStack for grouping resources</div>
+<pre><code>// DisposableStack manages multiple disposables
+function setupTestEnvironment() {
+  using stack = new DisposableStack();
+
+  // Register resources — disposed in reverse order
+  const tmpDir = stack.adopt('/tmp/test-dir', (dir) =&gt; {
+    console.log(`Removing directory: ${dir}`);
+  });
+
+  const logFile = stack.use(new TempFile('test-log'));
+
+  const mockServer = stack.defer(() =&gt; {
+    console.log('Stopping mock server');
+  });
+
+  // stack.adopt(value, onDispose) — wrap any value with a cleanup
+  // stack.use(disposable) — add an existing Disposable
+  // stack.defer(callback) — run callback on dispose
+
+  console.log('Running tests...');
+  // When block exits, all three are cleaned up in reverse order:
+  // 1. mockServer callback
+  // 2. logFile[Symbol.dispose]()
+  // 3. tmpDir callback
+}
+
+// AsyncDisposableStack for async resources
+async function setupAsyncEnv() {
+  await using stack = new AsyncDisposableStack();
+
+  const db = await stack.use(
+    await DatabaseConnection.connect('postgres://...')
+  );
+
+  const cache = await stack.use(
+    await RedisConnection.connect('redis://...')
+  );
+
+  stack.defer(async () =&gt; {
+    console.log('Flushing metrics...');
+    await flushMetrics();
+  });
+
+  // All cleaned up in reverse order when block exits
+}</code></pre>
+  </div>
+
+  <!-- Example 4: Lock pattern -->
+  <div class="code-example">
+    <div class="lang-badge">Example 4 &mdash; Mutex/Lock pattern with using</div>
+<pre><code>// A mutex that uses Disposable for automatic unlock
+class Mutex {
+  private locked = false;
+  private waiters: (() =&gt; void)[] = [];
+
+  async acquire(): Promise&lt;Disposable&gt; {
+    while (this.locked) {
+      await new Promise&lt;void&gt;(resolve =&gt; this.waiters.push(resolve));
+    }
+    this.locked = true;
+
+    return {
+      [Symbol.dispose]: () =&gt; {
+        this.locked = false;
+        const next = this.waiters.shift();
+        if (next) next();
+      },
+    };
+  }
+}
+
+const mutex = new Mutex();
+
+async function criticalSection() {
+  using lock = await mutex.acquire();
+  // Mutex is held for this entire block
+  console.log('Doing exclusive work...');
+  await expensiveOperation();
+  // Lock is automatically released when block exits
+  // Even if expensiveOperation() throws!
+}
+
+// Multiple concurrent calls — only one enters the critical section at a time
+Promise.all([
+  criticalSection(),
+  criticalSection(),
+  criticalSection(),
+]);</code></pre>
+  </div>
+
+  <!-- Example 5: Real-world patterns -->
+  <div class="code-example">
+    <div class="lang-badge">Example 5 &mdash; Real-world: file handles, timers, event listeners</div>
+<pre><code>// Timer that auto-clears
+function createTimer(ms: number, callback: () =&gt; void): Disposable {
+  const id = setInterval(callback, ms);
+  return {
+    [Symbol.dispose]() {
+      clearInterval(id);
+    },
+  };
+}
+
+// Event listener that auto-removes
+function onEvent(
+  target: EventTarget,
+  event: string,
+  handler: EventListener
+): Disposable {
+  target.addEventListener(event, handler);
+  return {
+    [Symbol.dispose]() {
+      target.removeEventListener(event, handler);
+    },
+  };
+}
+
+// Usage — no manual cleanup needed
+function setupUI() {
+  using timer = createTimer(1000, () =&gt; console.log('tick'));
+  using clickHandler = onEvent(document, 'click', (e) =&gt; {
+    console.log('clicked', (e as MouseEvent).clientX);
+  });
+
+  // Both are automatically cleaned up when the scope exits
+}
+
+// AbortController pattern
+function createAbortable(): Disposable &amp; { signal: AbortSignal } {
+  const controller = new AbortController();
+  return {
+    signal: controller.signal,
+    [Symbol.dispose]() {
+      controller.abort();
+    },
+  };
+}
+
+async function fetchWithTimeout(url: string) {
+  using aborter = createAbortable();
+  using timeout = { [Symbol.dispose]: () =&gt; {} };
+  setTimeout(() =&gt; aborter.signal.dispatchEvent(new Event('abort')), 5000);
+
+  const response = await fetch(url, { signal: aborter.signal });
+  return response.json();
+}</code></pre>
+  </div>
+
+  <div class="callout-warning">
+    <strong>Common Mistakes</strong>
+    <div class="mistake">Using <code>using</code> with a value that does not implement <code>Disposable</code> or <code>AsyncDisposable</code> &mdash; TypeScript will error at compile time, but it is easy to forget the <code>[Symbol.dispose]</code> method.</div>
+    <div class="correct">Always implement the <code>Disposable</code> or <code>AsyncDisposable</code> interface explicitly so TypeScript enforces the contract.</div>
+    <div class="mistake">Using <code>using</code> (synchronous) with an async disposable resource &mdash; the async cleanup will not be awaited.</div>
+    <div class="correct">Use <code>await using</code> for any resource with <code>[Symbol.asyncDispose]</code>. Use plain <code>using</code> only for synchronous <code>[Symbol.dispose]</code>.</div>
+  </div>
+
+  <div class="key-rules">
+    <strong>Key Rules for Using Declarations</strong>
+    <ul>
+      <li><code>using x = ...</code> &mdash; calls <code>x[Symbol.dispose]()</code> when scope exits</li>
+      <li><code>await using x = ...</code> &mdash; calls <code>await x[Symbol.asyncDispose]()</code> when scope exits</li>
+      <li>Resources are disposed in <strong>reverse</strong> order of declaration (LIFO)</li>
+      <li>Disposal happens even if an exception is thrown</li>
+      <li><code>DisposableStack</code> groups multiple resources for coordinated cleanup</li>
+      <li>Requires TypeScript 5.2+ and <code>"lib": ["ESNext.Disposable"]</code> or <code>"lib": ["ES2024"]</code></li>
+    </ul>
+  </div>
+
+  <div class="exercises">
+    <strong>Exercises</strong>
+    <div class="exercise">
+      <span class="exercise-num">1</span>
+      Create a <code>TempDirectory</code> class that implements <code>Disposable</code>. It should create a temp directory on construction and delete it (with all contents) on dispose. Use <code>using</code> to ensure cleanup in a test function.
+    </div>
+    <div class="exercise">
+      <span class="exercise-num">2</span>
+      Implement a <code>ConnectionPool</code> that implements <code>AsyncDisposable</code>. The pool manages multiple database connections, and <code>[Symbol.asyncDispose]</code> gracefully closes all of them. Use <code>await using</code> in an async function.
+    </div>
+    <div class="exercise">
+      <span class="exercise-num">3</span>
+      Write a <code>createTestContext()</code> function that uses <code>DisposableStack</code> to set up a mock server, a test database, and a temp file, then tears them all down automatically. Verify the teardown order is reverse of setup.
+    </div>
+    <div class="exercise">
+      <span class="exercise-num">4</span>
+      Create a <code>withTransaction()</code> helper: <code>await using tx = await db.beginTransaction()</code>. The transaction should auto-rollback on dispose unless <code>tx.commit()</code> was called. Implement the <code>AsyncDisposable</code> interface.
+    </div>
+  </div>
+
+  <div class="connections">
+    <strong>Connections:</strong> Relates to <strong>Interfaces</strong> (implementing <code>Disposable</code>). Pairs with <strong>Symbol</strong> types (<code>Symbol.dispose</code>, <code>Symbol.asyncDispose</code>). Replaces try/finally patterns from <strong>Error Handling</strong>. Useful in <strong>Type-Safe API Client Patterns</strong> (concept #5) for connection lifecycle.
+  </div>
+</div>
+
+<!-- Concept #4: Decorator Metadata -->
+<div class="concept-card" id="decorator_metadata">
+  <div class="concept-header">
+    <span class="concept-title">#4. Decorator Metadata</span>
+    <span class="ttag">decorator_metadata</span>
+  </div>
+
+  <div class="why-matters">TypeScript 5.2 introduced <code>Symbol.metadata</code>, which lets decorators attach metadata to classes without external libraries like <code>reflect-metadata</code>. This enables first-class support for dependency injection containers, ORM column mappings, validation rules, and API route registration &mdash; all with runtime introspection.</div>
+
+  <div class="explanation">
+    <p>The TC39 decorator metadata proposal gives every decorator access to a <code>context.metadata</code> object. Multiple decorators on the same class share the same metadata object, and the metadata is accessible at runtime via <code>MyClass[Symbol.metadata]</code>.</p>
+    <p>This replaces the <code>reflect-metadata</code> polyfill and <code>Reflect.defineMetadata</code>/<code>Reflect.getMetadata</code> pattern that was common in Angular, NestJS, and TypeORM. The new approach is standards-based and does not require experimental decorators.</p>
+  </div>
+
+  <!-- Example 1: Basic decorator metadata -->
+  <div class="code-example">
+    <div class="lang-badge">Example 1 &mdash; Attaching metadata with decorators</div>
+<pre><code>// A decorator that records validation rules in metadata
+function MinLength(min: number) {
+  return function (
+    target: undefined,  // undefined for field decorators
+    context: ClassFieldDecoratorContext
+  ) {
+    // Attach metadata to the class via context.metadata
+    const rules = (context.metadata.validationRules ??= {}) as
+      Record&lt;string, any[]&gt;;
+    const fieldName = String(context.name);
+    (rules[fieldName] ??= []).push({ type: 'minLength', value: min });
+  };
+}
+
+function MaxLength(max: number) {
+  return function (
+    target: undefined,
+    context: ClassFieldDecoratorContext
+  ) {
+    const rules = (context.metadata.validationRules ??= {}) as
+      Record&lt;string, any[]&gt;;
+    const fieldName = String(context.name);
+    (rules[fieldName] ??= []).push({ type: 'maxLength', value: max });
+  };
+}
+
+function Required(
+  target: undefined,
+  context: ClassFieldDecoratorContext
+) {
+  const rules = (context.metadata.validationRules ??= {}) as
+    Record&lt;string, any[]&gt;;
+  const fieldName = String(context.name);
+  (rules[fieldName] ??= []).push({ type: 'required' });
+}
+
+class User {
+  @Required
+  @MinLength(2)
+  @MaxLength(50)
+  name: string = '';
+
+  @Required
+  @MinLength(5)
+  email: string = '';
+}
+
+// Access metadata at runtime
+const metadata = User[Symbol.metadata];
+console.log(metadata?.validationRules);
+// {
+//   name: [
+//     { type: 'required' },
+//     { type: 'minLength', value: 2 },
+//     { type: 'maxLength', value: 50 }
+//   ],
+//   email: [
+//     { type: 'required' },
+//     { type: 'minLength', value: 5 }
+//   ]
+// }</code></pre>
+  </div>
+
+  <!-- Example 2: DI container -->
+  <div class="code-example">
+    <div class="lang-badge">Example 2 &mdash; Dependency injection with metadata</div>
+<pre><code>// Simple DI container using decorator metadata
+const INJECT_KEY = Symbol('inject');
+
+function Injectable(
+  target: new (...args: any[]) =&gt; any,
+  context: ClassDecoratorContext
+) {
+  context.metadata[INJECT_KEY] = {
+    name: context.name,
+    injectable: true,
+  };
+}
+
+function Inject(serviceKey: string) {
+  return function (
+    target: undefined,
+    context: ClassFieldDecoratorContext
+  ) {
+    const deps = (context.metadata.dependencies ??= []) as
+      { field: string; serviceKey: string }[];
+    deps.push({ field: String(context.name), serviceKey });
+  };
+}
+
+@Injectable
+class UserService {
+  getUser(id: string) {
+    return { id, name: 'Alice' };
+  }
+}
+
+@Injectable
+class OrderController {
+  @Inject('UserService')
+  userService!: UserService;
+
+  getOrderWithUser(orderId: string) {
+    const user = this.userService.getUser('usr_1');
+    return { orderId, user };
+  }
+}
+
+// The DI container reads metadata to wire dependencies
+function createContainer(classes: (new (...args: any[]) =&gt; any)[]) {
+  const instances = new Map&lt;string, any&gt;();
+
+  for (const cls of classes) {
+    const meta = cls[Symbol.metadata];
+    const instance = new cls();
+    const name = (meta?.[INJECT_KEY] as any)?.name ?? cls.name;
+    instances.set(name, instance);
+  }
+
+  // Wire dependencies
+  for (const cls of classes) {
+    const meta = cls[Symbol.metadata];
+    const deps = (meta?.dependencies ?? []) as
+      { field: string; serviceKey: string }[];
+    const name = (meta?.[INJECT_KEY] as any)?.name ?? cls.name;
+    const instance = instances.get(name);
+
+    for (const dep of deps) {
+      instance[dep.field] = instances.get(dep.serviceKey);
+    }
+  }
+
+  return instances;
+}</code></pre>
+  </div>
+
+  <!-- Example 3: ORM column mappings -->
+  <div class="code-example">
+    <div class="lang-badge">Example 3 &mdash; ORM-style column mappings</div>
+<pre><code>// Decorator-based ORM column definitions
+function Table(tableName: string) {
+  return function (
+    target: new (...args: any[]) =&gt; any,
+    context: ClassDecoratorContext
+  ) {
+    context.metadata.tableName = tableName;
+  };
+}
+
+function Column(options: {
+  type: 'string' | 'number' | 'boolean' | 'date';
+  nullable?: boolean;
+  primary?: boolean;
+  unique?: boolean;
+}) {
+  return function (
+    target: undefined,
+    context: ClassFieldDecoratorContext
+  ) {
+    const columns = (context.metadata.columns ??= []) as any[];
+    columns.push({
+      field: String(context.name),
+      ...options,
+    });
+  };
+}
+
+@Table('users')
+class UserEntity {
+  @Column({ type: 'number', primary: true })
+  id: number = 0;
+
+  @Column({ type: 'string', unique: true })
+  email: string = '';
+
+  @Column({ type: 'string' })
+  name: string = '';
+
+  @Column({ type: 'date', nullable: true })
+  lastLogin: Date | null = null;
+}
+
+// Read schema at runtime
+const meta = UserEntity[Symbol.metadata]!;
+console.log(meta.tableName);  // "users"
+console.log(meta.columns);
+// [
+//   { field: 'id', type: 'number', primary: true },
+//   { field: 'email', type: 'string', unique: true },
+//   { field: 'name', type: 'string' },
+//   { field: 'lastLogin', type: 'date', nullable: true }
+// ]
+
+// Generate SQL from metadata
+function generateCreateTable(cls: new (...args: any[]) =&gt; any): string {
+  const m = cls[Symbol.metadata]!;
+  const table = m.tableName as string;
+  const cols = (m.columns as any[]).map(c =&gt;
+    `${c.field} ${c.type.toUpperCase()}${c.primary ? ' PRIMARY KEY' : ''}${c.nullable ? '' : ' NOT NULL'}`
+  );
+  return `CREATE TABLE ${table} (\n  ${cols.join(',\n  ')}\n);`;
+}</code></pre>
+  </div>
+
+  <!-- Example 4: API route registration -->
+  <div class="code-example">
+    <div class="lang-badge">Example 4 &mdash; API route registration with metadata</div>
+<pre><code>// Express-like route decorators
+type HttpMethod = 'GET' | 'POST' | 'PUT' | 'DELETE';
+
+function Route(method: HttpMethod, path: string) {
+  return function (
+    target: Function,
+    context: ClassMethodDecoratorContext
+  ) {
+    const routes = (context.metadata.routes ??= []) as
+      { method: HttpMethod; path: string; handler: string }[];
+    routes.push({
+      method,
+      path,
+      handler: String(context.name),
+    });
+  };
+}
+
+// Shorthand decorators
+const Get = (path: string) =&gt; Route('GET', path);
+const Post = (path: string) =&gt; Route('POST', path);
+const Put = (path: string) =&gt; Route('PUT', path);
+const Delete = (path: string) =&gt; Route('DELETE', path);
+
+class UserController {
+  @Get('/users')
+  listUsers() { return []; }
+
+  @Get('/users/:id')
+  getUser() { return {}; }
+
+  @Post('/users')
+  createUser() { return {}; }
+
+  @Delete('/users/:id')
+  deleteUser() { return {}; }
+}
+
+// Register routes from metadata
+const routeMeta = UserController[Symbol.metadata]!;
+const routes = routeMeta.routes as any[];
+// [
+//   { method: 'GET', path: '/users', handler: 'listUsers' },
+//   { method: 'GET', path: '/users/:id', handler: 'getUser' },
+//   { method: 'POST', path: '/users', handler: 'createUser' },
+//   { method: 'DELETE', path: '/users/:id', handler: 'deleteUser' }
+// ]</code></pre>
+  </div>
+
+  <!-- Example 5: vs reflect-metadata -->
+  <div class="code-example">
+    <div class="lang-badge">Example 5 &mdash; Comparison: Symbol.metadata vs reflect-metadata</div>
+<pre><code>// OLD: reflect-metadata (requires polyfill + experimentalDecorators)
+// import 'reflect-metadata';
+//
+// function OldColumn(type: string) {
+//   return function (target: any, key: string) {
+//     Reflect.defineMetadata('column:type', type, target, key);
+//   };
+// }
+//
+// // Reading metadata
+// const type = Reflect.getMetadata('column:type', instance, 'name');
+//
+// Problems:
+// - Requires 'reflect-metadata' polyfill (extra dependency)
+// - Requires experimentalDecorators + emitDecoratorMetadata in tsconfig
+// - Not standards-based — may break with future TS versions
+// - Metadata stored externally via WeakMap, not on the class itself
+
+// NEW: Symbol.metadata (built-in, standards-based)
+function NewColumn(type: string) {
+  return function (
+    target: undefined,
+    context: ClassFieldDecoratorContext
+  ) {
+    const cols = (context.metadata.columns ??= {}) as Record&lt;string, string&gt;;
+    cols[String(context.name)] = type;
+  };
+}
+
+// Reading metadata — direct property access, no polyfill needed
+// const cols = MyClass[Symbol.metadata]?.columns;
+
+// Benefits:
+// - No polyfill needed — built into the language
+// - Standards-based TC39 proposal (Stage 3)
+// - Metadata lives on the class via Symbol.metadata
+// - Works with the standard (non-experimental) decorators
+// - TypeScript 5.2+ support</code></pre>
+  </div>
+
+  <div class="callout-warning">
+    <strong>Common Mistakes</strong>
+    <div class="mistake">Mixing <code>experimentalDecorators</code> (legacy) with the new TC39 decorators &mdash; they are incompatible. <code>Symbol.metadata</code> only works with the new decorator syntax.</div>
+    <div class="correct">Remove <code>"experimentalDecorators": true</code> from tsconfig when using the new decorators and <code>Symbol.metadata</code>.</div>
+    <div class="mistake">Assuming <code>context.metadata</code> is a fresh object per decorator &mdash; it is shared across all decorators on the same class (and its subclasses).</div>
+    <div class="correct">Use namespaced keys (Symbols or unique string prefixes) to avoid collisions between different decorator libraries.</div>
+  </div>
+
+  <div class="exercises">
+    <strong>Exercises</strong>
+    <div class="exercise">
+      <span class="exercise-num">1</span>
+      Build a <code>@Validate</code> decorator system with <code>@IsString</code>, <code>@IsNumber</code>, <code>@IsEmail</code>, and <code>@Range(min, max)</code> field decorators. Write a <code>validate(instance)</code> function that reads <code>Symbol.metadata</code> and returns an array of validation errors.
+    </div>
+    <div class="exercise">
+      <span class="exercise-num">2</span>
+      Create <code>@Serializable</code> class decorator and <code>@JsonProperty(name?)</code> field decorator that map TypeScript property names to JSON keys. Write <code>toJson(instance)</code> and <code>fromJson(cls, json)</code> functions using the metadata.
+    </div>
+    <div class="exercise">
+      <span class="exercise-num">3</span>
+      Implement a simple DI container with <code>@Injectable</code> and <code>@Inject(token)</code> decorators. The container should read <code>Symbol.metadata</code> to wire dependencies automatically. Test with a service that depends on two other services.
+    </div>
+  </div>
+
+  <div class="connections">
+    <strong>Connections:</strong> Extends <strong>Decorators</strong> fundamentals (TS 5.0 standard decorators). Replaces <strong>reflect-metadata</strong> patterns. Pairs with <strong>Ambient Declarations</strong> (typing <code>Symbol.metadata</code>). Used in frameworks like <strong>NestJS</strong> and <strong>TypeORM</strong> for metadata-driven architecture.
+  </div>
+</div>
+
+<!-- Concept #5: Type-Safe API Client Patterns -->
+<div class="concept-card" id="typesafe_api_client">
+  <div class="concept-header">
+    <span class="concept-title">#5. Type-Safe API Client Patterns</span>
+    <span class="ttag">typesafe_api_client</span>
+  </div>
+
+  <div class="why-matters">Most web apps use untyped <code>fetch</code> or <code>axios</code> calls where the response is <code>any</code>. A type-safe API client maps URL patterns to request/response types so that <code>api.get('/users/:id', { id: '1' })</code> returns <code>Promise&lt;User&gt;</code> with full compile-time checking of the URL, parameters, and response shape.</div>
+
+  <div class="explanation">
+    <p>The pattern involves three layers: (1) a route map that associates URL patterns with request/response types per HTTP method, (2) template literal types that extract path parameters from URL strings, and (3) a typed client that looks up the route map and enforces correct types at each call site.</p>
+    <p>Runtime validation with libraries like Zod can be added to bridge the gap between compile-time types and actual API responses. This pattern powers libraries like tRPC, ts-rest, and zodios.</p>
+  </div>
+
+  <!-- Example 1: Route type map -->
+  <div class="code-example">
+    <div class="lang-badge">Example 1 &mdash; Defining a typed route map</div>
+<pre><code>// Define the API contract as a type
+interface ApiRoutes {
+  '/users': {
+    GET: { response: User[]; query?: { page?: number; limit?: number } };
+    POST: { response: User; body: CreateUserInput };
+  };
+  '/users/:id': {
+    GET: { response: User };
+    PUT: { response: User; body: UpdateUserInput };
+    DELETE: { response: { success: boolean } };
+  };
+  '/posts': {
+    GET: { response: Post[]; query?: { authorId?: string } };
+    POST: { response: Post; body: CreatePostInput };
+  };
+  '/posts/:id/comments': {
+    GET: { response: Comment[] };
+    POST: { response: Comment; body: { text: string } };
+  };
+}
+
+interface User {
+  id: string;
+  name: string;
+  email: string;
+}
+
+interface CreateUserInput {
+  name: string;
+  email: string;
+}
+
+interface UpdateUserInput {
+  name?: string;
+  email?: string;
+}
+
+interface Post {
+  id: string;
+  title: string;
+  body: string;
+  authorId: string;
+}
+
+interface CreatePostInput {
+  title: string;
+  body: string;
+}
+
+interface Comment {
+  id: string;
+  text: string;
+  postId: string;
+  authorId: string;
+}</code></pre>
+  </div>
+
+  <!-- Example 2: Path parameter extraction -->
+  <div class="code-example">
+    <div class="lang-badge">Example 2 &mdash; Extracting path parameters with template literals</div>
+<pre><code>// Extract :param segments from a URL pattern
+type ExtractParams&lt;T extends string&gt; =
+  T extends `${string}:${infer Param}/${infer Rest}`
+    ? Param | ExtractParams&lt;`/${Rest}`&gt;
+    : T extends `${string}:${infer Param}`
+      ? Param
+      : never;
+
+// Build a params object from extracted param names
+type PathParams&lt;T extends string&gt; =
+  [ExtractParams&lt;T&gt;] extends [never]
+    ? {}
+    : { [K in ExtractParams&lt;T&gt;]: string };
+
+// Test the types
+type P1 = PathParams&lt;'/users'&gt;;
+//   ^? {}  — no params
+
+type P2 = PathParams&lt;'/users/:id'&gt;;
+//   ^? { id: string }
+
+type P3 = PathParams&lt;'/posts/:postId/comments/:commentId'&gt;;
+//   ^? { postId: string; commentId: string }
+
+// URL builder that substitutes params
+function buildUrl&lt;T extends string&gt;(
+  pattern: T,
+  params: PathParams&lt;T&gt;
+): string {
+  let url: string = pattern;
+  for (const [key, value] of Object.entries(params)) {
+    url = url.replace(`:${key}`, value as string);
+  }
+  return url;
+}
+
+const url = buildUrl('/users/:id', { id: '42' });
+//    ^? string — value is "/users/42"
+
+// buildUrl('/users/:id', {});
+// Error: Property 'id' is missing</code></pre>
+<div class="type-result">P1 = {}
+P2 = { id: string }
+P3 = { postId: string; commentId: string }
+url = "/users/42"</div>
+  </div>
+
+  <!-- Example 3: Typed fetch wrapper -->
+  <div class="code-example">
+    <div class="lang-badge">Example 3 &mdash; Building the typed API client</div>
+<pre><code>// The core typed client
+type HttpMethod = 'GET' | 'POST' | 'PUT' | 'DELETE';
+
+type RouteConfig = {
+  response: unknown;
+  body?: unknown;
+  query?: Record&lt;string, unknown&gt;;
+};
+
+// Determine what arguments the client method needs
+type RequestOptions&lt;
+  Route extends string,
+  Config extends RouteConfig
+&gt; = PathParams&lt;Route&gt; extends Record&lt;string, never&gt;
+  ? Config extends { body: infer B }
+    ? { body: B; query?: Config extends { query?: infer Q } ? Q : never }
+    : Config extends { query?: infer Q }
+      ? { query?: Q }
+      : {}
+  : Config extends { body: infer B }
+    ? { params: PathParams&lt;Route&gt;; body: B; query?: Config extends { query?: infer Q } ? Q : never }
+    : { params: PathParams&lt;Route&gt;; query?: Config extends { query?: infer Q } ? Q : never };
+
+// The client class
+class ApiClient&lt;Routes extends Record&lt;string, Partial&lt;Record&lt;HttpMethod, RouteConfig&gt;&gt;&gt;&gt; {
+  constructor(private baseUrl: string) {}
+
+  async request&lt;
+    P extends keyof Routes &amp; string,
+    M extends keyof Routes[P] &amp; HttpMethod
+  &gt;(
+    method: M,
+    path: P,
+    options: RequestOptions&lt;P, Routes[P][M] &amp; RouteConfig&gt;
+  ): Promise&lt;(Routes[P][M] &amp; RouteConfig)['response']&gt; {
+    const opts = options as any;
+    let url = `${this.baseUrl}${path}`;
+
+    // Substitute path params
+    if (opts.params) {
+      for (const [key, val] of Object.entries(opts.params)) {
+        url = url.replace(`:${key}`, val as string);
+      }
+    }
+
+    // Add query params
+    if (opts.query) {
+      const qs = new URLSearchParams(opts.query as any).toString();
+      url += `?${qs}`;
+    }
+
+    const response = await fetch(url, {
+      method,
+      headers: { 'Content-Type': 'application/json' },
+      body: opts.body ? JSON.stringify(opts.body) : undefined,
+    });
+
+    return response.json();
+  }
+}
+
+// Create a typed client instance
+const api = new ApiClient&lt;ApiRoutes&gt;('https://api.example.com');</code></pre>
+  </div>
+
+  <!-- Example 4: Using the client -->
+  <div class="code-example">
+    <div class="lang-badge">Example 4 &mdash; Using the type-safe client</div>
+<pre><code>// GET /users — response is User[]
+const users = await api.request('GET', '/users', {
+  query: { page: 1, limit: 20 },
+});
+// users: User[]
+
+// POST /users — requires body: CreateUserInput
+const newUser = await api.request('POST', '/users', {
+  body: { name: 'Alice', email: 'alice@example.com' },
+});
+// newUser: User
+
+// GET /users/:id — requires params.id
+const user = await api.request('GET', '/users/:id', {
+  params: { id: '42' },
+});
+// user: User
+
+// PUT /users/:id — requires params + body
+const updated = await api.request('PUT', '/users/:id', {
+  params: { id: '42' },
+  body: { name: 'Alice Updated' },
+});
+// updated: User
+
+// DELETE /users/:id — requires params
+const deleted = await api.request('DELETE', '/users/:id', {
+  params: { id: '42' },
+});
+// deleted: { success: boolean }
+
+// Type errors:
+// api.request('GET', '/users', { body: {} });
+// Error: body not expected for GET /users
+
+// api.request('POST', '/users', {});
+// Error: body is required for POST /users
+
+// api.request('PATCH', '/users', {});
+// Error: 'PATCH' not in routes for '/users'</code></pre>
+<div class="type-result">users: User[]
+newUser: User
+user: User
+updated: User
+deleted: { success: boolean }</div>
+  </div>
+
+  <!-- Example 5: Runtime validation with Zod -->
+  <div class="code-example">
+    <div class="lang-badge">Example 5 &mdash; Adding runtime validation with Zod</div>
+<pre><code>import { z } from 'zod';
+
+// Define schemas for runtime validation
+const UserSchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  email: z.string().email(),
+});
+
+const UsersResponseSchema = z.array(UserSchema);
+
+// Validated fetch wrapper
+async function validatedFetch&lt;T&gt;(
+  url: string,
+  schema: z.ZodType&lt;T&gt;,
+  init?: RequestInit
+): Promise&lt;T&gt; {
+  const response = await fetch(url, init);
+
+  if (!response.ok) {
+    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+  }
+
+  const data = await response.json();
+
+  // Runtime validation — throws if shape doesn't match
+  return schema.parse(data);
+  // Return type is T — inferred from the schema
+}
+
+// Usage — compile-time + runtime type safety
+const users = await validatedFetch(
+  'https://api.example.com/users',
+  UsersResponseSchema
+);
+// users: { id: string; name: string; email: string }[]
+// If API returns unexpected shape, Zod throws at runtime
+
+// Combined: typed routes + Zod validation
+interface ValidatedRoute&lt;T&gt; {
+  path: string;
+  method: HttpMethod;
+  schema: z.ZodType&lt;T&gt;;
+}
+
+function createRoute&lt;T&gt;(
+  path: string,
+  method: HttpMethod,
+  schema: z.ZodType&lt;T&gt;
+): ValidatedRoute&lt;T&gt; {
+  return { path, method, schema };
+}
+
+const getUserRoute = createRoute('/users/:id', 'GET', UserSchema);
+// getUserRoute.schema validates User shape at runtime
+// Return type is inferred as ValidatedRoute&lt;{ id: string; name: string; email: string }&gt;</code></pre>
+<div class="type-result">users: { id: string; name: string; email: string }[]
+getUserRoute: ValidatedRoute&lt;{ id: string; name: string; email: string }&gt;</div>
+  </div>
+
+  <div class="callout-warning">
+    <strong>Common Mistakes</strong>
+    <div class="mistake">Trusting <code>response.json()</code> without runtime validation &mdash; the compile-time type is only as good as your type assertion. APIs can change, return errors, or have bugs.</div>
+    <div class="correct">Always validate API responses at runtime with Zod, io-ts, or similar. Combine compile-time types with runtime validation for true type safety.</div>
+    <div class="mistake">Making the route map too complex with deeply nested conditional types &mdash; this slows down the TypeScript compiler and produces unreadable error messages.</div>
+    <div class="correct">Keep the route map flat and simple. Use helper types for path params but avoid more than 2-3 levels of conditional type nesting.</div>
+  </div>
+
+  <div class="key-rules">
+    <strong>Key Rules for Type-Safe API Clients</strong>
+    <ul>
+      <li>Define the API contract as a route map type &mdash; URL patterns to request/response types</li>
+      <li>Extract path parameters using template literal types: <code>:param</code> segments become required properties</li>
+      <li>Enforce correct HTTP methods per route at the type level</li>
+      <li>Always add runtime validation (Zod, io-ts) for API responses &mdash; types alone cannot catch runtime mismatches</li>
+      <li>Consider existing libraries: <strong>tRPC</strong> (full-stack), <strong>ts-rest</strong> (REST), <strong>zodios</strong> (Zod + axios) before building from scratch</li>
+    </ul>
+  </div>
+
+  <div class="exercises">
+    <strong>Exercises</strong>
+    <div class="exercise">
+      <span class="exercise-num">1</span>
+      Extend the <code>ApiRoutes</code> type with <code>/auth/login</code> (POST, body: <code>{ email: string; password: string }</code>, response: <code>{ token: string; user: User }</code>) and <code>/auth/me</code> (GET, response: <code>User</code>). Verify the client enforces the correct types.
+    </div>
+    <div class="exercise">
+      <span class="exercise-num">2</span>
+      Add convenience methods to the client: <code>api.get(path, options)</code>, <code>api.post(path, options)</code>, <code>api.put(path, options)</code>, <code>api.delete(path, options)</code> that delegate to <code>request</code> with the method pre-filled.
+    </div>
+    <div class="exercise">
+      <span class="exercise-num">3</span>
+      Implement a <code>createZodClient(baseUrl, routeSchemas)</code> function where <code>routeSchemas</code> maps each route + method to a Zod schema. The client should validate responses at runtime and infer return types from the schemas. Test with at least 3 routes.
+    </div>
+    <div class="exercise">
+      <span class="exercise-num">4</span>
+      Add support for nested path parameters: <code>/orgs/:orgId/teams/:teamId/members/:memberId</code>. Verify that <code>PathParams</code> correctly extracts all three parameters and that <code>buildUrl</code> substitutes them correctly.
+    </div>
+  </div>
+
+  <div class="connections">
+    <strong>Connections:</strong> Uses <strong>Template Literal Types</strong> (path param extraction), <strong>Conditional Types</strong> (request option inference), <strong>Generics</strong> (typed client methods), <strong>Mapped Types</strong> (route map structure). Relates to <strong>const Type Parameters</strong> (concept #1) for preserving literal route strings. Practical application of <strong>keyof &amp; Indexed Access</strong> (reviewed today).
+  </div>
+</div>
+
+</div><!-- end topic-section: TypeScript 5.x New Features -->
+
+
+<!-- ============================================================ -->
+<!-- FOOTER                                                        -->
+<!-- ============================================================ -->
+<footer class="guide-footer">
+  <h2>All Guides</h2>
+  <ul>
+    <li><a href="typescript-guides/typescript-guide-2026-07-09.html">2026-07-09</a> (Day 36)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-07-08.html">2026-07-08</a> (Day 35)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-07-07.html">2026-07-07</a> (Day 34)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-07-06.html">2026-07-06</a> (Day 33)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-07-05.html">2026-07-05</a> (Day 32)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-07-04.html">2026-07-04</a> (Day 31)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-07-03.html">2026-07-03</a> (Day 30)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-07-02.html">2026-07-02</a> (Day 29)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-07-01.html">2026-07-01</a> (Day 28)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-30.html">2026-06-30</a> (Day 27)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-29.html">2026-06-29</a> (Day 26)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-28.html">2026-06-28</a> (Day 25)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-27.html">2026-06-27</a> (Day 24)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-26.html">2026-06-26</a> (Day 23)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-25.html">2026-06-25</a> (Day 22)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-24.html">2026-06-24</a> (Day 21)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-23.html">2026-06-23</a> (Day 20)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-22.html">2026-06-22</a> (Day 19)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-21.html">2026-06-21</a> (Day 18)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-19.html">2026-06-19</a> (Day 17)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-18.html">2026-06-18</a> (Day 16)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-17.html">2026-06-17</a> (Day 15)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-15.html">2026-06-15</a> (Day 14)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-13.html">2026-06-13</a> (Day 13)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-12.html">2026-06-12</a> (Day 12)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-11.html">2026-06-11</a> (Day 11)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-10.html">2026-06-10</a> (Day 10)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-09.html">2026-06-09</a> (Day 9)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-08.html">2026-06-08</a> (Day 8)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-07.html">2026-06-07</a> (Day 7)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-05.html">2026-06-05</a> (Day 6)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-04.html">2026-06-04</a> (Day 5)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-03.html">2026-06-03</a> (Day 4)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-02.html">2026-06-02</a> (Day 3)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-01.html">2026-06-01</a> (Day 2)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-05-31.html">2026-05-31</a> (Day 1)</li>
+  </ul>
+</footer>
+
+</div><!-- end content -->
+</div><!-- end main -->
+
+<script>
+// Theme toggle
+(function() {
+  var toggle = document.getElementById('themeToggle');
+  var html = document.documentElement;
+  var STORAGE_KEY = 'lc-tsguide-theme';
+
+  function setTheme(theme) {
+    html.setAttribute('data-theme', theme);
+    toggle.textContent = theme === 'dark' ? '\u{1F319}' : '\u{2600}\u{FE0F}';
+    try { localStorage.setItem(STORAGE_KEY, theme); } catch(e) {}
+  }
+
+  // Load saved theme
+  try {
+    var saved = localStorage.getItem(STORAGE_KEY);
+    if (saved) setTheme(saved);
+  } catch(e) {}
+
+  toggle.addEventListener('click', function() {
+    var current = html.getAttribute('data-theme') || 'dark';
+    setTheme;
+  });
+})();
+
+// Sidebar active link tracking
+(function() {
+  var links = document.querySelectorAll('.sidebar-nav a');
+  var sections = [];
+  links.forEach(function(link) {
+    var id = link.getAttribute('href').replace('#', '');
+    var el = document.getElementById(id);
+    if (el) sections.push({ link: link, el: el });
+  });
+
+  function updateActive() {
+    var current = null;
+    var scrollY = window.scrollY + 120;
+    for (var i = sections.length - 1; i >= 0; i--) {
+      if (sections[i].el.offsetTop <= scrollY) {
+        current = sections[i];
+        break;
+      }
+    }
+    links.forEach(function(l) { l.classList.remove('active'); });
+    if  current.link.classList.add('active');
+  }
+
+  window.addEventListener('scroll', updateActive);
+  updateActive();
+})();
+</script>
+
+</body>
+</html>

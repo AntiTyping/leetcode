@@ -1,0 +1,703 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LeetCode Performance Report — Andy Pliszka — 2026-06-18</title>
+<style>
+:root {
+  --bg: #0d1117; --surface: #161b22; --surface2: #1c2129;
+  --border: #30363d; --text: #e6edf3; --text-muted: #8b949e;
+  --accent: #58a6ff; --accent-bg: rgba(56,139,253,0.15);
+  --green: #3fb950; --red: #f85149; --yellow: #d29922;
+  --purple: #bc8cff; --link: #58a6ff;
+}
+[data-theme="light"] {
+  --bg: #ffffff; --surface: #f6f8fa; --surface2: #eef1f5;
+  --border: #d0d7de; --text: #1f2328; --text-muted: #656d76;
+  --accent: #0969da; --accent-bg: rgba(9,105,218,0.1);
+  --green: #1a7f37; --red: #cf222e; --yellow: #9a6700;
+  --purple: #8250df; --link: #0969da;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+  background: var(--bg); color: var(--text);
+  font-size: 16px; line-height: 1.7;
+  -webkit-font-smoothing: antialiased;
+  padding: 0 0 4rem;
+}
+.wrap { max-width: 1180px; margin: 0 auto; padding: 0 1.5rem; }
+a { color: var(--link); text-decoration: none; }
+a:hover { text-decoration: underline; }
+h1, h2, h3 { line-height: 1.3; }
+h2 {
+  font-size: 1.5rem; margin: 3rem 0 1.25rem;
+  padding-bottom: 0.5rem; border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; gap: 0.6rem;
+}
+h2 .ico { font-size: 1.3rem; }
+h3 { font-size: 1.1rem; margin: 0 0 0.6rem; }
+p { color: var(--text); }
+.muted { color: var(--text-muted); }
+
+/* Header */
+header {
+  background: linear-gradient(135deg, var(--surface) 0%, var(--surface2) 100%);
+  border-bottom: 1px solid var(--border);
+  padding: 3rem 0 2.5rem; margin-bottom: 1rem;
+}
+header h1 { font-size: 2.4rem; letter-spacing: -0.5px; }
+header .sub { color: var(--text-muted); margin-top: 0.5rem; font-size: 1.05rem; }
+header .date-badge {
+  display: inline-block; margin-top: 1rem; padding: 0.35rem 0.9rem;
+  background: var(--accent-bg); color: var(--accent);
+  border: 1px solid var(--accent); border-radius: 2rem;
+  font-size: 0.9rem; font-weight: 600;
+}
+
+/* Theme toggle */
+.theme-toggle {
+  position: fixed; top: 1rem; right: 1rem; z-index: 100;
+  width: 2.6rem; height: 2.6rem; border-radius: 50%;
+  background: var(--surface); border: 1px solid var(--border);
+  color: var(--text); cursor: pointer; font-size: 1.2rem;
+  display: flex; align-items: center; justify-content: center;
+  transition: background 0.2s, transform 0.2s;
+}
+.theme-toggle:hover { background: var(--surface2); transform: scale(1.08); }
+
+/* Metric cards */
+.metrics { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem; }
+.metric {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 0.75rem; padding: 1.25rem; text-align: center;
+}
+.metric .num { font-size: 2.2rem; font-weight: 700; line-height: 1.1; }
+.metric .label { color: var(--text-muted); font-size: 0.85rem; margin-top: 0.3rem; text-transform: uppercase; letter-spacing: 0.5px; }
+.metric.easy .num { color: var(--green); }
+.metric.med .num { color: var(--yellow); }
+.metric.hard .num { color: var(--red); }
+.metric.accent .num { color: var(--accent); }
+.metric.purple .num { color: var(--purple); }
+
+/* Generic card */
+.card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 0.75rem; padding: 1.5rem;
+}
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+.grid-2-side { display: grid; grid-template-columns: 320px 1fr; gap: 2rem; align-items: center; }
+
+/* Donut */
+.donut-wrap { display: flex; flex-direction: column; align-items: center; gap: 1rem; }
+.donut {
+  width: 220px; height: 220px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  position: relative;
+}
+.donut::after {
+  content: ''; position: absolute; width: 130px; height: 130px;
+  background: var(--surface); border-radius: 50%;
+}
+.donut .center { position: relative; z-index: 1; text-align: center; }
+.donut .center .big { font-size: 1.9rem; font-weight: 700; }
+.donut .center .small { font-size: 0.8rem; color: var(--text-muted); }
+.legend { display: flex; flex-direction: column; gap: 0.8rem; }
+.legend .item { display: flex; align-items: center; gap: 0.7rem; }
+.legend .dot { width: 14px; height: 14px; border-radius: 3px; flex-shrink: 0; }
+.legend .item .lab { flex: 1; }
+.legend .item .val { font-weight: 600; color: var(--text-muted); }
+
+/* Activity bar chart */
+.activity {
+  display: grid; grid-auto-flow: column; grid-auto-columns: 1fr;
+  gap: 4px; align-items: stretch; overflow-x: auto;
+  padding: 1rem 0.5rem 0; min-height: 240px;
+}
+.bar-group {
+  display: grid; grid-template-rows: 1fr auto; gap: 0.4rem;
+  align-items: end; min-width: 30px; height: 220px;
+}
+.bar-track { display: flex; align-items: flex-end; justify-content: center; height: 100%; }
+.bar {
+  width: 70%; background: var(--accent); border-radius: 3px 3px 0 0;
+  position: relative; min-height: 2px; transition: opacity 0.2s;
+}
+.bar:hover { opacity: 0.75; }
+.bar .count {
+  position: absolute; top: -1.2rem; left: 50%; transform: translateX(-50%);
+  font-size: 0.7rem; color: var(--text-muted); white-space: nowrap;
+}
+.bar.peak { background: var(--green); }
+.bar-label {
+  font-size: 0.6rem; color: var(--text-muted); text-align: center;
+  writing-mode: vertical-rl; transform: rotate(180deg);
+  white-space: nowrap; height: 60px; overflow: hidden;
+}
+.phase-note { display: flex; gap: 1rem; flex-wrap: wrap; margin-top: 1rem; font-size: 0.85rem; color: var(--text-muted); }
+.phase-note span { display: inline-flex; align-items: center; gap: 0.4rem; }
+.phase-note .sw { width: 12px; height: 12px; border-radius: 3px; display: inline-block; }
+
+/* Cumulative SVG */
+.cumchart { width: 100%; }
+.cumchart svg { width: 100%; height: auto; display: block; }
+.cum-axis { fill: var(--text-muted); font-size: 11px; }
+.cum-grid { stroke: var(--border); stroke-width: 1; stroke-dasharray: 3 3; }
+.cum-line { fill: none; stroke: var(--accent); stroke-width: 2.5; }
+.cum-area { fill: var(--accent-bg); }
+.cum-dot { fill: var(--accent); }
+.cum-anno { fill: var(--text); font-size: 11px; font-weight: 600; }
+.cum-anno-bg { fill: var(--surface2); stroke: var(--border); }
+
+/* Topic bars */
+.topics { display: flex; flex-direction: column; gap: 0.55rem; }
+.topic-row { display: grid; grid-template-columns: 160px 1fr 40px; align-items: center; gap: 0.75rem; }
+.topic-row .tname { font-size: 0.9rem; }
+.topic-row .tbar-bg { background: var(--surface2); border-radius: 4px; height: 18px; overflow: hidden; }
+.topic-row .tbar { height: 100%; border-radius: 4px; background: var(--accent); }
+.topic-row .tval { font-size: 0.85rem; color: var(--text-muted); text-align: right; }
+
+.coverage-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem; margin-top: 1.5rem; }
+.cov-cat { background: var(--surface); border: 1px solid var(--border); border-radius: 0.6rem; padding: 1rem; }
+.cov-cat h4 { font-size: 0.95rem; margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.4rem; }
+.cov-cat .tags { display: flex; flex-wrap: wrap; gap: 0.35rem; }
+.cov-strong h4 { color: var(--green); }
+.cov-mod h4 { color: var(--accent); }
+.cov-weak h4 { color: var(--yellow); }
+.cov-missing h4 { color: var(--red); }
+
+.tag {
+  display: inline-block; padding: 0.1rem 0.5rem; font-size: 0.72rem;
+  background: var(--surface2); border: 1px solid var(--border);
+  border-radius: 1rem; color: var(--text-muted);
+}
+
+/* Strength/weakness */
+.sw-card { background: var(--surface); border: 1px solid var(--border); border-radius: 0.6rem; padding: 1rem 1.2rem; margin-bottom: 0.9rem; }
+.sw-card.s { border-left: 3px solid var(--green); }
+.sw-card.w { border-left: 3px solid var(--red); }
+.sw-card h4 { font-size: 0.98rem; margin-bottom: 0.3rem; }
+.sw-card p { font-size: 0.88rem; color: var(--text-muted); }
+
+/* Quality */
+.qual { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+.qual ul { list-style: none; }
+.qual li { font-size: 0.9rem; padding: 0.45rem 0 0.45rem 1.6rem; position: relative; border-bottom: 1px solid var(--border); }
+.qual li:last-child { border-bottom: none; }
+.qual .pos li::before { content: '✓'; position: absolute; left: 0; color: var(--green); font-weight: 700; }
+.qual .neg li::before { content: '!'; position: absolute; left: 0.3rem; color: var(--yellow); font-weight: 700; }
+
+/* Plan */
+.phase { background: var(--surface); border: 1px solid var(--border); border-radius: 0.7rem; padding: 1.3rem; margin-bottom: 1rem; }
+.phase h3 { display: flex; align-items: center; gap: 0.6rem; }
+.phase .wk { font-size: 0.75rem; background: var(--accent-bg); color: var(--accent); padding: 0.15rem 0.6rem; border-radius: 1rem; font-weight: 600; }
+.phase .probs { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: 0.7rem; }
+.pchip { font-size: 0.78rem; padding: 0.2rem 0.6rem; background: var(--surface2); border: 1px solid var(--border); border-radius: 0.4rem; }
+
+/* Tables */
+table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+th, td { text-align: left; padding: 0.55rem 0.7rem; border-bottom: 1px solid var(--border); }
+th { color: var(--text-muted); font-weight: 600; text-transform: uppercase; font-size: 0.72rem; letter-spacing: 0.5px; position: sticky; top: 0; background: var(--surface); z-index: 2; }
+tbody tr:hover { background: var(--surface2); }
+.scroll-table { max-height: 560px; overflow-y: auto; border: 1px solid var(--border); border-radius: 0.6rem; }
+
+.badge { display: inline-block; padding: 0.1rem 0.5rem; border-radius: 0.4rem; font-size: 0.72rem; font-weight: 700; }
+.b-easy { background: rgba(63,185,80,0.15); color: var(--green); border: 1px solid var(--green); }
+.b-med { background: rgba(210,153,34,0.15); color: var(--yellow); border: 1px solid var(--yellow); }
+.b-hard { background: rgba(248,81,73,0.15); color: var(--red); border: 1px solid var(--red); }
+
+/* Footer */
+footer { margin-top: 4rem; padding-top: 2rem; border-top: 1px solid var(--border); color: var(--text-muted); font-size: 0.85rem; }
+footer .prev-links { display: flex; flex-wrap: wrap; gap: 0.5rem 1.2rem; margin: 0.8rem 0 1.5rem; }
+
+@media (max-width: 760px) {
+  .grid-2, .qual { grid-template-columns: 1fr; }
+  .grid-2-side { grid-template-columns: 1fr; }
+  header h1 { font-size: 1.8rem; }
+}
+</style>
+</head>
+<body>
+<button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">🌙</button>
+
+<header>
+  <div class="wrap">
+    <h1>LeetCode Performance Report</h1>
+    <div class="sub">Andy Pliszka &middot; Progress &amp; learning-plan assessment</div>
+    <div class="date-badge">Generated 2026-06-18</div>
+  </div>
+</header>
+
+<div class="wrap">
+
+<!-- ===== KEY METRICS ===== -->
+<h2><span class="ico">📊</span> Key Metrics</h2>
+<div class="metrics">
+  <div class="metric accent"><div class="num">152</div><div class="label">Total Solved</div></div>
+  <div class="metric easy"><div class="num">78</div><div class="label">Easy</div></div>
+  <div class="metric med"><div class="num">66</div><div class="label">Medium</div></div>
+  <div class="metric hard"><div class="num">8</div><div class="label">Hard</div></div>
+  <div class="metric purple"><div class="num">30+</div><div class="label">Multi-Approach</div></div>
+  <div class="metric accent"><div class="num">6</div><div class="label">Languages</div></div>
+</div>
+
+<!-- ===== DIFFICULTY DONUT ===== -->
+<h2><span class="ico">🎯</span> Difficulty Distribution</h2>
+<div class="card">
+  <div class="grid-2-side">
+    <div class="donut-wrap">
+      <div class="donut" style="background: conic-gradient(
+        var(--green) 0% 51.3%,
+        var(--yellow) 51.3% 94.7%,
+        var(--red) 94.7% 100%);">
+        <div class="center">
+          <div class="big">152</div>
+          <div class="small">problems</div>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="legend">
+        <div class="item"><span class="dot" style="background:var(--green)"></span><span class="lab">Easy</span><span class="val">78 &middot; 51.3%</span></div>
+        <div class="item"><span class="dot" style="background:var(--yellow)"></span><span class="lab">Medium</span><span class="val">66 &middot; 43.4%</span></div>
+        <div class="item"><span class="dot" style="background:var(--red)"></span><span class="lab">Hard</span><span class="val">8 &middot; 5.3%</span></div>
+      </div>
+      <p class="muted" style="margin-top:1.2rem; font-size:0.9rem;">
+        <strong style="color:var(--text)">Recommendation:</strong> The Medium ratio is healthy, but Hard sits at just 5%.
+        For interview readiness, target a <strong style="color:var(--text)">~30% Easy / 50% Medium / 20% Hard</strong> mix.
+        Concretely, that means adding roughly 20&ndash;25 Hard problems over the next two months while keeping the Medium pace steady.
+      </p>
+    </div>
+  </div>
+</div>
+
+<!-- ===== ACTIVITY TIMELINE ===== -->
+<h2><span class="ico">📅</span> Activity Timeline &mdash; Problems Solved Per Day</h2>
+<div class="card">
+  <div class="activity" id="activity"></div>
+  <div class="phase-note">
+    <span><span class="sw" style="background:var(--accent)"></span> Daily count</span>
+    <span><span class="sw" style="background:var(--green)"></span> Peak day (8+)</span>
+    <span class="muted">Note: two long gaps (May&ndash;Oct 2025, Oct 2025&ndash;May 2026) are collapsed for readability.</span>
+  </div>
+</div>
+
+<!-- ===== CUMULATIVE PROGRESS ===== -->
+<h2><span class="ico">📈</span> Cumulative Progress</h2>
+<div class="card">
+  <div class="cumchart" id="cumchart"></div>
+  <p class="muted" style="margin-top:1rem; font-size:0.9rem;">
+    A slow start in May 2025 (~19 problems) was followed by two long gaps. The intense daily streak
+    beginning <strong style="color:var(--text)">May 21, 2026</strong> drove the total from ~19 to <strong style="color:var(--text)">152</strong> in about four weeks &mdash;
+    a steep, sustained climb with a notable burst on Jun 10 (12 problems).
+  </p>
+</div>
+
+<!-- ===== TOPIC COVERAGE ===== -->
+<h2><span class="ico">🧩</span> Topic Coverage</h2>
+<div class="card">
+  <div class="topics" id="topics"></div>
+</div>
+<div class="coverage-grid">
+  <div class="cov-cat cov-strong">
+    <h4>● Strong (10+)</h4>
+    <div class="tags">
+      <span class="tag">arrays (90+)</span><span class="tag">string (35+)</span><span class="tag">DP (30+)</span>
+      <span class="tag">two-pointers (25+)</span><span class="tag">hash-map (25+)</span><span class="tag">sorting (15+)</span>
+      <span class="tag">sliding-window (12+)</span>
+    </div>
+  </div>
+  <div class="cov-cat cov-mod">
+    <h4>● Moderate (5&ndash;9)</h4>
+    <div class="tags">
+      <span class="tag">greedy (10)</span><span class="tag">backtracking (8)</span><span class="tag">linked-list (7)</span>
+      <span class="tag">binary-search (7)</span><span class="tag">heap (7)</span><span class="tag">tree (6)</span>
+      <span class="tag">math (6)</span><span class="tag">prefix-sum (5)</span><span class="tag">design (5)</span>
+    </div>
+  </div>
+  <div class="cov-cat cov-weak">
+    <h4>● Weak (1&ndash;4)</h4>
+    <div class="tags">
+      <span class="tag">graph (4)</span><span class="tag">BFS/DFS (4)</span><span class="tag">stack (3)</span>
+      <span class="tag">bit-manipulation (2)</span><span class="tag">intervals (2)</span><span class="tag">trie (1)</span>
+    </div>
+  </div>
+  <div class="cov-cat cov-missing">
+    <h4>● Missing (0)</h4>
+    <div class="tags">
+      <span class="tag">union-find</span><span class="tag">topological sort</span><span class="tag">monotonic stack</span>
+      <span class="tag">Dijkstra</span><span class="tag">segment tree</span><span class="tag">tree DP</span>
+    </div>
+  </div>
+</div>
+
+<!-- ===== STRENGTHS / WEAKNESSES ===== -->
+<h2><span class="ico">⚖️</span> Strengths &amp; Weaknesses</h2>
+<div class="grid-2">
+  <div>
+    <h3 style="color:var(--green)">Strengths</h3>
+    <div class="sw-card s"><h4>Dynamic Programming mastery</h4><p>30+ DP problems including Hard ones (Paint House III, Min Difficulty Job Schedule). Strong coverage of 1D/2D, knapsack, and stock-trading variants.</p></div>
+    <div class="sw-card s"><h4>Two-pointer fluency</h4><p>25+ problems, many solved with multiple approaches. Comfortable with opposite-end, fast/slow, and partition patterns.</p></div>
+    <div class="sw-card s"><h4>Sliding window depth</h4><p>12+ problems spanning Easy to Hard (incl. Minimum Window Substring), both fixed and variable window.</p></div>
+    <div class="sw-card s"><h4>Multiple approaches per problem</h4><p>Many problems carry 2&ndash;6 solutions exploring different algorithms &mdash; a strong signal of genuine understanding over memorization.</p></div>
+    <div class="sw-card s"><h4>Consistent daily practice</h4><p>Sustained daily commits since May 21, 2026, with peaks of 8&ndash;12 problems/day. Momentum is excellent.</p></div>
+  </div>
+  <div>
+    <h3 style="color:var(--red)">Weaknesses &amp; Gaps</h3>
+    <div class="sw-card w"><h4>Graph algorithms thin</h4><p>Only 4 problems (200, 286, 797, 1791). Missing topological sort, Dijkstra, union-find, and graph coloring &mdash; all interview staples.</p></div>
+    <div class="sw-card w"><h4>Stack &amp; monotonic stack</h4><p>Only 3 (20, 496, 844). Missing the monotonic-stack classics: 84, 85, 739, 155.</p></div>
+    <div class="sw-card w"><h4>No union-find</h4><p>Zero coverage. Critical for connectivity problems (684, 547, 721) and an alternate solution to islands.</p></div>
+    <div class="sw-card w"><h4>Hard problems underweighted</h4><p>Only ~8 Hard out of 152 (5%). Needs deliberate Hard practice to be interview-ready.</p></div>
+    <div class="sw-card w"><h4>Limited tree variety</h4><p>Only 6 tree problems. Missing BST operations, LCA, construction, tree DP, and serialization.</p></div>
+    <div class="sw-card w"><h4>Bit manipulation sparse</h4><p>Only 2 (191, 268). Missing 136, 338, 371 &mdash; quick wins that round out fundamentals.</p></div>
+  </div>
+</div>
+
+<!-- ===== CODE QUALITY ===== -->
+<h2><span class="ico">🔍</span> Code Quality Assessment</h2>
+<div class="card">
+  <div class="qual">
+    <div class="pos">
+      <h3 style="color:var(--green)">Positives</h3>
+      <ul>
+        <li>Python-primary with idiomatic, readable solutions across nearly every problem.</li>
+        <li>Many problems explore 2&ndash;6 distinct approaches &mdash; depth over rote memorization.</li>
+        <li>Expanding into Go (15+), TypeScript (5), JavaScript (3), Rust (4), and Ruby (2) demonstrates language breadth.</li>
+        <li>Multi-language showcase problems (0026, 0027, 0028, 2126) implemented in 5&ndash;6 languages.</li>
+        <li>Consistent directory/naming convention (`NNNN Title`) keeps the inventory navigable.</li>
+      </ul>
+    </div>
+    <div class="neg">
+      <h3 style="color:var(--yellow)">Areas to Improve</h3>
+      <ul>
+        <li>Broaden into graph, union-find, and monotonic-stack patterns where solutions don't yet exist.</li>
+        <li>Add more Hard problems to stress-test optimization instincts under interview constraints.</li>
+        <li>For tree work, practice both recursive and iterative traversals and BST-specific operations.</li>
+        <li>Where `deque` fits, prefer it over `list.pop(0)` to avoid O(n) front-pops in BFS-style loops.</li>
+        <li>Keep watching for builtin shadowing (`list`, `sum`, `id`) and leftover debug prints in committed solutions.</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- ===== LEARNING PLAN ===== -->
+<h2><span class="ico">🚀</span> Accelerated Learning Plan &mdash; 7 Weeks</h2>
+<div class="phase">
+  <h3><span class="wk">Week 1&ndash;2</span> Phase 1 &middot; Stack &amp; Tree Foundations</h3>
+  <p class="muted">Close the stack gap and build core tree fluency (traversal, BST, construction, LCA).</p>
+  <div class="probs">
+    <span class="pchip">739 Daily Temperatures</span><span class="pchip">155 Min Stack</span><span class="pchip">84 Largest Rectangle</span>
+    <span class="pchip">226 Invert Binary Tree</span><span class="pchip">230 Kth Smallest in BST</span><span class="pchip">105 Build Tree</span>
+    <span class="pchip">236 Lowest Common Ancestor</span>
+  </div>
+</div>
+<div class="phase">
+  <h3><span class="wk">Week 3&ndash;4</span> Phase 2 &middot; Graph &amp; Union-Find</h3>
+  <p class="muted">Build the biggest missing area: traversal, topological sort, union-find, and shortest path.</p>
+  <div class="probs">
+    <span class="pchip">207 Course Schedule</span><span class="pchip">210 Course Schedule II</span><span class="pchip">684 Redundant Connection</span>
+    <span class="pchip">547 Number of Provinces</span><span class="pchip">133 Clone Graph</span><span class="pchip">743 Network Delay Time</span>
+    <span class="pchip">127 Word Ladder</span>
+  </div>
+</div>
+<div class="phase">
+  <h3><span class="wk">Week 5&ndash;6</span> Phase 3 &middot; Design &amp; Advanced</h3>
+  <p class="muted">Tackle classic design problems and add Hard depth around heaps, tries, and serialization.</p>
+  <div class="probs">
+    <span class="pchip">146 LRU Cache</span><span class="pchip">23 Merge k Sorted Lists</span><span class="pchip">297 Serialize/Deserialize Tree</span>
+    <span class="pchip">211 Design Add &amp; Search Words</span>
+  </div>
+</div>
+<div class="phase">
+  <h3><span class="wk">Week 7</span> Phase 4 &middot; Bit Manipulation &amp; Review</h3>
+  <p class="muted">Knock out bit-manipulation fundamentals and revisit all weak areas for retention.</p>
+  <div class="probs">
+    <span class="pchip">136 Single Number</span><span class="pchip">338 Counting Bits</span><span class="pchip">371 Sum of Two Integers</span>
+    <span class="pchip">Review: graph, stack, trees</span>
+  </div>
+</div>
+
+<!-- ===== NEXT 20 ===== -->
+<h2><span class="ico">⏭️</span> Next 20 Problems</h2>
+<div class="scroll-table">
+<table>
+  <thead><tr><th>#</th><th>Title</th><th>Difficulty</th><th>Topic</th><th>Why</th></tr></thead>
+  <tbody>
+    <tr><td>739</td><td>Daily Temperatures</td><td><span class="badge b-med">Medium</span></td><td>monotonic stack</td><td>Bridge into the stack pattern</td></tr>
+    <tr><td>155</td><td>Min Stack</td><td><span class="badge b-med">Medium</span></td><td>stack, design</td><td>Classic interview stack</td></tr>
+    <tr><td>84</td><td>Largest Rectangle in Histogram</td><td><span class="badge b-hard">Hard</span></td><td>monotonic stack</td><td>Monotonic-stack mastery</td></tr>
+    <tr><td>226</td><td>Invert Binary Tree</td><td><span class="badge b-easy">Easy</span></td><td>tree</td><td>Essential tree warmup</td></tr>
+    <tr><td>230</td><td>Kth Smallest Element in a BST</td><td><span class="badge b-med">Medium</span></td><td>tree, DFS</td><td>BST in-order operations</td></tr>
+    <tr><td>105</td><td>Construct Tree from Preorder/Inorder</td><td><span class="badge b-med">Medium</span></td><td>tree</td><td>Tree construction</td></tr>
+    <tr><td>236</td><td>Lowest Common Ancestor</td><td><span class="badge b-med">Medium</span></td><td>tree, DFS</td><td>Classic tree interview</td></tr>
+    <tr><td>207</td><td>Course Schedule</td><td><span class="badge b-med">Medium</span></td><td>graph, topo sort</td><td>Graph fundamentals</td></tr>
+    <tr><td>210</td><td>Course Schedule II</td><td><span class="badge b-med">Medium</span></td><td>graph, topo sort</td><td>Topological ordering</td></tr>
+    <tr><td>684</td><td>Redundant Connection</td><td><span class="badge b-med">Medium</span></td><td>union-find</td><td>Union-find introduction</td></tr>
+    <tr><td>547</td><td>Number of Provinces</td><td><span class="badge b-med">Medium</span></td><td>union-find, DFS</td><td>Union-find practice</td></tr>
+    <tr><td>133</td><td>Clone Graph</td><td><span class="badge b-med">Medium</span></td><td>graph, BFS/DFS</td><td>Graph traversal + copy</td></tr>
+    <tr><td>743</td><td>Network Delay Time</td><td><span class="badge b-med">Medium</span></td><td>graph, Dijkstra</td><td>Shortest path</td></tr>
+    <tr><td>136</td><td>Single Number</td><td><span class="badge b-easy">Easy</span></td><td>bit-manipulation</td><td>Bit basics (XOR)</td></tr>
+    <tr><td>338</td><td>Counting Bits</td><td><span class="badge b-easy">Easy</span></td><td>bit-manip, DP</td><td>Bit + DP combo</td></tr>
+    <tr><td>211</td><td>Design Add and Search Words</td><td><span class="badge b-med">Medium</span></td><td>trie, DFS</td><td>Trie practice</td></tr>
+    <tr><td>297</td><td>Serialize and Deserialize Binary Tree</td><td><span class="badge b-hard">Hard</span></td><td>tree, design</td><td>Tree Hard</td></tr>
+    <tr><td>127</td><td>Word Ladder</td><td><span class="badge b-hard">Hard</span></td><td>BFS, graph</td><td>BFS classic</td></tr>
+    <tr><td>146</td><td>LRU Cache</td><td><span class="badge b-med">Medium</span></td><td>design, hash-map, linked-list</td><td>Design classic</td></tr>
+    <tr><td>23</td><td>Merge k Sorted Lists</td><td><span class="badge b-hard">Hard</span></td><td>heap, linked-list</td><td>Heap + merge</td></tr>
+  </tbody>
+</table>
+</div>
+
+<!-- ===== FULL INVENTORY ===== -->
+<h2><span class="ico">📚</span> Full Problem Inventory <span class="muted" style="font-size:0.9rem; font-weight:400;">(152)</span></h2>
+<div class="scroll-table">
+<table>
+  <thead><tr><th>#</th><th>Title</th><th>Difficulty</th><th>Topics</th></tr></thead>
+  <tbody id="inventory"></tbody>
+</table>
+</div>
+
+<!-- ===== FOOTER ===== -->
+<footer>
+  <strong style="color:var(--text)">Previous Reports</strong>
+  <div class="prev-links">
+    <a href="report-2026-06-18.html">2026-06-18 (current)</a>
+    <a href="report-2026-06-17.html">2026-06-17</a>
+    <a href="report-2026-06-16.html">2026-06-16</a>
+    <a href="report-2026-06-15.html">2026-06-15</a>
+    <a href="report-2026-06-14.html">2026-06-14</a>
+    <a href="report-2026-06-10.html">2026-06-10</a>
+    <a href="report-2026-06-05.html">2026-06-05</a>
+    <a href="report-2026-06-01.html">2026-06-01</a>
+    <a href="report-2026-05-31.html">2026-05-31</a>
+    <a href="report-2026-05-30.html">2026-05-30</a>
+    <a href="report-2026-05-28.html">2026-05-28</a>
+    <a href="report-2026-05-27.html">2026-05-27</a>
+    <a href="report-2026-05-26.html">2026-05-26</a>
+    <a href="report-2026-05-22.html">2026-05-22</a>
+  </div>
+  <p>Generated 2026-06-18 for Andy Pliszka &middot; 152 problems &middot; Python-primary, 6 languages.</p>
+</footer>
+
+</div>
+
+<script>
+// ---------- Theme toggle ----------
+(function () {
+  var root = document.documentElement;
+  var btn = document.getElementById('themeToggle');
+  var saved = localStorage.getItem('lc-report-theme') || 'dark';
+  function apply(t) {
+    root.setAttribute('data-theme', t);
+    btn.textContent = t === 'dark' ? '🌙' : '☀️';
+  }
+  apply(saved);
+  btn.addEventListener('click', function () {
+    var next = root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+    localStorage.setItem('lc-report-theme', next);
+    apply(next);
+  });
+})();
+
+// ---------- Activity chart ----------
+var activityData = [
+  ['2025-05-15',4],['2025-05-16',4],['2025-05-17',3],['2025-05-18',4],['2025-05-19',3],
+  ['2025-10-23',1],
+  ['2026-05-21',6],['2026-05-22',3],['2026-05-23',1],['2026-05-24',4],['2026-05-25',7],
+  ['2026-05-26',7],['2026-05-27',8],['2026-05-28',2],['2026-05-29',3],['2026-05-30',10],
+  ['2026-05-31',4],['2026-06-04',3],['2026-06-05',1],['2026-06-06',1],['2026-06-07',1],
+  ['2026-06-08',3],['2026-06-10',12],['2026-06-11',1],['2026-06-13',1],['2026-06-14',3],
+  ['2026-06-16',5]
+];
+(function () {
+  var max = Math.max.apply(null, activityData.map(function (d) { return d[1]; }));
+  var html = activityData.map(function (d) {
+    var pct = (d[1] / max * 100).toFixed(1);
+    var peak = d[1] >= 8 ? ' peak' : '';
+    var label = d[0].slice(5);
+    return '<div class="bar-group">' +
+      '<div class="bar-track"><div class="bar' + peak + '" style="height:' + pct + '%">' +
+      '<span class="count">' + d[1] + '</span></div></div>' +
+      '<div class="bar-label">' + label + '</div></div>';
+  }).join('');
+  document.getElementById('activity').innerHTML = html;
+})();
+
+// ---------- Cumulative chart ----------
+(function () {
+  // running total per active day (plot includes flat gap segments)
+  var pts = [];
+  var total = 0;
+  activityData.forEach(function (d) { total += d[1]; pts.push([d[0], total]); });
+
+  var W = 1100, H = 360, padL = 50, padR = 30, padT = 30, padB = 50;
+  var iW = W - padL - padR, iH = H - padT - padB;
+  var maxY = 160;
+  var n = pts.length;
+  function x(i) { return padL + (n === 1 ? 0 : i / (n - 1) * iW); }
+  function y(v) { return padT + iH - (v / maxY * iH); }
+
+  var grid = '';
+  [25,50,75,100,125,150].forEach(function (m) {
+    var yy = y(m);
+    grid += '<line class="cum-grid" x1="' + padL + '" y1="' + yy + '" x2="' + (W - padR) + '" y2="' + yy + '"/>';
+    grid += '<text class="cum-axis" x="' + (padL - 8) + '" y="' + (yy + 4) + '" text-anchor="end">' + m + '</text>';
+  });
+
+  var line = pts.map(function (p, i) { return x(i) + ',' + y(p[1]); }).join(' ');
+  var area = padL + ',' + y(0) + ' ' + line + ' ' + x(n - 1) + ',' + y(0);
+
+  // x labels: first, a few milestones, last
+  var xlabels = '';
+  [0, 5, 6, 15, n - 1].forEach(function (i) {
+    if (i < 0 || i >= n) return;
+    xlabels += '<text class="cum-axis" x="' + x(i) + '" y="' + (H - padB + 22) + '" text-anchor="middle">' + pts[i][0].slice(2) + '</text>';
+  });
+
+  // dots + annotations for key points
+  function anno(i, text, dy) {
+    var px = x(i), py = y(pts[i][1]);
+    var w = text.length * 6.2 + 12;
+    var ax = Math.min(Math.max(px - w / 2, padL), W - padR - w);
+    var ay = py + dy;
+    return '<circle class="cum-dot" cx="' + px + '" cy="' + py + '" r="4"/>' +
+      '<rect class="cum-anno-bg" x="' + ax + '" y="' + (ay - 14) + '" width="' + w + '" height="18" rx="4"/>' +
+      '<text class="cum-anno" x="' + (ax + w / 2) + '" y="' + (ay - 1) + '" text-anchor="middle">' + text + '</text>';
+  }
+  // indices: 0 start, 5 (Oct 23 = 19), 6 (return from gap, May 21), find Jun10 burst, last
+  var jun10 = pts.findIndex(function (p) { return p[0] === '2026-06-10'; });
+  var annos =
+    anno(0, 'Start · 4', -14) +
+    anno(6, 'Burst begins · May 21', -14) +
+    anno(jun10, '+12 on Jun 10', -16) +
+    anno(n - 1, 'Now · 152', -14);
+
+  var svg =
+    '<svg viewBox="0 0 ' + W + ' ' + H + '" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Cumulative progress">' +
+    grid +
+    '<polygon class="cum-area" points="' + area + '"/>' +
+    '<polyline class="cum-line" points="' + line + '"/>' +
+    xlabels + annos +
+    '</svg>';
+  document.getElementById('cumchart').innerHTML = svg;
+})();
+
+// ---------- Topic bars ----------
+var topicData = [
+  ['arrays',90],['string',35],['DP',30],['two-pointers',25],['hash-map',25],
+  ['sorting',15],['sliding-window',12],['greedy',10],['backtracking',8],['linked-list',7],
+  ['binary-search',7],['heap',7],['tree',6],['math',6],['prefix-sum',5],['design',5],
+  ['graph',4],['BFS/DFS',4],['stack',3],['bit-manipulation',2],['intervals',2],['trie',1]
+];
+(function () {
+  var max = Math.max.apply(null, topicData.map(function (d) { return d[1]; }));
+  function color(v) {
+    if (v >= 10) return 'var(--green)';
+    if (v >= 5) return 'var(--accent)';
+    if (v >= 1 && v <= 4) return 'var(--yellow)';
+    return 'var(--red)';
+  }
+  document.getElementById('topics').innerHTML = topicData.map(function (d) {
+    var pct = (d[1] / max * 100).toFixed(1);
+    return '<div class="topic-row"><div class="tname">' + d[0] + '</div>' +
+      '<div class="tbar-bg"><div class="tbar" style="width:' + pct + '%;background:' + color(d[1]) + '"></div></div>' +
+      '<div class="tval">' + d[1] + '</div></div>';
+  }).join('');
+})();
+
+// ---------- Full inventory ----------
+var inventory = [
+  // [num, title, difficulty, topics]
+  ['0001','Two Sum','E','arrays, hash-map'],['0009','Palindrome Number','E','math'],
+  ['0013','Roman to Integer','E','string, hash-map'],['0020','Valid Parentheses','E','stack'],
+  ['0021','Contains Duplicate','E','arrays, hash-map'],['0026','Remove Duplicates','E','arrays, two-pointers'],
+  ['0027','Remove Element','E','arrays, two-pointers'],['0028','Find the Index','E','string'],
+  ['0035','Search Insert Position','E','binary-search'],['0070','Climbing Stairs','E','DP'],
+  ['0088','Merge Sorted Array','E','arrays, two-pointers'],['0094','Binary Tree Inorder','E','tree, DFS'],
+  ['0104','Maximum Depth of Binary Tree','E','tree, DFS'],['0118',"Pascal's Triangle",'E','arrays, DP'],
+  ['0119',"Pascal's Triangle II",'E','arrays, DP'],['0121','Best Time to Buy/Sell Stock','E','arrays, DP'],
+  ['0125','Valid Palindrome','E','string, two-pointers'],['0141','Linked List Cycle','E','linked-list, two-pointers'],
+  ['0160','Intersection of Two Linked Lists','E','linked-list'],['0167','Two Sum II','E','arrays, two-pointers, binary-search'],
+  ['0170','Two Sum III','E','design, hash-map'],['0191','Number of 1 Bits','E','bit-manipulation'],
+  ['0202','Happy Number','E','math, hash-map'],['0219','Contains Duplicate II','E','arrays, hash-map, sliding-window'],
+  ['0234','Palindrome Linked List','E','linked-list, two-pointers'],['0242','Valid Anagram','E','string, hash-map'],
+  ['0246','Strobogrammatic Number','E','string, math'],['0257','Binary Tree Paths','E','tree, DFS'],
+  ['0268','Missing Number','E','arrays, bit-manipulation, math'],['0283','Move Zeroes','E','arrays, two-pointers'],
+  ['0303','Range Sum Query Immutable','E','arrays, prefix-sum'],['0344','Reverse String','E','string, two-pointers'],
+  ['0345','Reverse Vowels','E','string, two-pointers'],['0346','Moving Average','E','design, sliding-window'],
+  ['0349','Intersection of Two Arrays','E','arrays, hash-map'],['0350','Intersection of Two Arrays II','E','arrays, hash-map'],
+  ['0392','Is Subsequence','E','string, two-pointers'],['0408','Valid Word Abbreviation','E','string'],
+  ['0409','Longest Palindrome','E','string, hash-map, greedy'],['0455','Assign Cookies','E','arrays, greedy, sorting'],
+  ['0496','Next Greater Element I','E','stack, hash-map'],['0506','Relative Ranks','E','arrays, sorting, heap'],
+  ['0509','Fibonacci Number','E','DP, math'],['0541','Reverse String II','E','string'],
+  ['0557','Reverse Words in a String III','E','string'],['0561','Array Partition','E','arrays, sorting, greedy'],
+  ['0594','Longest Harmonious Subsequence','E','arrays, hash-map'],['0605','Can Place Flowers','E','arrays, greedy'],
+  ['0643','Maximum Average Subarray I','E','arrays, sliding-window'],['0696','Count Binary Substrings','E','string'],
+  ['0703','Kth Largest Element in a Stream','E','heap, design'],['0704','Binary Search','E','binary-search'],
+  ['0746','Min Cost Climbing Stairs','E','DP'],['0821','Shortest Distance to a Character','E','arrays'],
+  ['0832','Flipping an Image','E','arrays'],['0844','Backspace String Compare','E','string, stack, two-pointers'],
+  ['0876','Middle of the Linked List','E','linked-list, two-pointers'],['0905','Sort Array By Parity','E','arrays, two-pointers'],
+  ['0917','Reverse Only Letters','E','string, two-pointers'],['0922','Sort Array By Parity II','E','arrays, two-pointers'],
+  ['0925','Long Pressed Name','E','string, two-pointers'],['1086','High Five','E','arrays, sorting, heap'],
+  ['1099','Two Sum Less Than K','E','arrays, two-pointers, sorting'],['1176','Diet Plan Performance','E','arrays, sliding-window'],
+  ['1481','Least Unique After K Removals','E','hash-map, greedy, sorting'],['1652','Defuse the Bomb','E','arrays, sliding-window'],
+  ['1752','Check if Array Sorted and Rotated','E','arrays'],['1763','Longest Nice Substring','E','string'],
+  ['1768','Merge Strings Alternately','E','string, two-pointers'],['1791','Find Center of Star Graph','E','graph'],
+  ['1876','Substrings of Size Three','E','string, sliding-window'],['1984','Min Diff Highest/Lowest K Scores','E','arrays, sliding-window, sorting'],
+  ['2269','K-Beauty','E','math, sliding-window'],['2379','Min Recolors','E','string, sliding-window'],
+  ['3110','Score of a String','E','string'],['3364','Min Positive Sum Subarray','E','arrays, prefix-sum'],
+  ['3931','Check Adjacent Digit Differences','E','arrays'],['3945','Digit Frequency Score','E','hash-map'],
+
+  ['0002','Add Two Numbers','M','linked-list, math'],['0003','Longest Substring w/o Repeating','M','string, sliding-window, hash-map'],
+  ['0005','Longest Palindromic Substring','M','string, DP'],['0011','Container With Most Water','M','arrays, two-pointers, greedy'],
+  ['0015','3Sum','M','arrays, two-pointers, sorting'],['0017','Letter Combinations','M','string, backtracking'],
+  ['0022','Generate Parentheses','M','string, backtracking'],['0033','Search in Rotated Sorted Array','M','binary-search'],
+  ['0036','Valid Sudoku','M','arrays, hash-map'],['0039','Combination Sum','M','arrays, backtracking'],
+  ['0045','Jump Game II','M','arrays, greedy, DP'],['0046','Permutations','M','arrays, backtracking'],
+  ['0049','Group Anagrams','M','string, hash-map, sorting'],['0055','Jump Game','M','arrays, greedy, DP'],
+  ['0056','Merge Intervals','M','arrays, sorting, intervals'],['0057','Insert Interval','M','arrays, intervals'],
+  ['0062','Unique Paths','M','DP, math'],['0063','Unique Paths II','M','DP'],
+  ['0064','Minimum Path Sum','M','DP'],['0077','Combinations','M','backtracking'],
+  ['0078','Subsets','M','arrays, backtracking'],['0091','Decode Ways','M','string, DP'],
+  ['0097','Interleaving String','M','string, DP'],['0102','Binary Tree Level Order','M','tree, BFS'],
+  ['0128','Longest Consecutive Sequence','M','arrays, hash-map'],['0139','Word Break','M','string, DP'],
+  ['0153','Find Minimum in Rotated Sorted Array','M','binary-search'],['0188','Buy/Sell Stock IV','M','DP'],
+  ['0198','House Robber','M','DP'],['0200','Number of Islands','M','graph, BFS, DFS'],
+  ['0208','Implement Trie','M','trie, design'],['0209','Minimum Size Subarray Sum','M','arrays, sliding-window, binary-search'],
+  ['0215','Kth Largest Element','M','arrays, heap, sorting'],['0221','Maximal Square','M','DP'],
+  ['0238','Product of Array Except Self','M','arrays, prefix-sum'],['0256','Paint House','M','DP'],
+  ['0265','Paint House II','M','DP'],['0271','Encode and Decode Strings','M','string, design'],
+  ['0276','Paint Fence','M','DP'],['0286','Walls and Gates','M','graph, BFS'],
+  ['0295','Find Median from Data Stream','M','heap, design'],['0300','Longest Increasing Subsequence','M','arrays, DP, binary-search'],
+  ['0309','Buy/Sell Stock with Cooldown','M','DP'],['0322','Coin Change','M','DP'],
+  ['0347','Top K Frequent Elements','M','arrays, hash-map, heap, sorting'],['0424','Longest Repeating Char Replacement','M','string, sliding-window'],
+  ['0502','IPO','M','heap, greedy, sorting'],['0516','Longest Palindromic Subsequence','M','string, DP'],
+  ['0518','Coin Change II','M','DP'],['0523','Continuous Subarray Sum','M','arrays, prefix-sum, hash-map'],
+  ['0525','Contiguous Array','M','arrays, prefix-sum, hash-map'],['0560','Subarray Sum Equals K','M','arrays, prefix-sum, hash-map'],
+  ['0653','Two Sum IV - BST','M','tree, hash-map, BFS'],['0680','Valid Palindrome II','M','string, two-pointers, greedy'],
+  ['0714','Buy/Sell Stock with Fee','M','DP'],['0718','Maximum Length of Repeated Subarray','M','DP, binary-search'],
+  ['0740','Delete and Earn','M','DP'],['0790','Domino and Tromino Tiling','M','DP'],
+  ['0797','All Paths From Source to Target','M','graph, DFS, backtracking'],['0918','Maximum Sum Circular Subarray','M','arrays, DP'],
+  ['0931','Minimum Falling Path Sum','M','DP'],['0983','Minimum Cost For Tickets','M','DP'],
+  ['1046','Last Stone Weight','M','heap'],['1137','N-th Tribonacci Number','M','DP, math'],
+  ['1143','Longest Common Subsequence','M','string, DP'],['1155','Number of Dice Rolls','M','DP'],
+  ['1220','Count Vowels Permutation','M','DP'],['1770','Maximum Score from Multiplications','M','DP'],
+  ['2126','Destroying Asteroids','M','arrays, greedy, sorting'],['2294','Partition Array','M','arrays, greedy, sorting'],
+
+  ['0004','Median of Two Sorted Arrays','H','arrays, binary-search'],['0076','Minimum Window Substring','H','string, sliding-window, hash-map'],
+  ['1335','Min Difficulty of a Job Schedule','H','DP'],['1473','Paint House III','H','DP']
+];
+(function () {
+  var diffMap = { E: ['Easy','b-easy'], M: ['Medium','b-med'], H: ['Hard','b-hard'] };
+  document.getElementById('inventory').innerHTML = inventory.map(function (r) {
+    var d = diffMap[r[2]];
+    var tags = r[3].split(',').map(function (t) { return '<span class="tag">' + t.trim() + '</span>'; }).join(' ');
+    return '<tr><td>' + r[0] + '</td><td>' + r[1] + '</td>' +
+      '<td><span class="badge ' + d[1] + '">' + d[0] + '</span></td>' +
+      '<td>' + tags + '</td></tr>';
+  }).join('');
+})();
+</script>
+</body>
+</html>

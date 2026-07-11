@@ -1,0 +1,1745 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Python Study Guide &mdash; Day 10 (2026-06-07)</title>
+<style>
+/* ===== CSS Variables ===== */
+:root {
+  --bg: #0d1117;
+  --surface1: #161b22;
+  --surface2: #1c2333;
+  --border: #30363d;
+  --text: #e6edf3;
+  --muted: #8b949e;
+  --accent: #58a6ff;
+  --accent-dim: #1f6feb33;
+  --green: #3fb950;
+  --green-dim: #23863633;
+  --yellow: #d29922;
+  --yellow-dim: #d2992233;
+  --red: #f85149;
+  --red-dim: #f8514933;
+  --purple: #bc8cff;
+  --purple-dim: #bc8cff22;
+  --orange: #f0883e;
+  --orange-dim: #f0883e22;
+  --code-bg: #0d1117;
+  --sidebar-w: 300px;
+  --font-mono: 'SF Mono', 'Cascadia Code', 'Fira Code', Consolas, monospace;
+  --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+  --radius: 8px;
+  --shadow: 0 1px 3px rgba(0,0,0,0.4);
+}
+
+[data-theme="light"] {
+  --bg: #ffffff;
+  --surface1: #f6f8fa;
+  --surface2: #f0f3f6;
+  --border: #d0d7de;
+  --text: #1f2328;
+  --muted: #656d76;
+  --accent: #0969da;
+  --accent-dim: #0969da1a;
+  --green: #1a7f37;
+  --green-dim: #1a7f3718;
+  --yellow: #9a6700;
+  --yellow-dim: #9a670018;
+  --red: #cf222e;
+  --red-dim: #cf222e18;
+  --purple: #8250df;
+  --purple-dim: #8250df18;
+  --orange: #bc4c00;
+  --orange-dim: #bc4c0018;
+  --code-bg: #f6f8fa;
+  --shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+/* ===== Reset & Base ===== */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: var(--font-sans);
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.7;
+  font-size: 15px;
+  transition: background 0.2s, color 0.2s;
+}
+
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+/* ===== Theme Toggle ===== */
+#theme-toggle {
+  position: fixed;
+  top: 16px;
+  right: 20px;
+  z-index: 1000;
+  background: var(--surface1);
+  border: 1px solid var(--border);
+  color: var(--text);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+  box-shadow: var(--shadow);
+}
+#theme-toggle:hover { background: var(--surface2); border-color: var(--accent); }
+
+/* ===== Sidebar ===== */
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: var(--sidebar-w);
+  height: 100vh;
+  background: var(--surface1);
+  border-right: 1px solid var(--border);
+  overflow-y: auto;
+  padding: 20px 0;
+  z-index: 100;
+  transition: transform 0.3s;
+}
+
+.sidebar-header {
+  padding: 0 20px 16px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 12px;
+}
+
+.sidebar-header h2 {
+  font-size: 16px;
+  color: var(--text);
+  font-weight: 700;
+}
+
+.sidebar-header .subtitle {
+  font-size: 12px;
+  color: var(--muted);
+  margin-top: 2px;
+}
+
+.sidebar-section {
+  margin-bottom: 8px;
+}
+
+.sidebar-section-title {
+  padding: 6px 20px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+}
+
+.sidebar-link {
+  display: block;
+  padding: 5px 20px 5px 28px;
+  font-size: 13px;
+  color: var(--muted);
+  text-decoration: none;
+  border-left: 2px solid transparent;
+  transition: all 0.15s;
+  line-height: 1.4;
+}
+
+.sidebar-link:hover {
+  color: var(--text);
+  background: var(--accent-dim);
+  border-left-color: var(--accent);
+  text-decoration: none;
+}
+
+.sidebar-link.active {
+  color: var(--accent);
+  border-left-color: var(--accent);
+  background: var(--accent-dim);
+}
+
+/* ===== Mobile sidebar toggle ===== */
+#sidebar-toggle {
+  display: none;
+  position: fixed;
+  top: 16px;
+  left: 16px;
+  z-index: 200;
+  background: var(--surface1);
+  border: 1px solid var(--border);
+  color: var(--text);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 20px;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--shadow);
+}
+
+/* ===== Main Content ===== */
+.main {
+  margin-left: var(--sidebar-w);
+  padding: 40px 48px 80px;
+  max-width: calc(860px + var(--sidebar-w) + 96px);
+}
+
+.page-title {
+  font-size: 32px;
+  font-weight: 800;
+  margin-bottom: 4px;
+  color: var(--text);
+}
+
+.page-subtitle {
+  font-size: 15px;
+  color: var(--muted);
+  margin-bottom: 36px;
+}
+
+/* ===== How-to Box ===== */
+.how-to {
+  background: var(--surface1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px 24px;
+  margin-bottom: 36px;
+}
+
+.how-to h3 {
+  font-size: 15px;
+  font-weight: 700;
+  margin-bottom: 8px;
+  color: var(--accent);
+}
+
+.how-to ul {
+  padding-left: 20px;
+  margin: 0;
+}
+
+.how-to li {
+  font-size: 14px;
+  color: var(--muted);
+  margin-bottom: 3px;
+}
+
+/* ===== Sections ===== */
+.section {
+  margin-bottom: 48px;
+}
+
+.section-label {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  padding: 3px 10px;
+  border-radius: 4px;
+  margin-bottom: 12px;
+}
+
+.section-label.review { background: var(--yellow-dim); color: var(--yellow); }
+.section-label.new { background: var(--green-dim); color: var(--green); }
+
+.section-title {
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 24px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--border);
+}
+
+/* ===== Concept Cards ===== */
+.concept {
+  background: var(--surface1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 28px;
+  margin-bottom: 28px;
+  box-shadow: var(--shadow);
+}
+
+.concept-header {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  margin-bottom: 6px;
+  flex-wrap: wrap;
+}
+
+.concept h3 {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.concept-meta {
+  font-size: 12px;
+  color: var(--muted);
+  background: var(--surface2);
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
+.concept h4 {
+  font-size: 15px;
+  font-weight: 600;
+  margin: 20px 0 8px;
+  color: var(--text);
+}
+
+.concept p, .concept li {
+  color: var(--text);
+  line-height: 1.7;
+}
+
+.concept ul, .concept ol {
+  padding-left: 22px;
+  margin: 8px 0;
+}
+
+.concept li {
+  margin-bottom: 4px;
+}
+
+/* ===== Code Blocks ===== */
+pre {
+  background: var(--code-bg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 16px 18px;
+  overflow-x: auto;
+  margin: 10px 0 14px;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--text);
+  position: relative;
+}
+
+code {
+  font-family: var(--font-mono);
+  font-size: 0.9em;
+}
+
+:not(pre) > code {
+  background: var(--surface2);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.88em;
+}
+
+/* ===== Good/Bad Examples ===== */
+.do-dont {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin: 10px 0;
+}
+
+.do-box, .dont-box {
+  border-radius: 6px;
+  padding: 14px;
+  border: 1px solid;
+}
+
+.do-box {
+  background: var(--green-dim);
+  border-color: var(--green);
+}
+
+.dont-box {
+  background: var(--red-dim);
+  border-color: var(--red);
+}
+
+.do-box .label, .dont-box .label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 6px;
+}
+
+.do-box .label { color: var(--green); }
+.dont-box .label { color: var(--red); }
+
+.do-box pre, .dont-box pre {
+  margin: 0;
+  border: none;
+  background: transparent;
+  padding: 0;
+  font-size: 12.5px;
+}
+
+/* ===== Key Rules ===== */
+.rules-list {
+  list-style: none;
+  padding: 0;
+  margin: 8px 0;
+}
+
+.rules-list li {
+  padding: 6px 0 6px 24px;
+  position: relative;
+}
+
+.rules-list li::before {
+  content: "\2192";
+  position: absolute;
+  left: 2px;
+  color: var(--accent);
+  font-weight: 700;
+}
+
+/* ===== Exercises ===== */
+.exercise {
+  background: var(--purple-dim);
+  border: 1px solid var(--purple);
+  border-radius: 6px;
+  padding: 14px 18px;
+  margin: 8px 0;
+}
+
+.exercise .exercise-label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--purple);
+  margin-bottom: 4px;
+}
+
+/* ===== Challenge (Review) ===== */
+.challenge {
+  background: var(--orange-dim);
+  border: 1px solid var(--orange);
+  border-radius: 6px;
+  padding: 14px 18px;
+  margin: 10px 0;
+}
+
+.challenge .challenge-label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--orange);
+  margin-bottom: 4px;
+}
+
+/* ===== Pitfall ===== */
+.pitfall {
+  background: var(--red-dim);
+  border-left: 3px solid var(--red);
+  border-radius: 0 6px 6px 0;
+  padding: 10px 14px;
+  margin: 10px 0;
+  font-size: 14px;
+}
+
+.pitfall strong {
+  color: var(--red);
+}
+
+/* ===== Connection ===== */
+.connection {
+  background: var(--accent-dim);
+  border-left: 3px solid var(--accent);
+  border-radius: 0 6px 6px 0;
+  padding: 10px 14px;
+  margin: 10px 0;
+  font-size: 14px;
+  color: var(--muted);
+}
+
+/* ===== Output Block ===== */
+.output {
+  background: var(--green-dim);
+  border: 1px solid var(--green);
+  border-radius: 6px;
+  padding: 12px 16px;
+  margin: 8px 0 14px;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--text);
+  white-space: pre-wrap;
+}
+
+.output .output-label {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--green);
+  margin-bottom: 4px;
+}
+
+/* ===== Footer ===== */
+.footer {
+  margin-top: 60px;
+  padding: 24px 0;
+  border-top: 1px solid var(--border);
+}
+
+.footer h4 {
+  font-size: 14px;
+  color: var(--muted);
+  margin-bottom: 10px;
+}
+
+.footer ul {
+  list-style: none;
+  padding: 0;
+}
+
+.footer li {
+  margin-bottom: 4px;
+  font-size: 14px;
+}
+
+.footer li a { color: var(--accent); }
+.footer .current { color: var(--green); font-weight: 600; }
+
+/* ===== Responsive ===== */
+@media (max-width: 900px) {
+  .sidebar {
+    transform: translateX(-100%);
+  }
+  .sidebar.open {
+    transform: translateX(0);
+    box-shadow: 4px 0 20px rgba(0,0,0,0.5);
+  }
+  #sidebar-toggle {
+    display: flex;
+  }
+  .main {
+    margin-left: 0;
+    padding: 60px 20px 60px;
+    max-width: 100%;
+  }
+  .do-dont {
+    grid-template-columns: 1fr;
+  }
+  #theme-toggle {
+    right: 14px;
+    top: 16px;
+  }
+}
+</style>
+</head>
+<body>
+
+<!-- Theme Toggle -->
+<button id="theme-toggle" aria-label="Toggle theme" title="Toggle light/dark theme">&#9789;</button>
+
+<!-- Mobile Sidebar Toggle -->
+<button id="sidebar-toggle" aria-label="Toggle sidebar">&#9776;</button>
+
+<!-- Sidebar -->
+<nav class="sidebar" id="sidebar">
+  <div class="sidebar-header">
+    <h2>Python Guide</h2>
+    <div class="subtitle">Day 10 &mdash; 2026-06-07</div>
+  </div>
+
+  <div class="sidebar-section">
+    <div class="sidebar-section-title">Review (6 concepts)</div>
+    <a href="#review-comprehensions" class="sidebar-link">List, Dict &amp; Set Comprehensions</a>
+    <a href="#review-type-hints-basic" class="sidebar-link">Type Hints &mdash; Basic Annotations</a>
+    <a href="#review-enum" class="sidebar-link">Enum</a>
+    <a href="#review-dataclasses" class="sidebar-link">Dataclasses</a>
+    <a href="#review-classes-init-repr-str" class="sidebar-link">Classes &mdash; __init__, __repr__, __str__</a>
+    <a href="#review-context-managers" class="sidebar-link">Context Managers</a>
+  </div>
+
+  <div class="sidebar-section">
+    <div class="sidebar-section-title">New (5 concepts)</div>
+    <a href="#venv-pyproject" class="sidebar-link">Virtual Environments &amp; pyproject.toml</a>
+    <a href="#design-patterns" class="sidebar-link">Design Patterns in Python</a>
+    <a href="#metaprogramming-hooks" class="sidebar-link">Metaprogramming Hooks</a>
+    <a href="#import-system" class="sidebar-link">Import System</a>
+    <a href="#walrus-pattern-matching" class="sidebar-link">Walrus &amp; Pattern Matching</a>
+  </div>
+</nav>
+
+<!-- Main Content -->
+<div class="main">
+
+<h1 class="page-title">Python Daily Guide</h1>
+<p class="page-subtitle">Day 10 &mdash; Saturday, June 7, 2026 &bull; 6 reviews, 5 new concepts</p>
+
+<!-- How to Use -->
+<div class="how-to">
+  <h3>How to Use This Guide</h3>
+  <ul>
+    <li><strong>Review cards</strong> &mdash; skim the reminder, write the key pattern from memory, then try the challenge.</li>
+    <li><strong>New concepts</strong> &mdash; read the explanation, run every code example in a REPL, then do the exercises.</li>
+    <li><strong>Don't peek at solutions</strong> &mdash; struggle for at least 10 minutes before looking things up.</li>
+    <li><strong>Connections</strong> &mdash; pay attention to how concepts link together across days.</li>
+  </ul>
+</div>
+
+
+<!-- ============================================================ -->
+<!-- REVIEW SECTION -->
+<!-- ============================================================ -->
+<div class="section">
+  <span class="section-label review">Review</span>
+  <h2 class="section-title">Review &mdash; 6 Concepts</h2>
+
+  <!-- Review 1: List, Dict & Set Comprehensions -->
+  <div class="concept" id="review-comprehensions">
+    <div class="concept-header">
+      <h3>List, Dict &amp; Set Comprehensions</h3>
+      <span class="concept-meta">Comprehensions &bull; 8 days since last review &bull; rep 2</span>
+    </div>
+
+    <h4>Quick Reminder</h4>
+    <p><code>[expr for x in iter if cond]</code> for lists, <code>{k: v for ...}</code> for dicts, <code>{expr for ...}</code> for sets. The walrus operator <code>:=</code> can capture intermediate values inside comprehensions to avoid computing them twice.</p>
+
+    <h4>Key Pattern &mdash; Nested Comprehension with Condition</h4>
+<pre># Flatten a matrix, keeping only even numbers
+matrix = [[1, 2, 3], [4, 5, 6], [7, 8, 9]]
+evens = [val for row in matrix for val in row if val % 2 == 0]
+print(evens)  # [2, 4, 6, 8]
+
+# Dict comprehension: word lengths (only long words)
+words = ["hello", "hi", "magnificent", "ok", "extraordinary"]
+long_words = {w: len(w) for w in words if len(w) &gt; 5}
+print(long_words)  # {'magnificent': 11, 'extraordinary': 13}
+
+# Walrus operator to avoid recomputing
+import math
+values = [2, -1, 16, 0, 81]
+roots = {v: r for v in values if (r := math.sqrt(v)) == int(r) and v &gt; 0}
+print(roots)  # {16: 4.0, 81: 9.0}</pre>
+
+    <div class="challenge">
+      <div class="challenge-label">Challenge</div>
+      <p>Given a list of dicts <code>[{"name": "Alice", "scores": [90, 85]}, {"name": "Bob", "scores": [70, 80, 90]}]</code>, create a dict mapping names to their average score using a dict comprehension.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>#1 Pitfall:</strong> Nested comprehensions read left-to-right (outer loop first). <code>[val for row in matrix for val in row]</code> is equivalent to the nested loop <code>for row in matrix: for val in row:</code>. Reversing the order gives a <code>NameError</code>.
+    </div>
+  </div>
+
+  <!-- Review 2: Type Hints — Basic Annotations -->
+  <div class="concept" id="review-type-hints-basic">
+    <div class="concept-header">
+      <h3>Type Hints &mdash; Basic Annotations</h3>
+      <span class="concept-meta">Type System &bull; 4 days since last review &bull; rep 1</span>
+    </div>
+
+    <h4>Quick Reminder</h4>
+    <p><code>def foo(x: int) -&gt; str:</code>, <code>list[int]</code>, <code>dict[str, int]</code>, <code>tuple[int, ...]</code> (Python 3.9+ lowercase generics). Type hints are not enforced at runtime &mdash; they are for static analysis tools like <code>mypy</code>.</p>
+
+    <h4>Key Pattern &mdash; Annotating Complex Return Types</h4>
+<pre>def parse_scores(raw: list[str]) -&gt; dict[str, list[int]]:
+    """Parse 'name:score,score' lines into a structured dict."""
+    result: dict[str, list[int]] = {}
+    for line in raw:
+        name, scores_str = line.split(":")
+        result[name] = [int(s) for s in scores_str.split(",")]
+    return result
+
+data = ["Alice:90,85,92", "Bob:78,88"]
+print(parse_scores(data))
+# {'Alice': [90, 85, 92], 'Bob': [78, 88]}</pre>
+
+    <div class="challenge">
+      <div class="challenge-label">Challenge</div>
+      <p>Annotate a function that takes a list of tuples <code>(name, score)</code> and returns a dict mapping names to their highest score. Use <code>list[tuple[str, int]]</code> for the input and <code>dict[str, int]</code> for the output.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>#1 Pitfall:</strong> Using <code>List</code> from <code>typing</code> instead of <code>list</code> in Python 3.9+. The old <code>typing.List</code>, <code>typing.Dict</code>, <code>typing.Tuple</code> imports are unnecessary. Use lowercase builtins: <code>list[int]</code>, <code>dict[str, int]</code>, <code>tuple[int, ...]</code>.
+    </div>
+  </div>
+
+  <!-- Review 3: Enum -->
+  <div class="concept" id="review-enum">
+    <div class="concept-header">
+      <h3>Enum</h3>
+      <span class="concept-meta">Data Modeling &bull; 4 days since last review &bull; rep 1</span>
+    </div>
+
+    <h4>Quick Reminder</h4>
+    <p><code>class Color(Enum): RED = 1</code> &mdash; use <code>IntEnum</code> for int comparison, <code>Flag</code> for bitwise operations, <code>auto()</code> for auto-assigned values. Access members by name (<code>Color["RED"]</code>) or value (<code>Color(1)</code>).</p>
+
+    <h4>Key Pattern &mdash; Pattern Matching with Enum</h4>
+<pre>from enum import Enum, Flag, auto
+
+class Direction(Enum):
+    NORTH = auto()
+    SOUTH = auto()
+    EAST = auto()
+    WEST = auto()
+
+def describe(d: Direction) -&gt; str:
+    match d:
+        case Direction.NORTH: return "Going up"
+        case Direction.SOUTH: return "Going down"
+        case Direction.EAST:  return "Going right"
+        case Direction.WEST:  return "Going left"
+
+print(describe(Direction.NORTH))  # Going up
+print(describe(Direction.EAST))   # Going right
+
+# Iterating all members
+for d in Direction:
+    print(f"{d.name} = {d.value}", end="  ")
+# NORTH = 1  SOUTH = 2  EAST = 3  WEST = 4</pre>
+
+    <div class="challenge">
+      <div class="challenge-label">Challenge</div>
+      <p>Create a <code>Permission</code> Flag enum (<code>READ=1</code>, <code>WRITE=2</code>, <code>EXECUTE=4</code>) and write a function checking if a combined permission includes <code>WRITE</code>.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>#1 Pitfall:</strong> Enum members are not ints by default. <code>Color.RED == 1</code> is <code>False</code> with plain <code>Enum</code>. Use <code>IntEnum</code> if you need integer comparison. With <code>Flag</code>, use <code>Permission.WRITE in combined</code> to test membership.
+    </div>
+  </div>
+
+  <!-- Review 4: Dataclasses -->
+  <div class="concept" id="review-dataclasses">
+    <div class="concept-header">
+      <h3>Dataclasses</h3>
+      <span class="concept-meta">Data Modeling &bull; 4 days since last review &bull; rep 1</span>
+    </div>
+
+    <h4>Quick Reminder</h4>
+    <p><code>@dataclass</code> auto-generates <code>__init__</code>, <code>__repr__</code>, <code>__eq__</code>. Use <code>field(default_factory=list)</code> for mutable defaults. <code>frozen=True</code> makes instances immutable. <code>order=True</code> adds comparison methods.</p>
+
+    <h4>Key Pattern &mdash; Computed Field with __post_init__</h4>
+<pre>from dataclasses import dataclass, field
+
+@dataclass(order=True)
+class BankAccount:
+    sort_index: float = field(init=False, repr=False)
+    name: str
+    balance: float = 0.0
+    transactions: list[str] = field(default_factory=list, repr=False)
+
+    def __post_init__(self):
+        self.sort_index = self.balance
+
+    @property
+    def is_overdrawn(self) -&gt; bool:
+        return self.balance &lt; 0
+
+a1 = BankAccount("Alice", 500.0)
+a2 = BankAccount("Bob", -50.0)
+print(a1)              # BankAccount(name='Alice', balance=500.0)
+print(a2.is_overdrawn) # True
+print(a1 &gt; a2)        # True (compares by sort_index = balance)</pre>
+
+    <div class="challenge">
+      <div class="challenge-label">Challenge</div>
+      <p>Create a <code>BankAccount</code> dataclass with name, balance, and a computed <code>is_overdrawn</code> property. Make it support comparison by balance using <code>order=True</code> and a <code>sort_index</code> field.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>#1 Pitfall:</strong> Mutable default arguments. <code>tags: list[str] = []</code> in a dataclass shares one list across all instances. Always use <code>field(default_factory=list)</code> instead of <code>field(default=[])</code>.
+    </div>
+  </div>
+
+  <!-- Review 5: Classes — __init__, __repr__, __str__ -->
+  <div class="concept" id="review-classes-init-repr-str">
+    <div class="concept-header">
+      <h3>Classes &mdash; __init__, __repr__, __str__</h3>
+      <span class="concept-meta">OOP &bull; 4 days since last review &bull; rep 1</span>
+    </div>
+
+    <h4>Quick Reminder</h4>
+    <p><code>__init__</code> initializes the instance. <code>__repr__</code> returns an unambiguous string for debugging (ideally valid Python to reconstruct the object). <code>__str__</code> returns a human-readable string. <code>repr()</code> falls back to <code>__repr__</code> if no <code>__str__</code> is defined.</p>
+
+    <h4>Key Pattern &mdash; __repr__ That Produces Valid Python</h4>
+<pre>class Money:
+    def __init__(self, amount: float, currency: str = "USD"):
+        self.amount = amount
+        self.currency = currency
+
+    def __repr__(self) -&gt; str:
+        return f"Money({self.amount!r}, {self.currency!r})"
+
+    def __str__(self) -&gt; str:
+        symbols = {"USD": "$", "EUR": "€", "GBP": "£"}
+        sym = symbols.get(self.currency, self.currency + " ")
+        return f"{sym}{self.amount:.2f} {self.currency}"
+
+m = Money(42.5, "USD")
+print(repr(m))  # Money(42.5, 'USD')
+print(str(m))   # $42.50 USD
+print(m)        # $42.50 USD (print calls __str__)
+
+# repr is reconstructable
+m2 = eval(repr(m))
+print(m2)  # $42.50 USD</pre>
+
+    <div class="challenge">
+      <div class="challenge-label">Challenge</div>
+      <p>Create a <code>Money</code> class with amount and currency that has proper <code>__repr__</code> (reconstructable) and <code>__str__</code> (human-readable like "$42.50 USD"). Verify that <code>eval(repr(m))</code> creates an equivalent object.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>#1 Pitfall:</strong> Not implementing <code>__repr__</code>. Without it, you get useless <code>&lt;Foo object at 0x...&gt;</code>. Every class you write should have a <code>__repr__</code>. Use <code>!r</code> in f-strings for attributes to get proper quoting: <code>f"Foo({self.name!r})"</code>.
+    </div>
+  </div>
+
+  <!-- Review 6: Context Managers -->
+  <div class="concept" id="review-context-managers">
+    <div class="concept-header">
+      <h3>Context Managers</h3>
+      <span class="concept-meta">Error Handling &amp; I/O &bull; 4 days since last review &bull; rep 0</span>
+    </div>
+
+    <h4>Quick Reminder</h4>
+    <p>The <code>with</code> statement calls <code>__enter__</code>/<code>__exit__</code>. Use <code>@contextmanager</code> from <code>contextlib</code> for generator-based context managers. The code before <code>yield</code> is the setup, the code after is teardown. Cleanup happens even on exceptions.</p>
+
+    <h4>Key Pattern &mdash; @contextmanager with try/finally</h4>
+<pre>from contextlib import contextmanager
+import time
+
+@contextmanager
+def timer(label: str = "Block"):
+    start = time.perf_counter()
+    try:
+        yield
+    finally:
+        elapsed = time.perf_counter() - start
+        print(f"{label} took {elapsed:.4f}s")
+
+# Usage
+with timer("Sorting"):
+    data = sorted(range(100_000, 0, -1))
+# Sorting took 0.0045s  (time varies)
+
+# Class-based equivalent
+class Timer:
+    def __init__(self, label: str = "Block"):
+        self.label = label
+
+    def __enter__(self):
+        self.start = time.perf_counter()
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        elapsed = time.perf_counter() - self.start
+        print(f"{self.label} took {elapsed:.4f}s")
+        return False  # don't suppress exceptions
+
+with Timer("Summing") as t:
+    total = sum(range(1_000_000))
+# Summing took 0.0123s  (time varies)</pre>
+
+    <div class="challenge">
+      <div class="challenge-label">Challenge</div>
+      <p>Write a context manager <code>timer()</code> that measures and prints the elapsed time of the <code>with</code> block. Implement it both as a class with <code>__enter__</code>/<code>__exit__</code> and as a generator with <code>@contextmanager</code>.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>#1 Pitfall:</strong> Forgetting to <code>yield</code> in <code>@contextmanager</code>, or yielding more than once. Exactly one <code>yield</code> is required. Without <code>yield</code>, the body of the <code>with</code> block never executes. Put <code>yield</code> inside <code>try</code> and cleanup in <code>finally</code>.
+    </div>
+  </div>
+
+</div><!-- end review section -->
+
+
+<!-- ============================================================ -->
+<!-- NEW CONCEPTS SECTION -->
+<!-- ============================================================ -->
+<div class="section">
+  <span class="section-label new">New</span>
+  <h2 class="section-title">New Concepts &mdash; 5 Topics</h2>
+
+  <!-- New 1: Virtual Environments & pyproject.toml -->
+  <div class="concept" id="venv-pyproject">
+    <div class="concept-header">
+      <h3>Virtual Environments &amp; pyproject.toml</h3>
+      <span class="concept-meta">Testing &amp; Packaging</span>
+    </div>
+
+    <h4>Why This Matters</h4>
+    <p>Every Python project needs isolated dependencies to avoid version conflicts. <code>pyproject.toml</code> is the modern standard (PEP 621) replacing <code>setup.py</code>/<code>setup.cfg</code> for project metadata, dependencies, and build configuration.</p>
+
+    <h4>Creating and Using Virtual Environments</h4>
+<pre># Create a virtual environment
+python -m venv .venv
+
+# Activate it (macOS/Linux)
+source .venv/bin/activate
+
+# Activate it (Windows)
+# .venv\Scripts\activate
+
+# Verify isolation
+import sys
+print(sys.prefix)
+# /path/to/project/.venv  (not the global Python)
+
+# Deactivate when done
+# deactivate</pre>
+
+    <h4>pyproject.toml Structure</h4>
+<pre># pyproject.toml -- modern Python project config
+
+[build-system]
+requires = ["setuptools&gt;=68.0", "wheel"]
+build-backend = "setuptools.backends._legacy:_Backend"
+
+[project]
+name = "myutil"
+version = "1.0.0"
+description = "A sample utility package"
+requires-python = "&gt;=3.11"
+dependencies = [
+    "numpy&gt;=1.24",
+    "requests&gt;=2.28",
+]
+
+[project.optional-dependencies]
+dev = ["pytest&gt;=7.0", "mypy&gt;=1.0", "ruff&gt;=0.1"]
+test = ["pytest&gt;=7.0", "pytest-cov&gt;=4.0"]
+
+[project.scripts]
+myutil = "myutil.cli:main"</pre>
+
+    <h4>Installing in Development Mode</h4>
+<pre># Install the package in editable mode with dev dependencies
+# pip install -e ".[dev]"
+
+# This makes your package importable AND lets you edit the source
+# without reinstalling. The [dev] part installs optional dev deps.
+
+# You can also install specific groups:
+# pip install -e ".[test]"
+# pip install -e ".[dev,test]"</pre>
+
+    <h4>Entry Points for CLI Tools</h4>
+<pre># In pyproject.toml:
+# [project.scripts]
+# myutil = "myutil.cli:main"
+
+# This means: when the user runs `myutil` in the terminal,
+# Python calls the `main()` function in `myutil/cli.py`
+
+# myutil/cli.py
+def main():
+    print("Hello from myutil CLI!")
+
+# After pip install, `myutil` is available as a command</pre>
+
+    <div class="do-dont">
+      <div class="do-box">
+        <div class="label">Do</div>
+<pre>python -m venv .venv
+# pyproject.toml with pinned deps
+# pip install -e ".[dev]"</pre>
+      </div>
+      <div class="dont-box">
+        <div class="label">Don't</div>
+<pre>pip install numpy  # global!
+# setup.py (legacy)
+# requirements.txt without pins</pre>
+      </div>
+    </div>
+
+    <ul class="rules-list">
+      <li>Always use a virtual environment. Never install packages globally.</li>
+      <li>Prefer <code>pyproject.toml</code> over <code>setup.py</code>/<code>setup.cfg</code>.</li>
+      <li>Pin dependencies for production. Use <code>&gt;=</code> for libraries, <code>==</code> for apps.</li>
+      <li>Use optional dependency groups to separate dev/test/prod requirements.</li>
+    </ul>
+
+    <div class="exercise">
+      <div class="exercise-label">Exercise 1</div>
+      <p>Write a minimal <code>pyproject.toml</code> for a package called "myutil" with <code>numpy</code> as a dependency and <code>pytest</code> as a dev dependency. Include the <code>[build-system]</code>, <code>[project]</code>, and <code>[project.optional-dependencies]</code> sections.</p>
+    </div>
+
+    <div class="exercise">
+      <div class="exercise-label">Exercise 2</div>
+      <p>Show how to create a CLI entry point in <code>pyproject.toml</code> that maps the command <code>greet</code> to a <code>main()</code> function in <code>myutil/greet.py</code>.</p>
+    </div>
+
+    <div class="exercise">
+      <div class="exercise-label">Exercise 3</div>
+      <p>Set up a project with separate "dev" and "test" optional dependency groups in <code>pyproject.toml</code>. Include <code>ruff</code> and <code>mypy</code> in dev, and <code>pytest</code> and <code>pytest-cov</code> in test. Show the install commands for each group.</p>
+    </div>
+
+    <div class="connection">
+      <strong>Connections:</strong> Virtual environments isolate your <code>sys.path</code> (covered in Import System below). Entry points create executable scripts that work like the CLI tools built with <code>argparse</code> (Day 8). <code>pyproject.toml</code> is also where you configure tools like <code>pytest</code> (Day 9) and <code>mypy</code> (type hints from Day 7).
+    </div>
+  </div>
+
+  <!-- New 2: Design Patterns in Python -->
+  <div class="concept" id="design-patterns">
+    <div class="concept-header">
+      <h3>Design Patterns in Python</h3>
+      <span class="concept-meta">Testing &amp; Packaging</span>
+    </div>
+
+    <h4>Why This Matters</h4>
+    <p>Classic design patterns (Singleton, Factory, Strategy, Observer) have much simpler Pythonic implementations thanks to first-class functions, decorators, and dunder methods. Knowing when <em>not</em> to use a pattern is as important as knowing the pattern itself.</p>
+
+    <h4>Strategy Pattern &mdash; Just Pass a Function</h4>
+<pre># In Java, you'd need a Strategy interface + concrete classes.
+# In Python, just pass a function.
+
+def format_upper(text: str) -&gt; str:
+    return text.upper()
+
+def format_title(text: str) -&gt; str:
+    return text.title()
+
+def format_snake(text: str) -&gt; str:
+    return text.lower().replace(" ", "_")
+
+# Strategy dispatch via dict
+strategies = {
+    "upper": format_upper,
+    "title": format_title,
+    "snake": format_snake,
+}
+
+def apply_format(text: str, style: str) -&gt; str:
+    formatter = strategies.get(style)
+    if formatter is None:
+        raise ValueError(f"Unknown style: {style}")
+    return formatter(text)
+
+print(apply_format("hello world", "upper"))  # HELLO WORLD
+print(apply_format("hello world", "title"))  # Hello World
+print(apply_format("hello world", "snake"))  # hello_world</pre>
+
+    <h4>Factory Pattern &mdash; __init_subclass__ Registry</h4>
+<pre>class Serializer:
+    _registry: dict[str, type] = {}
+
+    def __init_subclass__(cls, fmt: str = "", **kwargs):
+        super().__init_subclass__(**kwargs)
+        if fmt:
+            Serializer._registry[fmt] = cls
+
+    @classmethod
+    def create(cls, fmt: str) -&gt; "Serializer":
+        klass = cls._registry.get(fmt)
+        if klass is None:
+            raise ValueError(f"Unknown format: {fmt}")
+        return klass()
+
+    def serialize(self, data: dict) -&gt; str:
+        raise NotImplementedError
+
+class JSONSerializer(Serializer, fmt="json"):
+    def serialize(self, data: dict) -&gt; str:
+        import json
+        return json.dumps(data)
+
+class CSVSerializer(Serializer, fmt="csv"):
+    def serialize(self, data: dict) -&gt; str:
+        return ",".join(f"{k}={v}" for k, v in data.items())
+
+s = Serializer.create("json")
+print(s.serialize({"name": "Alice", "age": 30}))
+# {"name": "Alice", "age": 30}
+
+s2 = Serializer.create("csv")
+print(s2.serialize({"x": 1, "y": 2}))
+# x=1,y=2
+
+print(Serializer._registry)
+# {'json': &lt;class 'JSONSerializer'&gt;, 'csv': &lt;class 'CSVSerializer'&gt;}</pre>
+
+    <h4>Observer Pattern &mdash; Simple Callbacks</h4>
+<pre>class EventEmitter:
+    def __init__(self):
+        self._listeners: dict[str, list] = {}
+
+    def on(self, event: str, callback):
+        self._listeners.setdefault(event, []).append(callback)
+
+    def emit(self, event: str, *args, **kwargs):
+        for cb in self._listeners.get(event, []):
+            cb(*args, **kwargs)
+
+emitter = EventEmitter()
+emitter.on("login", lambda user: print(f"{user} logged in"))
+emitter.on("login", lambda user: print(f"Audit: {user}"))
+emitter.emit("login", "Alice")
+# Alice logged in
+# Audit: Alice</pre>
+
+    <h4>Singleton &mdash; A Module IS a Singleton</h4>
+<pre># config.py (this module IS the singleton)
+_settings = {"debug": False, "db_url": "sqlite:///app.db"}
+
+def get(key: str):
+    return _settings.get(key)
+
+def set(key: str, value):
+    _settings[key] = value
+
+# Any module that imports config gets the same _settings dict.
+# No Singleton class needed.</pre>
+
+    <div class="do-dont">
+      <div class="do-box">
+        <div class="label">Pythonic</div>
+<pre># Strategy: pass a function
+sorted(data, key=len)
+
+# Singleton: module variable
+# config.py with module-level dict</pre>
+      </div>
+      <div class="dont-box">
+        <div class="label">Over-Engineered</div>
+<pre># Java-style Strategy interface
+class SortStrategy(ABC):
+    @abstractmethod
+    def compare(self, a, b): ...
+
+# Singleton with __new__
+class Config:
+    _instance = None
+    def __new__(cls): ...</pre>
+      </div>
+    </div>
+
+    <ul class="rules-list">
+      <li>Python's first-class functions replace Strategy, Command, and Template Method patterns.</li>
+      <li>A module IS a singleton. Don't create a Singleton class unless you have a compelling reason.</li>
+      <li>Use <code>__init_subclass__</code> for registration patterns (Factory, Plugin systems).</li>
+      <li>Use <code>dict</code> dispatch instead of if/elif chains for selecting behavior.</li>
+    </ul>
+
+    <div class="exercise">
+      <div class="exercise-label">Exercise 1</div>
+      <p>Implement a plugin registry using <code>__init_subclass__</code>. Create a base class <code>Plugin</code> with a class-level <code>_plugins</code> dict. Subclasses auto-register by name. Add a <code>Plugin.get(name)</code> classmethod that returns the plugin class.</p>
+    </div>
+
+    <div class="exercise">
+      <div class="exercise-label">Exercise 2</div>
+      <p>Implement the Strategy pattern for a text formatter using only functions and a dict. Support "uppercase", "lowercase", and "title" strategies. Include a <code>format_text(text, style)</code> function that dispatches to the correct strategy.</p>
+    </div>
+
+    <div class="exercise">
+      <div class="exercise-label">Exercise 3</div>
+      <p>Write an Observer pattern where a <code>Subject</code> class has <code>subscribe(event, callback)</code> and <code>notify(event, data)</code> methods. Test it by subscribing multiple callbacks to a "price_change" event and notifying them.</p>
+    </div>
+
+    <div class="connection">
+      <strong>Connections:</strong> The Factory pattern uses <code>__init_subclass__</code> (covered next in Metaprogramming Hooks). Strategy replaces what you might do with ABCs (Day 6). Observer uses <code>defaultdict</code> (Day 2) or <code>dict.setdefault</code>. These patterns work naturally with decorators (Day 2) and closures (Day 4).
+    </div>
+  </div>
+
+  <!-- New 3: Metaprogramming: __init_subclass__ & __class_getitem__ -->
+  <div class="concept" id="metaprogramming-hooks">
+    <div class="concept-header">
+      <h3>Metaprogramming: __init_subclass__ &amp; __class_getitem__</h3>
+      <span class="concept-meta">Advanced Topics</span>
+    </div>
+
+    <h4>Why This Matters</h4>
+    <p>These hooks let you customize class creation without full metaclasses &mdash; 90% of the power, 10% of the complexity. <code>__init_subclass__</code> runs when a class is subclassed. <code>__class_getitem__</code> lets you subscript classes like <code>MyClass[int]</code>. <code>__set_name__</code> gives descriptors automatic attribute names.</p>
+
+    <h4>__init_subclass__ &mdash; Auto-Registration</h4>
+<pre>class Animal:
+    _registry: dict[str, type] = {}
+
+    def __init_subclass__(cls, sound: str = "", **kwargs):
+        super().__init_subclass__(**kwargs)
+        if sound:
+            cls.sound = sound
+            Animal._registry[cls.__name__.lower()] = cls
+
+    @classmethod
+    def make(cls, name: str) -&gt; "Animal":
+        return cls._registry[name]()
+
+    def speak(self) -&gt; str:
+        return f"{type(self).__name__} says {self.sound}"
+
+class Dog(Animal, sound="woof"): pass
+class Cat(Animal, sound="meow"): pass
+class Duck(Animal, sound="quack"): pass
+
+print(Animal._registry)
+# {'dog': &lt;class 'Dog'&gt;, 'cat': &lt;class 'Cat'&gt;, 'duck': &lt;class 'Duck'&gt;}
+
+animal = Animal.make("cat")
+print(animal.speak())  # Cat says meow</pre>
+
+    <h4>__init_subclass__ &mdash; Validation</h4>
+<pre>class Serializable:
+    def __init_subclass__(cls, **kwargs):
+        super().__init_subclass__(**kwargs)
+        # Skip abstract base itself
+        if not hasattr(cls, 'serialize'):
+            raise TypeError(
+                f"{cls.__name__} must define a serialize() method"
+            )
+
+class JSONDoc(Serializable):
+    def serialize(self) -&gt; str:
+        return "{}"
+
+# This would raise TypeError at class definition time:
+# class BadDoc(Serializable):
+#     pass
+# TypeError: BadDoc must define a serialize() method
+
+print(JSONDoc().serialize())  # {}</pre>
+
+    <h4>__class_getitem__ &mdash; Generic-Looking Classes</h4>
+<pre>class TypedBox:
+    def __init__(self, value):
+        self.value = value
+
+    def __class_getitem__(cls, item):
+        # Called when you write TypedBox[int]
+        # Returns a parameterized alias for type-checking
+        return type(f"{cls.__name__}[{item.__name__}]", (cls,), {
+            "_type": item
+        })
+
+    def __repr__(self):
+        return f"TypedBox({self.value!r})"
+
+IntBox = TypedBox[int]
+box = IntBox(42)
+print(box)            # TypedBox(42)
+print(IntBox._type)   # &lt;class 'int'&gt;
+print(type(box).__name__)  # TypedBox[int]</pre>
+
+    <h4>__set_name__ &mdash; Descriptor Gets Its Attribute Name</h4>
+<pre>class TypeChecked:
+    def __init__(self, expected_type):
+        self.expected_type = expected_type
+
+    def __set_name__(self, owner, name):
+        self.attr_name = f"_{name}"
+        self.public_name = name
+
+    def __get__(self, obj, objtype=None):
+        if obj is None:
+            return self
+        return getattr(obj, self.attr_name, None)
+
+    def __set__(self, obj, value):
+        if not isinstance(value, self.expected_type):
+            raise TypeError(
+                f"{self.public_name} must be {self.expected_type.__name__}, "
+                f"got {type(value).__name__}"
+            )
+        setattr(obj, self.attr_name, value)
+
+class User:
+    name = TypeChecked(str)
+    age = TypeChecked(int)
+
+    def __init__(self, name: str, age: int):
+        self.name = name
+        self.age = age
+
+u = User("Alice", 30)
+print(u.name, u.age)  # Alice 30
+
+try:
+    u.age = "not a number"
+except TypeError as e:
+    print(e)  # age must be int, got str</pre>
+
+    <div class="do-dont">
+      <div class="do-box">
+        <div class="label">Do</div>
+<pre># Use __init_subclass__ for registration
+class Plugin:
+    def __init_subclass__(cls, **kw):
+        registry[cls.__name__] = cls</pre>
+      </div>
+      <div class="dont-box">
+        <div class="label">Don't</div>
+<pre># Use a full metaclass for this
+class PluginMeta(type):
+    def __new__(mcs, name, bases, ns):
+        cls = super().__new__(...)
+        registry[name] = cls
+        return cls</pre>
+      </div>
+    </div>
+
+    <ul class="rules-list">
+      <li>Prefer <code>__init_subclass__</code> over metaclasses &mdash; simpler and covers 90% of use cases.</li>
+      <li><code>__class_getitem__</code> is primarily for type hints, not runtime behavior.</li>
+      <li><code>__set_name__</code> completes the descriptor protocol &mdash; no need to repeat the attribute name.</li>
+      <li>Always call <code>super().__init_subclass__(**kwargs)</code> to support cooperative inheritance.</li>
+    </ul>
+
+    <div class="exercise">
+      <div class="exercise-label">Exercise 1</div>
+      <p>Create a <code>Serializable</code> base class where <code>__init_subclass__</code> validates that all subclasses define a <code>serialize()</code> method. Test that defining a subclass without <code>serialize()</code> raises <code>TypeError</code> at class creation time.</p>
+    </div>
+
+    <div class="exercise">
+      <div class="exercise-label">Exercise 2</div>
+      <p>Create a <code>TypedBox[T]</code> class using <code>__class_getitem__</code> that stores its type parameter as a <code>_type</code> class attribute. <code>TypedBox[int](42)</code> should work, and <code>TypedBox[int]._type</code> should be <code>int</code>.</p>
+    </div>
+
+    <div class="exercise">
+      <div class="exercise-label">Exercise 3</div>
+      <p>Build a <code>ValidatedField</code> descriptor using <code>__set_name__</code> that enforces a type constraint. Usage: <code>name = ValidatedField(str)</code>, <code>age = ValidatedField(int)</code>. Assigning the wrong type should raise <code>TypeError</code>.</p>
+    </div>
+
+    <div class="connection">
+      <strong>Connections:</strong> <code>__init_subclass__</code> powers the Factory pattern (previous concept). <code>__set_name__</code> is part of the descriptor protocol (Day 9). <code>__class_getitem__</code> connects to <code>Generic[T]</code> from advanced typing (Day 9). These hooks replace most uses of metaclasses while being much simpler to understand.
+    </div>
+  </div>
+
+  <!-- New 4: Import System -->
+  <div class="concept" id="import-system">
+    <div class="concept-header">
+      <h3>Import System: __import__, importlib, sys.path</h3>
+      <span class="concept-meta">Advanced Topics</span>
+    </div>
+
+    <h4>Why This Matters</h4>
+    <p>Understanding Python's import system helps debug "module not found" errors, implement plugin systems, and control module loading. Imports follow a well-defined chain: finder &rarr; loader &rarr; module cache (<code>sys.modules</code>).</p>
+
+    <h4>How sys.path Works</h4>
+<pre>import sys
+
+# sys.path is a list of directories Python searches for modules
+print(sys.path[:4])
+# ['', '/usr/lib/python311.zip', '/usr/lib/python3.11', ...]
+# '' means the current directory
+
+# The search order:
+# 1. sys.modules cache (already imported?)
+# 2. Built-in modules (sys, os, etc.)
+# 3. Directories in sys.path (in order)</pre>
+
+    <h4>Dynamic Imports with importlib</h4>
+<pre>import importlib
+
+# Import a module by name (string)
+json_mod = importlib.import_module("json")
+data = json_mod.dumps({"key": "value"})
+print(data)  # {"key": "value"}
+
+# Import a submodule
+path_mod = importlib.import_module("os.path")
+print(path_mod.join("/usr", "local", "bin"))
+# /usr/local/bin
+
+# Useful for plugin systems where module name is determined at runtime
+module_name = "collections"
+mod = importlib.import_module(module_name)
+print(mod.Counter("hello"))
+# Counter({'l': 2, 'h': 1, 'e': 1, 'o': 1})</pre>
+
+    <h4>Module Cache &mdash; sys.modules</h4>
+<pre>import sys
+
+# Every imported module is cached in sys.modules
+import json
+print("json" in sys.modules)  # True
+
+# Importing again returns the cached version (fast!)
+import json as j2
+print(json is j2)  # True (same object)
+
+# You can inspect the cache
+print(len(sys.modules))  # hundreds of modules loaded at startup</pre>
+
+    <h4>Controlling Exports with __all__</h4>
+<pre># mymodule.py
+__all__ = ["public_func", "PublicClass"]
+
+def public_func():
+    return "I'm public"
+
+def _private_func():
+    return "I'm private by convention"
+
+class PublicClass:
+    pass
+
+class _InternalClass:
+    pass
+
+# When someone does: from mymodule import *
+# Only public_func and PublicClass are imported.
+# __all__ explicitly declares the public API.</pre>
+
+    <h4>Circular Imports &mdash; The Fix</h4>
+<pre># Problem: a.py imports b.py, b.py imports a.py
+# This causes ImportError or partially initialized modules.
+
+# FIX 1: Move the import inside the function (lazy import)
+# b.py
+def process():
+    from a import helper  # imported only when called
+    return helper()
+
+# FIX 2: Restructure into a third module
+# common.py -- shared code that both a.py and b.py need
+
+# FIX 3: Import the module, not the name
+# Instead of: from a import helper
+# Use: import a
+# Then: a.helper()  (defers name lookup to runtime)</pre>
+
+    <div class="do-dont">
+      <div class="do-box">
+        <div class="label">Do</div>
+<pre># Absolute imports
+from mypackage.utils import helper
+# importlib for dynamic loading
+importlib.import_module(name)</pre>
+      </div>
+      <div class="dont-box">
+        <div class="label">Don't</div>
+<pre># sys.path hacks at runtime
+sys.path.insert(0, "/random/path")
+# Shadowing stdlib modules
+# json.py in your project!</pre>
+      </div>
+    </div>
+
+    <ul class="rules-list">
+      <li>Use absolute imports. Relative imports are acceptable within a package but can confuse readers.</li>
+      <li>Fix circular imports by restructuring, not with <code>sys.path</code> hacks.</li>
+      <li>Use <code>importlib.import_module()</code> for dynamic loading (plugin systems).</li>
+      <li>Define <code>__all__</code> in every public module to control the <code>from module import *</code> API.</li>
+    </ul>
+
+    <div class="exercise">
+      <div class="exercise-label">Exercise 1</div>
+      <p>Write a plugin loader that dynamically imports all <code>.py</code> files from a "plugins/" directory using <code>importlib</code> and <code>pathlib</code>. Each plugin module should have a <code>register()</code> function that gets called after import.</p>
+    </div>
+
+    <div class="exercise">
+      <div class="exercise-label">Exercise 2</div>
+      <p>Show how <code>sys.modules</code> caching works: import <code>json</code>, verify it's in <code>sys.modules</code>, and demonstrate that importing it again returns the exact same object (using <code>is</code>).</p>
+    </div>
+
+    <div class="exercise">
+      <div class="exercise-label">Exercise 3</div>
+      <p>Fix a circular import scenario: module A needs a function from module B, and module B needs a class from module A. Show the failing code and two different solutions (lazy import and restructuring).</p>
+    </div>
+
+    <div class="connection">
+      <strong>Connections:</strong> <code>sys.path</code> is what virtual environments modify to isolate packages (previous concept). Plugin systems combine <code>importlib</code> with <code>__init_subclass__</code> (Metaprogramming Hooks). <code>__all__</code> controls the public API, working alongside type hints (Day 7) to document interfaces. Understanding imports helps debug issues with <code>pathlib</code> (Day 7) and <code>logging</code> config (Day 7).
+    </div>
+  </div>
+
+  <!-- New 5: Walrus Operator & Structural Pattern Matching -->
+  <div class="concept" id="walrus-pattern-matching">
+    <div class="concept-header">
+      <h3>Walrus Operator &amp; Structural Pattern Matching</h3>
+      <span class="concept-meta">Advanced Topics</span>
+    </div>
+
+    <h4>Why This Matters</h4>
+    <p>The walrus operator (<code>:=</code>, Python 3.8+) assigns and returns a value in one expression, eliminating repeated computation. Pattern matching (<code>match</code>/<code>case</code>, Python 3.10+) replaces complex if/elif chains with declarative, readable patterns.</p>
+
+    <h4>Walrus Operator in Action</h4>
+<pre># In a while loop -- avoid calling twice
+import re
+
+text = "Error: file not found at line 42"
+if (match := re.search(r"line (\d+)", text)) is not None:
+    print(f"Found line number: {match.group(1)}")
+else:
+    print("No line number found")
+# Found line number: 42
+
+# In a while loop for reading chunks
+# while (chunk := f.read(8192)):
+#     process(chunk)
+
+# In a comprehension -- compute once, use twice
+data = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+results = [(x, y) for x in data if (y := x ** 2) &gt; 20]
+print(results)
+# [(5, 25), (6, 36), (7, 49), (8, 64), (9, 81), (10, 100)]
+
+# Without walrus, you'd compute x**2 twice:
+# results = [(x, x**2) for x in data if x**2 &gt; 20]</pre>
+
+    <h4>Structural Pattern Matching &mdash; Basics</h4>
+<pre># Literal patterns
+def http_status(status: int) -&gt; str:
+    match status:
+        case 200:
+            return "OK"
+        case 301:
+            return "Moved Permanently"
+        case 404:
+            return "Not Found"
+        case 500:
+            return "Internal Server Error"
+        case _:
+            return f"Unknown status: {status}"
+
+print(http_status(200))  # OK
+print(http_status(404))  # Not Found
+print(http_status(999))  # Unknown status: 999</pre>
+
+    <h4>Pattern Matching &mdash; Sequences and Mappings</h4>
+<pre># Sequence patterns (lists/tuples)
+def process_command(command: list[str]) -&gt; str:
+    match command:
+        case ["quit"]:
+            return "Goodbye!"
+        case ["greet", name]:
+            return f"Hello, {name}!"
+        case ["move", x, y]:
+            return f"Moving to ({x}, {y})"
+        case ["add", *items]:
+            return f"Adding {len(items)} items: {items}"
+        case _:
+            return f"Unknown command: {command}"
+
+print(process_command(["quit"]))          # Goodbye!
+print(process_command(["greet", "Alice"]))  # Hello, Alice!
+print(process_command(["move", "3", "5"]))  # Moving to (3, 5)
+print(process_command(["add", "a", "b", "c"]))  # Adding 3 items: ['a', 'b', 'c']</pre>
+
+    <h4>Pattern Matching &mdash; Mappings and Guards</h4>
+<pre># Mapping patterns (dicts)
+def handle_event(event: dict) -&gt; str:
+    match event:
+        case {"type": "click", "x": x, "y": y}:
+            return f"Clicked at ({x}, {y})"
+        case {"type": "keypress", "key": key} if len(key) == 1:
+            return f"Pressed key: {key}"
+        case {"type": "keypress", "key": key}:
+            return f"Special key: {key}"
+        case {"type": t}:
+            return f"Unhandled event type: {t}"
+        case _:
+            return "Invalid event"
+
+print(handle_event({"type": "click", "x": 10, "y": 20}))
+# Clicked at (10, 20)
+print(handle_event({"type": "keypress", "key": "a"}))
+# Pressed key: a
+print(handle_event({"type": "keypress", "key": "Enter"}))
+# Special key: Enter</pre>
+
+    <h4>Pattern Matching &mdash; Class Patterns</h4>
+<pre>from dataclasses import dataclass
+
+@dataclass
+class Point:
+    x: float
+    y: float
+
+def classify_point(p: Point) -&gt; str:
+    match p:
+        case Point(x=0, y=0):
+            return "Origin"
+        case Point(x=0, y=y):
+            return f"On Y-axis at y={y}"
+        case Point(x=x, y=0):
+            return f"On X-axis at x={x}"
+        case Point(x=x, y=y) if x &gt; 0 and y &gt; 0:
+            return f"Quadrant I: ({x}, {y})"
+        case _:
+            return f"Other: ({p.x}, {p.y})"
+
+print(classify_point(Point(0, 0)))    # Origin
+print(classify_point(Point(0, 5)))    # On Y-axis at y=5
+print(classify_point(Point(3, 0)))    # On X-axis at x=3
+print(classify_point(Point(2, 7)))    # Quadrant I: (2, 7)
+print(classify_point(Point(-1, 3)))   # Other: (-1, 3)</pre>
+
+    <div class="do-dont">
+      <div class="do-box">
+        <div class="label">Do</div>
+<pre># Walrus: eliminate repeated work
+if (n := len(items)) &gt; 10:
+    print(f"Too many: {n}")
+
+# match/case: structured data
+match event:
+    case {"type": "click"}: ...</pre>
+      </div>
+      <div class="dont-box">
+        <div class="label">Don't</div>
+<pre># Walrus: hurts readability
+x := 5  # SyntaxError anyway
+result = [(y := x) for x in a]
+
+# match/case for simple checks
+match x:  # just use if/else
+    case True: ...
+    case False: ...</pre>
+      </div>
+    </div>
+
+    <ul class="rules-list">
+      <li>Use walrus when it eliminates a repeated computation (regex match, len, function call).</li>
+      <li>Use <code>match</code>/<code>case</code> when you have 3+ branches on structured data.</li>
+      <li>Always include <code>case _:</code> as a default fallback.</li>
+      <li>Capture variables in <code>case</code> are plain names; use dotted names (<code>Status.OK</code>) or guards for constants.</li>
+    </ul>
+
+    <div class="exercise">
+      <div class="exercise-label">Exercise 1</div>
+      <p>Rewrite this code using the walrus operator: read lines from a list, filter out empty ones, and collect the stripped versions. Before: compute <code>line.strip()</code> twice (once to check, once to keep). After: use <code>:=</code> to compute it once.</p>
+    </div>
+
+    <div class="exercise">
+      <div class="exercise-label">Exercise 2</div>
+      <p>Write a <code>match</code>/<code>case</code> that processes a list of command dicts like <code>{"action": "move", "x": 5, "y": 3}</code>. Handle "move", "attack" (with "target" key), "heal" (with "amount" key and guard for amount &gt; 0), and a default case.</p>
+    </div>
+
+    <div class="exercise">
+      <div class="exercise-label">Exercise 3</div>
+      <p>Use walrus in a list comprehension to filter and transform data in one pass. Given a list of strings, keep only those where <code>int(s)</code> succeeds and the value is positive. Use a helper function with walrus to avoid try/except in the comprehension.</p>
+    </div>
+
+    <div class="connection">
+      <strong>Connections:</strong> Walrus in comprehensions builds on list/dict comprehensions (Day 1, reviewed today). Pattern matching with <code>case Point(x=0):</code> uses dataclasses (Day 7, reviewed today) and works beautifully with Enum (Day 7, reviewed today). Pattern matching on dicts connects to JSON parsing (Day 7). Guards in <code>case</code> are like the conditions in comprehensions.
+    </div>
+  </div>
+
+</div><!-- end new concepts section -->
+
+
+<!-- ============================================================ -->
+<!-- FOOTER -->
+<!-- ============================================================ -->
+<div class="footer">
+  <h4>All Python Study Guides</h4>
+    <ul>
+    <li><a href="python-guides/python-guide-2026-07-09.html">2026-07-09</a> (Day 39)</li>
+    <li><a href="python-guides/python-guide-2026-07-08.html">2026-07-08</a> (Day 38)</li>
+    <li><a href="python-guides/python-guide-2026-07-07.html">2026-07-07</a> (Day 37)</li>
+    <li><a href="python-guides/python-guide-2026-07-06.html">2026-07-06</a> (Day 36)</li>
+    <li><a href="python-guides/python-guide-2026-07-05.html">2026-07-05</a> (Day 35)</li>
+    <li><a href="python-guides/python-guide-2026-07-04.html">2026-07-04</a> (Day 34)</li>
+    <li><a href="python-guides/python-guide-2026-07-03.html">2026-07-03</a> (Day 33)</li>
+    <li><a href="python-guides/python-guide-2026-07-02.html">2026-07-02</a> (Day 32)</li>
+    <li><a href="python-guides/python-guide-2026-07-01.html">2026-07-01</a> (Day 31)</li>
+    <li><a href="python-guides/python-guide-2026-06-30.html">2026-06-30</a> (Day 30)</li>
+    <li><a href="python-guides/python-guide-2026-06-29.html">2026-06-29</a> (Day 29)</li>
+    <li><a href="python-guides/python-guide-2026-06-28.html">2026-06-28</a> (Day 28)</li>
+    <li><a href="python-guides/python-guide-2026-06-27.html">2026-06-27</a> (Day 27)</li>
+    <li><a href="python-guides/python-guide-2026-06-26.html">2026-06-26</a> (Day 26)</li>
+    <li><a href="python-guides/python-guide-2026-06-25.html">2026-06-25</a> (Day 25)</li>
+    <li><a href="python-guides/python-guide-2026-06-24.html">2026-06-24</a> (Day 24)</li>
+    <li><a href="python-guides/python-guide-2026-06-23.html">2026-06-23</a> (Day 23)</li>
+    <li><a href="python-guides/python-guide-2026-06-22.html">2026-06-22</a> (Day 22)</li>
+    <li><a href="python-guides/python-guide-2026-06-21.html">2026-06-21</a> (Day 21)</li>
+    <li><a href="python-guides/python-guide-2026-06-19.html">2026-06-19</a> (Day 20)</li>
+    <li><a href="python-guides/python-guide-2026-06-18.html">2026-06-18</a> (Day 19)</li>
+    <li><a href="python-guides/python-guide-2026-06-17.html">2026-06-17</a> (Day 18)</li>
+    <li><a href="python-guides/python-guide-2026-06-15.html">2026-06-15</a> (Day 17)</li>
+    <li><a href="python-guides/python-guide-2026-06-13.html">2026-06-13</a> (Day 16)</li>
+    <li><a href="python-guides/python-guide-2026-06-12.html">2026-06-12</a> (Day 15)</li>
+    <li><a href="python-guides/python-guide-2026-06-11.html">2026-06-11</a> (Day 14)</li>
+    <li><a href="python-guides/python-guide-2026-06-10.html">2026-06-10</a> (Day 13)</li>
+    <li><a href="python-guides/python-guide-2026-06-09.html">2026-06-09</a> (Day 12)</li>
+    <li><a href="python-guides/python-guide-2026-06-08.html">2026-06-08</a> (Day 11)</li>
+    <li class="current"><a href="python-guides/python-guide-2026-06-07.html">2026-06-07</a> </li>
+    <li><a href="python-guides/python-guide-2026-06-05.html">2026-06-05</a> (Day 9)</li>
+    <li><a href="python-guides/python-guide-2026-06-04.html">2026-06-04</a> (Day 8)</li>
+    <li><a href="python-guides/python-guide-2026-06-03.html">2026-06-03</a> (Day 7)</li>
+    <li><a href="python-guides/python-guide-2026-06-02.html">2026-06-02</a> (Day 6)</li>
+    <li><a href="python-guides/python-guide-2026-06-01.html">2026-06-01</a> (Day 5)</li>
+    <li><a href="python-guides/python-guide-2026-05-31.html">2026-05-31</a> (Day 4)</li>
+    <li><a href="python-guides/python-guide-2026-05-30.html">2026-05-30</a> (Day 3)</li>
+    <li><a href="python-guides/python-guide-2026-05-29.html">2026-05-29</a> (Day 2)</li>
+    <li><a href="python-guides/python-guide-2026-05-28.html">2026-05-28</a> (Day 1)</li>
+  </ul>
+</div>
+
+</div><!-- end main -->
+
+<script>
+(function() {
+  // ===== Theme Toggle =====
+  const THEME_KEY = 'lc-pyguide-theme';
+  const toggle = document.getElementById('theme-toggle');
+  const html = document.documentElement;
+
+  function setTheme(theme) {
+    html.setAttribute('data-theme', theme);
+    localStorage.setItem(THEME_KEY, theme);
+    toggle.textContent = theme === 'dark' ? '☽' : '☀';
+    toggle.title = theme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme';
+  }
+
+  const saved = localStorage.getItem(THEME_KEY) || 'dark';
+  setTheme(saved);
+
+  toggle.addEventListener('click', function() {
+    const current = html.getAttribute('data-theme');
+    setTheme;
+  });
+
+  // ===== Mobile Sidebar Toggle =====
+  const sidebarToggle = document.getElementById('sidebar-toggle');
+  const sidebar = document.getElementById('sidebar');
+
+  sidebarToggle.addEventListener('click', function() {
+    sidebar.classList.toggle('open');
+  });
+
+  // Close sidebar when clicking a link on mobile
+  sidebar.querySelectorAll('.sidebar-link').forEach(function(link) {
+    link.addEventListener('click', function() {
+      if (window.innerWidth <= 900) {
+        sidebar.classList.remove('open');
+      }
+    });
+  });
+
+  // ===== Active Sidebar Link on Scroll =====
+  const links = document.querySelectorAll('.sidebar-link');
+  const sections = [];
+
+  links.forEach(function(link) {
+    var id = link.getAttribute('href').slice(1);
+    var el = document.getElementById(id);
+    if (el) sections.push({ id: id, el: el, link: link });
+  });
+
+  function updateActive() {
+    var current = null;
+    var scrollY = window.scrollY + 100;
+
+    for (var i = sections.length - 1; i >= 0; i--) {
+      if (sections[i].el.offsetTop <= scrollY) {
+        current = sections[i];
+        break;
+      }
+    }
+
+    links.forEach(function(l) { l.classList.remove('active'); });
+    if  current.link.classList.add('active');
+  }
+
+  window.addEventListener('scroll', updateActive, { passive: true });
+  updateActive();
+})();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,2069 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Go Study Guide &mdash; Day 18 (2026-06-23)</title>
+<style>
+/* ===== CSS Variables ===== */
+:root {
+  --bg: #0d1117;
+  --surface1: #161b22;
+  --surface2: #1c2129;
+  --border: #30363d;
+  --text: #e6edf3;
+  --muted: #8b949e;
+  --accent: #58a6ff;
+  --accent-dim: #1f6feb33;
+  --green: #3fb950;
+  --green-dim: #23863633;
+  --yellow: #d29922;
+  --yellow-dim: #d2992233;
+  --red: #f85149;
+  --red-dim: #f8514933;
+  --purple: #bc8cff;
+  --purple-dim: #bc8cff22;
+  --orange: #f0883e;
+  --orange-dim: #f0883e22;
+  --code-bg: #0d1117;
+  --sidebar-w: 300px;
+  --font-mono: 'SF Mono', 'Cascadia Code', 'Fira Code', Consolas, monospace;
+  --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+  --radius: 8px;
+  --shadow: 0 1px 3px rgba(0,0,0,0.4);
+}
+
+[data-theme="light"] {
+  --bg: #ffffff;
+  --surface1: #f6f8fa;
+  --surface2: #f0f3f6;
+  --border: #d0d7de;
+  --text: #1f2328;
+  --muted: #656d76;
+  --accent: #0969da;
+  --accent-dim: #0969da1a;
+  --green: #1a7f37;
+  --green-dim: #1a7f3718;
+  --yellow: #9a6700;
+  --yellow-dim: #9a670018;
+  --red: #cf222e;
+  --red-dim: #cf222e18;
+  --purple: #8250df;
+  --purple-dim: #8250df18;
+  --orange: #bc4c00;
+  --orange-dim: #bc4c0018;
+  --code-bg: #f6f8fa;
+  --shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+/* ===== Reset & Base ===== */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: var(--font-sans);
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.7;
+  font-size: 16px;
+  transition: background 0.2s, color 0.2s;
+}
+
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+/* ===== Theme Toggle ===== */
+#theme-toggle {
+  position: fixed;
+  top: 16px;
+  right: 20px;
+  z-index: 1000;
+  background: var(--surface1);
+  border: 1px solid var(--border);
+  color: var(--text);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+  box-shadow: var(--shadow);
+}
+#theme-toggle:hover { background: var(--surface2); border-color: var(--accent); }
+
+/* ===== Sidebar ===== */
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: var(--sidebar-w);
+  height: 100vh;
+  background: var(--surface1);
+  border-right: 1px solid var(--border);
+  overflow-y: auto;
+  padding: 20px 0;
+  z-index: 100;
+  transition: transform 0.3s;
+}
+
+.sidebar-header {
+  padding: 0 20px 16px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 12px;
+}
+
+.sidebar-header h2 {
+  font-size: 16px;
+  color: var(--text);
+  font-weight: 700;
+}
+
+.sidebar-header .subtitle {
+  font-size: 12px;
+  color: var(--muted);
+  margin-top: 2px;
+}
+
+.sidebar-section {
+  margin-bottom: 8px;
+}
+
+.sidebar-section-title {
+  padding: 6px 20px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+}
+
+.sidebar-link {
+  display: block;
+  padding: 5px 20px 5px 28px;
+  font-size: 13px;
+  color: var(--muted);
+  text-decoration: none;
+  border-left: 2px solid transparent;
+  transition: all 0.15s;
+  line-height: 1.4;
+}
+
+.sidebar-link:hover {
+  color: var(--text);
+  background: var(--accent-dim);
+  border-left-color: var(--accent);
+  text-decoration: none;
+}
+
+.sidebar-link.active {
+  color: var(--accent);
+  border-left-color: var(--accent);
+  background: var(--accent-dim);
+}
+
+/* ===== Mobile sidebar toggle ===== */
+#sidebar-toggle {
+  display: none;
+  position: fixed;
+  top: 16px;
+  left: 16px;
+  z-index: 200;
+  background: var(--surface1);
+  border: 1px solid var(--border);
+  color: var(--text);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 20px;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--shadow);
+}
+
+/* ===== Main Content ===== */
+.main {
+  margin-left: var(--sidebar-w);
+  padding: 40px 48px 80px;
+  max-width: calc(860px + var(--sidebar-w) + 96px);
+}
+
+.page-title {
+  font-size: 32px;
+  font-weight: 800;
+  margin-bottom: 4px;
+  color: var(--text);
+}
+
+.page-subtitle {
+  font-size: 15px;
+  color: var(--muted);
+  margin-bottom: 36px;
+}
+
+/* ===== Sections ===== */
+.section {
+  margin-bottom: 48px;
+}
+
+.section-label {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  padding: 3px 10px;
+  border-radius: 4px;
+  margin-bottom: 12px;
+}
+
+.section-label.review { background: var(--yellow-dim); color: var(--yellow); }
+.section-label.new { background: var(--green-dim); color: var(--green); }
+
+.section-title {
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 24px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--border);
+}
+
+/* ===== How To Use ===== */
+.how-to-use {
+  background: var(--surface1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px 24px;
+  margin-bottom: 36px;
+}
+
+.how-to-use h3 {
+  font-size: 16px;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.how-to-use ul {
+  padding-left: 22px;
+  margin: 0;
+}
+
+.how-to-use li {
+  font-size: 14px;
+  color: var(--muted);
+  margin-bottom: 4px;
+}
+
+/* ===== Concept Cards ===== */
+.concept {
+  background: var(--surface1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 28px;
+  margin-bottom: 28px;
+  box-shadow: var(--shadow);
+}
+
+.concept-header {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  margin-bottom: 6px;
+  flex-wrap: wrap;
+}
+
+.concept h3 {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.concept-meta {
+  font-size: 12px;
+  color: var(--muted);
+  background: var(--surface2);
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
+.concept h4 {
+  font-size: 15px;
+  font-weight: 600;
+  margin: 20px 0 8px;
+  color: var(--text);
+}
+
+.concept p, .concept li {
+  color: var(--text);
+  line-height: 1.7;
+}
+
+.concept ul, .concept ol {
+  padding-left: 22px;
+  margin: 8px 0;
+}
+
+.concept li {
+  margin-bottom: 4px;
+}
+
+.concept .why-matters {
+  font-style: italic;
+  color: var(--muted);
+  margin: 6px 0 16px;
+  font-size: 15px;
+}
+
+/* ===== Code Blocks ===== */
+pre {
+  background: var(--code-bg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 16px 18px;
+  overflow-x: auto;
+  margin: 10px 0 14px;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--text);
+  position: relative;
+}
+
+pre::after {
+  content: 'Go';
+  position: absolute;
+  top: 6px;
+  right: 10px;
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  opacity: 0.6;
+}
+
+code {
+  font-family: var(--font-mono);
+  font-size: 0.9em;
+}
+
+:not(pre) > code {
+  background: var(--surface2);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.88em;
+}
+
+/* ===== Output Blocks ===== */
+.output {
+  background: var(--green-dim);
+  border: 1px solid var(--green);
+  border-radius: 6px;
+  padding: 12px 16px;
+  margin: 6px 0 14px;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--text);
+  white-space: pre-wrap;
+}
+
+.output::after { content: none; }
+
+.output-label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--green);
+  margin-bottom: 4px;
+}
+
+/* ===== Good/Bad Examples ===== */
+.do-dont {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin: 10px 0;
+}
+
+.do-box, .dont-box {
+  border-radius: 6px;
+  padding: 14px;
+  border: 1px solid;
+}
+
+.do-box {
+  background: var(--green-dim);
+  border-color: var(--green);
+}
+
+.dont-box {
+  background: var(--red-dim);
+  border-color: var(--red);
+}
+
+.do-box .label, .dont-box .label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 6px;
+}
+
+.do-box .label { color: var(--green); }
+.dont-box .label { color: var(--red); }
+
+.do-box pre, .dont-box pre {
+  margin: 0;
+  border: none;
+  background: transparent;
+  padding: 0;
+  font-size: 12.5px;
+}
+
+.do-box pre::after, .dont-box pre::after { content: none; }
+
+/* ===== Key Rules ===== */
+.rules-list {
+  list-style: none;
+  padding: 0;
+  margin: 8px 0;
+}
+
+.rules-list li {
+  padding: 6px 0 6px 24px;
+  position: relative;
+}
+
+.rules-list li::before {
+  content: "\2192";
+  position: absolute;
+  left: 2px;
+  color: var(--accent);
+  font-weight: 700;
+}
+
+/* ===== Exercises ===== */
+.exercise {
+  background: var(--purple-dim);
+  border: 1px solid var(--purple);
+  border-radius: 6px;
+  padding: 14px 18px;
+  margin: 8px 0;
+}
+
+.exercise .exercise-label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--purple);
+  margin-bottom: 4px;
+}
+
+/* ===== Pitfall ===== */
+.pitfall {
+  background: var(--red-dim);
+  border-left: 3px solid var(--red);
+  border-radius: 0 6px 6px 0;
+  padding: 10px 14px;
+  margin: 10px 0;
+  font-size: 14px;
+}
+
+.pitfall strong {
+  color: var(--red);
+}
+
+/* ===== Connection ===== */
+.connection {
+  background: var(--accent-dim);
+  border-left: 3px solid var(--accent);
+  border-radius: 0 6px 6px 0;
+  padding: 10px 14px;
+  margin: 10px 0;
+  font-size: 14px;
+  color: var(--muted);
+}
+
+/* ===== Review Cards ===== */
+.review-card {
+  background: var(--surface1);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--purple);
+  border-radius: var(--radius);
+  padding: 20px 24px;
+  margin-bottom: 16px;
+  box-shadow: var(--shadow);
+}
+
+.review-card .review-header {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  margin-bottom: 6px;
+  flex-wrap: wrap;
+}
+
+.review-card h3 {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.review-card .review-meta {
+  font-size: 12px;
+  color: var(--muted);
+  background: var(--surface2);
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
+.review-card h4 {
+  font-size: 14px;
+  font-weight: 600;
+  margin: 14px 0 6px;
+  color: var(--text);
+}
+
+.review-card p, .review-card li {
+  color: var(--text);
+  line-height: 1.6;
+  font-size: 14px;
+}
+
+.review-card pre {
+  font-size: 12.5px;
+  padding: 12px 14px;
+  margin: 6px 0 10px;
+}
+
+.review-card .pitfall {
+  font-size: 13px;
+  padding: 8px 12px;
+}
+
+/* ===== Topic Badge ===== */
+.topic-badge {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 2px 8px;
+  border-radius: 4px;
+  background: var(--accent-dim);
+  color: var(--accent);
+  margin-left: 4px;
+}
+
+/* ===== Footer ===== */
+.footer {
+  margin-top: 60px;
+  padding: 24px 0;
+  border-top: 1px solid var(--border);
+}
+
+.footer h4 {
+  font-size: 14px;
+  color: var(--muted);
+  margin-bottom: 10px;
+}
+
+.footer ul {
+  list-style: none;
+  padding: 0;
+}
+
+.footer li {
+  margin-bottom: 4px;
+  font-size: 14px;
+}
+
+.footer li a { color: var(--accent); }
+.footer .current { color: var(--green); font-weight: 600; }
+
+/* ===== Bash code blocks ===== */
+pre.bash::after {
+  content: 'Bash';
+}
+
+/* ===== YAML code blocks ===== */
+pre.yaml-code::after {
+  content: 'YAML';
+}
+
+/* ===== Responsive ===== */
+@media (max-width: 900px) {
+  .sidebar {
+    transform: translateX(-100%);
+  }
+  .sidebar.open {
+    transform: translateX(0);
+    box-shadow: 4px 0 20px rgba(0,0,0,0.5);
+  }
+  #sidebar-toggle {
+    display: flex;
+  }
+  .main {
+    margin-left: 0;
+    padding: 60px 20px 60px;
+    max-width: 100%;
+  }
+  .do-dont {
+    grid-template-columns: 1fr;
+  }
+  #theme-toggle {
+    right: 14px;
+    top: 16px;
+  }
+}
+</style>
+</head>
+<body>
+
+<!-- Theme Toggle -->
+<button id="theme-toggle" aria-label="Toggle theme" title="Toggle light/dark theme">&#9789;</button>
+
+<!-- Mobile Sidebar Toggle -->
+<button id="sidebar-toggle" aria-label="Toggle sidebar">&#9776;</button>
+
+<!-- Sidebar -->
+<nav class="sidebar" id="sidebar">
+  <div class="sidebar-header">
+    <h2>Go Guide</h2>
+    <div class="subtitle">Day 18 &mdash; 2026-06-23</div>
+  </div>
+
+  <div class="sidebar-section">
+    <div class="sidebar-section-title">Review (6 concepts)</div>
+    <a href="#generics" class="sidebar-link">Type Parameters (Generics)</a>
+    <a href="#select" class="sidebar-link">Select Statement</a>
+    <a href="#goroutines" class="sidebar-link">Goroutines</a>
+    <a href="#channels" class="sidebar-link">Channels</a>
+    <a href="#context" class="sidebar-link">Context</a>
+    <a href="#concurrency_patterns" class="sidebar-link">Concurrency Patterns</a>
+  </div>
+
+  <div class="sidebar-section">
+    <div class="sidebar-section-title">Production Go (3)</div>
+    <a href="#graceful_shutdown" class="sidebar-link">Graceful Shutdown</a>
+    <a href="#config_management" class="sidebar-link">Configuration Management</a>
+    <a href="#slog" class="sidebar-link">Structured Logging (slog)</a>
+  </div>
+
+  <div class="sidebar-section">
+    <div class="sidebar-section-title">Memory &amp; Performance (2)</div>
+    <a href="#escape_analysis" class="sidebar-link">Escape Analysis: Stack vs Heap</a>
+    <a href="#sync_pool" class="sidebar-link">sync.Pool &amp; Reducing Allocs</a>
+  </div>
+</nav>
+
+<!-- Main Content -->
+<div class="main">
+
+<h1 class="page-title">Go Daily Guide &mdash; 2026-06-23 (Day 18)</h1>
+<p class="page-subtitle">Day 18 &mdash; Tuesday, June 23, 2026 &bull; 11 concepts (6 review + 5 new)</p>
+
+<!-- How to Use -->
+<div class="how-to-use">
+  <h3>How to Use This Guide</h3>
+  <ul>
+    <li>Start with the <strong>Review</strong> section &mdash; try to recall each concept before reading the refresher</li>
+    <li>Complete the challenge exercise for each review card without looking back at previous days</li>
+    <li>Then work through the <strong>New Concepts</strong> section, typing out every code example yourself</li>
+    <li>Pay special attention to the common mistakes sections (they highlight real Go gotchas)</li>
+    <li>Complete the exercises at the bottom of each concept without looking at solutions</li>
+    <li>Use <code>go run main.go</code> to test your code locally, or use the <a href="https://go.dev/play/" target="_blank">Go Playground</a></li>
+  </ul>
+</div>
+
+<!-- ============================================================ -->
+<!-- REVIEW SECTION -->
+<!-- ============================================================ -->
+<div class="section">
+  <span class="section-label review">Review</span>
+  <h2 class="section-title">Spaced Repetition Review &mdash; 6 Concepts</h2>
+
+  <!-- Review 1: Type Parameters (Generics) -->
+  <div class="review-card" id="generics">
+    <div class="review-header">
+      <h3>Type Parameters (Generics)</h3>
+      <span class="review-meta">Functions &amp; Control Flow &bull; 7 days overdue &bull; rep 2</span>
+    </div>
+
+    <h4>Quick Reminder</h4>
+    <p>Generics (Go 1.18+) let functions and types operate over a set of types via <em>type parameters</em>, written in square brackets <em>before</em> the regular parameter list: <code>func Map[T any, U any](s []T, f func(T) U) []U</code>. A <em>constraint</em> restricts which types are allowed. Use <code>any</code> for "any type" and <code>comparable</code> when the type must support <code>==</code>/<code>!=</code> (required for map keys).</p>
+
+    <h4>Key Pattern</h4>
+<pre>package main
+
+import "fmt"
+
+// Map transforms []T into []U using f
+func Map[T any, U any](s []T, f func(T) U) []U {
+    out := make([]U, len(s))
+    for i, v := range s {
+        out[i] = f(v)
+    }
+    return out
+}
+
+// Filter keeps only elements where pred returns true
+func Filter[T any](s []T, pred func(T) bool) []T {
+    out := make([]T, 0, len(s))
+    for _, v := range s {
+        if pred(v) {
+            out = append(out, v)
+        }
+    }
+    return out
+}
+
+func main() {
+    nums := []int{1, 2, 3, 4, 5}
+
+    // T inferred as int, U inferred as string
+    strs := Map(nums, func(n int) string {
+        return fmt.Sprintf("#%d", n)
+    })
+
+    evens := Filter(nums, func(n int) bool { return n%2 == 0 })
+
+    fmt.Println(strs)  // [#1 #2 #3 #4 #5]
+    fmt.Println(evens) // [2 4]
+}</pre>
+    <div class="output-label">Output</div>
+    <div class="output">[#1 #2 #3 #4 #5]
+[2 4]</div>
+
+    <div class="exercise">
+      <div class="exercise-label">Challenge Exercise</div>
+      <p>Write a generic <code>GroupBy[T any, K comparable](s []T, key func(T) K) map[K][]T</code> that groups slice elements by a key function. For example, grouping a slice of words by their length should return <code>map[int][]string</code>. Note that the key type <code>K</code> must be <code>comparable</code> because it is used as a map key.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>Pitfall:</strong> Using <code>any</code> where <code>comparable</code> is needed. A type parameter used as a map key or compared with <code>==</code> must be constrained by <code>comparable</code>, otherwise the code won't compile: <code>map[K][]T</code> requires <code>K comparable</code>.
+    </div>
+  </div>
+
+  <!-- Review 2: Select Statement -->
+  <div class="review-card" id="select">
+    <div class="review-header">
+      <h3>Select Statement</h3>
+      <span class="review-meta">Concurrency &bull; 6 days overdue &bull; rep 2</span>
+    </div>
+
+    <h4>Quick Reminder</h4>
+    <p><code>select</code> multiplexes channel operations: it blocks until one of its cases is ready, then executes that case. If several are ready, one is chosen at random. A <code>default</code> case makes the <code>select</code> non-blocking &mdash; it runs immediately when no other case is ready. Combine with <code>time.After</code> for timeouts.</p>
+
+    <h4>Key Pattern</h4>
+<pre>package main
+
+import (
+    "fmt"
+    "time"
+)
+
+func main() {
+    ch1 := make(chan string)
+    ch2 := make(chan string)
+
+    go func() { time.Sleep(50 * time.Millisecond); ch1 &lt;- "from ch1" }()
+    go func() { time.Sleep(80 * time.Millisecond); ch2 &lt;- "from ch2" }()
+
+    for i := 0; i &lt; 2; i++ {
+        select {
+        case msg := &lt;-ch1:
+            fmt.Println(msg)
+        case msg := &lt;-ch2:
+            fmt.Println(msg)
+        case &lt;-time.After(200 * time.Millisecond):
+            fmt.Println("timeout")
+        }
+    }
+}</pre>
+    <div class="output-label">Output</div>
+    <div class="output">from ch1
+from ch2</div>
+
+    <div class="exercise">
+      <div class="exercise-label">Challenge Exercise</div>
+      <p>Implement <code>merge(a, b &lt;-chan int) &lt;-chan int</code> that combines two input channels into one output channel using <code>select</code>. When both inputs are closed, close the output. Handle the case where one channel closes before the other (a closed channel is always ready, so you must set its variable to <code>nil</code> to disable that case).</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>Pitfall:</strong> Forgetting to handle channel close in <code>select</code>. Reading from a closed channel returns the zero value immediately and is <em>always ready</em>, so a closed channel will spin the <code>select</code> in a tight loop. Detect close with <code>v, ok := &lt;-ch</code> and set the channel variable to <code>nil</code> to disable that case.
+    </div>
+  </div>
+
+  <!-- Review 3: Goroutines -->
+  <div class="review-card" id="goroutines">
+    <div class="review-header">
+      <h3>Goroutines</h3>
+      <span class="review-meta">Concurrency &bull; 6 days overdue &bull; rep 2</span>
+    </div>
+
+    <h4>Quick Reminder</h4>
+    <p>A goroutine is a lightweight thread managed by the Go runtime, launched with <code>go func(){}()</code>. They're multiplexed onto a small number of OS threads. Use <code>sync.WaitGroup</code> to wait for a set of goroutines to finish: <code>wg.Add(n)</code> before launching, <code>defer wg.Done()</code> inside each, and <code>wg.Wait()</code> to block until all complete.</p>
+
+    <h4>Key Pattern</h4>
+<pre>package main
+
+import (
+    "fmt"
+    "sync"
+)
+
+func main() {
+    var wg sync.WaitGroup
+    results := make([]int, 5)
+
+    for i := 0; i &lt; 5; i++ {
+        wg.Add(1)
+        go func(idx int) {
+            defer wg.Done()
+            results[idx] = idx * idx
+        }(i) // pass i as an argument to capture its value
+    }
+
+    wg.Wait()
+    fmt.Println(results)
+}</pre>
+    <div class="output-label">Output</div>
+    <div class="output">[0 1 4 9 16]</div>
+
+    <div class="exercise">
+      <div class="exercise-label">Challenge Exercise</div>
+      <p>Write a parallel URL fetcher that limits concurrency to <strong>3</strong> goroutines using a buffered semaphore channel (<code>sem := make(chan struct{}, 3)</code>). Acquire a slot with <code>sem &lt;- struct{}{}</code> before fetching and release it with <code>&lt;-sem</code> in a deferred call. Collect results with a <code>WaitGroup</code>.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>Pitfall:</strong> Goroutine leak &mdash; launching goroutines that block forever (e.g., on a channel send no one receives) without any way to stop them. Always give long-lived goroutines a cancellation path via <code>context.Context</code> or a <code>done</code> channel.
+    </div>
+  </div>
+
+  <!-- Review 4: Channels -->
+  <div class="review-card" id="channels">
+    <div class="review-header">
+      <h3>Channels</h3>
+      <span class="review-meta">Concurrency &bull; 6 days overdue &bull; rep 2</span>
+    </div>
+
+    <h4>Quick Reminder</h4>
+    <p>Channels are typed conduits for communication. <strong>Unbuffered</strong> channels (<code>make(chan int)</code>) synchronize sender and receiver &mdash; a send blocks until a receive happens. <strong>Buffered</strong> channels (<code>make(chan int, 10)</code>) have capacity and only block when full/empty. <code>close(ch)</code> signals no more values; <code>for v := range ch</code> receives until the channel is closed and drained.</p>
+
+    <h4>Key Pattern</h4>
+<pre>package main
+
+import "fmt"
+
+func main() {
+    ch := make(chan int, 3)
+
+    // Producer
+    go func() {
+        for i := 1; i &lt;= 3; i++ {
+            ch &lt;- i * 10
+        }
+        close(ch) // signal completion; only the sender closes
+    }()
+
+    // Consumer: range stops automatically when ch is closed
+    for v := range ch {
+        fmt.Println("received:", v)
+    }
+
+    // Receiving from a closed channel: ok is false
+    v, ok := &lt;-ch
+    fmt.Printf("after close: v=%d ok=%v\n", v, ok)
+}</pre>
+    <div class="output-label">Output</div>
+    <div class="output">received: 10
+received: 20
+received: 30
+after close: v=0 ok=false</div>
+
+    <div class="exercise">
+      <div class="exercise-label">Challenge Exercise</div>
+      <p>Implement a pipeline with four stages, each running in its own goroutine and connected by channels: <code>generator</code> (emits 1..N) &rarr; <code>square</code> (n &rarr; n*n) &rarr; <code>filter</code> (keeps even values) &rarr; <code>printer</code>. Each stage should close its output channel when its input is drained so downstream <code>range</code> loops terminate cleanly.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>Pitfall:</strong> Sending on a closed channel <em>panics</em>. Only the sender should call <code>close</code>, and only once. If multiple goroutines send on the same channel, coordinate closing through a separate <code>WaitGroup</code> + a single closer goroutine, never close from a sender.
+    </div>
+  </div>
+
+  <!-- Review 5: Context -->
+  <div class="review-card" id="context">
+    <div class="review-header">
+      <h3>Context</h3>
+      <span class="review-meta">Concurrency &bull; 5 days overdue &bull; rep 2</span>
+    </div>
+
+    <h4>Quick Reminder</h4>
+    <p><code>context.Context</code> carries deadlines, cancellation signals, and request-scoped values across API boundaries. By convention it's the <em>first</em> parameter: <code>func DoWork(ctx context.Context, ...)</code>. Derive children with <code>context.WithCancel</code>, <code>WithTimeout</code>, or <code>WithDeadline</code>. The returned <code>cancel</code> function must always be called (usually via <code>defer</code>) to release resources.</p>
+
+    <h4>Key Pattern</h4>
+<pre>package main
+
+import (
+    "context"
+    "fmt"
+    "time"
+)
+
+func slowOp(ctx context.Context) error {
+    select {
+    case &lt;-time.After(2 * time.Second):
+        return nil // finished work
+    case &lt;-ctx.Done():
+        return ctx.Err() // context.DeadlineExceeded or Canceled
+    }
+}
+
+func main() {
+    ctx, cancel := context.WithTimeout(context.Background(), 500*time.Millisecond)
+    defer cancel() // always release resources
+
+    if err := slowOp(ctx); err != nil {
+        fmt.Println("operation failed:", err)
+        return
+    }
+    fmt.Println("operation succeeded")
+}</pre>
+    <div class="output-label">Output</div>
+    <div class="output">operation failed: context deadline exceeded</div>
+
+    <div class="exercise">
+      <div class="exercise-label">Challenge Exercise</div>
+      <p>Write an HTTP handler that runs a simulated slow database query in a goroutine and cancels it if the client disconnects. Use <code>r.Context()</code> (which is canceled when the client goes away) and <code>select</code> on <code>ctx.Done()</code> versus a result channel. Return 503 with a useful message on cancellation.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>Pitfall:</strong> Not calling <code>cancel()</code>. Even when a context expires naturally via its deadline, the associated timer and goroutine resources are only released when <code>cancel()</code> is called. <code>go vet</code> flags the "lostcancel" case &mdash; always <code>defer cancel()</code> immediately after creating the context.
+    </div>
+  </div>
+
+  <!-- Review 6: Concurrency Patterns -->
+  <div class="review-card" id="concurrency_patterns">
+    <div class="review-header">
+      <h3>Concurrency Patterns</h3>
+      <span class="review-meta">Concurrency &bull; 5 days overdue &bull; rep 2</span>
+    </div>
+
+    <h4>Quick Reminder</h4>
+    <p>Three building blocks: <strong>Fan-out</strong> &mdash; multiple goroutines read from one channel to parallelize work. <strong>Fan-in</strong> &mdash; multiple channels merge into one. <strong>Worker pool</strong> &mdash; a fixed number of goroutines pull jobs from a shared jobs channel and push to a results channel. Pools cap resource usage while keeping throughput high.</p>
+
+    <h4>Key Pattern</h4>
+<pre>package main
+
+import (
+    "fmt"
+    "sync"
+)
+
+func main() {
+    const workers = 3
+    jobs := make(chan int, 100)
+    results := make(chan int, 100)
+
+    var wg sync.WaitGroup
+    for w := 0; w &lt; workers; w++ {
+        wg.Add(1)
+        go func() {
+            defer wg.Done()
+            for job := range jobs {
+                results &lt;- job * job
+            }
+        }()
+    }
+
+    // Feed jobs
+    for i := 1; i &lt;= 9; i++ {
+        jobs &lt;- i
+    }
+    close(jobs)
+
+    // Close results once all workers are done
+    go func() { wg.Wait(); close(results) }()
+
+    sum := 0
+    for r := range results {
+        sum += r
+    }
+    fmt.Println("sum of squares:", sum)
+}</pre>
+    <div class="output-label">Output</div>
+    <div class="output">sum of squares: 285</div>
+
+    <div class="exercise">
+      <div class="exercise-label">Challenge Exercise</div>
+      <p>Implement a rate-limited worker pool that processes at most <strong>10 requests per second</strong>. Combine a fixed worker pool with a <code>time.Ticker</code> (or <code>golang.org/x/time/rate.Limiter</code>) so each job waits for a token before being processed. Verify the throughput cap by timing how long 30 jobs take (should be ~3 seconds).</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>Pitfall:</strong> Not closing the results channel. The consumer's <code>for r := range results</code> blocks forever if nothing closes <code>results</code>. Use a dedicated goroutine: <code>go func() { wg.Wait(); close(results) }()</code> &mdash; close only after every worker has finished sending.
+    </div>
+  </div>
+
+</div><!-- end Review section -->
+
+
+<!-- ============================================================ -->
+<!-- NEW CONCEPTS: PRODUCTION GO -->
+<!-- ============================================================ -->
+<div class="section">
+  <span class="section-label new">New Concepts</span>
+  <h2 class="section-title">Production Go</h2>
+
+  <!-- Concept 1: Graceful Shutdown -->
+  <div class="concept" id="graceful_shutdown">
+    <div class="concept-header">
+      <h3>Graceful Shutdown</h3>
+      <span class="topic-badge">Production Go</span>
+    </div>
+    <p class="why-matters">Why this matters: Production servers must drain in-flight requests and clean up resources (database connections, file handles, message acknowledgements) before stopping. An abrupt exit drops live connections, corrupts partially written data, and produces noisy errors for clients mid-request.</p>
+
+    <h4>The Idea</h4>
+    <p>Graceful shutdown is a three-step dance: (1) <strong>catch</strong> the OS termination signal (<code>SIGINT</code> from Ctrl+C, <code>SIGTERM</code> from an orchestrator like Kubernetes), (2) <strong>stop accepting</strong> new work, and (3) <strong>wait</strong> for in-flight work to finish, bounded by a timeout so a stuck request can't hang shutdown forever. Go 1.16+ provides <code>signal.NotifyContext</code>, which returns a context that is canceled when the named signals arrive &mdash; this lets you thread cancellation through your whole program with the same <code>context.Context</code> you already use.</p>
+
+    <h4>Example 1: Basic Signal Handling</h4>
+<pre>package main
+
+import (
+    "context"
+    "fmt"
+    "os"
+    "os/signal"
+    "syscall"
+    "time"
+)
+
+func main() {
+    // ctx is canceled when SIGINT or SIGTERM arrives
+    ctx, stop := signal.NotifyContext(context.Background(),
+        syscall.SIGINT, syscall.SIGTERM)
+    defer stop() // restore default signal behavior
+
+    fmt.Println("running... press Ctrl+C to stop")
+
+    select {
+    case &lt;-ctx.Done():
+        fmt.Println("\nsignal received, shutting down")
+    case &lt;-time.After(30 * time.Second):
+        fmt.Println("ran to completion")
+    }
+}</pre>
+    <div class="output-label">Output (after Ctrl+C)</div>
+    <div class="output">running... press Ctrl+C to stop
+^C
+signal received, shutting down</div>
+
+    <h4>Example 2: HTTP Server Graceful Shutdown</h4>
+<pre>package main
+
+import (
+    "context"
+    "errors"
+    "log"
+    "net/http"
+    "os/signal"
+    "syscall"
+    "time"
+)
+
+func main() {
+    mux := http.NewServeMux()
+    mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+        time.Sleep(2 * time.Second) // simulate slow work
+        w.Write([]byte("done\n"))
+    })
+
+    srv := &amp;http.Server{Addr: ":8080", Handler: mux}
+
+    // Run the server in a goroutine so main can wait for signals
+    go func() {
+        if err := srv.ListenAndServe(); err != nil &amp;&amp;
+            !errors.Is(err, http.ErrServerClosed) {
+            log.Fatalf("listen: %v", err)
+        }
+    }()
+    log.Println("server listening on :8080")
+
+    // Block until a signal arrives
+    ctx, stop := signal.NotifyContext(context.Background(),
+        syscall.SIGINT, syscall.SIGTERM)
+    defer stop()
+    &lt;-ctx.Done()
+    log.Println("shutting down...")
+
+    // Give in-flight requests up to 10s to finish
+    shutdownCtx, cancel := context.WithTimeout(context.Background(),
+        10*time.Second)
+    defer cancel()
+
+    if err := srv.Shutdown(shutdownCtx); err != nil {
+        log.Printf("forced shutdown: %v", err)
+    }
+    log.Println("server stopped cleanly")
+}</pre>
+    <p><code>srv.Shutdown</code> stops accepting new connections, then waits for active requests to complete. If <code>shutdownCtx</code> expires first, it returns an error and any still-active connections are closed abruptly.</p>
+
+    <h4>Example 3: Draining a Worker Pool</h4>
+<pre>package main
+
+import (
+    "context"
+    "fmt"
+    "os/signal"
+    "sync"
+    "syscall"
+)
+
+func worker(ctx context.Context, id int, jobs &lt;-chan int, wg *sync.WaitGroup) {
+    defer wg.Done()
+    for {
+        select {
+        case &lt;-ctx.Done():
+            fmt.Printf("worker %d: stop signal, draining\n", id)
+            // Finish remaining buffered jobs, then exit
+            for job := range jobs {
+                fmt.Printf("worker %d drained job %d\n", id, job)
+            }
+            return
+        case job, ok := &lt;-jobs:
+            if !ok {
+                return
+            }
+            fmt.Printf("worker %d did job %d\n", id, job)
+        }
+    }
+}
+
+func main() {
+    ctx, stop := signal.NotifyContext(context.Background(), syscall.SIGINT)
+    defer stop()
+
+    jobs := make(chan int, 10)
+    var wg sync.WaitGroup
+    for i := 1; i &lt;= 3; i++ {
+        wg.Add(1)
+        go worker(ctx, i, jobs, &amp;wg)
+    }
+
+    for i := 1; i &lt;= 5; i++ {
+        jobs &lt;- i
+    }
+    close(jobs)
+    wg.Wait()
+    fmt.Println("all workers drained")
+}</pre>
+
+    <h4>Example 4: Coordinating Multiple Subsystems</h4>
+<pre>package main
+
+import (
+    "context"
+    "log"
+    "os/signal"
+    "syscall"
+    "time"
+)
+
+type Subsystem struct {
+    Name     string
+    Shutdown func(context.Context) error
+}
+
+func main() {
+    ctx, stop := signal.NotifyContext(context.Background(),
+        syscall.SIGINT, syscall.SIGTERM)
+    defer stop()
+
+    subsystems := []Subsystem{
+        {"http-server", func(c context.Context) error {
+            time.Sleep(200 * time.Millisecond); return nil
+        }},
+        {"db-pool", func(c context.Context) error {
+            time.Sleep(100 * time.Millisecond); return nil
+        }},
+        {"metrics", func(c context.Context) error {
+            time.Sleep(50 * time.Millisecond); return nil
+        }},
+    }
+
+    &lt;-ctx.Done()
+    log.Println("shutting down subsystems (reverse order)")
+
+    shutdownCtx, cancel := context.WithTimeout(context.Background(),
+        15*time.Second)
+    defer cancel()
+
+    // Shut down in reverse order of startup
+    for i := len(subsystems) - 1; i &gt;= 0; i-- {
+        s := subsystems[i]
+        if err := s.Shutdown(shutdownCtx); err != nil {
+            log.Printf("%s shutdown error: %v", s.Name, err)
+        } else {
+            log.Printf("%s stopped", s.Name)
+        }
+    }
+}</pre>
+
+    <h4>Common Mistakes</h4>
+    <div class="do-dont">
+      <div class="dont-box">
+        <div class="label">Don't</div>
+<pre>// Hard exit drops in-flight requests
+func handleSignal() {
+    &lt;-sigChan
+    os.Exit(0) // connections killed!
+}</pre>
+      </div>
+      <div class="do-box">
+        <div class="label">Do</div>
+<pre>// signal -&gt; context cancel -&gt;
+// Shutdown(timeoutCtx) -&gt; clean exit
+&lt;-ctx.Done()
+srv.Shutdown(timeoutCtx)
+// os.Exit happens naturally as
+// main returns</pre>
+      </div>
+    </div>
+
+    <div class="pitfall">
+      <strong>Pitfall:</strong> Calling <code>os.Exit()</code> directly from a signal handler skips all deferred cleanup and aborts in-flight requests. Let the signal cancel a context, perform a bounded <code>Shutdown</code>, then return from <code>main</code> so deferred cleanup runs.
+    </div>
+
+    <div class="exercise">
+      <div class="exercise-label">Exercises</div>
+      <ul>
+        <li>Write a TCP echo server (<code>net.Listen("tcp", ...)</code>) with graceful shutdown: on signal, stop accepting new connections via <code>listener.Close()</code> but let active connections finish their current echo loop. Track active conns with a <code>WaitGroup</code>.</li>
+        <li>Add a shutdown hook that flushes a buffered writer (<code>bufio.Writer</code>) to disk before exit, ensuring no buffered bytes are lost when the process stops.</li>
+      </ul>
+    </div>
+
+    <div class="connection">
+      <strong>Connections:</strong> Graceful shutdown ties together <a href="#context">Context</a> (cancellation), <a href="#goroutines">Goroutines</a> + <code>WaitGroup</code> (waiting for in-flight work), and <a href="#select">Select</a> (racing <code>ctx.Done()</code> against work). It's the production endgame for everything in the concurrency review above.
+    </div>
+  </div>
+
+  <!-- Concept 2: Configuration Management -->
+  <div class="concept" id="config_management">
+    <div class="concept-header">
+      <h3>Configuration Management</h3>
+      <span class="topic-badge">Production Go</span>
+    </div>
+    <p class="why-matters">Why this matters: Hard-coded values make deployment painful and unsafe &mdash; you can't change a database URL or a log level without recompiling, and secrets end up in source control. Proper configuration cleanly supports dev/staging/prod environments and follows the 12-factor principle of storing config in the environment.</p>
+
+    <h4>The Idea</h4>
+    <p>Load all configuration <em>once at startup</em> into a single typed struct, validate it, and pass it explicitly to the components that need it. The canonical sources, in increasing sophistication: plain environment variables with defaults, struct-tag binding (<code>envconfig</code>), and layered config that merges files + env + flags (<code>viper</code>). Whichever you choose, fail fast: if required config is missing or invalid, the process should refuse to start with a clear error.</p>
+
+    <h4>Example 1: os.Getenv with Defaults</h4>
+<pre>package main
+
+import (
+    "fmt"
+    "os"
+    "strconv"
+)
+
+func getEnv(key, fallback string) string {
+    if v, ok := os.LookupEnv(key); ok {
+        return v
+    }
+    return fallback
+}
+
+func getEnvInt(key string, fallback int) int {
+    if v, ok := os.LookupEnv(key); ok {
+        if n, err := strconv.Atoi(v); err == nil {
+            return n
+        }
+    }
+    return fallback
+}
+
+func main() {
+    port := getEnvInt("PORT", 8080)
+    logLevel := getEnv("LOG_LEVEL", "info")
+    fmt.Printf("port=%d logLevel=%s\n", port, logLevel)
+}</pre>
+    <div class="output-label">Output (PORT unset, LOG_LEVEL=debug)</div>
+    <div class="output">port=8080 logLevel=debug</div>
+
+    <h4>Example 2: Config Struct with envconfig Tags</h4>
+<pre>package main
+
+import (
+    "fmt"
+    "log"
+
+    "github.com/kelseyhightower/envconfig"
+)
+
+type Config struct {
+    Port     int    `envconfig:"PORT" default:"8080"`
+    DBURL    string `envconfig:"DB_URL" required:"true"`
+    LogLevel string `envconfig:"LOG_LEVEL" default:"info"`
+}
+
+func main() {
+    var cfg Config
+    // Reads APP_PORT, APP_DB_URL, APP_LOG_LEVEL from the environment
+    if err := envconfig.Process("APP", &amp;cfg); err != nil {
+        log.Fatalf("config: %v", err)
+    }
+    fmt.Printf("%+v\n", cfg)
+}</pre>
+    <p>The <code>required:"true"</code> tag makes startup fail with a clear error if <code>APP_DB_URL</code> is missing &mdash; exactly the fail-fast behavior you want.</p>
+
+    <h4>Example 3: Viper with YAML + Env Override</h4>
+<pre>package main
+
+import (
+    "fmt"
+    "log"
+
+    "github.com/spf13/viper"
+)
+
+func main() {
+    viper.SetConfigName("config") // config.yaml
+    viper.SetConfigType("yaml")
+    viper.AddConfigPath(".")
+
+    // Defaults
+    viper.SetDefault("port", 8080)
+    viper.SetDefault("log_level", "info")
+
+    // Env vars override file values: APP_PORT, APP_LOG_LEVEL
+    viper.SetEnvPrefix("APP")
+    viper.AutomaticEnv()
+
+    if err := viper.ReadInConfig(); err != nil {
+        log.Printf("no config file, using defaults/env: %v", err)
+    }
+
+    fmt.Println("port:", viper.GetInt("port"))
+    fmt.Println("log_level:", viper.GetString("log_level"))
+}</pre>
+    <p>Precedence (highest first): explicit <code>Set</code> &gt; flags &gt; env &gt; config file &gt; defaults. This layering is what lets the same binary behave differently per environment.</p>
+
+    <h4>Example 4: Config Validation at Startup</h4>
+<pre>package main
+
+import (
+    "fmt"
+    "log"
+)
+
+type Config struct {
+    Port     int
+    DBURL    string
+    LogLevel string
+}
+
+func (c Config) Validate() error {
+    if c.Port &lt; 1 || c.Port &gt; 65535 {
+        return fmt.Errorf("port %d out of range 1-65535", c.Port)
+    }
+    if c.DBURL == "" {
+        return fmt.Errorf("DB_URL is required")
+    }
+    switch c.LogLevel {
+    case "debug", "info", "warn", "error":
+    default:
+        return fmt.Errorf("invalid log level %q", c.LogLevel)
+    }
+    return nil
+}
+
+func main() {
+    cfg := Config{Port: 99999, DBURL: "", LogLevel: "trace"}
+    if err := cfg.Validate(); err != nil {
+        log.Fatalf("invalid config: %v", err)
+    }
+    fmt.Println("config OK")
+}</pre>
+    <div class="output-label">Output</div>
+    <div class="output">invalid config: port 99999 out of range 1-65535</div>
+
+    <h4>Common Mistakes</h4>
+    <div class="do-dont">
+      <div class="dont-box">
+        <div class="label">Don't</div>
+<pre>// os.Getenv scattered everywhere
+func handler() {
+    db := os.Getenv("DB_URL")
+    timeout := os.Getenv("TIMEOUT")
+    // untyped, unvalidated,
+    // re-read on every call
+}</pre>
+      </div>
+      <div class="do-box">
+        <div class="label">Do</div>
+<pre>// Load once into a typed struct
+cfg := MustLoadConfig()
+cfg.Validate()
+// pass cfg explicitly to
+// components that need it
+srv := NewServer(cfg)</pre>
+      </div>
+    </div>
+
+    <div class="pitfall">
+      <strong>Pitfall:</strong> Reading <code>os.Getenv</code> scattered throughout the codebase makes config invisible and untestable, and silently treats a missing variable as the empty string. Load everything once at startup into a typed, validated struct.
+    </div>
+
+    <div class="exercise">
+      <div class="exercise-label">Exercises</div>
+      <ul>
+        <li>Create a <code>Config</code> struct for a web app with <code>Port int</code>, <code>DBURL string</code>, and <code>LogLevel string</code>. Load it from environment variables (with sensible defaults) using either hand-rolled <code>os.LookupEnv</code> helpers or <code>envconfig</code>.</li>
+        <li>Add a <code>Validate()</code> method that enforces the port range, requires <code>DBURL</code>, and restricts <code>LogLevel</code> to a known set. Make <code>main</code> exit with a clear message when validation fails.</li>
+      </ul>
+    </div>
+
+    <div class="connection">
+      <strong>Connections:</strong> A validated config struct is the natural place to derive the <code>slog</code> level (next concept) and the timeouts you pass into <a href="#context">Context</a> and <a href="#graceful_shutdown">Graceful Shutdown</a>. Config is the single source of truth that wires the whole program together.
+    </div>
+  </div>
+
+  <!-- Concept 3: Structured Logging with log/slog -->
+  <div class="concept" id="slog">
+    <div class="concept-header">
+      <h3>Structured Logging with log/slog</h3>
+      <span class="topic-badge">Production Go</span>
+    </div>
+    <p class="why-matters">Why this matters: Structured logging emits machine-parseable key/value records (typically JSON) instead of free-form strings, which makes logs searchable, filterable, and alertable in tools like Loki, Datadog, or CloudWatch. Since Go 1.21, <code>log/slog</code> brings this into the standard library &mdash; no third-party logger required.</p>
+
+    <h4>The Idea</h4>
+    <p>A <code>slog.Logger</code> writes records through a <code>Handler</code> that controls format and minimum level. Log with key/value pairs: <code>slog.Info("user created", "user_id", id, "email", email)</code>. Build a contextual logger with <code>logger.With("request_id", id)</code> so those fields appear on every subsequent line. Pick <code>slog.NewTextHandler</code> for human-readable dev output and <code>slog.NewJSONHandler</code> for production.</p>
+
+    <h4>Example 1: Basic slog Usage</h4>
+<pre>package main
+
+import "log/slog"
+
+func main() {
+    slog.Info("server started", "port", 8080, "env", "prod")
+    slog.Warn("disk space low", "free_mb", 512)
+    slog.Error("db connection failed", "attempt", 3)
+}</pre>
+    <div class="output-label">Output (default text handler)</div>
+    <div class="output">2026/06/23 10:00:00 INFO server started port=8080 env=prod
+2026/06/23 10:00:00 WARN disk space low free_mb=512
+2026/06/23 10:00:00 ERROR db connection failed attempt=3</div>
+
+    <h4>Example 2: JSON Handler with Level from Config</h4>
+<pre>package main
+
+import (
+    "log/slog"
+    "os"
+)
+
+func main() {
+    handler := slog.NewJSONHandler(os.Stdout, &amp;slog.HandlerOptions{
+        Level: slog.LevelDebug, // minimum level to emit
+    })
+    logger := slog.New(handler)
+    slog.SetDefault(logger) // make it the package-level default
+
+    slog.Debug("cache miss", "key", "user:42")
+    slog.Info("user created", "user_id", 42, "email", "a@b.com")
+}</pre>
+    <div class="output-label">Output (JSON)</div>
+    <div class="output">{"time":"2026-06-23T10:00:00Z","level":"DEBUG","msg":"cache miss","key":"user:42"}
+{"time":"2026-06-23T10:00:00Z","level":"INFO","msg":"user created","user_id":42,"email":"a@b.com"}</div>
+
+    <h4>Example 3: Adding Context with slog.With</h4>
+<pre>package main
+
+import (
+    "log/slog"
+    "os"
+)
+
+func main() {
+    base := slog.New(slog.NewJSONHandler(os.Stdout, nil))
+
+    // Derive a logger that stamps every line with these fields
+    reqLog := base.With("request_id", "abc-123", "method", "GET")
+
+    reqLog.Info("request received", "path", "/users")
+    reqLog.Info("request completed", "status", 200, "ms", 14)
+}</pre>
+    <div class="output-label">Output</div>
+    <div class="output">{"time":"...","level":"INFO","msg":"request received","request_id":"abc-123","method":"GET","path":"/users"}
+{"time":"...","level":"INFO","msg":"request completed","request_id":"abc-123","method":"GET","status":200,"ms":14}</div>
+
+    <h4>Example 4: Grouping and Typed Attributes</h4>
+<pre>package main
+
+import (
+    "log/slog"
+    "os"
+    "time"
+)
+
+func main() {
+    logger := slog.New(slog.NewJSONHandler(os.Stdout, nil))
+
+    // slog.Group nests related fields; typed attrs avoid alloc
+    logger.Info("http request",
+        slog.Group("req",
+            slog.String("method", "POST"),
+            slog.String("path", "/orders"),
+        ),
+        slog.Duration("latency", 23*time.Millisecond),
+        slog.Int("status", 201),
+    )
+}</pre>
+    <div class="output-label">Output</div>
+    <div class="output">{"time":"...","level":"INFO","msg":"http request","req":{"method":"POST","path":"/orders"},"latency":23000000,"status":201}</div>
+
+    <h4>Example 5: Request-Scoped Logger via Context</h4>
+<pre>package main
+
+import (
+    "context"
+    "log/slog"
+    "net/http"
+    "os"
+)
+
+type ctxKey struct{}
+
+func withLogger(ctx context.Context, l *slog.Logger) context.Context {
+    return context.WithValue(ctx, ctxKey{}, l)
+}
+
+func loggerFrom(ctx context.Context) *slog.Logger {
+    if l, ok := ctx.Value(ctxKey{}).(*slog.Logger); ok {
+        return l
+    }
+    return slog.Default()
+}
+
+// Middleware injects a request-scoped logger with a request_id
+func requestLogger(base *slog.Logger) func(http.Handler) http.Handler {
+    return func(next http.Handler) http.Handler {
+        return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+            l := base.With("request_id", r.Header.Get("X-Request-ID"))
+            ctx := withLogger(r.Context(), l)
+            next.ServeHTTP(w, r.WithContext(ctx))
+        })
+    }
+}
+
+func handler(w http.ResponseWriter, r *http.Request) {
+    loggerFrom(r.Context()).Info("handling", "path", r.URL.Path)
+    w.Write([]byte("ok\n"))
+}
+
+func main() {
+    base := slog.New(slog.NewJSONHandler(os.Stdout, nil))
+    h := requestLogger(base)(http.HandlerFunc(handler))
+    http.ListenAndServe(":8080", h)
+}</pre>
+
+    <h4>Common Mistakes</h4>
+    <div class="do-dont">
+      <div class="dont-box">
+        <div class="label">Don't</div>
+<pre>// Unstructured, unsearchable
+fmt.Printf("user %d created with "+
+    "email %s\n", id, email)</pre>
+      </div>
+      <div class="do-box">
+        <div class="label">Do</div>
+<pre>// Structured key/value pairs
+slog.Info("user created",
+    "user_id", id,
+    "email", email)</pre>
+      </div>
+    </div>
+
+    <div class="pitfall">
+      <strong>Pitfall:</strong> Passing an odd number of arguments after the message produces a dangling key with no value, which slog records as a <code>!BADKEY</code> attribute. Always pass complete key/value pairs, or use typed attrs (<code>slog.Int</code>, <code>slog.String</code>) to make the pairing explicit and avoid the mistake entirely.
+    </div>
+
+    <div class="exercise">
+      <div class="exercise-label">Exercises</div>
+      <ul>
+        <li>Set up <code>slog</code> with a JSON handler whose minimum level is read from an environment variable (<code>LOG_LEVEL=debug|info|warn|error</code>). Map the string to a <code>slog.Level</code> and pass it via <code>HandlerOptions</code>.</li>
+        <li>Create HTTP middleware that generates a request ID, attaches a <code>slog.With("request_id", id)</code> logger to the request context, and logs the method, path, status, and duration of every request.</li>
+      </ul>
+    </div>
+
+    <div class="connection">
+      <strong>Connections:</strong> The request-scoped logger pattern reuses <a href="#context">Context</a> value passing, and the middleware mirrors the middleware-chain pattern from prior days. The minimum level comes straight from <a href="#config_management">Configuration Management</a>. Together these three Production Go concepts form the operational backbone of a real Go service.
+    </div>
+  </div>
+
+</div><!-- end Production Go section -->
+
+
+<!-- ============================================================ -->
+<!-- NEW CONCEPTS: MEMORY & PERFORMANCE -->
+<!-- ============================================================ -->
+<div class="section">
+  <span class="section-label new">New Concepts</span>
+  <h2 class="section-title">Memory &amp; Performance</h2>
+
+  <!-- Concept 4: Escape Analysis & Stack vs Heap -->
+  <div class="concept" id="escape_analysis">
+    <div class="concept-header">
+      <h3>Escape Analysis &amp; Stack vs Heap</h3>
+      <span class="topic-badge">Memory &amp; Performance</span>
+    </div>
+    <p class="why-matters">Why this matters: Stack allocations are essentially free &mdash; they're reclaimed automatically when a function returns and never touch the garbage collector. Heap allocations cost a GC scan and add pressure that can dominate the runtime of a hot path. Understanding which is which lets you write faster code without guessing.</p>
+
+    <h4>The Idea</h4>
+    <p>The Go compiler decides at compile time whether each variable can live on the goroutine's stack or must "escape" to the heap. A value escapes when the compiler can't prove its lifetime ends with the function &mdash; most commonly when you return a pointer to a local, store it in an interface, capture it in a closure that outlives the call, or send it through a channel. Inspect the compiler's decisions with <code>go build -gcflags='-m'</code>.</p>
+
+    <h4>Example 1: Stack-Allocated Local</h4>
+<pre>package main
+
+import "fmt"
+
+// sum's locals never escape: total and the loop var
+// stay on the stack.
+func sum(nums []int) int {
+    total := 0
+    for _, n := range nums {
+        total += n
+    }
+    return total // returning a value (copy), not a pointer
+}
+
+func main() {
+    fmt.Println(sum([]int{1, 2, 3, 4})) // 10
+}</pre>
+
+    <h4>Example 2: Heap-Escaped Pointer Return</h4>
+<pre>package main
+
+type User struct {
+    Name string
+    Age  int
+}
+
+// The returned *User must outlive newUser, so u escapes
+// to the heap.
+func newUser(name string, age int) *User {
+    u := User{Name: name, Age: age} // u escapes
+    return &amp;u
+}
+
+func main() {
+    _ = newUser("Alice", 30)
+}</pre>
+    <div class="output-label">Output (go build -gcflags='-m')</div>
+    <div class="output">./main.go:11:2: moved to heap: u</div>
+    <p>Even though <code>u</code> is a local variable, returning its address forces it onto the heap so the caller's pointer stays valid.</p>
+
+    <h4>Example 3: Interface Boxing Escape</h4>
+<pre>package main
+
+import "fmt"
+
+func main() {
+    x := 42
+    // Passing x to a function that takes ...any boxes it
+    // into an interface value, which escapes to the heap.
+    fmt.Println(x) // x escapes to heap
+}</pre>
+    <div class="output-label">Output (go build -gcflags='-m')</div>
+    <div class="output">./main.go:9:13: ... argument does not escape
+./main.go:9:14: x escapes to heap</div>
+    <p>Converting a concrete value to an interface (here, <code>any</code> for the variadic <code>Println</code>) typically allocates, because the interface must hold a pointer to the value.</p>
+
+    <h4>Example 4: Analyzing with -gcflags='-m'</h4>
+<pre class="bash">$ go build -gcflags='-m' ./...
+# example/app
+./main.go:11:2: moved to heap: u
+./main.go:18:13: inlining call to fmt.Println
+./main.go:9:14: x escapes to heap
+./main.go:9:13: ... argument does not escape
+
+# Add -m -m for the reasoning behind each decision
+$ go build -gcflags='-m -m' ./...</pre>
+    <p>Read the output bottom-up per function. "moved to heap" and "escapes to heap" are the lines to hunt for in a hot path; "does not escape" confirms a stack allocation.</p>
+
+    <h4>Common Mistakes</h4>
+    <div class="do-dont">
+      <div class="dont-box">
+        <div class="label">Don't</div>
+<pre>// "Pointers are faster" cargo cult
+func add(a, b *int) *int {
+    r := *a + *b
+    return &amp;r // forces heap alloc
+}</pre>
+      </div>
+      <div class="do-box">
+        <div class="label">Do</div>
+<pre>// Value types stay on the stack
+func add(a, b int) int {
+    return a + b // no alloc
+}
+// Use pointers only when you need
+// to mutate or share large data</pre>
+      </div>
+    </div>
+
+    <div class="pitfall">
+      <strong>Pitfall:</strong> Reaching for pointers "for performance" by default. For small value types, copying is cheaper than the heap allocation + GC work a pointer can trigger. Measure with <code>-gcflags='-m'</code> and benchmarks before optimizing; use pointers when you genuinely need mutation or want to avoid copying a large struct.
+    </div>
+
+    <div class="exercise">
+      <div class="exercise-label">Exercises</div>
+      <ul>
+        <li>Write two versions of a function that produces a small struct: one that returns the struct by value and one that returns <code>*Struct</code>. Predict which allocates on the heap, then run <code>go build -gcflags='-m'</code> to confirm.</li>
+        <li>Take a function with a <code>[]byte</code> local and observe how it changes from "does not escape" to "escapes to heap" when you return a slice of it versus copy into a freshly allocated slice.</li>
+      </ul>
+    </div>
+
+    <div class="connection">
+      <strong>Connections:</strong> Escape analysis explains <em>why</em> the <code>sync.Pool</code> pattern (next concept) pays off &mdash; it targets exactly the heap-escaping objects this analysis reveals. It also informs the value-vs-pointer receiver choice you make on every method.
+    </div>
+  </div>
+
+  <!-- Concept 5: sync.Pool & Reducing Allocations -->
+  <div class="concept" id="sync_pool">
+    <div class="concept-header">
+      <h3>sync.Pool &amp; Reducing Allocations</h3>
+      <span class="topic-badge">Memory &amp; Performance</span>
+    </div>
+    <p class="why-matters">Why this matters: High-throughput servers can spend a surprising fraction of their time in the garbage collector. <code>sync.Pool</code> recycles short-lived objects across calls so they don't have to be reallocated and re-collected on every request, cutting allocation pressure and GC pauses on hot paths.</p>
+
+    <h4>The Idea</h4>
+    <p><code>sync.Pool</code> is a concurrency-safe set of temporary, interchangeable objects. <code>Get()</code> returns an object from the pool, or calls the pool's <code>New</code> function if it's empty. <code>Put()</code> returns an object for later reuse. Crucially, the pool may discard its contents at <em>any</em> GC cycle, so it's only suitable for objects you can recreate cheaply, never for caching or for anything whose loss matters.</p>
+
+    <h4>Example 1: Basic Pool with bytes.Buffer</h4>
+<pre>package main
+
+import (
+    "bytes"
+    "fmt"
+    "sync"
+)
+
+var bufPool = sync.Pool{
+    New: func() any { return new(bytes.Buffer) },
+}
+
+func render(name string) string {
+    buf := bufPool.Get().(*bytes.Buffer)
+    buf.Reset()          // clear any leftover state from prior use
+    defer bufPool.Put(buf)
+
+    buf.WriteString("Hello, ")
+    buf.WriteString(name)
+    return buf.String()
+}
+
+func main() {
+    fmt.Println(render("Alice"))
+    fmt.Println(render("Bob"))
+}</pre>
+    <div class="output-label">Output</div>
+    <div class="output">Hello, Alice
+Hello, Bob</div>
+
+    <h4>Example 2: Pool for JSON Encoding</h4>
+<pre>package main
+
+import (
+    "bytes"
+    "encoding/json"
+    "fmt"
+    "sync"
+)
+
+var encPool = sync.Pool{
+    New: func() any { return new(bytes.Buffer) },
+}
+
+func marshal(v any) ([]byte, error) {
+    buf := encPool.Get().(*bytes.Buffer)
+    buf.Reset()
+    defer encPool.Put(buf)
+
+    if err := json.NewEncoder(buf).Encode(v); err != nil {
+        return nil, err
+    }
+    // Copy out: the buffer goes back to the pool, so we can't
+    // return its internal bytes directly.
+    out := make([]byte, buf.Len())
+    copy(out, buf.Bytes())
+    return out, nil
+}
+
+func main() {
+    b, _ := marshal(map[string]int{"a": 1, "b": 2})
+    fmt.Print(string(b))
+}</pre>
+    <div class="output-label">Output</div>
+    <div class="output">{"a":1,"b":2}</div>
+
+    <h4>Example 3: Benchmark Showing Pool vs No-Pool</h4>
+<pre>package main
+
+import (
+    "bytes"
+    "sync"
+    "testing"
+)
+
+var pool = sync.Pool{New: func() any { return new(bytes.Buffer) }}
+
+func BenchmarkNoPool(b *testing.B) {
+    b.ReportAllocs()
+    for i := 0; i &lt; b.N; i++ {
+        buf := new(bytes.Buffer)
+        buf.WriteString("hello world")
+        _ = buf.String()
+    }
+}
+
+func BenchmarkPool(b *testing.B) {
+    b.ReportAllocs()
+    for i := 0; i &lt; b.N; i++ {
+        buf := pool.Get().(*bytes.Buffer)
+        buf.Reset()
+        buf.WriteString("hello world")
+        _ = buf.String()
+        pool.Put(buf)
+    }
+}</pre>
+    <div class="output-label">Output (go test -bench=. -benchmem)</div>
+    <div class="output">BenchmarkNoPool-8   20000000   62.1 ns/op   64 B/op   1 allocs/op
+BenchmarkPool-8     50000000   24.8 ns/op    0 B/op   0 allocs/op</div>
+    <p>The pooled version eliminates the per-iteration buffer allocation, roughly halving the time and dropping to zero allocations for the buffer itself.</p>
+
+    <h4>Example 4: Reset Before Put for a Custom Struct</h4>
+<pre>package main
+
+import (
+    "fmt"
+    "sync"
+)
+
+type Request struct {
+    Headers map[string]string
+    Body    []byte
+}
+
+func (r *Request) reset() {
+    // Clear fields so a recycled Request carries no stale data
+    for k := range r.Headers {
+        delete(r.Headers, k)
+    }
+    r.Body = r.Body[:0]
+}
+
+var reqPool = sync.Pool{
+    New: func() any {
+        return &amp;Request{Headers: make(map[string]string)}
+    },
+}
+
+func handle(payload string) {
+    req := reqPool.Get().(*Request)
+    defer func() {
+        req.reset()      // reset BEFORE returning to the pool
+        reqPool.Put(req)
+    }()
+
+    req.Headers["Content-Type"] = "text/plain"
+    req.Body = append(req.Body, payload...)
+    fmt.Printf("handled %d bytes, %d headers\n",
+        len(req.Body), len(req.Headers))
+}
+
+func main() {
+    handle("first")
+    handle("second")
+}</pre>
+    <div class="output-label">Output</div>
+    <div class="output">handled 5 bytes, 1 headers
+handled 6 bytes, 1 headers</div>
+
+    <h4>Common Mistakes</h4>
+    <div class="do-dont">
+      <div class="dont-box">
+        <div class="label">Don't</div>
+<pre>// Put back without resetting:
+// next Get sees stale data
+buf := pool.Get().(*bytes.Buffer)
+buf.WriteString(data)
+pool.Put(buf) // still full!</pre>
+      </div>
+      <div class="do-box">
+        <div class="label">Do</div>
+<pre>// Reset state before reuse
+buf := pool.Get().(*bytes.Buffer)
+buf.Reset()
+buf.WriteString(data)
+// ... use buf ...
+buf.Reset()
+pool.Put(buf)</pre>
+      </div>
+    </div>
+
+    <div class="pitfall">
+      <strong>Pitfall:</strong> Putting objects back without resetting their state. The next <code>Get</code> will hand out an object still carrying the previous user's data &mdash; leftover bytes in a buffer or stale map entries &mdash; causing subtle data corruption or even leaking one request's data into another. Always reset (e.g. <code>buf.Reset()</code>) right before <code>Put</code>.
+    </div>
+
+    <div class="exercise">
+      <div class="exercise-label">Exercises</div>
+      <ul>
+        <li>Create a pool of <code>[]byte</code> buffers (e.g. <code>make([]byte, 0, 4096)</code>) used inside an HTTP handler that reads and echoes the request body. Write a <code>-benchmem</code> benchmark proving the pooled handler allocates fewer bytes per request than a naive version.</li>
+        <li>Implement a pool for a custom struct with a slice and a map field, including a correct <code>reset()</code> that truncates the slice (<code>s[:0]</code>) and clears the map. Verify with a test that recycled objects never leak prior state.</li>
+      </ul>
+    </div>
+
+    <div class="connection">
+      <strong>Connections:</strong> <code>sync.Pool</code> is the direct remedy for the heap escapes surfaced by <a href="#escape_analysis">Escape Analysis</a>, and its concurrency safety builds on the <a href="#goroutines">Goroutines</a> and channel discipline from the review. In a real server it pairs naturally with the per-request buffers used in <a href="#slog">structured logging</a> and JSON response encoding.
+    </div>
+  </div>
+
+</div><!-- end Memory & Performance section -->
+
+
+<!-- ============================================================ -->
+<!-- FOOTER -->
+<!-- ============================================================ -->
+<footer class="footer">
+  <h4>All Go Guides</h4>
+  <ul>
+    <li><a href="golang-guides/golang-guide-2026-07-09.html">Day 34 &mdash; 2026-07-09</a></li>
+    <li><a href="golang-guides/golang-guide-2026-07-08.html">Day 33 &mdash; 2026-07-08</a></li>
+    <li><a href="golang-guides/golang-guide-2026-07-07.html">Day 32 &mdash; 2026-07-07</a></li>
+    <li><a href="golang-guides/golang-guide-2026-07-06.html">Day 31 &mdash; 2026-07-06</a></li>
+    <li><a href="golang-guides/golang-guide-2026-07-05.html">Day 30 &mdash; 2026-07-05</a></li>
+    <li><a href="golang-guides/golang-guide-2026-07-04.html">Day 29 &mdash; 2026-07-04</a></li>
+    <li><a href="golang-guides/golang-guide-2026-07-03.html">Day 28 &mdash; 2026-07-03</a></li>
+    <li><a href="golang-guides/golang-guide-2026-07-02.html">Day 27 &mdash; 2026-07-02</a></li>
+    <li><a href="golang-guides/golang-guide-2026-07-01.html">Day 26 &mdash; 2026-07-01</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-30.html">Day 25 &mdash; 2026-06-30</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-29.html">Day 24 &mdash; 2026-06-29</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-28.html">Day 23 &mdash; 2026-06-28</a></li>
+    <li class="current">Day 22 &mdash; 2026-06-27 (current)</li>
+    <li><a href="golang-guides/golang-guide-2026-06-26.html">Day 21 &mdash; 2026-06-26</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-25.html">Day 20 &mdash; 2026-06-25</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-24.html">Day 19 &mdash; 2026-06-24</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-23.html">Day 18 &mdash; 2026-06-23</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-22.html">Day 17 &mdash; 2026-06-22</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-21.html">Day 16 &mdash; 2026-06-21</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-19.html">Day 15 &mdash; 2026-06-19</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-18.html">Day 14 &mdash; 2026-06-18</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-17.html">Day 13 &mdash; 2026-06-17</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-15.html">Day 12 &mdash; 2026-06-15</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-13.html">Day 11 &mdash; 2026-06-13</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-12.html">Day 10 &mdash; 2026-06-12</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-11.html">Day 9 &mdash; 2026-06-11</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-10.html">Day 8 &mdash; 2026-06-10</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-09.html">Day 7 &mdash; 2026-06-09</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-08.html">Day 6 &mdash; 2026-06-08</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-07.html">Day 5 &mdash; 2026-06-07</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-05.html">Day 4 &mdash; 2026-06-05</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-04.html">Day 3 &mdash; 2026-06-04</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-03.html">Day 2 &mdash; 2026-06-03</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-02.html">Day 1 &mdash; 2026-06-02</a></li>
+  </ul>
+
+  <h4 style="margin-top: 20px;">All Guides</h4>
+  <ul>
+    <li><a href="guide.html">LeetCode Study Guide</a></li>
+    <li><a href="lang-guide.html">Multi-Language Guide</a></li>
+    <li><a href="python-guide.html">Python Guide</a></li>
+    <li><a href="typescript-guide.html">TypeScript Guide</a></li>
+    <li><a href="javascript-guide.html">JavaScript Guide</a></li>
+    <li><a href="golang-guide.html">Go Guide (current)</a></li>
+    <li><a href="report.html">Performance Report</a></li>
+  </ul>
+</footer>
+
+</div><!-- end main -->
+
+<script>
+// ===== Theme Toggle =====
+(function() {
+  var KEY = 'lc-goguide-theme';
+  var toggle = document.getElementById('theme-toggle');
+  var html = document.documentElement;
+
+  function setTheme(theme) {
+    html.setAttribute('data-theme', theme);
+    localStorage.setItem(KEY, theme);
+    toggle.textContent = theme === 'dark' ? '☽' : '☀';
+  }
+
+  var saved = localStorage.getItem(KEY) || 'dark';
+  setTheme(saved);
+
+  toggle.addEventListener('click', function() {
+    setTheme(html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
+  });
+})();
+
+// ===== Mobile Sidebar Toggle =====
+(function() {
+  var btn = document.getElementById('sidebar-toggle');
+  var sidebar = document.getElementById('sidebar');
+
+  btn.addEventListener('click', function() {
+    sidebar.classList.toggle('open');
+  });
+
+  // Close sidebar when clicking a link (mobile)
+  sidebar.querySelectorAll('.sidebar-link').forEach(function(link) {
+    link.addEventListener('click', function() {
+      if (window.innerWidth <= 900) {
+        sidebar.classList.remove('open');
+      }
+    });
+  });
+})();
+
+// ===== Active Sidebar Link on Scroll =====
+(function() {
+  var links = document.querySelectorAll('.sidebar-link');
+  var sections = [];
+
+  links.forEach(function(link) {
+    var id = link.getAttribute('href').replace('#', '');
+    var el = document.getElementById(id);
+    if (el) sections.push({ id: id, el: el, link: link });
+  });
+
+  function onScroll() {
+    var scrollTop = window.scrollY + 120;
+    var current = null;
+
+    for (var i = sections.length - 1; i >= 0; i--) {
+      if (sections[i].el.offsetTop <= scrollTop) {
+        current = sections[i];
+        break;
+      }
+    }
+
+    links.forEach(function(l) { l.classList.remove('active'); });
+    if (current) current.link.classList.add('active');
+  }
+
+  window.addEventListener('scroll', onScroll);
+  onScroll();
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,2178 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Go Study Guide &mdash; Day 17 (2026-06-22)</title>
+<style>
+/* ===== CSS Variables ===== */
+:root {
+  --bg: #0d1117;
+  --surface1: #161b22;
+  --surface2: #1c2333;
+  --border: #30363d;
+  --text: #e6edf3;
+  --muted: #8b949e;
+  --accent: #58a6ff;
+  --accent-dim: #1f6feb33;
+  --green: #3fb950;
+  --green-dim: #23863633;
+  --yellow: #d29922;
+  --yellow-dim: #d2992233;
+  --red: #f85149;
+  --red-dim: #f8514933;
+  --purple: #bc8cff;
+  --purple-dim: #bc8cff22;
+  --orange: #f0883e;
+  --orange-dim: #f0883e22;
+  --code-bg: #0d1117;
+  --sidebar-w: 300px;
+  --font-mono: 'SF Mono', 'Cascadia Code', 'Fira Code', Consolas, monospace;
+  --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+  --radius: 8px;
+  --shadow: 0 1px 3px rgba(0,0,0,0.4);
+}
+
+[data-theme="light"] {
+  --bg: #ffffff;
+  --surface1: #f6f8fa;
+  --surface2: #f0f3f6;
+  --border: #d0d7de;
+  --text: #1f2328;
+  --muted: #656d76;
+  --accent: #0969da;
+  --accent-dim: #0969da1a;
+  --green: #1a7f37;
+  --green-dim: #1a7f3718;
+  --yellow: #9a6700;
+  --yellow-dim: #9a670018;
+  --red: #cf222e;
+  --red-dim: #cf222e18;
+  --purple: #8250df;
+  --purple-dim: #8250df18;
+  --orange: #bc4c00;
+  --orange-dim: #bc4c0018;
+  --code-bg: #f6f8fa;
+  --shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+/* ===== Reset & Base ===== */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: var(--font-sans);
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.7;
+  font-size: 16px;
+  transition: background 0.2s, color 0.2s;
+}
+
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+/* ===== Theme Toggle ===== */
+#theme-toggle {
+  position: fixed;
+  top: 16px;
+  right: 20px;
+  z-index: 1000;
+  background: var(--surface1);
+  border: 1px solid var(--border);
+  color: var(--text);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+  box-shadow: var(--shadow);
+}
+#theme-toggle:hover { background: var(--surface2); border-color: var(--accent); }
+
+/* ===== Sidebar ===== */
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: var(--sidebar-w);
+  height: 100vh;
+  background: var(--surface1);
+  border-right: 1px solid var(--border);
+  overflow-y: auto;
+  padding: 20px 0;
+  z-index: 100;
+  transition: transform 0.3s;
+}
+
+.sidebar-header {
+  padding: 0 20px 16px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 12px;
+}
+
+.sidebar-header h2 {
+  font-size: 16px;
+  color: var(--text);
+  font-weight: 700;
+}
+
+.sidebar-header .subtitle {
+  font-size: 12px;
+  color: var(--muted);
+  margin-top: 2px;
+}
+
+.sidebar-section {
+  margin-bottom: 8px;
+}
+
+.sidebar-section-title {
+  padding: 6px 20px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+}
+
+.sidebar-link {
+  display: block;
+  padding: 5px 20px 5px 28px;
+  font-size: 13px;
+  color: var(--muted);
+  text-decoration: none;
+  border-left: 2px solid transparent;
+  transition: all 0.15s;
+  line-height: 1.4;
+}
+
+.sidebar-link:hover {
+  color: var(--text);
+  background: var(--accent-dim);
+  border-left-color: var(--accent);
+  text-decoration: none;
+}
+
+.sidebar-link.active {
+  color: var(--accent);
+  border-left-color: var(--accent);
+  background: var(--accent-dim);
+}
+
+/* ===== Mobile sidebar toggle ===== */
+#sidebar-toggle {
+  display: none;
+  position: fixed;
+  top: 16px;
+  left: 16px;
+  z-index: 200;
+  background: var(--surface1);
+  border: 1px solid var(--border);
+  color: var(--text);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 20px;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--shadow);
+}
+
+/* ===== Main Content ===== */
+.main {
+  margin-left: var(--sidebar-w);
+  padding: 40px 48px 80px;
+  max-width: calc(860px + var(--sidebar-w) + 96px);
+}
+
+.page-title {
+  font-size: 32px;
+  font-weight: 800;
+  margin-bottom: 4px;
+  color: var(--text);
+}
+
+.page-subtitle {
+  font-size: 15px;
+  color: var(--muted);
+  margin-bottom: 36px;
+}
+
+/* ===== Sections ===== */
+.section {
+  margin-bottom: 48px;
+}
+
+.section-label {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  padding: 3px 10px;
+  border-radius: 4px;
+  margin-bottom: 12px;
+}
+
+.section-label.review { background: var(--yellow-dim); color: var(--yellow); }
+.section-label.new { background: var(--green-dim); color: var(--green); }
+
+.section-title {
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 24px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--border);
+}
+
+/* ===== How To Use ===== */
+.how-to-use {
+  background: var(--surface1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px 24px;
+  margin-bottom: 36px;
+}
+
+.how-to-use h3 {
+  font-size: 16px;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.how-to-use ul {
+  padding-left: 22px;
+  margin: 0;
+}
+
+.how-to-use li {
+  font-size: 14px;
+  color: var(--muted);
+  margin-bottom: 4px;
+}
+
+/* ===== Concept Cards ===== */
+.concept {
+  background: var(--surface1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 28px;
+  margin-bottom: 28px;
+  box-shadow: var(--shadow);
+}
+
+.concept-header {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  margin-bottom: 6px;
+  flex-wrap: wrap;
+}
+
+.concept h3 {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.concept-meta {
+  font-size: 12px;
+  color: var(--muted);
+  background: var(--surface2);
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
+.concept h4 {
+  font-size: 15px;
+  font-weight: 600;
+  margin: 20px 0 8px;
+  color: var(--text);
+}
+
+.concept p, .concept li {
+  color: var(--text);
+  line-height: 1.7;
+}
+
+.concept ul, .concept ol {
+  padding-left: 22px;
+  margin: 8px 0;
+}
+
+.concept li {
+  margin-bottom: 4px;
+}
+
+.concept .why-matters {
+  font-style: italic;
+  color: var(--muted);
+  margin: 6px 0 16px;
+  font-size: 15px;
+}
+
+/* ===== Code Blocks ===== */
+pre {
+  background: var(--code-bg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 16px 18px;
+  overflow-x: auto;
+  margin: 10px 0 14px;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--text);
+  position: relative;
+}
+
+pre::after {
+  content: 'Go';
+  position: absolute;
+  top: 6px;
+  right: 10px;
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  opacity: 0.6;
+}
+
+code {
+  font-family: var(--font-mono);
+  font-size: 0.9em;
+}
+
+:not(pre) > code {
+  background: var(--surface2);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.88em;
+}
+
+/* ===== Output Blocks ===== */
+.output {
+  background: var(--green-dim);
+  border: 1px solid var(--green);
+  border-radius: 6px;
+  padding: 12px 16px;
+  margin: 6px 0 14px;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--text);
+  white-space: pre-wrap;
+}
+
+.output::after { content: none; }
+
+.output-label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--green);
+  margin-bottom: 4px;
+}
+
+/* ===== Good/Bad Examples ===== */
+.do-dont {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin: 10px 0;
+}
+
+.do-box, .dont-box {
+  border-radius: 6px;
+  padding: 14px;
+  border: 1px solid;
+}
+
+.do-box {
+  background: var(--green-dim);
+  border-color: var(--green);
+}
+
+.dont-box {
+  background: var(--red-dim);
+  border-color: var(--red);
+}
+
+.do-box .label, .dont-box .label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 6px;
+}
+
+.do-box .label { color: var(--green); }
+.dont-box .label { color: var(--red); }
+
+.do-box pre, .dont-box pre {
+  margin: 0;
+  border: none;
+  background: transparent;
+  padding: 0;
+  font-size: 12.5px;
+}
+
+.do-box pre::after, .dont-box pre::after { content: none; }
+
+/* ===== Key Rules ===== */
+.rules-list {
+  list-style: none;
+  padding: 0;
+  margin: 8px 0;
+}
+
+.rules-list li {
+  padding: 6px 0 6px 24px;
+  position: relative;
+}
+
+.rules-list li::before {
+  content: "\2192";
+  position: absolute;
+  left: 2px;
+  color: var(--accent);
+  font-weight: 700;
+}
+
+/* ===== Exercises ===== */
+.exercise {
+  background: var(--purple-dim);
+  border: 1px solid var(--purple);
+  border-radius: 6px;
+  padding: 14px 18px;
+  margin: 8px 0;
+}
+
+.exercise .exercise-label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--purple);
+  margin-bottom: 4px;
+}
+
+/* ===== Pitfall ===== */
+.pitfall {
+  background: var(--red-dim);
+  border-left: 3px solid var(--red);
+  border-radius: 0 6px 6px 0;
+  padding: 10px 14px;
+  margin: 10px 0;
+  font-size: 14px;
+}
+
+.pitfall strong {
+  color: var(--red);
+}
+
+/* ===== Connection ===== */
+.connection {
+  background: var(--accent-dim);
+  border-left: 3px solid var(--accent);
+  border-radius: 0 6px 6px 0;
+  padding: 10px 14px;
+  margin: 10px 0;
+  font-size: 14px;
+  color: var(--muted);
+}
+
+/* ===== Review Cards ===== */
+.review-card {
+  background: var(--surface1);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--purple);
+  border-radius: var(--radius);
+  padding: 20px 24px;
+  margin-bottom: 16px;
+  box-shadow: var(--shadow);
+}
+
+.review-card .review-header {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  margin-bottom: 6px;
+  flex-wrap: wrap;
+}
+
+.review-card h3 {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.review-card .review-meta {
+  font-size: 12px;
+  color: var(--muted);
+  background: var(--surface2);
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
+.review-card h4 {
+  font-size: 14px;
+  font-weight: 600;
+  margin: 14px 0 6px;
+  color: var(--text);
+}
+
+.review-card p, .review-card li {
+  color: var(--text);
+  line-height: 1.6;
+  font-size: 14px;
+}
+
+.review-card pre {
+  font-size: 12.5px;
+  padding: 12px 14px;
+  margin: 6px 0 10px;
+}
+
+.review-card .pitfall {
+  font-size: 13px;
+  padding: 8px 12px;
+}
+
+/* ===== Topic Badge ===== */
+.topic-badge {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 2px 8px;
+  border-radius: 4px;
+  background: var(--accent-dim);
+  color: var(--accent);
+  margin-left: 4px;
+}
+
+/* ===== Footer ===== */
+.footer {
+  margin-top: 60px;
+  padding: 24px 0;
+  border-top: 1px solid var(--border);
+}
+
+.footer h4 {
+  font-size: 14px;
+  color: var(--muted);
+  margin-bottom: 10px;
+}
+
+.footer ul {
+  list-style: none;
+  padding: 0;
+}
+
+.footer li {
+  margin-bottom: 4px;
+  font-size: 14px;
+}
+
+.footer li a { color: var(--accent); }
+.footer .current { color: var(--green); font-weight: 600; }
+
+/* ===== Bash code blocks ===== */
+pre.bash::after {
+  content: 'Bash';
+}
+
+/* ===== YAML code blocks ===== */
+pre.yaml-code::after {
+  content: 'YAML';
+}
+
+/* ===== SQL code blocks ===== */
+pre.sql-code::after {
+  content: 'SQL';
+}
+
+/* ===== go.work code blocks ===== */
+pre.gowork::after {
+  content: 'go.work';
+}
+
+/* ===== Responsive ===== */
+@media (max-width: 900px) {
+  .sidebar {
+    transform: translateX(-100%);
+  }
+  .sidebar.open {
+    transform: translateX(0);
+    box-shadow: 4px 0 20px rgba(0,0,0,0.5);
+  }
+  #sidebar-toggle {
+    display: flex;
+  }
+  .main {
+    margin-left: 0;
+    padding: 60px 20px 60px;
+    max-width: 100%;
+  }
+  .do-dont {
+    grid-template-columns: 1fr;
+  }
+  #theme-toggle {
+    right: 14px;
+    top: 16px;
+  }
+}
+</style>
+</head>
+<body>
+
+<!-- Theme Toggle -->
+<button id="theme-toggle" aria-label="Toggle theme" title="Toggle light/dark theme">&#9789;</button>
+
+<!-- Mobile Sidebar Toggle -->
+<button id="sidebar-toggle" aria-label="Toggle sidebar">&#9776;</button>
+
+<!-- Sidebar -->
+<nav class="sidebar" id="sidebar">
+  <div class="sidebar-header">
+    <h2>Go Guide</h2>
+    <div class="subtitle">Day 17 &mdash; 2026-06-22</div>
+  </div>
+
+  <div class="sidebar-section">
+    <div class="sidebar-section-title">Review (6 concepts)</div>
+    <a href="#slog" class="sidebar-link">Structured Logging (slog)</a>
+    <a href="#escape_analysis" class="sidebar-link">Escape Analysis &amp; sync.Pool</a>
+    <a href="#middleware" class="sidebar-link">Middleware Chains</a>
+    <a href="#reflect" class="sidebar-link">reflect Package</a>
+    <a href="#init_functions" class="sidebar-link">Init Functions</a>
+    <a href="#variadic" class="sidebar-link">Variadic Functions</a>
+  </div>
+
+  <div class="sidebar-section">
+    <div class="sidebar-section-title">Build &amp; Deployment (3)</div>
+    <a href="#go_workspaces" class="sidebar-link">Go Workspaces (go work)</a>
+    <a href="#build_constraints" class="sidebar-link">Build Constraints &amp; -ldflags</a>
+    <a href="#golden_file_testing" class="sidebar-link">Golden File Testing</a>
+  </div>
+
+  <div class="sidebar-section">
+    <div class="sidebar-section-title">Modern Go Patterns (2)</div>
+    <a href="#iter_package" class="sidebar-link">iter Package &amp; Iterators</a>
+    <a href="#structured_concurrency" class="sidebar-link">errgroup &amp; Context</a>
+  </div>
+</nav>
+
+<!-- Main Content -->
+<div class="main">
+
+<h1 class="page-title">Go Daily Guide &mdash; 2026-06-22 (Day 17)</h1>
+<p class="page-subtitle">Day 17 &mdash; Sunday, June 22, 2026 &bull; 11 concepts (6 review + 5 new)</p>
+
+<!-- How to Use -->
+<div class="how-to-use">
+  <h3>How to Use This Guide</h3>
+  <ul>
+    <li>Start with the <strong>Review</strong> section &mdash; try to recall each concept before reading the refresher</li>
+    <li>Complete the challenge exercise for each review card without looking back at previous days</li>
+    <li>Then work through the <strong>New Concepts</strong> section, typing out every code example yourself</li>
+    <li>Pay special attention to the common mistakes sections (they highlight real Go gotchas)</li>
+    <li>Complete the exercises at the bottom of each concept without looking at solutions</li>
+    <li>Use <code>go run main.go</code> to test your code locally, or use the <a href="https://go.dev/play/" target="_blank">Go Playground</a></li>
+  </ul>
+</div>
+
+<!-- ============================================================ -->
+<!-- REVIEW SECTION -->
+<!-- ============================================================ -->
+<div class="section">
+  <span class="section-label review">Review</span>
+  <h2 class="section-title">Spaced Repetition Review &mdash; 6 Concepts</h2>
+
+  <!-- Review 1: Structured Logging with log/slog -->
+  <div class="review-card" id="slog">
+    <div class="review-header">
+      <h3>Structured Logging with log/slog</h3>
+      <span class="review-meta">Standard Library &bull; 10 days overdue &bull; rep 0</span>
+    </div>
+
+    <h4>Quick Reminder</h4>
+    <p>The <code>log/slog</code> package (Go 1.21+) provides structured, leveled logging. Use <code>slog.Info("msg", "key", val)</code> for ad-hoc logging and <code>slog.With("key", val)</code> to create a contextual logger that includes those fields in every subsequent log call. Choose between <code>slog.NewTextHandler</code> for human-readable output and <code>slog.NewJSONHandler</code> for machine-parseable logs.</p>
+
+    <h4>Key Pattern</h4>
+<pre>package main
+
+import (
+    "log/slog"
+    "net/http"
+    "os"
+)
+
+func main() {
+    // Create a JSON handler with debug-level output
+    handler := slog.NewJSONHandler(os.Stdout, &amp;slog.HandlerOptions{
+        Level: slog.LevelDebug,
+    })
+    logger := slog.New(handler)
+
+    // Set as the default logger
+    slog.SetDefault(logger)
+
+    http.HandleFunc("/api/users", func(w http.ResponseWriter, r *http.Request) {
+        // Contextual logger for this request
+        reqLog := logger.With(
+            "method", r.Method,
+            "path", r.URL.Path,
+            "remote", r.RemoteAddr,
+        )
+
+        reqLog.Info("request received")
+        reqLog.Debug("processing", "query", r.URL.RawQuery)
+
+        w.WriteHeader(http.StatusOK)
+        reqLog.Info("request completed", "status", 200)
+    })
+
+    logger.Info("server starting", "addr", ":8080")
+    http.ListenAndServe(":8080", nil)
+}</pre>
+    <div class="output-label">Output (JSON)</div>
+    <div class="output">{"time":"2026-06-22T10:00:00Z","level":"INFO","msg":"server starting","addr":":8080"}
+{"time":"2026-06-22T10:00:01Z","level":"INFO","msg":"request received","method":"GET","path":"/api/users","remote":"127.0.0.1:52341"}
+{"time":"2026-06-22T10:00:01Z","level":"DEBUG","msg":"processing","method":"GET","path":"/api/users","remote":"127.0.0.1:52341","query":"page=1"}
+{"time":"2026-06-22T10:00:01Z","level":"INFO","msg":"request completed","method":"GET","path":"/api/users","remote":"127.0.0.1:52341","status":200}</div>
+
+    <div class="exercise">
+      <div class="exercise-label">Challenge Exercise</div>
+      <p>Create a custom <code>slog.Handler</code> that wraps <code>JSONHandler</code> and automatically adds a <code>request_id</code> field extracted from the request context (<code>context.WithValue</code>) to every log line. Use it in an HTTP handler that generates a UUID-like request ID per request.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>Pitfall:</strong> Using positional key-value pairs with an odd number of arguments silently produces malformed log output. Always pass key-value pairs: <code>slog.Info("msg", "k1", v1, "k2", v2)</code> &mdash; never <code>slog.Info("msg", "k1", v1, "orphan")</code>.
+    </div>
+  </div>
+
+  <!-- Review 2: Memory Management: Escape Analysis & sync.Pool -->
+  <div class="review-card" id="escape_analysis">
+    <div class="review-header">
+      <h3>Memory Management: Escape Analysis &amp; sync.Pool</h3>
+      <span class="review-meta">Performance &bull; 10 days overdue &bull; rep 0</span>
+    </div>
+
+    <h4>Quick Reminder</h4>
+    <p>Go's compiler performs escape analysis to decide whether a variable lives on the stack (cheap) or heap (requires GC). Use <code>go build -gcflags="-m"</code> to inspect decisions. <code>sync.Pool</code> provides a set of temporary objects that can be reused to reduce GC pressure &mdash; objects may be collected at any GC cycle.</p>
+
+    <h4>Key Pattern</h4>
+<pre>package main
+
+import (
+    "bytes"
+    "fmt"
+    "sync"
+)
+
+// Pool of reusable byte buffers
+var bufPool = sync.Pool{
+    New: func() any {
+        return &amp;bytes.Buffer{}
+    },
+}
+
+func formatMessage(name string, count int) string {
+    // Get a buffer from the pool
+    buf := bufPool.Get().(*bytes.Buffer)
+    buf.Reset() // Always reset before use!
+    defer bufPool.Put(buf)
+
+    fmt.Fprintf(buf, "Hello %s, you have %d messages", name, count)
+    return buf.String()
+}
+
+func main() {
+    // Each call reuses buffers instead of allocating new ones
+    msg1 := formatMessage("Alice", 5)
+    msg2 := formatMessage("Bob", 12)
+    fmt.Println(msg1)
+    fmt.Println(msg2)
+}</pre>
+    <div class="output-label">Output</div>
+    <div class="output">Hello Alice, you have 5 messages
+Hello Bob, you have 12 messages</div>
+
+    <h4>Escape Analysis Example</h4>
+<pre class="bash">$ go build -gcflags="-m" main.go
+# command-line-arguments
+./main.go:14:6: can inline bufPool.New
+./main.go:19:27: leaking param: name
+./main.go:23:14: ... argument does not escape
+./main.go:30:6: moved to heap: msg1</pre>
+
+    <div class="exercise">
+      <div class="exercise-label">Challenge Exercise</div>
+      <p>Write a benchmark comparing allocation-heavy vs <code>sync.Pool</code>-reusing approaches for a JSON encoder buffer. Use <code>testing.B</code> and <code>b.ReportAllocs()</code> to measure the difference. Target: the pooled version should show zero allocations per operation for the buffer itself.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>Pitfall:</strong> Holding references to Pool'd objects after calling <code>Put</code> &mdash; the pool may hand the same object to another goroutine immediately. Always treat the object as gone after <code>Put</code>.
+    </div>
+  </div>
+
+  <!-- Review 3: Middleware Chains -->
+  <div class="review-card" id="middleware">
+    <div class="review-header">
+      <h3>Middleware Chains</h3>
+      <span class="review-meta">Web Development &bull; 9 days overdue &bull; rep 1</span>
+    </div>
+
+    <h4>Quick Reminder</h4>
+    <p>A middleware is a function that wraps an <code>http.Handler</code>: it takes a handler, returns a handler, and can run logic before and/or after the inner handler. Chain them by nesting: <code>logging(auth(rateLimit(app)))</code>. Each middleware calls <code>next.ServeHTTP(w, r)</code> to pass control.</p>
+
+    <h4>Key Pattern</h4>
+<pre>package main
+
+import (
+    "fmt"
+    "log"
+    "net/http"
+    "runtime/debug"
+    "time"
+)
+
+// Middleware type for clarity
+type Middleware func(http.Handler) http.Handler
+
+// Timing middleware: logs request duration
+func timing(next http.Handler) http.Handler {
+    return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+        start := time.Now()
+        next.ServeHTTP(w, r)
+        log.Printf("%s %s took %v", r.Method, r.URL.Path, time.Since(start))
+    })
+}
+
+// Recovery middleware: catches panics and returns 500
+func recovery(next http.Handler) http.Handler {
+    return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+        defer func() {
+            if err := recover(); err != nil {
+                log.Printf("PANIC: %v\n%s", err, debug.Stack())
+                http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+            }
+        }()
+        next.ServeHTTP(w, r)
+    })
+}
+
+// Chain applies middlewares in order (first wraps outermost)
+func chain(h http.Handler, mws ...Middleware) http.Handler {
+    for i := len(mws) - 1; i >= 0; i-- {
+        h = mws[i](h)
+    }
+    return h
+}
+
+func main() {
+    app := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+        fmt.Fprintln(w, "Hello, World!")
+    })
+
+    handler := chain(app, recovery, timing)
+    http.ListenAndServe(":8080", handler)
+}</pre>
+
+    <div class="exercise">
+      <div class="exercise-label">Challenge Exercise</div>
+      <p>Write a timing middleware that logs request duration, and a recovery middleware that catches panics and returns 500. Then add a rate-limiting middleware using a <code>time.Ticker</code> or token bucket that returns 429 when exceeded. Chain all three together.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>Pitfall:</strong> Calling <code>next.ServeHTTP</code> twice accidentally duplicates the response. Forgetting to call it at all silently drops the request. Always call it exactly once (unless intentionally short-circuiting, like returning 401).
+    </div>
+  </div>
+
+  <!-- Review 4: reflect Package -->
+  <div class="review-card" id="reflect">
+    <div class="review-header">
+      <h3>reflect Package</h3>
+      <span class="review-meta">Advanced Go &bull; 9 days overdue &bull; rep 1</span>
+    </div>
+
+    <h4>Quick Reminder</h4>
+    <p><code>reflect.TypeOf(x)</code> returns the type, <code>reflect.ValueOf(x)</code> returns the value. Use <code>.Kind()</code> for the underlying kind (struct, slice, etc.), <code>.Field(i)</code> to access struct fields, and <code>.CanSet()</code> to check mutability. To modify a value, pass a pointer: <code>reflect.ValueOf(&amp;x).Elem()</code>.</p>
+
+    <h4>Key Pattern</h4>
+<pre>package main
+
+import (
+    "fmt"
+    "reflect"
+)
+
+type User struct {
+    Name  string `json:"name"`
+    Email string `json:"email"`
+    Age   int    `json:"age"`
+}
+
+// StructToMap converts any struct to a map using field names as keys
+func StructToMap(v any) map[string]any {
+    result := make(map[string]any)
+    val := reflect.ValueOf(v)
+
+    // Handle pointer to struct
+    if val.Kind() == reflect.Ptr {
+        val = val.Elem()
+    }
+
+    if val.Kind() != reflect.Struct {
+        return result
+    }
+
+    t := val.Type()
+    for i := 0; i &lt; val.NumField(); i++ {
+        field := t.Field(i)
+        if field.IsExported() {
+            result[field.Name] = val.Field(i).Interface()
+        }
+    }
+    return result
+}
+
+func main() {
+    u := User{Name: "Alice", Email: "alice@example.com", Age: 30}
+    m := StructToMap(u)
+    for k, v := range m {
+        fmt.Printf("%s: %v\n", k, v)
+    }
+}</pre>
+    <div class="output-label">Output</div>
+    <div class="output">Name: Alice
+Email: alice@example.com
+Age: 30</div>
+
+    <div class="exercise">
+      <div class="exercise-label">Challenge Exercise</div>
+      <p>Write a function <code>StructToMap(v any) map[string]any</code> that converts any struct to a map using its field names as keys. Handle nested structs recursively, and use the <code>json</code> struct tag as the key name when present.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>Pitfall:</strong> Calling <code>.Set()</code> on a non-addressable value panics. Always use <code>reflect.ValueOf(&amp;x).Elem()</code> when you need to mutate. Check <code>.CanSet()</code> before calling <code>.Set()</code>.
+    </div>
+  </div>
+
+  <!-- Review 5: Init Functions -->
+  <div class="review-card" id="init_functions">
+    <div class="review-header">
+      <h3>Init Functions</h3>
+      <span class="review-meta">Language Fundamentals &bull; 7 days overdue &bull; rep 2</span>
+    </div>
+
+    <h4>Quick Reminder</h4>
+    <p><code>func init()</code> runs automatically before <code>main()</code>, once per package. Multiple <code>init()</code> functions per file are allowed and execute in declaration order. The initialization order is: imported packages first (recursively), then package-level variables, then <code>init()</code> functions.</p>
+
+    <h4>Key Pattern</h4>
+<pre>package main
+
+import (
+    "flag"
+    "fmt"
+    "log"
+    "os"
+)
+
+var (
+    configFile string
+    verbose    bool
+)
+
+func init() {
+    flag.StringVar(&amp;configFile, "config", "default.yaml", "path to config file")
+    flag.BoolVar(&amp;verbose, "verbose", false, "enable verbose logging")
+}
+
+func init() {
+    // Second init: validate environment
+    if os.Getenv("APP_ENV") == "" {
+        os.Setenv("APP_ENV", "development")
+    }
+}
+
+func main() {
+    flag.Parse()
+    log.Printf("Config: %s, Verbose: %v, Env: %s",
+        configFile, verbose, os.Getenv("APP_ENV"))
+    fmt.Println("Application started")
+}</pre>
+    <div class="output-label">Output</div>
+    <div class="output">2026/06/22 10:00:00 Config: default.yaml, Verbose: false, Env: development
+Application started</div>
+
+    <div class="exercise">
+      <div class="exercise-label">Challenge Exercise</div>
+      <p>Explain the init order when package A imports B, and B imports C. Each has an <code>init()</code> that prints its name. Write the three packages and predict the output, then verify by running the code.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>Pitfall:</strong> Side effects in <code>init()</code> make testing difficult because there is no way to skip or override them. Prefer explicit initialization functions like <code>func Setup() error</code> that can be called (or not) from tests.
+    </div>
+  </div>
+
+  <!-- Review 6: Variadic Functions -->
+  <div class="review-card" id="variadic">
+    <div class="review-header">
+      <h3>Variadic Functions</h3>
+      <span class="review-meta">Language Fundamentals &bull; 7 days overdue &bull; rep 2</span>
+    </div>
+
+    <h4>Quick Reminder</h4>
+    <p><code>func f(args ...T)</code> accepts zero or more arguments of type <code>T</code>. Inside the function, <code>args</code> is a <code>[]T</code>. Spread a slice with <code>f(slice...)</code>. The variadic parameter must be the last parameter.</p>
+
+    <h4>Key Pattern</h4>
+<pre>package main
+
+import "fmt"
+
+// wrap applies a chain of string transformers
+func wrap(s string, wrappers ...func(string) string) string {
+    for _, w := range wrappers {
+        s = w(s)
+    }
+    return s
+}
+
+func bold(s string) string   { return "**" + s + "**" }
+func italic(s string) string { return "_" + s + "_" }
+func quote(s string) string  { return `"` + s + `"` }
+
+func main() {
+    result := wrap("hello", bold, italic, quote)
+    fmt.Println(result) // "_**hello**_"
+
+    // Spread a slice of transformers
+    transforms := []func(string) string{bold, quote}
+    fmt.Println(wrap("world", transforms...)) // "**world**"
+}</pre>
+    <div class="output-label">Output</div>
+    <div class="output">"_**hello**_"
+"**world**"</div>
+
+    <div class="exercise">
+      <div class="exercise-label">Challenge Exercise</div>
+      <p>Write a variadic function <code>merge(maps ...map[string]int) map[string]int</code> that merges all maps with last-write-wins semantics. Then write a version that accepts a resolver function <code>func(key string, old, new int) int</code> as the first argument.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>Pitfall:</strong> Modifying the underlying slice of a variadic parameter can mutate the caller's data. When the caller uses <code>f(slice...)</code>, the variadic param shares the same backing array. Append inside the function with care.
+    </div>
+  </div>
+
+</div><!-- end review section -->
+
+
+<!-- ============================================================ -->
+<!-- NEW CONCEPTS SECTION 1: Build & Deployment -->
+<!-- ============================================================ -->
+<div class="section">
+  <span class="section-label new">New</span>
+  <h2 class="section-title">Build &amp; Deployment &mdash; 3 Concepts</h2>
+
+  <!-- Concept 1: Go Workspaces (go work) -->
+  <div class="concept" id="go_workspaces">
+    <div class="concept-header">
+      <h3>Go Workspaces (go work)</h3>
+      <span class="concept-meta">Module Management</span>
+      <span class="topic-badge">Go 1.18+</span>
+    </div>
+    <p class="why-matters">Work on multiple modules simultaneously without juggling replace directives. Essential for monorepos and local multi-module development.</p>
+
+    <h4>What Are Go Workspaces?</h4>
+    <p>Go workspaces let you define a set of modules that should be used together during development. Instead of adding <code>replace</code> directives in every <code>go.mod</code> to point at local paths, you create a single <code>go.work</code> file at the root that tells the Go toolchain to use your local copies.</p>
+
+    <h4>Example 1: Creating a Workspace</h4>
+<pre class="bash"># Project structure:
+# myproject/
+#   api/         (module: github.com/me/api)
+#   pkg/shared/  (module: github.com/me/shared)
+
+# Initialize a workspace with both modules
+$ cd myproject
+$ go work init ./api ./pkg/shared</pre>
+
+    <p>This creates a <code>go.work</code> file:</p>
+<pre class="gowork">go 1.22
+
+use (
+    ./api
+    ./pkg/shared
+)</pre>
+
+    <h4>Example 2: The Shared Module</h4>
+<pre>// pkg/shared/validate.go
+package shared
+
+import (
+    "fmt"
+    "regexp"
+)
+
+var emailRe = regexp.MustCompile(`^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$`)
+
+// ValidateEmail checks if the email format is valid
+func ValidateEmail(email string) error {
+    if !emailRe.MatchString(email) {
+        return fmt.Errorf("invalid email: %s", email)
+    }
+    return nil
+}</pre>
+
+    <h4>Example 3: Using the Shared Module from API</h4>
+<pre>// api/main.go
+package main
+
+import (
+    "fmt"
+    "log"
+
+    "github.com/me/shared"
+)
+
+func main() {
+    emails := []string{"alice@example.com", "bad-email", "bob@test.org"}
+    for _, email := range emails {
+        if err := shared.ValidateEmail(email); err != nil {
+            log.Printf("INVALID: %v", err)
+        } else {
+            fmt.Printf("VALID: %s\n", email)
+        }
+    }
+}</pre>
+    <div class="output-label">Output</div>
+    <div class="output">VALID: alice@example.com
+2026/06/22 10:00:00 INVALID: invalid email: bad-email
+VALID: bob@test.org</div>
+
+    <h4>Managing Workspaces</h4>
+<pre class="bash"># Add a new module to the workspace
+$ go work use ./services/auth
+
+# Sync workspace with module requirements
+$ go work sync
+
+# Edit the go.work file programmatically
+$ go work edit -use=./services/billing
+$ go work edit -dropuse=./services/deprecated</pre>
+
+    <h4>Key Rules</h4>
+    <ul class="rules-list">
+      <li>The <code>go.work</code> file lives at the project root, above all modules</li>
+      <li>All modules listed in <code>use</code> are resolved locally, bypassing the module proxy</li>
+      <li><code>go work sync</code> updates each module's <code>go.mod</code> to match workspace requirements</li>
+      <li>The workspace only affects the local development experience &mdash; published modules use their own <code>go.mod</code></li>
+      <li>Set <code>GOWORK=off</code> to temporarily disable workspace mode</li>
+    </ul>
+
+    <div class="do-dont">
+      <div class="dont-box">
+        <div class="label">Don't: Commit go.work for libraries</div>
+<pre># go.work committed to a library repo
+# breaks consumers who don't have
+# your local module layout
+go 1.22
+use (
+    ./mylib
+    ../my-local-dep
+)</pre>
+      </div>
+      <div class="do-box">
+        <div class="label">Do: .gitignore for libraries, commit for monorepos</div>
+<pre># .gitignore (libraries)
+go.work
+go.work.sum
+
+# For monorepo apps, committing go.work
+# is fine since all modules live in the
+# same repo</pre>
+      </div>
+    </div>
+
+    <h4>Practice Exercises</h4>
+    <div class="exercise">
+      <div class="exercise-label">Exercise 1</div>
+      <p>Create a workspace with two modules: a <code>mathlib</code> that exports <code>Add</code>, <code>Multiply</code>, and <code>Sqrt</code> functions, and a <code>calculator</code> CLI that imports and uses them. Verify that changes in <code>mathlib</code> are immediately visible without publishing.</p>
+    </div>
+    <div class="exercise">
+      <div class="exercise-label">Exercise 2</div>
+      <p>Add a third module <code>mathlib/extensions</code> that imports <code>mathlib</code> and adds <code>Power</code> and <code>Factorial</code>. Update the workspace and the calculator to use extensions too.</p>
+    </div>
+
+    <div class="connection">
+      <strong>Connections:</strong> Workspaces replace the need for <code>replace</code> directives during development. They pair well with Go's module system and are essential for monorepo workflows with tools like <code>buf</code> or <code>wire</code>.
+    </div>
+  </div>
+
+  <!-- Concept 2: Build Constraints & -ldflags -->
+  <div class="concept" id="build_constraints">
+    <div class="concept-header">
+      <h3>Build Constraints &amp; -ldflags</h3>
+      <span class="concept-meta">Build System</span>
+      <span class="topic-badge">Essential</span>
+    </div>
+    <p class="why-matters">Conditionally compile code for different OS/arch/features. Inject version info at build time without modifying source files.</p>
+
+    <h4>Build Constraints (Build Tags)</h4>
+    <p>Build constraints control which files are included in a build. The <code>//go:build</code> directive (Go 1.17+) uses boolean expressions to specify conditions.</p>
+
+    <h4>Example 1: OS-Specific Code</h4>
+<pre>//go:build linux
+
+package platform
+
+import "fmt"
+
+func PlatformInfo() string {
+    return "Running on Linux"
+}
+
+func OpenConfig() string {
+    return "/etc/myapp/config.yaml"
+}</pre>
+
+<pre>//go:build darwin
+
+package platform
+
+func PlatformInfo() string {
+    return "Running on macOS"
+}
+
+func OpenConfig() string {
+    return "/Library/Application Support/myapp/config.yaml"
+}</pre>
+
+    <h4>Example 2: Custom Build Tags for Integration Tests</h4>
+<pre>//go:build integration
+
+package db_test
+
+import (
+    "database/sql"
+    "testing"
+
+    _ "github.com/lib/pq"
+)
+
+func TestDatabaseConnection(t *testing.T) {
+    db, err := sql.Open("postgres", "postgres://localhost/testdb?sslmode=disable")
+    if err != nil {
+        t.Fatal(err)
+    }
+    defer db.Close()
+
+    if err := db.Ping(); err != nil {
+        t.Fatalf("cannot reach database: %v", err)
+    }
+}</pre>
+
+<pre class="bash"># Run only unit tests (no tag required)
+$ go test ./...
+
+# Run integration tests too
+$ go test -tags integration ./...</pre>
+
+    <h4>Example 3: Injecting Version Info with -ldflags</h4>
+<pre>package main
+
+import "fmt"
+
+// These will be set at build time via -ldflags
+var (
+    version = "dev"
+    commit  = "none"
+    date    = "unknown"
+)
+
+func main() {
+    fmt.Printf("myapp %s (commit: %s, built: %s)\n", version, commit, date)
+}</pre>
+
+<pre class="bash"># Build with version info injected
+$ go build -ldflags "\
+  -X main.version=1.2.3 \
+  -X main.commit=$(git rev-parse --short HEAD) \
+  -X main.date=$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
+  -o myapp .
+
+$ ./myapp
+myapp 1.2.3 (commit: abc1234, built: 2026-06-22T10:00:00Z)</pre>
+
+    <h4>Example 4: Combining Constraints</h4>
+<pre>//go:build (linux &amp;&amp; amd64) || darwin
+
+package optimized
+
+// This file is only compiled on Linux/amd64 or any macOS
+func UseSIMD() bool {
+    return true
+}</pre>
+
+<pre>//go:build !windows &amp;&amp; !plan9
+
+package net
+
+// Compiled on everything except Windows and Plan 9
+func UseEpoll() bool {
+    return true
+}</pre>
+
+    <h4>Key Rules</h4>
+    <ul class="rules-list">
+      <li><code>//go:build</code> must appear before the <code>package</code> clause, with a blank line between</li>
+      <li>Use boolean operators: <code>&amp;&amp;</code> (AND), <code>||</code> (OR), <code>!</code> (NOT), and parentheses for grouping</li>
+      <li>File name conventions also act as constraints: <code>*_linux.go</code>, <code>*_amd64.go</code></li>
+      <li><code>-ldflags "-X"</code> can only set <code>string</code> variables at package scope</li>
+      <li>Use <code>-ldflags "-s -w"</code> to strip debug info and reduce binary size</li>
+    </ul>
+
+    <div class="do-dont">
+      <div class="dont-box">
+        <div class="label">Don't: Mix old and new syntax</div>
+<pre>// +build linux
+//go:build linux
+
+package foo
+// Confusing. Pick one syntax.</pre>
+      </div>
+      <div class="do-box">
+        <div class="label">Do: Use only //go:build (Go 1.17+)</div>
+<pre>//go:build linux
+
+package foo
+// Clean, unambiguous. gofmt will
+// auto-add the old // +build line
+// if needed for compatibility.</pre>
+      </div>
+    </div>
+
+    <h4>Practice Exercises</h4>
+    <div class="exercise">
+      <div class="exercise-label">Exercise 1</div>
+      <p>Create a <code>platform</code> package with OS-specific implementations of <code>TempDir() string</code> for Linux, macOS, and Windows. Write a main program that prints the result, and verify it compiles correctly on your system.</p>
+    </div>
+    <div class="exercise">
+      <div class="exercise-label">Exercise 2</div>
+      <p>Add a <code>-version</code> flag to a CLI tool that prints version, commit hash, and build date injected via <code>-ldflags</code>. Write a Makefile target that builds the binary with the correct values.</p>
+    </div>
+
+    <div class="connection">
+      <strong>Connections:</strong> Build constraints are how the standard library provides OS-specific implementations (see <code>os</code>, <code>syscall</code>). The <code>-ldflags</code> technique is used by virtually every Go CLI tool for version reporting (e.g., <code>kubectl version</code>, <code>docker version</code>).
+    </div>
+  </div>
+
+  <!-- Concept 3: Golden File Testing -->
+  <div class="concept" id="golden_file_testing">
+    <div class="concept-header">
+      <h3>Golden File Testing</h3>
+      <span class="concept-meta">Testing</span>
+      <span class="topic-badge">Pattern</span>
+    </div>
+    <p class="why-matters">Assert complex outputs (JSON, HTML, CLI output) against saved "golden" files. Regenerate baselines with a single flag instead of manually updating expected strings.</p>
+
+    <h4>What Is Golden File Testing?</h4>
+    <p>Instead of writing expected output inline in your test, you save it to a file in a <code>testdata/</code> directory. The test compares actual output against this "golden" file. When the output intentionally changes, pass <code>-update</code> to regenerate the golden files automatically.</p>
+
+    <h4>Example 1: Basic Golden File Pattern</h4>
+<pre>package renderer
+
+import (
+    "encoding/json"
+    "flag"
+    "os"
+    "path/filepath"
+    "testing"
+)
+
+var update = flag.Bool("update", false, "update golden files")
+
+type User struct {
+    Name  string `json:"name"`
+    Email string `json:"email"`
+    Role  string `json:"role"`
+}
+
+func RenderUserJSON(u User) ([]byte, error) {
+    return json.MarshalIndent(u, "", "  ")
+}
+
+func TestRenderUserJSON(t *testing.T) {
+    user := User{Name: "Alice", Email: "alice@example.com", Role: "admin"}
+
+    got, err := RenderUserJSON(user)
+    if err != nil {
+        t.Fatal(err)
+    }
+
+    golden := filepath.Join("testdata", t.Name()+".golden")
+
+    if *update {
+        // Regenerate the golden file
+        os.MkdirAll("testdata", 0o755)
+        if err := os.WriteFile(golden, got, 0o644); err != nil {
+            t.Fatal(err)
+        }
+    }
+
+    want, err := os.ReadFile(golden)
+    if err != nil {
+        t.Fatalf("golden file missing (run with -update): %v", err)
+    }
+
+    if string(got) != string(want) {
+        t.Errorf("output mismatch.\nGot:\n%s\nWant:\n%s", got, want)
+    }
+}</pre>
+
+<pre class="bash"># First run: generate golden files
+$ go test -run TestRenderUserJSON -update
+
+# Subsequent runs: compare against golden files
+$ go test -run TestRenderUserJSON -v
+=== RUN   TestRenderUserJSON
+--- PASS: TestRenderUserJSON (0.00s)
+PASS</pre>
+
+    <h4>Example 2: The testdata/ Convention</h4>
+<pre>// Directory structure:
+// mypackage/
+//   renderer.go
+//   renderer_test.go
+//   testdata/
+//     TestRenderUserJSON.golden
+//     TestRenderReport.golden
+//     TestRenderHTML.golden
+
+// The testdata/ directory is special in Go:
+// - Ignored by the Go toolchain during builds
+// - Included when running tests
+// - Perfect for fixtures, golden files, and test inputs</pre>
+
+    <h4>Example 3: Normalizing Volatile Data</h4>
+<pre>package audit
+
+import (
+    "regexp"
+    "strings"
+    "testing"
+)
+
+var (
+    timestampRe = regexp.MustCompile(`\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}`)
+    uuidRe      = regexp.MustCompile(`[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}`)
+)
+
+// normalize replaces volatile values so golden files don't break
+func normalize(s string) string {
+    s = timestampRe.ReplaceAllString(s, "&lt;TIMESTAMP&gt;")
+    s = uuidRe.ReplaceAllString(s, "&lt;UUID&gt;")
+    // Normalize line endings for cross-platform
+    s = strings.ReplaceAll(s, "\r\n", "\n")
+    return s
+}
+
+func TestAuditLog(t *testing.T) {
+    got := generateAuditLog() // produces output with timestamps and UUIDs
+    normalized := normalize(got)
+
+    // Compare normalized output against golden file
+    // (golden file also contains <TIMESTAMP> and <UUID> placeholders)
+    compareGolden(t, "TestAuditLog", normalized)
+}
+
+// Helper: compareGolden reads and compares (omitted for brevity)
+func generateAuditLog() string { return "" }
+func compareGolden(t *testing.T, name, got string) {}</pre>
+
+    <h4>Key Rules</h4>
+    <ul class="rules-list">
+      <li>Store golden files in <code>testdata/</code> &mdash; Go's toolchain ignores this directory during builds</li>
+      <li>Name golden files after the test: <code>TestFoo.golden</code> using <code>t.Name()</code></li>
+      <li>Always normalize volatile data (timestamps, UUIDs, ports) before comparison</li>
+      <li>Use <code>-update</code> flag pattern to regenerate &mdash; commit the updated golden files</li>
+      <li>Review golden file diffs in PRs to catch unintended output changes</li>
+    </ul>
+
+    <div class="do-dont">
+      <div class="dont-box">
+        <div class="label">Don't: Embed timestamps in golden output</div>
+<pre>// Golden file contains:
+// {"created":"2026-06-22T10:00:00Z",...}
+// This breaks tomorrow!</pre>
+      </div>
+      <div class="do-box">
+        <div class="label">Do: Normalize or strip volatile data</div>
+<pre>// Golden file contains:
+// {"created":"&lt;TIMESTAMP&gt;",...}
+// Stable across runs and machines</pre>
+      </div>
+    </div>
+
+    <h4>Practice Exercises</h4>
+    <div class="exercise">
+      <div class="exercise-label">Exercise 1</div>
+      <p>Write a CLI tool that outputs a formatted table of data. Create a golden file test for its output using the <code>-update</code> flag pattern. Include at least 3 test cases with different input data.</p>
+    </div>
+    <div class="exercise">
+      <div class="exercise-label">Exercise 2</div>
+      <p>Build a <code>goldentest</code> helper package that encapsulates the read/write/compare logic, supports <code>-update</code>, and provides a clean diff output on mismatch (hint: use a line-by-line comparison).</p>
+    </div>
+
+    <div class="connection">
+      <strong>Connections:</strong> Golden file testing is widely used in Go's own standard library tests. It pairs well with <code>go test -run TestName -update</code> workflows and table-driven tests. Tools like <code>go-cmp</code> can provide better diff output for complex comparisons.
+    </div>
+  </div>
+
+</div><!-- end Build & Deployment section -->
+
+
+<!-- ============================================================ -->
+<!-- NEW CONCEPTS SECTION 2: Modern Go Patterns -->
+<!-- ============================================================ -->
+<div class="section">
+  <span class="section-label new">New</span>
+  <h2 class="section-title">Modern Go Patterns &mdash; 2 Concepts</h2>
+
+  <!-- Concept 4: iter Package & Iterator Patterns (Go 1.23) -->
+  <div class="concept" id="iter_package">
+    <div class="concept-header">
+      <h3>iter Package &amp; Iterator Patterns</h3>
+      <span class="concept-meta">Modern Go</span>
+      <span class="topic-badge">Go 1.23+</span>
+    </div>
+    <p class="why-matters">Standard iterator protocol with <code>iter.Seq[V]</code> and <code>iter.Seq2[K,V]</code>. Works with range-over-func for composable, lazy iteration without allocating intermediate slices.</p>
+
+    <h4>Understanding the Iterator Protocol</h4>
+    <p>Go 1.23 introduced the <code>iter</code> package with two core types: <code>iter.Seq[V]</code> for single-value sequences and <code>iter.Seq2[K,V]</code> for key-value sequences. These are function types that accept a yield callback. The <code>range</code> keyword now works directly with these types.</p>
+
+    <h4>Example 1: Defining an Iterator</h4>
+<pre>package main
+
+import (
+    "fmt"
+    "iter"
+)
+
+// All returns an iterator over all elements of a slice
+func All[V any](s []V) iter.Seq[V] {
+    return func(yield func(V) bool) {
+        for _, v := range s {
+            if !yield(v) {
+                return
+            }
+        }
+    }
+}
+
+// Enumerate returns index-value pairs (like Python's enumerate)
+func Enumerate[V any](s []V) iter.Seq2[int, V] {
+    return func(yield func(int, V) bool) {
+        for i, v := range s {
+            if !yield(i, v) {
+                return
+            }
+        }
+    }
+}
+
+func main() {
+    names := []string{"Alice", "Bob", "Charlie"}
+
+    // Use with range
+    for name := range All(names) {
+        fmt.Println(name)
+    }
+
+    fmt.Println("---")
+
+    // Use with range (key-value)
+    for i, name := range Enumerate(names) {
+        fmt.Printf("%d: %s\n", i, name)
+    }
+}</pre>
+    <div class="output-label">Output</div>
+    <div class="output">Alice
+Bob
+Charlie
+---
+0: Alice
+1: Bob
+2: Charlie</div>
+
+    <h4>Example 2: Pull-Based Iteration</h4>
+<pre>package main
+
+import (
+    "fmt"
+    "iter"
+)
+
+// Fibonacci returns an infinite iterator of Fibonacci numbers
+func Fibonacci() iter.Seq[int] {
+    return func(yield func(int) bool) {
+        a, b := 0, 1
+        for {
+            if !yield(a) {
+                return
+            }
+            a, b = b, a+b
+        }
+    }
+}
+
+func main() {
+    // Pull-based: convert push iterator to pull
+    next, stop := iter.Pull(Fibonacci())
+    defer stop() // CRITICAL: always defer stop to avoid goroutine leak
+
+    // Pull exactly 10 Fibonacci numbers
+    for range 10 {
+        val, ok := next()
+        if !ok {
+            break
+        }
+        fmt.Printf("%d ", val)
+    }
+    fmt.Println()
+}</pre>
+    <div class="output-label">Output</div>
+    <div class="output">0 1 1 2 3 5 8 13 21 34</div>
+
+    <h4>Example 3: Composing Iterators &mdash; Filter, Map, Take</h4>
+<pre>package main
+
+import (
+    "fmt"
+    "iter"
+)
+
+// Filter returns elements that satisfy the predicate
+func Filter[V any](seq iter.Seq[V], pred func(V) bool) iter.Seq[V] {
+    return func(yield func(V) bool) {
+        for v := range seq {
+            if pred(v) {
+                if !yield(v) {
+                    return
+                }
+            }
+        }
+    }
+}
+
+// Map transforms each element
+func Map[V, U any](seq iter.Seq[V], f func(V) U) iter.Seq[U] {
+    return func(yield func(U) bool) {
+        for v := range seq {
+            if !yield(f(v)) {
+                return
+            }
+        }
+    }
+}
+
+// Take returns at most n elements
+func Take[V any](seq iter.Seq[V], n int) iter.Seq[V] {
+    return func(yield func(V) bool) {
+        count := 0
+        for v := range seq {
+            if count >= n {
+                return
+            }
+            if !yield(v) {
+                return
+            }
+            count++
+        }
+    }
+}
+
+// Ints returns an iterator over a range of integers
+func Ints(start, end int) iter.Seq[int] {
+    return func(yield func(int) bool) {
+        for i := start; i &lt; end; i++ {
+            if !yield(i) {
+                return
+            }
+        }
+    }
+}
+
+func main() {
+    // Compose: take 5 even squares from 1..100
+    isEven := func(n int) bool { return n%2 == 0 }
+    square := func(n int) int { return n * n }
+
+    result := Take(Filter(Map(Ints(1, 100), square), isEven), 5)
+
+    for v := range result {
+        fmt.Printf("%d ", v)
+    }
+    fmt.Println()
+}</pre>
+    <div class="output-label">Output</div>
+    <div class="output">4 16 36 64 100</div>
+
+    <h4>Key Rules</h4>
+    <ul class="rules-list">
+      <li><code>iter.Seq[V]</code> is <code>func(yield func(V) bool)</code> &mdash; yield returns false when the consumer breaks</li>
+      <li><code>iter.Seq2[K,V]</code> is for key-value pairs, used with two-variable range</li>
+      <li>Always check <code>!yield(v)</code> and return immediately &mdash; ignoring it violates the protocol</li>
+      <li><code>iter.Pull</code> converts push-based to pull-based &mdash; always <code>defer stop()</code></li>
+      <li>Iterators are lazy: no intermediate slices are allocated in the pipeline</li>
+    </ul>
+
+    <div class="do-dont">
+      <div class="dont-box">
+        <div class="label">Don't: Forget stop() from iter.Pull</div>
+<pre>next, stop := iter.Pull(seq)
+// Forgetting defer stop()
+// causes a goroutine leak!
+val, _ := next()
+fmt.Println(val)
+// Leaked goroutine still running</pre>
+      </div>
+      <div class="do-box">
+        <div class="label">Do: Always defer stop()</div>
+<pre>next, stop := iter.Pull(seq)
+defer stop()
+val, ok := next()
+if ok {
+    fmt.Println(val)
+}
+// Goroutine cleaned up on return</pre>
+      </div>
+    </div>
+
+    <h4>Practice Exercises</h4>
+    <div class="exercise">
+      <div class="exercise-label">Exercise 1</div>
+      <p>Write a <code>Zip[A, B any](a iter.Seq[A], b iter.Seq[B]) iter.Seq2[A, B]</code> that pairs elements from two iterators, stopping when either is exhausted. Use <code>iter.Pull</code> internally.</p>
+    </div>
+    <div class="exercise">
+      <div class="exercise-label">Exercise 2</div>
+      <p>Implement <code>Chunk[V any](seq iter.Seq[V], size int) iter.Seq[[]V]</code> that groups elements into slices of the given size. The last chunk may be smaller.</p>
+    </div>
+
+    <div class="connection">
+      <strong>Connections:</strong> The <code>iter</code> package unifies iteration across the standard library. <code>slices.All</code>, <code>maps.Keys</code>, and <code>maps.Values</code> now return iterators. This pattern is inspired by Python's generator protocol and Rust's <code>Iterator</code> trait.
+    </div>
+  </div>
+
+  <!-- Concept 5: Structured Concurrency with errgroup & Context -->
+  <div class="concept" id="structured_concurrency">
+    <div class="concept-header">
+      <h3>Structured Concurrency with errgroup &amp; Context</h3>
+      <span class="concept-meta">Concurrency</span>
+      <span class="topic-badge">Essential</span>
+    </div>
+    <p class="why-matters">errgroup + context ensures that when one goroutine fails, all others are cancelled. No orphaned goroutines, no leaked resources. This is the gold standard for concurrent Go code.</p>
+
+    <h4>Why errgroup?</h4>
+    <p>Raw <code>go</code> statements and <code>sync.WaitGroup</code> don't propagate errors or cancellation. <code>errgroup.Group</code> from <code>golang.org/x/sync/errgroup</code> combines WaitGroup semantics with error collection and context-based cancellation. When any goroutine returns an error, the shared context is cancelled, signaling all other goroutines to stop.</p>
+
+    <h4>Example 1: Basic errgroup</h4>
+<pre>package main
+
+import (
+    "context"
+    "fmt"
+    "math/rand"
+    "time"
+
+    "golang.org/x/sync/errgroup"
+)
+
+func fetchURL(ctx context.Context, url string) (string, error) {
+    // Simulate HTTP fetch with context awareness
+    select {
+    case &lt;-ctx.Done():
+        return "", ctx.Err()
+    case &lt;-time.After(time.Duration(rand.Intn(100)) * time.Millisecond):
+        return fmt.Sprintf("Response from %s", url), nil
+    }
+}
+
+func main() {
+    urls := []string{
+        "https://api.example.com/users",
+        "https://api.example.com/posts",
+        "https://api.example.com/comments",
+    }
+
+    // Create errgroup with context
+    g, ctx := errgroup.WithContext(context.Background())
+    results := make([]string, len(urls))
+
+    for i, url := range urls {
+        i, url := i, url // capture loop variables
+        g.Go(func() error {
+            res, err := fetchURL(ctx, url)
+            if err != nil {
+                return fmt.Errorf("fetch %s: %w", url, err)
+            }
+            results[i] = res
+            return nil
+        })
+    }
+
+    // Wait for all goroutines and collect first error
+    if err := g.Wait(); err != nil {
+        fmt.Printf("Error: %v\n", err)
+        return
+    }
+
+    for _, r := range results {
+        fmt.Println(r)
+    }
+}</pre>
+    <div class="output-label">Output</div>
+    <div class="output">Response from https://api.example.com/users
+Response from https://api.example.com/posts
+Response from https://api.example.com/comments</div>
+
+    <h4>Example 2: Bounded Concurrency with SetLimit</h4>
+<pre>package main
+
+import (
+    "context"
+    "fmt"
+    "time"
+
+    "golang.org/x/sync/errgroup"
+)
+
+func processItem(ctx context.Context, id int) error {
+    select {
+    case &lt;-ctx.Done():
+        return ctx.Err()
+    case &lt;-time.After(50 * time.Millisecond):
+        fmt.Printf("Processed item %d\n", id)
+        return nil
+    }
+}
+
+func main() {
+    g, ctx := errgroup.WithContext(context.Background())
+
+    // Limit to 3 concurrent goroutines
+    g.SetLimit(3)
+
+    for i := 1; i &lt;= 10; i++ {
+        i := i
+        g.Go(func() error {
+            return processItem(ctx, i)
+        })
+    }
+
+    if err := g.Wait(); err != nil {
+        fmt.Printf("Error: %v\n", err)
+    } else {
+        fmt.Println("All items processed successfully")
+    }
+}</pre>
+    <div class="output-label">Output</div>
+    <div class="output">Processed item 1
+Processed item 2
+Processed item 3
+Processed item 4
+Processed item 5
+Processed item 6
+Processed item 7
+Processed item 8
+Processed item 9
+Processed item 10
+All items processed successfully</div>
+
+    <h4>Example 3: Real-World Parallel HTTP Fetcher with Cancellation</h4>
+<pre>package main
+
+import (
+    "context"
+    "encoding/json"
+    "fmt"
+    "io"
+    "net/http"
+    "sync"
+    "time"
+
+    "golang.org/x/sync/errgroup"
+)
+
+type APIResponse struct {
+    Source string
+    Data   json.RawMessage
+}
+
+func fetchJSON(ctx context.Context, client *http.Client, url string) (*APIResponse, error) {
+    req, err := http.NewRequestWithContext(ctx, http.MethodGet, url, nil)
+    if err != nil {
+        return nil, fmt.Errorf("create request: %w", err)
+    }
+
+    resp, err := client.Do(req)
+    if err != nil {
+        return nil, fmt.Errorf("do request: %w", err)
+    }
+    defer resp.Body.Close()
+
+    if resp.StatusCode != http.StatusOK {
+        return nil, fmt.Errorf("unexpected status %d from %s", resp.StatusCode, url)
+    }
+
+    body, err := io.ReadAll(resp.Body)
+    if err != nil {
+        return nil, fmt.Errorf("read body: %w", err)
+    }
+
+    return &amp;APIResponse{Source: url, Data: body}, nil
+}
+
+func fetchAll(ctx context.Context, urls []string) ([]*APIResponse, error) {
+    client := &amp;http.Client{Timeout: 10 * time.Second}
+
+    g, ctx := errgroup.WithContext(ctx)
+    g.SetLimit(5) // Max 5 concurrent requests
+
+    var mu sync.Mutex
+    var responses []*APIResponse
+
+    for _, url := range urls {
+        url := url
+        g.Go(func() error {
+            resp, err := fetchJSON(ctx, client, url)
+            if err != nil {
+                return err // Cancels ctx for all other goroutines
+            }
+            mu.Lock()
+            responses = append(responses, resp)
+            mu.Unlock()
+            return nil
+        })
+    }
+
+    if err := g.Wait(); err != nil {
+        return responses, err // Return partial results + error
+    }
+
+    return responses, nil
+}
+
+func main() {
+    ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+    defer cancel()
+
+    urls := []string{
+        "https://httpbin.org/json",
+        "https://httpbin.org/get",
+    }
+
+    responses, err := fetchAll(ctx, urls)
+    if err != nil {
+        fmt.Printf("Error (got %d partial results): %v\n", len(responses), err)
+        return
+    }
+
+    for _, r := range responses {
+        fmt.Printf("Source: %s, Size: %d bytes\n", r.Source, len(r.Data))
+    }
+}</pre>
+
+    <h4>Key Rules</h4>
+    <ul class="rules-list">
+      <li><code>errgroup.WithContext</code> returns a derived context &mdash; pass it to every goroutine's work</li>
+      <li><code>g.Wait()</code> returns the first non-nil error from any goroutine</li>
+      <li>When one goroutine returns an error, the derived context is cancelled automatically</li>
+      <li>Use <code>g.SetLimit(n)</code> for bounded concurrency &mdash; <code>g.Go</code> blocks when the limit is reached</li>
+      <li>Goroutines must check <code>ctx.Done()</code> or use context-aware APIs to respond to cancellation</li>
+      <li>Access shared state with a mutex &mdash; errgroup does not synchronize access to shared variables</li>
+    </ul>
+
+    <div class="do-dont">
+      <div class="dont-box">
+        <div class="label">Don't: Ignore the derived context</div>
+<pre>g, ctx := errgroup.WithContext(ctx)
+g.Go(func() error {
+    // BAD: not using ctx!
+    // Won't stop if another goroutine fails
+    resp, err := http.Get(url)
+    return err
+})</pre>
+      </div>
+      <div class="do-box">
+        <div class="label">Do: Pass ctx to every operation</div>
+<pre>g, ctx := errgroup.WithContext(ctx)
+g.Go(func() error {
+    // GOOD: context-aware request
+    // Cancelled if another goroutine fails
+    req, _ := http.NewRequestWithContext(ctx,
+        http.MethodGet, url, nil)
+    resp, err := client.Do(req)
+    return err
+})</pre>
+      </div>
+    </div>
+
+    <h4>Practice Exercises</h4>
+    <div class="exercise">
+      <div class="exercise-label">Exercise 1</div>
+      <p>Write a parallel file hasher that computes SHA-256 checksums for all files in a directory. Use <code>errgroup</code> with <code>SetLimit(4)</code> to limit concurrency. Cancel all goroutines if any file read fails.</p>
+    </div>
+    <div class="exercise">
+      <div class="exercise-label">Exercise 2</div>
+      <p>Build a pipeline that reads URLs from a channel, fetches them concurrently (max 3), and writes results to another channel. Use <code>errgroup.WithContext</code> so that a single failed fetch cancels everything. The producer and consumer should also respect the context.</p>
+    </div>
+
+    <div class="connection">
+      <strong>Connections:</strong> <code>errgroup</code> builds on <code>sync.WaitGroup</code> and <code>context.Context</code> patterns covered earlier. It's the standard approach for structured concurrency in Go, similar to Python's <code>asyncio.TaskGroup</code> or Kotlin's <code>coroutineScope</code>. Use it whenever you spawn multiple goroutines that should succeed or fail together.
+    </div>
+  </div>
+
+</div><!-- end Modern Go Patterns section -->
+
+
+<!-- ============================================================ -->
+<!-- FOOTER -->
+<!-- ============================================================ -->
+<footer class="footer">
+  <h4>All Go Guides</h4>
+  <ul>
+    <li><a href="golang-guides/golang-guide-2026-07-09.html">Day 34 &mdash; 2026-07-09</a></li>
+    <li><a href="golang-guides/golang-guide-2026-07-08.html">Day 33 &mdash; 2026-07-08</a></li>
+    <li><a href="golang-guides/golang-guide-2026-07-07.html">Day 32 &mdash; 2026-07-07</a></li>
+    <li><a href="golang-guides/golang-guide-2026-07-06.html">Day 31 &mdash; 2026-07-06</a></li>
+    <li><a href="golang-guides/golang-guide-2026-07-05.html">Day 30 &mdash; 2026-07-05</a></li>
+    <li><a href="golang-guides/golang-guide-2026-07-04.html">Day 29 &mdash; 2026-07-04</a></li>
+    <li><a href="golang-guides/golang-guide-2026-07-03.html">Day 28 &mdash; 2026-07-03</a></li>
+    <li><a href="golang-guides/golang-guide-2026-07-02.html">Day 27 &mdash; 2026-07-02</a></li>
+    <li><a href="golang-guides/golang-guide-2026-07-01.html">Day 26 &mdash; 2026-07-01</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-30.html">Day 25 &mdash; 2026-06-30</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-29.html">Day 24 &mdash; 2026-06-29</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-28.html">Day 23 &mdash; 2026-06-28</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-27.html">2026-06-27</a> (Day 22)</li>
+    <li><a href="golang-guides/golang-guide-2026-06-26.html">2026-06-26</a> (Day 21)</li>
+    <li><a href="golang-guides/golang-guide-2026-06-25.html">2026-06-25</a> (Day 20)</li>
+    <li><a href="golang-guides/golang-guide-2026-06-24.html">2026-06-24</a> (Day 19)</li>
+    <li><a href="golang-guides/golang-guide-2026-06-23.html">2026-06-23</a> (Day 18)</li>
+    <li><a href="golang-guides/golang-guide-2026-06-22.html">Day 17 &mdash; 2026-06-22</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-21.html">Day 16 &mdash; 2026-06-21</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-19.html">Day 15 &mdash; 2026-06-19</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-18.html">Day 14 &mdash; 2026-06-18</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-17.html">Day 13 &mdash; 2026-06-17</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-15.html">Day 12 &mdash; 2026-06-15</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-13.html">Day 11 &mdash; 2026-06-13</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-12.html">Day 10 &mdash; 2026-06-12</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-11.html">Day 9 &mdash; 2026-06-11</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-10.html">Day 8 &mdash; 2026-06-10</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-09.html">Day 7 &mdash; 2026-06-09</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-08.html">Day 6 &mdash; 2026-06-08</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-07.html">Day 5 &mdash; 2026-06-07</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-05.html">Day 4 &mdash; 2026-06-05</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-04.html">Day 3 &mdash; 2026-06-04</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-03.html">Day 2 &mdash; 2026-06-03</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-02.html">Day 1 &mdash; 2026-06-02</a></li>
+  </ul>
+
+  <h4 style="margin-top: 20px;">All Guides</h4>
+  <ul>
+    <li><a href="guide.html">LeetCode Study Guide</a></li>
+    <li><a href="lang-guide.html">Multi-Language Guide</a></li>
+    <li><a href="python-guide.html">Python Guide</a></li>
+    <li><a href="typescript-guide.html">TypeScript Guide</a></li>
+    <li><a href="javascript-guide.html">JavaScript Guide</a></li>
+    <li><a href="golang-guide.html">Go Guide (current)</a></li>
+    <li><a href="report.html">Performance Report</a></li>
+  </ul>
+</footer>
+
+</div><!-- end main -->
+
+<script>
+// ===== Theme Toggle =====
+(function() {
+  var KEY = 'lc-goguide-theme';
+  var toggle = document.getElementById('theme-toggle');
+  var html = document.documentElement;
+
+  function setTheme(theme) {
+    html.setAttribute('data-theme', theme);
+    localStorage.setItem(KEY, theme);
+    toggle.textContent = theme === 'dark' ? '☽' : '☀';
+  }
+
+  var saved = localStorage.getItem(KEY) || 'dark';
+  setTheme(saved);
+
+  toggle.addEventListener('click', function() {
+    setTheme(html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
+  });
+})();
+
+// ===== Mobile Sidebar Toggle =====
+(function() {
+  var btn = document.getElementById('sidebar-toggle');
+  var sidebar = document.getElementById('sidebar');
+
+  btn.addEventListener('click', function() {
+    sidebar.classList.toggle('open');
+  });
+
+  // Close sidebar when clicking a link (mobile)
+  sidebar.querySelectorAll('.sidebar-link').forEach(function(link) {
+    link.addEventListener('click', function() {
+      if (window.innerWidth <= 900) {
+        sidebar.classList.remove('open');
+      }
+    });
+  });
+})();
+
+// ===== Active Sidebar Link on Scroll =====
+(function() {
+  var links = document.querySelectorAll('.sidebar-link');
+  var sections = [];
+
+  links.forEach(function(link) {
+    var id = link.getAttribute('href').replace('#', '');
+    var el = document.getElementById(id);
+    if (el) sections.push({ id: id, el: el, link: link });
+  });
+
+  function onScroll() {
+    var scrollTop = window.scrollY + 120;
+    var current = null;
+
+    for (var i = sections.length - 1; i >= 0; i--) {
+      if (sections[i].el.offsetTop <= scrollTop) {
+        current = sections[i];
+        break;
+      }
+    }
+
+    links.forEach(function(l) { l.classList.remove('active'); });
+    if (current) current.link.classList.add('active');
+  }
+
+  window.addEventListener('scroll', onScroll);
+  onScroll();
+})();
+</script>
+</body>
+</html>

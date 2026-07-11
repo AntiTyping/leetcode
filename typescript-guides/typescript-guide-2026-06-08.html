@@ -1,0 +1,1778 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TypeScript Daily Guide — 2026-06-08 (Day 8)</title>
+<style>
+:root {
+  --bg: #0d1117;
+  --surface: #161b22;
+  --surface2: #1c2129;
+  --border: #30363d;
+  --text: #e6edf3;
+  --text-muted: #8b949e;
+  --accent: #58a6ff;
+  --accent-bg: rgba(56,139,253,0.15);
+  --green: #3fb950;
+  --green-bg: rgba(63,185,80,0.08);
+  --red: #f85149;
+  --red-bg: rgba(248,81,73,0.08);
+  --yellow: #d29922;
+  --yellow-bg: rgba(210,153,34,0.1);
+  --orange: #db6d28;
+  --purple: #bc8cff;
+  --purple-bg: rgba(188,140,255,0.08);
+  --purple-border: rgba(188,140,255,0.2);
+  --link: #58a6ff;
+  --code-bg: #1c2129;
+  --output-bg: #0e1c0e;
+  --output-border: #1a3a1a;
+  --sidebar-bg: #161b22;
+  --sidebar-active: rgba(56,139,253,0.15);
+  --exercise-border: #30363d;
+}
+[data-theme="light"] {
+  --bg: #ffffff;
+  --surface: #f6f8fa;
+  --surface2: #eef1f5;
+  --border: #d0d7de;
+  --text: #1f2328;
+  --text-muted: #656d76;
+  --accent: #0969da;
+  --accent-bg: rgba(9,105,218,0.1);
+  --green: #1a7f37;
+  --green-bg: rgba(26,127,55,0.06);
+  --red: #cf222e;
+  --red-bg: rgba(207,34,46,0.06);
+  --yellow: #9a6700;
+  --yellow-bg: rgba(154,103,0,0.06);
+  --orange: #bc4c00;
+  --purple: #8250df;
+  --purple-bg: rgba(130,80,223,0.06);
+  --purple-border: rgba(130,80,223,0.15);
+  --link: #0969da;
+  --code-bg: #eef1f5;
+  --output-bg: #f0faf0;
+  --output-border: #c6e6c6;
+  --sidebar-bg: #f6f8fa;
+  --sidebar-active: rgba(9,105,218,0.1);
+  --exercise-border: #d0d7de;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;font-size:16px;line-height:1.7;color:var(--text);background:var(--bg);display:flex;min-height:100vh}
+a{color:var(--link);text-decoration:none}
+a:hover{text-decoration:underline}
+
+/* Sidebar */
+.sidebar{position:fixed;top:0;left:0;width:300px;height:100vh;background:var(--sidebar-bg);border-right:1px solid var(--border);overflow-y:auto;padding:20px 0;z-index:100}
+.sidebar-header{padding:16px 20px;border-bottom:1px solid var(--border);margin-bottom:12px}
+.sidebar-header h2{font-size:15px;font-weight:600;color:var(--text)}
+.sidebar-header .date{font-size:13px;color:var(--text-muted);margin-top:2px}
+.sidebar-section{padding:8px 20px 4px;font-size:12px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px}
+.sidebar-section.review-label{color:var(--purple)}
+.sidebar-nav{list-style:none;padding:0}
+.sidebar-nav li a{display:block;padding:6px 20px 6px 28px;font-size:14px;color:var(--text-muted);transition:all 0.15s}
+.sidebar-nav li a:hover,.sidebar-nav li a.active{color:var(--accent);background:var(--sidebar-active);text-decoration:none}
+.sidebar-nav li a .nav-id{font-size:11px;color:var(--text-muted);opacity:0.6;margin-left:6px}
+
+/* Main */
+.main{margin-left:300px;flex:1;padding:40px;max-width:1160px}
+.content{max-width:860px;margin:0 auto}
+
+/* Theme Toggle */
+.theme-toggle{position:fixed;top:16px;right:20px;z-index:200;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:8px 12px;cursor:pointer;color:var(--text);font-size:18px;line-height:1;transition:all 0.15s}
+.theme-toggle:hover{border-color:var(--accent)}
+
+/* Header */
+.guide-header{text-align:center;padding:32px 0 40px;border-bottom:1px solid var(--border);margin-bottom:40px}
+.guide-header h1{font-size:28px;font-weight:700;margin-bottom:8px}
+.guide-header .meta{font-size:15px;color:var(--text-muted)}
+.guide-header .meta span{margin:0 8px}
+.badge{display:inline-block;padding:2px 10px;border-radius:12px;font-size:13px;font-weight:500}
+.badge-blue{background:var(--accent-bg);color:var(--accent)}
+.badge-purple{background:var(--purple-bg);color:var(--purple)}
+
+/* How To Use */
+.how-to-use{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:24px 28px;margin-bottom:40px}
+.how-to-use h2{font-size:18px;margin-bottom:12px}
+.how-to-use ol{padding-left:24px}
+.how-to-use li{margin-bottom:6px;color:var(--text-muted)}
+
+/* Review Section */
+.review-section{margin-bottom:48px}
+.review-section-header{font-size:22px;font-weight:700;padding-bottom:12px;border-bottom:2px solid var(--purple);margin-bottom:28px;display:flex;align-items:center;gap:12px;color:var(--purple)}
+
+/* Review Card */
+.review-card{background:var(--purple-bg);border:1px solid var(--purple-border);border-radius:10px;padding:28px;margin-bottom:24px}
+.review-card .review-header{display:flex;align-items:center;gap:12px;margin-bottom:12px;flex-wrap:wrap}
+.review-card .review-title{font-size:18px;font-weight:700;color:var(--purple)}
+.review-card .review-meta{font-size:13px;color:var(--text-muted)}
+.review-card .review-reminder{color:var(--text-muted);font-style:italic;margin-bottom:16px;padding-left:14px;border-left:3px solid var(--purple)}
+.review-card .review-pattern{margin-bottom:16px}
+.review-card .review-pattern strong{display:block;margin-bottom:8px;font-size:14px;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px}
+.review-card .review-challenge{margin-bottom:12px}
+.review-card .review-challenge strong{display:block;margin-bottom:8px;font-size:14px;color:var(--yellow);text-transform:uppercase;letter-spacing:0.5px}
+.review-card .review-challenge p{line-height:1.6}
+.review-card .review-pitfall{background:var(--red-bg);border:1px solid rgba(248,81,73,0.15);border-radius:6px;padding:12px 16px;font-size:14px;line-height:1.6}
+.review-card .review-pitfall strong{color:var(--red);margin-right:4px}
+.review-card code{background:var(--code-bg);padding:2px 6px;border-radius:4px;font-family:'SF Mono','Fira Code','Consolas',monospace;font-size:13px}
+
+/* Topic Section */
+.topic-section{margin-bottom:48px}
+.topic-section-header{font-size:22px;font-weight:700;padding-bottom:12px;border-bottom:2px solid var(--accent);margin-bottom:28px;display:flex;align-items:center;gap:12px}
+.topic-section-header .section-num{background:var(--accent);color:#fff;width:32px;height:32px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:15px;font-weight:700;flex-shrink:0}
+
+/* Concept Card */
+.concept-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:28px;margin-bottom:32px}
+.concept-header{display:flex;align-items:center;gap:12px;margin-bottom:16px;flex-wrap:wrap}
+.concept-title{font-size:20px;font-weight:700}
+.ttag{display:inline-block;padding:2px 10px;border-radius:12px;font-size:12px;font-weight:500;background:var(--accent-bg);color:var(--accent)}
+.why-matters{color:var(--text-muted);font-style:italic;margin-bottom:20px;padding-left:14px;border-left:3px solid var(--accent)}
+.explanation{margin-bottom:20px;line-height:1.8}
+.explanation p{margin-bottom:12px}
+.explanation ul,.explanation ol{padding-left:24px;margin-bottom:12px}
+.explanation li{margin-bottom:4px}
+.explanation code{background:var(--code-bg);padding:2px 6px;border-radius:4px;font-family:'SF Mono','Fira Code','Consolas',monospace;font-size:14px}
+
+/* Code Examples */
+.code-example{margin-bottom:20px;border:1px solid var(--border);border-radius:8px;overflow:hidden}
+.lang-badge{background:var(--surface2);color:var(--text-muted);font-size:12px;font-weight:600;padding:6px 14px;border-bottom:1px solid var(--border);font-family:'SF Mono','Fira Code','Consolas',monospace}
+pre{margin:0;padding:16px;overflow-x:auto;background:var(--code-bg);font-family:'SF Mono','Fira Code','Consolas',monospace;font-size:13.5px;line-height:1.6;white-space:pre-wrap}
+pre code{background:none;padding:0;font-size:inherit}
+.output{background:var(--output-bg);border-top:1px solid var(--output-border);padding:12px 16px;font-family:'SF Mono','Fira Code','Consolas',monospace;font-size:13px;color:var(--green);white-space:pre-wrap}
+.output::before{content:"Output:";display:block;font-size:11px;font-weight:600;color:var(--text-muted);margin-bottom:4px;text-transform:uppercase;letter-spacing:0.5px}
+.type-result{background:var(--output-bg);border-top:1px solid var(--output-border);padding:12px 16px;font-family:'SF Mono','Fira Code','Consolas',monospace;font-size:13px;color:var(--green);white-space:pre-wrap}
+.type-result::before{content:"Type Result:";display:block;font-size:11px;font-weight:600;color:var(--text-muted);margin-bottom:4px;text-transform:uppercase;letter-spacing:0.5px}
+.type-error{background:var(--red-bg);border-top:1px solid rgba(248,81,73,0.2);padding:12px 16px;font-family:'SF Mono','Fira Code','Consolas',monospace;font-size:13px;color:var(--red);white-space:pre-wrap}
+.type-error::before{content:"Type Error:";display:block;font-size:11px;font-weight:600;color:var(--red);margin-bottom:4px;text-transform:uppercase;letter-spacing:0.5px}
+
+/* Callouts */
+.callout-warning{background:var(--yellow-bg);border:1px solid rgba(210,153,34,0.2);border-radius:8px;padding:20px;margin-bottom:20px}
+.callout-warning strong{color:var(--yellow);display:block;margin-bottom:12px;font-size:16px}
+.mistake,.correct{padding:10px 14px;border-radius:6px;margin-bottom:10px;font-size:14px;line-height:1.6}
+.mistake{background:var(--red-bg);border-left:3px solid var(--red)}
+.mistake code,.correct code{background:var(--code-bg);padding:2px 6px;border-radius:4px;font-family:'SF Mono','Fira Code','Consolas',monospace;font-size:13px}
+.correct{background:var(--green-bg);border-left:3px solid var(--green)}
+
+/* Key Rules */
+.key-rules{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:20px;margin-bottom:20px}
+.key-rules strong{display:block;margin-bottom:10px;font-size:16px}
+.key-rules ul{padding-left:20px}
+.key-rules li{margin-bottom:6px}
+.key-rules code{background:var(--code-bg);padding:2px 6px;border-radius:4px;font-family:'SF Mono','Fira Code','Consolas',monospace;font-size:13px}
+
+/* Exercises */
+.exercises{border:2px dashed var(--exercise-border);border-radius:8px;padding:20px;margin-bottom:20px;margin-left:12px}
+.exercises strong{display:block;margin-bottom:14px;font-size:16px;color:var(--purple)}
+.exercise{margin-bottom:14px;padding-left:38px;position:relative;line-height:1.6}
+.exercise:last-child{margin-bottom:0}
+.exercise-num{position:absolute;left:0;top:2px;background:var(--purple);color:#fff;width:24px;height:24px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:12px;font-weight:700}
+.exercise code{background:var(--code-bg);padding:2px 6px;border-radius:4px;font-family:'SF Mono','Fira Code','Consolas',monospace;font-size:13px}
+
+/* Connections */
+.connections{background:var(--accent-bg);border:1px solid rgba(56,139,253,0.2);border-radius:8px;padding:16px 20px;font-size:14px;color:var(--text-muted)}
+.connections strong{color:var(--accent);margin-right:6px}
+
+/* Footer */
+.guide-footer{border-top:1px solid var(--border);padding-top:32px;margin-top:48px}
+.guide-footer h2{font-size:18px;margin-bottom:16px}
+.guide-footer ul{list-style:none;padding:0}
+.guide-footer li{padding:6px 0}
+.guide-footer li a{font-weight:500}
+
+/* Responsive */
+@media(max-width:900px){
+  .sidebar{display:none}
+  .main{margin-left:0}
+  .theme-toggle{top:12px;right:12px}
+}
+</style>
+</head>
+<body>
+
+<!-- Theme Toggle -->
+<button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">&#x1F319;</button>
+
+<!-- Sidebar -->
+<nav class="sidebar">
+  <div class="sidebar-header">
+    <h2>TypeScript Daily Guide</h2>
+    <div class="date">2026-06-08 &mdash; Day 8</div>
+  </div>
+
+  <div class="sidebar-section review-label">Review (6 concepts)</div>
+  <ul class="sidebar-nav">
+    <li><a href="#review_decorators_tc39">Decorators (TC39) <span class="nav-id">R1</span></a></li>
+    <li><a href="#review_module_systems">Module Systems <span class="nav-id">R2</span></a></li>
+    <li><a href="#review_declaration_files">Declaration Files <span class="nav-id">R3</span></a></li>
+    <li><a href="#review_tsconfig_deep_dive">tsconfig.json Deep Dive <span class="nav-id">R4</span></a></li>
+    <li><a href="#review_type_annotations">Type Annotations <span class="nav-id">R5</span></a></li>
+    <li><a href="#review_union_narrowing">Union Types &amp; Narrowing <span class="nav-id">R6</span></a></li>
+  </ul>
+
+  <div class="sidebar-section">React + TypeScript</div>
+  <ul class="sidebar-nav">
+    <li><a href="#react_component_props">Component Props <span class="nav-id">#1</span></a></li>
+    <li><a href="#react_hooks_typing">Hooks Typing <span class="nav-id">#2</span></a></li>
+    <li><a href="#react_generic_components">Generic Components <span class="nav-id">#3</span></a></li>
+  </ul>
+
+  <div class="sidebar-section">Node.js &amp; APIs</div>
+  <ul class="sidebar-nav">
+    <li><a href="#nodejs_typescript">Node.js + TypeScript <span class="nav-id">#4</span></a></li>
+    <li><a href="#api_typing_trpc">API Typing: tRPC &amp; OpenAPI <span class="nav-id">#5</span></a></li>
+  </ul>
+</nav>
+
+<!-- Main Content -->
+<div class="main">
+<div class="content">
+
+<!-- Header -->
+<header class="guide-header">
+  <h1>TypeScript Daily Guide &mdash; Day 8</h1>
+  <div class="meta">
+    <span>2026-06-08</span>
+    <span>&middot;</span>
+    <span>Day 8</span>
+    <span>&middot;</span>
+    <span class="badge badge-purple">6 reviews</span>
+    <span class="badge badge-blue">5 new concepts</span>
+  </div>
+</header>
+
+<!-- How to Use -->
+<div class="how-to-use">
+  <h2>How to Use This Guide</h2>
+  <ol>
+    <li><strong>Review first</strong> &mdash; scan each purple review card; if the concept feels solid, move on; if fuzzy, re-read the code pattern</li>
+    <li><strong>Attempt the challenge exercise</strong> on any review card that felt shaky &mdash; this is your best reinforcement signal</li>
+    <li><strong>Work through new concepts</strong> top to bottom &mdash; each builds on the previous</li>
+    <li><strong>Type every code example</strong> yourself in a .ts or .tsx file &mdash; hover over types in your editor to build intuition</li>
+    <li><strong>Do at least 2 exercises per concept</strong> before moving to the next one</li>
+  </ol>
+</div>
+
+<!-- ============================================================ -->
+<!-- REVIEW SECTION                                                -->
+<!-- ============================================================ -->
+<div class="review-section">
+<div class="review-section-header">Review &mdash; 6 Concepts</div>
+
+<!-- R1: Decorators (TC39) -->
+<div class="review-card" id="review_decorators_tc39">
+  <div class="review-header">
+    <span class="review-title">R1. Decorators (TC39)</span>
+    <span class="badge badge-purple">Functions &amp; Patterns</span>
+    <span class="review-meta">rep 1 &middot; last reviewed 2026-06-05 &middot; 3 days ago</span>
+  </div>
+  <div class="review-reminder">TC39 stage 3 decorators replace the old <code>experimentalDecorators</code>. A class decorator receives the class constructor and a context object. A method decorator receives the method function and context with <code>addInitializer</code>.</div>
+
+  <div class="review-pattern">
+    <strong>Key Pattern</strong>
+    <div class="code-example">
+<pre><code>// TC39 method decorator signature
+function logged&lt;T extends (...args: any[]) =&gt; any&gt;(
+  target: T,
+  context: ClassMethodDecoratorContext
+): T | void {
+  const name = String(context.name);
+  return function (this: ThisParameterType&lt;T&gt;, ...args: Parameters&lt;T&gt;) {
+    console.log(`Entering ${name}`);
+    const result = target.call(this, ...args);
+    console.log(`Exiting ${name}`);
+    return result;
+  } as T;
+}
+
+class UserService {
+  @logged
+  getUser(id: string) { return { id, name: "Alice" }; }
+}
+
+new UserService().getUser("u-1");</code></pre>
+<div class="output">Entering getUser
+Exiting getUser</div>
+    </div>
+  </div>
+
+  <div class="review-challenge">
+    <strong>Challenge Exercise</strong>
+    <p>Write a <code>@logged</code> method decorator that logs entry/exit with the method name and timestamps. Ensure the decorator preserves the original return value.</p>
+  </div>
+
+  <div class="review-pitfall">
+    <strong>#1 Pitfall:</strong> TC39 decorators are NOT the same as legacy <code>experimentalDecorators</code>. The old API uses <code>(target, propertyKey, descriptor)</code>; the new API uses <code>(value, context)</code>. Mixing them causes silent failures.
+  </div>
+</div>
+
+<!-- R2: Module Systems -->
+<div class="review-card" id="review_module_systems">
+  <div class="review-header">
+    <span class="review-title">R2. Module Systems</span>
+    <span class="badge badge-purple">Modules &amp; Project Structure</span>
+    <span class="review-meta">rep 1 &middot; last reviewed 2026-06-05 &middot; 3 days ago</span>
+  </div>
+  <div class="review-reminder">ESM uses <code>import</code>/<code>export</code> (static, async, tree-shakeable). CJS uses <code>require()</code>/<code>module.exports</code> (dynamic, sync). Re-exports: <code>export { foo } from './module'</code>.</div>
+
+  <div class="review-pattern">
+    <strong>Key Pattern</strong>
+    <div class="code-example">
+<pre><code>// Re-export barrel file (index.ts)
+export { UserService } from './user.service';
+export { OrderService } from './order.service';
+export { type Config, defaultConfig } from './config';
+
+// Renamed re-export
+export { UserService as UserSvc } from './user.service';
+
+// Re-export everything
+export * from './utils';
+
+// Re-export with namespace
+export * as validators from './validators';</code></pre>
+    </div>
+  </div>
+
+  <div class="review-challenge">
+    <strong>Challenge Exercise</strong>
+    <p>Create a barrel file that re-exports from 3 modules with at least one renamed export and one <code>type</code>-only re-export.</p>
+  </div>
+
+  <div class="review-pitfall">
+    <strong>#1 Pitfall:</strong> CJS <code>require()</code> is synchronous and evaluated at runtime; ESM <code>import</code> is async and statically analyzable. Mixing them (e.g., <code>require()</code> in an ESM file) causes runtime errors in Node.js.
+  </div>
+</div>
+
+<!-- R3: Declaration Files -->
+<div class="review-card" id="review_declaration_files">
+  <div class="review-header">
+    <span class="review-title">R3. Declaration Files</span>
+    <span class="badge badge-purple">Modules &amp; Project Structure</span>
+    <span class="review-meta">rep 1 &middot; last reviewed 2026-06-05 &middot; 3 days ago</span>
+  </div>
+  <div class="review-reminder"><code>.d.ts</code> files describe the shape of JS modules without implementation. Use <code>declare module</code> for ambient declarations of untyped packages or non-TS assets.</div>
+
+  <div class="review-pattern">
+    <strong>Key Pattern</strong>
+    <div class="code-example">
+<pre><code>// css-modules.d.ts
+declare module '*.css' {
+  const styles: Record&lt;string, string&gt;;
+  export default styles;
+}
+
+// svg.d.ts
+declare module '*.svg' {
+  const content: string;
+  export default content;
+}
+
+// typed-env.d.ts
+declare namespace NodeJS {
+  interface ProcessEnv {
+    NODE_ENV: 'development' | 'production' | 'test';
+    DATABASE_URL: string;
+    PORT?: string;
+  }
+}</code></pre>
+    </div>
+  </div>
+
+  <div class="review-challenge">
+    <strong>Challenge Exercise</strong>
+    <p>Write a <code>.d.ts</code> declaration file for a JS utility library that exports three functions: <code>slugify(text: string): string</code>, <code>truncate(text: string, max: number): string</code>, and <code>capitalize(text: string): string</code>.</p>
+  </div>
+
+  <div class="review-pitfall">
+    <strong>#1 Pitfall:</strong> Forgetting <code>export</code> in declaration files makes types globally visible instead of module-scoped. Always include at least one <code>export</code> to make the file a module declaration.
+  </div>
+</div>
+
+<!-- R4: tsconfig.json Deep Dive -->
+<div class="review-card" id="review_tsconfig_deep_dive">
+  <div class="review-header">
+    <span class="review-title">R4. tsconfig.json Deep Dive</span>
+    <span class="badge badge-purple">Modules &amp; Project Structure</span>
+    <span class="review-meta">rep 1 &middot; last reviewed 2026-06-05 &middot; 3 days ago</span>
+  </div>
+  <div class="review-reminder"><code>"strict": true</code> enables all strict flags. <code>"paths"</code> creates import aliases at compile time. <code>"moduleResolution": "bundler"</code> is the modern choice for projects using bundlers.</div>
+
+  <div class="review-pattern">
+    <strong>Key Pattern</strong>
+    <div class="code-example">
+<pre><code>// tsconfig.json path aliases
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"],
+      "@components/*": ["./src/components/*"],
+      "@utils/*": ["./src/utils/*"]
+    },
+    "moduleResolution": "bundler",
+    "strict": true,
+    "noUncheckedIndexedAccess": true
+  }
+}
+
+// Usage in code:
+// import { Button } from '@components/Button';
+// instead of: import { Button } from '../../../components/Button';</code></pre>
+    </div>
+  </div>
+
+  <div class="review-challenge">
+    <strong>Challenge Exercise</strong>
+    <p>Configure a <code>tsconfig.json</code> for a library that emits both CJS and ESM output, using project references or separate tsconfig files for each target.</p>
+  </div>
+
+  <div class="review-pitfall">
+    <strong>#1 Pitfall:</strong> <code>paths</code> only affects TypeScript compilation, not runtime resolution. You still need a bundler plugin (e.g., <code>vite-tsconfig-paths</code>) or <code>module-alias</code> for Node.js to resolve path aliases at runtime.
+  </div>
+</div>
+
+<!-- R5: Type Annotations -->
+<div class="review-card" id="review_type_annotations">
+  <div class="review-header">
+    <span class="review-title">R5. Type Annotations</span>
+    <span class="badge badge-purple">Core Type System</span>
+    <span class="review-meta">rep 2 &middot; last reviewed 2026-06-01 &middot; 7 days ago</span>
+  </div>
+  <div class="review-reminder">Annotate variables, parameters, and return types with <code>: Type</code>. Primitives: <code>string</code>, <code>number</code>, <code>boolean</code>. Arrays: <code>T[]</code> or <code>Array&lt;T&gt;</code>. Tuples: <code>[string, number]</code>. Optional params: <code>name?: string</code>.</div>
+
+  <div class="review-pattern">
+    <strong>Key Pattern</strong>
+    <div class="code-example">
+<pre><code>function greet(name: string, age?: number): string {
+  return age !== undefined
+    ? `Hello ${name}, age ${age}`
+    : `Hello ${name}`;
+}
+
+// Typed config with optional nested properties
+interface AppConfig {
+  host: string;
+  port: number;
+  db?: {
+    url: string;
+    pool?: { min: number; max: number };
+  };
+}
+
+function initApp(config: AppConfig): void {
+  console.log(`Server: ${config.host}:${config.port}`);
+  if (config.db) {
+    console.log(`DB: ${config.db.url}`);
+  }
+}
+
+initApp({ host: "localhost", port: 3000 });</code></pre>
+<div class="output">Server: localhost:3000</div>
+    </div>
+  </div>
+
+  <div class="review-challenge">
+    <strong>Challenge Exercise</strong>
+    <p>Type a function that takes a config object with optional nested properties: <code>{ api: { baseUrl: string; timeout?: number; headers?: Record&lt;string, string&gt; }; debug?: boolean }</code>.</p>
+  </div>
+
+  <div class="review-pitfall">
+    <strong>#1 Pitfall:</strong> Using the <code>object</code> type (too broad &mdash; includes arrays, functions, Date) instead of a specific shape type. Use <code>Record&lt;string, unknown&gt;</code> for generic objects or define an interface.
+  </div>
+</div>
+
+<!-- R6: Union Types & Narrowing -->
+<div class="review-card" id="review_union_narrowing">
+  <div class="review-header">
+    <span class="review-title">R6. Union Types &amp; Narrowing</span>
+    <span class="badge badge-purple">Core Type System</span>
+    <span class="review-meta">rep 2 &middot; last reviewed 2026-06-01 &middot; 7 days ago</span>
+  </div>
+  <div class="review-reminder">Union types (<code>A | B</code>) require narrowing before accessing type-specific properties. Narrow with <code>typeof</code>, <code>instanceof</code>, <code>in</code>, or discriminant properties. Discriminated unions use a shared literal field (e.g., <code>kind</code>).</div>
+
+  <div class="review-pattern">
+    <strong>Key Pattern</strong>
+    <div class="code-example">
+<pre><code>type ClickEvent  = { kind: "click";  x: number; y: number };
+type KeyEvent    = { kind: "key";    key: string; code: number };
+type ScrollEvent = { kind: "scroll"; deltaY: number };
+type FocusEvent  = { kind: "focus";  target: string };
+
+type AppEvent = ClickEvent | KeyEvent | ScrollEvent | FocusEvent;
+
+function handleEvent(event: AppEvent): string {
+  switch (event.kind) {
+    case "click":  return `Clicked at (${event.x}, ${event.y})`;
+    case "key":    return `Key pressed: ${event.key}`;
+    case "scroll": return `Scrolled by ${event.deltaY}`;
+    case "focus":  return `Focused on ${event.target}`;
+  }
+}
+
+console.log(handleEvent({ kind: "click", x: 10, y: 20 }));</code></pre>
+<div class="output">Clicked at (10, 20)</div>
+    </div>
+  </div>
+
+  <div class="review-challenge">
+    <strong>Challenge Exercise</strong>
+    <p>Build a type-safe event handler using discriminated unions for 4 event types: <code>click</code>, <code>key</code>, <code>scroll</code>, and <code>resize</code>. Ensure the switch is exhaustive (add a <code>never</code> check).</p>
+  </div>
+
+  <div class="review-pitfall">
+    <strong>#1 Pitfall:</strong> Forgetting that <code>typeof null === 'object'</code> in JavaScript &mdash; narrowing with <code>typeof x === 'object'</code> doesn't eliminate <code>null</code>. Always check <code>x !== null &amp;&amp; typeof x === 'object'</code>.
+  </div>
+</div>
+
+</div><!-- end review-section -->
+
+
+<!-- ============================================================ -->
+<!-- NEW CONCEPTS: React + TypeScript                              -->
+<!-- ============================================================ -->
+<div class="topic-section">
+<div class="topic-section-header"><span class="section-num">1</span> React + TypeScript: Component Props</div>
+
+<div class="concept-card" id="react_component_props">
+  <div class="concept-header">
+    <span class="concept-title">Component Props</span>
+    <span class="ttag">React + TypeScript</span>
+    <span class="ttag">Ecosystem</span>
+  </div>
+  <div class="why-matters">Typing React component props catches misuse at compile time &mdash; wrong prop types, missing required props, invalid children. This is where most React + TypeScript value comes from.</div>
+
+  <div class="explanation">
+    <p>There are several ways to type a functional component's props in React. The key decision is whether to use <code>React.FC</code> or explicit type annotations.</p>
+    <ul>
+    <li><a href="typescript-guides/typescript-guide-2026-07-04.html">2026-07-04</a> (Day 31)</li>
+      <li><code>React.FC&lt;Props&gt;</code> was popular but is falling out of favor &mdash; it used to implicitly include <code>children</code> (fixed in React 18), and it doesn't support generic components</li>
+      <li>Inline annotation (<code>function Button(props: ButtonProps)</code>) is now preferred</li>
+      <li>Children should be explicitly typed as <code>React.ReactNode</code> (the broadest type, accepting elements, strings, numbers, null, arrays)</li>
+      <li>Event handlers have precise types: <code>React.MouseEvent&lt;HTMLButtonElement&gt;</code>, <code>React.ChangeEvent&lt;HTMLInputElement&gt;</code></li>
+      <li><code>ComponentPropsWithoutRef&lt;'button'&gt;</code> lets you inherit all native HTML attributes for wrapper components</li>
+      <li>Discriminated union props create polymorphic components with type-safe conditional props</li>
+    </ul>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">basic-props.tsx</div>
+<pre><code>import React from 'react';
+
+// Explicit annotation (preferred over React.FC)
+interface ButtonProps {
+  label: string;
+  variant?: 'primary' | 'secondary' | 'danger';
+  disabled?: boolean;
+  onClick: () =&gt; void;
+}
+
+function Button({ label, variant = 'primary', disabled = false, onClick }: ButtonProps) {
+  return (
+    &lt;button
+      className={`btn btn-${variant}`}
+      disabled={disabled}
+      onClick={onClick}
+    &gt;
+      {label}
+    &lt;/button&gt;
+  );
+}
+
+// Usage:
+&lt;Button label="Save" onClick={() =&gt; save()} /&gt;
+// &lt;Button label="Save" /&gt;  // Error: onClick is missing
+// &lt;Button label={42} onClick={() =&gt; {}} /&gt;  // Error: number not assignable to string</code></pre>
+<div class="type-error">Property 'onClick' is missing in type '{ label: string; }' but required in type 'ButtonProps'.</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">children-props.tsx</div>
+<pre><code>// Typing children explicitly
+interface CardProps {
+  title: string;
+  children: React.ReactNode;  // broadest: elements, strings, null, arrays
+}
+
+function Card({ title, children }: CardProps) {
+  return (
+    &lt;div className="card"&gt;
+      &lt;h2&gt;{title}&lt;/h2&gt;
+      &lt;div className="card-body"&gt;{children}&lt;/div&gt;
+    &lt;/div&gt;
+  );
+}
+
+// ReactNode accepts anything renderable
+&lt;Card title="Info"&gt;
+  &lt;p&gt;Some text&lt;/p&gt;
+  {null}
+  {42}
+  {['a', 'b']}
+&lt;/Card&gt;</code></pre>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">event-handlers.tsx</div>
+<pre><code>interface FormProps {
+  onSubmit: (data: { name: string; email: string }) =&gt; void;
+}
+
+function ContactForm({ onSubmit }: FormProps) {
+  const handleChange = (e: React.ChangeEvent&lt;HTMLInputElement&gt;) =&gt; {
+    console.log(e.target.value);  // string, fully typed
+  };
+
+  const handleSubmit = (e: React.FormEvent&lt;HTMLFormElement&gt;) =&gt; {
+    e.preventDefault();
+    const form = new FormData(e.currentTarget);
+    onSubmit({
+      name: form.get('name') as string,
+      email: form.get('email') as string,
+    });
+  };
+
+  return (
+    &lt;form onSubmit={handleSubmit}&gt;
+      &lt;input name="name" onChange={handleChange} /&gt;
+      &lt;input name="email" type="email" onChange={handleChange} /&gt;
+      &lt;button type="submit"&gt;Send&lt;/button&gt;
+    &lt;/form&gt;
+  );
+}</code></pre>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">extending-html-props.tsx</div>
+<pre><code>import { ComponentPropsWithoutRef } from 'react';
+
+// Inherit all native &lt;input&gt; props + add custom ones
+interface TextInputProps extends ComponentPropsWithoutRef&lt;'input'&gt; {
+  label: string;
+  error?: string;
+}
+
+function TextInput({ label, error, ...inputProps }: TextInputProps) {
+  return (
+    &lt;div&gt;
+      &lt;label&gt;{label}&lt;/label&gt;
+      &lt;input {...inputProps} /&gt;
+      {error &amp;&amp; &lt;span className="error"&gt;{error}&lt;/span&gt;}
+    &lt;/div&gt;
+  );
+}
+
+// All native input props are available:
+&lt;TextInput
+  label="Email"
+  type="email"
+  placeholder="you@example.com"
+  required
+  error="Invalid email"
+/&gt;</code></pre>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">discriminated-union-props.tsx</div>
+<pre><code>// Polymorphic component: link OR button, never both
+type LinkAction = {
+  variant: 'link';
+  href: string;
+  target?: '_blank' | '_self';
+};
+
+type ButtonAction = {
+  variant: 'button';
+  onClick: () =&gt; void;
+  disabled?: boolean;
+};
+
+type ActionProps = (LinkAction | ButtonAction) &amp; { label: string };
+
+function Action(props: ActionProps) {
+  if (props.variant === 'link') {
+    return &lt;a href={props.href} target={props.target}&gt;{props.label}&lt;/a&gt;;
+  }
+  return &lt;button onClick={props.onClick} disabled={props.disabled}&gt;{props.label}&lt;/button&gt;;
+}
+
+// Type-safe usage:
+&lt;Action variant="link" label="Docs" href="/docs" /&gt;
+&lt;Action variant="button" label="Save" onClick={() =&gt; save()} /&gt;
+
+// Error: href not valid for button variant
+// &lt;Action variant="button" label="X" onClick={() =&gt; {}} href="/bad" /&gt;</code></pre>
+<div class="type-error">Object literal may only specify known properties, and 'href' does not exist in type 'ButtonAction &amp; { label: string }'.</div>
+  </div>
+
+  <div class="callout-warning">
+    <strong>Common Mistakes</strong>
+    <div class="mistake">Using <code>React.FC&lt;Props&gt;</code> &mdash; it doesn't support generic components and adds an implicit <code>children?</code> in older React versions</div>
+    <div class="correct">Use explicit annotation: <code>function MyComponent(props: Props): JSX.Element</code></div>
+    <div class="mistake">Using <code>any</code> for event handlers: <code>onClick: (e: any) =&gt; void</code></div>
+    <div class="correct">Use precise types: <code>onClick: (e: React.MouseEvent&lt;HTMLButtonElement&gt;) =&gt; void</code></div>
+    <div class="mistake">Not using discriminated unions for conditional props (e.g., <code>href?: string; onClick?: () =&gt; void</code>)</div>
+    <div class="correct">Use discriminated unions so exactly one variant is enforced at compile time</div>
+  </div>
+
+  <div class="key-rules">
+    <strong>Key Rules</strong>
+    <ul>
+      <li>Prefer explicit return types over <code>React.FC</code></li>
+      <li>Use <code>ComponentPropsWithoutRef</code> for wrapper components that forward native HTML attributes</li>
+      <li>Use discriminated unions for polymorphic components (link vs button, modal vs drawer, etc.)</li>
+      <li>Always type <code>children</code> explicitly as <code>React.ReactNode</code> if your component accepts them</li>
+    </ul>
+  </div>
+
+  <div class="exercises">
+    <strong>Exercises</strong>
+    <div class="exercise"><span class="exercise-num">1</span>Create a <code>Badge</code> component with props: <code>label: string</code>, <code>color: 'green' | 'red' | 'blue'</code>, and optional <code>icon: React.ReactNode</code>. The component should render a span with the label and optional icon.</div>
+    <div class="exercise"><span class="exercise-num">2</span>Build a <code>Modal</code> component that accepts <code>isOpen: boolean</code>, <code>onClose: () =&gt; void</code>, <code>title: string</code>, and <code>children: React.ReactNode</code>. Extend it with <code>ComponentPropsWithoutRef&lt;'dialog'&gt;</code>.</div>
+    <div class="exercise"><span class="exercise-num">3</span>Create a discriminated union props type for a <code>Notification</code> component with three variants: <code>success</code> (with <code>message: string</code>), <code>error</code> (with <code>message: string</code> and <code>retry: () =&gt; void</code>), and <code>loading</code> (with <code>progress: number</code>).</div>
+  </div>
+
+  <div class="connections">
+    <strong>Connections:</strong> Component props typing builds on <a href="#review_type_annotations">Type Annotations</a> (reviewed today) for basic prop shapes and <a href="#review_union_narrowing">Union Types &amp; Narrowing</a> (reviewed today) for discriminated union props. The <code>ComponentPropsWithoutRef</code> pattern uses <a href="typescript-guides/typescript-guide-2026-06-01.html">Generics</a> (Day 2) and <a href="typescript-guides/typescript-guide-2026-06-02.html">Utility Types</a> (Day 3) under the hood.
+  </div>
+</div>
+</div>
+
+
+<div class="topic-section">
+<div class="topic-section-header"><span class="section-num">2</span> React + TypeScript: Hooks Typing</div>
+
+<div class="concept-card" id="react_hooks_typing">
+  <div class="concept-header">
+    <span class="concept-title">Hooks Typing</span>
+    <span class="ttag">React + TypeScript</span>
+    <span class="ttag">Ecosystem</span>
+  </div>
+  <div class="why-matters">Properly typed hooks prevent runtime errors from incorrect state shapes, wrong ref types, and mismatched reducer actions. Hooks are where most React logic lives &mdash; getting the types right here pays dividends everywhere.</div>
+
+  <div class="explanation">
+    <p>React hooks have excellent TypeScript support, but several patterns require explicit generic annotations:</p>
+    <ul>
+      <li><code>useState&lt;T&gt;</code> needs an explicit generic when the initial value doesn't capture the full type (e.g., <code>useState&lt;User | null&gt;(null)</code>)</li>
+      <li><code>useRef&lt;HTMLInputElement&gt;(null)</code> creates a <code>RefObject</code> (read-only <code>.current</code>). <code>useRef&lt;number&gt;(0)</code> creates a <code>MutableRefObject</code></li>
+      <li><code>useReducer</code> shines with discriminated union actions &mdash; each action type gets its own payload shape</li>
+      <li>Custom hooks returning tuples need <code>as const</code> to prevent TypeScript from widening <code>[string, () =&gt; void]</code> to <code>(string | (() =&gt; void))[]</code></li>
+      <li>Typed context with <code>createContext&lt;T | undefined&gt;(undefined)</code> needs a guarded hook that throws when used outside a provider</li>
+    </ul>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">useState-typed.tsx</div>
+<pre><code>import { useState } from 'react';
+
+// Simple: TypeScript infers from initial value
+const [count, setCount] = useState(0);          // number
+const [name, setName] = useState('');            // string
+
+// Explicit generic needed when initial doesn't match full type
+interface User {
+  id: string;
+  name: string;
+  email: string;
+}
+
+type LoadingState =
+  | { status: 'idle' }
+  | { status: 'loading' }
+  | { status: 'success'; data: User }
+  | { status: 'error'; error: string };
+
+function UserProfile({ userId }: { userId: string }) {
+  const [state, setState] = useState&lt;LoadingState&gt;({ status: 'idle' });
+
+  async function loadUser() {
+    setState({ status: 'loading' });
+    try {
+      const user = await fetchUser(userId);
+      setState({ status: 'success', data: user });
+    } catch (e) {
+      setState({ status: 'error', error: String(e) });
+    }
+  }
+
+  // TypeScript narrows inside each case
+  switch (state.status) {
+    case 'loading': return &lt;p&gt;Loading...&lt;/p&gt;;
+    case 'success': return &lt;p&gt;{state.data.name}&lt;/p&gt;;  // data is available
+    case 'error':   return &lt;p&gt;{state.error}&lt;/p&gt;;       // error is available
+    default:        return &lt;button onClick={loadUser}&gt;Load&lt;/button&gt;;
+  }
+}</code></pre>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">useRef-typed.tsx</div>
+<pre><code>import { useRef, useEffect } from 'react';
+
+function SearchInput() {
+  // DOM ref: nullable initial = RefObject (read-only .current)
+  const inputRef = useRef&lt;HTMLInputElement&gt;(null);
+
+  // Mutable ref: non-null initial = MutableRefObject
+  const renderCount = useRef&lt;number&gt;(0);
+
+  useEffect(() =&gt; {
+    // Must null-check DOM refs
+    inputRef.current?.focus();
+    renderCount.current += 1;  // No null check needed: MutableRefObject
+    console.log(`Rendered ${renderCount.current} times`);
+  });
+
+  return &lt;input ref={inputRef} placeholder="Search..." /&gt;;
+}
+
+// Key distinction:
+// useRef&lt;HTMLDivElement&gt;(null)   =&gt; RefObject&lt;HTMLDivElement&gt;       (.current is readonly)
+// useRef&lt;number&gt;(0)             =&gt; MutableRefObject&lt;number&gt;         (.current is mutable)</code></pre>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">useReducer-typed.tsx</div>
+<pre><code>import { useReducer } from 'react';
+
+interface TodoState {
+  todos: { id: number; text: string; done: boolean }[];
+  nextId: number;
+}
+
+// Discriminated union for actions
+type TodoAction =
+  | { type: 'ADD';    text: string }
+  | { type: 'TOGGLE'; id: number }
+  | { type: 'DELETE'; id: number }
+  | { type: 'CLEAR_DONE' };
+
+function todoReducer(state: TodoState, action: TodoAction): TodoState {
+  switch (action.type) {
+    case 'ADD':
+      return {
+        ...state,
+        todos: [...state.todos, { id: state.nextId, text: action.text, done: false }],
+        nextId: state.nextId + 1,
+      };
+    case 'TOGGLE':
+      return {
+        ...state,
+        todos: state.todos.map(t =&gt; t.id === action.id ? { ...t, done: !t.done } : t),
+      };
+    case 'DELETE':
+      return { ...state, todos: state.todos.filter(t =&gt; t.id !== action.id) };
+    case 'CLEAR_DONE':
+      return { ...state, todos: state.todos.filter(t =&gt; !t.done) };
+  }
+}
+
+function TodoApp() {
+  const [state, dispatch] = useReducer(todoReducer, { todos: [], nextId: 1 });
+
+  dispatch({ type: 'ADD', text: 'Learn TypeScript' });   // OK
+  dispatch({ type: 'TOGGLE', id: 1 });                    // OK
+  // dispatch({ type: 'ADD', id: 1 });                    // Error: 'id' not in ADD action
+  // dispatch({ type: 'UNKNOWN' });                       // Error: not assignable to TodoAction
+
+  return null;
+}</code></pre>
+<div class="type-error">Object literal may only specify known properties, and 'id' does not exist in type '{ type: "ADD"; text: string; }'.</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">custom-hook-return.tsx</div>
+<pre><code>import { useState, useCallback } from 'react';
+
+// Without `as const`, TS infers: (boolean | (() =&gt; void))[]
+// With `as const`, TS infers: [boolean, () =&gt; void, () =&gt; void]
+function useToggle(initial = false) {
+  const [value, setValue] = useState(initial);
+  const toggle = useCallback(() =&gt; setValue(v =&gt; !v), []);
+  const reset = useCallback(() =&gt; setValue(initial), [initial]);
+
+  return [value, toggle, reset] as const;
+}
+
+// Usage:
+function Panel() {
+  const [isOpen, toggle, reset] = useToggle(false);
+  //     ^ boolean  ^ () =&gt; void  ^ () =&gt; void (precise types!)
+  return (
+    &lt;div&gt;
+      &lt;button onClick={toggle}&gt;{isOpen ? 'Close' : 'Open'}&lt;/button&gt;
+      &lt;button onClick={reset}&gt;Reset&lt;/button&gt;
+    &lt;/div&gt;
+  );
+}</code></pre>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">typed-context.tsx</div>
+<pre><code>import { createContext, useContext, useState, ReactNode } from 'react';
+
+interface AuthContextType {
+  user: { id: string; name: string } | null;
+  login: (name: string) =&gt; void;
+  logout: () =&gt; void;
+}
+
+// Create with undefined default; guard at the hook level
+const AuthContext = createContext&lt;AuthContextType | undefined&gt;(undefined);
+
+// Guarded hook: throws descriptive error if used outside provider
+function useAuth(): AuthContextType {
+  const ctx = useContext(AuthContext);
+  if (ctx === undefined) {
+    throw new Error('useAuth must be used within an AuthProvider');
+  }
+  return ctx;  // AuthContextType, not AuthContextType | undefined
+}
+
+function AuthProvider({ children }: { children: ReactNode }) {
+  const [user, setUser] = useState&lt;{ id: string; name: string } | null&gt;(null);
+  const login = (name: string) =&gt; setUser({ id: crypto.randomUUID(), name });
+  const logout = () =&gt; setUser(null);
+
+  return (
+    &lt;AuthContext.Provider value={{ user, login, logout }}&gt;
+      {children}
+    &lt;/AuthContext.Provider&gt;
+  );
+}
+
+// Consumer: no undefined check needed
+function UserBadge() {
+  const { user } = useAuth();   // AuthContextType guaranteed
+  return user ? &lt;span&gt;{user.name}&lt;/span&gt; : &lt;span&gt;Guest&lt;/span&gt;;
+}</code></pre>
+  </div>
+
+  <div class="callout-warning">
+    <strong>Common Mistakes</strong>
+    <div class="mistake">Not providing type to <code>useState</code> when it starts as <code>null</code>: <code>const [user, setUser] = useState(null)</code> infers <code>null</code> forever</div>
+    <div class="correct">Provide explicit generic: <code>const [user, setUser] = useState&lt;User | null&gt;(null)</code></div>
+    <div class="mistake">Forgetting <code>as const</code> on custom hook tuple returns: <code>return [value, setter]</code> infers <code>(T | SetterFn)[]</code></div>
+    <div class="correct">Add <code>as const</code>: <code>return [value, setter] as const</code> to get <code>[T, SetterFn]</code></div>
+    <div class="mistake">Using <code>any</code> in reducer actions: <code>type Action = { type: string; payload: any }</code></div>
+    <div class="correct">Use discriminated unions with precise payloads for each action type</div>
+  </div>
+
+  <div class="key-rules">
+    <strong>Key Rules</strong>
+    <ul>
+      <li>Always type <code>useRef</code> for DOM elements as nullable: <code>useRef&lt;HTMLElement&gt;(null)</code></li>
+      <li>Use discriminated unions for <code>useReducer</code> action types</li>
+      <li>Use <code>as const</code> for custom hook tuple returns</li>
+      <li>Guard context hooks with a runtime check and throw if used outside the provider</li>
+    </ul>
+  </div>
+
+  <div class="exercises">
+    <strong>Exercises</strong>
+    <div class="exercise"><span class="exercise-num">1</span>Create a <code>useFetch&lt;T&gt;</code> custom hook that returns a discriminated union state: <code>{ status: 'idle' } | { status: 'loading' } | { status: 'success'; data: T } | { status: 'error'; error: string }</code>. It should accept a URL and fetch on mount.</div>
+    <div class="exercise"><span class="exercise-num">2</span>Write a <code>useLocalStorage&lt;T&gt;</code> hook that returns <code>[T, (value: T) =&gt; void]</code> with proper <code>as const</code> typing. It should read/write to localStorage and handle serialization.</div>
+    <div class="exercise"><span class="exercise-num">3</span>Build a typed <code>ThemeContext</code> with <code>createContext</code> that provides <code>{ theme: 'light' | 'dark'; toggle: () =&gt; void }</code>. Include the guarded <code>useTheme()</code> hook pattern.</div>
+  </div>
+
+  <div class="connections">
+    <strong>Connections:</strong> The discriminated union state in <code>useState</code> and <code>useReducer</code> directly applies <a href="#review_union_narrowing">Union Types &amp; Narrowing</a> (reviewed today). Custom hook generics build on <a href="typescript-guides/typescript-guide-2026-06-01.html">Generics Basics</a> (Day 2). The <code>as const</code> return pattern connects to <a href="typescript-guides/typescript-guide-2026-05-31.html">Literal Types &amp; const Assertions</a> (Day 1). The context guard pattern uses <a href="typescript-guides/typescript-guide-2026-06-03.html">Type Predicates</a> (Day 4) thinking.
+  </div>
+</div>
+</div>
+
+
+<div class="topic-section">
+<div class="topic-section-header"><span class="section-num">3</span> React + TypeScript: Generic Components</div>
+
+<div class="concept-card" id="react_generic_components">
+  <div class="concept-header">
+    <span class="concept-title">Generic Components</span>
+    <span class="ttag">React + TypeScript</span>
+    <span class="ttag">Advanced</span>
+  </div>
+  <div class="why-matters">Generic components let you build reusable UI (lists, tables, selects) that maintain type safety for any data shape. Instead of using <code>any</code> for item types, the consumer gets full autocomplete and error checking.</div>
+
+  <div class="explanation">
+    <p>A generic React component is a function component with a type parameter. The generic flows through props so the consumer gets precise types:</p>
+    <ul>
+      <li>Basic pattern: <code>function List&lt;T&gt;(props: { items: T[]; renderItem: (item: T) =&gt; ReactNode })</code></li>
+      <li>Constraints: <code>&lt;T extends { id: string }&gt;</code> ensures items have required fields for keys</li>
+      <li><code>forwardRef</code> with generics is tricky &mdash; React's <code>forwardRef</code> loses the generic. Use a type assertion wrapper or the new React 19 <code>ref</code> prop</li>
+      <li>Generic table components use column definitions that reference keys of the data type</li>
+      <li>Keep generics simple &mdash; if your component only handles 2-3 fixed types, a union is clearer than a generic</li>
+    </ul>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">generic-list.tsx</div>
+<pre><code>import { ReactNode } from 'react';
+
+interface ListProps&lt;T&gt; {
+  items: T[];
+  renderItem: (item: T, index: number) =&gt; ReactNode;
+  keyExtractor: (item: T) =&gt; string | number;
+}
+
+function List&lt;T&gt;({ items, renderItem, keyExtractor }: ListProps&lt;T&gt;) {
+  return (
+    &lt;ul&gt;
+      {items.map((item, i) =&gt; (
+        &lt;li key={keyExtractor(item)}&gt;{renderItem(item, i)}&lt;/li&gt;
+      ))}
+    &lt;/ul&gt;
+  );
+}
+
+// Usage: T is inferred as User
+interface User { id: string; name: string; email: string }
+const users: User[] = [
+  { id: '1', name: 'Alice', email: 'alice@test.com' },
+  { id: '2', name: 'Bob', email: 'bob@test.com' },
+];
+
+&lt;List
+  items={users}
+  keyExtractor={u =&gt; u.id}      // u is User
+  renderItem={u =&gt; u.name}       // u is User, full autocomplete
+/&gt;
+
+// Type error if renderItem doesn't match item type:
+// renderItem={(u) =&gt; u.age}   // Error: 'age' does not exist on type 'User'</code></pre>
+<div class="type-error">Property 'age' does not exist on type 'User'.</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">generic-select.tsx</div>
+<pre><code>import { ReactNode } from 'react';
+
+interface SelectProps&lt;T extends Record&lt;string, any&gt;&gt; {
+  items: T[];
+  labelKey: keyof T;
+  valueKey: keyof T;
+  selected: T[keyof T] | null;
+  onChange: (value: T[keyof T]) =&gt; void;
+}
+
+function Select&lt;T extends Record&lt;string, any&gt;&gt;({
+  items, labelKey, valueKey, selected, onChange
+}: SelectProps&lt;T&gt;) {
+  return (
+    &lt;select
+      value={selected != null ? String(selected) : ''}
+      onChange={e =&gt; {
+        const item = items.find(i =&gt; String(i[valueKey]) === e.target.value);
+        if (item) onChange(item[valueKey]);
+      }}
+    &gt;
+      &lt;option value=""&gt;Select...&lt;/option&gt;
+      {items.map(item =&gt; (
+        &lt;option key={String(item[valueKey])} value={String(item[valueKey])}&gt;
+          {String(item[labelKey])}
+        &lt;/option&gt;
+      ))}
+    &lt;/select&gt;
+  );
+}
+
+// Usage: T inferred as { code: string; name: string }
+const countries = [
+  { code: 'US', name: 'United States' },
+  { code: 'UK', name: 'United Kingdom' },
+];
+
+&lt;Select
+  items={countries}
+  labelKey="name"       // autocomplete: "code" | "name"
+  valueKey="code"       // autocomplete: "code" | "name"
+  selected="US"
+  onChange={v =&gt; console.log(v)}
+/&gt;
+
+// &lt;Select items={countries} labelKey="population" ... /&gt;
+// Error: "population" not assignable to "code" | "name"</code></pre>
+<div class="type-error">Type '"population"' is not assignable to type '"code" | "name"'.</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">generic-table.tsx</div>
+<pre><code>import { ReactNode } from 'react';
+
+interface Column&lt;T&gt; {
+  key: keyof T &amp; string;
+  header: string;
+  render?: (value: T[keyof T], row: T) =&gt; ReactNode;
+}
+
+interface TableProps&lt;T extends { id: string | number }&gt; {
+  data: T[];
+  columns: Column&lt;T&gt;[];
+}
+
+function Table&lt;T extends { id: string | number }&gt;({ data, columns }: TableProps&lt;T&gt;) {
+  return (
+    &lt;table&gt;
+      &lt;thead&gt;
+        &lt;tr&gt;{columns.map(col =&gt; &lt;th key={col.key}&gt;{col.header}&lt;/th&gt;)}&lt;/tr&gt;
+      &lt;/thead&gt;
+      &lt;tbody&gt;
+        {data.map(row =&gt; (
+          &lt;tr key={row.id}&gt;
+            {columns.map(col =&gt; (
+              &lt;td key={col.key}&gt;
+                {col.render ? col.render(row[col.key], row) : String(row[col.key])}
+              &lt;/td&gt;
+            ))}
+          &lt;/tr&gt;
+        ))}
+      &lt;/tbody&gt;
+    &lt;/table&gt;
+  );
+}
+
+// Usage:
+interface Product { id: string; name: string; price: number; inStock: boolean }
+
+const products: Product[] = [
+  { id: 'p1', name: 'Widget', price: 9.99, inStock: true },
+  { id: 'p2', name: 'Gadget', price: 24.99, inStock: false },
+];
+
+&lt;Table
+  data={products}
+  columns={[
+    { key: 'name', header: 'Product' },
+    { key: 'price', header: 'Price', render: v =&gt; `$${v}` },
+    { key: 'inStock', header: 'Available', render: v =&gt; v ? 'Yes' : 'No' },
+    // { key: 'rating', header: 'Rating' },  // Error: 'rating' not in Product
+  ]}
+/&gt;</code></pre>
+<div class="type-error">Type '"rating"' is not assignable to type 'keyof Product &amp; string'.</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">forwardref-generic.tsx</div>
+<pre><code>import { forwardRef, Ref, ReactNode } from 'react';
+
+// Problem: forwardRef loses the generic type parameter
+// Solution: create a wrapper that preserves it
+
+interface InnerListProps&lt;T&gt; {
+  items: T[];
+  renderItem: (item: T) =&gt; ReactNode;
+}
+
+// Inner component with ref
+function InnerList&lt;T&gt;(
+  { items, renderItem }: InnerListProps&lt;T&gt;,
+  ref: Ref&lt;HTMLUListElement&gt;
+) {
+  return (
+    &lt;ul ref={ref}&gt;
+      {items.map((item, i) =&gt; &lt;li key={i}&gt;{renderItem(item)}&lt;/li&gt;)}
+    &lt;/ul&gt;
+  );
+}
+
+// Type assertion to preserve generic
+const ForwardedList = forwardRef(InnerList) as &lt;T&gt;(
+  props: InnerListProps&lt;T&gt; &amp; { ref?: Ref&lt;HTMLUListElement&gt; }
+) =&gt; ReactNode;
+
+// Usage: generic is preserved
+&lt;ForwardedList
+  items={[1, 2, 3]}
+  renderItem={n =&gt; n * 2}      // n is number
+  ref={someRef}
+/&gt;</code></pre>
+  </div>
+
+  <div class="callout-warning">
+    <strong>Common Mistakes</strong>
+    <div class="mistake">Losing the generic type through <code>forwardRef</code>: the returned component becomes non-generic</div>
+    <div class="correct">Use a type assertion wrapper or upgrade to React 19's ref-as-prop pattern</div>
+    <div class="mistake">Not constraining generics enough: <code>&lt;T&gt;</code> accepts <code>unknown</code>, can't access any properties</div>
+    <div class="correct">Add constraints: <code>&lt;T extends { id: string }&gt;</code> so you can safely use <code>item.id</code></div>
+    <div class="mistake">Overcomplicating with generics when a union of 2-3 fixed types would be clearer</div>
+    <div class="correct">Use generics for truly reusable containers; prefer unions for small fixed sets</div>
+  </div>
+
+  <div class="key-rules">
+    <strong>Key Rules</strong>
+    <ul>
+      <li>Constrain generics to the minimum needed shape: <code>&lt;T extends { id: string | number }&gt;</code></li>
+      <li>Use generic components for truly reusable containers (List, Table, Select, Autocomplete)</li>
+      <li>Prefer unions over generics for small fixed sets of types</li>
+      <li>Use <code>keyof T</code> in column/field definitions to ensure keys match the data shape</li>
+    </ul>
+  </div>
+
+  <div class="exercises">
+    <strong>Exercises</strong>
+    <div class="exercise"><span class="exercise-num">1</span>Build a generic <code>Autocomplete&lt;T&gt;</code> component that accepts <code>items: T[]</code>, <code>getLabel: (item: T) =&gt; string</code>, <code>onSelect: (item: T) =&gt; void</code>, and an optional <code>filterFn</code>. Constrain <code>T extends { id: string }</code>.</div>
+    <div class="exercise"><span class="exercise-num">2</span>Create a generic <code>SortableTable&lt;T&gt;</code> that extends the Table example with a <code>sortBy</code> prop typed as <code>keyof T</code> and a <code>sortDirection</code> prop typed as <code>'asc' | 'desc'</code>.</div>
+    <div class="exercise"><span class="exercise-num">3</span>Write a generic <code>Tabs&lt;T extends string&gt;</code> component where the tab keys are constrained to a string literal union. Props: <code>tabs: Record&lt;T, ReactNode&gt;</code>, <code>activeTab: T</code>, <code>onTabChange: (tab: T) =&gt; void</code>.</div>
+  </div>
+
+  <div class="connections">
+    <strong>Connections:</strong> Generic components are the React application of <a href="typescript-guides/typescript-guide-2026-06-01.html">Generics Basics</a> (Day 2) and <a href="typescript-guides/typescript-guide-2026-06-04.html">Generic Constraints</a> (Day 5). The <code>keyof T</code> column typing uses <a href="typescript-guides/typescript-guide-2026-06-03.html">keyof &amp; Indexed Access</a> (Day 4). The <code>forwardRef</code> generic workaround connects to understanding <a href="typescript-guides/typescript-guide-2026-06-07.html#covariance_contravariance">Covariance</a> (Day 7) since React's <code>forwardRef</code> signature is not naturally generic.
+  </div>
+</div>
+</div>
+
+
+<div class="topic-section">
+<div class="topic-section-header"><span class="section-num">4</span> Node.js + TypeScript</div>
+
+<div class="concept-card" id="nodejs_typescript">
+  <div class="concept-header">
+    <span class="concept-title">Node.js + TypeScript</span>
+    <span class="ttag">Node.js</span>
+    <span class="ttag">Ecosystem</span>
+  </div>
+  <div class="why-matters">TypeScript in Node.js requires understanding <code>@types/node</code>, proper module configuration, and Node-specific patterns like typed streams, fs/promises, and process.env. Getting these right prevents subtle runtime bugs.</div>
+
+  <div class="explanation">
+    <p>Node.js doesn't natively understand TypeScript (unless using tsx/ts-node or Node 22+ with <code>--experimental-strip-types</code>). Key patterns:</p>
+    <ul>
+      <li><code>@types/node</code> provides ambient type declarations for all Node.js built-in APIs (fs, path, http, etc.)</li>
+      <li><code>fs/promises</code> returns properly typed Promises &mdash; prefer it over callback-based <code>fs</code></li>
+      <li><code>process.env</code> is typed as <code>Record&lt;string, string | undefined&gt;</code> &mdash; every value might be undefined</li>
+      <li>Declaration merging lets you augment <code>ProcessEnv</code> with your app's specific variables</li>
+      <li>Native ESM in Node requires <code>"type": "module"</code> in package.json and <code>.mts</code>/<code>.cts</code> extensions for disambiguation</li>
+      <li>Worker threads communicate via <code>parentPort.postMessage()</code> &mdash; type the messages with a discriminated union</li>
+    </ul>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">fs-promises.ts</div>
+<pre><code>import { readFile, writeFile, readdir, stat } from 'node:fs/promises';
+import { join } from 'node:path';
+
+// readFile returns Buffer by default, string with encoding
+async function loadConfig(path: string): Promise&lt;Record&lt;string, unknown&gt;&gt; {
+  const content: string = await readFile(path, 'utf-8');  // string
+  return JSON.parse(content);
+}
+
+// Typed directory listing
+async function listTsFiles(dir: string): Promise&lt;string[]&gt; {
+  const entries = await readdir(dir, { withFileTypes: true });
+  // entries is Dirent[] — each has .name, .isFile(), .isDirectory()
+  return entries
+    .filter(e =&gt; e.isFile() &amp;&amp; e.name.endsWith('.ts'))
+    .map(e =&gt; join(dir, e.name));
+}
+
+// Error handling: Node errors have a `code` property
+async function safeRead(path: string): Promise&lt;string | null&gt; {
+  try {
+    return await readFile(path, 'utf-8');
+  } catch (err) {
+    if (err instanceof Error &amp;&amp; 'code' in err &amp;&amp; err.code === 'ENOENT') {
+      return null;  // File not found
+    }
+    throw err;  // Re-throw unexpected errors
+  }
+}
+
+console.log(await listTsFiles('./src'));</code></pre>
+<div class="output">[ './src/index.ts', './src/config.ts', './src/utils.ts' ]</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">typed-env.d.ts</div>
+<pre><code>// Augment ProcessEnv with your app's variables
+declare namespace NodeJS {
+  interface ProcessEnv {
+    NODE_ENV: 'development' | 'production' | 'test';
+    DATABASE_URL: string;
+    PORT: string;
+    API_KEY: string;
+    LOG_LEVEL?: 'debug' | 'info' | 'warn' | 'error';
+  }
+}</code></pre>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">using-typed-env.ts</div>
+<pre><code>// After the declaration merging above:
+const port = parseInt(process.env.PORT, 10);   // PORT is string (not string | undefined)
+const dbUrl = process.env.DATABASE_URL;         // string
+
+// Optional vars still need a check
+const logLevel = process.env.LOG_LEVEL ?? 'info';  // 'debug' | 'info' | 'warn' | 'error'
+
+// IMPORTANT: declaration merging only helps at compile time.
+// At runtime, process.env.PORT could still be undefined if not set!
+// Always validate at startup:
+function requireEnv(key: string): string {
+  const value = process.env[key];
+  if (!value) throw new Error(`Missing required env var: ${key}`);
+  return value;
+}
+
+const apiKey = requireEnv('API_KEY');
+console.log(`Starting on port ${port}`);</code></pre>
+<div class="output">Starting on port 3000</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">http-server.ts</div>
+<pre><code>import { createServer, IncomingMessage, ServerResponse } from 'node:http';
+
+// Typed request handler
+function handleRequest(req: IncomingMessage, res: ServerResponse): void {
+  const { method, url } = req;  // method: string | undefined, url: string | undefined
+
+  if (method === 'GET' &amp;&amp; url === '/health') {
+    res.writeHead(200, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify({ status: 'ok', uptime: process.uptime() }));
+    return;
+  }
+
+  res.writeHead(404);
+  res.end('Not Found');
+}
+
+const server = createServer(handleRequest);
+server.listen(3000, () =&gt; {
+  console.log('Server running on http://localhost:3000');
+});</code></pre>
+<div class="output">Server running on http://localhost:3000</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">worker-threads.ts</div>
+<pre><code>import { Worker, isMainThread, parentPort, workerData } from 'node:worker_threads';
+
+// Typed messages between main thread and worker
+type WorkerMessage =
+  | { type: 'PROCESS'; data: number[] }
+  | { type: 'CANCEL' };
+
+type WorkerResult =
+  | { type: 'DONE'; result: number }
+  | { type: 'ERROR'; error: string };
+
+if (isMainThread) {
+  // Main thread: create worker
+  const worker = new Worker(new URL(import.meta.url));
+
+  worker.postMessage({ type: 'PROCESS', data: [1, 2, 3, 4, 5] } satisfies WorkerMessage);
+
+  worker.on('message', (msg: WorkerResult) =&gt; {
+    if (msg.type === 'DONE') {
+      console.log(`Sum: ${msg.result}`);
+    } else {
+      console.error(`Worker error: ${msg.error}`);
+    }
+  });
+} else {
+  // Worker thread
+  parentPort!.on('message', (msg: WorkerMessage) =&gt; {
+    if (msg.type === 'PROCESS') {
+      const sum = msg.data.reduce((a, b) =&gt; a + b, 0);
+      parentPort!.postMessage({ type: 'DONE', result: sum } satisfies WorkerResult);
+    }
+  });
+}</code></pre>
+<div class="output">Sum: 15</div>
+  </div>
+
+  <div class="callout-warning">
+    <strong>Common Mistakes</strong>
+    <div class="mistake">Assuming <code>process.env</code> values are always strings: <code>const port = parseInt(process.env.PORT)</code> &mdash; could be <code>NaN</code></div>
+    <div class="correct">Always validate: <code>const port = parseInt(process.env.PORT ?? '3000', 10)</code></div>
+    <div class="mistake">Using <code>require()</code> in ESM mode (<code>"type": "module"</code>): throws <code>ERR_REQUIRE_ESM</code> at runtime</div>
+    <div class="correct">Use <code>import</code> or <code>createRequire(import.meta.url)</code> for CJS interop</div>
+    <div class="mistake">Forgetting that declaration merging doesn't enforce runtime presence of env vars</div>
+    <div class="correct">Always validate environment variables at startup with a <code>requireEnv()</code> function</div>
+  </div>
+
+  <div class="key-rules">
+    <strong>Key Rules</strong>
+    <ul>
+      <li>Always check <code>process.env</code> for undefined &mdash; augmenting <code>ProcessEnv</code> is compile-time only</li>
+      <li>Use <code>fs/promises</code> over callback-based <code>fs</code> APIs</li>
+      <li>Augment <code>ProcessEnv</code> for validated environment variables, but always validate at startup</li>
+      <li>Use <code>satisfies</code> when posting messages to worker threads to catch type mismatches</li>
+    </ul>
+  </div>
+
+  <div class="exercises">
+    <strong>Exercises</strong>
+    <div class="exercise"><span class="exercise-num">1</span>Write a <code>loadJsonFile&lt;T&gt;(path: string): Promise&lt;T&gt;</code> function using <code>fs/promises</code> that reads a JSON file, parses it, and returns the typed result. Add proper error handling for file-not-found and parse errors.</div>
+    <div class="exercise"><span class="exercise-num">2</span>Create a typed <code>env.d.ts</code> for a project that uses <code>DATABASE_URL</code>, <code>REDIS_URL</code>, <code>JWT_SECRET</code>, and optional <code>DEBUG</code>. Write a startup validation function that checks all required vars are present.</div>
+    <div class="exercise"><span class="exercise-num">3</span>Build a typed HTTP router: define a <code>Route</code> type with <code>method: 'GET' | 'POST' | 'PUT' | 'DELETE'</code>, <code>path: string</code>, and <code>handler: (req: IncomingMessage, res: ServerResponse) =&gt; void</code>. Create a <code>createRouter(routes: Route[])</code> function.</div>
+  </div>
+
+  <div class="connections">
+    <strong>Connections:</strong> The <code>ProcessEnv</code> augmentation uses <a href="#review_declaration_files">Declaration Files</a> (reviewed today). The worker thread message typing applies <a href="#review_union_narrowing">Union Types &amp; Narrowing</a> (reviewed today) with discriminated unions. The <code>satisfies</code> keyword connects to <a href="typescript-guides/typescript-guide-2026-06-03.html">satisfies Operator</a> (Day 4). Module configuration ties back to <a href="#review_tsconfig_deep_dive">tsconfig.json Deep Dive</a> (reviewed today) and <a href="#review_module_systems">Module Systems</a> (reviewed today).
+  </div>
+</div>
+</div>
+
+
+<div class="topic-section">
+<div class="topic-section-header"><span class="section-num">5</span> API Typing: tRPC &amp; OpenAPI</div>
+
+<div class="concept-card" id="api_typing_trpc">
+  <div class="concept-header">
+    <span class="concept-title">API Typing: tRPC &amp; OpenAPI</span>
+    <span class="ttag">Full-Stack</span>
+    <span class="ttag">Ecosystem</span>
+  </div>
+  <div class="why-matters">End-to-end type safety between frontend and backend eliminates an entire class of integration bugs &mdash; mismatched request/response shapes. With tRPC, you change a server procedure and the client breaks at compile time, not in production.</div>
+
+  <div class="explanation">
+    <p>There are two main approaches to API type safety in the TypeScript ecosystem:</p>
+    <ul>
+      <li><strong>tRPC</strong>: Define server procedures with Zod schemas; TypeScript automatically infers client types. Zero codegen, zero config &mdash; the client "sees" the server's types through TypeScript's type inference</li>
+      <li><strong>OpenAPI codegen</strong>: Generate TypeScript types from an OpenAPI/Swagger specification. Best for multi-language backends where tRPC isn't an option</li>
+      <li><strong>Zod as shared contract</strong>: Define schemas once, validate at runtime, infer types at compile time with <code>z.infer&lt;typeof schema&gt;</code></li>
+      <li>The key insight: types disappear at runtime, but Zod schemas persist &mdash; so Zod bridges compile-time and runtime type safety</li>
+    </ul>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">trpc-router.ts (server)</div>
+<pre><code>import { initTRPC } from '@trpc/server';
+import { z } from 'zod';
+
+const t = initTRPC.create();
+
+// Zod schemas define input/output validation
+const UserSchema = z.object({
+  id: z.string().uuid(),
+  name: z.string().min(1),
+  email: z.string().email(),
+  role: z.enum(['admin', 'user', 'viewer']),
+});
+
+// Infer TypeScript type from Zod schema
+type User = z.infer&lt;typeof UserSchema&gt;;
+// Equivalent to:
+// { id: string; name: string; email: string; role: 'admin' | 'user' | 'viewer' }
+
+const appRouter = t.router({
+  // Query: read data
+  getUser: t.procedure
+    .input(z.object({ id: z.string().uuid() }))
+    .query(async ({ input }): Promise&lt;User&gt; =&gt; {
+      // input is { id: string } — validated at runtime by Zod
+      return fetchUserFromDb(input.id);
+    }),
+
+  // Mutation: write data
+  createUser: t.procedure
+    .input(z.object({
+      name: z.string().min(1).max(100),
+      email: z.string().email(),
+      role: z.enum(['admin', 'user', 'viewer']).default('user'),
+    }))
+    .mutation(async ({ input }) =&gt; {
+      // input is { name: string; email: string; role: 'admin' | 'user' | 'viewer' }
+      return createUserInDb(input);
+    }),
+
+  // List with pagination
+  listUsers: t.procedure
+    .input(z.object({
+      page: z.number().int().min(1).default(1),
+      limit: z.number().int().min(1).max(100).default(20),
+      role: z.enum(['admin', 'user', 'viewer']).optional(),
+    }))
+    .query(async ({ input }) =&gt; {
+      return { users: await queryUsers(input), total: 42 };
+    }),
+});
+
+// Export the router type for the client
+export type AppRouter = typeof appRouter;</code></pre>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">trpc-client.tsx (frontend)</div>
+<pre><code>import { createTRPCReact } from '@trpc/react-query';
+import type { AppRouter } from '../server/router';  // Type-only import
+
+// Create typed client — all procedures are fully typed
+const trpc = createTRPCReact&lt;AppRouter&gt;();
+
+function UserProfile({ userId }: { userId: string }) {
+  // Fully typed: input must be { id: string }, result is User
+  const { data, isLoading } = trpc.getUser.useQuery({ id: userId });
+
+  if (isLoading) return &lt;p&gt;Loading...&lt;/p&gt;;
+
+  // data is User | undefined (undefined while loading)
+  return (
+    &lt;div&gt;
+      &lt;h1&gt;{data?.name}&lt;/h1&gt;        {/* string */}
+      &lt;p&gt;{data?.email}&lt;/p&gt;         {/* string */}
+      &lt;span&gt;{data?.role}&lt;/span&gt;     {/* 'admin' | 'user' | 'viewer' */}
+    &lt;/div&gt;
+  );
+}
+
+function CreateUserForm() {
+  const mutation = trpc.createUser.useMutation();
+
+  const handleSubmit = () =&gt; {
+    mutation.mutate({
+      name: 'Alice',
+      email: 'alice@example.com',
+      // role defaults to 'user' via Zod .default()
+    });
+
+    // Type error: missing required field
+    // mutation.mutate({ name: 'Bob' });
+    // Error: Property 'email' is missing
+
+    // Type error: invalid role
+    // mutation.mutate({ name: 'Bob', email: 'b@b.com', role: 'superadmin' });
+    // Error: 'superadmin' not assignable to 'admin' | 'user' | 'viewer'
+  };
+
+  return &lt;button onClick={handleSubmit}&gt;Create&lt;/button&gt;;
+}</code></pre>
+<div class="type-error">Type '"superadmin"' is not assignable to type '"admin" | "user" | "viewer"'.</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">zod-shared-contract.ts</div>
+<pre><code>import { z } from 'zod';
+
+// Define once, use for both validation and types
+const CreateOrderSchema = z.object({
+  productId: z.string().uuid(),
+  quantity: z.number().int().positive(),
+  shippingAddress: z.object({
+    street: z.string(),
+    city: z.string(),
+    zip: z.string().regex(/^\d{5}(-\d{4})?$/),
+    country: z.string().length(2),
+  }),
+  couponCode: z.string().optional(),
+});
+
+// Extract TypeScript type from Zod schema
+type CreateOrderInput = z.infer&lt;typeof CreateOrderSchema&gt;;
+// {
+//   productId: string;
+//   quantity: number;
+//   shippingAddress: { street: string; city: string; zip: string; country: string };
+//   couponCode?: string;
+// }
+
+// Runtime validation (server-side)
+function validateOrder(raw: unknown): CreateOrderInput {
+  return CreateOrderSchema.parse(raw);  // Throws ZodError if invalid
+}
+
+// Safe parsing (no throw)
+function tryValidateOrder(raw: unknown): CreateOrderInput | null {
+  const result = CreateOrderSchema.safeParse(raw);
+  if (result.success) return result.data;   // CreateOrderInput
+  console.error(result.error.issues);        // ZodIssue[]
+  return null;
+}
+
+const valid = validateOrder({
+  productId: '550e8400-e29b-41d4-a716-446655440000',
+  quantity: 3,
+  shippingAddress: { street: '123 Main', city: 'NYC', zip: '10001', country: 'US' },
+});
+console.log(valid.quantity);</code></pre>
+<div class="output">3</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">openapi-codegen.ts</div>
+<pre><code>// OpenAPI codegen generates types from a spec file:
+// npx openapi-typescript ./api-spec.yaml -o ./generated/api.ts
+
+// Generated types look like:
+interface paths {
+  '/users/{id}': {
+    get: {
+      parameters: { path: { id: string } };
+      responses: {
+        200: { content: { 'application/json': components['schemas']['User'] } };
+        404: { content: { 'application/json': { error: string } } };
+      };
+    };
+  };
+  '/users': {
+    post: {
+      requestBody: {
+        content: { 'application/json': components['schemas']['CreateUser'] };
+      };
+      responses: {
+        201: { content: { 'application/json': components['schemas']['User'] } };
+      };
+    };
+  };
+}
+
+interface components {
+  schemas: {
+    User: { id: string; name: string; email: string };
+    CreateUser: { name: string; email: string };
+  };
+}
+
+// Use with a typed fetch wrapper:
+import createClient from 'openapi-fetch';
+
+const client = createClient&lt;paths&gt;({ baseUrl: 'https://api.example.com' });
+
+// Fully typed: path params, request body, and response
+const { data, error } = await client.GET('/users/{id}', {
+  params: { path: { id: 'abc-123' } },
+});
+
+if (data) {
+  console.log(data.name);   // string — from components['schemas']['User']
+}</code></pre>
+  </div>
+
+  <div class="callout-warning">
+    <strong>Common Mistakes</strong>
+    <div class="mistake">Not using Zod for runtime validation: types disappear at runtime, so a malformed API response passes silently</div>
+    <div class="correct">Always validate at the boundary (API input, external data) with Zod <code>.parse()</code> or <code>.safeParse()</code></div>
+    <div class="mistake">Duplicating types between client and server: <code>interface User { ... }</code> defined in both</div>
+    <div class="correct">Use tRPC (automatic sharing) or a shared package with Zod schemas for a single source of truth</div>
+    <div class="mistake">Over-engineering API types when tRPC handles it automatically</div>
+    <div class="correct">Use tRPC for full-stack TypeScript; use OpenAPI codegen only for multi-language backends</div>
+  </div>
+
+  <div class="key-rules">
+    <strong>Key Rules</strong>
+    <ul>
+      <li>Use <strong>tRPC</strong> for full-stack TypeScript projects &mdash; zero codegen, zero config, end-to-end types</li>
+      <li>Use <strong>OpenAPI codegen</strong> for multi-language backends (Go, Python, Java, etc.)</li>
+      <li>Always validate at the boundary with Zod &mdash; <code>z.infer</code> bridges compile-time and runtime</li>
+      <li>Define schemas once in a shared package; derive both types and validation from them</li>
+    </ul>
+  </div>
+
+  <div class="exercises">
+    <strong>Exercises</strong>
+    <div class="exercise"><span class="exercise-num">1</span>Define a Zod schema for a blog post: <code>title</code> (string, 1-200 chars), <code>body</code> (string), <code>tags</code> (array of strings, max 5), <code>publishedAt</code> (optional ISO date string). Use <code>z.infer</code> to extract the TypeScript type.</div>
+    <div class="exercise"><span class="exercise-num">2</span>Create a tRPC router with 3 procedures: <code>getPosts</code> (query, accepts optional <code>tag</code> filter), <code>getPost</code> (query, accepts <code>id</code>), and <code>createPost</code> (mutation, accepts the blog post schema from Exercise 1).</div>
+    <div class="exercise"><span class="exercise-num">3</span>Write a <code>safeFetch&lt;T&gt;(url: string, schema: z.ZodType&lt;T&gt;): Promise&lt;T&gt;</code> function that fetches a URL, parses the JSON response, and validates it against a Zod schema. Return a typed, validated result.</div>
+  </div>
+
+  <div class="connections">
+    <strong>Connections:</strong> Zod integration was introduced in <a href="typescript-guides/typescript-guide-2026-06-07.html">Zod &amp; Runtime Validation</a> (Day 7, reviewed today) &mdash; this expands it to API contracts. The <code>z.infer</code> pattern uses <a href="typescript-guides/typescript-guide-2026-06-05.html#infer_mastery">infer</a> (Day 6) at the library level. tRPC's type inference relies on <a href="typescript-guides/typescript-guide-2026-06-01.html">Generics</a> (Day 2) flowing through the router definition. The discriminated union approach to API responses connects to the <code>useState</code> loading state from <a href="#react_hooks_typing">Hooks Typing</a> (today).
+  </div>
+</div>
+</div>
+
+
+<!-- ============================================================ -->
+<!-- FOOTER                                                        -->
+<!-- ============================================================ -->
+<footer class="guide-footer">
+  <h2>All Guides</h2>
+  <ul>
+    <li><a href="typescript-guides/typescript-guide-2026-07-09.html">2026-07-09</a> (Day 36)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-07-08.html">2026-07-08</a> (Day 35)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-07-07.html">2026-07-07</a> (Day 34)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-07-06.html">2026-07-06</a> (Day 33)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-07-05.html">2026-07-05</a> (Day 32)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-07-04.html">2026-07-04</a> (Day 31)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-07-03.html">2026-07-03</a> (Day 30)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-07-02.html">2026-07-02</a> (Day 29)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-07-01.html">2026-07-01</a> (Day 28)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-30.html">2026-06-30</a> (Day 27)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-29.html">2026-06-29</a> (Day 26)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-28.html">2026-06-28</a> (Day 25)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-27.html">2026-06-27</a> (Day 24)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-26.html">2026-06-26</a> (Day 23)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-25.html">2026-06-25</a> (Day 22)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-24.html">2026-06-24</a> (Day 21)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-23.html">2026-06-23</a> (Day 20)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-22.html">2026-06-22</a> (Day 19)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-21.html">2026-06-21</a> (Day 18)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-19.html">2026-06-19</a> (Day 17)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-18.html">2026-06-18</a> (Day 16)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-17.html">2026-06-17</a> (Day 15)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-15.html">2026-06-15</a> (Day 14)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-13.html">2026-06-13</a> (Day 13)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-12.html">2026-06-12</a> (Day 12)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-11.html">2026-06-11</a> (Day 11)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-10.html">2026-06-10</a> (Day 10)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-09.html">2026-06-09</a> (Day 9)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-08.html">2026-06-08</a> (Day 8)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-07.html">2026-06-07</a> (Day 7)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-05.html">2026-06-05</a> (Day 6)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-04.html">2026-06-04</a> (Day 5)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-03.html">2026-06-03</a> (Day 4)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-02.html">2026-06-02</a> (Day 3)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-01.html">2026-06-01</a> (Day 2)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-05-31.html">2026-05-31</a> (Day 1)</li>
+  </ul>
+</footer>
+
+</div><!-- end content -->
+</div><!-- end main -->
+
+<script>
+// Theme toggle
+(function() {
+  var toggle = document.getElementById('themeToggle');
+  var html = document.documentElement;
+  var STORAGE_KEY = 'lc-tsguide-theme';
+
+  function setTheme(theme) {
+    html.setAttribute('data-theme', theme);
+    toggle.textContent = theme === 'dark' ? '\u{1F319}' : '\u{2600}\u{FE0F}';
+    try { localStorage.setItem(STORAGE_KEY, theme); } catch(e) {}
+  }
+
+  // Load saved theme
+  try {
+    var saved = localStorage.getItem(STORAGE_KEY);
+    if (saved) setTheme(saved);
+  } catch(e) {}
+
+  toggle.addEventListener('click', function() {
+    var current = html.getAttribute('data-theme') || 'dark';
+    setTheme;
+  });
+})();
+
+// Sidebar active link tracking
+(function() {
+  var links = document.querySelectorAll('.sidebar-nav a');
+  var sections = [];
+  links.forEach(function(link) {
+    var id = link.getAttribute('href').replace('#', '');
+    var el = document.getElementById(id);
+    if (el) sections.push({ link: link, el: el });
+  });
+
+  function updateActive() {
+    var current = null;
+    var scrollY = window.scrollY + 120;
+    for (var i = sections.length - 1; i >= 0; i--) {
+      if (sections[i].el.offsetTop <= scrollY) {
+        current = sections[i];
+        break;
+      }
+    }
+    links.forEach(function(l) { l.classList.remove('active'); });
+    if  current.link.classList.add('active');
+  }
+
+  window.addEventListener('scroll', updateActive);
+  updateActive();
+})();
+</script>
+
+</body>
+</html>

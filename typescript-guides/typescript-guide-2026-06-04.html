@@ -1,0 +1,1882 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TypeScript Daily Guide — 2026-06-04 (Day 5)</title>
+<style>
+:root {
+  --bg: #0d1117;
+  --surface: #161b22;
+  --surface2: #1c2129;
+  --border: #30363d;
+  --text: #e6edf3;
+  --text-muted: #8b949e;
+  --accent: #58a6ff;
+  --accent-bg: rgba(56,139,253,0.15);
+  --green: #3fb950;
+  --green-bg: rgba(63,185,80,0.08);
+  --red: #f85149;
+  --red-bg: rgba(248,81,73,0.08);
+  --yellow: #d29922;
+  --yellow-bg: rgba(210,153,34,0.1);
+  --orange: #db6d28;
+  --purple: #bc8cff;
+  --purple-bg: rgba(188,140,255,0.08);
+  --purple-border: rgba(188,140,255,0.2);
+  --link: #58a6ff;
+  --code-bg: #1c2129;
+  --output-bg: #0e1c0e;
+  --output-border: #1a3a1a;
+  --sidebar-bg: #161b22;
+  --sidebar-active: rgba(56,139,253,0.15);
+  --exercise-border: #30363d;
+}
+[data-theme="light"] {
+  --bg: #ffffff;
+  --surface: #f6f8fa;
+  --surface2: #eef1f5;
+  --border: #d0d7de;
+  --text: #1f2328;
+  --text-muted: #656d76;
+  --accent: #0969da;
+  --accent-bg: rgba(9,105,218,0.1);
+  --green: #1a7f37;
+  --green-bg: rgba(26,127,55,0.06);
+  --red: #cf222e;
+  --red-bg: rgba(207,34,46,0.06);
+  --yellow: #9a6700;
+  --yellow-bg: rgba(154,103,0,0.06);
+  --orange: #bc4c00;
+  --purple: #8250df;
+  --purple-bg: rgba(130,80,223,0.06);
+  --purple-border: rgba(130,80,223,0.15);
+  --link: #0969da;
+  --code-bg: #eef1f5;
+  --output-bg: #f0faf0;
+  --output-border: #c6e6c6;
+  --sidebar-bg: #f6f8fa;
+  --sidebar-active: rgba(9,105,218,0.1);
+  --exercise-border: #d0d7de;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;font-size:16px;line-height:1.7;color:var(--text);background:var(--bg);display:flex;min-height:100vh}
+a{color:var(--link);text-decoration:none}
+a:hover{text-decoration:underline}
+
+/* Sidebar */
+.sidebar{position:fixed;top:0;left:0;width:300px;height:100vh;background:var(--sidebar-bg);border-right:1px solid var(--border);overflow-y:auto;padding:20px 0;z-index:100}
+.sidebar-header{padding:16px 20px;border-bottom:1px solid var(--border);margin-bottom:12px}
+.sidebar-header h2{font-size:15px;font-weight:600;color:var(--text)}
+.sidebar-header .date{font-size:13px;color:var(--text-muted);margin-top:2px}
+.sidebar-section{padding:8px 20px 4px;font-size:12px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px}
+.sidebar-section.review-label{color:var(--purple)}
+.sidebar-nav{list-style:none;padding:0}
+.sidebar-nav li a{display:block;padding:6px 20px 6px 28px;font-size:14px;color:var(--text-muted);transition:all 0.15s}
+.sidebar-nav li a:hover,.sidebar-nav li a.active{color:var(--accent);background:var(--sidebar-active);text-decoration:none}
+.sidebar-nav li a .nav-id{font-size:11px;color:var(--text-muted);opacity:0.6;margin-left:6px}
+
+/* Main */
+.main{margin-left:300px;flex:1;padding:40px;max-width:1160px}
+.content{max-width:860px;margin:0 auto}
+
+/* Theme Toggle */
+.theme-toggle{position:fixed;top:16px;right:20px;z-index:200;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:8px 12px;cursor:pointer;color:var(--text);font-size:18px;line-height:1;transition:all 0.15s}
+.theme-toggle:hover{border-color:var(--accent)}
+
+/* Header */
+.guide-header{text-align:center;padding:32px 0 40px;border-bottom:1px solid var(--border);margin-bottom:40px}
+.guide-header h1{font-size:28px;font-weight:700;margin-bottom:8px}
+.guide-header .meta{font-size:15px;color:var(--text-muted)}
+.guide-header .meta span{margin:0 8px}
+.badge{display:inline-block;padding:2px 10px;border-radius:12px;font-size:13px;font-weight:500}
+.badge-blue{background:var(--accent-bg);color:var(--accent)}
+.badge-purple{background:var(--purple-bg);color:var(--purple)}
+
+/* How To Use */
+.how-to-use{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:24px 28px;margin-bottom:40px}
+.how-to-use h2{font-size:18px;margin-bottom:12px}
+.how-to-use ol{padding-left:24px}
+.how-to-use li{margin-bottom:6px;color:var(--text-muted)}
+
+/* Review Section */
+.review-section{margin-bottom:48px}
+.review-section-header{font-size:22px;font-weight:700;padding-bottom:12px;border-bottom:2px solid var(--purple);margin-bottom:28px;display:flex;align-items:center;gap:12px;color:var(--purple)}
+
+/* Review Card */
+.review-card{background:var(--purple-bg);border:1px solid var(--purple-border);border-radius:10px;padding:28px;margin-bottom:24px}
+.review-card .review-header{display:flex;align-items:center;gap:12px;margin-bottom:12px;flex-wrap:wrap}
+.review-card .review-title{font-size:18px;font-weight:700;color:var(--purple)}
+.review-card .review-meta{font-size:13px;color:var(--text-muted)}
+.review-card .review-reminder{color:var(--text-muted);font-style:italic;margin-bottom:16px;padding-left:14px;border-left:3px solid var(--purple)}
+.review-card .review-pattern{margin-bottom:16px}
+.review-card .review-pattern strong{display:block;margin-bottom:8px;font-size:14px;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px}
+.review-card .review-challenge{margin-bottom:12px}
+.review-card .review-challenge strong{display:block;margin-bottom:8px;font-size:14px;color:var(--yellow);text-transform:uppercase;letter-spacing:0.5px}
+.review-card .review-challenge p{line-height:1.6}
+.review-card .review-pitfall{background:var(--red-bg);border:1px solid rgba(248,81,73,0.15);border-radius:6px;padding:12px 16px;font-size:14px;line-height:1.6}
+.review-card .review-pitfall strong{color:var(--red);margin-right:4px}
+.review-card code{background:var(--code-bg);padding:2px 6px;border-radius:4px;font-family:'SF Mono','Fira Code','Consolas',monospace;font-size:13px}
+
+/* Topic Section */
+.topic-section{margin-bottom:48px}
+.topic-section-header{font-size:22px;font-weight:700;padding-bottom:12px;border-bottom:2px solid var(--accent);margin-bottom:28px;display:flex;align-items:center;gap:12px}
+.topic-section-header .section-num{background:var(--accent);color:#fff;width:32px;height:32px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:15px;font-weight:700;flex-shrink:0}
+
+/* Concept Card */
+.concept-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:28px;margin-bottom:32px}
+.concept-header{display:flex;align-items:center;gap:12px;margin-bottom:16px;flex-wrap:wrap}
+.concept-title{font-size:20px;font-weight:700}
+.ttag{display:inline-block;padding:2px 10px;border-radius:12px;font-size:12px;font-weight:500;background:var(--accent-bg);color:var(--accent)}
+.why-matters{color:var(--text-muted);font-style:italic;margin-bottom:20px;padding-left:14px;border-left:3px solid var(--accent)}
+.explanation{margin-bottom:20px;line-height:1.8}
+.explanation p{margin-bottom:12px}
+.explanation ul,.explanation ol{padding-left:24px;margin-bottom:12px}
+.explanation li{margin-bottom:4px}
+.explanation code{background:var(--code-bg);padding:2px 6px;border-radius:4px;font-family:'SF Mono','Fira Code','Consolas',monospace;font-size:14px}
+
+/* Code Examples */
+.code-example{margin-bottom:20px;border:1px solid var(--border);border-radius:8px;overflow:hidden}
+.lang-badge{background:var(--surface2);color:var(--text-muted);font-size:12px;font-weight:600;padding:6px 14px;border-bottom:1px solid var(--border);font-family:'SF Mono','Fira Code','Consolas',monospace}
+pre{margin:0;padding:16px;overflow-x:auto;background:var(--code-bg);font-family:'SF Mono','Fira Code','Consolas',monospace;font-size:13.5px;line-height:1.6;white-space:pre-wrap}
+pre code{background:none;padding:0;font-size:inherit}
+.output{background:var(--output-bg);border-top:1px solid var(--output-border);padding:12px 16px;font-family:'SF Mono','Fira Code','Consolas',monospace;font-size:13px;color:var(--green);white-space:pre-wrap}
+.output::before{content:"Output:";display:block;font-size:11px;font-weight:600;color:var(--text-muted);margin-bottom:4px;text-transform:uppercase;letter-spacing:0.5px}
+.type-result{background:var(--output-bg);border-top:1px solid var(--output-border);padding:12px 16px;font-family:'SF Mono','Fira Code','Consolas',monospace;font-size:13px;color:var(--green);white-space:pre-wrap}
+.type-result::before{content:"Type Result:";display:block;font-size:11px;font-weight:600;color:var(--text-muted);margin-bottom:4px;text-transform:uppercase;letter-spacing:0.5px}
+.type-error{background:var(--red-bg);border-top:1px solid rgba(248,81,73,0.2);padding:12px 16px;font-family:'SF Mono','Fira Code','Consolas',monospace;font-size:13px;color:var(--red);white-space:pre-wrap}
+.type-error::before{content:"Type Error:";display:block;font-size:11px;font-weight:600;color:var(--red);margin-bottom:4px;text-transform:uppercase;letter-spacing:0.5px}
+
+/* Callouts */
+.callout-warning{background:var(--yellow-bg);border:1px solid rgba(210,153,34,0.2);border-radius:8px;padding:20px;margin-bottom:20px}
+.callout-warning strong{color:var(--yellow);display:block;margin-bottom:12px;font-size:16px}
+.mistake,.correct{padding:10px 14px;border-radius:6px;margin-bottom:10px;font-size:14px;line-height:1.6}
+.mistake{background:var(--red-bg);border-left:3px solid var(--red)}
+.mistake code,.correct code{background:var(--code-bg);padding:2px 6px;border-radius:4px;font-family:'SF Mono','Fira Code','Consolas',monospace;font-size:13px}
+.correct{background:var(--green-bg);border-left:3px solid var(--green)}
+
+/* Key Rules */
+.key-rules{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:20px;margin-bottom:20px}
+.key-rules strong{display:block;margin-bottom:10px;font-size:16px}
+.key-rules ul{padding-left:20px}
+.key-rules li{margin-bottom:6px}
+.key-rules code{background:var(--code-bg);padding:2px 6px;border-radius:4px;font-family:'SF Mono','Fira Code','Consolas',monospace;font-size:13px}
+
+/* Exercises */
+.exercises{border:2px dashed var(--exercise-border);border-radius:8px;padding:20px;margin-bottom:20px;margin-left:12px}
+.exercises strong{display:block;margin-bottom:14px;font-size:16px;color:var(--purple)}
+.exercise{margin-bottom:14px;padding-left:38px;position:relative;line-height:1.6}
+.exercise:last-child{margin-bottom:0}
+.exercise-num{position:absolute;left:0;top:2px;background:var(--purple);color:#fff;width:24px;height:24px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:12px;font-weight:700}
+.exercise code{background:var(--code-bg);padding:2px 6px;border-radius:4px;font-family:'SF Mono','Fira Code','Consolas',monospace;font-size:13px}
+
+/* Connections */
+.connections{background:var(--accent-bg);border:1px solid rgba(56,139,253,0.2);border-radius:8px;padding:16px 20px;font-size:14px;color:var(--text-muted)}
+.connections strong{color:var(--accent);margin-right:6px}
+
+/* Footer */
+.guide-footer{border-top:1px solid var(--border);padding-top:32px;margin-top:48px}
+.guide-footer h2{font-size:18px;margin-bottom:16px}
+.guide-footer ul{list-style:none;padding:0}
+.guide-footer li{padding:6px 0}
+.guide-footer li a{font-weight:500}
+
+/* Responsive */
+@media(max-width:900px){
+  .sidebar{display:none}
+  .main{margin-left:0}
+  .theme-toggle{top:12px;right:12px}
+}
+</style>
+</head>
+<body>
+
+<!-- Theme Toggle -->
+<button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">&#x1F319;</button>
+
+<!-- Sidebar -->
+<nav class="sidebar">
+  <div class="sidebar-header">
+    <h2>TypeScript Daily Guide</h2>
+    <div class="date">2026-06-04 &mdash; Day 5</div>
+  </div>
+
+  <div class="sidebar-section review-label">Review (6 concepts)</div>
+  <ul class="sidebar-nav">
+    <li><a href="#review_function_overloads">Function Overloads <span class="nav-id">R1</span></a></li>
+    <li><a href="#review_generic_constraints">Generic Constraints &amp; Defaults <span class="nav-id">R2</span></a></li>
+    <li><a href="#review_branded_types">Branded/Opaque Types <span class="nav-id">R3</span></a></li>
+    <li><a href="#review_this_types">this Types &amp; Fluent Interfaces <span class="nav-id">R4</span></a></li>
+    <li><a href="#review_async_patterns">Async Patterns &amp; Promise Typing <span class="nav-id">R5</span></a></li>
+    <li><a href="#review_never_exhaustiveness">never &amp; Exhaustiveness <span class="nav-id">R6</span></a></li>
+  </ul>
+
+  <div class="sidebar-section">Modules &amp; Project Structure (Week 4 finish)</div>
+  <ul class="sidebar-nav">
+    <li><a href="#project_references">Project References <span class="nav-id">#1</span></a></li>
+    <li><a href="#package_publishing">Package Publishing <span class="nav-id">#2</span></a></li>
+  </ul>
+
+  <div class="sidebar-section">Runtime Patterns (Week 5)</div>
+  <ul class="sidebar-nav">
+    <li><a href="#zod_validation">Zod &amp; Runtime Validation <span class="nav-id">#3</span></a></li>
+    <li><a href="#error_handling_patterns">Error Handling Patterns <span class="nav-id">#4</span></a></li>
+    <li><a href="#discriminated_unions_practice">Discriminated Unions in Practice <span class="nav-id">#5</span></a></li>
+  </ul>
+</nav>
+
+<!-- Main Content -->
+<div class="main">
+<div class="content">
+
+<!-- Header -->
+<header class="guide-header">
+  <h1>TypeScript Daily Guide &mdash; Day 5</h1>
+  <div class="meta">
+    <span>2026-06-04</span>
+    <span>&middot;</span>
+    <span>Day 5</span>
+    <span>&middot;</span>
+    <span class="badge badge-purple">6 reviews</span>
+    <span class="badge badge-blue">5 new concepts</span>
+  </div>
+</header>
+
+<!-- How to Use -->
+<div class="how-to-use">
+  <h2>How to Use This Guide</h2>
+  <ol>
+    <li><strong>Review first</strong> &mdash; scan each purple review card; if the concept feels solid, move on; if fuzzy, re-read the code pattern</li>
+    <li><strong>Attempt the challenge exercise</strong> on any review card that felt shaky &mdash; this is your best reinforcement signal</li>
+    <li><strong>Work through new concepts</strong> top to bottom &mdash; each builds on the previous</li>
+    <li><strong>Type every code example</strong> yourself in a .ts file &mdash; hover over types in your editor to build intuition</li>
+    <li><strong>Do at least 2 exercises per concept</strong> before moving to the next one</li>
+  </ol>
+</div>
+
+<!-- ============================================================ -->
+<!-- REVIEW SECTION                                                -->
+<!-- ============================================================ -->
+<div class="review-section">
+<div class="review-section-header">Review &mdash; 6 Concepts</div>
+
+<!-- R1: Function Overloads -->
+<div class="review-card" id="review_function_overloads">
+  <div class="review-header">
+    <span class="review-title">R1. Function Overloads</span>
+    <span class="badge badge-purple">Functions &amp; Patterns</span>
+    <span class="review-meta">rep 0 &middot; last reviewed 2026-06-02 &middot; 2 days ago</span>
+  </div>
+  <div class="review-reminder">Overloads let a single function have multiple call signatures. Write each overload signature above the implementation signature. The implementation signature must be compatible with all overloads but is not directly callable &mdash; callers only see the overload signatures.</div>
+
+  <div class="review-pattern">
+    <strong>Key Pattern</strong>
+    <div class="code-example">
+<pre><code>// Overload signatures (what callers see)
+function createElement(tag: "a"): HTMLAnchorElement;
+function createElement(tag: "canvas"): HTMLCanvasElement;
+function createElement(tag: "input"): HTMLInputElement;
+function createElement(tag: string): HTMLElement;
+// Implementation signature (must satisfy all overloads)
+function createElement(tag: string): HTMLElement {
+  return document.createElement(tag);
+}
+
+const link = createElement("a");       // HTMLAnchorElement
+const canvas = createElement("canvas"); // HTMLCanvasElement
+const div = createElement("div");       // HTMLElement</code></pre>
+    </div>
+  </div>
+
+  <div class="review-challenge">
+    <strong>Challenge Exercise</strong>
+    <p>Write an overloaded <code>fetch</code> wrapper: when called with <code>{ json: true }</code> it returns <code>Promise&lt;unknown&gt;</code>; when called with <code>{ text: true }</code> it returns <code>Promise&lt;string&gt;</code>; when called with no options it returns <code>Promise&lt;Response&gt;</code>. Test that each call site infers the correct return type.</p>
+  </div>
+
+  <div class="review-pitfall">
+    <strong>#1 Pitfall:</strong> Ordering overloads from most specific to most general. TypeScript resolves overloads top-to-bottom and picks the first match. Putting <code>string</code> before <code>"a"</code> means the literal overload is never reached.
+  </div>
+</div>
+
+<!-- R2: Generic Constraints & Defaults -->
+<div class="review-card" id="review_generic_constraints">
+  <div class="review-header">
+    <span class="review-title">R2. Generic Constraints &amp; Defaults</span>
+    <span class="badge badge-purple">Functions &amp; Patterns</span>
+    <span class="review-meta">rep 0 &middot; last reviewed 2026-06-02 &middot; 2 days ago</span>
+  </div>
+  <div class="review-reminder"><code>T extends SomeType</code> constrains a generic so only compatible types are accepted. <code>T = DefaultType</code> provides a fallback when the caller omits the type argument. Combine both: <code>&lt;T extends Base = SpecificDefault&gt;</code>.</div>
+
+  <div class="review-pattern">
+    <strong>Key Pattern</strong>
+    <div class="code-example">
+<pre><code>// Constraint: T must have a .length property
+function longest&lt;T extends { length: number }&gt;(a: T, b: T): T {
+  return a.length &gt;= b.length ? a : b;
+}
+
+longest("hello", "hi");       // "hello" (string has .length)
+longest([1, 2, 3], [4, 5]);   // [1, 2, 3] (array has .length)
+// longest(10, 20);            // Error: number has no .length
+
+// Default: T defaults to string if not specified
+interface ApiResponse&lt;T = string&gt; {
+  data: T;
+  status: number;
+}
+const res: ApiResponse = { data: "ok", status: 200 };        // T = string
+const res2: ApiResponse&lt;number&gt; = { data: 42, status: 200 }; // T = number</code></pre>
+    </div>
+  </div>
+
+  <div class="review-challenge">
+    <strong>Challenge Exercise</strong>
+    <p>Write a <code>merge&lt;T extends object, U extends object&gt;(a: T, b: U): T &amp; U</code> function. Then add a third generic <code>K extends keyof (T &amp; U) = keyof (T &amp; U)</code> so the caller can optionally pick which keys appear in the result. Test with two different object types.</p>
+  </div>
+
+  <div class="review-pitfall">
+    <strong>#1 Pitfall:</strong> Returning a narrower type than the constraint allows. <code>function make&lt;T extends object&gt;(): T { return {}; }</code> fails because <code>{}</code> is not guaranteed to satisfy every <code>T extends object</code>. The constraint is a minimum, not the exact type.
+  </div>
+</div>
+
+<!-- R3: Branded/Opaque Types -->
+<div class="review-card" id="review_branded_types">
+  <div class="review-header">
+    <span class="review-title">R3. Branded/Opaque Types</span>
+    <span class="badge badge-purple">Functions &amp; Patterns</span>
+    <span class="review-meta">rep 0 &middot; last reviewed 2026-06-02 &middot; 2 days ago</span>
+  </div>
+  <div class="review-reminder">Branded types add a phantom property (e.g., <code>__brand</code>) to a primitive to prevent mixing structurally identical types. <code>type UserId = string &amp; { __brand: "UserId" }</code> makes UserId and OrderId incompatible even though both are strings at runtime.</div>
+
+  <div class="review-pattern">
+    <strong>Key Pattern</strong>
+    <div class="code-example">
+<pre><code>type UserId = string &amp; { readonly __brand: unique symbol };
+type OrderId = string &amp; { readonly __brand: unique symbol };
+
+function createUserId(id: string): UserId { return id as UserId; }
+function createOrderId(id: string): OrderId { return id as OrderId; }
+
+function getUser(id: UserId): void { /* ... */ }
+
+const uid = createUserId("user_123");
+const oid = createOrderId("order_456");
+getUser(uid); // OK
+// getUser(oid); // Error: OrderId not assignable to UserId</code></pre>
+    </div>
+  </div>
+
+  <div class="review-challenge">
+    <strong>Challenge Exercise</strong>
+    <p>Create branded types <code>Celsius</code> and <code>Fahrenheit</code> (both <code>number</code>-based). Write constructor functions and a <code>toFahrenheit(c: Celsius): Fahrenheit</code> converter. Verify that passing a raw <code>number</code> or a <code>Fahrenheit</code> value to <code>toFahrenheit</code> produces a compile error.</p>
+  </div>
+
+  <div class="review-pitfall">
+    <strong>#1 Pitfall:</strong> Using a plain string literal for the brand instead of <code>unique symbol</code>. With <code>{ __brand: "UserId" }</code>, you can accidentally create the same brand in another file. <code>unique symbol</code> guarantees uniqueness across the codebase.
+  </div>
+</div>
+
+<!-- R4: this Types & Fluent Interfaces -->
+<div class="review-card" id="review_this_types">
+  <div class="review-header">
+    <span class="review-title">R4. this Types &amp; Fluent Interfaces</span>
+    <span class="badge badge-purple">Functions &amp; Patterns</span>
+    <span class="review-meta">rep 0 &middot; last reviewed 2026-06-02 &middot; 2 days ago</span>
+  </div>
+  <div class="review-reminder">The <code>this</code> type in a method refers to the type of the calling instance &mdash; enabling fluent APIs (method chaining) that preserve the subclass type. Annotate the first parameter as <code>this: ClassName</code> to enforce the calling context.</div>
+
+  <div class="review-pattern">
+    <strong>Key Pattern</strong>
+    <div class="code-example">
+<pre><code>class QueryBuilder {
+  private filters: string[] = [];
+
+  where(condition: string): this {
+    this.filters.push(condition);
+    return this;  // returns 'this', not 'QueryBuilder'
+  }
+
+  limit(n: number): this {
+    this.filters.push(`LIMIT ${n}`);
+    return this;
+  }
+}
+
+class TypedQueryBuilder extends QueryBuilder {
+  select(fields: string[]): this {
+    // 'this' refers to TypedQueryBuilder, not QueryBuilder
+    return this;
+  }
+}
+
+// Chaining preserves the subclass type
+const q = new TypedQueryBuilder()
+  .where("age > 18")   // returns TypedQueryBuilder (not QueryBuilder)
+  .select(["name"])     // still TypedQueryBuilder
+  .limit(10);           // still TypedQueryBuilder</code></pre>
+    </div>
+  </div>
+
+  <div class="review-challenge">
+    <strong>Challenge Exercise</strong>
+    <p>Write a <code>FormBuilder</code> class with <code>field(name: string, type: string): this</code> and <code>required(): this</code> methods. Create a <code>ValidatedFormBuilder</code> subclass that adds <code>validate(fn: () =&gt; boolean): this</code>. Verify that chaining across both classes preserves the subclass type.</p>
+  </div>
+
+  <div class="review-pitfall">
+    <strong>#1 Pitfall:</strong> Returning the class name instead of <code>this</code> in method signatures: <code>where(...): QueryBuilder</code> breaks chaining in subclasses because the return type narrows to the base class, losing subclass-specific methods.
+  </div>
+</div>
+
+<!-- R5: Async Patterns & Promise Typing -->
+<div class="review-card" id="review_async_patterns">
+  <div class="review-header">
+    <span class="review-title">R5. Async Patterns &amp; Promise Typing</span>
+    <span class="badge badge-purple">Functions &amp; Patterns</span>
+    <span class="review-meta">rep 0 &middot; last reviewed 2026-06-02 &middot; 2 days ago</span>
+  </div>
+  <div class="review-reminder"><code>async</code> functions always return <code>Promise&lt;T&gt;</code>. Use <code>Awaited&lt;T&gt;</code> to unwrap nested promise types. <code>Promise.all()</code> preserves tuple types with <code>as const</code>. Catch blocks receive <code>unknown</code> in TS 4.4+ &mdash; narrow with <code>instanceof</code> before accessing properties.</div>
+
+  <div class="review-pattern">
+    <strong>Key Pattern</strong>
+    <div class="code-example">
+<pre><code>// Typed async function with error narrowing
+async function fetchUser(id: string): Promise&lt;{ name: string; email: string }&gt; {
+  const res = await fetch(`/api/users/${id}`);
+  if (!res.ok) throw new Error(`HTTP ${res.status}`);
+  return res.json();
+}
+
+// Promise.all with tuple types
+async function loadDashboard() {
+  const [user, posts, settings] = await Promise.all([
+    fetchUser("123"),                          // Promise&lt;{ name; email }&gt;
+    fetch("/api/posts").then(r =&gt; r.json()),   // Promise&lt;any&gt;
+    fetch("/api/settings").then(r =&gt; r.json()),// Promise&lt;any&gt;
+  ] as const);
+  // user: { name: string; email: string }
+}
+
+// Awaited unwraps nested promises
+type A = Awaited&lt;Promise&lt;Promise&lt;string&gt;&gt;&gt;; // string</code></pre>
+    </div>
+  </div>
+
+  <div class="review-challenge">
+    <strong>Challenge Exercise</strong>
+    <p>Write a <code>retry&lt;T&gt;(fn: () =&gt; Promise&lt;T&gt;, attempts: number): Promise&lt;T&gt;</code> function that retries the async operation up to <code>attempts</code> times, with <code>unknown</code> in the catch block properly narrowed. Type the function so that calling <code>retry(() =&gt; fetchUser("1"), 3)</code> infers <code>Promise&lt;{ name: string; email: string }&gt;</code>.</p>
+  </div>
+
+  <div class="review-pitfall">
+    <strong>#1 Pitfall:</strong> Forgetting that <code>catch</code> receives <code>unknown</code> (not <code>Error</code>). Writing <code>catch (e) { console.log(e.message) }</code> is a type error because <code>unknown</code> has no <code>.message</code>. Always narrow with <code>e instanceof Error</code> first.
+  </div>
+</div>
+
+<!-- R6: never & Exhaustiveness -->
+<div class="review-card" id="review_never_exhaustiveness">
+  <div class="review-header">
+    <span class="review-title">R6. never &amp; Exhaustiveness</span>
+    <span class="badge badge-purple">Advanced Type System</span>
+    <span class="review-meta">rep 1 &middot; last reviewed 2026-06-03 &middot; 1 day ago</span>
+  </div>
+  <div class="review-reminder">The <code>never</code> type represents values that can never occur &mdash; bottom of the type hierarchy. Use it for exhaustiveness checking in switch/if-else chains: assign the narrowed value to <code>never</code>, and the compiler errors if you miss a case. Functions that always throw or loop forever return <code>never</code>.</div>
+
+  <div class="review-pattern">
+    <strong>Key Pattern</strong>
+    <div class="code-example">
+<pre><code>type Shape =
+  | { kind: "circle"; r: number }
+  | { kind: "square"; s: number }
+  | { kind: "triangle"; base: number; height: number };
+
+function assertNever(x: never): never {
+  throw new Error(`Unexpected value: ${JSON.stringify(x)}`);
+}
+
+function area(shape: Shape): number {
+  switch (shape.kind) {
+    case "circle":   return Math.PI * shape.r ** 2;
+    case "square":   return shape.s ** 2;
+    case "triangle": return 0.5 * shape.base * shape.height;
+    default:         return assertNever(shape);
+  }
+}</code></pre>
+    </div>
+  </div>
+
+  <div class="review-challenge">
+    <strong>Challenge Exercise</strong>
+    <p>Define a <code>type Action = { type: "increment" } | { type: "decrement" } | { type: "reset"; value: number }</code>. Write a reducer function with exhaustive switch using <code>assertNever</code>. Add a fourth action type <code>"set"</code> and confirm the compiler flags the missing case before you add the handler.</p>
+  </div>
+
+  <div class="review-pitfall">
+    <strong>#1 Pitfall:</strong> Forgetting the <code>default</code> exhaustiveness guard entirely. Without it, adding a new variant to the union compiles silently and falls through to <code>undefined</code> at runtime. Always include the <code>assertNever</code> check in the default branch.
+  </div>
+</div>
+
+</div><!-- end review-section -->
+
+<!-- ============================================================ -->
+<!-- NEW CONCEPTS: Week 4 Finish                                   -->
+<!-- ============================================================ -->
+<div class="topic-section">
+<div class="topic-section-header">
+  <span class="section-num">4</span>
+  Week 4 Finish: Modules &amp; Project Structure
+</div>
+
+<!-- ============================================================ -->
+<!-- #1 Project References                                         -->
+<!-- ============================================================ -->
+<div class="concept-card" id="project_references">
+  <div class="concept-header">
+    <span class="concept-title">1. Project References</span>
+    <span class="ttag">Modules &amp; Project Structure</span>
+  </div>
+
+  <div class="why-matters">As codebases grow, a single tsconfig becomes a bottleneck &mdash; every edit recompiles everything. Project references split your code into independently compilable units with dependency tracking, cutting rebuild times from minutes to seconds in monorepos.</div>
+
+  <div class="explanation">
+    <p>Project references let you structure a TypeScript codebase as a graph of sub-projects, each with its own <code>tsconfig.json</code>. TypeScript then compiles only the parts that changed, caching results via <code>.tsbuildinfo</code> files. This is the foundation of fast builds in monorepos.</p>
+    <ul>
+    <li><a href="typescript-guides/typescript-guide-2026-07-04.html">2026-07-04</a> (Day 31)</li>
+      <li><code>"composite": true</code> marks a project as referenceable &mdash; requires <code>declaration</code> and enforces strict file inclusion</li>
+      <li><code>"references": [{ "path": "./packages/lib" }]</code> declares dependencies between projects</li>
+      <li><code>tsc --build</code> (or <code>tsc -b</code>) compiles the project graph in dependency order</li>
+      <li>Incremental compilation uses <code>.tsbuildinfo</code> to skip unchanged projects</li>
+      <li>A root <code>tsconfig.json</code> with only <code>references</code> orchestrates the entire build</li>
+    </ul>
+  </div>
+
+  <!-- Basic composite project -->
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &mdash; Enabling composite in a Sub-Project</div>
+<pre><code>// packages/shared/tsconfig.json
+{
+  "compilerOptions": {
+    "composite": true,           // Required for project references
+    "declaration": true,         // Auto-enabled by composite
+    "declarationMap": true,      // Go-to-definition works across projects
+    "outDir": "./dist",
+    "rootDir": "./src",
+    "strict": true,
+    "target": "ES2022",
+    "module": "ESNext",
+    "moduleResolution": "bundler"
+  },
+  "include": ["src/**/*.ts"]
+}
+
+// packages/shared/src/index.ts
+export interface User {
+  id: string;
+  name: string;
+  email: string;
+}
+
+export function validateEmail(email: string): boolean {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+}
+
+// After `tsc -b`, this generates:
+// packages/shared/dist/index.js     (compiled JS)
+// packages/shared/dist/index.d.ts   (type declarations)
+// packages/shared/dist/index.d.ts.map (declaration source map)</code></pre>
+  </div>
+
+  <!-- References array -->
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &mdash; Referencing a Sub-Project</div>
+<pre><code>// packages/api/tsconfig.json
+{
+  "compilerOptions": {
+    "composite": true,
+    "declaration": true,
+    "outDir": "./dist",
+    "rootDir": "./src",
+    "strict": true,
+    "target": "ES2022",
+    "module": "ESNext",
+    "moduleResolution": "bundler"
+  },
+  "include": ["src/**/*.ts"],
+  "references": [
+    { "path": "../shared" }     // api depends on shared
+  ]
+}
+
+// packages/api/src/handler.ts
+// Import from the shared project (uses its .d.ts output)
+import { User, validateEmail } from "../../shared/src";
+
+export function createUser(name: string, email: string): User | null {
+  if (!validateEmail(email)) return null;
+  return { id: crypto.randomUUID(), name, email };
+}
+
+// The import resolves to shared's declaration files when built.
+// In development, editors use the source files directly for
+// go-to-definition (thanks to declarationMap).</code></pre>
+  </div>
+
+  <!-- Root tsconfig for the monorepo -->
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &mdash; Root tsconfig.json (Orchestrator)</div>
+<pre><code>// tsconfig.json (at monorepo root)
+{
+  "files": [],                  // Don't compile any files directly
+  "references": [
+    { "path": "./packages/shared" },
+    { "path": "./packages/api" },
+    { "path": "./packages/web" }
+  ]
+}
+
+// Build commands:
+// tsc -b                       Build everything in dependency order
+// tsc -b --watch               Incremental watch mode
+// tsc -b --clean               Remove all build outputs
+// tsc -b --force               Rebuild everything from scratch
+// tsc -b packages/api          Build only api and its dependencies
+
+// Build order is automatic:
+// 1. shared (no dependencies)
+// 2. api (depends on shared)
+// 3. web (depends on shared)</code></pre>
+  </div>
+
+  <!-- tsbuildinfo and incremental -->
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &mdash; Incremental Compilation</div>
+<pre><code>// When you run `tsc -b`, TypeScript creates .tsbuildinfo files:
+// packages/shared/tsconfig.tsbuildinfo
+// packages/api/tsconfig.tsbuildinfo
+
+// These files store a hash of each source file's contents.
+// On the next build, TypeScript compares hashes and skips
+// unchanged projects entirely.
+
+// Example: you edit packages/api/src/handler.ts
+// tsc -b will:
+//   1. Check shared -> unchanged, skip (< 1ms)
+//   2. Check api -> handler.ts changed, recompile api only
+//   3. Check web -> unchanged if it doesn't depend on api, skip
+
+// For a 100-file monorepo, this turns a 15-second full build
+// into a 1-2 second incremental build.
+
+// Gotcha: add .tsbuildinfo to .gitignore
+// They're machine-specific cache files:
+// *.tsbuildinfo</code></pre>
+  </div>
+
+  <!-- Real monorepo structure -->
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &mdash; Real-World Monorepo Structure</div>
+<pre><code>// Typical monorepo layout:
+//
+// my-app/
+// ├── tsconfig.json              (root: references only)
+// ├── packages/
+// │   ├── shared/                (types, utils, no dependencies)
+// │   │   ├── tsconfig.json      (composite: true)
+// │   │   └── src/
+// │   ├── database/              (depends on shared)
+// │   │   ├── tsconfig.json      (references: [shared])
+// │   │   └── src/
+// │   ├── api/                   (depends on shared, database)
+// │   │   ├── tsconfig.json      (references: [shared, database])
+// │   │   └── src/
+// │   └── web/                   (depends on shared)
+// │       ├── tsconfig.json      (references: [shared])
+// │       └── src/
+
+// When to split into separate tsconfigs:
+// 1. Packages have different target environments (Node vs browser)
+// 2. Parts of the codebase have different strict settings
+// 3. Build times exceed ~10 seconds for a full rebuild
+// 4. You want independent npm packages from a monorepo
+// 5. Teams own different parts of the codebase</code></pre>
+  </div>
+
+  <div class="callout-warning">
+    <strong>Common Mistakes</strong>
+    <div class="mistake">&#10060; Forgetting <code>"composite": true</code> in a referenced project:<br><code>error TS6306: Referenced project must have setting "composite": true</code></div>
+    <div class="correct">&#9989; Every project in the <code>references</code> array must have <code>"composite": true</code> in its own tsconfig. This also automatically requires <code>"declaration": true</code>.</div>
+    <div class="mistake">&#10060; Running <code>tsc</code> instead of <code>tsc -b</code> on a project with references:<br>Regular <code>tsc</code> ignores the references array and compiles only the current project</div>
+    <div class="correct">&#9989; Always use <code>tsc --build</code> (or <code>tsc -b</code>) when working with project references. It processes the dependency graph correctly.</div>
+  </div>
+
+  <div class="key-rules">
+    <strong>Key Rules</strong>
+    <ul>
+      <li><code>"composite": true</code> + <code>"declaration": true</code> marks a project as referenceable &mdash; every referenced project needs both</li>
+      <li>Use <code>tsc -b</code> (not plain <code>tsc</code>) to compile the project graph in dependency order with incremental caching</li>
+      <li>Split into project references when builds are slow, environments differ, or teams need independent compilation units</li>
+    </ul>
+  </div>
+
+  <div class="exercises">
+    <strong>Exercises</strong>
+    <div class="exercise"><span class="exercise-num">1</span> Create a mini monorepo with two packages: <code>packages/types</code> (exports interfaces) and <code>packages/app</code> (imports from types). Set up <code>composite: true</code> and <code>references</code> in each tsconfig. Verify that <code>tsc -b</code> compiles both in the correct order and generates <code>.d.ts</code> files.</div>
+    <div class="exercise"><span class="exercise-num">2</span> Add a third package <code>packages/utils</code> that depends on <code>types</code>. Make <code>app</code> depend on both <code>types</code> and <code>utils</code>. Edit a file in <code>types</code> and run <code>tsc -b</code> &mdash; observe that all three packages rebuild. Edit a file in <code>utils</code> and confirm only <code>utils</code> and <code>app</code> rebuild (not <code>types</code>).</div>
+    <div class="exercise"><span class="exercise-num">3</span> Set up a root <code>tsconfig.json</code> with <code>"files": []</code> and <code>"references"</code> pointing to all three packages. Run <code>tsc -b --watch</code> and verify that editing any file triggers only the necessary rebuilds. Check the <code>.tsbuildinfo</code> file size and confirm it's in <code>.gitignore</code>.</div>
+  </div>
+
+  <div class="connections">
+    <strong>Connections:</strong> Project references build on the <a href="typescript-guides/typescript-guide-2026-06-03.html#tsconfig_deep_dive">tsconfig Deep Dive</a> from Day 4. The <code>declaration: true</code> requirement ties directly to <a href="typescript-guides/typescript-guide-2026-06-03.html#declaration_files">Declaration Files</a>. The monorepo pattern connects to <a href="#package_publishing">Package Publishing</a> (next) &mdash; each referenced project can become an independently published npm package.
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- #2 Package Publishing                                         -->
+<!-- ============================================================ -->
+<div class="concept-card" id="package_publishing">
+  <div class="concept-header">
+    <span class="concept-title">2. Package Publishing</span>
+    <span class="ttag">Modules &amp; Project Structure</span>
+  </div>
+
+  <div class="why-matters">Publishing a TypeScript library that works seamlessly in both CJS and ESM environments, with proper type declarations, is one of the most error-prone tasks in the ecosystem. Getting <code>exports</code>, <code>types</code>, and dual-format builds right saves your consumers hours of debugging.</div>
+
+  <div class="explanation">
+    <p>A well-published TypeScript package needs three things: compiled JavaScript (CJS, ESM, or both), type declarations (<code>.d.ts</code>), and correct <code>package.json</code> metadata so that Node.js, bundlers, and TypeScript all resolve the right files.</p>
+    <ul>
+      <li><code>"exports"</code> field in package.json: modern conditional exports (replaces <code>"main"</code> and <code>"module"</code>)</li>
+      <li>Dual CJS/ESM: separate <code>.cjs</code>/<code>.mjs</code> entry points or separate directories</li>
+      <li><code>"types"</code> field: points to the root <code>.d.ts</code> file for TypeScript consumers</li>
+      <li><code>"typesVersions"</code>: maps subpath imports to declaration files (pre-exports era)</li>
+      <li><code>"declaration": true</code>, <code>"declarationMap": true</code>: generate <code>.d.ts</code> files alongside JS</li>
+      <li><code>"peerDependencies"</code>: declare version ranges your library is compatible with</li>
+    </ul>
+  </div>
+
+  <!-- Modern package.json with exports -->
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &mdash; Modern package.json with Conditional Exports</div>
+<pre><code>// package.json
+{
+  "name": "@myorg/utils",
+  "version": "1.0.0",
+  "type": "module",                // Default to ESM
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",    // TypeScript looks here first
+      "import": "./dist/index.mjs",    // ESM consumers
+      "require": "./dist/index.cjs"    // CJS consumers
+    },
+    "./math": {
+      "types": "./dist/math.d.ts",
+      "import": "./dist/math.mjs",
+      "require": "./dist/math.cjs"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": ["dist"],               // Only ship dist/ to npm
+  "scripts": {
+    "build": "tsup src/index.ts src/math.ts --format cjs,esm --dts",
+    "prepublishOnly": "npm run build"
+  }
+}
+
+// Consumers can now import:
+// import { debounce } from "@myorg/utils";       // -> dist/index.mjs
+// import { clamp } from "@myorg/utils/math";     // -> dist/math.mjs
+// const { debounce } = require("@myorg/utils");  // -> dist/index.cjs</code></pre>
+  </div>
+
+  <!-- Dual CJS/ESM build -->
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &mdash; Dual CJS/ESM Build Setup</div>
+<pre><code>// tsconfig.esm.json
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "module": "ESNext",
+    "outDir": "./dist/esm",
+    "declaration": true,
+    "declarationDir": "./dist/types"
+  }
+}
+
+// tsconfig.cjs.json
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "module": "CommonJS",
+    "outDir": "./dist/cjs",
+    "declaration": false       // Types generated once from ESM build
+  }
+}
+
+// Build script (in package.json):
+// "build": "tsc -p tsconfig.esm.json && tsc -p tsconfig.cjs.json"
+
+// Or use a build tool like tsup (much simpler):
+// "build": "tsup src/index.ts --format cjs,esm --dts --clean"
+
+// tsup generates:
+// dist/
+//   index.mjs      (ESM)
+//   index.cjs      (CJS)
+//   index.d.ts     (declarations)
+//   index.d.mts    (ESM-specific declarations)</code></pre>
+  </div>
+
+  <!-- types and typesVersions -->
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &mdash; Types Field and typesVersions</div>
+<pre><code>// package.json &mdash; types field (simple case)
+{
+  "name": "my-lib",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",     // Root type declaration
+  "typesVersions": {
+    "*": {
+      "math": ["./dist/math.d.ts"],  // Subpath: import { add } from "my-lib/math"
+      "string": ["./dist/string.d.ts"]
+    }
+  }
+}
+
+// When to use "types" vs "exports.types":
+// - "types": legacy fallback, works with all TS versions
+// - "exports.*.types": modern, requires TS 4.7+ and moduleResolution "node16" or "bundler"
+// - Best practice: include BOTH for maximum compatibility
+
+// IMPORTANT: "types" condition must come FIRST in exports:
+{
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",  // MUST be first!
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.cjs"
+    }
+  }
+}
+
+// If "types" comes after "import", TypeScript may resolve the
+// wrong declaration file (or none at all).</code></pre>
+  </div>
+
+  <!-- Declaration generation -->
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &mdash; Declaration Generation Settings</div>
+<pre><code>// tsconfig.json for a library
+{
+  "compilerOptions": {
+    "declaration": true,           // Generate .d.ts files
+    "declarationMap": true,        // .d.ts.map for go-to-definition
+    "emitDeclarationOnly": false,  // Also emit JS (or true for type-only)
+    "declarationDir": "./dist/types", // Separate dir for declarations
+    "stripInternal": true,         // Remove @internal-tagged items from .d.ts
+
+    // Control what's exported in .d.ts:
+    "isolatedModules": true,       // Ensure each file can be transpiled alone
+    "resolveJsonModule": true      // Allow importing .json files
+  }
+}
+
+// Mark internal APIs with @internal JSDoc tag:
+// src/index.ts
+export function publicApi(): string {
+  return internalHelper();
+}
+
+/** @internal */
+export function internalHelper(): string {
+  return "internal";
+}
+
+// With stripInternal: true, the .d.ts will NOT include internalHelper
+// Consumers can't import it (TypeScript won't see it)</code></pre>
+  </div>
+
+  <!-- peerDependencies -->
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &mdash; peerDependencies for Type Compatibility</div>
+<pre><code>// package.json for a React component library
+{
+  "name": "@myorg/ui",
+  "peerDependencies": {
+    "react": "^18.0.0 || ^19.0.0",
+    "react-dom": "^18.0.0 || ^19.0.0"
+  },
+  "peerDependenciesMeta": {
+    "react-dom": { "optional": true }  // Not needed for React Native
+  },
+  "devDependencies": {
+    "react": "^19.0.0",               // Install locally for development
+    "react-dom": "^19.0.0",
+    "@types/react": "^19.0.0",
+    "typescript": "^5.5.0"
+  }
+}
+
+// Why peerDependencies matter for types:
+// If your library exports React components, consumers need compatible
+// @types/react. Using peerDependencies ensures:
+// 1. Only one copy of React in the bundle (no duplicate React errors)
+// 2. Type definitions are compatible (your JSX.Element = their JSX.Element)
+// 3. Consumers control which React version they use
+
+// Common pattern: publish types alongside the package
+// NOT as a separate @types/* package (that's for DefinitelyTyped only)</code></pre>
+  </div>
+
+  <div class="callout-warning">
+    <strong>Common Mistakes</strong>
+    <div class="mistake">&#10060; Putting <code>"types"</code> after <code>"import"</code> in the exports field:<br>TypeScript resolves conditions top-to-bottom. If <code>"import"</code> comes first, TS may try to use <code>.mjs</code> as the type source.</div>
+    <div class="correct">&#9989; Always put <code>"types"</code> as the first condition in each exports entry:<br><code>"exports": { ".": { "types": "...", "import": "...", "require": "..." } }</code></div>
+    <div class="mistake">&#10060; Publishing <code>src/</code> to npm along with <code>dist/</code>:<br>Consumers may accidentally import from source files, bypassing your build output</div>
+    <div class="correct">&#9989; Use the <code>"files"</code> field to whitelist only <code>["dist"]</code>. Run <code>npm pack --dry-run</code> to verify what gets published.</div>
+  </div>
+
+  <div class="key-rules">
+    <strong>Key Rules</strong>
+    <ul>
+      <li>Use <code>"exports"</code> with <code>"types"</code> first, then <code>"import"</code> and <code>"require"</code> for each entry point</li>
+      <li>Generate <code>.d.ts</code> files with <code>"declaration": true</code> and ship them alongside compiled JS &mdash; never publish raw <code>.ts</code> source</li>
+      <li>Use <code>"peerDependencies"</code> for shared dependencies (React, TypeScript, framework packages) to avoid version conflicts and duplicate types</li>
+    </ul>
+  </div>
+
+  <div class="exercises">
+    <strong>Exercises</strong>
+    <div class="exercise"><span class="exercise-num">1</span> Create a minimal TypeScript library with two entry points: <code>src/index.ts</code> (exports a <code>greet</code> function) and <code>src/math.ts</code> (exports <code>add</code> and <code>multiply</code>). Configure <code>package.json</code> with <code>"exports"</code> mapping both <code>"."</code> and <code>"./math"</code> to their compiled outputs with <code>"types"</code> conditions. Run <code>npm pack --dry-run</code> to verify only dist files are included.</div>
+    <div class="exercise"><span class="exercise-num">2</span> Set up a dual CJS/ESM build using <code>tsup</code> (or two tsconfig files). Verify that <code>require("my-lib")</code> resolves to the CJS output and <code>import from "my-lib"</code> resolves to the ESM output. Check that <code>.d.ts</code> files are generated for both formats.</div>
+    <div class="exercise"><span class="exercise-num">3</span> Add a <code>/** @internal */</code> tag to a helper function in your library. Enable <code>"stripInternal": true</code> in tsconfig. Rebuild and verify the function is absent from the generated <code>.d.ts</code> file. Then test that consumers cannot import it.</div>
+  </div>
+
+  <div class="connections">
+    <strong>Connections:</strong> Package publishing directly builds on <a href="#project_references">Project References</a> &mdash; each composite project in a monorepo can be an independently published package. The <code>.d.ts</code> generation relies on <a href="typescript-guides/typescript-guide-2026-06-03.html#declaration_files">Declaration Files</a> from Day 4. Conditional exports interact with <a href="typescript-guides/typescript-guide-2026-06-03.html#module_systems">Module Systems</a> (ESM vs CJS resolution).
+  </div>
+</div>
+
+</div><!-- end topic-section (Week 4 finish) -->
+
+<!-- ============================================================ -->
+<!-- NEW CONCEPTS: Week 5 — Runtime Patterns                       -->
+<!-- ============================================================ -->
+<div class="topic-section">
+<div class="topic-section-header">
+  <span class="section-num">5</span>
+  Week 5: Runtime Patterns
+</div>
+
+<!-- ============================================================ -->
+<!-- #3 Zod & Runtime Validation                                   -->
+<!-- ============================================================ -->
+<div class="concept-card" id="zod_validation">
+  <div class="concept-header">
+    <span class="concept-title">3. Zod &amp; Runtime Validation</span>
+    <span class="ttag">Runtime Patterns</span>
+  </div>
+
+  <div class="why-matters">TypeScript types are erased at runtime &mdash; a <code>User</code> type cannot validate an API response. Zod bridges the gap: you define a schema once and get both runtime validation and a TypeScript type via <code>z.infer</code>. It eliminates the "double-definition" problem where types and validators drift apart.</div>
+
+  <div class="explanation">
+    <p>Zod is a TypeScript-first schema validation library. You define schemas that describe the shape of data, then use them to validate unknown input at runtime. The killer feature is <code>z.infer&lt;typeof schema&gt;</code>, which extracts a TypeScript type from any schema &mdash; so your type and your validator are always in sync.</p>
+    <ul>
+      <li><code>z.object()</code>, <code>z.string()</code>, <code>z.number()</code>, <code>z.array()</code> &mdash; primitive schema builders</li>
+      <li><code>.parse()</code> throws <code>ZodError</code> on invalid input; <code>.safeParse()</code> returns a result object</li>
+      <li><code>z.infer&lt;typeof schema&gt;</code> extracts the TypeScript type from a schema</li>
+      <li><code>.extend()</code>, <code>.merge()</code>, <code>.pick()</code>, <code>.omit()</code> &mdash; schema composition</li>
+      <li><code>.transform()</code> and <code>.refine()</code> &mdash; custom transformations and validations</li>
+    </ul>
+  </div>
+
+  <!-- Basic schemas -->
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &mdash; Defining Schemas and Inferring Types</div>
+<pre><code>import { z } from "zod";
+
+// Define a schema
+const UserSchema = z.object({
+  id: z.string().uuid(),
+  name: z.string().min(1).max(100),
+  email: z.string().email(),
+  age: z.number().int().min(0).max(150),
+  role: z.enum(["admin", "editor", "viewer"]),
+  tags: z.array(z.string()).default([]),
+  bio: z.string().optional(),        // string | undefined
+  createdAt: z.coerce.date(),        // coerces string/number to Date
+});
+
+// Infer the TypeScript type from the schema
+type User = z.infer&lt;typeof UserSchema&gt;;
+// {
+//   id: string;
+//   name: string;
+//   email: string;
+//   age: number;
+//   role: "admin" | "editor" | "viewer";
+//   tags: string[];
+//   bio?: string | undefined;
+//   createdAt: Date;
+// }
+
+// The type and the validator are ALWAYS in sync.
+// Change the schema -> the type updates automatically.</code></pre>
+  </div>
+
+  <!-- parse vs safeParse -->
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &mdash; .parse() vs .safeParse()</div>
+<pre><code>import { z } from "zod";
+
+const EmailSchema = z.string().email();
+
+// .parse() — throws ZodError on failure
+try {
+  const email = EmailSchema.parse("alice@example.com"); // "alice@example.com"
+  const bad = EmailSchema.parse("not-an-email");        // throws ZodError!
+} catch (err) {
+  if (err instanceof z.ZodError) {
+    console.log(err.issues);
+    // [{ code: "invalid_string", validation: "email", message: "Invalid email", path: [] }]
+  }
+}
+
+// .safeParse() — returns a discriminated union (never throws)
+const result = EmailSchema.safeParse("alice@example.com");
+if (result.success) {
+  console.log(result.data); // "alice@example.com" (typed as string)
+} else {
+  console.log(result.error.issues); // ZodIssue[]
+}
+
+// Use .parse() when invalid data is exceptional (server middleware)
+// Use .safeParse() when invalid data is expected (form validation)</code></pre>
+    <div class="output">alice@example.com</div>
+  </div>
+
+  <!-- Schema composition -->
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &mdash; Schema Composition</div>
+<pre><code>import { z } from "zod";
+
+const BaseUserSchema = z.object({
+  name: z.string(),
+  email: z.string().email(),
+});
+
+// .extend() — add new fields
+const FullUserSchema = BaseUserSchema.extend({
+  id: z.string().uuid(),
+  role: z.enum(["admin", "user"]),
+});
+
+// .pick() — select specific fields (like TypeScript's Pick)
+const LoginSchema = FullUserSchema.pick({ email: true });
+// { email: string }
+
+// .omit() — exclude specific fields (like TypeScript's Omit)
+const CreateUserSchema = FullUserSchema.omit({ id: true });
+// { name: string; email: string; role: "admin" | "user" }
+
+// .merge() — combine two schemas
+const AddressSchema = z.object({
+  street: z.string(),
+  city: z.string(),
+  zip: z.string().regex(/^\d{5}$/),
+});
+
+const UserWithAddressSchema = FullUserSchema.merge(AddressSchema);
+type UserWithAddress = z.infer&lt;typeof UserWithAddressSchema&gt;;
+// All fields from both schemas combined
+
+// .partial() — make all fields optional
+const UpdateUserSchema = FullUserSchema.partial();
+// { id?: string; name?: string; email?: string; role?: "admin" | "user" }</code></pre>
+  </div>
+
+  <!-- Transform and refine -->
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &mdash; Transform and Refine</div>
+<pre><code>import { z } from "zod";
+
+// .transform() — change the output type
+const StringToNumber = z.string().transform((s) =&gt; parseInt(s, 10));
+type Result = z.infer&lt;typeof StringToNumber&gt;; // number (not string!)
+
+const parsed = StringToNumber.parse("42"); // 42 (number)
+
+// .refine() — custom validation logic
+const PasswordSchema = z
+  .string()
+  .min(8)
+  .refine((pw) =&gt; /[A-Z]/.test(pw), {
+    message: "Must contain at least one uppercase letter",
+  })
+  .refine((pw) =&gt; /[0-9]/.test(pw), {
+    message: "Must contain at least one digit",
+  });
+
+// .superRefine() — access the error context for complex validations
+const SignupSchema = z
+  .object({
+    password: z.string().min(8),
+    confirmPassword: z.string(),
+  })
+  .superRefine((data, ctx) =&gt; {
+    if (data.password !== data.confirmPassword) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Passwords don't match",
+        path: ["confirmPassword"],
+      });
+    }
+  });
+
+// Real-world: validate API response
+async function fetchUser(id: string): Promise&lt;z.infer&lt;typeof UserSchema&gt;&gt; {
+  const res = await fetch(`/api/users/${id}`);
+  const json = await res.json();
+  return UserSchema.parse(json); // Throws if API returns unexpected shape
+}
+
+const UserSchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  email: z.string().email(),
+});</code></pre>
+    <div class="output">42</div>
+  </div>
+
+  <!-- Nested and recursive schemas -->
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &mdash; Nested and Recursive Schemas</div>
+<pre><code>import { z } from "zod";
+
+// Nested objects
+const CompanySchema = z.object({
+  name: z.string(),
+  employees: z.array(
+    z.object({
+      name: z.string(),
+      department: z.enum(["engineering", "design", "product"]),
+    })
+  ),
+  address: z.object({
+    street: z.string(),
+    city: z.string(),
+    country: z.string(),
+  }),
+});
+
+// Recursive schemas (e.g., a tree structure)
+type Category = {
+  name: string;
+  children: Category[];
+};
+
+const CategorySchema: z.ZodType&lt;Category&gt; = z.lazy(() =&gt;
+  z.object({
+    name: z.string(),
+    children: z.array(CategorySchema),
+  })
+);
+
+const tree = CategorySchema.parse({
+  name: "Root",
+  children: [
+    { name: "Child A", children: [] },
+    { name: "Child B", children: [
+      { name: "Grandchild", children: [] }
+    ]},
+  ],
+});
+
+console.log(tree.children[1].children[0].name);</code></pre>
+    <div class="output">Grandchild</div>
+  </div>
+
+  <div class="callout-warning">
+    <strong>Common Mistakes</strong>
+    <div class="mistake">&#10060; Defining the TypeScript type separately from the Zod schema:<br><code>interface User { name: string; email: string; }</code> &mdash; then writing a separate Zod schema that might not match</div>
+    <div class="correct">&#9989; Use <code>z.infer&lt;typeof UserSchema&gt;</code> as the single source of truth:<br><code>const UserSchema = z.object({ ... }); type User = z.infer&lt;typeof UserSchema&gt;;</code></div>
+    <div class="mistake">&#10060; Using <code>.parse()</code> for form validation (catching exceptions for normal flow):<br>Exceptions are expensive; form input is frequently invalid</div>
+    <div class="correct">&#9989; Use <code>.safeParse()</code> for user input and form validation &mdash; it returns a result object without throwing. Reserve <code>.parse()</code> for server middleware where invalid data is exceptional.</div>
+  </div>
+
+  <div class="key-rules">
+    <strong>Key Rules</strong>
+    <ul>
+      <li><code>z.infer&lt;typeof schema&gt;</code> is the single source of truth &mdash; never define a TypeScript type separately from its Zod schema</li>
+      <li>Use <code>.safeParse()</code> for expected-invalid input (forms, user data) and <code>.parse()</code> for unexpected-invalid input (API middleware)</li>
+      <li>Schema composition (<code>.extend()</code>, <code>.pick()</code>, <code>.omit()</code>, <code>.partial()</code>) mirrors TypeScript utility types &mdash; use them to derive schemas from a base</li>
+    </ul>
+  </div>
+
+  <div class="exercises">
+    <strong>Exercises</strong>
+    <div class="exercise"><span class="exercise-num">1</span> Define a <code>ProductSchema</code> with fields: <code>id</code> (UUID string), <code>name</code> (non-empty string), <code>price</code> (positive number), <code>category</code> (enum of 3 values), <code>tags</code> (array of strings, max 10). Create <code>CreateProductSchema</code> by omitting <code>id</code> and <code>UpdateProductSchema</code> by making everything partial. Validate sample data with <code>.safeParse()</code>.</div>
+    <div class="exercise"><span class="exercise-num">2</span> Write a <code>DateRangeSchema</code> with <code>start</code> and <code>end</code> date fields that uses <code>.superRefine()</code> to ensure <code>end</code> is after <code>start</code>. Use <code>z.coerce.date()</code> so string inputs are automatically converted. Test with valid and invalid date ranges.</div>
+    <div class="exercise"><span class="exercise-num">3</span> Build a recursive <code>CommentSchema</code> where each comment has <code>author</code> (string), <code>text</code> (string), and <code>replies</code> (array of <code>CommentSchema</code>). Use <code>z.lazy()</code> for the recursion. Parse a nested comment thread and verify the inferred type matches.</div>
+  </div>
+
+  <div class="connections">
+    <strong>Connections:</strong> Zod's <code>.safeParse()</code> returns a discriminated union &mdash; the exact pattern we'll formalize in <a href="#discriminated_unions_practice">Discriminated Unions in Practice</a>. The <code>z.infer</code> mechanism uses conditional types with <code>infer</code> (Day 2). <code>.transform()</code> changes the output type, similar to mapped types but at runtime. Zod schemas pair naturally with <a href="#error_handling_patterns">Error Handling Patterns</a> (next).
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- #4 Error Handling Patterns                                    -->
+<!-- ============================================================ -->
+<div class="concept-card" id="error_handling_patterns">
+  <div class="concept-header">
+    <span class="concept-title">4. Error Handling Patterns</span>
+    <span class="ttag">Runtime Patterns</span>
+  </div>
+
+  <div class="why-matters">JavaScript's <code>try/catch</code> loses type information &mdash; the catch variable is <code>unknown</code>, and nothing in the function signature tells callers what errors to expect. TypeScript patterns like <code>Result&lt;T, E&gt;</code> and tagged error unions make error handling explicit, composable, and exhaustively checkable at compile time.</div>
+
+  <div class="explanation">
+    <p>There are two schools of error handling in TypeScript: <strong>throw-based</strong> (traditional try/catch) and <strong>return-based</strong> (Result types). Each has trade-offs. The key insight is that TypeScript's type system can enforce exhaustive error handling when errors are <em>values</em>, not thrown exceptions.</p>
+    <ul>
+      <li><code>Result&lt;T, E&gt;</code>: <code>{ ok: true; data: T } | { ok: false; error: E }</code> &mdash; errors in the return type</li>
+      <li>Tagged error types: discriminated unions for different error kinds</li>
+      <li><code>never</code> for exhaustive error handling in switch statements</li>
+      <li>Custom error classes extending <code>Error</code> with typed properties</li>
+      <li><code>unknown</code> in catch blocks (TS 4.4+) requires narrowing before use</li>
+    </ul>
+  </div>
+
+  <!-- Result type -->
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &mdash; The Result Type Pattern</div>
+<pre><code>// Define the Result type
+type Result&lt;T, E&gt; =
+  | { ok: true; data: T }
+  | { ok: false; error: E };
+
+// Helper constructors
+function Ok&lt;T&gt;(data: T): Result&lt;T, never&gt; {
+  return { ok: true, data };
+}
+
+function Err&lt;E&gt;(error: E): Result&lt;never, E&gt; {
+  return { ok: false, error };
+}
+
+// Usage: parsing a config file
+function parseConfig(raw: string): Result&lt;Config, ParseError&gt; {
+  try {
+    const parsed = JSON.parse(raw);
+    if (!parsed.host) return Err({ kind: "missing_field", field: "host" });
+    if (!parsed.port) return Err({ kind: "missing_field", field: "port" });
+    return Ok({ host: parsed.host, port: parsed.port });
+  } catch {
+    return Err({ kind: "invalid_json" });
+  }
+}
+
+interface Config { host: string; port: number }
+type ParseError =
+  | { kind: "invalid_json" }
+  | { kind: "missing_field"; field: string };
+
+// Caller MUST handle both cases (TypeScript enforces this)
+const result = parseConfig('{"host":"localhost","port":3000}');
+if (result.ok) {
+  console.log(`Connecting to ${result.data.host}:${result.data.port}`);
+} else {
+  console.log(`Config error: ${result.error.kind}`);
+}</code></pre>
+    <div class="output">Connecting to localhost:3000</div>
+  </div>
+
+  <!-- Tagged error types -->
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &mdash; Tagged Error Types with Discriminated Unions</div>
+<pre><code>// Define specific error types with a discriminant
+type AppError =
+  | { kind: "not_found"; resource: string; id: string }
+  | { kind: "unauthorized"; requiredRole: string }
+  | { kind: "validation"; field: string; message: string }
+  | { kind: "network"; statusCode: number; url: string };
+
+function assertNever(x: never): never {
+  throw new Error(`Unhandled: ${JSON.stringify(x)}`);
+}
+
+function handleError(error: AppError): string {
+  switch (error.kind) {
+    case "not_found":
+      return `${error.resource} with id ${error.id} not found`;
+    case "unauthorized":
+      return `Access denied. Required role: ${error.requiredRole}`;
+    case "validation":
+      return `Validation failed on ${error.field}: ${error.message}`;
+    case "network":
+      return `Network error ${error.statusCode} fetching ${error.url}`;
+    default:
+      return assertNever(error); // Compile error if a case is missing
+  }
+}
+
+// Each branch has full type narrowing:
+// In "not_found" case: error.resource and error.id are available
+// In "network" case: error.statusCode and error.url are available
+console.log(handleError({ kind: "not_found", resource: "User", id: "123" }));</code></pre>
+    <div class="output">User with id 123 not found</div>
+  </div>
+
+  <!-- Custom error classes -->
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &mdash; Custom Error Classes</div>
+<pre><code>// Base application error with typed code
+class AppError extends Error {
+  constructor(
+    message: string,
+    public readonly code: string,
+    public readonly statusCode: number = 500,
+    public readonly details?: Record&lt;string, unknown&gt;
+  ) {
+    super(message);
+    this.name = this.constructor.name;
+    // Fix prototype chain (needed for instanceof to work with TS)
+    Object.setPrototypeOf(this, new.target.prototype);
+  }
+}
+
+class NotFoundError extends AppError {
+  constructor(resource: string, id: string) {
+    super(`${resource} ${id} not found`, "NOT_FOUND", 404, { resource, id });
+  }
+}
+
+class ValidationError extends AppError {
+  constructor(
+    public readonly field: string,
+    message: string
+  ) {
+    super(message, "VALIDATION", 400, { field });
+  }
+}
+
+// Usage with instanceof narrowing
+function handleRequest() {
+  try {
+    throw new NotFoundError("User", "abc-123");
+  } catch (err: unknown) {
+    if (err instanceof NotFoundError) {
+      console.log(err.statusCode, err.details);  // 404, { resource: "User", id: "abc-123" }
+    } else if (err instanceof ValidationError) {
+      console.log(err.field, err.message);
+    } else if (err instanceof Error) {
+      console.log("Unexpected:", err.message);
+    } else {
+      console.log("Non-Error thrown:", err);
+    }
+  }
+}
+
+handleRequest();</code></pre>
+    <div class="output">404 { resource: 'User', id: 'abc-123' }</div>
+  </div>
+
+  <!-- unknown in catch blocks -->
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &mdash; Safe catch with unknown (TS 4.4+)</div>
+<pre><code>// Before TS 4.4: catch (err) gave err: any
+// After TS 4.4: catch (err) gives err: unknown (with useUnknownInCatchVariables)
+
+// Problem: you can't access .message on unknown
+async function fetchData(url: string): Promise&lt;string&gt; {
+  try {
+    const res = await fetch(url);
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    return await res.text();
+  } catch (err: unknown) {
+    // err.message;  // Error: 'err' is of type 'unknown'
+
+    // Pattern 1: instanceof check
+    if (err instanceof Error) {
+      throw new Error(`Fetch failed: ${err.message}`, { cause: err });
+    }
+
+    // Pattern 2: type predicate helper
+    throw new Error(`Fetch failed: ${String(err)}`);
+  }
+}
+
+// Reusable error narrowing helper
+function toError(err: unknown): Error {
+  if (err instanceof Error) return err;
+  if (typeof err === "string") return new Error(err);
+  if (typeof err === "object" &amp;&amp; err !== null &amp;&amp; "message" in err) {
+    return new Error(String((err as { message: unknown }).message));
+  }
+  return new Error(`Unknown error: ${JSON.stringify(err)}`);
+}
+
+// Usage: always safe
+try {
+  throw "a raw string"; // sadly, some code throws non-Errors
+} catch (err: unknown) {
+  const error = toError(err);
+  console.log(error.message);
+}</code></pre>
+    <div class="output">a raw string</div>
+  </div>
+
+  <!-- When to throw vs return -->
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &mdash; When to Throw vs Return Result</div>
+<pre><code>// THROW: for truly exceptional conditions
+// - Programmer errors (null pointer, out of bounds)
+// - Unrecoverable failures (database connection lost)
+// - Framework boundaries (Express middleware, React error boundaries)
+function divideStrict(a: number, b: number): number {
+  if (b === 0) throw new Error("Division by zero"); // programmer error
+  return a / b;
+}
+
+// RETURN Result: for expected business failures
+// - Validation errors (user input)
+// - Resource not found
+// - Permission denied
+// - Any error the caller is expected to handle
+function divide(a: number, b: number): Result&lt;number, "division_by_zero"&gt; {
+  if (b === 0) return Err("division_by_zero");
+  return Ok(a / b);
+}
+
+// The type signature DOCUMENTS the possible errors:
+// divide returns: { ok: true, data: number } | { ok: false, error: "division_by_zero" }
+// Callers know exactly what can go wrong without reading the implementation.
+
+type Result&lt;T, E&gt; = { ok: true; data: T } | { ok: false; error: E };
+function Ok&lt;T&gt;(data: T): Result&lt;T, never&gt; { return { ok: true, data }; }
+function Err&lt;E&gt;(error: E): Result&lt;never, E&gt; { return { ok: false, error }; }
+
+// Result pattern shines in pipelines:
+const result = divide(10, 2);
+if (result.ok) {
+  console.log(`Result: ${result.data}`);
+}</code></pre>
+    <div class="output">Result: 5</div>
+  </div>
+
+  <div class="callout-warning">
+    <strong>Common Mistakes</strong>
+    <div class="mistake">&#10060; Accessing <code>err.message</code> directly in a catch block:<br><code>catch (err) { console.log(err.message); }</code> &mdash; <code>err</code> is <code>unknown</code>, not <code>Error</code></div>
+    <div class="correct">&#9989; Always narrow with <code>instanceof Error</code> first:<br><code>catch (err: unknown) { if (err instanceof Error) console.log(err.message); }</code></div>
+    <div class="mistake">&#10060; Using <code>Result</code> for truly exceptional conditions (out of memory, stack overflow):<br>These can't be caught or returned meaningfully</div>
+    <div class="correct">&#9989; Use <code>Result</code> for expected business errors (not found, validation, permission). Let truly exceptional conditions throw and crash.</div>
+  </div>
+
+  <div class="key-rules">
+    <strong>Key Rules</strong>
+    <ul>
+      <li><code>Result&lt;T, E&gt;</code> makes errors part of the return type &mdash; callers can't ignore them, and the compiler enforces handling</li>
+      <li>Use <code>unknown</code> in catch blocks and narrow with <code>instanceof</code> before accessing properties &mdash; never assume the caught value is an <code>Error</code></li>
+      <li>Throw for programmer errors and unrecoverable failures; return <code>Result</code> for expected business failures that callers should handle</li>
+    </ul>
+  </div>
+
+  <div class="exercises">
+    <strong>Exercises</strong>
+    <div class="exercise"><span class="exercise-num">1</span> Implement a full <code>Result&lt;T, E&gt;</code> module with <code>Ok</code>, <code>Err</code>, and helper functions: <code>map(result, fn)</code> that transforms the <code>data</code> if <code>ok</code>, <code>mapErr(result, fn)</code> that transforms the <code>error</code> if not ok, and <code>unwrap(result)</code> that returns data or throws. Ensure all return types are correctly inferred.</div>
+    <div class="exercise"><span class="exercise-num">2</span> Write a <code>parseUserInput(raw: unknown): Result&lt;ValidUser, UserError&gt;</code> function where <code>UserError</code> is a discriminated union with at least 3 error kinds. Handle each error kind exhaustively using a switch statement with <code>assertNever</code>. Test with valid and each kind of invalid input.</div>
+    <div class="exercise"><span class="exercise-num">3</span> Create a custom error class hierarchy: <code>HttpError</code> (base) with subclasses <code>NotFoundError</code>, <code>UnauthorizedError</code>, and <code>RateLimitError</code> (includes a <code>retryAfter: number</code> property). Write a <code>toError(err: unknown): HttpError</code> helper that safely converts any thrown value. Test <code>instanceof</code> narrowing in a catch block.</div>
+  </div>
+
+  <div class="connections">
+    <strong>Connections:</strong> The <code>Result</code> type is a discriminated union &mdash; the same pattern formalized in <a href="#discriminated_unions_practice">Discriminated Unions in Practice</a> (next). Exhaustive error handling reuses the <a href="#review_never_exhaustiveness">never &amp; Exhaustiveness</a> pattern from review. Zod's <a href="#zod_validation"><code>.safeParse()</code></a> already returns a Result-like structure. Custom error classes connect back to Day 3's class patterns.
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- #5 Discriminated Unions in Practice                            -->
+<!-- ============================================================ -->
+<div class="concept-card" id="discriminated_unions_practice">
+  <div class="concept-header">
+    <span class="concept-title">5. Discriminated Unions in Practice</span>
+    <span class="ttag">Runtime Patterns</span>
+  </div>
+
+  <div class="why-matters">Discriminated unions are the backbone of type-safe state management in TypeScript. They model real-world states (loading, success, error), event systems, and message protocols so that the compiler prevents impossible states and guarantees exhaustive handling &mdash; turning runtime crashes into compile-time errors.</div>
+
+  <div class="explanation">
+    <p>A discriminated union is a union of object types that share a common literal property (the "discriminant" or "tag"). TypeScript uses this tag to narrow the type in <code>switch</code> statements, enabling type-safe access to properties that only exist in specific variants. This pattern replaces boolean flags, optional properties, and stringly-typed APIs.</p>
+    <ul>
+      <li><strong>State machines</strong>: <code>{ status: "loading" } | { status: "success"; data: T } | { status: "error"; error: E }</code></li>
+      <li><strong>Event systems</strong>: action types with discriminated payloads (Redux pattern)</li>
+      <li><strong>API responses</strong>: success/error variants with different payloads</li>
+      <li><strong>Exhaustive matching</strong>: switch + <code>never</code> ensures all variants are handled</li>
+      <li>Each variant carries only the data relevant to that state &mdash; no optional property soup</li>
+    </ul>
+  </div>
+
+  <!-- State machine: fetch state -->
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &mdash; Fetch State Machine</div>
+<pre><code>// Model every possible state of an async operation
+type FetchState&lt;T&gt; =
+  | { status: "idle" }
+  | { status: "loading" }
+  | { status: "success"; data: T; fetchedAt: Date }
+  | { status: "error"; error: Error; retryCount: number };
+
+function renderUserProfile(state: FetchState&lt;{ name: string; email: string }&gt;): string {
+  switch (state.status) {
+    case "idle":
+      return "Click to load profile";
+    case "loading":
+      return "Loading...";
+    case "success":
+      // state.data is typed as { name: string; email: string }
+      return `${state.data.name} (${state.data.email})`;
+    case "error":
+      // state.error and state.retryCount are available
+      return `Error: ${state.error.message} (retried ${state.retryCount} times)`;
+  }
+  // No default needed: TypeScript knows all cases are covered
+  // If you add a new status, the function won't compile until you handle it
+}
+
+// Compare to the BAD alternative with optional properties:
+// interface BadState { loading: boolean; data?: User; error?: Error; }
+// - data and error can BOTH be set (impossible state)
+// - loading can be false while data is undefined (ambiguous)
+// - No compiler help when you add new states
+
+console.log(renderUserProfile({ status: "idle" }));
+console.log(renderUserProfile({
+  status: "success",
+  data: { name: "Alice", email: "alice@example.com" },
+  fetchedAt: new Date()
+}));</code></pre>
+    <div class="output">Click to load profile
+Alice (alice@example.com)</div>
+  </div>
+
+  <!-- Redux-style actions -->
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &mdash; Redux-Style Action Pattern</div>
+<pre><code>// Define actions as a discriminated union
+type CounterAction =
+  | { type: "increment" }
+  | { type: "decrement" }
+  | { type: "increment_by"; amount: number }
+  | { type: "reset"; initialValue?: number };
+
+interface CounterState {
+  count: number;
+  lastAction: string;
+}
+
+function counterReducer(state: CounterState, action: CounterAction): CounterState {
+  switch (action.type) {
+    case "increment":
+      return { count: state.count + 1, lastAction: "increment" };
+    case "decrement":
+      return { count: state.count - 1, lastAction: "decrement" };
+    case "increment_by":
+      // action.amount is available (only exists on this variant)
+      return { count: state.count + action.amount, lastAction: `+${action.amount}` };
+    case "reset":
+      return { count: action.initialValue ?? 0, lastAction: "reset" };
+    default: {
+      const _exhaustive: never = action;
+      return _exhaustive;
+    }
+  }
+}
+
+let state: CounterState = { count: 0, lastAction: "init" };
+state = counterReducer(state, { type: "increment" });
+state = counterReducer(state, { type: "increment_by", amount: 10 });
+console.log(state);</code></pre>
+    <div class="output">{ count: 11, lastAction: '+10' }</div>
+  </div>
+
+  <!-- API response types -->
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &mdash; API Response Types</div>
+<pre><code>// Typed API responses with discriminated unions
+type ApiResponse&lt;T&gt; =
+  | { status: "success"; data: T; meta: { requestId: string; duration: number } }
+  | { status: "error"; code: number; message: string; details?: string[] }
+  | { status: "rate_limited"; retryAfter: number };
+
+async function callApi&lt;T&gt;(url: string): Promise&lt;ApiResponse&lt;T&gt;&gt; {
+  const res = await fetch(url);
+
+  if (res.status === 429) {
+    return {
+      status: "rate_limited",
+      retryAfter: parseInt(res.headers.get("Retry-After") ?? "60", 10),
+    };
+  }
+
+  if (!res.ok) {
+    return {
+      status: "error",
+      code: res.status,
+      message: res.statusText,
+    };
+  }
+
+  return {
+    status: "success",
+    data: await res.json() as T,
+    meta: {
+      requestId: res.headers.get("X-Request-Id") ?? "unknown",
+      duration: 0,
+    },
+  };
+}
+
+// Consumer gets full type narrowing
+async function loadUsers() {
+  const response = await callApi&lt;{ name: string }[]&gt;("/api/users");
+
+  switch (response.status) {
+    case "success":
+      console.log(`Got ${response.data.length} users`);    // data is typed
+      break;
+    case "error":
+      console.error(`Error ${response.code}: ${response.message}`);
+      break;
+    case "rate_limited":
+      console.warn(`Rate limited. Retry in ${response.retryAfter}s`);
+      break;
+  }
+}</code></pre>
+  </div>
+
+  <!-- Form state machine -->
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &mdash; Form State Machine</div>
+<pre><code>// Model a form lifecycle with discriminated unions
+type FormState&lt;T&gt; =
+  | { phase: "editing"; values: Partial&lt;T&gt;; errors: Record&lt;string, string&gt; }
+  | { phase: "submitting"; values: T }
+  | { phase: "submitted"; values: T; response: { id: string } }
+  | { phase: "failed"; values: T; error: string };
+
+type UserForm = { name: string; email: string };
+
+type FormAction&lt;T&gt; =
+  | { type: "update_field"; field: keyof T; value: string }
+  | { type: "submit" }
+  | { type: "submit_success"; response: { id: string } }
+  | { type: "submit_failure"; error: string }
+  | { type: "reset" };
+
+function formReducer(
+  state: FormState&lt;UserForm&gt;,
+  action: FormAction&lt;UserForm&gt;
+): FormState&lt;UserForm&gt; {
+  switch (action.type) {
+    case "update_field":
+      if (state.phase !== "editing") return state;  // Can only edit in editing phase
+      return {
+        ...state,
+        values: { ...state.values, [action.field]: action.value },
+      };
+    case "submit":
+      if (state.phase !== "editing") return state;
+      const values = state.values as UserForm;      // Assume valid for brevity
+      return { phase: "submitting", values };
+    case "submit_success":
+      if (state.phase !== "submitting") return state;
+      return { phase: "submitted", values: state.values, response: action.response };
+    case "submit_failure":
+      if (state.phase !== "submitting") return state;
+      return { phase: "failed", values: state.values, error: action.error };
+    case "reset":
+      return { phase: "editing", values: {}, errors: {} };
+  }
+}
+
+// State transitions are explicit and type-safe:
+// editing -> submitting -> submitted
+//                       -> failed -> editing (via reset)</code></pre>
+  </div>
+
+  <!-- WebSocket messages -->
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &mdash; WebSocket Message Protocol</div>
+<pre><code>// Type a WebSocket protocol with discriminated unions
+type ServerMessage =
+  | { type: "user_joined"; userId: string; name: string; timestamp: number }
+  | { type: "user_left"; userId: string; timestamp: number }
+  | { type: "chat_message"; userId: string; text: string; timestamp: number }
+  | { type: "typing"; userId: string; isTyping: boolean }
+  | { type: "error"; code: string; message: string };
+
+function handleMessage(msg: ServerMessage): void {
+  switch (msg.type) {
+    case "user_joined":
+      console.log(`${msg.name} joined the chat`);
+      break;
+    case "user_left":
+      console.log(`User ${msg.userId} left`);
+      break;
+    case "chat_message":
+      console.log(`[${msg.userId}]: ${msg.text}`);
+      break;
+    case "typing":
+      if (msg.isTyping) console.log(`${msg.userId} is typing...`);
+      break;
+    case "error":
+      console.error(`Server error [${msg.code}]: ${msg.message}`);
+      break;
+    default: {
+      const _: never = msg;
+      console.warn("Unknown message type");
+    }
+  }
+}
+
+// Parse raw WebSocket data with runtime validation
+function parseMessage(raw: string): ServerMessage | null {
+  try {
+    const parsed = JSON.parse(raw);
+    if (typeof parsed.type !== "string") return null;
+    return parsed as ServerMessage; // In production, use Zod here!
+  } catch {
+    return null;
+  }
+}
+
+handleMessage({ type: "chat_message", userId: "u1", text: "Hello!", timestamp: Date.now() });</code></pre>
+    <div class="output">[u1]: Hello!</div>
+  </div>
+
+  <div class="callout-warning">
+    <strong>Common Mistakes</strong>
+    <div class="mistake">&#10060; Using optional properties instead of discriminated unions:<br><code>interface State { loading: boolean; data?: User; error?: Error }</code><br>Allows impossible states: <code>{ loading: true, data: user, error: err }</code></div>
+    <div class="correct">&#9989; Use discriminated unions to make impossible states unrepresentable:<br><code>type State = { status: "loading" } | { status: "success"; data: User } | { status: "error"; error: Error }</code></div>
+    <div class="mistake">&#10060; Using a non-literal type as the discriminant:<br><code>type Msg = { type: string; data: unknown }</code> &mdash; TypeScript can't narrow on <code>string</code></div>
+    <div class="correct">&#9989; Use literal types for discriminants:<br><code>type Msg = { type: "ping" } | { type: "pong"; data: string }</code> &mdash; each variant has a specific literal</div>
+  </div>
+
+  <div class="key-rules">
+    <strong>Key Rules</strong>
+    <ul>
+      <li>Use discriminated unions to make impossible states unrepresentable &mdash; each variant carries only the data relevant to that state</li>
+      <li>The discriminant property must be a literal type (<code>"loading"</code>, <code>"error"</code>, not <code>string</code>) for TypeScript to narrow correctly</li>
+      <li>Always include an exhaustiveness check (<code>default: assertNever(x)</code>) so adding a new variant forces you to handle it everywhere</li>
+    </ul>
+  </div>
+
+  <div class="exercises">
+    <strong>Exercises</strong>
+    <div class="exercise"><span class="exercise-num">1</span> Model a file upload as a discriminated union with states: <code>idle</code>, <code>selecting</code> (file dialog open), <code>uploading</code> (progress: number, 0-100), <code>processing</code> (server-side), <code>complete</code> (url: string), and <code>failed</code> (error: string). Write a <code>getStatusMessage</code> function that exhaustively handles all states and returns a user-friendly string.</div>
+    <div class="exercise"><span class="exercise-num">2</span> Implement a simple state machine for an authentication flow: <code>logged_out</code>, <code>authenticating</code> (credentials submitted), <code>mfa_required</code> (awaiting 2FA code), <code>authenticated</code> (user and token), <code>session_expired</code>. Write a <code>transition(state, event)</code> function that only allows valid transitions (e.g., can't go from <code>logged_out</code> directly to <code>authenticated</code>).</div>
+    <div class="exercise"><span class="exercise-num">3</span> Design a typed event system for a document editor with events: <code>text_insert</code> (position, text), <code>text_delete</code> (start, end), <code>format_change</code> (range, format), <code>cursor_move</code> (position), <code>undo</code>, <code>redo</code>. Write a <code>applyEvent</code> function and an <code>eventToString</code> function, both with exhaustive matching.</div>
+  </div>
+
+  <div class="connections">
+    <strong>Connections:</strong> This pattern is the practical application of <a href="#review_never_exhaustiveness">never &amp; Exhaustiveness</a> from review. The <code>Result</code> type from <a href="#error_handling_patterns">Error Handling Patterns</a> is itself a discriminated union. Zod's <a href="#zod_validation"><code>.safeParse()</code></a> returns <code>{ success: true; data: T } | { success: false; error: ZodError }</code> &mdash; the same pattern. Redux action types, React <code>useReducer</code>, and XState all use discriminated unions as their foundation.
+  </div>
+</div>
+
+</div><!-- end topic-section (Week 5) -->
+
+<!-- Footer -->
+<footer class="guide-footer">
+  <h2>All Guides</h2>
+  <ul>
+    <li><a href="typescript-guides/typescript-guide-2026-07-09.html">2026-07-09</a> (Day 36)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-07-08.html">2026-07-08</a> (Day 35)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-07-07.html">2026-07-07</a> (Day 34)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-07-06.html">2026-07-06</a> (Day 33)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-07-05.html">2026-07-05</a> (Day 32)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-07-04.html">2026-07-04</a> (Day 31)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-07-03.html">2026-07-03</a> (Day 30)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-07-02.html">2026-07-02</a> (Day 29)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-07-01.html">2026-07-01</a> (Day 28)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-30.html">2026-06-30</a> (Day 27)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-29.html">2026-06-29</a> (Day 26)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-28.html">2026-06-28</a> (Day 25)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-27.html">2026-06-27</a> (Day 24)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-26.html">2026-06-26</a> (Day 23)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-25.html">2026-06-25</a> (Day 22)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-24.html">2026-06-24</a> (Day 21)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-23.html">2026-06-23</a> (Day 20)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-22.html">2026-06-22</a> (Day 19)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-21.html">2026-06-21</a> (Day 18)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-19.html">2026-06-19</a> (Day 17)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-18.html">2026-06-18</a> (Day 16)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-17.html">2026-06-17</a> (Day 15)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-15.html">2026-06-15</a> (Day 14)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-13.html">2026-06-13</a> (Day 13)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-12.html">2026-06-12</a> (Day 12)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-11.html">2026-06-11</a> (Day 11)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-10.html">2026-06-10</a> (Day 10)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-09.html">2026-06-09</a> (Day 9)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-08.html">2026-06-08</a> (Day 8)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-07.html">2026-06-07</a> (Day 7)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-05.html">2026-06-05</a> (Day 6)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-04.html">2026-06-04</a> (Day 5)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-03.html">2026-06-03</a> (Day 4)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-02.html">2026-06-02</a> (Day 3)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-01.html">2026-06-01</a> (Day 2)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-05-31.html">2026-05-31</a> (Day 1)</li>
+  </ul>
+</footer>
+
+</div><!-- end content -->
+</div><!-- end main -->
+
+<script>
+// Theme toggle
+(function() {
+  var toggle = document.getElementById('themeToggle');
+  var html = document.documentElement;
+  var STORAGE_KEY = 'lc-tsguide-theme';
+
+  function setTheme(theme) {
+    html.setAttribute('data-theme', theme);
+    toggle.textContent = theme === 'dark' ? '\u{1F319}' : '\u{2600}\u{FE0F}';
+    try { localStorage.setItem(STORAGE_KEY, theme); } catch(e) {}
+  }
+
+  // Load saved theme
+  try {
+    var saved = localStorage.getItem(STORAGE_KEY);
+    if (saved) setTheme(saved);
+  } catch(e) {}
+
+  toggle.addEventListener('click', function() {
+    var current = html.getAttribute('data-theme') || 'dark';
+    setTheme;
+  });
+})();
+
+// Sidebar active link tracking
+(function() {
+  var links = document.querySelectorAll('.sidebar-nav a');
+  var sections = [];
+  links.forEach(function(link) {
+    var id = link.getAttribute('href').replace('#', '');
+    var el = document.getElementById(id);
+    if (el) sections.push({ link: link, el: el });
+  });
+
+  function updateActive() {
+    var current = null;
+    var scrollY = window.scrollY + 120;
+    for (var i = sections.length - 1; i >= 0; i--) {
+      if (sections[i].el.offsetTop <= scrollY) {
+        current = sections[i];
+        break;
+      }
+    }
+    links.forEach(function(l) { l.classList.remove('active'); });
+    if  current.link.classList.add('active');
+  }
+
+  window.addEventListener('scroll', updateActive);
+  updateActive();
+})();
+</script>
+
+</body>
+</html>

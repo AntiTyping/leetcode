@@ -1,0 +1,1096 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TypeScript Daily Guide — 2026-06-29 (Day 26)</title>
+<style>
+:root {
+  --bg: #0d1117;
+  --surface: #161b22;
+  --surface2: #1c2129;
+  --border: #30363d;
+  --text: #e6edf3;
+  --text-muted: #8b949e;
+  --accent: #58a6ff;
+  --accent-bg: rgba(56,139,253,0.15);
+  --green: #3fb950;
+  --green-bg: rgba(63,185,80,0.08);
+  --red: #f85149;
+  --red-bg: rgba(248,81,73,0.08);
+  --yellow: #d29922;
+  --yellow-bg: rgba(210,153,34,0.1);
+  --orange: #db6d28;
+  --purple: #bc8cff;
+  --purple-bg: rgba(188,140,255,0.08);
+  --purple-border: rgba(188,140,255,0.2);
+  --link: #58a6ff;
+  --code-bg: #1c2129;
+  --output-bg: #0e1c0e;
+  --output-border: #1a3a1a;
+  --sidebar-bg: #161b22;
+  --sidebar-active: rgba(56,139,253,0.15);
+  --exercise-border: #30363d;
+}
+[data-theme="light"] {
+  --bg: #ffffff;
+  --surface: #f6f8fa;
+  --surface2: #eef1f5;
+  --border: #d0d7de;
+  --text: #1f2328;
+  --text-muted: #656d76;
+  --accent: #0969da;
+  --accent-bg: rgba(9,105,218,0.1);
+  --green: #1a7f37;
+  --green-bg: rgba(26,127,55,0.06);
+  --red: #cf222e;
+  --red-bg: rgba(207,34,46,0.06);
+  --yellow: #9a6700;
+  --yellow-bg: rgba(154,103,0,0.06);
+  --orange: #bc4c00;
+  --purple: #8250df;
+  --purple-bg: rgba(130,80,223,0.06);
+  --purple-border: rgba(130,80,223,0.15);
+  --link: #0969da;
+  --code-bg: #eef1f5;
+  --output-bg: #f0faf0;
+  --output-border: #c6e6c6;
+  --sidebar-bg: #f6f8fa;
+  --sidebar-active: rgba(9,105,218,0.1);
+  --exercise-border: #d0d7de;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;font-size:16px;line-height:1.7;color:var(--text);background:var(--bg);display:flex;min-height:100vh}
+a{color:var(--link);text-decoration:none}
+a:hover{text-decoration:underline}
+
+/* Sidebar */
+.sidebar{position:fixed;top:0;left:0;width:300px;height:100vh;background:var(--sidebar-bg);border-right:1px solid var(--border);overflow-y:auto;padding:20px 0;z-index:100}
+.sidebar-header{padding:16px 20px;border-bottom:1px solid var(--border);margin-bottom:12px}
+.sidebar-header h2{font-size:15px;font-weight:600;color:var(--text)}
+.sidebar-header .date{font-size:13px;color:var(--text-muted);margin-top:2px}
+.sidebar-section{padding:8px 20px 4px;font-size:12px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px}
+.sidebar-section.review-label{color:var(--purple)}
+.sidebar-nav{list-style:none;padding:0}
+.sidebar-nav li a{display:block;padding:6px 20px 6px 28px;font-size:14px;color:var(--text-muted);transition:all 0.15s}
+.sidebar-nav li a:hover,.sidebar-nav li a.active{color:var(--accent);background:var(--sidebar-active);text-decoration:none}
+.sidebar-nav li a .nav-id{font-size:11px;color:var(--text-muted);opacity:0.6;margin-left:6px}
+
+/* Main */
+.main{margin-left:300px;flex:1;padding:40px;max-width:1160px}
+.content{max-width:860px;margin:0 auto}
+
+/* Theme Toggle */
+.theme-toggle{position:fixed;top:16px;right:20px;z-index:200;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:8px 12px;cursor:pointer;color:var(--text);font-size:18px;line-height:1;transition:all 0.15s}
+.theme-toggle:hover{border-color:var(--accent)}
+
+/* Header */
+.guide-header{text-align:center;padding:32px 0 40px;border-bottom:1px solid var(--border);margin-bottom:40px}
+.guide-header h1{font-size:28px;font-weight:700;margin-bottom:8px}
+.guide-header .meta{font-size:15px;color:var(--text-muted)}
+.guide-header .meta span{margin:0 8px}
+.badge{display:inline-block;padding:2px 10px;border-radius:12px;font-size:13px;font-weight:500}
+.badge-blue{background:var(--accent-bg);color:var(--accent)}
+.badge-purple{background:var(--purple-bg);color:var(--purple)}
+
+/* How To Use */
+.how-to-use{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:24px 28px;margin-bottom:40px}
+.how-to-use h2{font-size:18px;margin-bottom:12px}
+.how-to-use ol{padding-left:24px}
+.how-to-use li{margin-bottom:6px;color:var(--text-muted)}
+
+/* Review Section */
+.review-section{margin-bottom:48px}
+.review-section-header{font-size:22px;font-weight:700;padding-bottom:12px;border-bottom:2px solid var(--purple);margin-bottom:28px;display:flex;align-items:center;gap:12px;color:var(--purple)}
+
+/* Review Card */
+.review-card{background:var(--purple-bg);border:1px solid var(--purple-border);border-left:4px solid var(--purple);border-radius:10px;padding:28px;margin-bottom:24px}
+.review-card .review-header{display:flex;align-items:center;gap:12px;margin-bottom:12px;flex-wrap:wrap}
+.review-card .review-title{font-size:18px;font-weight:700;color:var(--purple)}
+.review-card .review-meta{font-size:13px;color:var(--text-muted)}
+.review-card .review-reminder{color:var(--text-muted);font-style:italic;margin-bottom:16px;padding-left:14px;border-left:3px solid var(--purple)}
+.review-card .review-pattern{margin-bottom:16px}
+.review-card .review-pattern strong{display:block;margin-bottom:8px;font-size:14px;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px}
+.review-card .review-challenge{margin-bottom:12px}
+.review-card .review-challenge strong{display:block;margin-bottom:8px;font-size:14px;color:var(--yellow);text-transform:uppercase;letter-spacing:0.5px}
+.review-card .review-challenge p{line-height:1.6}
+.review-card .review-pitfall{background:var(--red-bg);border:1px solid rgba(248,81,73,0.15);border-radius:6px;padding:12px 16px;font-size:14px;line-height:1.6}
+.review-card .review-pitfall strong{color:var(--red);margin-right:4px}
+.review-card code{background:var(--code-bg);padding:2px 6px;border-radius:4px;font-family:'SF Mono','Fira Code','Consolas',monospace;font-size:13px}
+
+/* Topic Section */
+.topic-section{margin-bottom:48px}
+.topic-section-header{font-size:22px;font-weight:700;padding-bottom:12px;border-bottom:2px solid var(--accent);margin-bottom:28px;display:flex;align-items:center;gap:12px}
+.topic-section-header .section-num{background:var(--accent);color:#fff;width:32px;height:32px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:15px;font-weight:700;flex-shrink:0}
+
+/* Concept Card */
+.concept-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:28px;margin-bottom:32px}
+.concept-header{display:flex;align-items:center;gap:12px;margin-bottom:16px;flex-wrap:wrap}
+.concept-title{font-size:20px;font-weight:700}
+.ttag{display:inline-block;padding:2px 10px;border-radius:12px;font-size:12px;font-weight:500;background:var(--accent-bg);color:var(--accent)}
+
+.why-matters{color:var(--text-muted);font-style:italic;margin-bottom:20px;padding-left:14px;border-left:3px solid var(--accent)}
+.explanation{margin-bottom:20px;line-height:1.8}
+.explanation p{margin-bottom:12px}
+.explanation ul,.explanation ol{padding-left:24px;margin-bottom:12px}
+.explanation li{margin-bottom:4px}
+.explanation code{background:var(--code-bg);padding:2px 6px;border-radius:4px;font-family:'SF Mono','Fira Code','Consolas',monospace;font-size:14px}
+.step{display:flex;gap:12px;margin-bottom:10px;align-items:flex-start}
+.step-num{background:var(--accent-bg);color:var(--accent);width:24px;height:24px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;margin-top:3px}
+
+/* Code Examples */
+.code-example{margin-bottom:20px;border:1px solid var(--border);border-radius:8px;overflow:hidden}
+.lang-badge{background:var(--surface2);color:var(--text-muted);font-size:12px;font-weight:600;padding:6px 14px;border-bottom:1px solid var(--border);font-family:'SF Mono','Fira Code','Consolas',monospace}
+pre{margin:0;padding:16px;overflow-x:auto;background:var(--code-bg);font-family:'SF Mono','Fira Code','Consolas',monospace;font-size:13.5px;line-height:1.6;white-space:pre-wrap}
+pre code{background:none;padding:0;font-size:inherit}
+.output{background:var(--output-bg);border-top:1px solid var(--output-border);padding:12px 16px;font-family:'SF Mono','Fira Code','Consolas',monospace;font-size:13px;color:var(--green);white-space:pre-wrap}
+.output::before{content:"Output:";display:block;font-size:11px;font-weight:600;color:var(--text-muted);margin-bottom:4px;text-transform:uppercase;letter-spacing:0.5px}
+.type-result{background:var(--output-bg);border-top:1px solid var(--output-border);padding:12px 16px;font-family:'SF Mono','Fira Code','Consolas',monospace;font-size:13px;color:var(--green);white-space:pre-wrap}
+.type-result::before{content:"Type Result:";display:block;font-size:11px;font-weight:600;color:var(--text-muted);margin-bottom:4px;text-transform:uppercase;letter-spacing:0.5px}
+.type-error{background:var(--red-bg);border-top:1px solid rgba(248,81,73,0.2);padding:12px 16px;font-family:'SF Mono','Fira Code','Consolas',monospace;font-size:13px;color:var(--red);white-space:pre-wrap}
+.type-error::before{content:"Type Error:";display:block;font-size:11px;font-weight:600;color:var(--red);margin-bottom:4px;text-transform:uppercase;letter-spacing:0.5px}
+
+/* Callouts */
+.callout-warning{background:var(--yellow-bg);border:1px solid rgba(210,153,34,0.2);border-radius:8px;padding:20px;margin-bottom:20px}
+.callout-warning strong{color:var(--yellow);display:block;margin-bottom:12px;font-size:16px}
+.mistake,.correct{padding:10px 14px;border-radius:6px;margin-bottom:10px;font-size:14px;line-height:1.6}
+.mistake{background:var(--red-bg);border-left:3px solid var(--red)}
+.mistake code,.correct code{background:var(--code-bg);padding:2px 6px;border-radius:4px;font-family:'SF Mono','Fira Code','Consolas',monospace;font-size:13px}
+.correct{background:var(--green-bg);border-left:3px solid var(--green)}
+
+/* Key Rules */
+.key-rules{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:20px;margin-bottom:20px}
+.key-rules strong{display:block;margin-bottom:10px;font-size:16px}
+.key-rules ul{padding-left:20px}
+.key-rules li{margin-bottom:6px}
+.key-rules code{background:var(--code-bg);padding:2px 6px;border-radius:4px;font-family:'SF Mono','Fira Code','Consolas',monospace;font-size:13px}
+
+/* Exercises */
+.exercises{border:2px dashed var(--exercise-border);border-radius:8px;padding:20px;margin-bottom:20px;margin-left:12px}
+.exercises strong{display:block;margin-bottom:14px;font-size:16px;color:var(--purple)}
+.exercise{margin-bottom:14px;padding-left:38px;position:relative;line-height:1.6}
+.exercise:last-child{margin-bottom:0}
+.exercise-num{position:absolute;left:0;top:2px;background:var(--purple);color:#fff;width:24px;height:24px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:12px;font-weight:700}
+.exercise code{background:var(--code-bg);padding:2px 6px;border-radius:4px;font-family:'SF Mono','Fira Code','Consolas',monospace;font-size:13px}
+
+/* Connections */
+.connections{background:var(--accent-bg);border:1px solid rgba(56,139,253,0.2);border-radius:8px;padding:16px 20px;font-size:14px;color:var(--text-muted)}
+.connections strong{color:var(--accent);margin-right:6px}
+
+/* Cross-links */
+.cross-links{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:20px 24px;margin-bottom:40px;text-align:center}
+.cross-links a{margin:0 10px;font-weight:500}
+
+/* Footer */
+.guide-footer{border-top:1px solid var(--border);padding-top:32px;margin-top:48px}
+.guide-footer h2{font-size:18px;margin-bottom:16px}
+.guide-footer ul{list-style:none;padding:0}
+.guide-footer li{padding:6px 0}
+.guide-footer li a{font-weight:500}
+
+/* Responsive */
+@media(max-width:900px){
+  .sidebar{display:none}
+  .main{margin-left:0}
+  .theme-toggle{top:12px;right:12px}
+}
+</style>
+</head>
+<body>
+
+<!-- Theme Toggle -->
+<button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">&#x1F319;</button>
+
+<!-- Sidebar -->
+<nav class="sidebar">
+  <div class="sidebar-header">
+    <h2>TypeScript Daily Guide</h2>
+    <div class="date">2026-06-29 &mdash; Day 26</div>
+  </div>
+
+  <div class="sidebar-section review-label">Review (6 concepts)</div>
+  <ul class="sidebar-nav">
+    <li><a href="#review_utility_types">Utility Types <span class="nav-id">R1</span></a></li>
+    <li><a href="#review_conditional_types">Conditional Types <span class="nav-id">R2</span></a></li>
+    <li><a href="#review_mapped_types">Mapped Types <span class="nav-id">R3</span></a></li>
+    <li><a href="#review_keyof">keyof &amp; Indexed Access <span class="nav-id">R4</span></a></li>
+    <li><a href="#review_predicates">Type Predicates &amp; Asserts <span class="nav-id">R5</span></a></li>
+    <li><a href="#review_constraints">Generic Constraints &amp; Defaults <span class="nav-id">R6</span></a></li>
+  </ul>
+
+  <div class="sidebar-section">React + TS: Refs &amp; Imperative Handles</div>
+  <ul class="sidebar-nav">
+    <li><a href="#forwardref"><code>forwardRef</code> &amp; Generic Components <span class="nav-id">#1</span></a></li>
+    <li><a href="#imperative"><code>useImperativeHandle</code> Typing <span class="nav-id">#2</span></a></li>
+  </ul>
+
+  <div class="sidebar-section">React + TS: Composition &amp; State</div>
+  <ul class="sidebar-nav">
+    <li><a href="#hoc">Higher-Order Components <span class="nav-id">#3</span></a></li>
+    <li><a href="#children">Typing <code>children</code> <span class="nav-id">#4</span></a></li>
+    <li><a href="#usereducer"><code>useReducer</code> + Discriminated Actions <span class="nav-id">#5</span></a></li>
+  </ul>
+</nav>
+
+<!-- Main Content -->
+<div class="main">
+<div class="content">
+
+<!-- Header -->
+<header class="guide-header">
+  <h1>TypeScript Daily Guide &mdash; Day 26</h1>
+  <div class="meta">
+    <span>2026-06-29</span>
+    <span>&middot;</span>
+    <span>Day 26 of 26</span>
+    <span>&middot;</span>
+    <span class="badge badge-purple">6 reviews</span>
+    <span class="badge badge-blue">5 new concepts</span>
+  </div>
+</header>
+
+<!-- How to Use -->
+<div class="how-to-use">
+  <h2>How to Use This Guide</h2>
+  <ol>
+    <li><strong>Review first</strong> &mdash; scan each purple review card; if the concept feels solid, move on; if fuzzy, re-read the code pattern</li>
+    <li><strong>Attempt the challenge exercise</strong> on any review card that felt shaky &mdash; this is your best reinforcement signal</li>
+    <li><strong>Work through new concepts</strong> top to bottom &mdash; each builds on the previous</li>
+    <li><strong>Type every code example</strong> yourself in a <code>.tsx</code> file &mdash; hover over props and inferred types in your editor to build intuition</li>
+    <li><strong>Do at least 2 exercises per concept</strong> before moving to the next one</li>
+  </ol>
+</div>
+
+<!-- Cross-links -->
+<div class="cross-links">
+  <a href="guide.html">LeetCode Guide</a>
+  <a href="lang-guide.html">Lang Guide</a>
+  <a href="python-guide.html">Python Guide</a>
+  <a href="golang-guide.html">Go Guide</a>
+  <a href="javascript-guide.html">JS Guide</a>
+  <a href="report.html">Report</a>
+</div>
+
+<!-- ============================================================ -->
+<!-- REVIEW SECTION                                                -->
+<!-- ============================================================ -->
+<div class="review-section">
+<div class="review-section-header">Review &mdash; 6 Concepts</div>
+
+<!-- R1: Utility Types -->
+<div class="review-card" id="review_utility_types">
+  <div class="review-header">
+    <span class="review-title">R1. Utility Types</span>
+    <span class="badge badge-purple">Generic &amp; Utility Types</span>
+    <span class="review-meta">18 days since review &middot; rep 3 &rarr; 4</span>
+  </div>
+  <div class="review-reminder"><code>Partial</code>, <code>Required</code>, <code>Pick</code>, <code>Omit</code>, <code>Record</code>, <code>Readonly</code>, <code>Exclude</code>, <code>Extract</code>, <code>NonNullable</code>, and <code>ReturnType</code> are built-in transformations over object and union types. Compose them instead of hand-rolling &mdash; and remember they operate at the top level unless you write a recursive version.</div>
+
+  <div class="review-pattern">
+    <strong>Key Pattern</strong>
+    <div class="code-example">
+<pre><code>interface User { id: string; name: string; email: string; age: number }
+
+type UserPatch  = Partial&lt;Pick&lt;User, "name" | "email"&gt;&gt;;  // { name?; email? }
+type PublicUser = Omit&lt;User, "email"&gt;;                     // no email
+type ById       = Record&lt;string, User&gt;;                    // dictionary
+type R          = ReturnType&lt;() =&gt; User&gt;;                   // User
+type NoNull     = NonNullable&lt;string | null | undefined&gt;;   // string</code></pre>
+<div class="type-result">compose Pick/Omit/Partial/Record rather than re-declaring shapes</div>
+    </div>
+  </div>
+
+  <div class="review-challenge">
+    <strong>Challenge Exercise</strong>
+    <p>Write <code>type Mutable&lt;T&gt;</code> that strips <code>readonly</code> using a mapped type, then compose <code>Partial&lt;Pick&lt;T, K&gt;&gt;</code> to type the body of a PATCH endpoint that updates a subset of fields. Finally implement <code>update&lt;T, K extends keyof T&gt;(entity: T, patch: Partial&lt;Pick&lt;T, K&gt;&gt;): T</code> and confirm an unknown field in <code>patch</code> is rejected.</p>
+  </div>
+
+  <div class="review-pitfall">
+    <strong>Pitfall:</strong> Reaching for <code>Partial&lt;T&gt;</code> on a nested object and expecting <em>deep</em> optionality &mdash; it&rsquo;s shallow. Also, <code>Omit&lt;T, K&gt;</code> does <em>not</em> constrain <code>K</code> to <code>keyof T</code> (it accepts any string), so a mistyped key silently omits nothing.
+  </div>
+</div>
+
+<!-- R2: Conditional Types -->
+<div class="review-card" id="review_conditional_types">
+  <div class="review-header">
+    <span class="review-title">R2. Conditional Types</span>
+    <span class="badge badge-purple">Advanced Type System</span>
+    <span class="review-meta">17 days since review &middot; rep 3 &rarr; 4</span>
+  </div>
+  <div class="review-reminder"><code>T extends U ? X : Y</code> picks a branch at the type level. Over a <em>naked</em> union type parameter it <em>distributes</em>, evaluating member-by-member; <code>infer</code> captures a piece of the matched type for reuse in the branches.</div>
+
+  <div class="review-pattern">
+    <strong>Key Pattern</strong>
+    <div class="code-example">
+<pre><code>type ElementType&lt;T&gt; = T extends (infer U)[] ? U : T;
+type A = ElementType&lt;string[]&gt;;   // string
+type B = ElementType&lt;number&gt;;     // number
+
+type NonNull&lt;T&gt; = T extends null | undefined ? never : T;
+type C = NonNull&lt;string | null&gt;;  // string  (distributes; null -&gt; never)</code></pre>
+<div class="type-result">infer extracts; distribution maps the conditional across union members</div>
+    </div>
+  </div>
+
+  <div class="review-challenge">
+    <strong>Challenge Exercise</strong>
+    <p>Write <code>Flatten&lt;T&gt;</code> that unwraps one array level and a recursive <code>DeepFlatten&lt;T&gt;</code>. Then write <code>Params&lt;F&gt;</code> using <code>infer</code> to pull a function&rsquo;s parameter tuple, and explain why wrapping the check as <code>[T] extends [U]</code> turns <em>off</em> distribution.</p>
+  </div>
+
+  <div class="review-pitfall">
+    <strong>Pitfall:</strong> Forgetting that conditionals distribute over a bare union type parameter &mdash; <code>T extends any ? T[] : never</code> applies to each member separately, not to the whole union. Wrap both sides in a 1-tuple (<code>[T] extends [any]</code>) to treat the union as a single unit.
+  </div>
+</div>
+
+<!-- R3: Mapped Types -->
+<div class="review-card" id="review_mapped_types">
+  <div class="review-header">
+    <span class="review-title">R3. Mapped Types</span>
+    <span class="badge badge-purple">Advanced Type System</span>
+    <span class="review-meta">17 days since review &middot; rep 3 &rarr; 4</span>
+  </div>
+  <div class="review-reminder"><code>{ [K in keyof T]: ... }</code> rebuilds a type key-by-key. Add or strip modifiers with <code>?</code>/<code>-?</code> and <code>readonly</code>/<code>-readonly</code>, and remap keys with <code>as</code> (map a key to <code>never</code> to drop it).</div>
+
+  <div class="review-pattern">
+    <strong>Key Pattern</strong>
+    <div class="code-example">
+<pre><code>type Optional&lt;T&gt; = { [K in keyof T]?: T[K] };
+type Strip&lt;T&gt;    = { -readonly [K in keyof T]-?: T[K] };  // remove readonly + optional
+
+type Getters&lt;T&gt; = {
+  [K in keyof T as `get${Capitalize&lt;string &amp; K&gt;}`]: () =&gt; T[K];
+};
+// Getters&lt;{ name: string }&gt;  ->  { getName: () =&gt; string }</code></pre>
+<div class="type-result">modifiers add/remove ?/readonly; `as` remaps (or drops) keys</div>
+    </div>
+  </div>
+
+  <div class="review-challenge">
+    <strong>Challenge Exercise</strong>
+    <p>Write <code>Nullable&lt;T&gt;</code> making every property <code>T[K] | null</code>, then a key-remapping <code>EventHandlers&lt;T&gt;</code> that turns <code>{ click: MouseEvent }</code> into <code>{ onClick: (e: MouseEvent) =&gt; void }</code>. Finally, use <code>as</code> + a conditional <code>never</code> to build <code>NonFunctionKeys&lt;T&gt;</code> that drops every method-valued property.</p>
+  </div>
+
+  <div class="review-pitfall">
+    <strong>Pitfall:</strong> Confusing &ldquo;drop the key&rdquo; with &ldquo;make the value <code>never</code>.&rdquo; Remapping a key to <code>never</code> via <code>as</code> <em>removes</em> it; returning <code>never</code> in the value position instead keeps the key with an unusable <code>never</code> type.
+  </div>
+</div>
+
+<!-- R4: keyof & Indexed Access -->
+<div class="review-card" id="review_keyof">
+  <div class="review-header">
+    <span class="review-title">R4. keyof &amp; Indexed Access Types</span>
+    <span class="badge badge-purple">Advanced Type System</span>
+    <span class="review-meta">16 days since review &middot; rep 3 &rarr; 4</span>
+  </div>
+  <div class="review-reminder"><code>keyof T</code> is the union of T&rsquo;s keys; <code>T[K]</code> looks up the type at key <code>K</code>; <code>T[keyof T]</code> is the union of all value types; and <code>T[number]</code> on a tuple/array yields the element type.</div>
+
+  <div class="review-pattern">
+    <strong>Key Pattern</strong>
+    <div class="code-example">
+<pre><code>interface User { id: number; name: string }
+type Keys   = keyof User;         // "id" | "name"
+type NameT  = User["name"];       // string
+type Values = User[keyof User];   // number | string
+
+const routes = ["home", "about"] as const;
+type Route = typeof routes[number];   // "home" | "about"</code></pre>
+<div class="type-result">keyof gives keys; T[K] and T[keyof T] read value types</div>
+    </div>
+  </div>
+
+  <div class="review-challenge">
+    <strong>Challenge Exercise</strong>
+    <p>Write <code>getIn&lt;T, K extends keyof T&gt;(obj: T, key: K): T[K]</code>, then a two-level <code>getIn2&lt;T, K1 extends keyof T, K2 extends keyof T[K1]&gt;</code>. Confirm the return type is exactly the nested value type by hovering it &mdash; e.g. <code>getIn2(config, "db", "port")</code> should be <code>number</code>, not <code>unknown</code>.</p>
+  </div>
+
+  <div class="review-pitfall">
+    <strong>Pitfall:</strong> Writing <code>T[keyof T]</code> when you meant one specific key &mdash; it collapses distinct value types into a union. Also, <code>keyof</code> on a type with an index signature includes <code>string</code>/<code>number</code>, widening past your literal keys.
+  </div>
+</div>
+
+<!-- R5: Type Predicates & Assertion Functions -->
+<div class="review-card" id="review_predicates">
+  <div class="review-header">
+    <span class="review-title">R5. Type Predicates &amp; Assertion Functions</span>
+    <span class="badge badge-purple">Advanced Type System</span>
+    <span class="review-meta">16 days since review &middot; rep 3 &rarr; 4</span>
+  </div>
+  <div class="review-reminder">A user-defined type guard <code>x is T</code> narrows in the caller after a <code>true</code> return; an <code>asserts x is T</code> (or <code>asserts cond</code>) narrows by <em>throwing</em> on failure. Both require an explicit return-type annotation.</div>
+
+  <div class="review-pattern">
+    <strong>Key Pattern</strong>
+    <div class="code-example">
+<pre><code>function isString(x: unknown): x is string {
+  return typeof x === "string";
+}
+function assertDefined&lt;T&gt;(x: T): asserts x is NonNullable&lt;T&gt; {
+  if (x == null) throw new Error("nullish");
+}
+
+const v: unknown = "hi";
+if (isString(v)) v.toUpperCase();   // v: string here
+
+let u: string | undefined;
+assertDefined(u); u.length;         // u: string after the assert</code></pre>
+<div class="type-result">`is` narrows on true; `asserts` narrows by throwing</div>
+    </div>
+  </div>
+
+  <div class="review-challenge">
+    <strong>Challenge Exercise</strong>
+    <p>Write <code>isNonEmpty&lt;T&gt;(a: T[]): a is [T, ...T[]]</code> and an <code>assertNever(x: never): never</code> for exhaustive switches. Then write <code>hasKey&lt;K extends string&gt;(o: object, k: K): o is Record&lt;K, unknown&gt;</code> and use it to safely read a dynamic property.</p>
+  </div>
+
+  <div class="review-pitfall">
+    <strong>Pitfall:</strong> A predicate whose body doesn&rsquo;t actually verify the claimed type &mdash; the compiler <em>trusts</em> the <code>is</code> annotation, so a wrong guard silently lies to every caller. And an assertion function needs an explicit <code>asserts</code> return type; inference won&rsquo;t produce it.
+  </div>
+</div>
+
+<!-- R6: Generic Constraints & Defaults -->
+<div class="review-card" id="review_constraints">
+  <div class="review-header">
+    <span class="review-title">R6. Generic Constraints &amp; Defaults</span>
+    <span class="badge badge-purple">Functions &amp; Patterns</span>
+    <span class="review-meta">16 days since review &middot; rep 3 &rarr; 4</span>
+  </div>
+  <div class="review-reminder"><code>T extends U</code> restricts what a type parameter accepts (and unlocks property access on <code>T</code>); <code>T = Default</code> supplies a fallback when a type argument is neither passed nor inferable. Constrain to the <em>minimum</em> capability you need.</div>
+
+  <div class="review-pattern">
+    <strong>Key Pattern</strong>
+    <div class="code-example">
+<pre><code>function longest&lt;T extends { length: number }&gt;(a: T, b: T): T {
+  return a.length &gt;= b.length ? a : b;
+}
+longest([1], [1, 2]);   // number[]
+longest("a", "bb");     // string
+
+interface Box&lt;T = string&gt; { value: T }
+const b: Box = { value: "hi" };   // T defaults to string</code></pre>
+<div class="type-result">constrain to a capability; default only fills an un-inferable slot</div>
+    </div>
+  </div>
+
+  <div class="review-challenge">
+    <strong>Challenge Exercise</strong>
+    <p>Write <code>pluck&lt;T, K extends keyof T = keyof T&gt;(o: T, k: K): T[K]</code> and a constrained <code>merge&lt;A extends object, B extends object&gt;(a: A, b: B): A &amp; B</code>. Then define <code>createStore&lt;S = Record&lt;string, unknown&gt;&gt;()</code> and show exactly when the default <code>S</code> kicks in versus when an explicit or inferred argument overrides it.</p>
+  </div>
+
+  <div class="review-pitfall">
+    <strong>Pitfall:</strong> Over-constraining (<code>T extends string</code> when you only read <code>.length</code>) or adding a default that masks a missing inference site. A default applies <em>only</em> when a type argument is neither supplied nor inferable &mdash; an inferred <code>T</code> always beats its default.
+  </div>
+</div>
+
+</div><!-- end review-section -->
+
+<!-- ============================================================ -->
+<!-- TOPIC SECTION 1: React + TS: Refs & Imperative Handles        -->
+<!-- ============================================================ -->
+<div class="topic-section">
+<div class="topic-section-header"><span class="section-num">1</span>React + TS: Refs &amp; Imperative Handles</div>
+
+<!-- Concept 1: forwardRef & Generic Components -->
+<div class="concept-card" id="forwardref">
+  <div class="concept-header">
+    <span class="concept-title">1. <code>forwardRef</code> &amp; Generic Components with Refs</span>
+    <span class="ttag">React + TypeScript</span>
+  </div>
+
+  <div class="why-matters">To let a parent grab a child&rsquo;s DOM node (focus an input, scroll a list) or its imperative API, a component must <em>forward</em> a ref. <code>forwardRef</code> types the second <code>ref</code> parameter cleanly &mdash; but it has a famous wrinkle: it erases a component&rsquo;s own generic, so a generic list that also forwards a ref needs a deliberate workaround.</div>
+
+  <div class="explanation">
+    <p><code>forwardRef&lt;RefType, Props&gt;</code> turns a component into one that receives <code>(props, ref)</code>, where <code>ref</code> is typed <code>Ref&lt;RefType&gt;</code>. For a DOM input, <code>RefType</code> is <code>HTMLInputElement</code>; attach it with <code>ref={ref}</code> and the parent&rsquo;s <code>useRef&lt;HTMLInputElement&gt;</code> lines up exactly.</p>
+    <p>The wrinkle: <code>forwardRef</code>&rsquo;s type signature isn&rsquo;t generic-preserving, so a component written as <code>forwardRef(function List&lt;T&gt;(...))</code> stops being generic &mdash; <code>T</code> collapses to <code>unknown</code> at every call site. Two recoveries: cast the result to a generic <em>call signature</em>, or (React 19+) skip <code>forwardRef</code> entirely and accept <code>ref</code> as a normal prop, which keeps generics natively.</p>
+    <div class="step"><span class="step-num">1</span><div>Wrap in <code>forwardRef&lt;Element, Props&gt;</code>; the <code>ref</code> parameter is <code>Ref&lt;Element&gt;</code>, not <code>Element</code>.</div></div>
+    <div class="step"><span class="step-num">2</span><div>Attach <code>ref</code> to the underlying element; consumers pass a matching <code>useRef</code>.</div></div>
+    <div class="step"><span class="step-num">3</span><div>Generic components lose their type parameter &mdash; recover it with a call-signature cast, or use React 19 ref-as-prop.</div></div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 1 of 4 &mdash; a basic DOM forwardRef</div>
+<pre><code>import { forwardRef } from "react";
+
+type InputProps = { label: string } &amp; React.ComponentPropsWithoutRef&lt;"input"&gt;;
+
+const TextInput = forwardRef&lt;HTMLInputElement, InputProps&gt;(
+  function TextInput({ label, ...rest }, ref) {
+    return &lt;label&gt;{label}&lt;input ref={ref} {...rest} /&gt;&lt;/label&gt;;
+  }
+);</code></pre>
+<div class="type-result">ref param is Ref&lt;HTMLInputElement&gt;; rest is the native input props</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 2 of 4 &mdash; the consumer drives the ref</div>
+<pre><code>function Form() {
+  const inputRef = useRef&lt;HTMLInputElement&gt;(null);
+  useEffect(() =&gt; { inputRef.current?.focus(); }, []);
+  return &lt;TextInput ref={inputRef} label="Name" /&gt;;   // ref typed &amp; checked
+}</code></pre>
+<div class="type-result">inputRef.current is HTMLInputElement | null</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 3 of 4 &mdash; the generic-loss problem</div>
+<pre><code>// we WANT: &lt;List&lt;T&gt; items ref /&gt;, ref forwarded to the &lt;ul&gt;
+const List = forwardRef(function List&lt;T&gt;(
+  { items }: { items: T[] },
+  ref: React.Ref&lt;HTMLUListElement&gt;
+) {
+  return &lt;ul ref={ref}&gt;{items.map((x, i) =&gt; &lt;li key={i}&gt;{String(x)}&lt;/li&gt;)}&lt;/ul&gt;;
+});
+
+// but List is no longer generic: T is fixed to unknown at every call site</code></pre>
+<div class="type-error">forwardRef drops the &lt;T&gt; &mdash; items infers as unknown[] for all callers</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 4 of 4 &mdash; recovering the generic</div>
+<pre><code>// (a) re-assert the intended generic call signature
+const GenericList = List as &lt;T&gt;(
+  p: { items: T[] } &amp; React.RefAttributes&lt;HTMLUListElement&gt;
+) =&gt; React.ReactElement;
+
+// (b) React 19: ref is just a prop &mdash; no forwardRef, generics survive
+function List19&lt;T&gt;({ items, ref }: {
+  items: T[];
+  ref?: React.Ref&lt;HTMLUListElement&gt;;
+}) {
+  return &lt;ul ref={ref}&gt;{items.map((x, i) =&gt; &lt;li key={i}&gt;{String(x)}&lt;/li&gt;)}&lt;/ul&gt;;
+}</code></pre>
+<div class="type-result">cast restores per-call T; React 19 ref-as-prop keeps it natively</div>
+  </div>
+
+  <div class="callout-warning">
+    <strong>Common Mistakes:</strong>
+    <div class="mistake">&#10060; Typing the ref parameter as <code>HTMLInputElement</code> instead of <code>Ref&lt;HTMLInputElement&gt;</code> &mdash; a caller&rsquo;s ref object can&rsquo;t be assigned to a bare element type.</div>
+    <div class="correct">&#9989; Use <code>React.Ref&lt;T&gt;</code> / <code>React.ForwardedRef&lt;T&gt;</code> for the parameter; only <code>ref.current</code> is <code>T | null</code>.</div>
+    <div class="mistake">&#10060; Expecting a generic <code>forwardRef</code> component to keep inferring its type parameter at call sites.</div>
+    <div class="correct">&#9989; Recover the generic with a call-signature cast, or (React 19+) drop <code>forwardRef</code> and accept <code>ref</code> as a normal prop.</div>
+  </div>
+
+  <div class="key-rules">
+    <strong>Key Rules:</strong>
+    <ul>
+    <li><a href="typescript-guides/typescript-guide-2026-07-04.html">2026-07-04</a> (Day 31)</li>
+      <li><code>forwardRef&lt;Element, Props&gt;</code> supplies a typed second <code>ref</code> param; forward it to the underlying element.</li>
+      <li>The <code>ref</code> parameter&rsquo;s type is <code>Ref&lt;Element&gt;</code>, not <code>Element</code>.</li>
+      <li><code>forwardRef</code> erases a component&rsquo;s own generic &mdash; cast to a generic call signature to restore it.</li>
+      <li>On React 19+, <code>ref</code> is a regular prop, so generic + ref components need no special handling.</li>
+    </ul>
+  </div>
+
+  <div class="exercises">
+    <strong>Practice Exercises:</strong>
+    <div class="exercise"><span class="exercise-num">1</span>Wrap a <code>&lt;Button&gt;</code> in <code>forwardRef</code> so a parent can <code>useRef&lt;HTMLButtonElement&gt;</code> and call <code>.focus()</code>. Confirm the ref param is <code>Ref&lt;HTMLButtonElement&gt;</code> and <code>.current</code> is <code>HTMLButtonElement | null</code>.</div>
+    <div class="exercise"><span class="exercise-num">2</span>Write a generic <code>&lt;Select&lt;T&gt;&gt;</code> that forwards a ref to its <code>&lt;select&gt;</code>; observe that <code>T</code> collapses to <code>unknown</code>, then restore inference with a call-signature cast.</div>
+    <div class="exercise"><span class="exercise-num">3</span>Re-implement the same <code>&lt;Select&lt;T&gt;&gt;</code> for React 19 by accepting <code>ref?: Ref&lt;HTMLSelectElement&gt;</code> as an ordinary prop, and show generics survive with no cast.</div>
+  </div>
+
+  <div class="connections"><strong>Connections:</strong> <code>forwardRef</code> is <em>Generics Basics</em> meeting <em>React Component Props</em> (Day 24), and the generic-loss cast reuses call-signature types. It sets up Concept 2 (<code>useImperativeHandle</code>), which customizes <em>what</em> the forwarded ref exposes rather than handing over the raw node.</div>
+</div>
+
+<!-- Concept 2: useImperativeHandle -->
+<div class="concept-card" id="imperative">
+  <div class="concept-header">
+    <span class="concept-title">2. <code>useImperativeHandle</code>: Typing the Exposed API</span>
+    <span class="ttag">React + TypeScript</span>
+  </div>
+
+  <div class="why-matters">Sometimes a parent shouldn&rsquo;t touch the raw DOM node but a <em>curated</em> API &mdash; <code>videoRef.current.play()</code>, <code>formRef.current.submit()</code>. <code>useImperativeHandle</code> lets a component expose a typed handle object through its ref, and typing that handle is what gives the parent autocomplete and safety while hiding the implementation.</div>
+
+  <div class="explanation">
+    <p>Pair <code>forwardRef&lt;Handle, Props&gt;</code> with <code>useImperativeHandle(ref, () =&gt; ({ ... }), deps)</code>. The <code>Handle</code> interface is the contract the parent sees; the factory returns an object matching it, and the dependency array controls when the handle is recomputed. The parent uses <code>useRef&lt;Handle&gt;</code> and calls the typed methods.</p>
+    <p>Two typing wins matter. First, declare an explicit <code>Handle</code> interface (or derive it with <code>ReturnType</code>) so the exposed surface can&rsquo;t drift from &mdash; or accidentally widen to &mdash; the whole DOM node. Second, treat the third argument like any hook dependency list: everything the handle&rsquo;s closures read must appear there, or you ship a stale-closure bug behind a perfectly-typed method.</p>
+    <div class="step"><span class="step-num">1</span><div>Define a <code>Handle</code> interface = the imperative API you want to expose.</div></div>
+    <div class="step"><span class="step-num">2</span><div><code>forwardRef&lt;Handle, Props&gt;</code> + <code>useImperativeHandle(ref, () =&gt; ({ ... }), deps)</code>.</div></div>
+    <div class="step"><span class="step-num">3</span><div>Parent uses <code>useRef&lt;Handle&gt;</code> and calls only the typed methods.</div></div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 1 of 4 &mdash; define the handle + expose it</div>
+<pre><code>export interface VideoHandle {
+  play(): void;
+  pause(): void;
+  seek(seconds: number): void;
+}
+
+const Video = forwardRef&lt;VideoHandle, { src: string }&gt;(
+  function Video({ src }, ref) {
+    const el = useRef&lt;HTMLVideoElement&gt;(null);
+    useImperativeHandle(ref, () =&gt; ({
+      play:  () =&gt; el.current?.play(),
+      pause: () =&gt; el.current?.pause(),
+      seek:  (s) =&gt; { if (el.current) el.current.currentTime = s; },
+    }), []);
+    return &lt;video ref={el} src={src} /&gt;;
+  }
+);</code></pre>
+<div class="type-result">the ref now exposes VideoHandle, not HTMLVideoElement</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 2 of 4 &mdash; the parent calls the typed API</div>
+<pre><code>function Player() {
+  const ref = useRef&lt;VideoHandle&gt;(null);
+  return (
+    &lt;&gt;
+      &lt;Video ref={ref} src="/clip.mp4" /&gt;
+      &lt;button onClick={() =&gt; ref.current?.play()}&gt;Play&lt;/button&gt;
+      &lt;button onClick={() =&gt; ref.current?.seek(30)}&gt;Skip 30s&lt;/button&gt;
+    &lt;/&gt;
+  );
+}
+// ref.current?.rewind()  // error: 'rewind' is not on VideoHandle</code></pre>
+<div class="type-result">ref.current is VideoHandle | null; seek(30) checked, unknown methods error</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 3 of 4 &mdash; derive the handle type so it can&rsquo;t drift</div>
+<pre><code>// single source of truth: the object the factory returns
+function buildVideoApi(el: React.RefObject&lt;HTMLVideoElement&gt;) {
+  return {
+    play:  () =&gt; el.current?.play(),
+    pause: () =&gt; el.current?.pause(),
+  };
+}
+type VideoApi = ReturnType&lt;typeof buildVideoApi&gt;;   // stays in sync</code></pre>
+<div class="type-result">VideoApi tracks the implementation via ReturnType &mdash; no duplicate interface</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 4 of 4 &mdash; the deps array is real</div>
+<pre><code>useImperativeHandle(ref, () =&gt; ({
+  submit: () =&gt; doSubmit(formState),   // closes over formState
+}), [formState]);   // recompute the handle whenever formState changes</code></pre>
+<div class="type-result">omit [formState] and submit() fires with a stale snapshot</div>
+  </div>
+
+  <div class="callout-warning">
+    <strong>Common Mistakes:</strong>
+    <div class="mistake">&#10060; Returning a handle whose shape doesn&rsquo;t match <code>forwardRef&lt;Handle&gt;</code> &mdash; or leaving <code>Handle</code> as the DOM element type so the parent sees the whole node.</div>
+    <div class="correct">&#9989; Declare an explicit <code>Handle</code> interface (or derive it with <code>ReturnType</code>) and expose only those methods.</div>
+    <div class="mistake">&#10060; Omitting the dependency array so the handle&rsquo;s closures capture stale state.</div>
+    <div class="correct">&#9989; List every value the handle reads in the deps array, exactly like <code>useEffect</code>/<code>useCallback</code>.</div>
+  </div>
+
+  <div class="key-rules">
+    <strong>Key Rules:</strong>
+    <ul>
+      <li><code>useImperativeHandle</code> customizes what a ref exposes; pair it with <code>forwardRef&lt;Handle, Props&gt;</code>.</li>
+      <li>The <code>Handle</code> type is the contract the parent sees &mdash; keep it minimal and intentional.</li>
+      <li>Derive the handle type from the implementation (<code>ReturnType</code>) to prevent drift.</li>
+      <li>The third argument is a dependency array &mdash; include everything the handle&rsquo;s closures capture.</li>
+    </ul>
+  </div>
+
+  <div class="exercises">
+    <strong>Practice Exercises:</strong>
+    <div class="exercise"><span class="exercise-num">1</span>Build a <code>&lt;TextField&gt;</code> exposing <code>{ focus(): void; clear(): void }</code> via <code>useImperativeHandle</code>; drive it from a parent using <code>useRef&lt;TextFieldHandle&gt;</code>.</div>
+    <div class="exercise"><span class="exercise-num">2</span>Add a <code>getValue(): string</code> method and confirm the parent&rsquo;s <code>ref.current?.getValue()</code> is typed as <code>string | undefined</code> (because of the optional chain).</div>
+    <div class="exercise"><span class="exercise-num">3</span>Refactor so the handle type is <code>ReturnType&lt;typeof buildHandle&gt;</code>; then add a method to the implementation and confirm the parent sees it with no separate interface edit.</div>
+  </div>
+
+  <div class="connections"><strong>Connections:</strong> This builds directly on Concept 1 (<code>forwardRef</code>) and is <em>Interfaces vs Type Aliases</em> plus <em>ReturnType</em> from <em>Utility Types</em> (R1). The curated-API idea echoes <em>Branded/Opaque</em> boundaries &mdash; expose intent, hide the node.</div>
+</div>
+
+</div><!-- end topic-section 1 -->
+
+<!-- ============================================================ -->
+<!-- TOPIC SECTION 2: React + TS: Composition & State             -->
+<!-- ============================================================ -->
+<div class="topic-section">
+<div class="topic-section-header"><span class="section-num">2</span>React + TS: Composition &amp; State</div>
+
+<!-- Concept 3: Higher-Order Components -->
+<div class="concept-card" id="hoc">
+  <div class="concept-header">
+    <span class="concept-title">3. Higher-Order Components (HOC) Typing</span>
+    <span class="ttag">React + TypeScript</span>
+  </div>
+
+  <div class="why-matters">An HOC wraps a component to inject props &mdash; a theme, a store slice, the current user. The typing challenge is precise: the returned component must expose the <em>original</em> props <em>minus</em> the ones the HOC supplies, so callers still pass what they must and are forbidden from passing what&rsquo;s injected.</div>
+
+  <div class="explanation">
+    <p>Make the HOC generic over the wrapped component&rsquo;s props <code>P</code>, and return a component whose props are <code>Omit&lt;P, keyof Injected&gt;</code>. Constrain <code>P extends Injected</code> so the injection type-checks, and bridge the spread back to <code>P</code> with a single trusted cast at the injection seam. Everything the HOC does <em>not</em> inject passes straight through.</p>
+    <p>In modern React a custom hook usually beats an HOC &mdash; no prop-subtraction gymnastics, no wrapper component in the tree. Reach for an HOC when you must wrap arbitrary or class components, add cross-cutting render logic, or forward refs around a boundary. When you do, <code>Omit</code> is the load-bearing utility that keeps the public prop surface honest.</p>
+    <div class="step"><span class="step-num">1</span><div>The HOC is generic over the wrapped component&rsquo;s props <code>P</code> (constrained to include the injected props).</div></div>
+    <div class="step"><span class="step-num">2</span><div>Return a component typed <code>Omit&lt;P, keyof Injected&gt;</code> &mdash; injected props vanish from the public API.</div></div>
+    <div class="step"><span class="step-num">3</span><div>Bridge the merged props back to <code>P</code> with one cast at the seam; everything else passes through.</div></div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 1 of 4 &mdash; inject a prop, subtract it from the public props</div>
+<pre><code>type WithUser = { user: { id: string; name: string } };
+
+function withUser&lt;P extends WithUser&gt;(Cmp: React.ComponentType&lt;P&gt;) {
+  return function Wrapped(props: Omit&lt;P, keyof WithUser&gt;) {
+    const user = useCurrentUser();                 // injected internally
+    return &lt;Cmp {...(props as P)} user={user} /&gt;;   // bridge back to P
+  };
+}</code></pre>
+<div class="type-result">Wrapped&rsquo;s props are P without `user`</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 2 of 4 &mdash; the caller no longer passes the injected prop</div>
+<pre><code>type ProfileProps = WithUser &amp; { showEmail: boolean };
+function Profile({ user, showEmail }: ProfileProps) { /* ... */ return null; }
+
+const ConnectedProfile = withUser(Profile);
+
+&lt;ConnectedProfile showEmail /&gt;;            // ok &mdash; user is injected
+&lt;ConnectedProfile user={u} showEmail /&gt;;   // error: 'user' was removed</code></pre>
+<div class="type-error">Property 'user' does not exist on the wrapped component&rsquo;s props</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 3 of 4 &mdash; a pass-through HOC keeps P intact</div>
+<pre><code>function withLogging&lt;P extends object&gt;(Cmp: React.ComponentType&lt;P&gt;) {
+  const Wrapped = (props: P) =&gt; {
+    useEffect(() =&gt; console.log(Cmp.displayName ?? Cmp.name, "mounted"), []);
+    return &lt;Cmp {...props} /&gt;;
+  };
+  Wrapped.displayName = `withLogging(${Cmp.displayName ?? Cmp.name})`;
+  return Wrapped;
+}</code></pre>
+<div class="type-result">injects nothing, so the public props stay exactly P</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 4 of 4 &mdash; a hook is usually the better tool</div>
+<pre><code>// HOC form
+const Connected = withUser(Profile);
+
+// hook equivalent &mdash; no Omit gymnastics, no wrapper in the tree
+function Profile2({ showEmail }: { showEmail: boolean }) {
+  const user = useCurrentUser();   // just call the hook
+  return null;
+}</code></pre>
+<div class="type-result">prefer a hook unless you must wrap arbitrary/class components</div>
+  </div>
+
+  <div class="callout-warning">
+    <strong>Common Mistakes:</strong>
+    <div class="mistake">&#10060; Returning <code>ComponentType&lt;P&gt;</code> so the caller is still <em>required</em> to pass the prop the HOC injects.</div>
+    <div class="correct">&#9989; Return <code>ComponentType&lt;Omit&lt;P, keyof Injected&gt;&gt;</code> so injected props disappear from the public API.</div>
+    <div class="mistake">&#10060; Spreading props without the <code>as P</code> bridge and fighting the &ldquo;<code>Omit&lt;P&gt;</code> is not assignable to <code>P</code>&rdquo; error.</div>
+    <div class="correct">&#9989; Cast the merged <code>{...props, ...injected}</code> back to <code>P</code> at the single trusted seam inside the HOC.</div>
+  </div>
+
+  <div class="key-rules">
+    <strong>Key Rules:</strong>
+    <ul>
+      <li>Make the HOC generic over the wrapped props <code>P</code>.</li>
+      <li>Subtract injected props with <code>Omit&lt;P, keyof Injected&gt;</code> in the returned component&rsquo;s type.</li>
+      <li>Constrain <code>P extends Injected</code> so the injection itself type-checks.</li>
+      <li>Prefer a custom hook unless you must wrap arbitrary/class components or add cross-cutting render logic.</li>
+    </ul>
+  </div>
+
+  <div class="exercises">
+    <strong>Practice Exercises:</strong>
+    <div class="exercise"><span class="exercise-num">1</span>Write <code>withTheme&lt;P extends { theme: Theme }&gt;</code> that injects <code>theme</code> and returns a component typed <code>Omit&lt;P, "theme"&gt;</code>. Confirm callers can&rsquo;t pass <code>theme</code> but must still pass everything else.</div>
+    <div class="exercise"><span class="exercise-num">2</span>Add a second injected prop (<code>t: TranslateFn</code>) and widen the <code>Omit</code> to remove both; verify both vanish from the public props.</div>
+    <div class="exercise"><span class="exercise-num">3</span>Rewrite <code>withTheme</code> as a <code>useTheme()</code> hook and note which HOC use cases (class components, wrapping render output, ref forwarding) the hook can&rsquo;t replace.</div>
+  </div>
+
+  <div class="connections"><strong>Connections:</strong> HOC typing is <em>Utility Types</em> (R1: <code>Omit</code>) plus <em>Generic Constraints</em> (R6) applied to components. It contrasts with Concept 1&rsquo;s ref forwarding (HOCs often need to forward refs too) and with the render-prop / hook alternatives from Day 25.</div>
+</div>
+
+<!-- Concept 4: Typing children -->
+<div class="concept-card" id="children">
+  <div class="concept-header">
+    <span class="concept-title">4. Typing <code>children</code>: ReactNode vs ReactElement</span>
+    <span class="ttag">React + TypeScript</span>
+  </div>
+
+  <div class="why-matters"><code>children</code> is the most-used prop, and its type controls what a component will accept: any renderable content, exactly one element, only elements of a specific shape, or a function. Picking the right one turns &ldquo;anything goes&rdquo; into a compile-time guarantee about how the component may be composed.</div>
+
+  <div class="explanation">
+    <p><code>React.ReactNode</code> is the broadest renderable type &mdash; strings, numbers, <code>null</code>, <code>boolean</code>, arrays, and elements. It&rsquo;s the right default. <code>React.ReactElement</code> is a single element <em>object</em> (not text or <code>null</code>); use it to require an actual element. Narrow further with <code>ReactElement&lt;ChildProps&gt;</code> to constrain a child&rsquo;s prop shape, or a function type for render props.</p>
+    <p>One subtlety trips people up: constraining children to <code>ReactElement&lt;TabProps&gt;</code> checks the <em>props shape</em>, not the component <em>identity</em> &mdash; anything whose props are assignable will pass, not only your <code>&lt;Tab&gt;</code>. The <code>PropsWithChildren&lt;P&gt;</code> helper is a convenience that adds an <em>optional</em> <code>children?: ReactNode</code>; if you need children to be required, type it explicitly instead.</p>
+    <div class="step"><span class="step-num">1</span><div><code>React.ReactNode</code> &mdash; the broadest renderable (text, arrays, <code>null</code>, elements). The default choice.</div></div>
+    <div class="step"><span class="step-num">2</span><div><code>React.ReactElement</code> &mdash; a single element object; use it to require an actual element.</div></div>
+    <div class="step"><span class="step-num">3</span><div>Narrow with <code>ReactElement&lt;P&gt;</code> for a specific child shape, or a function type for render props.</div></div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 1 of 4 &mdash; the common case: ReactNode</div>
+<pre><code>type CardProps = { title: string; children: React.ReactNode };
+function Card({ title, children }: CardProps) {
+  return &lt;section&gt;&lt;h3&gt;{title}&lt;/h3&gt;{children}&lt;/section&gt;;
+}
+
+&lt;Card title="Hi"&gt;text, &lt;b&gt;elements&lt;/b&gt;, {null}, or arrays&lt;/Card&gt;;   // all ok</code></pre>
+<div class="type-result">ReactNode accepts text, elements, arrays, null, boolean</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 2 of 4 &mdash; require exactly one element</div>
+<pre><code>type ModalProps = { children: React.ReactElement };
+function Modal({ children }: ModalProps) {
+  return &lt;div className="modal"&gt;{children}&lt;/div&gt;;
+}
+
+&lt;Modal&gt;&lt;Form /&gt;&lt;/Modal&gt;;      // ok: one element
+&lt;Modal&gt;plain text&lt;/Modal&gt;;    // error: string is not a ReactElement</code></pre>
+<div class="type-error">Type 'string' is not assignable to type 'ReactElement'</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 3 of 4 &mdash; constrain to a child&rsquo;s props</div>
+<pre><code>type TabProps = { label: string };
+function Tab(_: TabProps) { return null; }
+
+type TabsProps = { children: React.ReactElement&lt;TabProps&gt;[] };
+function Tabs({ children }: TabsProps) {
+  return &lt;div&gt;{children.map((c) =&gt; c.props.label)}&lt;/div&gt;;   // props.label: string
+}
+
+&lt;Tabs&gt;&lt;Tab label="A" /&gt;&lt;Tab label="B" /&gt;&lt;/Tabs&gt;;   // ok, props typed</code></pre>
+<div class="type-result">c.props is TabProps &mdash; label autocompletes and is checked</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 4 of 4 &mdash; PropsWithChildren</div>
+<pre><code>import type { PropsWithChildren } from "react";
+
+type PanelProps = PropsWithChildren&lt;{ open: boolean }&gt;;
+// equivalent to: { open: boolean } &amp; { children?: React.ReactNode }
+
+function Panel({ open, children }: PanelProps) {
+  return open ? &lt;div&gt;{children}&lt;/div&gt; : null;
+}</code></pre>
+<div class="type-result">PropsWithChildren&lt;P&gt; = P &amp; { children?: ReactNode } (children optional)</div>
+  </div>
+
+  <div class="callout-warning">
+    <strong>Common Mistakes:</strong>
+    <div class="mistake">&#10060; Typing <code>children: JSX.Element</code> (an alias of <code>ReactElement</code>) when you also want to allow strings/arrays/<code>null</code> &mdash; valid content is rejected.</div>
+    <div class="correct">&#9989; Use <code>React.ReactNode</code> for general content; reserve <code>ReactElement</code> for &ldquo;must be a single element.&rdquo;</div>
+    <div class="mistake">&#10060; Assuming <code>ReactElement&lt;TabProps&gt;</code> guarantees the child <em>is</em> a <code>&lt;Tab&gt;</code> at runtime &mdash; it only checks the props shape.</div>
+    <div class="correct">&#9989; Treat the element-props constraint as a shape hint; if you truly depend on identity, check <code>child.type === Tab</code> at runtime.</div>
+  </div>
+
+  <div class="key-rules">
+    <strong>Key Rules:</strong>
+    <ul>
+      <li>Default to <code>React.ReactNode</code> &mdash; it&rsquo;s the true &ldquo;renderable content&rdquo; type.</li>
+      <li>Use <code>React.ReactElement</code> to require a single element, <code>ReactElement&lt;P&gt;</code> to constrain its props.</li>
+      <li><code>PropsWithChildren&lt;P&gt;</code> adds an <em>optional</em> <code>children?: ReactNode</code>.</li>
+      <li>Element-props typing is structural (shape), not nominal (component identity).</li>
+    </ul>
+  </div>
+
+  <div class="exercises">
+    <strong>Practice Exercises:</strong>
+    <div class="exercise"><span class="exercise-num">1</span>Type a <code>&lt;Layout&gt;</code> that accepts arbitrary <code>children</code>, then a <code>&lt;Center&gt;</code> that requires exactly one <code>ReactElement</code>; prove text is rejected by the second but not the first.</div>
+    <div class="exercise"><span class="exercise-num">2</span>Build <code>&lt;RadioGroup&gt;</code> whose <code>children</code> are <code>ReactElement&lt;{ value: string }&gt;[]</code> and map over <code>child.props.value</code>. Confirm a child missing <code>value</code> is a type error.</div>
+    <div class="exercise"><span class="exercise-num">3</span>Compare <code>PropsWithChildren&lt;P&gt;</code> with manually writing <code>children: React.ReactNode</code> &mdash; when would you want <code>children</code> <em>required</em> instead, and how would you type that?</div>
+  </div>
+
+  <div class="connections"><strong>Connections:</strong> This is <em>Type Annotations</em> (R1) and <em>Union Types</em> (<code>ReactNode</code> is a big union) applied to the <code>children</code> prop, and it dovetails with the function-as-children render props from Day 25. The props-constrained element type reuses <em>Generics</em> + <em>Indexed Access</em> (R4).</div>
+</div>
+
+<!-- Concept 5: useReducer with Discriminated Actions -->
+<div class="concept-card" id="usereducer">
+  <div class="concept-header">
+    <span class="concept-title">5. <code>useReducer</code> with Discriminated Actions</span>
+    <span class="ttag">React + TypeScript</span>
+  </div>
+
+  <div class="why-matters">Once component state has several fields that change together, <code>useReducer</code> beats scattered <code>useState</code>s &mdash; and a discriminated-union <code>Action</code> type makes every <code>dispatch</code> exhaustively checked, with each action&rsquo;s payload tied to its <code>type</code>. It&rsquo;s the discriminated-union pattern applied to React state, and the same mental model as Redux.</div>
+
+  <div class="explanation">
+    <p>Model <code>Action</code> as a union tagged by a literal <code>type</code>, each member carrying exactly the payload it needs. Write <code>reducer(state: State, action: Action): State</code> with a <code>switch (action.type)</code> &mdash; each case narrows <code>action</code> to the matching member, so its payload is fully typed. Add a <code>never</code> default to make the compiler force you to handle every action.</p>
+    <p><code>useReducer(reducer, initial)</code> then infers <code>dispatch</code>&rsquo;s parameter <em>from the reducer&rsquo;s action type</em> &mdash; no manual generic needed. A wrong or missing payload at a call site is a compile error, not a runtime surprise. A lazy initializer (the optional third argument) stays typed too: its return type must match <code>State</code>.</p>
+    <div class="step"><span class="step-num">1</span><div>Model <code>Action</code> as a discriminated union keyed on <code>type</code>, each member with its own payload.</div></div>
+    <div class="step"><span class="step-num">2</span><div>Write <code>reducer(state, action): State</code> and <code>switch (action.type)</code> &mdash; each case sees its payload.</div></div>
+    <div class="step"><span class="step-num">3</span><div><code>useReducer(reducer, initial)</code> &mdash; <code>dispatch</code> accepts only valid actions; add a <code>never</code> default.</div></div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 1 of 4 &mdash; state + discriminated actions</div>
+<pre><code>type State = { count: number; step: number };
+
+type Action =
+  | { type: "increment" }
+  | { type: "decrement" }
+  | { type: "setStep"; step: number }
+  | { type: "reset"; to: number };</code></pre>
+<div class="type-result">each action carries exactly the payload its type needs</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 2 of 4 &mdash; the reducer narrows per case</div>
+<pre><code>function reducer(state: State, action: Action): State {
+  switch (action.type) {
+    case "increment": return { ...state, count: state.count + state.step };
+    case "decrement": return { ...state, count: state.count - state.step };
+    case "setStep":   return { ...state, step: action.step };   // action.step: number
+    case "reset":     return { count: action.to, step: 1 };     // action.to: number
+    default: {
+      const _exhaustive: never = action;   // new action -&gt; compile error here
+      return _exhaustive;
+    }
+  }
+}</code></pre>
+<div class="type-result">action is narrowed to the matching member in each case</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 3 of 4 &mdash; useReducer infers dispatch</div>
+<pre><code>function Counter() {
+  const [state, dispatch] = useReducer(reducer, { count: 0, step: 1 });
+  return (
+    &lt;&gt;
+      &lt;span&gt;{state.count}&lt;/span&gt;
+      &lt;button onClick={() =&gt; dispatch({ type: "increment" })}&gt;+&lt;/button&gt;
+      &lt;button onClick={() =&gt; dispatch({ type: "setStep", step: 5 })}&gt;step 5&lt;/button&gt;
+      {/* dispatch({ type: "setStep" })  ->  error: missing 'step' */}
+    &lt;/&gt;
+  );
+}</code></pre>
+<div class="type-result">dispatch&rsquo;s arg is Action; wrong/missing payloads are compile errors</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 4 of 4 &mdash; a lazy initializer stays typed</div>
+<pre><code>function init(initialCount: number): State {
+  return { count: initialCount, step: 1 };
+}
+
+const [state, dispatch] = useReducer(reducer, 10, init);   // init(10) -&gt; State</code></pre>
+<div class="type-result">the third arg&rsquo;s return type must match State</div>
+  </div>
+
+  <div class="callout-warning">
+    <strong>Common Mistakes:</strong>
+    <div class="mistake">&#10060; Typing <code>action: { type: string; payload?: any }</code> &mdash; every dispatch compiles, payloads are <code>any</code>, and exhaustiveness is impossible.</div>
+    <div class="correct">&#9989; Make <code>Action</code> a discriminated union so each <code>type</code> locks in its own payload and the reducer can narrow.</div>
+    <div class="mistake">&#10060; Omitting the <code>never</code> default, so adding a new action silently falls through without a handler.</div>
+    <div class="correct">&#9989; Assign <code>action</code> to a <code>never</code>-typed variable in <code>default</code> to force handling of every action at compile time.</div>
+  </div>
+
+  <div class="key-rules">
+    <strong>Key Rules:</strong>
+    <ul>
+      <li>Model actions as a discriminated union keyed on a literal <code>type</code>.</li>
+      <li>Type the reducer&rsquo;s return as <code>State</code>; the <code>switch</code> narrows each case&rsquo;s payload automatically.</li>
+      <li><code>useReducer</code> infers <code>dispatch</code>&rsquo;s parameter from the reducer &mdash; no manual generic needed.</li>
+      <li>Add a <code>never</code> default for compile-time exhaustiveness as actions grow.</li>
+    </ul>
+  </div>
+
+  <div class="exercises">
+    <strong>Practice Exercises:</strong>
+    <div class="exercise"><span class="exercise-num">1</span>Model a <code>&lt;Toggle&gt;</code>&rsquo;s state with actions <code>on</code>, <code>off</code>, <code>toggle</code>, and a <code>set</code> action carrying <code>value: boolean</code>. Write the reducer with a <code>never</code> default and confirm a <code>set</code> without <code>value</code> is an error.</div>
+    <div class="exercise"><span class="exercise-num">2</span>Build a fetch reducer with <code>State = { status: "idle" | "loading" | "success" | "error"; ... }</code> and actions <code>start</code>, <code>success</code> (carries <code>data: T</code>), <code>failure</code> (carries <code>error: string</code>). Make the whole thing generic over <code>T</code>.</div>
+    <div class="exercise"><span class="exercise-num">3</span>Wrap the reducer + <code>dispatch</code> in a typed context (from Day 25&rsquo;s Context concept) so descendants can dispatch with full type-checking, and confirm an unknown action <code>type</code> is rejected.</div>
+  </div>
+
+  <div class="connections"><strong>Connections:</strong> This is <em>Discriminated Unions</em> + <em>never &amp; Exhaustiveness</em> applied to React state, and it composes with <em>Typing React Context</em> (Day 25) to build a fully-typed store. The lazy-initializer typing reuses return-type inference from <em>Generic Constraints</em> (R6).</div>
+</div>
+
+</div><!-- end topic-section 2 -->
+
+<!-- Footer -->
+<footer class="guide-footer">
+  <h2>All Guides</h2>
+  <ul>
+    <li><a href="typescript-guides/typescript-guide-2026-07-09.html">2026-07-09</a> (Day 36)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-07-08.html">2026-07-08</a> (Day 35)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-07-07.html">2026-07-07</a> (Day 34)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-07-06.html">2026-07-06</a> (Day 33)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-07-05.html">2026-07-05</a> (Day 32)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-07-04.html">2026-07-04</a> (Day 31)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-07-03.html">2026-07-03</a> (Day 30)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-07-02.html">2026-07-02</a> (Day 29)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-07-01.html">2026-07-01</a> (Day 28)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-30.html">2026-06-30</a> (Day 27)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-29.html">2026-06-29</a> (Day 26)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-28.html">2026-06-28</a> (Day 25)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-27.html">2026-06-27</a> (Day 24)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-26.html">2026-06-26</a> (Day 23)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-25.html">2026-06-25</a> (Day 22)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-24.html">2026-06-24</a> (Day 21)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-23.html">2026-06-23</a> (Day 20)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-22.html">2026-06-22</a> (Day 19)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-21.html">2026-06-21</a> (Day 18)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-19.html">2026-06-19</a> (Day 17)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-18.html">2026-06-18</a> (Day 16)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-17.html">2026-06-17</a> (Day 15)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-15.html">2026-06-15</a> (Day 14)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-13.html">2026-06-13</a> (Day 13)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-12.html">2026-06-12</a> (Day 12)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-11.html">2026-06-11</a> (Day 11)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-10.html">2026-06-10</a> (Day 10)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-09.html">2026-06-09</a> (Day 9)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-08.html">2026-06-08</a> (Day 8)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-07.html">2026-06-07</a> (Day 7)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-05.html">2026-06-05</a> (Day 6)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-04.html">2026-06-04</a> (Day 5)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-03.html">2026-06-03</a> (Day 4)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-02.html">2026-06-02</a> (Day 3)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-01.html">2026-06-01</a> (Day 2)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-05-31.html">2026-05-31</a> (Day 1)</li>
+  </ul>
+</footer>
+
+</div><!-- end content -->
+</div><!-- end main -->
+
+<script>
+// Theme toggle
+(function() {
+  var toggle = document.getElementById('themeToggle');
+  var html = document.documentElement;
+  var STORAGE_KEY = 'lc-tsguide-theme';
+
+  function setTheme(theme) {
+    html.setAttribute('data-theme', theme);
+    toggle.textContent = theme === 'dark' ? '\u{1F319}' : '\u{2600}\u{FE0F}';
+    try { localStorage.setItem(STORAGE_KEY, theme); } catch(e) {}
+  }
+
+  try {
+    var saved = localStorage.getItem(STORAGE_KEY);
+    if (saved) setTheme(saved);
+  } catch(e) {}
+
+  toggle.addEventListener('click', function() {
+    var current = html.getAttribute('data-theme') || 'dark';
+    setTheme(current === 'dark' ? 'light' : 'dark');
+  });
+})();
+
+// Sidebar active link tracking
+(function() {
+  var links = document.querySelectorAll('.sidebar-nav a');
+  var sections = [];
+  links.forEach(function(link) {
+    var id = link.getAttribute('href').replace('#', '');
+    var el = document.getElementById(id);
+    if (el) sections.push({ link: link, el: el });
+  });
+
+  function updateActive() {
+    var current = null;
+    var scrollY = window.scrollY + 120;
+    for (var i = sections.length - 1; i >= 0; i--) {
+      if (sections[i].el.offsetTop <= scrollY) {
+        current = sections[i];
+        break;
+      }
+    }
+    links.forEach(function(l) { l.classList.remove('active'); });
+    if (current) current.link.classList.add('active');
+  }
+
+  window.addEventListener('scroll', updateActive);
+  updateActive();
+})();
+</script>
+
+</body>
+</html>

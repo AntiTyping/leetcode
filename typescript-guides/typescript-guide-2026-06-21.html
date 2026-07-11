@@ -1,0 +1,1097 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TypeScript Daily Guide — 2026-06-21 (Day 18)</title>
+<style>
+:root {
+  --bg: #0d1117;
+  --surface: #161b22;
+  --surface2: #1c2129;
+  --border: #30363d;
+  --text: #e6edf3;
+  --text-muted: #8b949e;
+  --accent: #58a6ff;
+  --accent-bg: rgba(56,139,253,0.15);
+  --green: #3fb950;
+  --green-bg: rgba(63,185,80,0.08);
+  --red: #f85149;
+  --red-bg: rgba(248,81,73,0.08);
+  --yellow: #d29922;
+  --yellow-bg: rgba(210,153,34,0.1);
+  --orange: #db6d28;
+  --purple: #bc8cff;
+  --purple-bg: rgba(188,140,255,0.08);
+  --purple-border: rgba(188,140,255,0.2);
+  --link: #58a6ff;
+  --code-bg: #1c2129;
+  --output-bg: #0e1c0e;
+  --output-border: #1a3a1a;
+  --sidebar-bg: #161b22;
+  --sidebar-active: rgba(56,139,253,0.15);
+  --exercise-border: #30363d;
+}
+[data-theme="light"] {
+  --bg: #ffffff;
+  --surface: #f6f8fa;
+  --surface2: #eef1f5;
+  --border: #d0d7de;
+  --text: #1f2328;
+  --text-muted: #656d76;
+  --accent: #0969da;
+  --accent-bg: rgba(9,105,218,0.1);
+  --green: #1a7f37;
+  --green-bg: rgba(26,127,55,0.06);
+  --red: #cf222e;
+  --red-bg: rgba(207,34,46,0.06);
+  --yellow: #9a6700;
+  --yellow-bg: rgba(154,103,0,0.06);
+  --orange: #bc4c00;
+  --purple: #8250df;
+  --purple-bg: rgba(130,80,223,0.06);
+  --purple-border: rgba(130,80,223,0.15);
+  --link: #0969da;
+  --code-bg: #eef1f5;
+  --output-bg: #f0faf0;
+  --output-border: #c6e6c6;
+  --sidebar-bg: #f6f8fa;
+  --sidebar-active: rgba(9,105,218,0.1);
+  --exercise-border: #d0d7de;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;font-size:16px;line-height:1.7;color:var(--text);background:var(--bg);display:flex;min-height:100vh}
+a{color:var(--link);text-decoration:none}
+a:hover{text-decoration:underline}
+
+/* Sidebar */
+.sidebar{position:fixed;top:0;left:0;width:300px;height:100vh;background:var(--sidebar-bg);border-right:1px solid var(--border);overflow-y:auto;padding:20px 0;z-index:100}
+.sidebar-header{padding:16px 20px;border-bottom:1px solid var(--border);margin-bottom:12px}
+.sidebar-header h2{font-size:15px;font-weight:600;color:var(--text)}
+.sidebar-header .date{font-size:13px;color:var(--text-muted);margin-top:2px}
+.sidebar-section{padding:8px 20px 4px;font-size:12px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px}
+.sidebar-section.review-label{color:var(--purple)}
+.sidebar-nav{list-style:none;padding:0}
+.sidebar-nav li a{display:block;padding:6px 20px 6px 28px;font-size:14px;color:var(--text-muted);transition:all 0.15s}
+.sidebar-nav li a:hover,.sidebar-nav li a.active{color:var(--accent);background:var(--sidebar-active);text-decoration:none}
+.sidebar-nav li a .nav-id{font-size:11px;color:var(--text-muted);opacity:0.6;margin-left:6px}
+
+/* Main */
+.main{margin-left:300px;flex:1;padding:40px;max-width:1160px}
+.content{max-width:860px;margin:0 auto}
+
+/* Theme Toggle */
+.theme-toggle{position:fixed;top:16px;right:20px;z-index:200;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:8px 12px;cursor:pointer;color:var(--text);font-size:18px;line-height:1;transition:all 0.15s}
+.theme-toggle:hover{border-color:var(--accent)}
+
+/* Header */
+.guide-header{text-align:center;padding:32px 0 40px;border-bottom:1px solid var(--border);margin-bottom:40px}
+.guide-header h1{font-size:28px;font-weight:700;margin-bottom:8px}
+.guide-header .meta{font-size:15px;color:var(--text-muted)}
+.guide-header .meta span{margin:0 8px}
+.badge{display:inline-block;padding:2px 10px;border-radius:12px;font-size:13px;font-weight:500}
+.badge-blue{background:var(--accent-bg);color:var(--accent)}
+.badge-purple{background:var(--purple-bg);color:var(--purple)}
+
+/* How To Use */
+.how-to-use{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:24px 28px;margin-bottom:40px}
+.how-to-use h2{font-size:18px;margin-bottom:12px}
+.how-to-use ol{padding-left:24px}
+.how-to-use li{margin-bottom:6px;color:var(--text-muted)}
+
+/* Review Section */
+.review-section{margin-bottom:48px}
+.review-section-header{font-size:22px;font-weight:700;padding-bottom:12px;border-bottom:2px solid var(--purple);margin-bottom:28px;display:flex;align-items:center;gap:12px;color:var(--purple)}
+
+/* Review Card */
+.review-card{background:var(--purple-bg);border:1px solid var(--purple-border);border-left:4px solid var(--purple);border-radius:10px;padding:28px;margin-bottom:24px}
+.review-card .review-header{display:flex;align-items:center;gap:12px;margin-bottom:12px;flex-wrap:wrap}
+.review-card .review-title{font-size:18px;font-weight:700;color:var(--purple)}
+.review-card .review-meta{font-size:13px;color:var(--text-muted)}
+.review-card .review-reminder{color:var(--text-muted);font-style:italic;margin-bottom:16px;padding-left:14px;border-left:3px solid var(--purple)}
+.review-card .review-pattern{margin-bottom:16px}
+.review-card .review-pattern strong{display:block;margin-bottom:8px;font-size:14px;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px}
+.review-card .review-challenge{margin-bottom:12px}
+.review-card .review-challenge strong{display:block;margin-bottom:8px;font-size:14px;color:var(--yellow);text-transform:uppercase;letter-spacing:0.5px}
+.review-card .review-challenge p{line-height:1.6}
+.review-card .review-pitfall{background:var(--red-bg);border:1px solid rgba(248,81,73,0.15);border-radius:6px;padding:12px 16px;font-size:14px;line-height:1.6}
+.review-card .review-pitfall strong{color:var(--red);margin-right:4px}
+.review-card code{background:var(--code-bg);padding:2px 6px;border-radius:4px;font-family:'SF Mono','Fira Code','Consolas',monospace;font-size:13px}
+
+/* Topic Section */
+.topic-section{margin-bottom:48px}
+.topic-section-header{font-size:22px;font-weight:700;padding-bottom:12px;border-bottom:2px solid var(--accent);margin-bottom:28px;display:flex;align-items:center;gap:12px}
+.topic-section-header .section-num{background:var(--accent);color:#fff;width:32px;height:32px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:15px;font-weight:700;flex-shrink:0}
+
+/* Concept Card */
+.concept-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:28px;margin-bottom:32px}
+.concept-header{display:flex;align-items:center;gap:12px;margin-bottom:16px;flex-wrap:wrap}
+.concept-title{font-size:20px;font-weight:700}
+.ttag{display:inline-block;padding:2px 10px;border-radius:12px;font-size:12px;font-weight:500;background:var(--accent-bg);color:var(--accent)}
+
+.why-matters{color:var(--text-muted);font-style:italic;margin-bottom:20px;padding-left:14px;border-left:3px solid var(--accent)}
+.explanation{margin-bottom:20px;line-height:1.8}
+.explanation p{margin-bottom:12px}
+.explanation ul,.explanation ol{padding-left:24px;margin-bottom:12px}
+.explanation li{margin-bottom:4px}
+.explanation code{background:var(--code-bg);padding:2px 6px;border-radius:4px;font-family:'SF Mono','Fira Code','Consolas',monospace;font-size:14px}
+.step{display:flex;gap:12px;margin-bottom:10px;align-items:flex-start}
+.step-num{background:var(--accent-bg);color:var(--accent);width:24px;height:24px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;margin-top:3px}
+
+/* Code Examples */
+.code-example{margin-bottom:20px;border:1px solid var(--border);border-radius:8px;overflow:hidden}
+.lang-badge{background:var(--surface2);color:var(--text-muted);font-size:12px;font-weight:600;padding:6px 14px;border-bottom:1px solid var(--border);font-family:'SF Mono','Fira Code','Consolas',monospace}
+pre{margin:0;padding:16px;overflow-x:auto;background:var(--code-bg);font-family:'SF Mono','Fira Code','Consolas',monospace;font-size:13.5px;line-height:1.6;white-space:pre-wrap}
+pre code{background:none;padding:0;font-size:inherit}
+.output{background:var(--output-bg);border-top:1px solid var(--output-border);padding:12px 16px;font-family:'SF Mono','Fira Code','Consolas',monospace;font-size:13px;color:var(--green);white-space:pre-wrap}
+.output::before{content:"Output:";display:block;font-size:11px;font-weight:600;color:var(--text-muted);margin-bottom:4px;text-transform:uppercase;letter-spacing:0.5px}
+.type-result{background:var(--output-bg);border-top:1px solid var(--output-border);padding:12px 16px;font-family:'SF Mono','Fira Code','Consolas',monospace;font-size:13px;color:var(--green);white-space:pre-wrap}
+.type-result::before{content:"Type Result:";display:block;font-size:11px;font-weight:600;color:var(--text-muted);margin-bottom:4px;text-transform:uppercase;letter-spacing:0.5px}
+.type-error{background:var(--red-bg);border-top:1px solid rgba(248,81,73,0.2);padding:12px 16px;font-family:'SF Mono','Fira Code','Consolas',monospace;font-size:13px;color:var(--red);white-space:pre-wrap}
+.type-error::before{content:"Type Error:";display:block;font-size:11px;font-weight:600;color:var(--red);margin-bottom:4px;text-transform:uppercase;letter-spacing:0.5px}
+
+/* Callouts */
+.callout-warning{background:var(--yellow-bg);border:1px solid rgba(210,153,34,0.2);border-radius:8px;padding:20px;margin-bottom:20px}
+.callout-warning strong{color:var(--yellow);display:block;margin-bottom:12px;font-size:16px}
+.mistake,.correct{padding:10px 14px;border-radius:6px;margin-bottom:10px;font-size:14px;line-height:1.6}
+.mistake{background:var(--red-bg);border-left:3px solid var(--red)}
+.mistake code,.correct code{background:var(--code-bg);padding:2px 6px;border-radius:4px;font-family:'SF Mono','Fira Code','Consolas',monospace;font-size:13px}
+.correct{background:var(--green-bg);border-left:3px solid var(--green)}
+
+/* Key Rules */
+.key-rules{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:20px;margin-bottom:20px}
+.key-rules strong{display:block;margin-bottom:10px;font-size:16px}
+.key-rules ul{padding-left:20px}
+.key-rules li{margin-bottom:6px}
+.key-rules code{background:var(--code-bg);padding:2px 6px;border-radius:4px;font-family:'SF Mono','Fira Code','Consolas',monospace;font-size:13px}
+
+/* Exercises */
+.exercises{border:2px dashed var(--exercise-border);border-radius:8px;padding:20px;margin-bottom:20px;margin-left:12px}
+.exercises strong{display:block;margin-bottom:14px;font-size:16px;color:var(--purple)}
+.exercise{margin-bottom:14px;padding-left:38px;position:relative;line-height:1.6}
+.exercise:last-child{margin-bottom:0}
+.exercise-num{position:absolute;left:0;top:2px;background:var(--purple);color:#fff;width:24px;height:24px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:12px;font-weight:700}
+.exercise code{background:var(--code-bg);padding:2px 6px;border-radius:4px;font-family:'SF Mono','Fira Code','Consolas',monospace;font-size:13px}
+
+/* Connections */
+.connections{background:var(--accent-bg);border:1px solid rgba(56,139,253,0.2);border-radius:8px;padding:16px 20px;font-size:14px;color:var(--text-muted)}
+.connections strong{color:var(--accent);margin-right:6px}
+
+/* Footer */
+.guide-footer{border-top:1px solid var(--border);padding-top:32px;margin-top:48px}
+.guide-footer h2{font-size:18px;margin-bottom:16px}
+.guide-footer ul{list-style:none;padding:0}
+.guide-footer li{padding:6px 0}
+.guide-footer li a{font-weight:500}
+
+/* Responsive */
+@media(max-width:900px){
+  .sidebar{display:none}
+  .main{margin-left:0}
+  .theme-toggle{top:12px;right:12px}
+}
+</style>
+</head>
+<body>
+
+<!-- Theme Toggle -->
+<button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">&#x1F319;</button>
+
+<!-- Sidebar -->
+<nav class="sidebar">
+  <div class="sidebar-header">
+    <h2>TypeScript Daily Guide</h2>
+    <div class="date">2026-06-21 &mdash; Day 18</div>
+  </div>
+
+  <div class="sidebar-section review-label">Review (6 concepts)</div>
+  <ul class="sidebar-nav">
+    <li><a href="#review_worker_threads">Worker Threads Typing <span class="nav-id">R1</span></a></li>
+    <li><a href="#review_migration">Migration: JS to TS <span class="nav-id">R2</span></a></li>
+    <li><a href="#review_utility_recipes">Advanced Utility Recipes <span class="nav-id">R3</span></a></li>
+    <li><a href="#review_variadic_tuples">Variadic Tuple Types <span class="nav-id">R4</span></a></li>
+    <li><a href="#review_event_emitter">Type-Safe Event Emitters <span class="nav-id">R5</span></a></li>
+    <li><a href="#review_builder">Builder Pattern (Type State) <span class="nav-id">R6</span></a></li>
+  </ul>
+
+  <div class="sidebar-section">Functional Type Patterns</div>
+  <ul class="sidebar-nav">
+    <li><a href="#ts_pipe_compose">pipe() &amp; compose() <span class="nav-id">#1</span></a></li>
+    <li><a href="#type_safe_curry">Type-Safe Currying <span class="nav-id">#2</span></a></li>
+  </ul>
+
+  <div class="sidebar-section">TypeScript 5.x Features</div>
+  <ul class="sidebar-nav">
+    <li><a href="#isolated_declarations">Isolated Declarations <span class="nav-id">#3</span></a></li>
+    <li><a href="#control_flow_narrowing">Control Flow Narrowing <span class="nav-id">#4</span></a></li>
+    <li><a href="#iterator_helpers_ts">Iterator Helpers (TC39) <span class="nav-id">#5</span></a></li>
+  </ul>
+</nav>
+
+<!-- Main Content -->
+<div class="main">
+<div class="content">
+
+<!-- Header -->
+<header class="guide-header">
+  <h1>TypeScript Daily Guide &mdash; Day 18</h1>
+  <div class="meta">
+    <span>2026-06-21</span>
+    <span>&middot;</span>
+    <span>Day 18 of 18</span>
+    <span>&middot;</span>
+    <span class="badge badge-purple">6 reviews</span>
+    <span class="badge badge-blue">5 new concepts</span>
+  </div>
+</header>
+
+<!-- How to Use -->
+<div class="how-to-use">
+  <h2>How to Use This Guide</h2>
+  <ol>
+    <li><strong>Review first</strong> &mdash; scan each purple review card; if the concept feels solid, move on; if fuzzy, re-read the code pattern</li>
+    <li><strong>Attempt the challenge exercise</strong> on any review card that felt shaky &mdash; this is your best reinforcement signal</li>
+    <li><strong>Work through new concepts</strong> top to bottom &mdash; each builds on the previous</li>
+    <li><strong>Type every code example</strong> yourself in a .ts or .tsx file &mdash; hover over types in your editor to build intuition</li>
+    <li><strong>Do at least 2 exercises per concept</strong> before moving to the next one</li>
+  </ol>
+</div>
+
+<!-- ============================================================ -->
+<!-- REVIEW SECTION                                                -->
+<!-- ============================================================ -->
+<div class="review-section">
+<div class="review-section-header">Review &mdash; 6 Concepts</div>
+
+<!-- R1: Worker Threads Typing -->
+<div class="review-card" id="review_worker_threads">
+  <div class="review-header">
+    <span class="review-title">R1. Worker Threads Typing</span>
+    <span class="badge badge-purple">Ecosystem Deep Dives</span>
+    <span class="review-meta">11 days since review</span>
+  </div>
+  <div class="review-reminder">Node&rsquo;s <code>worker_threads</code> module ships an untyped <code>postMessage</code>/<code>onmessage</code> channel. Wrap the raw <code>MessagePort</code> in a generic so both ends agree on the message shape, and model the protocol as a discriminated union.</div>
+
+  <div class="review-pattern">
+    <strong>Key Pattern</strong>
+    <div class="code-example">
+<pre><code>// Shared protocol — used by both the host and the worker.
+type WorkerMessage&lt;T&gt; =
+  | { type: "data"; payload: T }
+  | { type: "error"; error: string };
+
+// A thin typed wrapper around the untyped port.
+function postTyped&lt;T&gt;(port: MessagePort, msg: WorkerMessage&lt;T&gt;): void {
+  port.postMessage(msg); // payload is now constrained to T
+}</code></pre>
+    </div>
+  </div>
+
+  <div class="review-challenge">
+    <strong>Challenge Exercise</strong>
+    <p>Build a <code>TypedWorker&lt;Req, Res&gt;</code> wrapper class around <code>new Worker(...)</code> exposing a promise-returning <code>request(req: Req): Promise&lt;Res&gt;</code>. Correlate replies to requests with an <code>id</code> so concurrent calls don&rsquo;t cross wires.</p>
+  </div>
+
+  <div class="review-pitfall">
+    <strong>Pitfall:</strong> Sending non-serializable values (functions, class instances, closures) through <code>postMessage</code>. The structured-clone algorithm silently drops or throws on them &mdash; only plain, cloneable data crosses the thread boundary.
+  </div>
+</div>
+
+<!-- R2: Migration JS to TS -->
+<div class="review-card" id="review_migration">
+  <div class="review-header">
+    <span class="review-title">R2. Migration Strategies: JS to TS</span>
+    <span class="badge badge-purple">Ecosystem Deep Dives</span>
+    <span class="review-meta">11 days since review</span>
+  </div>
+  <div class="review-reminder">Migrate incrementally: turn on <code>allowJs: true</code> with <code>checkJs: false</code> so JS and TS coexist, annotate with <code>@ts-check</code> + JSDoc before renaming, then convert files one at a time and ratchet up strictness flag by flag.</div>
+
+  <div class="review-pattern">
+    <strong>Key Pattern</strong>
+    <div class="code-example">
+<pre><code>// tsconfig.json — the gentle on-ramp
+{
+  "compilerOptions": {
+    "allowJs": true,    // compile .js alongside .ts
+    "checkJs": false,   // don't type-check JS yet
+    "strict": false     // turn strict flags on one at a time
+  }
+}
+
+// In a single .js file, opt into checking gradually:
+// @ts-check
+/** @param {number} n */
+function double(n) { return n * 2; }</code></pre>
+    </div>
+  </div>
+
+  <div class="review-challenge">
+    <strong>Challenge Exercise</strong>
+    <p>You inherit a 200-file JS app. Write the ordered migration plan: which <code>tsconfig</code> flags you flip and in what order, where <code>@ts-check</code> + JSDoc fits, and how you&rsquo;d enable <code>noImplicitAny</code> then <code>strictNullChecks</code> without a big-bang rewrite.</p>
+  </div>
+
+  <div class="review-pitfall">
+    <strong>Pitfall:</strong> Flipping <code>strict: true</code> on a large codebase all at once. You get thousands of errors and no clear path through them &mdash; enable strict flags individually (<code>noImplicitAny</code> &rarr; <code>strictNullChecks</code> &rarr; the rest) so each step is finishable.
+  </div>
+</div>
+
+<!-- R3: Advanced Utility Type Recipes -->
+<div class="review-card" id="review_utility_recipes">
+  <div class="review-header">
+    <span class="review-title">R3. Advanced Utility Type Recipes</span>
+    <span class="badge badge-purple">Type-Level Programming</span>
+    <span class="review-meta">10 days since review</span>
+  </div>
+  <div class="review-reminder">Compose the built-ins into real-world helpers: <code>DeepPartial&lt;T&gt;</code>, <code>DeepReadonly&lt;T&gt;</code>, <code>Prettify&lt;T&gt;</code> (flattens intersections for readable hovers), and <code>UnionToIntersection&lt;T&gt;</code> (via contravariant inference).</div>
+
+  <div class="review-pattern">
+    <strong>Key Pattern</strong>
+    <div class="code-example">
+<pre><code>type DeepPartial&lt;T&gt; = {
+  [K in keyof T]?: T[K] extends object ? DeepPartial&lt;T[K]&gt; : T[K];
+};
+
+// Flatten an intersection so editors show a clean object shape.
+type Prettify&lt;T&gt; = { [K in keyof T]: T[K] } &amp; {};
+
+type UnionToIntersection&lt;U&gt; =
+  (U extends any ? (x: U) =&gt; void : never) extends
+    (x: infer I) =&gt; void ? I : never;</code></pre>
+    </div>
+  </div>
+
+  <div class="review-challenge">
+    <strong>Challenge Exercise</strong>
+    <p>Implement <code>DeepReadonly&lt;T&gt;</code> that recurses through nested objects <em>and</em> arrays (arrays become <code>readonly</code> tuples/arrays of readonly elements), and prove it works by assigning to a nested field and showing the compile error.</p>
+  </div>
+
+  <div class="review-pitfall">
+    <strong>Pitfall:</strong> Infinite recursion (or &ldquo;Type instantiation is excessively deep&rdquo;). Always include a base case &mdash; stop recursing when <code>T[K]</code> is a primitive or function, not just <code>extends object</code>, since functions and arrays are objects too.
+  </div>
+</div>
+
+<!-- R4: Variadic Tuple Types -->
+<div class="review-card" id="review_variadic_tuples">
+  <div class="review-header">
+    <span class="review-title">R4. Variadic Tuple Types</span>
+    <span class="badge badge-purple">Advanced Type System</span>
+    <span class="review-meta">10 days since review</span>
+  </div>
+  <div class="review-reminder">Spread type parameters in tuple positions with <code>[...T, ...U]</code> to type concatenation, head/tail splitting, and arbitrary-arity functions like <code>pipe()</code> or <code>curry()</code>. The spread can appear anywhere in the tuple, not just the end.</div>
+
+  <div class="review-pattern">
+    <strong>Key Pattern</strong>
+    <div class="code-example">
+<pre><code>type Concat&lt;A extends unknown[], B extends unknown[]&gt; = [...A, ...B];
+
+type R = Concat&lt;[1, 2], [3, 4]&gt;; // [1, 2, 3, 4]
+
+// Typed last-argument capture with a leading spread.
+type Last&lt;T extends unknown[]&gt; =
+  T extends [...unknown[], infer L] ? L : never;
+type L = Last&lt;[1, 2, 3]&gt;; // 3</code></pre>
+    </div>
+  </div>
+
+  <div class="review-challenge">
+    <strong>Challenge Exercise</strong>
+    <p>Write a type <code>Zip&lt;A, B&gt;</code> that pairs two tuples element-wise into a tuple of pairs &mdash; <code>Zip&lt;[1,2], ["a","b"]&gt;</code> resolves to <code>[[1,"a"],[2,"b"]]</code> &mdash; using recursion and head/tail destructuring with <code>[infer Head, ...infer Tail]</code>.</p>
+  </div>
+
+  <div class="review-pitfall">
+    <strong>Pitfall:</strong> Confusing <code>T extends unknown[]</code> (a tuple/array, spreadable, preserves positions) with <code>T extends Array&lt;unknown&gt;</code> (homogeneous array, no positional info). Spreading and <code>infer</code>-destructuring only retain element positions on the tuple form.
+  </div>
+</div>
+
+<!-- R5: Type-Safe Event Emitters -->
+<div class="review-card" id="review_event_emitter">
+  <div class="review-header">
+    <span class="review-title">R5. Type-Safe Event Emitters</span>
+    <span class="badge badge-purple">Runtime Patterns</span>
+    <span class="review-meta">10 days since review</span>
+  </div>
+  <div class="review-reminder">Map each event name to its payload type, then key <code>on</code>/<code>emit</code> off <code>keyof Events</code> so the handler argument and the emitted value are both inferred from the event name &mdash; no <code>any</code>, no stringly-typed dispatch.</div>
+
+  <div class="review-pattern">
+    <strong>Key Pattern</strong>
+    <div class="code-example">
+<pre><code>interface Events {
+  login: { userId: string };
+  logout: void;
+}
+
+class Emitter&lt;E&gt; {
+  on&lt;K extends keyof E&gt;(event: K, handler: (payload: E[K]) =&gt; void) {}
+  emit&lt;K extends keyof E&gt;(event: K, payload: E[K]) {}
+}
+
+const bus = new Emitter&lt;Events&gt;();
+bus.on("login", (p) =&gt; p.userId); // p: { userId: string }</code></pre>
+    </div>
+  </div>
+
+  <div class="review-challenge">
+    <strong>Challenge Exercise</strong>
+    <p>Extend the emitter to store handlers in a typed map and implement a working <code>emit</code> that calls every registered handler with the correct payload. Make <code>emit("logout")</code> require no payload while <code>emit("login", ...)</code> requires the object (hint: conditional/optional parameters on <code>void</code> payloads).</p>
+  </div>
+
+  <div class="review-pitfall">
+    <strong>Pitfall:</strong> Typing event names as <code>string</code> instead of <code>keyof Events</code>. The moment the key is a plain <code>string</code>, the payload widens to <code>any</code> (or <code>unknown</code>) and every typo compiles cleanly.
+  </div>
+</div>
+
+<!-- R6: Builder Pattern with Type-Level State -->
+<div class="review-card" id="review_builder">
+  <div class="review-header">
+    <span class="review-title">R6. Builder Pattern with Type-Level State</span>
+    <span class="badge badge-purple">Patterns</span>
+    <span class="review-meta">10 days since review</span>
+  </div>
+  <div class="review-reminder">Track which builder methods have been called in a type parameter. Each <code>withX()</code> returns a <em>new</em> builder type with that field flipped to <code>true</code>, and <code>build()</code> is only callable once the type proves every required field is set.</div>
+
+  <div class="review-pattern">
+    <strong>Key Pattern</strong>
+    <div class="code-example">
+<pre><code>class Builder&lt;T extends Record&lt;string, boolean&gt;&gt; {
+  withName(): Builder&lt;T &amp; { name: true }&gt; { return this as any; }
+  withAge(): Builder&lt;T &amp; { age: true }&gt; { return this as any; }
+  build(this: Builder&lt;{ name: true; age: true }&gt;) { /* all set */ }
+}
+
+new Builder&lt;{}&gt;().withName().withAge().build(); // ok
+// new Builder&lt;{}&gt;().withName().build();          // error: age not set</code></pre>
+    </div>
+  </div>
+
+  <div class="review-challenge">
+    <strong>Challenge Exercise</strong>
+    <p>Build a typed <code>QueryBuilder</code> where <code>.from(table)</code> must be called before <code>.where(...)</code>, and <code>.select(...)</code> before <code>.execute()</code>. Encode the ordering constraints in the type-level state so calling them out of order is a compile error.</p>
+  </div>
+
+  <div class="review-pitfall">
+    <strong>Pitfall:</strong> Returning <code>this</code> from the <code>withX()</code> methods. That keeps the <em>original</em> type parameter, so the type-level state never advances &mdash; return a value typed as the widened <code>Builder&lt;T &amp; {...}&gt;</code> instead (often via a cast in the implementation).
+  </div>
+</div>
+
+</div><!-- end review-section -->
+
+<!-- ============================================================ -->
+<!-- TOPIC SECTION 1: Functional Type Patterns                     -->
+<!-- ============================================================ -->
+<div class="topic-section">
+<div class="topic-section-header"><span class="section-num">1</span> Functional Type Patterns</div>
+
+<!-- #1: Type-Safe pipe() and compose() -->
+<div class="concept-card" id="ts_pipe_compose">
+  <div class="concept-header">
+    <span class="concept-title">#1 &middot; Type-Safe pipe() and compose()</span>
+    <span class="ttag">Functional Type Patterns</span>
+  </div>
+  <p class="why-matters">Functional composition is everywhere in FP-heavy codebases (RxJS, fp-ts, Redux middleware). TypeScript can thread types through an arbitrary-length pipeline so each function&rsquo;s output is checked against the next function&rsquo;s input &mdash; without you annotating a single intermediate value.</p>
+
+  <div class="explanation">
+    <div class="step"><span class="step-num">1</span><div><code>pipe(x, f, g)</code> applies left-to-right: <code>g(f(x))</code>. <code>compose(f, g)</code> applies right-to-left: <code>f(g(x))</code>. Same machinery, opposite reading order.</div></div>
+    <div class="step"><span class="step-num">2</span><div>There is no single generic signature that types this correctly &mdash; you need <strong>function overloads</strong>, one per arity, so each function&rsquo;s return type feeds the next parameter.</div></div>
+    <div class="step"><span class="step-num">3</span><div>Each overload chains the type variables: <code>pipe&lt;A, B, C&gt;(a: A, ab: (a: A) =&gt; B, bc: (b: B) =&gt; C): C</code>. The compiler infers <code>A, B, C</code> from the actual functions.</div></div>
+    <div class="step"><span class="step-num">4</span><div>Practical libraries stop at ~10 overloads, then add a final <code>any</code>-typed fallback for longer chains. Ten covers virtually all real usage.</div></div>
+    <div class="step"><span class="step-num">5</span><div>For async pipelines, thread <code>Promise</code> through each step and <code>await</code> between them &mdash; or type an <code>asyncPipe</code> whose steps return <code>Promise&lt;T&gt;</code>.</div></div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 1 of 4</div>
+<pre><code>// Overloaded pipe(): one signature per arity, chaining type variables.
+function pipe&lt;A, B&gt;(a: A, ab: (a: A) =&gt; B): B;
+function pipe&lt;A, B, C&gt;(a: A, ab: (a: A) =&gt; B, bc: (b: B) =&gt; C): C;
+function pipe&lt;A, B, C, D&gt;(
+  a: A, ab: (a: A) =&gt; B, bc: (b: B) =&gt; C, cd: (c: C) =&gt; D
+): D;
+// Implementation signature (not part of the public overloads):
+function pipe(value: unknown, ...fns: Array&lt;(x: unknown) =&gt; unknown&gt;): unknown {
+  return fns.reduce((acc, fn) =&gt; fn(acc), value);
+}
+
+const result = pipe(2, (n) =&gt; n + 1, (n) =&gt; n * 10);
+console.log(result); // result is inferred as number</code></pre>
+<div class="output">30</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 2 of 4</div>
+<pre><code>// Types flow through changing shapes: number -&gt; string -&gt; string[].
+const tokens = pipe(
+  42,
+  (n) =&gt; `value:${n}`,          // number -&gt; string
+  (s) =&gt; s.split(":"),          // string -&gt; string[]
+);
+//    ^? string[]
+
+console.log(tokens);</code></pre>
+<div class="type-result">tokens: string[]  — each step's return type becomes the next step's input</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 3 of 4</div>
+<pre><code>// compose(): right-to-left, useful when reading like math f ∘ g.
+function compose&lt;A, B, C&gt;(bc: (b: B) =&gt; C, ab: (a: A) =&gt; B): (a: A) =&gt; C {
+  return (a) =&gt; bc(ab(a));
+}
+
+const shout = compose(
+  (s: string) =&gt; s + "!",        // applied second
+  (s: string) =&gt; s.toUpperCase() // applied first
+);
+
+console.log(shout("hi")); // (a: string) =&gt; string</code></pre>
+<div class="output">HI!</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 4 of 4</div>
+<pre><code>// Async pipe: each step may be sync or async; Promise is threaded through.
+async function pipeAsync&lt;A, B, C&gt;(
+  a: A,
+  ab: (a: A) =&gt; B | Promise&lt;B&gt;,
+  bc: (b: B) =&gt; C | Promise&lt;C&gt;,
+): Promise&lt;C&gt; {
+  return bc(await ab(a) as B) as C;
+}
+
+const out = await pipeAsync(
+  "/users/1",
+  (url) =&gt; fetch(url),            // returns Promise&lt;Response&gt;
+  (res) =&gt; res.status,            // Response -&gt; number
+);
+//    ^? number</code></pre>
+<div class="type-result">out: number  — Promise unwrapped between steps via await</div>
+  </div>
+
+  <div class="callout-warning">
+    <strong>Common Mistakes:</strong>
+    <div class="mistake">&#10060; Trying to type <code>pipe</code> with a single generic signature like <code>pipe&lt;T&gt;(v: T, ...fns: ((x: T) =&gt; T)[])</code> &mdash; this forces every step to the <em>same</em> type and breaks shape-changing pipelines.</div>
+    <div class="correct">&#9989; Use one overload per arity so each function&rsquo;s output type is the next function&rsquo;s input type. Generic single-signature piping needs higher-kinded types TS doesn&rsquo;t have.</div>
+    <div class="mistake">&#10060; Mixing sync and async steps in a plain <code>pipe</code> &mdash; a <code>Promise</code> leaks through and the next step receives the un-awaited promise.</div>
+    <div class="correct">&#9989; Use a dedicated <code>pipeAsync</code> that <code>await</code>s each step, or normalize every step to return a <code>Promise</code>.</div>
+  </div>
+
+  <div class="key-rules">
+    <strong>Key Rules:</strong>
+    <ul>
+    <li><a href="typescript-guides/typescript-guide-2026-07-04.html">2026-07-04</a> (Day 31)</li>
+      <li>Type variadic composition with stacked overloads (arity 1&ndash;~10), not one generic signature.</li>
+      <li><code>pipe</code> reads top-to-bottom (data-first); <code>compose</code> reads bottom-to-top (math-style). Pick one and be consistent.</li>
+      <li>Never mix sync/async in the same pipe helper &mdash; separate <code>pipe</code> from <code>pipeAsync</code> so the return type stays honest.</li>
+    </ul>
+  </div>
+
+  <div class="exercises">
+    <strong>Practice Exercises:</strong>
+    <div class="exercise"><span class="exercise-num">1</span>Implement a type-safe <code>pipe(val, fn1, fn2)</code> (3-argument overload) that infers the types through the chain, so <code>pipe(2, n =&gt; String(n), s =&gt; s.length)</code> is typed as <code>number</code>.</div>
+    <div class="exercise"><span class="exercise-num">2</span>Add a 4- and 5-argument overload, then verify a shape-changing chain (<code>number &rarr; string &rarr; string[] &rarr; number</code>) reports the right final type on hover.</div>
+    <div class="exercise"><span class="exercise-num">3</span>Write <code>pipeAsync</code> overloads that allow any step to return either <code>T</code> or <code>Promise&lt;T&gt;</code>, always producing a <code>Promise</code> of the final type.</div>
+  </div>
+
+  <div class="connections"><strong>Connections:</strong> A direct application of <em>Function Overloads</em> and <em>Generic Constraints &amp; Defaults</em>, and it leans on the <em>Variadic Tuple Types</em> you reviewed today for the &ldquo;truly generic&rdquo; version. It pairs with <em>Type-Safe Currying</em> below &mdash; curried functions are the usual citizens of a pipe.</div>
+</div>
+
+<!-- #2: Type-Safe Currying -->
+<div class="concept-card" id="type_safe_curry">
+  <div class="concept-header">
+    <span class="concept-title">#2 &middot; Type-Safe Currying</span>
+    <span class="ttag">Functional Type Patterns</span>
+  </div>
+  <p class="why-matters">Currying turns <code>f(a, b, c)</code> into <code>f(a)(b)(c)</code>, enabling partial application and point-free composition. TypeScript can infer the <em>remaining</em> parameters at each call so a half-applied function still autocompletes correctly.</p>
+
+  <div class="explanation">
+    <div class="step"><span class="step-num">1</span><div>A curried function takes its arguments one (or a few) at a time, returning a new function until every parameter is supplied, then returns the result.</div></div>
+    <div class="step"><span class="step-num">2</span><div>The type is recursive: peel one parameter off the tuple of parameters, return a function of the rest, and bottom out when no parameters remain.</div></div>
+    <div class="step"><span class="step-num">3</span><div>Use <code>Parameters&lt;T&gt;</code> to get the argument tuple and <code>[infer First, ...infer Rest]</code> to split it &mdash; the variadic-tuple machinery from your review.</div></div>
+    <div class="step"><span class="step-num">4</span><div>The signature is <code>curry&lt;T extends (...args: any[]) =&gt; any&gt;(fn: T): Curried&lt;Parameters&lt;T&gt;, ReturnType&lt;T&gt;&gt;</code>.</div></div>
+    <div class="step"><span class="step-num">5</span><div>The base case &mdash; an empty parameter tuple &mdash; resolves to the plain <code>ReturnType</code>, ending the recursion.</div></div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 1 of 4</div>
+<pre><code>// The recursive Curried type: peel one arg per call.
+type Curried&lt;Args extends unknown[], R&gt; =
+  Args extends [infer First, ...infer Rest]
+    ? (arg: First) =&gt; Curried&lt;Rest, R&gt;   // still more params -&gt; return a fn
+    : R;                                  // base case: no params left
+
+// Example instantiation for (a: number, b: string) =&gt; boolean:
+type C = Curried&lt;[number, string], boolean&gt;;
+//   ^? (arg: number) =&gt; (arg: string) =&gt; boolean</code></pre>
+<div class="type-result">C = (arg: number) =&gt; (arg: string) =&gt; boolean</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 2 of 4</div>
+<pre><code>// A curry() whose return type is driven by the input function's signature.
+declare function curry&lt;T extends (...args: any[]) =&gt; any&gt;(
+  fn: T
+): Curried&lt;Parameters&lt;T&gt;, ReturnType&lt;T&gt;&gt;;
+
+const add = (a: number, b: number, c: number) =&gt; a + b + c;
+const curriedAdd = curry(add);
+
+const step1 = curriedAdd(1); // (arg: number) =&gt; (arg: number) =&gt; number
+const step2 = step1(2);      // (arg: number) =&gt; number
+const total = step2(3);      // number</code></pre>
+<div class="type-result">total: number  — each call narrows the remaining parameter list</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 3 of 4</div>
+<pre><code>// Partial application: bind the first argument, reuse the rest.
+const greet = (greeting: string, name: string) =&gt; `${greeting}, ${name}!`;
+const curriedGreet = curry(greet);
+
+const hello = curriedGreet("Hello"); // (arg: string) =&gt; string
+console.log(hello("Ada"));
+console.log(hello("Linus"));</code></pre>
+<div class="output">Hello, Ada!
+Hello, Linus!</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 4 of 4</div>
+<pre><code>// A runtime curry that matches the type. Collect args until arity is met.
+function curryImpl(fn: Function) {
+  return function curried(this: unknown, ...args: unknown[]): unknown {
+    return args.length &gt;= fn.length
+      ? fn.apply(this, args)
+      : (...more: unknown[]) =&gt; curried.apply(this, [...args, ...more]);
+  };
+}
+
+const sum3 = curryImpl((a: number, b: number, c: number) =&gt; a + b + c);
+console.log(sum3(1)(2)(3)); // also supports sum3(1, 2)(3)</code></pre>
+<div class="output">6</div>
+  </div>
+
+  <div class="callout-warning">
+    <strong>Common Mistakes:</strong>
+    <div class="mistake">&#10060; Forgetting the base case in the recursive type &mdash; when the parameter tuple empties, you return another function forever, so the call never resolves to the result type.</div>
+    <div class="correct">&#9989; Always terminate: <code>Args extends [infer First, ...infer Rest] ? ... : R</code> &mdash; the <code>: R</code> branch is the base case that ends recursion at <code>ReturnType</code>.</div>
+    <div class="mistake">&#10060; Losing <code>this</code> context when currying a method &mdash; the inner arrow/closures capture the wrong <code>this</code>.</div>
+    <div class="correct">&#9989; Thread <code>this</code> explicitly (<code>fn.apply(this, args)</code>) and, in the type, account for rest parameters rather than assuming fixed arity.</div>
+  </div>
+
+  <div class="key-rules">
+    <strong>Key Rules:</strong>
+    <ul>
+      <li>Drive the curried type from <code>Parameters&lt;T&gt;</code> and recurse with <code>[infer First, ...infer Rest]</code>; bottom out at <code>ReturnType&lt;T&gt;</code>.</li>
+      <li>The base case (<code>: R</code>) is mandatory &mdash; without it the recursion never terminates.</li>
+      <li>Currying shines for partial application and pipes; reach for it when the same leading arguments are reused, not just to look clever.</li>
+    </ul>
+  </div>
+
+  <div class="exercises">
+    <strong>Practice Exercises:</strong>
+    <div class="exercise"><span class="exercise-num">1</span>Type a <code>curry()</code> that works for functions with up to 4 parameters, so <code>curry((a:number,b:string,c:boolean)=&gt;...)</code> produces a 3-deep chain with each remaining parameter correctly typed.</div>
+    <div class="exercise"><span class="exercise-num">2</span>Extend the <code>Curried&lt;Args, R&gt;</code> type to allow supplying <em>several</em> arguments at once (e.g. <code>f(1, 2)(3)</code> as well as <code>f(1)(2)(3)</code>).</div>
+    <div class="exercise"><span class="exercise-num">3</span>Make it work with optional parameters: given <code>(a: number, b?: string) =&gt; void</code>, decide and encode whether the curried form requires the optional arg or allows early completion.</div>
+  </div>
+
+  <div class="connections"><strong>Connections:</strong> Built on <em>Variadic Tuple Types</em> and <em>infer Mastery</em>, and uses <em>Generic Constraints</em> to bound the input function. It feeds directly into <em>pipe()/compose()</em> above &mdash; curried functions are the standard unary citizens of a pipeline.</div>
+</div>
+
+</div><!-- end topic-section 1 -->
+
+<!-- ============================================================ -->
+<!-- TOPIC SECTION 2: TypeScript 5.x Features                      -->
+<!-- ============================================================ -->
+<div class="topic-section">
+<div class="topic-section-header"><span class="section-num">2</span> TypeScript 5.x Features</div>
+
+<!-- #3: Isolated Declarations -->
+<div class="concept-card" id="isolated_declarations">
+  <div class="concept-header">
+    <span class="concept-title">#3 &middot; Isolated Declarations</span>
+    <span class="ttag">TypeScript 5.x</span>
+  </div>
+  <p class="why-matters">In a large monorepo, generating <code>.d.ts</code> files is a build bottleneck because the compiler must analyze across module boundaries. <code>--isolatedDeclarations</code> requires explicit return types on exports so each file&rsquo;s declarations can be emitted in parallel &mdash; by tools other than <code>tsc</code> itself.</p>
+
+  <div class="explanation">
+    <div class="step"><span class="step-num">1</span><div>Normally the compiler infers an exported function&rsquo;s return type by looking at its body &mdash; which may pull in types from other modules, serializing the work.</div></div>
+    <div class="step"><span class="step-num">2</span><div>With <code>isolatedDeclarations: true</code>, every <em>exported</em> value must declare its type explicitly, so a tool can produce the <code>.d.ts</code> from a single file in isolation.</div></div>
+    <div class="step"><span class="step-num">3</span><div>This unlocks parallel and faster declaration emit in build tools (esbuild, swc, and others) that don&rsquo;t implement TypeScript&rsquo;s full inference.</div></div>
+    <div class="step"><span class="step-num">4</span><div>It is purely a <strong>compile-time / build constraint</strong> &mdash; it changes nothing about runtime behavior or emitted JavaScript.</div></div>
+    <div class="step"><span class="step-num">5</span><div>Only exports at the module boundary need annotations. Local, non-exported functions still enjoy full inference.</div></div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 1 of 4</div>
+<pre><code>// With isolatedDeclarations enabled, this exported function errors:
+export function makeUser(name: string) {   // no explicit return type
+  return { name, createdAt: Date.now() };
+}</code></pre>
+<div class="type-error">Function must have an explicit return type annotation with --isolatedDeclarations. (9007)</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 2 of 4</div>
+<pre><code>// Fixed: annotate the return type at the boundary.
+export function makeUser(name: string): { name: string; createdAt: number } {
+  return { name, createdAt: Date.now() };
+}
+
+// Or name the type and reference it — often cleaner.
+type User = { name: string; createdAt: number };
+export function makeUser2(name: string): User {
+  return { name, createdAt: Date.now() };
+}</code></pre>
+<div class="type-result">Both compile cleanly under --isolatedDeclarations; .d.ts emit needs no cross-file inference</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 3 of 4</div>
+<pre><code>// Inference is still fine for NON-exported (local) declarations.
+function localHelper(x: number) {
+  return x.toString(); // inferred string — no annotation required
+}
+
+// Only this exported wrapper needs an explicit return type.
+export function format(n: number): string {
+  return localHelper(n); // calls the freely-inferred local helper
+}</code></pre>
+<div class="type-result">localHelper needs nothing; only the exported format requires : string</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 4 of 4</div>
+<pre><code>// Exported const expressions also need annotatable types.
+// ❌ errors: the inferred type depends on a call's return type.
+// export const config = loadConfig();
+
+// ✅ annotate, or use a literal the compiler can emit directly.
+export const VERSION = "1.4.0" as const;            // literal — ok
+export const limits: { max: number } = { max: 100 }; // annotated — ok</code></pre>
+<div class="type-result">VERSION: "1.4.0"; limits: { max: number } — both emittable without inference</div>
+  </div>
+
+  <div class="callout-warning">
+    <strong>Common Mistakes:</strong>
+    <div class="mistake">&#10060; Thinking <code>--isolatedDeclarations</code> changes runtime behavior or output JS. It doesn&rsquo;t &mdash; it only constrains what the compiler will accept so declarations can be emitted independently.</div>
+    <div class="correct">&#9989; Treat it as a build-performance / tooling feature: it enables third-party tools to emit <code>.d.ts</code> fast and in parallel.</div>
+    <div class="mistake">&#10060; Over-annotating <em>every</em> function in the file, including private internals, to satisfy the flag.</div>
+    <div class="correct">&#9989; Annotate only what crosses the module boundary (the exports). Local functions keep full inference &mdash; adding types there is noise.</div>
+  </div>
+
+  <div class="key-rules">
+    <strong>Key Rules:</strong>
+    <ul>
+      <li>Only <em>exported</em> declarations need explicit types; locals are unaffected.</li>
+      <li>The benefit is faster, parallel <code>.d.ts</code> emit by non-<code>tsc</code> tools &mdash; relevant mainly to monorepos and library authors.</li>
+      <li>Prefer a named type alias over a giant inline return annotation &mdash; it reads better and is reusable.</li>
+    </ul>
+  </div>
+
+  <div class="exercises">
+    <strong>Practice Exercises:</strong>
+    <div class="exercise"><span class="exercise-num">1</span>Given a module with 5 exports (two functions, two consts, one re-export), add the <em>minimum</em> annotations needed to compile under <code>--isolatedDeclarations</code>.</div>
+    <div class="exercise"><span class="exercise-num">2</span>From a mixed file of exported and local functions, identify which functions require return-type annotations and which don&rsquo;t &mdash; and explain why.</div>
+    <div class="exercise"><span class="exercise-num">3</span>Refactor a file with three large inline return-type annotations to use named type aliases without changing behavior.</div>
+  </div>
+
+  <div class="connections"><strong>Connections:</strong> Relates to <em>Declaration Files</em>, <em>Project References</em>, and <em>Package Publishing</em> &mdash; all about how types cross the module boundary. The &ldquo;annotate the boundary, infer the interior&rdquo; principle echoes <em>Module Boundary Types</em>.</div>
+</div>
+
+<!-- #4: Control Flow Narrowing Deep Dive -->
+<div class="concept-card" id="control_flow_narrowing">
+  <div class="concept-header">
+    <span class="concept-title">#4 &middot; Control Flow Narrowing Deep Dive</span>
+    <span class="ttag">TypeScript 5.x</span>
+  </div>
+  <p class="why-matters">TypeScript&rsquo;s control-flow analysis (CFA) is far smarter than most developers use it for. Understanding exactly how it narrows lets you delete piles of <code>as</code> assertions and write code the compiler can verify rather than code you have to promise it about.</p>
+
+  <div class="explanation">
+    <div class="step"><span class="step-num">1</span><div>CFA narrows on <code>typeof</code>, <code>instanceof</code>, the <code>in</code> operator, equality checks, truthiness, and assignment &mdash; tracking the type along each branch of control flow.</div></div>
+    <div class="step"><span class="step-num">2</span><div>The <code>in</code> operator narrows by property presence: <code>"x" in obj</code> selects union members that have <code>x</code>.</div></div>
+    <div class="step"><span class="step-num">3</span><div>Since TS 5.4, narrowing is <em>preserved into closures</em> when the compiler can prove the variable isn&rsquo;t reassigned afterward &mdash; previously the narrowing was lost inside callbacks.</div></div>
+    <div class="step"><span class="step-num">4</span><div>You can destructure a discriminated union and still narrow on the discriminant, as long as you check the destructured discriminant directly.</div></div>
+    <div class="step"><span class="step-num">5</span><div><strong>Assertion functions</strong> (<code>asserts x is T</code>) and <strong>type predicates</strong> (<code>x is T</code>) let you teach CFA custom narrowing rules.</div></div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 1 of 4</div>
+<pre><code>// Narrowing with the `in` operator over a union.
+type Fish = { swim: () =&gt; void };
+type Bird = { fly: () =&gt; void };
+
+function move(animal: Fish | Bird) {
+  if ("swim" in animal) {
+    animal.swim(); // animal: Fish
+  } else {
+    animal.fly();  // animal: Bird
+  }
+}</code></pre>
+<div class="type-result">"swim" in animal selects the Fish member; the else branch is Bird</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 2 of 4</div>
+<pre><code>// Narrowing preserved in a closure (TS 5.4+), because x is never reassigned.
+function printLen(x: string | null) {
+  if (x === null) return;
+  // x: string here
+
+  const run = () =&gt; {
+    console.log(x.length); // TS 5.4+: still string inside the closure
+  };
+  run();
+}
+
+// Pre-5.4, x would widen back to string | null inside `run`,
+// forcing an `x!` or a re-check.</code></pre>
+<div class="type-result">x stays string inside run() as long as it is not reassigned later</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 3 of 4</div>
+<pre><code>// Destructured discriminated union still narrows on the discriminant.
+type Shape =
+  | { kind: "circle"; radius: number }
+  | { kind: "square"; side: number };
+
+function area(shape: Shape): number {
+  const { kind } = shape;        // pull out the discriminant
+  if (kind === "circle") {
+    return Math.PI * shape.radius ** 2; // shape narrowed to circle
+  }
+  return shape.side ** 2;               // shape narrowed to square
+}</code></pre>
+<div class="type-result">Checking the destructured `kind` narrows `shape` to the matching variant</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 4 of 4</div>
+<pre><code>// Custom narrowing: an assertion function teaches CFA a new rule.
+function assertIsDefined&lt;T&gt;(v: T): asserts v is NonNullable&lt;T&gt; {
+  if (v === null || v === undefined) throw new Error("Expected a value");
+}
+
+function greet(name?: string) {
+  assertIsDefined(name);   // after this line, name is string
+  return name.toUpperCase(); // no `!`, no `as` needed
+}
+
+console.log(greet("ada"));</code></pre>
+<div class="output">ADA</div>
+  </div>
+
+  <div class="callout-warning">
+    <strong>Common Mistakes:</strong>
+    <div class="mistake">&#10060; Assuming a narrowing survives across an <code>await</code> or callback that could let the variable be reassigned &mdash; CFA conservatively widens it back.</div>
+    <div class="correct">&#9989; Capture the narrowed value in a <code>const</code> local (<code>const s = x;</code>) so it can never be reassigned, then use <code>s</code> &mdash; its narrow type is permanent.</div>
+    <div class="mistake">&#10060; Reaching for <code>as</code> to silence &ldquo;possibly null&rdquo; errors, defeating the very check that would have caught the bug.</div>
+    <div class="correct">&#9989; Let CFA narrow via a guard (<code>if (x)</code>), a type predicate, or an assertion function &mdash; the compiler then <em>proves</em> the access is safe instead of trusting you.</div>
+  </div>
+
+  <div class="key-rules">
+    <strong>Key Rules:</strong>
+    <ul>
+      <li>Narrow with <code>typeof</code> / <code>instanceof</code> / <code>in</code> / equality / truthiness &mdash; reach for <code>as</code> only at genuine type-system boundaries.</li>
+      <li>Narrowed types persist into closures (TS 5.4+) only while the variable is provably not reassigned; a <code>const</code> copy guarantees it.</li>
+      <li>Use <code>x is T</code> predicates and <code>asserts x is T</code> functions to extend CFA with your own narrowing logic.</li>
+    </ul>
+  </div>
+
+  <div class="exercises">
+    <strong>Practice Exercises:</strong>
+    <div class="exercise"><span class="exercise-num">1</span>Given <code>value: string | number | { type: "a" } | { type: "b" }</code>, write a function that handles all four cases with zero <code>as</code> assertions, using <code>typeof</code> and <code>in</code>/discriminant checks.</div>
+    <div class="exercise"><span class="exercise-num">2</span>Write a function where a value is narrowed before a callback, and make the callback safely rely on the narrow type &mdash; first by capturing a <code>const</code>, then verify whether TS 5.4 lets you skip that step.</div>
+    <div class="exercise"><span class="exercise-num">3</span>Write an assertion function <code>assertNever(x: never): never</code> and use it in a discriminated-union <code>switch</code> so that adding a new variant produces a compile error.</div>
+  </div>
+
+  <div class="connections"><strong>Connections:</strong> The practical heart of <em>Union Types &amp; Narrowing</em>, <em>Type Predicates &amp; Assertion Functions</em>, <em>Discriminated Unions in Practice</em>, and <em>never &amp; Exhaustiveness</em> &mdash; this card ties all four together into everyday discipline.</div>
+</div>
+
+<!-- #5: Iterator Helpers (TC39 Stage 3) -->
+<div class="concept-card" id="iterator_helpers_ts">
+  <div class="concept-header">
+    <span class="concept-title">#5 &middot; Iterator Helpers (TC39 Stage 3)</span>
+    <span class="ttag">TypeScript 5.x</span>
+  </div>
+  <p class="why-matters">New methods on iterators &mdash; <code>map</code>, <code>filter</code>, <code>take</code>, <code>drop</code>, <code>flatMap</code>, <code>reduce</code> &mdash; bring array-like ergonomics to lazy sequences. Unlike array methods, they don&rsquo;t allocate intermediate arrays, so you can process huge or infinite sequences and stop early. TypeScript already ships the types.</p>
+
+  <div class="explanation">
+    <div class="step"><span class="step-num">1</span><div><code>Iterator.from(iterable)</code> wraps any existing iterable (arrays, sets, generators) into a helper-enabled iterator.</div></div>
+    <div class="step"><span class="step-num">2</span><div>The helpers are <strong>lazy</strong>: <code>.map()</code> / <code>.filter()</code> produce a new iterator and do no work until you pull values &mdash; with <code>.toArray()</code>, <code>for...of</code>, or <code>.reduce()</code>.</div></div>
+    <div class="step"><span class="step-num">3</span><div><code>.take(n)</code> and <code>.drop(n)</code> bound the sequence &mdash; the key to working with infinite generators safely.</div></div>
+    <div class="step"><span class="step-num">4</span><div>Generators (<code>function*</code>) implement the iterator protocol, so the helpers chain straight off them with full element typing.</div></div>
+    <div class="step"><span class="step-num">5</span><div>Terminal operations (<code>.toArray()</code>, <code>.reduce()</code>, <code>.forEach()</code>, <code>.find()</code>) consume the iterator and produce a concrete value.</div></div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 1 of 3</div>
+<pre><code>// Basic chain: wrap, map, filter, then materialize.
+const result = Iterator.from([1, 2, 3, 4, 5, 6])
+  .map((n) =&gt; n * n)        // 1, 4, 9, 16, 25, 36 (lazily)
+  .filter((n) =&gt; n % 2 === 0) // 4, 16, 36
+  .toArray();               // number[]
+
+console.log(result);</code></pre>
+<div class="output">[ 4, 16, 36 ]</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 2 of 3</div>
+<pre><code>// Lazy processing of an INFINITE generator with take/drop.
+function* naturals(): Generator&lt;number&gt; {
+  let n = 1;
+  while (true) yield n++; // never terminates on its own
+}
+
+const page = Iterator.from(naturals())
+  .drop(10)   // skip 1..10
+  .take(5)    // then take 11..15 — bounds the infinite source
+  .toArray(); // number[]
+
+console.log(page);</code></pre>
+<div class="output">[ 11, 12, 13, 14, 15 ]</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 3 of 3</div>
+<pre><code>// Typed generator + flatMap + reduce, all element types inferred.
+function* words(): Generator&lt;string&gt; {
+  yield "type"; yield "script"; yield "rocks";
+}
+
+const totalChars = Iterator.from(words())
+  .flatMap((w) =&gt; Iterator.from(w))  // stream of single chars
+  .reduce((count) =&gt; count + 1, 0);  // number
+
+console.log(totalChars); // length of all words combined</code></pre>
+<div class="output">14</div>
+  </div>
+
+  <div class="callout-warning">
+    <strong>Common Mistakes:</strong>
+    <div class="mistake">&#10060; Treating iterator helpers like array methods &mdash; expecting <code>.map()</code> to run immediately or to return an array. It returns a lazy iterator and does nothing until consumed.</div>
+    <div class="correct">&#9989; Remember they are lazy: end the chain with a terminal op (<code>.toArray()</code>, <code>.reduce()</code>, <code>for...of</code>) to actually pull values.</div>
+    <div class="mistake">&#10060; Forgetting <code>Iterator.from()</code> and calling <code>.map()</code> directly on a plain array &mdash; that hits <code>Array.prototype.map</code> (eager, allocates) instead of the lazy iterator helper.</div>
+    <div class="correct">&#9989; Wrap with <code>Iterator.from(arr)</code> first when you want lazy, allocation-free chaining over an array.</div>
+  </div>
+
+  <div class="key-rules">
+    <strong>Key Rules:</strong>
+    <ul>
+      <li>Iterator helpers are <em>lazy</em>; array methods are <em>eager</em>. Use iterators for large/infinite sequences and early termination.</li>
+      <li><code>.take(n)</code> is what makes infinite generators usable &mdash; always bound an unbounded source before a terminal op.</li>
+      <li>Use <code>Iterator.from()</code> to bring any iterable into the helper world; chain freely, then finish with one terminal operation.</li>
+    </ul>
+  </div>
+
+  <div class="exercises">
+    <strong>Practice Exercises:</strong>
+    <div class="exercise"><span class="exercise-num">1</span>Use iterator helpers to lazily process a large sequence (say a generator of 1..1_000_000) and take only the first 10 values matching a predicate, without building an intermediate array.</div>
+    <div class="exercise"><span class="exercise-num">2</span>Type a custom iterator class implementing <code>[Symbol.iterator]()</code> over a fixed dataset, and confirm the helper methods (<code>.map</code>, <code>.filter</code>) infer the element type correctly.</div>
+    <div class="exercise"><span class="exercise-num">3</span>Build a lazy <code>range(start, end, step)</code> generator and compose <code>.filter().map().take()</code> on it, proving with a counter that only the consumed elements are ever evaluated.</div>
+  </div>
+
+  <div class="connections"><strong>Connections:</strong> Extends <em>Streaming &amp; Async Iteration Typing</em> (the sync sibling of async iterators) and pairs with <em>pipe()/compose()</em> above &mdash; lazy iterator chains are composition by another name. Bounding infinite sequences leans on the same discipline as <em>Async Patterns</em>.</div>
+</div>
+
+</div><!-- end topic-section 2 -->
+
+<!-- Footer -->
+<footer class="guide-footer">
+  <h2>All Guides</h2>
+  <ul>
+    <li><a href="typescript-guides/typescript-guide-2026-07-09.html">2026-07-09</a> (Day 36)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-07-08.html">2026-07-08</a> (Day 35)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-07-07.html">2026-07-07</a> (Day 34)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-07-06.html">2026-07-06</a> (Day 33)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-07-05.html">2026-07-05</a> (Day 32)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-07-04.html">2026-07-04</a> (Day 31)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-07-03.html">2026-07-03</a> (Day 30)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-07-02.html">2026-07-02</a> (Day 29)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-07-01.html">2026-07-01</a> (Day 28)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-30.html">2026-06-30</a> (Day 27)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-29.html">2026-06-29</a> (Day 26)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-28.html">2026-06-28</a> (Day 25)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-27.html">2026-06-27</a> (Day 24)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-26.html">2026-06-26</a> (Day 23)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-25.html">2026-06-25</a> (Day 22)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-24.html">2026-06-24</a> (Day 21)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-23.html">2026-06-23</a> (Day 20)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-22.html">2026-06-22</a> (Day 19)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-21.html">2026-06-21</a> (Day 18)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-19.html">2026-06-19</a> (Day 17)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-18.html">2026-06-18</a> (Day 16)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-17.html">2026-06-17</a> (Day 15)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-15.html">2026-06-15</a> (Day 14)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-13.html">2026-06-13</a> (Day 13)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-12.html">2026-06-12</a> (Day 12)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-11.html">2026-06-11</a> (Day 11)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-10.html">2026-06-10</a> (Day 10)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-09.html">2026-06-09</a> (Day 9)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-08.html">2026-06-08</a> (Day 8)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-07.html">2026-06-07</a> (Day 7)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-05.html">2026-06-05</a> (Day 6)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-04.html">2026-06-04</a> (Day 5)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-03.html">2026-06-03</a> (Day 4)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-02.html">2026-06-02</a> (Day 3)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-01.html">2026-06-01</a> (Day 2)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-05-31.html">2026-05-31</a> (Day 1)</li>
+  </ul>
+</footer>
+
+</div><!-- end content -->
+</div><!-- end main -->
+
+<script>
+// Theme toggle
+(function() {
+  var toggle = document.getElementById('themeToggle');
+  var html = document.documentElement;
+  var STORAGE_KEY = 'lc-tsguide-theme';
+
+  function setTheme(theme) {
+    html.setAttribute('data-theme', theme);
+    toggle.textContent = theme === 'dark' ? '\u{1F319}' : '\u{2600}\u{FE0F}';
+    try { localStorage.setItem(STORAGE_KEY, theme); } catch(e) {}
+  }
+
+  try {
+    var saved = localStorage.getItem(STORAGE_KEY);
+    if (saved) setTheme(saved);
+  } catch(e) {}
+
+  toggle.addEventListener('click', function() {
+    var current = html.getAttribute('data-theme') || 'dark';
+    setTheme;
+  });
+})();
+
+// Sidebar active link tracking
+(function() {
+  var links = document.querySelectorAll('.sidebar-nav a');
+  var sections = [];
+  links.forEach(function(link) {
+    var id = link.getAttribute('href').replace('#', '');
+    var el = document.getElementById(id);
+    if (el) sections.push({ link: link, el: el });
+  });
+
+  function updateActive() {
+    var current = null;
+    var scrollY = window.scrollY + 120;
+    for (var i = sections.length - 1; i >= 0; i--) {
+      if (sections[i].el.offsetTop <= scrollY) {
+        current = sections[i];
+        break;
+      }
+    }
+    links.forEach(function(l) { l.classList.remove('active'); });
+    if  current.link.classList.add('active');
+  }
+
+  window.addEventListener('scroll', updateActive);
+  updateActive();
+})();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,1132 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TypeScript Daily Guide — 2026-06-28 (Day 25)</title>
+<style>
+:root {
+  --bg: #0d1117;
+  --surface: #161b22;
+  --surface2: #1c2129;
+  --border: #30363d;
+  --text: #e6edf3;
+  --text-muted: #8b949e;
+  --accent: #58a6ff;
+  --accent-bg: rgba(56,139,253,0.15);
+  --green: #3fb950;
+  --green-bg: rgba(63,185,80,0.08);
+  --red: #f85149;
+  --red-bg: rgba(248,81,73,0.08);
+  --yellow: #d29922;
+  --yellow-bg: rgba(210,153,34,0.1);
+  --orange: #db6d28;
+  --purple: #bc8cff;
+  --purple-bg: rgba(188,140,255,0.08);
+  --purple-border: rgba(188,140,255,0.2);
+  --link: #58a6ff;
+  --code-bg: #1c2129;
+  --output-bg: #0e1c0e;
+  --output-border: #1a3a1a;
+  --sidebar-bg: #161b22;
+  --sidebar-active: rgba(56,139,253,0.15);
+  --exercise-border: #30363d;
+}
+[data-theme="light"] {
+  --bg: #ffffff;
+  --surface: #f6f8fa;
+  --surface2: #eef1f5;
+  --border: #d0d7de;
+  --text: #1f2328;
+  --text-muted: #656d76;
+  --accent: #0969da;
+  --accent-bg: rgba(9,105,218,0.1);
+  --green: #1a7f37;
+  --green-bg: rgba(26,127,55,0.06);
+  --red: #cf222e;
+  --red-bg: rgba(207,34,46,0.06);
+  --yellow: #9a6700;
+  --yellow-bg: rgba(154,103,0,0.06);
+  --orange: #bc4c00;
+  --purple: #8250df;
+  --purple-bg: rgba(130,80,223,0.06);
+  --purple-border: rgba(130,80,223,0.15);
+  --link: #0969da;
+  --code-bg: #eef1f5;
+  --output-bg: #f0faf0;
+  --output-border: #c6e6c6;
+  --sidebar-bg: #f6f8fa;
+  --sidebar-active: rgba(9,105,218,0.1);
+  --exercise-border: #d0d7de;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;font-size:16px;line-height:1.7;color:var(--text);background:var(--bg);display:flex;min-height:100vh}
+a{color:var(--link);text-decoration:none}
+a:hover{text-decoration:underline}
+
+/* Sidebar */
+.sidebar{position:fixed;top:0;left:0;width:300px;height:100vh;background:var(--sidebar-bg);border-right:1px solid var(--border);overflow-y:auto;padding:20px 0;z-index:100}
+.sidebar-header{padding:16px 20px;border-bottom:1px solid var(--border);margin-bottom:12px}
+.sidebar-header h2{font-size:15px;font-weight:600;color:var(--text)}
+.sidebar-header .date{font-size:13px;color:var(--text-muted);margin-top:2px}
+.sidebar-section{padding:8px 20px 4px;font-size:12px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px}
+.sidebar-section.review-label{color:var(--purple)}
+.sidebar-nav{list-style:none;padding:0}
+.sidebar-nav li a{display:block;padding:6px 20px 6px 28px;font-size:14px;color:var(--text-muted);transition:all 0.15s}
+.sidebar-nav li a:hover,.sidebar-nav li a.active{color:var(--accent);background:var(--sidebar-active);text-decoration:none}
+.sidebar-nav li a .nav-id{font-size:11px;color:var(--text-muted);opacity:0.6;margin-left:6px}
+
+/* Main */
+.main{margin-left:300px;flex:1;padding:40px;max-width:1160px}
+.content{max-width:860px;margin:0 auto}
+
+/* Theme Toggle */
+.theme-toggle{position:fixed;top:16px;right:20px;z-index:200;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:8px 12px;cursor:pointer;color:var(--text);font-size:18px;line-height:1;transition:all 0.15s}
+.theme-toggle:hover{border-color:var(--accent)}
+
+/* Header */
+.guide-header{text-align:center;padding:32px 0 40px;border-bottom:1px solid var(--border);margin-bottom:40px}
+.guide-header h1{font-size:28px;font-weight:700;margin-bottom:8px}
+.guide-header .meta{font-size:15px;color:var(--text-muted)}
+.guide-header .meta span{margin:0 8px}
+.badge{display:inline-block;padding:2px 10px;border-radius:12px;font-size:13px;font-weight:500}
+.badge-blue{background:var(--accent-bg);color:var(--accent)}
+.badge-purple{background:var(--purple-bg);color:var(--purple)}
+
+/* How To Use */
+.how-to-use{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:24px 28px;margin-bottom:40px}
+.how-to-use h2{font-size:18px;margin-bottom:12px}
+.how-to-use ol{padding-left:24px}
+.how-to-use li{margin-bottom:6px;color:var(--text-muted)}
+
+/* Review Section */
+.review-section{margin-bottom:48px}
+.review-section-header{font-size:22px;font-weight:700;padding-bottom:12px;border-bottom:2px solid var(--purple);margin-bottom:28px;display:flex;align-items:center;gap:12px;color:var(--purple)}
+
+/* Review Card */
+.review-card{background:var(--purple-bg);border:1px solid var(--purple-border);border-left:4px solid var(--purple);border-radius:10px;padding:28px;margin-bottom:24px}
+.review-card .review-header{display:flex;align-items:center;gap:12px;margin-bottom:12px;flex-wrap:wrap}
+.review-card .review-title{font-size:18px;font-weight:700;color:var(--purple)}
+.review-card .review-meta{font-size:13px;color:var(--text-muted)}
+.review-card .review-reminder{color:var(--text-muted);font-style:italic;margin-bottom:16px;padding-left:14px;border-left:3px solid var(--purple)}
+.review-card .review-pattern{margin-bottom:16px}
+.review-card .review-pattern strong{display:block;margin-bottom:8px;font-size:14px;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px}
+.review-card .review-challenge{margin-bottom:12px}
+.review-card .review-challenge strong{display:block;margin-bottom:8px;font-size:14px;color:var(--yellow);text-transform:uppercase;letter-spacing:0.5px}
+.review-card .review-challenge p{line-height:1.6}
+.review-card .review-pitfall{background:var(--red-bg);border:1px solid rgba(248,81,73,0.15);border-radius:6px;padding:12px 16px;font-size:14px;line-height:1.6}
+.review-card .review-pitfall strong{color:var(--red);margin-right:4px}
+.review-card code{background:var(--code-bg);padding:2px 6px;border-radius:4px;font-family:'SF Mono','Fira Code','Consolas',monospace;font-size:13px}
+
+/* Topic Section */
+.topic-section{margin-bottom:48px}
+.topic-section-header{font-size:22px;font-weight:700;padding-bottom:12px;border-bottom:2px solid var(--accent);margin-bottom:28px;display:flex;align-items:center;gap:12px}
+.topic-section-header .section-num{background:var(--accent);color:#fff;width:32px;height:32px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:15px;font-weight:700;flex-shrink:0}
+
+/* Concept Card */
+.concept-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:28px;margin-bottom:32px}
+.concept-header{display:flex;align-items:center;gap:12px;margin-bottom:16px;flex-wrap:wrap}
+.concept-title{font-size:20px;font-weight:700}
+.ttag{display:inline-block;padding:2px 10px;border-radius:12px;font-size:12px;font-weight:500;background:var(--accent-bg);color:var(--accent)}
+
+.why-matters{color:var(--text-muted);font-style:italic;margin-bottom:20px;padding-left:14px;border-left:3px solid var(--accent)}
+.explanation{margin-bottom:20px;line-height:1.8}
+.explanation p{margin-bottom:12px}
+.explanation ul,.explanation ol{padding-left:24px;margin-bottom:12px}
+.explanation li{margin-bottom:4px}
+.explanation code{background:var(--code-bg);padding:2px 6px;border-radius:4px;font-family:'SF Mono','Fira Code','Consolas',monospace;font-size:14px}
+.step{display:flex;gap:12px;margin-bottom:10px;align-items:flex-start}
+.step-num{background:var(--accent-bg);color:var(--accent);width:24px;height:24px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;margin-top:3px}
+
+/* Code Examples */
+.code-example{margin-bottom:20px;border:1px solid var(--border);border-radius:8px;overflow:hidden}
+.lang-badge{background:var(--surface2);color:var(--text-muted);font-size:12px;font-weight:600;padding:6px 14px;border-bottom:1px solid var(--border);font-family:'SF Mono','Fira Code','Consolas',monospace}
+pre{margin:0;padding:16px;overflow-x:auto;background:var(--code-bg);font-family:'SF Mono','Fira Code','Consolas',monospace;font-size:13.5px;line-height:1.6;white-space:pre-wrap}
+pre code{background:none;padding:0;font-size:inherit}
+.output{background:var(--output-bg);border-top:1px solid var(--output-border);padding:12px 16px;font-family:'SF Mono','Fira Code','Consolas',monospace;font-size:13px;color:var(--green);white-space:pre-wrap}
+.output::before{content:"Output:";display:block;font-size:11px;font-weight:600;color:var(--text-muted);margin-bottom:4px;text-transform:uppercase;letter-spacing:0.5px}
+.type-result{background:var(--output-bg);border-top:1px solid var(--output-border);padding:12px 16px;font-family:'SF Mono','Fira Code','Consolas',monospace;font-size:13px;color:var(--green);white-space:pre-wrap}
+.type-result::before{content:"Type Result:";display:block;font-size:11px;font-weight:600;color:var(--text-muted);margin-bottom:4px;text-transform:uppercase;letter-spacing:0.5px}
+.type-error{background:var(--red-bg);border-top:1px solid rgba(248,81,73,0.2);padding:12px 16px;font-family:'SF Mono','Fira Code','Consolas',monospace;font-size:13px;color:var(--red);white-space:pre-wrap}
+.type-error::before{content:"Type Error:";display:block;font-size:11px;font-weight:600;color:var(--red);margin-bottom:4px;text-transform:uppercase;letter-spacing:0.5px}
+
+/* Callouts */
+.callout-warning{background:var(--yellow-bg);border:1px solid rgba(210,153,34,0.2);border-radius:8px;padding:20px;margin-bottom:20px}
+.callout-warning strong{color:var(--yellow);display:block;margin-bottom:12px;font-size:16px}
+.mistake,.correct{padding:10px 14px;border-radius:6px;margin-bottom:10px;font-size:14px;line-height:1.6}
+.mistake{background:var(--red-bg);border-left:3px solid var(--red)}
+.mistake code,.correct code{background:var(--code-bg);padding:2px 6px;border-radius:4px;font-family:'SF Mono','Fira Code','Consolas',monospace;font-size:13px}
+.correct{background:var(--green-bg);border-left:3px solid var(--green)}
+
+/* Key Rules */
+.key-rules{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:20px;margin-bottom:20px}
+.key-rules strong{display:block;margin-bottom:10px;font-size:16px}
+.key-rules ul{padding-left:20px}
+.key-rules li{margin-bottom:6px}
+.key-rules code{background:var(--code-bg);padding:2px 6px;border-radius:4px;font-family:'SF Mono','Fira Code','Consolas',monospace;font-size:13px}
+
+/* Exercises */
+.exercises{border:2px dashed var(--exercise-border);border-radius:8px;padding:20px;margin-bottom:20px;margin-left:12px}
+.exercises strong{display:block;margin-bottom:14px;font-size:16px;color:var(--purple)}
+.exercise{margin-bottom:14px;padding-left:38px;position:relative;line-height:1.6}
+.exercise:last-child{margin-bottom:0}
+.exercise-num{position:absolute;left:0;top:2px;background:var(--purple);color:#fff;width:24px;height:24px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:12px;font-weight:700}
+.exercise code{background:var(--code-bg);padding:2px 6px;border-radius:4px;font-family:'SF Mono','Fira Code','Consolas',monospace;font-size:13px}
+
+/* Connections */
+.connections{background:var(--accent-bg);border:1px solid rgba(56,139,253,0.2);border-radius:8px;padding:16px 20px;font-size:14px;color:var(--text-muted)}
+.connections strong{color:var(--accent);margin-right:6px}
+
+/* Cross-links */
+.cross-links{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:20px 24px;margin-bottom:40px;text-align:center}
+.cross-links a{margin:0 10px;font-weight:500}
+
+/* Footer */
+.guide-footer{border-top:1px solid var(--border);padding-top:32px;margin-top:48px}
+.guide-footer h2{font-size:18px;margin-bottom:16px}
+.guide-footer ul{list-style:none;padding:0}
+.guide-footer li{padding:6px 0}
+.guide-footer li a{font-weight:500}
+
+/* Responsive */
+@media(max-width:900px){
+  .sidebar{display:none}
+  .main{margin-left:0}
+  .theme-toggle{top:12px;right:12px}
+}
+</style>
+</head>
+<body>
+
+<!-- Theme Toggle -->
+<button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">&#x1F319;</button>
+
+<!-- Sidebar -->
+<nav class="sidebar">
+  <div class="sidebar-header">
+    <h2>TypeScript Daily Guide</h2>
+    <div class="date">2026-06-28 &mdash; Day 25</div>
+  </div>
+
+  <div class="sidebar-section review-label">Review (6 concepts)</div>
+  <ul class="sidebar-nav">
+    <li><a href="#review_type_annotations">Type Annotations <span class="nav-id">R1</span></a></li>
+    <li><a href="#review_union_narrowing">Union Types &amp; Narrowing <span class="nav-id">R2</span></a></li>
+    <li><a href="#review_literal_types">Literal Types &amp; const Assertions <span class="nav-id">R3</span></a></li>
+    <li><a href="#review_interfaces">Interfaces vs Type Aliases <span class="nav-id">R4</span></a></li>
+    <li><a href="#review_generics">Generics Basics <span class="nav-id">R5</span></a></li>
+    <li><a href="#review_enums">Enums <span class="nav-id">R6</span></a></li>
+  </ul>
+
+  <div class="sidebar-section">React + TS: Component Patterns II</div>
+  <ul class="sidebar-nav">
+    <li><a href="#polymorphic">Polymorphic Components &amp; the <code>as</code> Prop <span class="nav-id">#1</span></a></li>
+    <li><a href="#context">Typing React Context Safely <span class="nav-id">#2</span></a></li>
+    <li><a href="#discriminated_props">Discriminated Union Props <span class="nav-id">#3</span></a></li>
+  </ul>
+
+  <div class="sidebar-section">React + TS: Events &amp; Composition</div>
+  <ul class="sidebar-nav">
+    <li><a href="#event_handlers">Typing Event Handlers &amp; Synthetic Events <span class="nav-id">#4</span></a></li>
+    <li><a href="#render_props">Render Props &amp; Function-as-Children <span class="nav-id">#5</span></a></li>
+  </ul>
+</nav>
+
+<!-- Main Content -->
+<div class="main">
+<div class="content">
+
+<!-- Header -->
+<header class="guide-header">
+  <h1>TypeScript Daily Guide &mdash; Day 25</h1>
+  <div class="meta">
+    <span>2026-06-28</span>
+    <span>&middot;</span>
+    <span>Day 25 of 25</span>
+    <span>&middot;</span>
+    <span class="badge badge-purple">6 reviews</span>
+    <span class="badge badge-blue">5 new concepts</span>
+  </div>
+</header>
+
+<!-- How to Use -->
+<div class="how-to-use">
+  <h2>How to Use This Guide</h2>
+  <ol>
+    <li><strong>Review first</strong> &mdash; scan each purple review card; if the concept feels solid, move on; if fuzzy, re-read the code pattern</li>
+    <li><strong>Attempt the challenge exercise</strong> on any review card that felt shaky &mdash; this is your best reinforcement signal</li>
+    <li><strong>Work through new concepts</strong> top to bottom &mdash; each builds on the previous</li>
+    <li><strong>Type every code example</strong> yourself in a <code>.tsx</code> file &mdash; hover over props and inferred types in your editor to build intuition</li>
+    <li><strong>Do at least 2 exercises per concept</strong> before moving to the next one</li>
+  </ol>
+</div>
+
+<!-- Cross-links -->
+<div class="cross-links">
+  <a href="guide.html">LeetCode Guide</a>
+  <a href="lang-guide.html">Lang Guide</a>
+  <a href="python-guide.html">Python Guide</a>
+  <a href="golang-guide.html">Go Guide</a>
+  <a href="javascript-guide.html">JS Guide</a>
+  <a href="report.html">Report</a>
+</div>
+
+<!-- ============================================================ -->
+<!-- REVIEW SECTION                                                -->
+<!-- ============================================================ -->
+<div class="review-section">
+<div class="review-section-header">Review &mdash; 6 Concepts</div>
+
+<!-- R1: Type Annotations -->
+<div class="review-card" id="review_type_annotations">
+  <div class="review-header">
+    <span class="review-title">R1. Type Annotations</span>
+    <span class="badge badge-purple">Core Type System</span>
+    <span class="review-meta">20 days since review &middot; rep 3 &rarr; 4</span>
+  </div>
+  <div class="review-reminder">Annotations describe the <em>shape</em> of a value; inference fills them in when it can. The skill is knowing where an annotation earns its keep (function parameters, empty containers, public boundaries) and where it just fights inference (obvious literals, most local <code>const</code>s).</div>
+
+  <div class="review-pattern">
+    <strong>Key Pattern</strong>
+    <div class="code-example">
+<pre><code>// annotate the boundary, let the body infer
+function total(items: readonly { price: number; qty: number }[]): number {
+  return items.reduce((sum, i) =&gt; sum + i.price * i.qty, 0);  // sum: number inferred
+}
+
+const point: [number, number] = [0, 0];    // tuple, not number[]
+const ids: string[] = [];                   // else inferred never[]
+let seen;                                    // any (implicit) &mdash; avoid
+const label = "ready";                       // "ready" literal &mdash; no annotation needed</code></pre>
+<div class="type-result">annotate params/returns/empty arrays; skip obvious literals</div>
+    </div>
+  </div>
+
+  <div class="review-challenge">
+    <strong>Challenge Exercise</strong>
+    <p>Write a function <code>groupBy&lt;T&gt;(items: T[], key: (item: T) =&gt; string): Record&lt;string, T[]&gt;</code> and annotate only what inference can&rsquo;t supply. Then create an <em>empty</em> accumulator inside it and show what its type would be <em>without</em> an annotation (<code>{}</code>) versus with (<code>Record&lt;string, T[]&gt;</code>), and explain which one lets <code>acc[k].push(...)</code> compile.</p>
+  </div>
+
+  <div class="review-pitfall">
+    <strong>Pitfall:</strong> Declaring <code>let x;</code> (implicit <code>any</code>) or <code>const rows = []</code> that infers <code>never[]</code>, then getting cryptic errors on first use. Annotate empty containers and uninitialized <code>let</code> up front; conversely, don&rsquo;t annotate a <code>const</code> whose literal already carries the exact type you want.
+  </div>
+</div>
+
+<!-- R2: Union Types & Narrowing -->
+<div class="review-card" id="review_union_narrowing">
+  <div class="review-header">
+    <span class="review-title">R2. Union Types &amp; Narrowing</span>
+    <span class="badge badge-purple">Core Type System</span>
+    <span class="review-meta">20 days since review &middot; rep 3 &rarr; 4</span>
+  </div>
+  <div class="review-reminder">A union <code>A | B</code> is &ldquo;one of these&rdquo;; you can only touch the members <em>common</em> to all branches until you <em>narrow</em>. Control-flow narrowing (<code>typeof</code>, <code>in</code>, <code>instanceof</code>, truthiness, and a discriminant tag) tells the compiler which member you&rsquo;re holding.</div>
+
+  <div class="review-pattern">
+    <strong>Key Pattern</strong>
+    <div class="code-example">
+<pre><code>type Shape =
+  | { kind: "circle"; r: number }
+  | { kind: "rect"; w: number; h: number };
+
+function area(s: Shape): number {
+  switch (s.kind) {                 // discriminant narrows each branch
+    case "circle": return Math.PI * s.r ** 2;   // s: circle
+    case "rect":   return s.w * s.h;            // s: rect
+  }
+}
+
+function len(x: string | string[]): number {
+  return typeof x === "string" ? x.length : x.length;  // both branches ok
+}</code></pre>
+<div class="type-result">discriminant + typeof narrow the union to a single member</div>
+    </div>
+  </div>
+
+  <div class="review-challenge">
+    <strong>Challenge Exercise</strong>
+    <p>Given <code>type Result&lt;T&gt; = { ok: true; value: T } | { ok: false; error: string }</code>, write <code>unwrap&lt;T&gt;(r: Result&lt;T&gt;): T</code> that narrows on <code>r.ok</code> and throws on the error branch. Then add a third case and use a <code>never</code>-typed default to prove the compiler forces you to handle it (foreshadowing exhaustiveness).</p>
+  </div>
+
+  <div class="review-pitfall">
+    <strong>Pitfall:</strong> Reaching into a union member before narrowing (<code>s.r</code> when <code>s</code> is still <code>Shape</code>) &mdash; only the common properties are accessible. Also, <code>typeof</code> narrowing can&rsquo;t distinguish two object types; use a discriminant property or an <code>in</code> check for those.
+  </div>
+</div>
+
+<!-- R3: Literal Types & const Assertions -->
+<div class="review-card" id="review_literal_types">
+  <div class="review-header">
+    <span class="review-title">R3. Literal Types &amp; const Assertions</span>
+    <span class="badge badge-purple">Core Type System</span>
+    <span class="review-meta">18 days since review &middot; rep 3 &rarr; 4</span>
+  </div>
+  <div class="review-reminder">A literal type is a single exact value (<code>"GET"</code>, <code>42</code>, <code>true</code>). By default TypeScript <em>widens</em> literals in mutable positions (<code>let</code>, object properties) to their base type; <code>as const</code> stops that, freezing values and making everything deeply <code>readonly</code>.</div>
+
+  <div class="review-pattern">
+    <strong>Key Pattern</strong>
+    <div class="code-example">
+<pre><code>let method = "GET";                 // widened to string
+const m2 = "GET";                   // "GET" (const keeps the literal)
+
+const config = { method: "GET", retries: 3 };
+// type: { method: string; retries: number }  &mdash; widened
+
+const frozen = { method: "GET", retries: 3 } as const;
+// type: { readonly method: "GET"; readonly retries: 3 }
+
+const routes = ["home", "about"] as const;   // readonly ["home", "about"]
+type Route = typeof routes[number];           // "home" | "about"</code></pre>
+<div class="type-result">as const preserves literals + makes the value deeply readonly</div>
+    </div>
+  </div>
+
+  <div class="review-challenge">
+    <strong>Challenge Exercise</strong>
+    <p>Define <code>const HTTP_METHODS = ["GET","POST","PUT","DELETE"] as const</code> and derive a <code>Method</code> union from it with <code>typeof ... [number]</code>. Then write <code>request(url: string, method: Method)</code> and confirm a typo (<code>"PATCH"</code>) is a compile error. Finally, show what breaks if you drop <code>as const</code> (the derived type collapses to <code>string</code>).</p>
+  </div>
+
+  <div class="review-pitfall">
+    <strong>Pitfall:</strong> Passing an object literal to a function expecting a literal-typed field and getting a widening error, or deriving a union from an array that <em>isn&rsquo;t</em> <code>as const</code> (you get <code>string</code>, not the member union). Remember <code>as const</code> also makes the value <code>readonly</code> &mdash; you can no longer <code>.push</code> to it.
+  </div>
+</div>
+
+<!-- R4: Interfaces vs Type Aliases -->
+<div class="review-card" id="review_interfaces">
+  <div class="review-header">
+    <span class="review-title">R4. Interfaces vs Type Aliases</span>
+    <span class="badge badge-purple">Structuring Types</span>
+    <span class="review-meta">18 days since review &middot; rep 3 &rarr; 4</span>
+  </div>
+  <div class="review-reminder">Both name object shapes. <code>interface</code> supports declaration merging and <code>extends</code>, and gives nicer error messages for public object contracts. <code>type</code> can express <em>anything</em> &mdash; unions, tuples, mapped/conditional types, primitives &mdash; which interfaces cannot.</div>
+
+  <div class="review-pattern">
+    <strong>Key Pattern</strong>
+    <div class="code-example">
+<pre><code>interface User { id: string; name: string }
+interface User { role: "admin" | "user" }   // merges into one User
+interface Admin extends User { perms: string[] }
+
+// type aliases do what interfaces can't:
+type Id = string | number;                    // union
+type Pair = [number, number];                 // tuple
+type Nullable&lt;T&gt; = T | null;                   // generic alias
+type Keys = keyof User;                        // "id" | "name" | "role"</code></pre>
+<div class="type-result">interface = mergeable object contracts; type = anything</div>
+    </div>
+  </div>
+
+  <div class="review-challenge">
+    <strong>Challenge Exercise</strong>
+    <p>Model a <code>Shape</code> discriminated union (only <code>type</code> can do this) and an <code>Entity</code> base object contract that three interfaces <code>extends</code>. Then demonstrate declaration merging by augmenting a third-party interface (e.g. add a field to <code>Window</code>) and explain why you couldn&rsquo;t achieve that augmentation with a <code>type</code> alias.</p>
+  </div>
+
+  <div class="review-pitfall">
+    <strong>Pitfall:</strong> Trying to <code>extends</code> a union with an interface (illegal &mdash; use <code>type</code>), or being surprised that two same-named <code>interface</code>s silently merge (a <code>type</code> would instead error on redeclaration). Pick <code>interface</code> for extensible public object APIs, <code>type</code> for unions/tuples/computed types.
+  </div>
+</div>
+
+<!-- R5: Generics Basics -->
+<div class="review-card" id="review_generics">
+  <div class="review-header">
+    <span class="review-title">R5. Generics Basics</span>
+    <span class="badge badge-purple">Generic &amp; Utility Types</span>
+    <span class="review-meta">18 days since review &middot; rep 3 &rarr; 4</span>
+  </div>
+  <div class="review-reminder">A generic parameter is a type the caller (or inference) fills in, letting one function/type work over many types <em>without losing precision</em>. Constraints (<code>T extends ...</code>) let you require capabilities while keeping <code>T</code> as specific as the caller passed.</div>
+
+  <div class="review-pattern">
+    <strong>Key Pattern</strong>
+    <div class="code-example">
+<pre><code>function first&lt;T&gt;(arr: readonly T[]): T | undefined {
+  return arr[0];
+}
+const n = first([1, 2, 3]);        // number | undefined (T inferred)
+
+// constraint: T must have the key K
+function pluck&lt;T, K extends keyof T&gt;(obj: T, key: K): T[K] {
+  return obj[key];
+}
+const name = pluck({ id: 1, name: "Ada" }, "name");  // string
+// pluck({ id: 1 }, "nope");   // error: "nope" not a key of T</code></pre>
+<div class="type-result">generics preserve the caller&rsquo;s exact type through the call</div>
+    </div>
+  </div>
+
+  <div class="review-challenge">
+    <strong>Challenge Exercise</strong>
+    <p>Write <code>mapValues&lt;T, U&gt;(obj: Record&lt;string, T&gt;, fn: (v: T) =&gt; U): Record&lt;string, U&gt;</code>, then a constrained <code>maxBy&lt;T&gt;(items: T[], score: (t: T) =&gt; number): T | undefined</code>. Prove the return type tracks the input element type by hovering it in your editor, and add a <code>K extends keyof T</code> overload that lets callers pass a property name instead of a scoring function.</p>
+  </div>
+
+  <div class="review-pitfall">
+    <strong>Pitfall:</strong> Adding a type parameter that appears only <em>once</em> in the signature (e.g. <code>&lt;T&gt;(x: T): void</code>) &mdash; it buys nothing over <code>unknown</code> and often masks a design smell. A generic earns its place only when the same <code>T</code> links an input to an output (or two inputs) so the relationship is preserved.
+  </div>
+</div>
+
+<!-- R6: Enums -->
+<div class="review-card" id="review_enums">
+  <div class="review-header">
+    <span class="review-title">R6. Enums</span>
+    <span class="badge badge-purple">Structuring Types</span>
+    <span class="review-meta">17 days since review &middot; rep 3 &rarr; 4</span>
+  </div>
+  <div class="review-reminder">Enums name a fixed set of related constants. Numeric enums are reverse-mapped and start at 0; string enums are readable and stable across serialization. In modern code a <code>const</code> object + <code>as const</code> (or a literal union) is often the leaner, tree-shakeable alternative.</div>
+
+  <div class="review-pattern">
+    <strong>Key Pattern</strong>
+    <div class="code-example">
+<pre><code>enum Status { Active = "ACTIVE", Closed = "CLOSED" }   // string enum
+const s: Status = Status.Active;   // "ACTIVE" at runtime
+
+// modern alternative: const object + derived union (no runtime enum object)
+const Role = { Admin: "admin", User: "user" } as const;
+type Role = typeof Role[keyof typeof Role];   // "admin" | "user"
+
+function setRole(r: Role) {}
+setRole("admin");        // ok &mdash; plain string literal accepted
+// setRole("root");      // error</code></pre>
+<div class="type-result">string enum vs const-object union: pick by tree-shaking + ergonomics</div>
+    </div>
+  </div>
+
+  <div class="review-challenge">
+    <strong>Challenge Exercise</strong>
+    <p>Model a <code>LogLevel</code> two ways: as a string <code>enum</code> and as a <code>const</code> object + derived union. Write a <code>log(level, msg)</code> for each and compare: which one lets a caller pass a bare string literal, which produces a runtime object, and which is fully erased by the bundler? Then note why <code>const enum</code> can be risky under <code>isolatedModules</code>.</p>
+  </div>
+
+  <div class="review-pitfall">
+    <strong>Pitfall:</strong> Reaching for a numeric enum where the values get serialized &mdash; reordering members silently changes the persisted numbers. Prefer string enums (or a const-object union) for anything that crosses a wire or storage boundary, and remember numeric enums accept any <code>number</code>, weakening exhaustiveness.
+  </div>
+</div>
+
+</div><!-- end review-section -->
+
+<!-- ============================================================ -->
+<!-- TOPIC SECTION 1: React + TypeScript: Component Patterns II    -->
+<!-- ============================================================ -->
+<div class="topic-section">
+<div class="topic-section-header"><span class="section-num">1</span>React + TypeScript: Component Patterns II</div>
+
+<!-- Concept 1: Polymorphic Components & the as Prop -->
+<div class="concept-card" id="polymorphic">
+  <div class="concept-header">
+    <span class="concept-title">1. Polymorphic Components &amp; the <code>as</code> Prop</span>
+    <span class="ttag">React Patterns</span>
+  </div>
+
+  <div class="why-matters">Design-system primitives like <code>&lt;Box&gt;</code>, <code>&lt;Text&gt;</code>, or <code>&lt;Button&gt;</code> often need to render as <em>different</em> elements &mdash; a <code>button</code>, an <code>a</code>, a <code>Link</code> &mdash; while still accepting exactly the right props for whatever they render as. A polymorphic component captures that with a single generic <code>as</code> prop, and typing it well is the difference between a component that autocompletes <code>href</code> only when it&rsquo;s an anchor and one that silently accepts nonsense.</div>
+
+  <div class="explanation">
+    <p>The core idea: make the component generic over an element type <code>E extends ElementType</code>, and merge your own props with <em>the intrinsic props of that element</em> (<code>ComponentPropsWithoutRef&lt;E&gt;</code>). The <code>as</code> prop chooses <code>E</code>, so the accepted props change with it &mdash; pick <code>"a"</code> and you get <code>href</code>; pick <code>"button"</code> and you get <code>type</code>/<code>disabled</code>.</p>
+    <p>Two refinements make it production-grade. First, subtract your own prop names from the element props so a component-level prop can&rsquo;t collide with a native one (<code>Omit&lt;ComponentPropsWithoutRef&lt;E&gt;, keyof OwnProps&gt;</code>). Second, default <code>as</code> to a sensible element so callers can omit it. Because the whole thing is a generic function component, inference flows from the <code>as</code> value you pass at the call site to the props TypeScript then checks &mdash; no manual type argument needed.</p>
+    <div class="step"><span class="step-num">1</span><div>Make the component generic: <code>&lt;E extends ElementType = "span"&gt;</code>, with an optional <code>as?: E</code> prop.</div></div>
+    <div class="step"><span class="step-num">2</span><div>Merge your own props with <code>ComponentPropsWithoutRef&lt;E&gt;</code>, using <code>Omit</code> to avoid collisions.</div></div>
+    <div class="step"><span class="step-num">3</span><div>The chosen <code>as</code> value drives which native props are required/allowed at the call site.</div></div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 1 of 4 &mdash; the prop type, built from the element</div>
+<pre><code>import type { ElementType, ComponentPropsWithoutRef } from "react";
+
+type TextOwnProps&lt;E extends ElementType&gt; = {
+  as?: E;
+  size?: "sm" | "md" | "lg";
+};
+
+// own props + the intrinsic props of E, minus any collisions
+type TextProps&lt;E extends ElementType&gt; =
+  TextOwnProps&lt;E&gt; &amp;
+  Omit&lt;ComponentPropsWithoutRef&lt;E&gt;, keyof TextOwnProps&lt;E&gt;&gt;;</code></pre>
+<div class="type-result">TextProps&lt;"a"&gt; includes href; TextProps&lt;"button"&gt; includes disabled</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 2 of 4 &mdash; the generic component</div>
+<pre><code>function Text&lt;E extends ElementType = "span"&gt;(
+  { as, size = "md", ...rest }: TextProps&lt;E&gt;
+) {
+  const Component = as ?? "span";
+  return &lt;Component className={`text-${size}`} {...rest} /&gt;;
+}</code></pre>
+<div class="type-result">as defaults to "span"; rest is the correctly-typed element props</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 3 of 4 &mdash; props change with the as value</div>
+<pre><code>&lt;Text&gt;plain span&lt;/Text&gt;;                          // ok, defaults to span
+&lt;Text as="a" href="/home"&gt;a link&lt;/Text&gt;;          // href allowed &amp; typed
+&lt;Text as="button" onClick={() =&gt; {}} size="lg"/&gt;; // button props allowed
+
+&lt;Text as="span" href="/x" /&gt;;                     // error: href not on span
+&lt;Text as="a" /&gt;;                                  // ok (href optional on anchor)</code></pre>
+<div class="type-error">Property 'href' does not exist on span props (line 4)</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 4 of 4 &mdash; rendering a custom component via as</div>
+<pre><code>function Link({ to, children }: { to: string; children: React.ReactNode }) {
+  return &lt;a href={to}&gt;{children}&lt;/a&gt;;
+}
+
+// as can be your own component too &mdash; its props are required
+&lt;Text as={Link} to="/about"&gt;About&lt;/Text&gt;;   // to is required &amp; checked
+// &lt;Text as={Link} /&gt;;                       // error: missing 'to'</code></pre>
+<div class="type-result">as={Link} pulls in Link's own required props (to)</div>
+  </div>
+
+  <div class="callout-warning">
+    <strong>Common Mistakes:</strong>
+    <div class="mistake">&#10060; Typing <code>as</code> as <code>keyof JSX.IntrinsicElements</code> only &mdash; then you can never render a <em>custom</em> component through it.</div>
+    <div class="correct">&#9989; Constrain to <code>ElementType</code>, which covers both intrinsic tags and component types.</div>
+    <div class="mistake">&#10060; Spreading <code>ComponentPropsWithoutRef&lt;E&gt;</code> without <code>Omit</code>, so a native <code>color</code>/<code>size</code> silently clashes with your own prop of the same name.</div>
+    <div class="correct">&#9989; Subtract your own keys: <code>Omit&lt;ComponentPropsWithoutRef&lt;E&gt;, keyof OwnProps&gt;</code> so your prop always wins with its intended type.</div>
+  </div>
+
+  <div class="key-rules">
+    <strong>Key Rules:</strong>
+    <ul>
+    <li><a href="typescript-guides/typescript-guide-2026-07-04.html">2026-07-04</a> (Day 31)</li>
+      <li>Constrain the element parameter to <code>ElementType</code> and default it so <code>as</code> is optional.</li>
+      <li>Compose props as <em>own props</em> &amp; <code>Omit&lt;ComponentPropsWithoutRef&lt;E&gt;, keyof OwnProps&gt;</code>.</li>
+      <li>Use <code>ComponentPropsWithoutRef</code> unless you also forward a <code>ref</code> (then it&rsquo;s <code>PropsWithRef</code> + <code>forwardRef</code>, which is trickier to type).</li>
+      <li>The <code>as</code> value is inferred at the call site &mdash; callers never pass a manual type argument.</li>
+    </ul>
+  </div>
+
+  <div class="exercises">
+    <strong>Practice Exercises:</strong>
+    <div class="exercise"><span class="exercise-num">1</span>Build a polymorphic <code>&lt;Box as?&gt;</code> that defaults to <code>"div"</code>, accepts a <code>padding?: number</code> own prop, and forwards all other element props. Prove <code>&lt;Box as="a" href="/x" /&gt;</code> compiles while <code>&lt;Box href="/x" /&gt;</code> (default div) errors.</div>
+    <div class="exercise"><span class="exercise-num">2</span>Add an own prop named <code>color</code> to <code>Box</code> and show that without <code>Omit</code> you get a conflicting-type error on intrinsic elements that also have <code>color</code>; then fix it with <code>Omit</code>.</div>
+    <div class="exercise"><span class="exercise-num">3</span>Extend <code>Box</code> to forward a <code>ref</code> using <code>forwardRef</code>, and describe the type challenge that appears (the generic is lost through <code>forwardRef</code>) and one workaround (a cast or a manually-typed wrapper).</div>
+  </div>
+
+  <div class="connections"><strong>Connections:</strong> This is <em>Generics Basics</em> (R5) applied to components, and the <code>Omit</code>/<code>keyof</code> composition reuses <em>Utility Types</em> and <em>keyof &amp; Indexed Access</em>. It sets up Concept 3 (discriminated props) as the alternative when variants can&rsquo;t be expressed by a single element swap, and the <code>forwardRef</code> exercise links to <em>React + TypeScript: Component Props</em>.</div>
+</div>
+
+<!-- Concept 2: Typing React Context Safely -->
+<div class="concept-card" id="context">
+  <div class="concept-header">
+    <span class="concept-title">2. Typing React Context Safely</span>
+    <span class="ttag">React Patterns</span>
+  </div>
+
+  <div class="why-matters">Context is how you share state without prop-drilling, but the default value forces a design decision: either your context type includes <code>undefined</code> (and every consumer must guard) or you provide a fake default (and a component used <em>outside</em> the provider fails silently at runtime). The idiomatic fix &mdash; a <code>undefined</code> default plus a custom hook that asserts &mdash; gives consumers a non-nullable type <em>and</em> a loud error when the provider is missing.</div>
+
+  <div class="explanation">
+    <p><code>createContext&lt;T&gt;(defaultValue)</code> demands a default. If your real value only exists inside a provider, the honest type is <code>T | undefined</code> with a default of <code>undefined</code>. But you don&rsquo;t want every consumer writing <code>if (!ctx) throw</code>. So you wrap the access in a custom hook that reads the context, throws if it&rsquo;s <code>undefined</code>, and &mdash; crucially &mdash; <em>returns the narrowed <code>T</code></em>. After the throw, control-flow narrowing removes <code>undefined</code> from the type, so callers get a clean non-nullable value.</p>
+    <p>This pattern also centralizes the &ldquo;used outside provider&rdquo; error message in one place, and keeps the context object itself un-exported so nobody bypasses the hook. For values that never change (config), you can skip state; for mutable state, put both the value and its updater in the context type so consumers get a fully-typed API. It composes naturally with the discriminated-union and reducer patterns you already know.</p>
+    <div class="step"><span class="step-num">1</span><div>Type the context as <code>T | undefined</code> and default to <code>undefined</code> &mdash; the honest &ldquo;no provider yet&rdquo; state.</div></div>
+    <div class="step"><span class="step-num">2</span><div>Expose a custom hook that throws when the value is <code>undefined</code>, so the return type narrows to <code>T</code>.</div></div>
+    <div class="step"><span class="step-num">3</span><div>Keep the raw context private; consumers only ever call the hook.</div></div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 1 of 4 &mdash; the context + asserting hook</div>
+<pre><code>import { createContext, useContext } from "react";
+
+interface AuthValue { user: string | null; login(name: string): void }
+
+const AuthContext = createContext&lt;AuthValue | undefined&gt;(undefined);
+
+export function useAuth(): AuthValue {
+  const ctx = useContext(AuthContext);
+  if (ctx === undefined) {
+    throw new Error("useAuth must be used within &lt;AuthProvider&gt;");
+  }
+  return ctx;            // narrowed: AuthValue (no | undefined)
+}</code></pre>
+<div class="type-result">useAuth() returns AuthValue &mdash; consumers never see undefined</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 2 of 4 &mdash; the provider owns the state</div>
+<pre><code>export function AuthProvider({ children }: { children: React.ReactNode }) {
+  const [user, setUser] = useState&lt;string | null&gt;(null);
+  const value: AuthValue = { user, login: setUser };
+  return &lt;AuthContext.Provider value={value}&gt;{children}&lt;/AuthContext.Provider&gt;;
+}</code></pre>
+<div class="type-result">value is checked against AuthValue at the provider boundary</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 3 of 4 &mdash; consumers get a clean, typed API</div>
+<pre><code>function Profile() {
+  const { user, login } = useAuth();     // fully typed, non-nullable
+  return user
+    ? &lt;p&gt;Hello {user}&lt;/p&gt;
+    : &lt;button onClick={() =&gt; login("Ada")}&gt;Log in&lt;/button&gt;;
+}
+
+// rendered outside &lt;AuthProvider&gt; -&gt; throws the clear error at runtime</code></pre>
+<div class="output">Error: useAuth must be used within &lt;AuthProvider&gt; (when unwrapped)</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 4 of 4 &mdash; a reusable createSafeContext factory</div>
+<pre><code>function createSafeContext&lt;T&gt;(name: string) {
+  const Ctx = createContext&lt;T | undefined&gt;(undefined);
+  function useCtx(): T {
+    const v = useContext(Ctx);
+    if (v === undefined) throw new Error(`use${name} outside ${name}Provider`);
+    return v;
+  }
+  return [Ctx.Provider, useCtx] as const;   // tuple, positions preserved
+}
+
+const [ThemeProvider, useTheme] = createSafeContext&lt;"dark" | "light"&gt;("Theme");</code></pre>
+<div class="type-result">factory returns a typed [Provider, useHook] pair via as const</div>
+  </div>
+
+  <div class="callout-warning">
+    <strong>Common Mistakes:</strong>
+    <div class="mistake">&#10060; Passing a fake default (<code>createContext({} as AuthValue)</code>) so consumers <em>seem</em> safe &mdash; a component outside the provider then reads garbage instead of failing.</div>
+    <div class="correct">&#9989; Default to <code>undefined</code> and throw in the hook; you get both a non-nullable consumer type and a real runtime guard.</div>
+    <div class="mistake">&#10060; Exporting the raw context and calling <code>useContext(AuthContext)</code> directly &mdash; every call site re-introduces the <code>| undefined</code> you tried to hide.</div>
+    <div class="correct">&#9989; Keep the context private; export only the <code>useAuth</code> hook so the narrowing lives in exactly one place.</div>
+  </div>
+
+  <div class="key-rules">
+    <strong>Key Rules:</strong>
+    <ul>
+      <li>Type context as <code>T | undefined</code> with an <code>undefined</code> default when the value only exists under a provider.</li>
+      <li>The asserting hook&rsquo;s <code>throw</code> narrows the return type to <code>T</code> via control-flow analysis.</li>
+      <li>Don&rsquo;t fake a default value &mdash; it trades a compile error for a silent runtime bug.</li>
+      <li>A <code>createSafeContext</code> factory + <code>as const</code> gives a typed <code>[Provider, useHook]</code> pair you can reuse.</li>
+    </ul>
+  </div>
+
+  <div class="exercises">
+    <strong>Practice Exercises:</strong>
+    <div class="exercise"><span class="exercise-num">1</span>Build a <code>ThemeContext</code> holding <code>{ theme: "dark" | "light"; toggle(): void }</code> using the <code>undefined</code>-default + <code>useTheme</code> pattern, and confirm consumers get a non-nullable value with no guard.</div>
+    <div class="exercise"><span class="exercise-num">2</span>Implement the generic <code>createSafeContext&lt;T&gt;(name)</code> factory and use it to spin up two independent contexts; verify the returned hook return type is exactly <code>T</code> (not <code>T | undefined</code>) with <code>expect-type</code>.</div>
+    <div class="exercise"><span class="exercise-num">3</span>Extend the auth context to carry a <code>useReducer</code>-based state with a discriminated <code>Action</code> union, exposing <code>state</code> and <code>dispatch</code> through the context type. Confirm <code>dispatch</code> rejects an unknown action <code>type</code>.</div>
+  </div>
+
+  <div class="connections"><strong>Connections:</strong> The throw-to-narrow trick is <em>Union Types &amp; Narrowing</em> (R2) and assertion-style narrowing in disguise, and the factory&rsquo;s <code>as const</code> tuple return is the same idea as the custom-hook pattern from <em>React Hooks Typing</em> (Day 24). Exercise 3 wires in the discriminated-union reducer you&rsquo;ll formalize in Concept 3.</div>
+</div>
+
+<!-- Concept 3: Discriminated Union Props -->
+<div class="concept-card" id="discriminated_props">
+  <div class="concept-header">
+    <span class="concept-title">3. Discriminated Union Props for Component Variants</span>
+    <span class="ttag">React Patterns</span>
+  </div>
+
+  <div class="why-matters">Many components have <em>modes</em> where certain props only make sense together: a button that&rsquo;s either a link (needs <code>href</code>) or a submit button (needs <code>onClick</code>); an input that&rsquo;s <code>"text"</code> vs <code>"number"</code> with different <code>value</code> types. A flat props interface with everything optional lets callers pass invalid combinations. A discriminated union of prop shapes makes the illegal states <em>unrepresentable</em> and gives per-variant autocomplete.</div>
+
+  <div class="explanation">
+    <p>Instead of one interface with a pile of optional fields, define the props as a <em>union</em> of the valid shapes, each tagged by a discriminant prop (often <code>variant</code> or <code>kind</code>). React checks the whole object against the union, so a caller who sets <code>variant="link"</code> is required to pass <code>href</code> and is <em>forbidden</em> from passing the submit-only props. Inside the component you narrow on the discriminant exactly like any other discriminated union &mdash; a <code>switch</code> or an early <code>if</code> &mdash; and each branch sees only its own props.</p>
+    <p>This is the &ldquo;make impossible states impossible&rdquo; principle applied to component APIs. The payoff is real: the union catches <code>&lt;Button variant="link" onClick={...} /&gt;</code> at compile time, and it drives editor autocomplete to show only the props valid for the chosen variant. Pair it with a <code>never</code> default in the internal <code>switch</code> to get exhaustiveness &mdash; add a new variant to the union and the component fails to compile until you handle it. Excess-property checking on object literals is what makes the &ldquo;forbidden extra prop&rdquo; half work, so keep the shapes tight.</p>
+    <div class="step"><span class="step-num">1</span><div>Define props as a union of per-variant shapes, each with a shared discriminant prop.</div></div>
+    <div class="step"><span class="step-num">2</span><div>Callers get required props per variant and are blocked from mixing another variant&rsquo;s props.</div></div>
+    <div class="step"><span class="step-num">3</span><div>Narrow on the discriminant inside the component; add a <code>never</code> default for exhaustiveness.</div></div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 1 of 4 &mdash; the union of prop shapes</div>
+<pre><code>type ButtonProps =
+  | { variant: "link"; href: string; children: React.ReactNode }
+  | { variant: "submit"; onClick: () =&gt; void; children: React.ReactNode };
+
+// note: 'href' exists ONLY on the link shape, 'onClick' ONLY on submit</code></pre>
+<div class="type-result">two mutually-exclusive prop shapes tagged by variant</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 2 of 4 &mdash; narrowing inside the component</div>
+<pre><code>function Button(props: ButtonProps) {
+  switch (props.variant) {
+    case "link":
+      return &lt;a href={props.href}&gt;{props.children}&lt;/a&gt;;      // href in scope
+    case "submit":
+      return &lt;button onClick={props.onClick}&gt;{props.children}&lt;/button&gt;;
+    default: {
+      const _exhaustive: never = props;   // new variant -&gt; compile error here
+      return _exhaustive;
+    }
+  }
+}</code></pre>
+<div class="type-result">each case sees only its variant&rsquo;s props; default enforces exhaustiveness</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 3 of 4 &mdash; invalid combinations are rejected</div>
+<pre><code>&lt;Button variant="link" href="/home"&gt;Home&lt;/Button&gt;;        // ok
+&lt;Button variant="submit" onClick={save}&gt;Save&lt;/Button&gt;;      // ok
+
+&lt;Button variant="link" onClick={save}&gt;Bad&lt;/Button&gt;;
+// error: 'onClick' does not exist on the link shape, and 'href' is missing
+
+&lt;Button variant="submit" href="/x"&gt;Bad&lt;/Button&gt;;
+// error: 'href' does not exist on the submit shape</code></pre>
+<div class="type-error">Object literal may only specify known properties; 'onClick' not in link variant</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 4 of 4 &mdash; a typed input whose value type follows its type prop</div>
+<pre><code>type FieldProps =
+  | { type: "text"; value: string; onChange: (v: string) =&gt; void }
+  | { type: "number"; value: number; onChange: (v: number) =&gt; void };
+
+function Field(props: FieldProps) {
+  if (props.type === "number") {
+    // props.value: number, props.onChange: (v: number) =&gt; void
+    return &lt;input type="number" value={props.value} /&gt;;
+  }
+  // props.value: string here
+  return &lt;input value={props.value} /&gt;;
+}</code></pre>
+<div class="type-result">value/onChange types are linked to the type discriminant</div>
+  </div>
+
+  <div class="callout-warning">
+    <strong>Common Mistakes:</strong>
+    <div class="mistake">&#10060; One flat interface with every field optional (<code>href?, onClick?</code>) &mdash; it accepts <code>&lt;Button /&gt;</code> with neither, or with both, and pushes validation to runtime.</div>
+    <div class="correct">&#9989; Model each mode as its own shape in a discriminated union so illegal prop combinations don&rsquo;t type-check.</div>
+    <div class="mistake">&#10060; Omitting the discriminant and trying to tell variants apart by which optional prop is present &mdash; the compiler can&rsquo;t narrow reliably on &ldquo;maybe defined&rdquo; props.</div>
+    <div class="correct">&#9989; Give every member a shared literal discriminant (<code>variant</code>/<code>type</code>) so a <code>switch</code> narrows cleanly and exhaustiveness works.</div>
+  </div>
+
+  <div class="key-rules">
+    <strong>Key Rules:</strong>
+    <ul>
+      <li>Prefer a union of prop shapes over one interface full of optionals when props are mode-specific.</li>
+      <li>Every union member needs a shared literal discriminant to narrow on.</li>
+      <li>Excess-property checks are what forbid another variant&rsquo;s props on a literal &mdash; keep shapes exact.</li>
+      <li>Add a <code>never</code> default in the internal <code>switch</code> to force handling of every variant.</li>
+    </ul>
+  </div>
+
+  <div class="exercises">
+    <strong>Practice Exercises:</strong>
+    <div class="exercise"><span class="exercise-num">1</span>Type an <code>&lt;Alert&gt;</code> whose props are <code>{ severity: "info"; }</code> vs <code>{ severity: "error"; onRetry: () =&gt; void }</code>, so only the error variant requires <code>onRetry</code>. Prove passing <code>onRetry</code> to an <code>info</code> alert is an error.</div>
+    <div class="exercise"><span class="exercise-num">2</span>Build a <code>&lt;DataView&gt;</code> with variants <code>loading</code>, <code>error</code> (needs <code>message</code>), and <code>ready</code> (needs <code>data: Row[]</code>). Render each and add a <code>never</code> default; then add a fourth variant and observe the compile error until you handle it.</div>
+    <div class="exercise"><span class="exercise-num">3</span>Combine this with Concept 1: make a polymorphic <code>&lt;Button&gt;</code> that is <em>either</em> <code>as="a"</code> (requires <code>href</code>) or <code>as="button"</code> (allows <code>onClick</code>), using a discriminated union keyed on <code>as</code>. Note where the two techniques tension with each other.</div>
+  </div>
+
+  <div class="connections"><strong>Connections:</strong> This is <em>Union Types &amp; Narrowing</em> (R2) and <em>never &amp; Exhaustiveness</em> applied to props, with <em>Excess Property Checks</em> (Day 23) doing the work of rejecting foreign props. It contrasts with Concept 1: polymorphism swaps the <em>element</em>, discriminated props swap the <em>contract</em> &mdash; and Exercise 3 shows they can be combined.</div>
+</div>
+
+</div><!-- end topic-section 1 -->
+
+<!-- ============================================================ -->
+<!-- TOPIC SECTION 2: React + TypeScript: Events & Composition     -->
+<!-- ============================================================ -->
+<div class="topic-section">
+<div class="topic-section-header"><span class="section-num">2</span>React + TypeScript: Events &amp; Composition</div>
+
+<!-- Concept 4: Typing Event Handlers & Synthetic Events -->
+<div class="concept-card" id="event_handlers">
+  <div class="concept-header">
+    <span class="concept-title">4. Typing Event Handlers &amp; Synthetic Events</span>
+    <span class="ttag">React Patterns</span>
+  </div>
+
+  <div class="why-matters">Event handling is where beginners reach for <code>any</code> most often &mdash; <code>e.target.value</code> &ldquo;just works&rdquo; untyped, so people stop there. But React ships precise types for every event, and using them gives you a correctly-typed <code>currentTarget</code>, autocomplete on <code>key</code>/<code>clientX</code>, and handler aliases you can reuse. Knowing the two ways to get the type (inline inference vs an explicit handler alias) removes the guesswork.</div>
+
+  <div class="explanation">
+    <p>React wraps native DOM events in a <code>SyntheticEvent</code>, and provides generic types parameterized by the element: <code>React.ChangeEvent&lt;HTMLInputElement&gt;</code>, <code>React.MouseEvent&lt;HTMLButtonElement&gt;</code>, <code>React.KeyboardEvent&lt;HTMLInputElement&gt;</code>, <code>React.FormEvent&lt;HTMLFormElement&gt;</code>. The generic argument types <code>e.currentTarget</code> (the element the handler is attached to &mdash; always the safe one to read; <code>e.target</code> is only <code>EventTarget</code>).</p>
+    <p>There are two idioms and it&rsquo;s worth being deliberate. <strong>Inline:</strong> write the handler directly in JSX (<code>onChange={(e) =&gt; ...}</code>) and let React <em>infer</em> <code>e</code> from the prop &mdash; no annotation needed and the type is exact. <strong>Standalone:</strong> when you extract the handler to a named function, you must annotate it, and the cleanest way is the handler-type alias React exports: <code>React.ChangeEventHandler&lt;HTMLInputElement&gt;</code> (or <code>MouseEventHandler</code>, <code>KeyboardEventHandler</code>, &hellip;). Annotate the <em>variable</em> with the handler type and the parameter is inferred for you. Prefer inference inline; prefer the handler-type alias when hoisting.</p>
+    <div class="step"><span class="step-num">1</span><div>React events are generic over the element: <code>ChangeEvent&lt;HTMLInputElement&gt;</code>, <code>MouseEvent&lt;HTMLButtonElement&gt;</code>, &hellip;</div></div>
+    <div class="step"><span class="step-num">2</span><div>Read <code>e.currentTarget</code> (typed to your element), not <code>e.target</code> (just <code>EventTarget</code>).</div></div>
+    <div class="step"><span class="step-num">3</span><div>Inline handlers infer <code>e</code>; extracted handlers use a <code>...EventHandler&lt;El&gt;</code> alias so the param is inferred.</div></div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 1 of 4 &mdash; inline inference (no annotation needed)</div>
+<pre><code>function SearchBox() {
+  const [q, setQ] = useState("");
+  return (
+    &lt;input
+      value={q}
+      onChange={(e) =&gt; setQ(e.currentTarget.value)}   // e inferred: ChangeEvent&lt;HTMLInputElement&gt;
+      onKeyDown={(e) =&gt; { if (e.key === "Enter") submit(); }}
+    /&gt;
+  );
+}</code></pre>
+<div class="type-result">e is fully typed from the prop; currentTarget is HTMLInputElement</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 2 of 4 &mdash; extracted handler via the handler-type alias</div>
+<pre><code>// annotate the VARIABLE with the handler type; param is inferred
+const onChange: React.ChangeEventHandler&lt;HTMLInputElement&gt; = (e) =&gt; {
+  console.log(e.currentTarget.value);   // e.currentTarget: HTMLInputElement
+};
+
+const onSubmit: React.FormEventHandler&lt;HTMLFormElement&gt; = (e) =&gt; {
+  e.preventDefault();
+  const data = new FormData(e.currentTarget);   // currentTarget: HTMLFormElement
+};</code></pre>
+<div class="type-result">handler-type alias infers the event param for you</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 3 of 4 &mdash; explicit event type when you annotate the param directly</div>
+<pre><code>function handleClick(e: React.MouseEvent&lt;HTMLButtonElement&gt;) {
+  console.log(e.clientX, e.currentTarget.disabled);   // both typed
+}
+
+// target vs currentTarget:
+function onInput(e: React.ChangeEvent&lt;HTMLInputElement&gt;) {
+  e.currentTarget.value;   // string &mdash; safe
+  // e.target is EventTarget &amp; HTMLInputElement here for ChangeEvent specifically,
+  // but for many events target is only EventTarget &mdash; prefer currentTarget
+}</code></pre>
+<div class="type-result">MouseEvent exposes clientX; currentTarget is the attached element</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 4 of 4 &mdash; a reusable typed handler prop on your own component</div>
+<pre><code>type ToggleProps = {
+  checked: boolean;
+  onToggle: (next: boolean, e: React.ChangeEvent&lt;HTMLInputElement&gt;) =&gt; void;
+};
+
+function Toggle({ checked, onToggle }: ToggleProps) {
+  return (
+    &lt;input
+      type="checkbox"
+      checked={checked}
+      onChange={(e) =&gt; onToggle(e.currentTarget.checked, e)}
+    /&gt;
+  );
+}</code></pre>
+<div class="type-result">your component can expose semantic + raw-event params, both typed</div>
+  </div>
+
+  <div class="callout-warning">
+    <strong>Common Mistakes:</strong>
+    <div class="mistake">&#10060; Annotating an inline handler param as <code>(e: any)</code> &ldquo;to move on&rdquo; &mdash; you throw away the exact event type React already inferred for free.</div>
+    <div class="correct">&#9989; Leave inline handlers un-annotated (React infers <code>e</code>); only annotate when you <em>extract</em> the function.</div>
+    <div class="mistake">&#10060; Reading <code>e.target.value</code> on a generic event and fighting a &ldquo;<code>value</code> does not exist on <code>EventTarget</code>&rdquo; error, then casting.</div>
+    <div class="correct">&#9989; Use <code>e.currentTarget</code>, which the generic event type points at your specific element &mdash; no cast needed.</div>
+  </div>
+
+  <div class="key-rules">
+    <strong>Key Rules:</strong>
+    <ul>
+      <li>React events are generic over the element type &mdash; always pass the element (<code>&lt;HTMLInputElement&gt;</code>, &hellip;).</li>
+      <li>Prefer <code>e.currentTarget</code>; <code>e.target</code> is typed as the wider <code>EventTarget</code> for most events.</li>
+      <li>Inline handlers infer their event &mdash; don&rsquo;t annotate them; extracted handlers should use a <code>...EventHandler&lt;El&gt;</code> alias.</li>
+      <li>Annotate the handler <em>variable</em> (not the parameter) with the handler-type alias to get parameter inference.</li>
+    </ul>
+  </div>
+
+  <div class="exercises">
+    <strong>Practice Exercises:</strong>
+    <div class="exercise"><span class="exercise-num">1</span>Write a controlled <code>&lt;form&gt;</code> with an extracted <code>onSubmit: React.FormEventHandler&lt;HTMLFormElement&gt;</code> that calls <code>e.preventDefault()</code> and reads a field via <code>new FormData(e.currentTarget)</code>. Confirm <code>currentTarget</code> is <code>HTMLFormElement</code>.</div>
+    <div class="exercise"><span class="exercise-num">2</span>Type a <code>&lt;select&gt;</code> <code>onChange</code> both ways &mdash; once inline (inferred) and once as an extracted <code>ChangeEventHandler&lt;HTMLSelectElement&gt;</code> &mdash; and show both give <code>e.currentTarget.value: string</code>.</div>
+    <div class="exercise"><span class="exercise-num">3</span>Define a component that accepts an <code>onKeyCommand</code> prop typed as <code>(key: string, e: React.KeyboardEvent) =&gt; void</code>, wire it to an input&rsquo;s <code>onKeyDown</code>, and forward <code>e.key</code> plus the raw event. Verify a caller can&rsquo;t pass a handler expecting a <code>MouseEvent</code>.</div>
+  </div>
+
+  <div class="connections"><strong>Connections:</strong> The handler-type aliases are function-type <em>Type Annotations</em> (R1), and the target/currentTarget distinction is a small <em>Narrowing</em> story (R2). Passing typed event callbacks as props ties back to <em>React Component Props</em> (Day 24) and sets up render props (Concept 5), where the child <em>is</em> a typed function.</div>
+</div>
+
+<!-- Concept 5: Render Props & Function-as-Children -->
+<div class="concept-card" id="render_props">
+  <div class="concept-header">
+    <span class="concept-title">5. Render Props &amp; Function-as-Children</span>
+    <span class="ttag">React Patterns</span>
+  </div>
+
+  <div class="why-matters">Before hooks, render props were <em>the</em> way to share stateful logic; they&rsquo;re still the cleanest pattern when a component needs to own state or a resource and let the caller decide how to render it (a <code>&lt;Fetcher&gt;</code>, a <code>&lt;List&gt;</code> that renders each item, a headless dropdown). Typing them well &mdash; especially the generic &ldquo;function-as-children&rdquo; form &mdash; means the render callback&rsquo;s argument is fully inferred from the component&rsquo;s own generic.</div>
+
+  <div class="explanation">
+    <p>A render prop is just a prop whose value is a function returning JSX. Two shapes exist: a named prop (<code>render={(x) =&gt; ...}</code>) and the special <code>children</code>-as-function (<code>&lt;C&gt;{(x) =&gt; ...}&lt;/C&gt;</code>). To type either, declare the prop as a function returning <code>React.ReactNode</code>: <code>render: (value: T) =&gt; React.ReactNode</code>. When the component is <em>generic</em> over <code>T</code>, the callback&rsquo;s parameter is inferred at the call site from whatever the component produces.</p>
+    <p>The function-as-children form has one wrinkle: <code>children</code> is normally <code>React.ReactNode</code>, but here you want it to be a <em>function</em>, so you type <code>children</code> explicitly as <code>(value: T) =&gt; React.ReactNode</code> &mdash; overriding the default. Make the component a generic function component and TypeScript threads <code>T</code> from the data you pass (or fetch) straight into the render callback&rsquo;s parameter, giving the caller full autocomplete on <code>item</code>/<code>data</code> without any annotation. This is the headless-component pattern: the component owns behavior, the caller owns markup, and the types keep the seam honest.</p>
+    <div class="step"><span class="step-num">1</span><div>A render prop is a prop typed as <code>(value: T) =&gt; React.ReactNode</code> (named) or the same on <code>children</code>.</div></div>
+    <div class="step"><span class="step-num">2</span><div>Make the component generic over <code>T</code> so the callback&rsquo;s argument is inferred at the call site.</div></div>
+    <div class="step"><span class="step-num">3</span><div>For function-as-children, override <code>children</code>&rsquo;s type to a function (it isn&rsquo;t <code>ReactNode</code> anymore).</div></div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 1 of 4 &mdash; a named render prop, generic over the item</div>
+<pre><code>type ListProps&lt;T&gt; = {
+  items: T[];
+  render: (item: T, index: number) =&gt; React.ReactNode;
+};
+
+function List&lt;T&gt;({ items, render }: ListProps&lt;T&gt;) {
+  return &lt;ul&gt;{items.map((it, i) =&gt; &lt;li key={i}&gt;{render(it, i)}&lt;/li&gt;)}&lt;/ul&gt;;
+}
+
+// item is inferred as User &mdash; no annotation at the call site
+&lt;List items={users} render={(u) =&gt; &lt;span&gt;{u.name}&lt;/span&gt;} /&gt;;</code></pre>
+<div class="type-result">render&rsquo;s item param is inferred from items (User)</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 2 of 4 &mdash; function-as-children (children is a function)</div>
+<pre><code>type FetcherProps&lt;T&gt; = {
+  url: string;
+  children: (state: { data: T | null; loading: boolean }) =&gt; React.ReactNode;
+};
+
+function Fetcher&lt;T&gt;({ url, children }: FetcherProps&lt;T&gt;) {
+  const [data, setData] = useState&lt;T | null&gt;(null);
+  const [loading, setLoading] = useState(true);
+  // ... effect that fetches url, setData, setLoading(false) ...
+  return &lt;&gt;{children({ data, loading })}&lt;/&gt;;
+}</code></pre>
+<div class="type-result">children is typed as a function, not the usual ReactNode</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 3 of 4 &mdash; the call site infers everything</div>
+<pre><code>&lt;Fetcher&lt;User&gt; url="/me"&gt;
+  {({ data, loading }) =&gt;                 // data: User | null, loading: boolean
+    loading ? &lt;p&gt;Loading&hellip;&lt;/p&gt; : &lt;p&gt;{data?.name}&lt;/p&gt;
+  }
+&lt;/Fetcher&gt;;
+
+// explicit &lt;User&gt; when it can't be inferred from props; otherwise omit it</code></pre>
+<div class="type-result">render callback&rsquo;s state param is fully typed from T = User</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 4 of 4 &mdash; a headless toggle exposing state via render prop</div>
+<pre><code>type ToggleRenderProps = {
+  children: (api: { on: boolean; toggle: () =&gt; void }) =&gt; React.ReactNode;
+};
+
+function Toggle({ children }: ToggleRenderProps) {
+  const [on, setOn] = useState(false);
+  return &lt;&gt;{children({ on, toggle: () =&gt; setOn((v) =&gt; !v) })}&lt;/&gt;;
+}
+
+&lt;Toggle&gt;
+  {({ on, toggle }) =&gt;                     // on: boolean, toggle: () =&gt; void
+    &lt;button onClick={toggle}&gt;{on ? "ON" : "OFF"}&lt;/button&gt;}
+&lt;/Toggle&gt;;</code></pre>
+<div class="type-result">the caller owns markup; the component owns behavior; types stay tight</div>
+  </div>
+
+  <div class="callout-warning">
+    <strong>Common Mistakes:</strong>
+    <div class="mistake">&#10060; Leaving <code>children</code> as the default <code>React.ReactNode</code> while passing a function &mdash; TypeScript flags the function as an invalid child.</div>
+    <div class="correct">&#9989; Explicitly type <code>children</code> as <code>(value: T) =&gt; React.ReactNode</code> when you use function-as-children.</div>
+    <div class="mistake">&#10060; Hard-coding the render argument type (e.g. <code>render: (item: unknown) =&gt; ...</code>) so callers must cast <code>item</code> to use it.</div>
+    <div class="correct">&#9989; Make the component generic over <code>T</code> so the callback&rsquo;s parameter is inferred from <code>items</code>/<code>data</code> with zero casts.</div>
+  </div>
+
+  <div class="key-rules">
+    <strong>Key Rules:</strong>
+    <ul>
+      <li>A render prop is a function prop returning <code>React.ReactNode</code>; function-as-children puts it on <code>children</code>.</li>
+      <li>Override <code>children</code>&rsquo;s type when it&rsquo;s a function &mdash; the default <code>ReactNode</code> won&rsquo;t accept one.</li>
+      <li>Make the component generic over <code>T</code> so the callback argument is inferred at the call site.</li>
+      <li>Great for headless components (own behavior, delegate markup); hooks often replace the logic-sharing use case.</li>
+    </ul>
+  </div>
+
+  <div class="exercises">
+    <strong>Practice Exercises:</strong>
+    <div class="exercise"><span class="exercise-num">1</span>Write a generic <code>&lt;For items render /&gt;</code> component and confirm the <code>item</code> argument is inferred (no annotation) for both a <code>number[]</code> and a <code>User[]</code>.</div>
+    <div class="exercise"><span class="exercise-num">2</span>Build a function-as-children <code>&lt;Mouse&gt;</code> that tracks <code>{ x: number; y: number }</code> and passes it to <code>children</code>. Type <code>children</code> correctly and prove the caller&rsquo;s destructured <code>{ x, y }</code> are numbers.</div>
+    <div class="exercise"><span class="exercise-num">3</span>Convert the generic <code>&lt;Fetcher&lt;T&gt;&gt;</code> to expose a discriminated state (<code>{ status: "loading" } | { status: "error"; error: Error } | { status: "ok"; data: T }</code>) through the render callback, so the caller must narrow on <code>status</code> before reading <code>data</code>.</div>
+  </div>
+
+  <div class="connections"><strong>Connections:</strong> Render props are <em>Generics Basics</em> (R5) plus function-typed props (R1), and Exercise 3 folds in the <em>Discriminated Union Props</em> idea from Concept 3 applied to the callback&rsquo;s argument. This closes the component-composition arc: polymorphism (element), discriminated props (contract), and render props (delegated rendering) are the three levers for flexible, fully-typed component APIs.</div>
+</div>
+
+</div><!-- end topic-section 2 -->
+
+<!-- Footer -->
+<footer class="guide-footer">
+  <h2>All Guides</h2>
+  <ul>
+    <li><a href="typescript-guides/typescript-guide-2026-07-09.html">2026-07-09</a> (Day 36)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-07-08.html">2026-07-08</a> (Day 35)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-07-07.html">2026-07-07</a> (Day 34)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-07-06.html">2026-07-06</a> (Day 33)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-07-05.html">2026-07-05</a> (Day 32)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-07-04.html">2026-07-04</a> (Day 31)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-07-03.html">2026-07-03</a> (Day 30)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-07-02.html">2026-07-02</a> (Day 29)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-07-01.html">2026-07-01</a> (Day 28)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-30.html">2026-06-30</a> (Day 27)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-29.html">2026-06-29</a> (Day 26)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-28.html">2026-06-28</a> (Day 25)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-27.html">2026-06-27</a> (Day 24)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-26.html">2026-06-26</a> (Day 23)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-25.html">2026-06-25</a> (Day 22)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-24.html">2026-06-24</a> (Day 21)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-23.html">2026-06-23</a> (Day 20)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-22.html">2026-06-22</a> (Day 19)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-21.html">2026-06-21</a> (Day 18)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-19.html">2026-06-19</a> (Day 17)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-18.html">2026-06-18</a> (Day 16)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-17.html">2026-06-17</a> (Day 15)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-15.html">2026-06-15</a> (Day 14)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-13.html">2026-06-13</a> (Day 13)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-12.html">2026-06-12</a> (Day 12)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-11.html">2026-06-11</a> (Day 11)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-10.html">2026-06-10</a> (Day 10)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-09.html">2026-06-09</a> (Day 9)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-08.html">2026-06-08</a> (Day 8)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-07.html">2026-06-07</a> (Day 7)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-05.html">2026-06-05</a> (Day 6)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-04.html">2026-06-04</a> (Day 5)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-03.html">2026-06-03</a> (Day 4)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-02.html">2026-06-02</a> (Day 3)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-01.html">2026-06-01</a> (Day 2)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-05-31.html">2026-05-31</a> (Day 1)</li>
+  </ul>
+</footer>
+
+</div><!-- end content -->
+</div><!-- end main -->
+
+<script>
+// Theme toggle
+(function() {
+  var toggle = document.getElementById('themeToggle');
+  var html = document.documentElement;
+  var STORAGE_KEY = 'lc-tsguide-theme';
+
+  function setTheme(theme) {
+    html.setAttribute('data-theme', theme);
+    toggle.textContent = theme === 'dark' ? '\u{1F319}' : '\u{2600}\u{FE0F}';
+    try { localStorage.setItem(STORAGE_KEY, theme); } catch(e) {}
+  }
+
+  try {
+    var saved = localStorage.getItem(STORAGE_KEY);
+    if (saved) setTheme(saved);
+  } catch(e) {}
+
+  toggle.addEventListener('click', function() {
+    var current = html.getAttribute('data-theme') || 'dark';
+    setTheme(current === 'dark' ? 'light' : 'dark');
+  });
+})();
+
+// Sidebar active link tracking
+(function() {
+  var links = document.querySelectorAll('.sidebar-nav a');
+  var sections = [];
+  links.forEach(function(link) {
+    var id = link.getAttribute('href').replace('#', '');
+    var el = document.getElementById(id);
+    if (el) sections.push({ link: link, el: el });
+  });
+
+  function updateActive() {
+    var current = null;
+    var scrollY = window.scrollY + 120;
+    for (var i = sections.length - 1; i >= 0; i--) {
+      if (sections[i].el.offsetTop <= scrollY) {
+        current = sections[i];
+        break;
+      }
+    }
+    links.forEach(function(l) { l.classList.remove('active'); });
+    if (current) current.link.classList.add('active');
+  }
+
+  window.addEventListener('scroll', updateActive);
+  updateActive();
+})();
+</script>
+
+</body>
+</html>

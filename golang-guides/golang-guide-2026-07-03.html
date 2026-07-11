@@ -1,0 +1,1709 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Go Study Guide &mdash; Day 28 (2026-07-03)</title>
+<style>
+/* ===== CSS Variables ===== */
+:root {
+  --bg: #0d1117;
+  --surface1: #161b22;
+  --surface2: #1c2129;
+  --border: #30363d;
+  --text: #e6edf3;
+  --muted: #8b949e;
+  --accent: #58a6ff;
+  --accent-dim: #1f6feb33;
+  --green: #3fb950;
+  --green-dim: #23863633;
+  --yellow: #d29922;
+  --yellow-dim: #d2992233;
+  --red: #f85149;
+  --red-dim: #f8514933;
+  --purple: #bc8cff;
+  --purple-dim: #bc8cff22;
+  --orange: #f0883e;
+  --orange-dim: #f0883e22;
+  --code-bg: #0d1117;
+  --sidebar-w: 300px;
+  --font-mono: 'SF Mono', 'Cascadia Code', 'Fira Code', Consolas, monospace;
+  --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+  --radius: 8px;
+  --shadow: 0 1px 3px rgba(0,0,0,0.4);
+}
+
+[data-theme="light"] {
+  --bg: #ffffff;
+  --surface1: #f6f8fa;
+  --surface2: #f0f3f6;
+  --border: #d0d7de;
+  --text: #1f2328;
+  --muted: #656d76;
+  --accent: #0969da;
+  --accent-dim: #0969da1a;
+  --green: #1a7f37;
+  --green-dim: #1a7f3718;
+  --yellow: #9a6700;
+  --yellow-dim: #9a670018;
+  --red: #cf222e;
+  --red-dim: #cf222e18;
+  --purple: #8250df;
+  --purple-dim: #8250df18;
+  --orange: #bc4c00;
+  --orange-dim: #bc4c0018;
+  --code-bg: #f6f8fa;
+  --shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+/* ===== Reset & Base ===== */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: var(--font-sans);
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.7;
+  font-size: 16px;
+  transition: background 0.2s, color 0.2s;
+}
+
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+/* ===== Theme Toggle ===== */
+#theme-toggle {
+  position: fixed;
+  top: 16px;
+  right: 20px;
+  z-index: 1000;
+  background: var(--surface1);
+  border: 1px solid var(--border);
+  color: var(--text);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+  box-shadow: var(--shadow);
+}
+#theme-toggle:hover { background: var(--surface2); border-color: var(--accent); }
+
+/* ===== Sidebar ===== */
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: var(--sidebar-w);
+  height: 100vh;
+  background: var(--surface1);
+  border-right: 1px solid var(--border);
+  overflow-y: auto;
+  padding: 20px 0;
+  z-index: 100;
+  transition: transform 0.3s;
+}
+
+.sidebar-header {
+  padding: 0 20px 16px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 12px;
+}
+
+.sidebar-header h2 {
+  font-size: 16px;
+  color: var(--text);
+  font-weight: 700;
+}
+
+.sidebar-header .subtitle {
+  font-size: 12px;
+  color: var(--muted);
+  margin-top: 2px;
+}
+
+.sidebar-section {
+  margin-bottom: 8px;
+}
+
+.sidebar-section-title {
+  padding: 6px 20px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+}
+
+.sidebar-link {
+  display: block;
+  padding: 5px 20px 5px 28px;
+  font-size: 13px;
+  color: var(--muted);
+  text-decoration: none;
+  border-left: 2px solid transparent;
+  transition: all 0.15s;
+  line-height: 1.4;
+}
+
+.sidebar-link:hover {
+  color: var(--text);
+  background: var(--accent-dim);
+  border-left-color: var(--accent);
+  text-decoration: none;
+}
+
+.sidebar-link.active {
+  color: var(--accent);
+  border-left-color: var(--accent);
+  background: var(--accent-dim);
+}
+
+/* ===== Mobile sidebar toggle ===== */
+#sidebar-toggle {
+  display: none;
+  position: fixed;
+  top: 16px;
+  left: 16px;
+  z-index: 200;
+  background: var(--surface1);
+  border: 1px solid var(--border);
+  color: var(--text);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 20px;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--shadow);
+}
+
+/* ===== Main Content ===== */
+.main {
+  margin-left: var(--sidebar-w);
+  padding: 40px 48px 80px;
+  max-width: calc(860px + var(--sidebar-w) + 96px);
+}
+
+.page-title {
+  font-size: 32px;
+  font-weight: 800;
+  margin-bottom: 4px;
+  color: var(--text);
+}
+
+.page-subtitle {
+  font-size: 15px;
+  color: var(--muted);
+  margin-bottom: 36px;
+}
+
+/* ===== Sections ===== */
+.section {
+  margin-bottom: 48px;
+}
+
+.section-label {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  padding: 3px 10px;
+  border-radius: 4px;
+  margin-bottom: 12px;
+}
+
+.section-label.review { background: var(--yellow-dim); color: var(--yellow); }
+.section-label.new { background: var(--green-dim); color: var(--green); }
+
+.section-title {
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 24px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--border);
+}
+
+/* ===== How To Use ===== */
+.how-to-use {
+  background: var(--surface1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px 24px;
+  margin-bottom: 36px;
+}
+
+.how-to-use h3 {
+  font-size: 16px;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.how-to-use ul {
+  padding-left: 22px;
+  margin: 0;
+}
+
+.how-to-use li {
+  font-size: 14px;
+  color: var(--muted);
+  margin-bottom: 4px;
+}
+
+/* ===== Concept Cards ===== */
+.concept {
+  background: var(--surface1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 28px;
+  margin-bottom: 28px;
+  box-shadow: var(--shadow);
+}
+
+.concept-header {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  margin-bottom: 6px;
+  flex-wrap: wrap;
+}
+
+.concept h3 {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.concept-meta {
+  font-size: 12px;
+  color: var(--muted);
+  background: var(--surface2);
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
+.concept h4 {
+  font-size: 15px;
+  font-weight: 600;
+  margin: 20px 0 8px;
+  color: var(--text);
+}
+
+.concept p, .concept li {
+  color: var(--text);
+  line-height: 1.7;
+}
+
+.concept ul, .concept ol {
+  padding-left: 22px;
+  margin: 8px 0;
+}
+
+.concept li {
+  margin-bottom: 4px;
+}
+
+.concept .why-matters {
+  font-style: italic;
+  color: var(--muted);
+  margin: 6px 0 16px;
+  font-size: 15px;
+}
+
+/* ===== Code Blocks ===== */
+pre {
+  background: var(--code-bg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 16px 18px;
+  overflow-x: auto;
+  margin: 10px 0 14px;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--text);
+  position: relative;
+}
+
+pre::after {
+  content: 'Go';
+  position: absolute;
+  top: 6px;
+  right: 10px;
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  opacity: 0.6;
+}
+
+code {
+  font-family: var(--font-mono);
+  font-size: 0.9em;
+}
+
+:not(pre) > code {
+  background: var(--surface2);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.88em;
+}
+
+/* ===== Output Blocks ===== */
+.output {
+  background: var(--green-dim);
+  border: 1px solid var(--green);
+  border-radius: 6px;
+  padding: 12px 16px;
+  margin: 6px 0 14px;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--text);
+  white-space: pre-wrap;
+}
+
+.output::after { content: none; }
+
+.output-label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--green);
+  margin-bottom: 4px;
+}
+
+/* ===== Good/Bad Examples ===== */
+.do-dont {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin: 10px 0;
+}
+
+.do-box, .dont-box {
+  border-radius: 6px;
+  padding: 14px;
+  border: 1px solid;
+}
+
+.do-box {
+  background: var(--green-dim);
+  border-color: var(--green);
+}
+
+.dont-box {
+  background: var(--red-dim);
+  border-color: var(--red);
+}
+
+.do-box .label, .dont-box .label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 6px;
+}
+
+.do-box .label { color: var(--green); }
+.dont-box .label { color: var(--red); }
+
+.do-box pre, .dont-box pre {
+  margin: 0;
+  border: none;
+  background: transparent;
+  padding: 0;
+  font-size: 12.5px;
+}
+
+.do-box pre::after, .dont-box pre::after { content: none; }
+
+/* ===== Key Rules ===== */
+.rules-list {
+  list-style: none;
+  padding: 0;
+  margin: 8px 0;
+}
+
+.rules-list li {
+  padding: 6px 0 6px 24px;
+  position: relative;
+}
+
+.rules-list li::before {
+  content: "\2192";
+  position: absolute;
+  left: 2px;
+  color: var(--accent);
+  font-weight: 700;
+}
+
+/* ===== Exercises ===== */
+.exercise {
+  background: var(--purple-dim);
+  border: 1px solid var(--purple);
+  border-radius: 6px;
+  padding: 14px 18px;
+  margin: 8px 0;
+}
+
+.exercise .exercise-label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--purple);
+  margin-bottom: 4px;
+}
+
+/* ===== Pitfall ===== */
+.pitfall {
+  background: var(--red-dim);
+  border-left: 3px solid var(--red);
+  border-radius: 0 6px 6px 0;
+  padding: 10px 14px;
+  margin: 10px 0;
+  font-size: 14px;
+}
+
+.pitfall strong {
+  color: var(--red);
+}
+
+/* ===== Connection ===== */
+.connection {
+  background: var(--accent-dim);
+  border-left: 3px solid var(--accent);
+  border-radius: 0 6px 6px 0;
+  padding: 10px 14px;
+  margin: 10px 0;
+  font-size: 14px;
+  color: var(--muted);
+}
+
+/* ===== Review Cards ===== */
+.review-card {
+  background: var(--surface1);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--purple);
+  border-radius: var(--radius);
+  padding: 20px 24px;
+  margin-bottom: 16px;
+  box-shadow: var(--shadow);
+}
+
+.review-card .review-header {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  margin-bottom: 6px;
+  flex-wrap: wrap;
+}
+
+.review-card h3 {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.review-card .review-meta {
+  font-size: 12px;
+  color: var(--muted);
+  background: var(--surface2);
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
+.review-card h4 {
+  font-size: 14px;
+  font-weight: 600;
+  margin: 14px 0 6px;
+  color: var(--text);
+}
+
+.review-card p, .review-card li {
+  color: var(--text);
+  line-height: 1.6;
+  font-size: 14px;
+}
+
+.review-card pre {
+  font-size: 12.5px;
+  padding: 12px 14px;
+  margin: 6px 0 10px;
+}
+
+.review-card .pitfall {
+  font-size: 13px;
+  padding: 8px 12px;
+}
+
+/* ===== Topic Badge ===== */
+.topic-badge {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 2px 8px;
+  border-radius: 4px;
+  background: var(--accent-dim);
+  color: var(--accent);
+  margin-left: 4px;
+}
+
+/* ===== Footer ===== */
+.footer {
+  margin-top: 60px;
+  padding: 24px 0;
+  border-top: 1px solid var(--border);
+}
+
+.footer h4 {
+  font-size: 14px;
+  color: var(--muted);
+  margin-bottom: 10px;
+}
+
+.footer ul {
+  list-style: none;
+  padding: 0;
+}
+
+.footer li {
+  margin-bottom: 4px;
+  font-size: 14px;
+}
+
+.footer li a { color: var(--accent); }
+.footer .current { color: var(--green); font-weight: 600; }
+
+/* ===== Bash code blocks ===== */
+pre.bash::after {
+  content: 'Bash';
+}
+
+/* ===== Responsive ===== */
+@media (max-width: 900px) {
+  .sidebar {
+    transform: translateX(-100%);
+  }
+  .sidebar.open {
+    transform: translateX(0);
+    box-shadow: 4px 0 20px rgba(0,0,0,0.5);
+  }
+  #sidebar-toggle {
+    display: flex;
+  }
+  .main {
+    margin-left: 0;
+    padding: 60px 20px 60px;
+    max-width: 100%;
+  }
+  .do-dont {
+    grid-template-columns: 1fr;
+  }
+  #theme-toggle {
+    right: 14px;
+    top: 16px;
+  }
+}
+</style>
+</head>
+<body>
+
+<!-- Theme Toggle -->
+<button id="theme-toggle" aria-label="Toggle theme" title="Toggle light/dark theme">&#9789;</button>
+
+<!-- Mobile Sidebar Toggle -->
+<button id="sidebar-toggle" aria-label="Toggle sidebar">&#9776;</button>
+
+<!-- Sidebar -->
+<nav class="sidebar" id="sidebar">
+  <div class="sidebar-header">
+    <h2>Go Guide</h2>
+    <div class="subtitle">Day 28 &mdash; 2026-07-03</div>
+  </div>
+
+  <div class="sidebar-section">
+    <div class="sidebar-section-title">Review (6 concepts)</div>
+    <a href="#error_handling" class="sidebar-link">Error Handling</a>
+    <a href="#first_class_functions" class="sidebar-link">First-class Functions</a>
+    <a href="#defer_panic_recover" class="sidebar-link">Defer, Panic, Recover</a>
+    <a href="#chi_router_patterns" class="sidebar-link">chi Router Patterns</a>
+    <a href="#regexp" class="sidebar-link">regexp: Regular Expressions</a>
+    <a href="#database_sql" class="sidebar-link">database/sql</a>
+  </div>
+
+  <div class="sidebar-section">
+    <div class="sidebar-section-title">Modern Go Language Features (2)</div>
+    <a href="#builtin_min_max_clear" class="sidebar-link">min, max &amp; clear Builtins</a>
+    <a href="#sync_once_helpers" class="sidebar-link">sync.OnceFunc / OnceValue</a>
+  </div>
+
+  <div class="sidebar-section">
+    <div class="sidebar-section-title">Text, Hashing &amp; Testing (3)</div>
+    <a href="#unicode_utf8" class="sidebar-link">unicode &amp; unicode/utf8</a>
+    <a href="#hash_maphash" class="sidebar-link">hash/maphash</a>
+    <a href="#testing_quick" class="sidebar-link">testing/quick</a>
+  </div>
+</nav>
+
+<!-- Main Content -->
+<div class="main">
+
+<h1 class="page-title">Go Daily Guide &mdash; 2026-07-03 (Day 28)</h1>
+<p class="page-subtitle">Day 28 &mdash; Friday, July 3, 2026 &bull; 11 concepts (6 review + 5 new)</p>
+
+<!-- How to Use -->
+<div class="how-to-use">
+  <h3>How to Use This Guide</h3>
+  <ul>
+    <li>Start with the <strong>Review</strong> section &mdash; try to recall each concept before reading the refresher</li>
+    <li>Complete the challenge exercise for each review card without looking back at previous days</li>
+    <li>Then work through the <strong>New Concepts</strong> section, typing out every code example yourself</li>
+    <li>Pay special attention to the common mistakes sections (they highlight real Go gotchas)</li>
+    <li>Complete the exercises at the bottom of each concept without looking at solutions</li>
+    <li>Use <code>go run main.go</code> to test your code locally, or use the <a href="https://go.dev/play/" target="_blank">Go Playground</a></li>
+  </ul>
+</div>
+
+<!-- ============================================================ -->
+<!-- REVIEW SECTION -->
+<!-- ============================================================ -->
+<div class="section">
+  <span class="section-label review">Review</span>
+  <h2 class="section-title">Spaced Repetition Review &mdash; 6 Concepts</h2>
+
+  <!-- Review 1: Error Handling -->
+  <div class="review-card" id="error_handling">
+    <div class="review-header">
+      <h3>Error Handling</h3>
+      <span class="review-meta">Go Foundations &bull; due today &bull; rep 3</span>
+    </div>
+
+    <h4>Quick Reminder</h4>
+    <p>An <code>error</code> is any value implementing <code>interface{ Error() string }</code>. Idiomatic Go returns errors as the last value and checks them immediately with <code>if err != nil</code>. Create them with <code>errors.New</code> or <code>fmt.Errorf</code>; the <code>%w</code> verb <em>wraps</em> an error so callers can later unwrap it. <code>errors.Is(err, target)</code> walks the wrap chain to match a sentinel value; <code>errors.As(err, &amp;dst)</code> walks it to find a value of a concrete type. Prefer wrapping with context at each layer over discarding and re-creating.</p>
+
+    <h4>Key Pattern</h4>
+<pre>package main
+
+import (
+    "errors"
+    "fmt"
+)
+
+var ErrNotFound = errors.New("not found") // sentinel
+
+type ValidationError struct{ Field string }
+
+func (e *ValidationError) Error() string {
+    return "invalid field: " + e.Field
+}
+
+func lookup(id int) error {
+    if id == 0 {
+        return fmt.Errorf("lookup %d: %w", id, ErrNotFound) // wrap
+    }
+    return &amp;ValidationError{Field: "id"}
+}
+
+func main() {
+    err := lookup(0)
+    fmt.Println(errors.Is(err, ErrNotFound)) // true (unwraps %w)
+
+    var ve *ValidationError
+    fmt.Println(errors.As(lookup(1), &amp;ve))   // true
+    fmt.Println(ve.Field)                     // id
+}</pre>
+    <div class="output-label">Output</div>
+    <div class="output">true
+true
+id</div>
+
+    <div class="exercise">
+      <div class="exercise-label">Challenge Exercise</div>
+      <p>Define a sentinel <code>ErrClosed</code> and a struct error <code>*QueryError{Query string; Err error}</code> whose <code>Unwrap()</code> returns its inner <code>Err</code>. Wrap <code>ErrClosed</code> inside a <code>QueryError</code>, wrap that again with <code>fmt.Errorf("run: %w", ...)</code>, and show that <code>errors.Is(top, ErrClosed)</code> is still true and <code>errors.As(top, &amp;qe)</code> recovers the <code>QueryError</code>. Then combine two independent failures with <code>errors.Join</code> and explain how <code>errors.Is</code> handles the multi-error tree.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>#1 Pitfall:</strong> Using <code>%v</code> instead of <code>%w</code> when you meant to wrap &mdash; the message looks identical but the chain is broken, so <code>errors.Is</code>/<code>errors.As</code> can no longer see the underlying error. Also avoid comparing error <em>strings</em> (<code>err.Error() == "not found"</code>); compare against a sentinel with <code>errors.Is</code> instead.
+    </div>
+  </div>
+
+  <!-- Review 2: First-class Functions -->
+  <div class="review-card" id="first_class_functions">
+    <div class="review-header">
+      <h3>First-class Functions</h3>
+      <span class="review-meta">Functions &amp; Control Flow &bull; due today &bull; rep 3</span>
+    </div>
+
+    <h4>Quick Reminder</h4>
+    <p>Functions in Go are values: you can store them in variables, pass them as arguments, return them, and put them in slices or maps. A <em>closure</em> is a function literal that captures variables from its enclosing scope <em>by reference</em> &mdash; it keeps them alive and sees their later mutations. Higher-order functions (take or return functions) power callbacks, strategies, middleware, and lazy generators.</p>
+
+    <h4>Key Pattern</h4>
+<pre>package main
+
+import "fmt"
+
+// Higher-order: returns a closure capturing next.
+func counter(start int) func() int {
+    next := start
+    return func() int {
+        n := next
+        next++
+        return n
+    }
+}
+
+// Function as a parameter (a strategy).
+func apply(xs []int, f func(int) int) []int {
+    out := make([]int, len(xs))
+    for i, x := range xs {
+        out[i] = f(x)
+    }
+    return out
+}
+
+func main() {
+    c := counter(10)
+    fmt.Println(c(), c(), c()) // 10 11 12
+
+    double := func(x int) int { return x * 2 }
+    fmt.Println(apply([]int{1, 2, 3}, double)) // [2 4 6]
+}</pre>
+    <div class="output-label">Output</div>
+    <div class="output">10 11 12
+[2 4 6]</div>
+
+    <div class="exercise">
+      <div class="exercise-label">Challenge Exercise</div>
+      <p>Write a <code>memoize(f func(int) int) func(int) int</code> that caches results in a captured map. Then build a tiny event system: a <code>map[string][]func(payload string)</code> where <code>on(event, handler)</code> registers callbacks and <code>emit(event, payload)</code> invokes them all. Finally, demonstrate the classic closure-capture bug by spawning goroutines in a loop and explain how Go 1.22's per-iteration loop variables changed the outcome versus taking <code>x := x</code> yourself.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>#1 Pitfall:</strong> Assuming a closure captures a <em>copy</em> of the loop variable. Before Go 1.22 a single variable was shared across iterations, so all deferred/goroutine closures saw the final value. In Go 1.22+ each iteration gets its own variable, but if you build for an older language version the old sharing still bites &mdash; capture explicitly when in doubt.
+    </div>
+  </div>
+
+  <!-- Review 3: Defer, Panic, Recover -->
+  <div class="review-card" id="defer_panic_recover">
+    <div class="review-header">
+      <h3>Defer, Panic, Recover</h3>
+      <span class="review-meta">Functions &amp; Control Flow &bull; due today &bull; rep 3</span>
+    </div>
+
+    <h4>Quick Reminder</h4>
+    <p><code>defer</code> schedules a call to run when the surrounding function returns, in <strong>LIFO</strong> order &mdash; ideal for cleanup (<code>Close</code>, <code>Unlock</code>). Deferred arguments are evaluated <em>immediately</em>, but the call itself runs last. <code>panic</code> unwinds the stack running deferred calls; <code>recover</code>, called <em>inside a deferred function</em>, stops the unwinding and returns the panic value. Use panic for truly unrecoverable states, not ordinary error flow. A deferred closure can even mutate a named return value.</p>
+
+    <h4>Key Pattern</h4>
+<pre>package main
+
+import "fmt"
+
+func safeDivide(a, b int) (result int, err error) {
+    defer func() {
+        if r := recover(); r != nil {
+            err = fmt.Errorf("recovered: %v", r) // set named return
+        }
+    }()
+    result = a / b // panics on b == 0
+    return result, nil
+}
+
+func main() {
+    fmt.Println(safeDivide(10, 2)) // 5 <nil>
+    fmt.Println(safeDivide(10, 0)) // 0 recovered: runtime error...
+
+    for i := 0; i < 3; i++ {
+        defer fmt.Print(i, " ") // args eval now; runs LIFO at return
+    }
+    fmt.Println("counting down:")
+}</pre>
+    <div class="output-label">Output</div>
+    <div class="output">5 <nil>
+0 recovered: runtime error: integer divide by zero
+counting down:
+2 1 0 </div>
+
+    <div class="exercise">
+      <div class="exercise-label">Challenge Exercise</div>
+      <p>Write a <code>withLock(mu *sync.Mutex, f func())</code> helper that locks, <code>defer mu.Unlock()</code>s, and runs <code>f</code> even if it panics. Then write a goroutine-safe <code>guard(fn func() error) (err error)</code> that turns any panic in <code>fn</code> into an error via a deferred <code>recover</code>. Explain why a panic in one goroutine is <em>not</em> caught by a <code>recover</code> in another, and why deferred arguments being evaluated eagerly matters when you write <code>defer f(expensiveCall())</code>.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>#1 Pitfall:</strong> Calling <code>recover()</code> directly (not inside a deferred function) &mdash; it returns <code>nil</code> and does nothing. Also, deferring inside a tight loop accumulates calls until the function returns, which can hold resources far longer than expected; move the loop body into its own function so each <code>defer</code> fires per iteration.
+    </div>
+  </div>
+
+  <!-- Review 4: chi Router Patterns -->
+  <div class="review-card" id="chi_router_patterns">
+    <div class="review-header">
+      <h3>Advanced HTTP Patterns: chi Router</h3>
+      <span class="review-meta">Production Architecture &bull; overdue &bull; rep 1</span>
+    </div>
+
+    <h4>Quick Reminder</h4>
+    <p><code>chi</code> is a lightweight, <code>net/http</code>-compatible router: handlers are plain <code>http.HandlerFunc</code>s and middleware are plain <code>func(http.Handler) http.Handler</code>. It adds URL parameters (<code>chi.URLParam(r, "id")</code>), composable middleware stacks (<code>r.Use(...)</code>), sub-routers (<code>r.Route</code>/<code>r.Mount</code>), and per-group middleware via <code>r.Group</code>. Because it builds on the standard interfaces, everything you learned about <code>http.Handler</code> and middleware chains still applies.</p>
+
+    <h4>Key Pattern</h4>
+<pre>package main
+
+import (
+    "net/http"
+
+    "github.com/go-chi/chi/v5"
+    "github.com/go-chi/chi/v5/middleware"
+)
+
+func main() {
+    r := chi.NewRouter()
+    r.Use(middleware.Logger)               // stack-wide middleware
+
+    r.Route("/users", func(r chi.Router) { // sub-router
+        r.Get("/", listUsers)
+        r.Get("/{id}", getUser)            // URL param
+    })
+
+    http.ListenAndServe(":8080", r)
+}
+
+func listUsers(w http.ResponseWriter, r *http.Request) {
+    w.Write([]byte("all users"))
+}
+
+func getUser(w http.ResponseWriter, r *http.Request) {
+    id := chi.URLParam(r, "id") // pull the path variable
+    w.Write([]byte("user " + id))
+}</pre>
+
+    <div class="exercise">
+      <div class="exercise-label">Challenge Exercise</div>
+      <p>Build a router with a public <code>/health</code> route and an authenticated <code>/api</code> group: use <code>r.Group</code> to attach an auth middleware only to the API routes, and <code>r.Route("/api/posts", ...)</code> with <code>GET /{id}</code>, <code>POST /</code>, and <code>DELETE /{id}</code>. Add a middleware that injects a request ID into the <code>context.Context</code> and read it in a handler. Then compare chi's <code>{id}</code> params with Go 1.22's enhanced <code>net/http</code> <code>ServeMux</code> patterns and explain when the standard mux is now enough.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>#1 Pitfall:</strong> Registering routes or calling <code>r.Use</code> <em>after</em> the router is already serving, or mixing <code>r.Use</code> (applies to routes defined afterward) with the expectation that it retroactively wraps earlier routes. Declare middleware before the routes it should cover, and use <code>r.Group</code>/<code>r.With</code> for per-route stacks rather than one giant global chain.
+    </div>
+  </div>
+
+  <!-- Review 5: regexp -->
+  <div class="review-card" id="regexp">
+    <div class="review-header">
+      <h3>regexp: Regular Expressions</h3>
+      <span class="review-meta">I/O &amp; Networking &bull; overdue &bull; rep 1</span>
+    </div>
+
+    <h4>Quick Reminder</h4>
+    <p>Go's <code>regexp</code> uses the RE2 engine: linear-time matching with <em>no</em> catastrophic backtracking (and therefore no backreferences or lookahead). Compile a pattern once with <code>regexp.MustCompile</code> (panics on a bad pattern at init) or <code>regexp.Compile</code> (returns an error). The common methods come in a naming grid: <code>Find</code>/<code>FindAll</code>, with <code>String</code>, <code>Submatch</code>, and <code>Index</code> variants. Named groups <code>(?P&lt;name&gt;...)</code> pair with <code>SubexpNames()</code>.</p>
+
+    <h4>Key Pattern</h4>
+<pre>package main
+
+import (
+    "fmt"
+    "regexp"
+)
+
+// Compile once (package level or with sync.Once), reuse everywhere.
+var dateRe = regexp.MustCompile(`(?P<y>\d{4})-(?P<m>\d{2})-(?P<d>\d{2})`)
+
+func main() {
+    s := "log 2026-07-03 event"
+    fmt.Println(dateRe.MatchString(s)) // true
+
+    m := dateRe.FindStringSubmatch(s)
+    fmt.Println(m[0]) // 2026-07-03 (whole match)
+    fmt.Println(m[1]) // 2026        (group 1 = y)
+
+    // Map named groups.
+    names := dateRe.SubexpNames() // ["", "y", "m", "d"]
+    for i, name := range names {
+        if name != "" {
+            fmt.Printf("%s=%s ", name, m[i])
+        }
+    }
+    fmt.Println()
+
+    out := dateRe.ReplaceAllString(s, "$y/$m/$d")
+    fmt.Println(out) // log 2026/07/03 event
+}</pre>
+    <div class="output-label">Output</div>
+    <div class="output">true
+2026-07-03
+2026
+y=2026 m=07 d=03
+log 2026/07/03 event</div>
+
+    <div class="exercise">
+      <div class="exercise-label">Challenge Exercise</div>
+      <p>Write a log-line parser: given <code>"127.0.0.1 - GET /path 200 13ms"</code>, use a single named-group regexp to extract IP, method, path, status, and latency into a struct. Use <code>FindAllStringSubmatch</code> to parse a whole multi-line log. Then benchmark compiling inside the hot loop versus once at package scope, and explain why RE2 guarantees linear time and what that means for accepting untrusted patterns (ReDoS-safe) compared with PCRE engines.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>#1 Pitfall:</strong> Calling <code>regexp.MustCompile</code> (or <code>Compile</code>) inside a hot function instead of once at package level &mdash; compilation is expensive and dominates the cost. Also remember Go string literals: use raw backtick strings for patterns so <code>\d</code> isn't interpreted as a Go escape, and reach for <code>strings</code> functions when you don't actually need a regex.
+    </div>
+  </div>
+
+  <!-- Review 6: database/sql -->
+  <div class="review-card" id="database_sql">
+    <div class="review-header">
+      <h3>database/sql</h3>
+      <span class="review-meta">I/O &amp; Networking &bull; overdue &bull; rep 1</span>
+    </div>
+
+    <h4>Quick Reminder</h4>
+    <p><code>database/sql</code> is a driver-agnostic layer: you import a driver for its side effect (<code>_ "github.com/mattn/go-sqlite3"</code>) and talk to an <code>*sql.DB</code>, which is a <em>connection pool</em>, not a single connection &mdash; keep one for the app's lifetime. Use <code>QueryContext</code>/<code>QueryRowContext</code> for reads, <code>ExecContext</code> for writes, and <em>always</em> pass placeholders (<code>?</code> or <code>$1</code>) rather than string-concatenating &mdash; that's your SQL-injection defense. Scan nullable columns into <code>sql.NullString</code> et al., and close every <code>*sql.Rows</code>.</p>
+
+    <h4>Key Pattern</h4>
+<pre>package main
+
+import (
+    "context"
+    "database/sql"
+    "fmt"
+
+    _ "github.com/mattn/go-sqlite3" // driver, registered via init()
+)
+
+type User struct {
+    ID   int
+    Name string
+}
+
+func getUser(ctx context.Context, db *sql.DB, id int) (User, error) {
+    var u User
+    // Placeholder ? prevents SQL injection.
+    row := db.QueryRowContext(ctx,
+        "SELECT id, name FROM users WHERE id = ?", id)
+    if err := row.Scan(&amp;u.ID, &amp;u.Name); err != nil {
+        if err == sql.ErrNoRows {
+            return u, fmt.Errorf("user %d: %w", id, err)
+        }
+        return u, err
+    }
+    return u, nil
+}</pre>
+
+    <div class="exercise">
+      <div class="exercise-label">Challenge Exercise</div>
+      <p>Open an in-memory SQLite DB, create a <code>users</code> table, and write <code>insertUser</code> (using <code>ExecContext</code> + <code>LastInsertId</code>) and <code>listUsers</code> (iterating <code>*sql.Rows</code> with <code>rows.Next()</code>/<code>rows.Scan</code>, then checking <code>rows.Err()</code>). Wrap two inserts in a transaction with <code>db.BeginTx</code>, commit on success, and <code>defer tx.Rollback()</code> as a safety net. Configure <code>SetMaxOpenConns</code>/<code>SetConnMaxLifetime</code> and explain why <code>*sql.DB</code> is safe for concurrent use while a single <code>*sql.Conn</code> or <code>*sql.Tx</code> is not.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>#1 Pitfall:</strong> Building SQL with <code>fmt.Sprintf</code> and user input (injection), or forgetting to <code>rows.Close()</code> / check <code>rows.Err()</code> &mdash; leaked rows hold a pooled connection until the GC finalizer runs, starving the pool. Always use placeholders, <code>defer rows.Close()</code>, and treat <code>sql.ErrNoRows</code> from <code>QueryRow</code> as an expected "not found", not a hard failure.
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- NEW CONCEPTS SECTION -->
+<!-- ============================================================ -->
+<div class="section">
+  <span class="section-label new">New</span>
+  <h2 class="section-title">New Concepts &mdash; 5 in 2 Sections</h2>
+
+  <h3 style="font-size:18px;margin:8px 0 18px;color:var(--muted);">Section 1 &mdash; Modern Go Language Features (Go 1.21+)</h3>
+
+  <!-- New 1: min, max, clear builtins -->
+  <div class="concept" id="builtin_min_max_clear">
+    <div class="concept-header">
+      <h3>min, max &amp; clear: New Universe Builtins (Go 1.21)</h3>
+      <span class="topic-badge">Language</span>
+    </div>
+    <p class="why-matters">Why it matters: for years every Go codebase hand-rolled an <code>intMin</code> helper because the language had none. Go 1.21 added <code>min</code>, <code>max</code>, and <code>clear</code> as <em>universe-scope built-in functions</em> &mdash; no import, generic over any ordered type. <code>min</code>/<code>max</code> take one or more arguments and return the smallest/largest; <code>clear</code> empties a map or zeroes a slice in place. They replace a whole category of boilerplate and subtle off-by-one helpers.</p>
+
+    <h4>min and max over ordered values</h4>
+    <p>They are variadic and work on any type whose values are ordered (integers, floats, strings). Mixed constant types are fine as long as they're compatible.</p>
+<pre>package main
+
+import "fmt"
+
+func main() {
+    fmt.Println(min(3, 1, 2))       // 1
+    fmt.Println(max(3, 1, 2))       // 3
+    fmt.Println(min(4.5, 2.0))      // 2
+    fmt.Println(max("apple", "pear")) // pear (lexicographic)
+
+    // Clamp a value into [lo, hi] with no helper function.
+    lo, hi, x := 0, 10, 15
+    clamped := max(lo, min(x, hi))
+    fmt.Println(clamped)            // 10
+}</pre>
+    <div class="output-label">Output</div>
+    <div class="output">1
+3
+2
+pear
+10</div>
+
+    <h4>clear on maps and slices</h4>
+    <p><code>clear(m)</code> deletes every key from a map (length becomes 0). <code>clear(s)</code> sets every element of a slice to the zero value <em>without</em> changing its length &mdash; useful for reusing a buffer while dropping references so the GC can reclaim them.</p>
+<pre>package main
+
+import "fmt"
+
+func main() {
+    m := map[string]int{"a": 1, "b": 2}
+    clear(m)
+    fmt.Println(len(m)) // 0 (all keys removed)
+
+    s := []string{"x", "y", "z"}
+    clear(s)            // zeroes elements; len stays 3
+    fmt.Println(len(s), s) // 3 [  ]
+
+    // Idiom: drop pointer references before pooling a slice.
+    ptrs := []*int{new(int), new(int)}
+    clear(ptrs) // now [nil nil] -> pointees are collectable
+    fmt.Println(ptrs[0] == nil) // true
+}</pre>
+    <div class="output-label">Output</div>
+    <div class="output">0
+3 [  ]
+true</div>
+
+    <h4>Common Mistakes</h4>
+    <div class="do-dont">
+      <div class="dont-box">
+        <div class="label">Wrong</div>
+<pre>// clear on a slice does NOT shorten it.
+s := []int{1, 2, 3}
+clear(s)
+// s is [0 0 0], not []! len(s) == 3 still.
+if len(s) == 0 { /* never runs */ }
+
+// min/max on a map's NaN floats is order-undefined
+_ = max(math.NaN(), 1.0) // result is NaN, surprising</pre>
+      </div>
+      <div class="do-box">
+        <div class="label">Right</div>
+<pre>// To empty a slice, reslice to zero length.
+s := []int{1, 2, 3}
+s = s[:0] // len 0, keeps capacity for reuse
+
+// clear when you specifically want to zero elements
+// (e.g. free pointers) but keep the length.
+buf := make([]*T, n)
+clear(buf) // drop references, reuse buf</pre>
+      </div>
+    </div>
+
+    <h4>Key Rules</h4>
+    <ul class="rules-list">
+      <li><code>min</code>/<code>max</code> are builtins (Go 1.21+), variadic, and generic over <em>ordered</em> types &mdash; no import, no hand-written helper.</li>
+      <li>They evaluate all arguments; for exactly two args they're the direct replacement for the old <code>if a &lt; b</code> helper.</li>
+      <li><code>clear(map)</code> removes all keys (len &rarr; 0); <code>clear(slice)</code> zeroes elements but <em>keeps</em> the length &mdash; reslice with <code>s[:0]</code> to actually shrink.</li>
+      <li>With floating-point <code>NaN</code>, <code>min</code>/<code>max</code> follow the spec's NaN rules &mdash; sanitize inputs if NaN is possible.</li>
+    </ul>
+
+    <div class="exercise">
+      <div class="exercise-label">Practice Exercise</div>
+      <p>Rewrite an old codebase helper set (<code>IntMin</code>, <code>IntMax</code>, <code>Clamp</code>) to use the builtins, and write a generic <code>clamp[T cmp.Ordered](x, lo, hi T) T</code> for the cases where you still want a named function. Then benchmark <code>clear(m)</code> versus a <code>for k := range m { delete(m, k) }</code> loop and versus reassigning <code>m = make(map[K]V)</code>, explaining when reusing the cleared map (preserving capacity) beats allocating a fresh one. Finally, show a slice-buffer pool that uses <code>clear</code> to avoid leaking pointers.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>Pitfall:</strong> Expecting <code>clear(slice)</code> to make the slice empty like <code>clear(map)</code> makes the map empty. On a slice it zeroes in place and the length is unchanged &mdash; a common source of "why is my slice still length 3?" bugs. Use <code>s = s[:0]</code> (or <code>s = nil</code>) to empty a slice; use <code>clear</code> only when you deliberately want zeroed elements at the same length.
+    </div>
+
+    <div class="connection">
+      <strong>Connections:</strong> Pairs with the generic <code>cmp.Ordered</code> constraint and the <code>slices</code>/<code>maps</code> packages from earlier days; <code>clear</code> complements the <code>sync.Pool</code> allocation-reduction pattern, and <code>min</code>/<code>max</code> often replace comparator helpers used with <code>slices.SortFunc</code>.
+    </div>
+  </div>
+
+  <!-- New 2: sync.OnceFunc / OnceValue -->
+  <div class="concept" id="sync_once_helpers">
+    <div class="concept-header">
+      <h3>sync.OnceFunc, OnceValue &amp; OnceValues (Go 1.21)</h3>
+      <span class="topic-badge">Std Lib</span>
+    </div>
+    <p class="why-matters">Why it matters: the classic <code>var once sync.Once; once.Do(func(){...})</code> pattern is everywhere &mdash; lazy initialization of an expensive singleton, one-time setup, cached config. Go 1.21 added three helpers that wrap that boilerplate into a returned function: <code>sync.OnceFunc</code>, <code>sync.OnceValue</code>, and <code>sync.OnceValues</code>. They give you a goroutine-safe closure that runs the underlying work exactly once and caches nothing-or-the-result for all later calls.</p>
+
+    <h4>OnceValue: lazily compute and cache a result</h4>
+    <p><code>sync.OnceValue(f)</code> returns a <code>func() T</code>; the first call runs <code>f</code>, every later call returns the same cached value &mdash; safe under concurrency, with no <code>Once</code> variable to manage.</p>
+<pre>package main
+
+import (
+    "fmt"
+    "sync"
+)
+
+// f runs at most once, even across many goroutines.
+var config = sync.OnceValue(func() map[string]string {
+    fmt.Println("loading config...") // prints only once
+    return map[string]string{"env": "prod"}
+})
+
+func main() {
+    fmt.Println(config()["env"]) // loading config... then prod
+    fmt.Println(config()["env"]) // prod (cached, no reload)
+
+    var wg sync.WaitGroup
+    for i := 0; i < 3; i++ {
+        wg.Add(1)
+        go func() { defer wg.Done(); _ = config() }()
+    }
+    wg.Wait() // still only one "loading config..." total
+}</pre>
+    <div class="output-label">Output</div>
+    <div class="output">loading config...
+prod
+prod</div>
+
+    <h4>OnceFunc and OnceValues</h4>
+    <p><code>OnceFunc</code> wraps a side-effecting function with no result; <code>OnceValues</code> caches a two-value return &mdash; perfect for a <code>(T, error)</code> initializer.</p>
+<pre>package main
+
+import (
+    "fmt"
+    "sync"
+)
+
+var setup = sync.OnceFunc(func() {
+    fmt.Println("one-time setup")
+})
+
+var load = sync.OnceValues(func() (int, error) {
+    return 42, nil // computed once, cached with its error
+})
+
+func main() {
+    setup()
+    setup() // no second print
+
+    v, err := load()
+    fmt.Println(v, err) // 42 <nil>
+    v2, _ := load()
+    fmt.Println(v2)     // 42 (same cached value)
+}</pre>
+    <div class="output-label">Output</div>
+    <div class="output">one-time setup
+42 <nil>
+42</div>
+
+    <h4>Common Mistakes</h4>
+    <div class="do-dont">
+      <div class="dont-box">
+        <div class="label">Wrong</div>
+<pre>// Recreating the wrapper each call defeats "once":
+func getConfig() Config {
+    // new OnceValue every call -> f runs every time
+    return sync.OnceValue(loadConfig)()
+}
+
+// Panicking f: the panic is re-thrown on EVERY
+// later call, but you assumed it retries.
+var x = sync.OnceValue(mustLoad) // mustLoad panics</pre>
+      </div>
+      <div class="do-box">
+        <div class="label">Right</div>
+<pre>// Build the wrapper ONCE (package var or in init).
+var getConfig = sync.OnceValue(loadConfig)
+
+// Prefer OnceValues to carry an error instead of
+// panicking, so callers can handle failure.
+var getConfig2 = sync.OnceValues(func() (Config, error) {
+    return loadConfig()
+})</pre>
+      </div>
+    </div>
+
+    <h4>Key Rules</h4>
+    <ul class="rules-list">
+      <li>Create the wrapper <em>once</em> (a package var or in <code>init</code>) and call the returned function many times &mdash; not a fresh wrapper per call.</li>
+      <li><code>OnceFunc</code> &rarr; no result; <code>OnceValue</code> &rarr; one cached value; <code>OnceValues</code> &rarr; two (typically <code>(T, error)</code>).</li>
+      <li>All are goroutine-safe: concurrent first callers block until <code>f</code> finishes, then share the result.</li>
+      <li>If <code>f</code> panics, the wrapper caches the panic and <em>re-panics</em> on every subsequent call &mdash; it does not retry. Prefer returning an error for recoverable failures.</li>
+    </ul>
+
+    <div class="exercise">
+      <div class="exercise-label">Practice Exercise</div>
+      <p>Replace a <code>sync.Once</code>-guarded lazy database handle with <code>sync.OnceValues(func() (*sql.DB, error) {...})</code> and show that concurrent callers share one pool. Then write a small experiment proving the panic-caching behavior: wrap a function that panics, call the wrapper twice inside <code>recover</code> blocks, and observe both calls panic. Finally, compare <code>OnceValue</code> against a plain package-level <code>var x = expensive()</code> initializer and explain when lazy (deferred to first use) wins over eager package initialization.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>Pitfall:</strong> Calling <code>sync.OnceValue(f)()</code> inline on every access &mdash; because you construct a brand-new wrapper each time, <code>f</code> runs every time and you get none of the caching or "once" guarantee. Store the returned function in a long-lived variable. Also beware that a panicking <code>f</code> is cached: every future call re-panics rather than retrying.
+    </div>
+
+    <div class="connection">
+      <strong>Connections:</strong> A modern, ergonomic layer over <code>sync.Once</code> from the concurrency days; pairs with lazy-singleton and configuration-loading patterns, and complements <code>init</code> functions by deferring cost until first use rather than at program start.
+    </div>
+  </div>
+
+  <h3 style="font-size:18px;margin:28px 0 18px;color:var(--muted);">Section 2 &mdash; Text, Hashing &amp; Testing Standard Library</h3>
+
+  <!-- New 3: unicode & unicode/utf8 -->
+  <div class="concept" id="unicode_utf8">
+    <div class="concept-header">
+      <h3>unicode &amp; unicode/utf8: Correct Character Handling</h3>
+      <span class="topic-badge">Std Lib</span>
+    </div>
+    <p class="why-matters">Why it matters: a Go <code>string</code> is a read-only sequence of <em>bytes</em> (UTF-8 encoded), not characters. Indexing <code>s[i]</code> gives you a byte, and <code>len(s)</code> counts bytes &mdash; both wrong for multibyte text like <code>"caf&eacute;"</code> or emoji. The <code>unicode/utf8</code> package decodes bytes into runes (Unicode code points), and <code>unicode</code> classifies them (<code>IsLetter</code>, <code>IsDigit</code>, <code>IsSpace</code>, <code>ToUpper</code>). Getting this right is the difference between code that works on ASCII and code that works on the world.</p>
+
+    <h4>Bytes vs runes</h4>
+    <p><code>utf8.RuneCountInString</code> counts characters; a <code>for range</code> over a string yields <code>(byteIndex, rune)</code> pairs, decoding UTF-8 for you.</p>
+<pre>package main
+
+import (
+    "fmt"
+    "unicode/utf8"
+)
+
+func main() {
+    s := "café" // "café" — é is 2 bytes in UTF-8
+
+    fmt.Println(len(s))                    // 5 bytes
+    fmt.Println(utf8.RuneCountInString(s)) // 4 runes
+
+    // range decodes runes; i is the BYTE offset of each.
+    for i, r := range s {
+        fmt.Printf("%d:%c ", i, r)
+    }
+    fmt.Println()
+
+    // Decode the first rune manually.
+    r, size := utf8.DecodeRuneInString(s)
+    fmt.Printf("%c is %d byte(s)\n", r, size)
+}</pre>
+    <div class="output-label">Output</div>
+    <div class="output">5
+4
+0:c 1:a 2:f 3:é
+c is 1 byte(s)</div>
+
+    <h4>Classifying and transforming runes</h4>
+    <p>The <code>unicode</code> package answers "is this a letter/digit/space?" and case-folds correctly across scripts. Convert to <code>[]rune</code> when you need true random access or reversal.</p>
+<pre>package main
+
+import (
+    "fmt"
+    "unicode"
+)
+
+func main() {
+    letters, digits := 0, 0
+    for _, r := range "Go 1.21!" {
+        switch {
+        case unicode.IsLetter(r):
+            letters++
+        case unicode.IsDigit(r):
+            digits++
+        }
+    }
+    fmt.Println(letters, digits) // 2 3
+
+    // Reverse by runes so multibyte chars stay intact.
+    rs := []rune("café")
+    for i, j := 0, len(rs)-1; i < j; i, j = i+1, j-1 {
+        rs[i], rs[j] = rs[j], rs[i]
+    }
+    fmt.Println(string(rs)) // éfac
+}</pre>
+    <div class="output-label">Output</div>
+    <div class="output">2 3
+éfac</div>
+
+    <h4>Common Mistakes</h4>
+    <div class="do-dont">
+      <div class="dont-box">
+        <div class="label">Wrong</div>
+<pre>// Byte indexing splits multibyte runes -> garbage.
+s := "café"
+first := s[0:1]          // "c" (ok by luck)
+last := s[len(s)-1:]     // half of é -> invalid UTF-8
+n := len(s)              // 5, not 4 "characters"
+for i := 0; i < len(s); i++ {
+    fmt.Printf("%c", s[i]) // prints bytes, mojibake on é
+}</pre>
+      </div>
+      <div class="do-box">
+        <div class="label">Right</div>
+<pre>s := "café"
+n := utf8.RuneCountInString(s) // 4 real chars
+for _, r := range s {          // decodes runes
+    fmt.Printf("%c", r)
+}
+// Random access / reversal: convert once.
+rs := []rune(s)
+last := string(rs[len(rs)-1])  // "é" intact</pre>
+      </div>
+    </div>
+
+    <h4>Key Rules</h4>
+    <ul class="rules-list">
+      <li><code>len(s)</code> and <code>s[i]</code> are <em>byte</em> operations; use <code>for range</code> or <code>utf8.RuneCountInString</code>/<code>DecodeRuneInString</code> for runes.</li>
+      <li><code>for i, r := range s</code> gives the byte offset <code>i</code> and decoded rune <code>r</code> &mdash; the idiomatic way to walk text.</li>
+      <li>Convert to <code>[]rune</code> for random access, indexing, or reversal; it costs an allocation but keeps multibyte characters whole.</li>
+      <li>Use <code>unicode.IsLetter/IsDigit/IsSpace/IsPunct</code> and <code>unicode.ToUpper/ToLower</code> for correct, script-aware classification instead of ASCII range checks.</li>
+    </ul>
+
+    <div class="exercise">
+      <div class="exercise-label">Practice Exercise</div>
+      <p>Write <code>reverse(s string) string</code> that reverses by runes (test it on <code>"H&eacute;llo, 世界"</code>) and a <code>truncate(s string, n int) string</code> that cuts to at most <code>n</code> <em>runes</em> without splitting a character, appending "&hellip;" if truncated. Then write a validator using <code>utf8.ValidString</code> that rejects malformed input, and a <code>slugify</code> that lowercases with <code>unicode.ToLower</code> and keeps only letters/digits. Explain why <code>utf8.RuneCountInString</code> is O(n) and when you'd cache a <code>[]rune</code> instead of recounting.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>Pitfall:</strong> Treating <code>string</code> length or indexing as character-based. <code>len("café") == 5</code>, and slicing at an arbitrary byte offset can cut a rune in half, producing invalid UTF-8 (which renders as the <code>U+FFFD</code> replacement char). Iterate with <code>for range</code>, count with <code>utf8.RuneCountInString</code>, and slice on rune boundaries (or via <code>[]rune</code>) whenever the text may be non-ASCII.
+    </div>
+
+    <div class="connection">
+      <strong>Connections:</strong> Deepens the Strings &amp; Runes foundation; the <code>strings</code> and <code>bytes</code> packages share these UTF-8 semantics, <code>bufio.Scanner</code> with <code>ScanRunes</code> uses the same decoder, and correct classification underpins parsing tasks in <code>encoding/csv</code> and tokenizers.
+    </div>
+  </div>
+
+  <!-- New 4: hash/maphash -->
+  <div class="concept" id="hash_maphash">
+    <div class="concept-header">
+      <h3>hash/maphash: Fast Hashing of Strings &amp; Bytes</h3>
+      <span class="topic-badge">Std Lib</span>
+    </div>
+    <p class="why-matters">Why it matters: when you need a fast, well-distributed hash of strings or byte slices &mdash; for a custom hash table, sharding keys across workers, a bloom filter, or consistent bucketing &mdash; <code>hash/maphash</code> is the tool. It's the same non-cryptographic hash Go's built-in maps use, is faster than FNV/CRC for this purpose, and is <em>randomly seeded per process</em> to resist hash-flooding denial-of-service attacks. It is <strong>not</strong> for checksums or anything that must be stable across runs.</p>
+
+    <h4>Hashing with a shared seed</h4>
+    <p>All values you want to compare must use the <em>same</em> <code>maphash.Seed</code>. Go 1.19+ adds the convenient <code>maphash.String</code>/<code>maphash.Bytes</code> one-call helpers.</p>
+<pre>package main
+
+import (
+    "fmt"
+    "hash/maphash"
+)
+
+func main() {
+    // One seed shared by every value you hash together.
+    seed := maphash.MakeSeed()
+
+    h1 := maphash.String(seed, "gopher")
+    h2 := maphash.String(seed, "gopher")
+    h3 := maphash.String(seed, "rustacean")
+
+    fmt.Println(h1 == h2) // true  (same seed + input)
+    fmt.Println(h1 == h3) // false (different input)
+
+    // Shard a key across N workers deterministically
+    // within this process.
+    const workers = 4
+    bucket := h1 % workers
+    fmt.Println(bucket < workers) // true
+}</pre>
+    <div class="output-label">Output</div>
+    <div class="output">true
+false
+true</div>
+
+    <h4>Streaming with the Hash type</h4>
+    <p>For incremental hashing, <code>maphash.Hash</code> implements <code>io.Writer</code>; write pieces, then read the 64-bit <code>Sum64</code>. <code>Reset</code> reuses it (keeping the seed).</p>
+<pre>package main
+
+import (
+    "fmt"
+    "hash/maphash"
+)
+
+func main() {
+    var h maphash.Hash
+    h.SetSeed(maphash.MakeSeed())
+
+    h.WriteString("hello ")
+    h.Write([]byte("world"))
+    sum := h.Sum64()
+    fmt.Println(sum != 0) // true (some 64-bit digest)
+
+    h.Reset()             // same seed, fresh accumulator
+    h.WriteString("hello world")
+    fmt.Println(h.Sum64() == sum) // true: same bytes, same seed
+}</pre>
+    <div class="output-label">Output</div>
+    <div class="output">true
+true</div>
+
+    <h4>Common Mistakes</h4>
+    <div class="do-dont">
+      <div class="dont-box">
+        <div class="label">Wrong</div>
+<pre>// Different seeds -> different hashes for equal keys.
+a := maphash.String(maphash.MakeSeed(), "k")
+b := maphash.String(maphash.MakeSeed(), "k")
+// a != b almost always! Can't compare across seeds.
+
+// Persisting a maphash value to disk/DB:
+save(a) // meaningless next run — seed is random per process</pre>
+      </div>
+      <div class="do-box">
+        <div class="label">Right</div>
+<pre>seed := maphash.MakeSeed() // make ONE, share it
+a := maphash.String(seed, "k")
+b := maphash.String(seed, "k") // a == b
+
+// Need a STABLE, cross-run hash? Use crc32/fnv/sha256,
+// not maphash.
+stable := crc32.ChecksumIEEE([]byte("k"))
+_ = stable</pre>
+      </div>
+    </div>
+
+    <h4>Key Rules</h4>
+    <ul class="rules-list">
+      <li>Use one <code>maphash.Seed</code> (from <code>maphash.MakeSeed</code>) for every value you compare or bucket together; different seeds give different, incomparable hashes.</li>
+      <li>Values are <em>randomly seeded per process</em> and <strong>not</strong> stable across runs or machines &mdash; never persist or wire-transmit them, and never use them as a checksum.</li>
+      <li><code>maphash.String</code>/<code>maphash.Bytes</code> are the fast one-shot API; <code>maphash.Hash</code> (an <code>io.Writer</code>) is for streaming, with <code>Reset</code> to reuse.</li>
+      <li>Its random seeding defends the runtime's maps against hash-flooding DoS &mdash; that same property makes it unsuitable when you need reproducibility.</li>
+    </ul>
+
+    <div class="exercise">
+      <div class="exercise-label">Practice Exercise</div>
+      <p>Build a tiny sharded counter: <code>N</code> goroutines each own a <code>map[string]int</code>, and a key is routed to shard <code>maphash.String(seed, key) % N</code> to avoid a global lock. Verify that the same key always lands in the same shard within a run. Then contrast <code>maphash</code> with <code>hash/fnv</code> and <code>crc32</code>: hash the same key with each, restart the program, and observe which outputs change. Explain precisely why maphash's per-process randomness both thwarts hash-flooding and rules it out for a content-addressed store.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>Pitfall:</strong> Assuming maphash output is stable. Because the seed is randomized at process start, the same string hashes to a <em>different</em> 64-bit value on the next run &mdash; so persisting it, sending it between machines, or using it as a cache key across restarts silently breaks. Reach for <code>crc32</code>, <code>fnv</code>, or a crypto hash when you need determinism; use <code>maphash</code> only for in-process, single-run bucketing.
+    </div>
+
+    <div class="connection">
+      <strong>Connections:</strong> The fast in-process counterpart to <code>hash/fnv</code> &amp; <code>hash/crc32</code>; its <code>io.Writer</code> streaming mirrors the <code>hex</code>/<code>gzip</code> composition pattern, and its anti-DoS seeding is the same idea behind the runtime's built-in map implementation you reviewed under Maps.
+    </div>
+  </div>
+
+  <!-- New 5: testing/quick -->
+  <div class="concept" id="testing_quick">
+    <div class="concept-header">
+      <h3>testing/quick: Property-Based Testing</h3>
+      <span class="topic-badge">Std Lib</span>
+    </div>
+    <p class="why-matters">Why it matters: table-driven tests check the cases <em>you</em> thought of; property-based tests check thousands of <em>random</em> inputs against an invariant you assert always holds. The standard library's <code>testing/quick</code> generates random arguments for your check function and fails if the property is ever false. It's a low-friction way to flush out edge cases (empty input, huge values, unusual byte sequences) that hand-written tables miss &mdash; and it needs no third-party dependency.</p>
+
+    <h4>Checking a property</h4>
+    <p><code>quick.Check(f, cfg)</code> calls <code>f</code> with randomly generated arguments; <code>f</code> returns <code>bool</code>. A classic property: encoding then decoding must round-trip to the original.</p>
+<pre>package main
+
+import (
+    "fmt"
+    "strconv"
+    "testing/quick"
+)
+
+func main() {
+    // Property: Atoi(Itoa(n)) == n for every int.
+    roundTrip := func(n int) bool {
+        got, err := strconv.Atoi(strconv.Itoa(n))
+        return err == nil && got == n
+    }
+
+    if err := quick.Check(roundTrip, nil); err != nil {
+        fmt.Println("property failed:", err)
+    } else {
+        fmt.Println("round-trip holds for all sampled ints")
+    }
+}</pre>
+    <div class="output-label">Output</div>
+    <div class="output">round-trip holds for all sampled ints</div>
+
+    <h4>Catching a real bug &amp; tuning generation</h4>
+    <p>When a property is false, <code>quick.Check</code> reports the failing input. Use a <code>quick.Config</code> to raise <code>MaxCount</code> or plug in a custom generator via the <code>Values</code> field.</p>
+<pre>package main
+
+import (
+    "fmt"
+    "testing/quick"
+)
+
+// Buggy: claims to be its own inverse, but it isn't.
+func brokenNegate(n int8) int8 { return -n } // -(-128) overflows!
+
+func main() {
+    involutive := func(n int8) bool {
+        return brokenNegate(brokenNegate(n)) == n
+    }
+    cfg := &amp;quick.Config{MaxCount: 100000} // sample harder
+    if err := quick.Check(involutive, cfg); err != nil {
+        fmt.Println("found a counterexample")
+    }
+}</pre>
+    <div class="output-label">Output</div>
+    <div class="output">found a counterexample</div>
+
+    <h4>Common Mistakes</h4>
+    <div class="do-dont">
+      <div class="dont-box">
+        <div class="label">Wrong</div>
+<pre>// Ignoring the returned error means failures pass silently.
+func TestRoundTrip(t *testing.T) {
+    quick.Check(roundTrip, nil) // result discarded!
+}
+
+// A check func that panics instead of returning false
+// aborts the run rather than reporting a clean failure.</pre>
+      </div>
+      <div class="do-box">
+        <div class="label">Right</div>
+<pre>func TestRoundTrip(t *testing.T) {
+    if err := quick.Check(roundTrip, nil); err != nil {
+        t.Error(err) // prints the failing input
+    }
+}
+// Return false for a violated property; reserve panics
+// for genuinely impossible states.</pre>
+      </div>
+    </div>
+
+    <h4>Key Rules</h4>
+    <ul class="rules-list">
+      <li>Your check function takes generatable arguments and returns <code>bool</code>; <code>quick.Check</code> returns a non-nil error (containing the failing input) when the property breaks.</li>
+      <li>Always inspect the returned error &mdash; in a test call <code>t.Error(err)</code>; discarding it makes the property test a no-op.</li>
+      <li>Tune with <code>*quick.Config</code>: <code>MaxCount</code> for how many samples, <code>Rand</code> for a fixed seed (reproducibility), and <code>Values</code> for a custom generator of complex types.</li>
+      <li>Implement <code>quick.Generator</code> (a <code>Generate</code> method) on your own types so <code>quick</code> can produce valid domain values instead of arbitrary junk.</li>
+    </ul>
+
+    <div class="exercise">
+      <div class="exercise-label">Practice Exercise</div>
+      <p>Write property tests for a <code>reverse[T any]([]T) []T</code>: reversing twice yields the original, and length is preserved. Add a JSON round-trip property (<code>Unmarshal(Marshal(x)) == x</code>) for a small struct, implementing <code>quick.Generator</code> so only valid structs are produced. Then deliberately introduce an off-by-one in a <code>merge</code> of two sorted slices and let <code>quick.Check</code> find the counterexample. Finally, set <code>Config.Rand</code> to a fixed seed and explain why reproducibility matters when a CI run flags a rare failure.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>Pitfall:</strong> Discarding the error from <code>quick.Check</code> &mdash; the test then passes no matter what, giving false confidence. Also, a property that's merely <em>expensive</em> can time out at the default 100 samples, while a property that <em>panics</em> on bad input aborts instead of reporting a tidy counterexample. Always check and surface the error, keep the property total (return <code>false</code>, don't panic), and set a fixed <code>Rand</code> seed so a failing case can be reproduced.
+    </div>
+
+    <div class="connection">
+      <strong>Connections:</strong> Complements table-driven <code>testing</code> and fuzzing from the Testing &amp; Tooling days &mdash; fuzzing mutates a corpus toward crashes, while <code>testing/quick</code> asserts algebraic properties; round-trip checks pair naturally with <code>encoding/json</code>, <code>encoding/gob</code>, and the <code>hex</code>/<code>base64</code> codecs.
+    </div>
+  </div>
+
+</div><!-- end New Concepts section -->
+
+
+<!-- ============================================================ -->
+<!-- FOOTER -->
+<!-- ============================================================ -->
+<footer class="footer">
+  <h4>All Go Guides</h4>
+  <ul>
+    <li><a href="golang-guides/golang-guide-2026-07-09.html">Day 34 &mdash; 2026-07-09</a></li>
+    <li><a href="golang-guides/golang-guide-2026-07-08.html">Day 33 &mdash; 2026-07-08</a></li>
+    <li><a href="golang-guides/golang-guide-2026-07-07.html">Day 32 &mdash; 2026-07-07</a></li>
+    <li><a href="golang-guides/golang-guide-2026-07-06.html">Day 31 &mdash; 2026-07-06</a></li>
+    <li><a href="golang-guides/golang-guide-2026-07-05.html">Day 30 &mdash; 2026-07-05</a></li>
+    <li><a href="golang-guides/golang-guide-2026-07-04.html">Day 29 &mdash; 2026-07-04</a></li>
+    <li class="current">Day 28 &mdash; 2026-07-03 (current)</li>
+    <li><a href="golang-guides/golang-guide-2026-07-02.html">Day 27 &mdash; 2026-07-02</a></li>
+    <li><a href="golang-guides/golang-guide-2026-07-01.html">Day 26 &mdash; 2026-07-01</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-30.html">Day 25 &mdash; 2026-06-30</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-29.html">Day 24 &mdash; 2026-06-29</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-28.html">Day 23 &mdash; 2026-06-28</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-27.html">Day 22 &mdash; 2026-06-27</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-26.html">Day 21 &mdash; 2026-06-26</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-25.html">Day 20 &mdash; 2026-06-25</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-24.html">Day 19 &mdash; 2026-06-24</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-23.html">Day 18 &mdash; 2026-06-23</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-22.html">Day 17 &mdash; 2026-06-22</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-21.html">Day 16 &mdash; 2026-06-21</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-19.html">Day 15 &mdash; 2026-06-19</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-18.html">Day 14 &mdash; 2026-06-18</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-17.html">Day 13 &mdash; 2026-06-17</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-15.html">Day 12 &mdash; 2026-06-15</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-13.html">Day 11 &mdash; 2026-06-13</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-12.html">Day 10 &mdash; 2026-06-12</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-11.html">Day 9 &mdash; 2026-06-11</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-10.html">Day 8 &mdash; 2026-06-10</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-09.html">Day 7 &mdash; 2026-06-09</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-08.html">Day 6 &mdash; 2026-06-08</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-07.html">Day 5 &mdash; 2026-06-07</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-05.html">Day 4 &mdash; 2026-06-05</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-04.html">Day 3 &mdash; 2026-06-04</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-03.html">Day 2 &mdash; 2026-06-03</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-02.html">Day 1 &mdash; 2026-06-02</a></li>
+  </ul>
+
+  <h4 style="margin-top: 20px;">All Guides</h4>
+  <ul>
+    <li><a href="guide.html">LeetCode Study Guide</a></li>
+    <li><a href="lang-guide.html">Multi-Language Guide</a></li>
+    <li><a href="python-guide.html">Python Guide</a></li>
+    <li><a href="typescript-guide.html">TypeScript Guide</a></li>
+    <li><a href="javascript-guide.html">JavaScript Guide</a></li>
+    <li><a href="golang-guide.html">Go Guide (current)</a></li>
+    <li><a href="report.html">Performance Report</a></li>
+  </ul>
+</footer>
+
+</div><!-- end main -->
+
+<script>
+// ===== Theme Toggle =====
+(function() {
+  var KEY = 'lc-goguide-theme';
+  var toggle = document.getElementById('theme-toggle');
+  var html = document.documentElement;
+
+  function setTheme(theme) {
+    html.setAttribute('data-theme', theme);
+    localStorage.setItem(KEY, theme);
+    toggle.textContent = theme === 'dark' ? '☽' : '☀';
+  }
+
+  var saved = localStorage.getItem(KEY) || 'dark';
+  setTheme(saved);
+
+  toggle.addEventListener('click', function() {
+    setTheme(html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
+  });
+})();
+
+// ===== Mobile Sidebar Toggle =====
+(function() {
+  var btn = document.getElementById('sidebar-toggle');
+  var sidebar = document.getElementById('sidebar');
+
+  btn.addEventListener('click', function() {
+    sidebar.classList.toggle('open');
+  });
+
+  // Close sidebar when clicking a link (mobile)
+  sidebar.querySelectorAll('.sidebar-link').forEach(function(link) {
+    link.addEventListener('click', function() {
+      if (window.innerWidth <= 900) {
+        sidebar.classList.remove('open');
+      }
+    });
+  });
+})();
+
+// ===== Active Sidebar Link on Scroll =====
+(function() {
+  var links = document.querySelectorAll('.sidebar-link');
+  var sections = [];
+
+  links.forEach(function(link) {
+    var id = link.getAttribute('href').replace('#', '');
+    var el = document.getElementById(id);
+    if (el) sections.push({ id: id, el: el, link: link });
+  });
+
+  function onScroll() {
+    var scrollTop = window.scrollY + 120;
+    var current = null;
+
+    for (var i = sections.length - 1; i >= 0; i--) {
+      if (sections[i].el.offsetTop <= scrollTop) {
+        current = sections[i];
+        break;
+      }
+    }
+
+    links.forEach(function(l) { l.classList.remove('active'); });
+    if (current) current.link.classList.add('active');
+  }
+
+  window.addEventListener('scroll', onScroll);
+  onScroll();
+})();
+</script>
+</body>
+</html>

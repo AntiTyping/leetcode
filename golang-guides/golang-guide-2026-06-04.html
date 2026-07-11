@@ -1,0 +1,2972 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Go Study Guide &mdash; Day 3 (2026-06-04)</title>
+<style>
+/* ===== CSS Variables ===== */
+:root {
+  --bg: #0d1117;
+  --surface1: #161b22;
+  --surface2: #1c2333;
+  --border: #30363d;
+  --text: #e6edf3;
+  --muted: #8b949e;
+  --accent: #58a6ff;
+  --accent-dim: #1f6feb33;
+  --green: #3fb950;
+  --green-dim: #23863633;
+  --yellow: #d29922;
+  --yellow-dim: #d2992233;
+  --red: #f85149;
+  --red-dim: #f8514933;
+  --purple: #bc8cff;
+  --purple-dim: #bc8cff22;
+  --orange: #f0883e;
+  --orange-dim: #f0883e22;
+  --code-bg: #0d1117;
+  --sidebar-w: 300px;
+  --font-mono: 'SF Mono', 'Cascadia Code', 'Fira Code', Consolas, monospace;
+  --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+  --radius: 8px;
+  --shadow: 0 1px 3px rgba(0,0,0,0.4);
+}
+
+[data-theme="light"] {
+  --bg: #ffffff;
+  --surface1: #f6f8fa;
+  --surface2: #f0f3f6;
+  --border: #d0d7de;
+  --text: #1f2328;
+  --muted: #656d76;
+  --accent: #0969da;
+  --accent-dim: #0969da1a;
+  --green: #1a7f37;
+  --green-dim: #1a7f3718;
+  --yellow: #9a6700;
+  --yellow-dim: #9a670018;
+  --red: #cf222e;
+  --red-dim: #cf222e18;
+  --purple: #8250df;
+  --purple-dim: #8250df18;
+  --orange: #bc4c00;
+  --orange-dim: #bc4c0018;
+  --code-bg: #f6f8fa;
+  --shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+/* ===== Reset & Base ===== */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: var(--font-sans);
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.7;
+  font-size: 16px;
+  transition: background 0.2s, color 0.2s;
+}
+
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+/* ===== Theme Toggle ===== */
+#theme-toggle {
+  position: fixed;
+  top: 16px;
+  right: 20px;
+  z-index: 1000;
+  background: var(--surface1);
+  border: 1px solid var(--border);
+  color: var(--text);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+  box-shadow: var(--shadow);
+}
+#theme-toggle:hover { background: var(--surface2); border-color: var(--accent); }
+
+/* ===== Sidebar ===== */
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: var(--sidebar-w);
+  height: 100vh;
+  background: var(--surface1);
+  border-right: 1px solid var(--border);
+  overflow-y: auto;
+  padding: 20px 0;
+  z-index: 100;
+  transition: transform 0.3s;
+}
+
+.sidebar-header {
+  padding: 0 20px 16px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 12px;
+}
+
+.sidebar-header h2 {
+  font-size: 16px;
+  color: var(--text);
+  font-weight: 700;
+}
+
+.sidebar-header .subtitle {
+  font-size: 12px;
+  color: var(--muted);
+  margin-top: 2px;
+}
+
+.sidebar-section {
+  margin-bottom: 8px;
+}
+
+.sidebar-section-title {
+  padding: 6px 20px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+}
+
+.sidebar-link {
+  display: block;
+  padding: 5px 20px 5px 28px;
+  font-size: 13px;
+  color: var(--muted);
+  text-decoration: none;
+  border-left: 2px solid transparent;
+  transition: all 0.15s;
+  line-height: 1.4;
+}
+
+.sidebar-link:hover {
+  color: var(--text);
+  background: var(--accent-dim);
+  border-left-color: var(--accent);
+  text-decoration: none;
+}
+
+.sidebar-link.active {
+  color: var(--accent);
+  border-left-color: var(--accent);
+  background: var(--accent-dim);
+}
+
+/* ===== Mobile sidebar toggle ===== */
+#sidebar-toggle {
+  display: none;
+  position: fixed;
+  top: 16px;
+  left: 16px;
+  z-index: 200;
+  background: var(--surface1);
+  border: 1px solid var(--border);
+  color: var(--text);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 20px;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--shadow);
+}
+
+/* ===== Main Content ===== */
+.main {
+  margin-left: var(--sidebar-w);
+  padding: 40px 48px 80px;
+  max-width: calc(860px + var(--sidebar-w) + 96px);
+}
+
+.page-title {
+  font-size: 32px;
+  font-weight: 800;
+  margin-bottom: 4px;
+  color: var(--text);
+}
+
+.page-subtitle {
+  font-size: 15px;
+  color: var(--muted);
+  margin-bottom: 36px;
+}
+
+/* ===== Sections ===== */
+.section {
+  margin-bottom: 48px;
+}
+
+.section-label {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  padding: 3px 10px;
+  border-radius: 4px;
+  margin-bottom: 12px;
+}
+
+.section-label.review { background: var(--yellow-dim); color: var(--yellow); }
+.section-label.new { background: var(--green-dim); color: var(--green); }
+
+.section-title {
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 24px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--border);
+}
+
+/* ===== How To Use ===== */
+.how-to-use {
+  background: var(--surface1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px 24px;
+  margin-bottom: 36px;
+}
+
+.how-to-use h3 {
+  font-size: 16px;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.how-to-use ul {
+  padding-left: 22px;
+  margin: 0;
+}
+
+.how-to-use li {
+  font-size: 14px;
+  color: var(--muted);
+  margin-bottom: 4px;
+}
+
+/* ===== Concept Cards ===== */
+.concept {
+  background: var(--surface1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 28px;
+  margin-bottom: 28px;
+  box-shadow: var(--shadow);
+}
+
+.concept-header {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  margin-bottom: 6px;
+  flex-wrap: wrap;
+}
+
+.concept h3 {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.concept-meta {
+  font-size: 12px;
+  color: var(--muted);
+  background: var(--surface2);
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
+.concept h4 {
+  font-size: 15px;
+  font-weight: 600;
+  margin: 20px 0 8px;
+  color: var(--text);
+}
+
+.concept p, .concept li {
+  color: var(--text);
+  line-height: 1.7;
+}
+
+.concept ul, .concept ol {
+  padding-left: 22px;
+  margin: 8px 0;
+}
+
+.concept li {
+  margin-bottom: 4px;
+}
+
+/* ===== Code Blocks ===== */
+pre {
+  background: var(--code-bg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 16px 18px;
+  overflow-x: auto;
+  margin: 10px 0 14px;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--text);
+  position: relative;
+}
+
+code {
+  font-family: var(--font-mono);
+  font-size: 0.9em;
+}
+
+:not(pre) > code {
+  background: var(--surface2);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.88em;
+}
+
+/* ===== Output Blocks ===== */
+.output {
+  background: var(--green-dim);
+  border: 1px solid var(--green);
+  border-radius: 6px;
+  padding: 12px 16px;
+  margin: 6px 0 14px;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--text);
+  white-space: pre-wrap;
+}
+
+.output-label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--green);
+  margin-bottom: 4px;
+}
+
+/* ===== Good/Bad Examples ===== */
+.do-dont {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin: 10px 0;
+}
+
+.do-box, .dont-box {
+  border-radius: 6px;
+  padding: 14px;
+  border: 1px solid;
+}
+
+.do-box {
+  background: var(--green-dim);
+  border-color: var(--green);
+}
+
+.dont-box {
+  background: var(--red-dim);
+  border-color: var(--red);
+}
+
+.do-box .label, .dont-box .label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 6px;
+}
+
+.do-box .label { color: var(--green); }
+.dont-box .label { color: var(--red); }
+
+.do-box pre, .dont-box pre {
+  margin: 0;
+  border: none;
+  background: transparent;
+  padding: 0;
+  font-size: 12.5px;
+}
+
+/* ===== Key Rules ===== */
+.rules-list {
+  list-style: none;
+  padding: 0;
+  margin: 8px 0;
+}
+
+.rules-list li {
+  padding: 6px 0 6px 24px;
+  position: relative;
+}
+
+.rules-list li::before {
+  content: "\2192";
+  position: absolute;
+  left: 2px;
+  color: var(--accent);
+  font-weight: 700;
+}
+
+/* ===== Exercises ===== */
+.exercise {
+  background: var(--purple-dim);
+  border: 1px solid var(--purple);
+  border-radius: 6px;
+  padding: 14px 18px;
+  margin: 8px 0;
+}
+
+.exercise .exercise-label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--purple);
+  margin-bottom: 4px;
+}
+
+/* ===== Pitfall ===== */
+.pitfall {
+  background: var(--red-dim);
+  border-left: 3px solid var(--red);
+  border-radius: 0 6px 6px 0;
+  padding: 10px 14px;
+  margin: 10px 0;
+  font-size: 14px;
+}
+
+.pitfall strong {
+  color: var(--red);
+}
+
+/* ===== Connection ===== */
+.connection {
+  background: var(--accent-dim);
+  border-left: 3px solid var(--accent);
+  border-radius: 0 6px 6px 0;
+  padding: 10px 14px;
+  margin: 10px 0;
+  font-size: 14px;
+  color: var(--muted);
+}
+
+/* ===== Review Cards ===== */
+.review-card {
+  background: var(--surface1);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--yellow);
+  border-radius: var(--radius);
+  padding: 20px 24px;
+  margin-bottom: 16px;
+  box-shadow: var(--shadow);
+}
+
+.review-card .review-header {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  margin-bottom: 6px;
+  flex-wrap: wrap;
+}
+
+.review-card h3 {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.review-card .review-meta {
+  font-size: 12px;
+  color: var(--muted);
+  background: var(--surface2);
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
+.review-card h4 {
+  font-size: 14px;
+  font-weight: 600;
+  margin: 14px 0 6px;
+  color: var(--text);
+}
+
+.review-card p, .review-card li {
+  color: var(--text);
+  line-height: 1.6;
+  font-size: 14px;
+}
+
+.review-card pre {
+  font-size: 12.5px;
+  padding: 12px 14px;
+  margin: 6px 0 10px;
+}
+
+.review-card .pitfall {
+  font-size: 13px;
+  padding: 8px 12px;
+}
+
+/* ===== Footer ===== */
+.footer {
+  margin-top: 60px;
+  padding: 24px 0;
+  border-top: 1px solid var(--border);
+}
+
+.footer h4 {
+  font-size: 14px;
+  color: var(--muted);
+  margin-bottom: 10px;
+}
+
+.footer ul {
+  list-style: none;
+  padding: 0;
+}
+
+.footer li {
+  margin-bottom: 4px;
+  font-size: 14px;
+}
+
+.footer li a { color: var(--accent); }
+.footer .current { color: var(--green); font-weight: 600; }
+
+/* ===== Responsive ===== */
+@media (max-width: 900px) {
+  .sidebar {
+    transform: translateX(-100%);
+  }
+  .sidebar.open {
+    transform: translateX(0);
+    box-shadow: 4px 0 20px rgba(0,0,0,0.5);
+  }
+  #sidebar-toggle {
+    display: flex;
+  }
+  .main {
+    margin-left: 0;
+    padding: 60px 20px 60px;
+    max-width: 100%;
+  }
+  .do-dont {
+    grid-template-columns: 1fr;
+  }
+  #theme-toggle {
+    right: 14px;
+    top: 16px;
+  }
+}
+</style>
+</head>
+<body>
+
+<!-- Theme Toggle -->
+<button id="theme-toggle" aria-label="Toggle theme" title="Toggle light/dark theme">&#9789;</button>
+
+<!-- Mobile Sidebar Toggle -->
+<button id="sidebar-toggle" aria-label="Toggle sidebar">&#9776;</button>
+
+<!-- Sidebar -->
+<nav class="sidebar" id="sidebar">
+  <div class="sidebar-header">
+    <h2>Go Guide</h2>
+    <div class="subtitle">Day 3 &mdash; 2026-06-04</div>
+  </div>
+
+  <div class="sidebar-section">
+    <div class="sidebar-section-title">Review (6 concepts)</div>
+    <a href="#review-interfaces" class="sidebar-link">Interfaces</a>
+    <a href="#review-slices-deep-dive" class="sidebar-link">Slices Deep Dive</a>
+    <a href="#review-maps" class="sidebar-link">Maps</a>
+    <a href="#review-strings-runes" class="sidebar-link">Strings &amp; Runes</a>
+    <a href="#review-structs-methods" class="sidebar-link">Structs &amp; Methods</a>
+    <a href="#review-pointers" class="sidebar-link">Pointers</a>
+  </div>
+
+  <div class="sidebar-section">
+    <div class="sidebar-section-title">New: Generics &amp; Concurrency (6)</div>
+    <a href="#custom-constraints" class="sidebar-link">Custom Constraints</a>
+    <a href="#goroutines" class="sidebar-link">Goroutines</a>
+    <a href="#channels" class="sidebar-link">Channels</a>
+    <a href="#select-statement" class="sidebar-link">Select Statement</a>
+    <a href="#sync-package" class="sidebar-link">sync Package</a>
+    <a href="#context-package" class="sidebar-link">Context</a>
+  </div>
+</nav>
+
+<!-- Main Content -->
+<div class="main">
+
+<h1 class="page-title">Go Daily Guide</h1>
+<p class="page-subtitle">Day 3 &mdash; Thursday, June 4, 2026 &bull; 6 review + 6 new concepts</p>
+
+<!-- How to Use -->
+<div class="how-to-use">
+  <h3>How to Use This Guide</h3>
+  <ul>
+    <li>Start with the <strong>Review</strong> section &mdash; try to recall each concept before reading the refresher</li>
+    <li>Complete the challenge exercise for each review card without looking back at previous days</li>
+    <li>Then work through the <strong>New Concepts</strong> section, typing out every code example yourself</li>
+    <li>Pay special attention to the common mistakes sections (they highlight real Go gotchas)</li>
+    <li>Complete the exercises at the bottom of each concept without looking at solutions</li>
+    <li>Use <code>go run main.go</code> to test your code locally, or use the <a href="https://go.dev/play/" target="_blank">Go Playground</a></li>
+  </ul>
+</div>
+
+<!-- ============================================================ -->
+<!-- REVIEW SECTION -->
+<!-- ============================================================ -->
+<div class="section">
+  <span class="section-label review">Review</span>
+  <h2 class="section-title">Spaced Repetition Review &mdash; 6 Concepts</h2>
+
+  <!-- Review 1: Interfaces -->
+  <div class="review-card" id="review-interfaces">
+    <div class="review-header">
+      <h3>Interfaces</h3>
+      <span class="review-meta">Go Foundations &bull; 2 days ago</span>
+    </div>
+
+    <h4>Quick Reminder</h4>
+    <p>Interfaces define behavior contracts via method sets. Types satisfy interfaces implicitly &mdash; no <code>implements</code> keyword. Keep interfaces small (1-3 methods). Accept interfaces, return concrete types. Use the comma-ok pattern with type assertions.</p>
+
+    <h4>Key Pattern</h4>
+<pre>// Small interface — any type with a String() method satisfies it
+type Stringer interface {
+    String() string
+}
+
+// Type assertion with comma-ok
+if s, ok := val.(Stringer); ok {
+    fmt.Println(s.String())
+}
+
+// Type switch for multiple types
+switch v := val.(type) {
+case int:
+    fmt.Println("int:", v)
+case string:
+    fmt.Println("string:", v)
+}</pre>
+
+    <div class="exercise">
+      <div class="exercise-label">Challenge Exercise</div>
+      <p>Define a <code>Sizer</code> interface with a single method <code>Size() int</code>. Implement it for three types: <code>File</code> (stores byte count), <code>Directory</code> (stores a slice of <code>Sizer</code> children and sums their sizes), and <code>Link</code> (wraps another <code>Sizer</code> and delegates). Write a function <code>TotalSize(items []Sizer) int</code> that sums all sizes.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>#1 Pitfall:</strong> The nil interface trap &mdash; a concrete nil pointer wrapped in an interface is <em>not</em> equal to <code>nil</code>. Always return <code>nil</code> directly (not a typed nil pointer) for error returns.
+    </div>
+  </div>
+
+  <!-- Review 2: Slices Deep Dive -->
+  <div class="review-card" id="review-slices-deep-dive">
+    <div class="review-header">
+      <h3>Slices Deep Dive</h3>
+      <span class="review-meta">Go Foundations &bull; 1 day ago</span>
+    </div>
+
+    <h4>Quick Reminder</h4>
+    <p>Slices are dynamic views into backing arrays with three components: pointer, length, and capacity. When <code>append</code> exceeds capacity, a new backing array is allocated. Use three-index slices to limit capacity and prevent corruption.</p>
+
+    <h4>Key Pattern</h4>
+<pre>// Pre-allocate with known capacity
+result := make([]int, 0, len(input))
+for _, v := range input {
+    if v > 0 {
+        result = append(result, v)
+    }
+}
+
+// Three-index slice limits capacity
+safe := original[1:4:4] // cap limited — append won't corrupt original
+
+// Copy to detach from backing array
+detached := make([]int, len(sub))
+copy(detached, sub)</pre>
+
+    <div class="exercise">
+      <div class="exercise-label">Challenge Exercise</div>
+      <p>Write a function <code>Chunk[T any](s []T, size int) [][]T</code> that splits a slice into sub-slices of the given size. The last chunk may be smaller. Each chunk must be independent (use <code>copy</code> or three-index slicing). For <code>Chunk([]int{1,2,3,4,5}, 2)</code>, expect <code>[[1 2] [3 4] [5]]</code>.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>#1 Pitfall:</strong> Forgetting to reassign <code>append</code> &mdash; <code>append(s, v)</code> without <code>s = append(s, v)</code> silently discards the result when a new backing array is allocated.
+    </div>
+  </div>
+
+  <!-- Review 3: Maps -->
+  <div class="review-card" id="review-maps">
+    <div class="review-header">
+      <h3>Maps</h3>
+      <span class="review-meta">Go Foundations &bull; 1 day ago</span>
+    </div>
+
+    <h4>Quick Reminder</h4>
+    <p>Maps are reference-type hash tables with O(1) average access. A nil map allows reads (returning zero values) but panics on writes. Use comma-ok to distinguish "missing" from "zero value." Map iteration order is random.</p>
+
+    <h4>Key Pattern</h4>
+<pre>// Comma-ok for safe lookup
+if val, ok := m[key]; ok {
+    // key exists
+}
+
+// Counting pattern
+freq := make(map[string]int)
+for _, word := range words {
+    freq[word]++
+}
+
+// Delete with built-in
+delete(m, key) // no-op if key is missing</pre>
+
+    <div class="exercise">
+      <div class="exercise-label">Challenge Exercise</div>
+      <p>Write a function <code>GroupBy[T any, K comparable](items []T, keyFn func(T) K) map[K][]T</code> that groups items by a key function. For <code>GroupBy([]string{"cat","car","dog","deer"}, func(s string) byte { return s[0] })</code>, expect <code>map[99:[cat car] 100:[dog deer]]</code> (grouped by first letter).</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>#1 Pitfall:</strong> Writing to a nil map &mdash; <code>var m map[string]int; m["key"] = 1</code> panics. Always initialize with <code>make()</code> or a literal.
+    </div>
+  </div>
+
+  <!-- Review 4: Strings & Runes -->
+  <div class="review-card" id="review-strings-runes">
+    <div class="review-header">
+      <h3>Strings &amp; Runes</h3>
+      <span class="review-meta">Go Foundations &bull; 1 day ago</span>
+    </div>
+
+    <h4>Quick Reminder</h4>
+    <p>Go strings are immutable byte sequences encoded as UTF-8. <code>len(s)</code> counts bytes, not characters. Use <code>[]rune(s)</code> for character-level operations, <code>for _, r := range s</code> for Unicode-safe iteration, and <code>strings.Builder</code> for efficient concatenation.</p>
+
+    <h4>Key Pattern</h4>
+<pre>// Unicode-safe character count
+runeCount := utf8.RuneCountInString(s)
+
+// Safe iteration with range (decodes runes)
+for i, r := range s {
+    fmt.Printf("byte=%d rune=%c codepoint=U+%04X\n", i, r, r)
+}
+
+// Efficient building
+var b strings.Builder
+b.Grow(estimatedSize) // pre-allocate
+b.WriteString(part)
+result := b.String()</pre>
+
+    <div class="exercise">
+      <div class="exercise-label">Challenge Exercise</div>
+      <p>Write a function <code>WordWrap(s string, maxWidth int) string</code> that wraps text at word boundaries to fit within <code>maxWidth</code> runes per line. Insert <code>\n</code> at wrap points. Do not break mid-word unless a single word exceeds <code>maxWidth</code>. Must handle multi-byte characters correctly.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>#1 Pitfall:</strong> Using <code>s[i]</code> to access characters &mdash; it gives you a byte, not a rune. A multi-byte character will return only the first byte.
+    </div>
+  </div>
+
+  <!-- Review 5: Structs & Methods -->
+  <div class="review-card" id="review-structs-methods">
+    <div class="review-header">
+      <h3>Structs &amp; Methods</h3>
+      <span class="review-meta">Go Foundations &bull; 1 day ago</span>
+    </div>
+
+    <h4>Quick Reminder</h4>
+    <p>Structs group named fields into custom types. Methods with pointer receivers can modify the struct; value receivers work on copies. Embedding promotes methods for composition (not inheritance). Consistency rule: if any method needs a pointer receiver, all should use pointer receivers.</p>
+
+    <h4>Key Pattern</h4>
+<pre>type Logger struct {
+    Prefix  string
+    verbose bool
+}
+
+// Pointer receiver: can modify Logger
+func (l *Logger) SetVerbose(v bool) { l.verbose = v }
+
+// Value receiver: read-only
+func (l Logger) Log(msg string) {
+    fmt.Printf("[%s] %s\n", l.Prefix, msg)
+}
+
+// Embedding for composition
+type TimedLogger struct {
+    Logger              // promotes Logger methods
+    CreatedAt time.Time
+}</pre>
+
+    <div class="exercise">
+      <div class="exercise-label">Challenge Exercise</div>
+      <p>Create a <code>Ring[T any]</code> generic struct that implements a fixed-size circular buffer. It should have methods <code>Push(val T)</code> (overwrites oldest when full), <code>Pop() (T, bool)</code> (removes oldest), <code>Peek() (T, bool)</code>, and <code>Len() int</code>. Use a slice with head/tail indices internally.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>#1 Pitfall:</strong> Using a value receiver when you need to mutate the struct &mdash; changes are silently lost because the method operates on a copy.
+    </div>
+  </div>
+
+  <!-- Review 6: Pointers -->
+  <div class="review-card" id="review-pointers">
+    <div class="review-header">
+      <h3>Pointers</h3>
+      <span class="review-meta">Go Foundations &bull; 1 day ago</span>
+    </div>
+
+    <h4>Quick Reminder</h4>
+    <p>Pointers hold memory addresses. Use <code>&amp;</code> to get the address, <code>*</code> to dereference. Go auto-dereferences struct field access through pointers. No pointer arithmetic. Use pointers for mutation and large structs; avoid for small value types.</p>
+
+    <h4>Key Pattern</h4>
+<pre>// Constructor returns pointer to heap-allocated struct
+func NewConfig(path string) *Config {
+    return &amp;Config{Path: path, Loaded: false}
+}
+
+// Nil-safe method guards
+func (c *Config) Get(key string) string {
+    if c == nil {
+        return ""
+    }
+    return c.values[key]
+}
+
+// Swap using pointers
+func Swap[T any](a, b *T) {
+    *a, *b = *b, *a
+}</pre>
+
+    <div class="exercise">
+      <div class="exercise-label">Challenge Exercise</div>
+      <p>Implement a generic <code>LRU[K comparable, V any]</code> cache using a doubly-linked list of <code>*Node</code> pointers and a <code>map[K]*Node</code> for O(1) lookups. Support <code>Get(key K) (V, bool)</code> and <code>Put(key K, val V)</code>. When the cache exceeds capacity, evict the least recently used entry.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>#1 Pitfall:</strong> Dereferencing a nil pointer &mdash; causes a runtime panic. Always check <code>if p != nil</code> before accessing <code>*p</code> or <code>p.Field</code>.
+    </div>
+  </div>
+
+</div><!-- end review section -->
+
+<!-- ============================================================ -->
+<!-- NEW CONCEPTS -->
+<!-- ============================================================ -->
+<div class="section">
+  <span class="section-label new">New</span>
+  <h2 class="section-title">Generics &amp; Concurrency &mdash; 6 Concepts</h2>
+
+  <!-- ========== CONCEPT 1: Custom Constraints ========== -->
+  <div class="concept" id="custom-constraints">
+    <div class="concept-header">
+      <h3>Custom Constraints</h3>
+      <span class="concept-meta">Functions &amp; Control Flow &bull; New</span>
+    </div>
+
+    <p>Go's type parameter constraints go beyond <code>any</code> and <code>comparable</code>. You can define custom interface constraints using type sets, union types, and the <code>~</code> approximation operator. This gives you precise control over which types are allowed in generic functions and structs.</p>
+
+    <h4>Why It Matters</h4>
+    <p>Custom constraints let you write generic code that requires specific operations (like arithmetic or ordering) while remaining type-safe at compile time. Without them, you'd need runtime type assertions or duplicate functions for each type.</p>
+
+    <h4>Basic Interface Constraint with Type Sets</h4>
+<pre>package main
+
+import "fmt"
+
+// Number constraint: only int or float64 allowed
+type Number interface {
+    int | float64
+}
+
+func Sum[T Number](nums []T) T {
+    var total T
+    for _, n := range nums {
+        total += n
+    }
+    return total
+}
+
+func main() {
+    ints := []int{1, 2, 3, 4, 5}
+    fmt.Println("Sum ints:", Sum(ints))
+
+    floats := []float64{1.1, 2.2, 3.3}
+    fmt.Println("Sum floats:", Sum(floats))
+
+    // This would NOT compile:
+    // strs := []string{"a", "b"}
+    // Sum(strs) // string not in Number constraint
+}</pre>
+    <div class="output">
+      <div class="output-label">Output</div>
+Sum ints: 15
+Sum floats: 6.6000000000000005
+    </div>
+
+    <h4>The ~ Approximation Operator</h4>
+<pre>package main
+
+import "fmt"
+
+// Without ~: only exact types match
+type StrictFloat interface {
+    float64
+}
+
+// With ~: any type whose UNDERLYING type matches
+type AnyFloat interface {
+    ~float64
+}
+
+type Celsius float64
+type Fahrenheit float64
+
+func ToKelvin[T AnyFloat](temp T) float64 {
+    return float64(temp) + 273.15
+}
+
+// Without ~, this would fail for Celsius and Fahrenheit
+func main() {
+    var c Celsius = 100
+    var f Fahrenheit = 212
+
+    fmt.Printf("%.1f C = %.1f K\n", float64(c), ToKelvin(c))
+    fmt.Printf("%.1f F as kelvin offset: %.1f K\n", float64(f), ToKelvin(f))
+
+    // Plain float64 also works
+    fmt.Printf("0.0 = %.2f K\n", ToKelvin(0.0))
+}</pre>
+    <div class="output">
+      <div class="output-label">Output</div>
+100.0 C = 373.1 K
+212.0 F as kelvin offset: 485.1 K
+0.0 = 273.15 K
+    </div>
+
+    <h4>Union Types in Constraints</h4>
+<pre>package main
+
+import "fmt"
+
+// Signed integers constraint
+type Signed interface {
+    ~int | ~int8 | ~int16 | ~int32 | ~int64
+}
+
+// Unsigned integers constraint
+type Unsigned interface {
+    ~uint | ~uint8 | ~uint16 | ~uint32 | ~uint64
+}
+
+// Integer combines both
+type Integer interface {
+    Signed | Unsigned
+}
+
+func Abs[T Signed](n T) T {
+    if n &lt; 0 {
+        return -n
+    }
+    return n
+}
+
+func BitCount[T Integer](n T) int {
+    count := 0
+    for n != 0 {
+        count += int(n &amp; 1)
+        n >>= 1
+    }
+    return count
+}
+
+func main() {
+    fmt.Println("Abs(-42):", Abs(-42))
+    fmt.Println("Abs(int8(-10)):", Abs(int8(-10)))
+
+    fmt.Println("BitCount(13):", BitCount(13))     // 1101 = 3 bits
+    fmt.Println("BitCount(uint8(255)):", BitCount(uint8(255))) // 8 bits
+}</pre>
+    <div class="output">
+      <div class="output-label">Output</div>
+Abs(-42): 42
+Abs(int8(-10)): 10
+BitCount(13): 3
+BitCount(uint8(255)): 8
+    </div>
+
+    <h4>Combining Method Requirements with Type Sets</h4>
+<pre>package main
+
+import "fmt"
+
+// Constraint that requires BOTH a method AND specific underlying types
+type StringableNumber interface {
+    ~int | ~float64
+    String() string
+}
+
+type Score int
+
+func (s Score) String() string {
+    return fmt.Sprintf("Score(%d)", int(s))
+}
+
+type Rating float64
+
+func (r Rating) String() string {
+    return fmt.Sprintf("Rating(%.1f)", float64(r))
+}
+
+func PrintValue[T StringableNumber](val T) {
+    fmt.Println("Value:", val.String())
+}
+
+func main() {
+    PrintValue(Score(95))
+    PrintValue(Rating(4.5))
+
+    // This would NOT compile — plain int has no String() method:
+    // PrintValue(42)
+}</pre>
+    <div class="output">
+      <div class="output-label">Output</div>
+Value: Score(95)
+Value: Rating(4.5)
+    </div>
+
+    <h4>Using the Standard Library Constraints</h4>
+<pre>package main
+
+import (
+    "cmp"
+    "fmt"
+    "golang.org/x/exp/constraints"
+)
+
+// cmp.Ordered from standard library (Go 1.21+)
+func Clamp[T cmp.Ordered](val, lo, hi T) T {
+    if val &lt; lo {
+        return lo
+    }
+    if val &gt; hi {
+        return hi
+    }
+    return val
+}
+
+// constraints.Integer from x/exp (covers all int/uint types)
+// constraints.Float covers all float types
+// constraints.Ordered covers Integer | Float | ~string
+
+func MinMax[T cmp.Ordered](vals ...T) (T, T) {
+    min, max := vals[0], vals[0]
+    for _, v := range vals[1:] {
+        if v &lt; min {
+            min = v
+        }
+        if v &gt; max {
+            max = v
+        }
+    }
+    return min, max
+}
+
+func main() {
+    fmt.Println("Clamp(15, 0, 10):", Clamp(15, 0, 10))
+    fmt.Println("Clamp(-5, 0, 10):", Clamp(-5, 0, 10))
+    fmt.Println("Clamp(5, 0, 10):", Clamp(5, 0, 10))
+    fmt.Println("Clamp(\"z\", \"a\", \"m\"):", Clamp("z", "a", "m"))
+
+    min, max := MinMax(3, 1, 4, 1, 5, 9, 2, 6)
+    fmt.Printf("MinMax: min=%d, max=%d\n", min, max)
+}</pre>
+    <div class="output">
+      <div class="output-label">Output</div>
+Clamp(15, 0, 10): 10
+Clamp(-5, 0, 10): 0
+Clamp(5, 0, 10): 5
+Clamp("z", "a", "m"): m
+MinMax: min=1, max=9
+    </div>
+
+    <h4>Common Mistakes</h4>
+    <div class="do-dont">
+      <div class="do-box">
+        <div class="label">Do: Use ~ for named types</div>
+<pre>type Numeric interface {
+    ~int | ~float64
+}
+// Works with type MyInt int</pre>
+      </div>
+      <div class="dont-box">
+        <div class="label">Don't: Forget ~ for custom types</div>
+<pre>type Numeric interface {
+    int | float64
+}
+// Fails for type MyInt int</pre>
+      </div>
+    </div>
+    <div class="do-dont">
+      <div class="do-box">
+        <div class="label">Do: Use cmp.Ordered for ordering</div>
+<pre>func Sort[T cmp.Ordered](s []T) {
+    // use &lt; and &gt; operators
+}</pre>
+      </div>
+      <div class="dont-box">
+        <div class="label">Don't: Use any when you need operators</div>
+<pre>func Sort[T any](s []T) {
+    // cannot use &lt; on T!
+    // compile error
+}</pre>
+      </div>
+    </div>
+
+    <h4>Key Rules</h4>
+    <ul class="rules-list">
+      <li>Type sets define which types satisfy a constraint: <code>int | float64</code> means "exactly int or float64"</li>
+      <li>The <code>~</code> operator matches underlying types: <code>~int</code> includes <code>type MyInt int</code></li>
+      <li>Constraints can combine type sets with method requirements (both must be satisfied)</li>
+      <li>Use <code>cmp.Ordered</code> (standard library) for types supporting <code>&lt;</code>, <code>&gt;</code> operators</li>
+      <li>Prefer <code>any</code> or <code>comparable</code> when custom constraints are not needed</li>
+    </ul>
+
+    <div class="connection">
+      <strong>Connection:</strong> Custom constraints extend the <em>Type Parameters (Generics)</em> foundation from Day 2. The <code>~</code> operator is essential when working with named types built from <em>Structs &amp; Methods</em>. The <em>Interfaces</em> concept (implicit satisfaction) applies here &mdash; constraint interfaces work the same way.
+    </div>
+
+    <div class="exercise">
+      <div class="exercise-label">Exercise 1</div>
+      <p>Define a <code>Numeric</code> constraint that includes all integer and float types (use <code>~</code>). Write a generic <code>Average[T Numeric](nums []T) float64</code> function. Test with <code>[]int</code>, <code>[]float64</code>, and a custom <code>type Meter float64</code>.</p>
+    </div>
+    <div class="exercise">
+      <div class="exercise-label">Exercise 2</div>
+      <p>Create a constraint <code>Addable</code> that requires both a <code>~int | ~float64 | ~string</code> type set and an <code>IsZero() bool</code> method. Implement types that satisfy it. Write a function <code>SumNonZero[T Addable](items []T) T</code> that skips zero values.</p>
+    </div>
+    <div class="exercise">
+      <div class="exercise-label">Exercise 3</div>
+      <p>Write a generic <code>SortedMap[K cmp.Ordered, V any]</code> struct that stores key-value pairs and iterates in sorted key order. Implement <code>Put(K, V)</code>, <code>Get(K) (V, bool)</code>, and <code>Keys() []K</code> (returned sorted). Test with string keys and int keys.</p>
+    </div>
+  </div>
+
+  <!-- ========== CONCEPT 2: Goroutines ========== -->
+  <div class="concept" id="goroutines">
+    <div class="concept-header">
+      <h3>Goroutines</h3>
+      <span class="concept-meta">Concurrency &bull; New</span>
+    </div>
+
+    <p>Goroutines are lightweight, cooperatively-scheduled threads managed by the Go runtime. They cost only a few KB of stack (which grows as needed), so you can launch thousands or even millions. The <code>go</code> keyword is all you need to start concurrent execution.</p>
+
+    <h4>Why It Matters</h4>
+    <p>Concurrency is Go's superpower. While other languages use heavy OS threads or complex async/await patterns, Go makes concurrent programming as simple as adding the word <code>go</code> before a function call. Understanding goroutines is essential for writing performant servers, parallel algorithms, and responsive applications.</p>
+
+    <h4>Launching Goroutines</h4>
+<pre>package main
+
+import (
+    "fmt"
+    "time"
+)
+
+func greet(name string) {
+    for i := 0; i &lt; 3; i++ {
+        fmt.Printf("[%s] Hello #%d\n", name, i+1)
+        time.Sleep(100 * time.Millisecond)
+    }
+}
+
+func main() {
+    // Launch two goroutines
+    go greet("Alice")
+    go greet("Bob")
+
+    // Main goroutine also runs concurrently
+    greet("Main")
+
+    // Give goroutines time to finish
+    time.Sleep(500 * time.Millisecond)
+    fmt.Println("Done!")
+}</pre>
+    <div class="output">
+      <div class="output-label">Output (interleaved, order varies)</div>
+[Main] Hello #1
+[Alice] Hello #1
+[Bob] Hello #1
+[Main] Hello #2
+[Bob] Hello #2
+[Alice] Hello #2
+[Main] Hello #3
+[Alice] Hello #3
+[Bob] Hello #3
+Done!
+    </div>
+
+    <div class="pitfall">
+      <strong>Main exits, goroutines die:</strong> When <code>main()</code> returns, all goroutines are killed immediately. Never rely on <code>time.Sleep</code> for synchronization in production code &mdash; use <code>sync.WaitGroup</code> or channels.
+    </div>
+
+    <h4>sync.WaitGroup: Waiting for Goroutines</h4>
+<pre>package main
+
+import (
+    "fmt"
+    "sync"
+)
+
+func worker(id int, wg *sync.WaitGroup) {
+    defer wg.Done() // decrement counter when done
+
+    fmt.Printf("Worker %d starting\n", id)
+    // Simulate work
+    sum := 0
+    for i := 0; i &lt; 1_000_000; i++ {
+        sum += i
+    }
+    fmt.Printf("Worker %d done (sum=%d)\n", id, sum)
+}
+
+func main() {
+    var wg sync.WaitGroup
+
+    for i := 1; i &lt;= 5; i++ {
+        wg.Add(1) // increment counter BEFORE launching goroutine
+        go worker(i, &amp;wg)
+    }
+
+    wg.Wait() // block until counter reaches zero
+    fmt.Println("All workers completed!")
+}</pre>
+    <div class="output">
+      <div class="output-label">Output (order varies)</div>
+Worker 5 starting
+Worker 1 starting
+Worker 3 starting
+Worker 2 starting
+Worker 4 starting
+Worker 2 done (sum=499999500000)
+Worker 5 done (sum=499999500000)
+Worker 1 done (sum=499999500000)
+Worker 4 done (sum=499999500000)
+Worker 3 done (sum=499999500000)
+All workers completed!
+    </div>
+
+    <h4>Anonymous Goroutines &amp; Closure Capture</h4>
+<pre>package main
+
+import (
+    "fmt"
+    "sync"
+)
+
+func main() {
+    var wg sync.WaitGroup
+    names := []string{"Alice", "Bob", "Charlie", "Diana"}
+
+    for _, name := range names {
+        wg.Add(1)
+        // Go 1.22+: loop variable is per-iteration, so this is safe
+        go func() {
+            defer wg.Done()
+            fmt.Printf("Hello, %s!\n", name)
+        }()
+    }
+
+    wg.Wait()
+    fmt.Println("---")
+
+    // Pre-Go 1.22 safe pattern: pass as parameter
+    for _, name := range names {
+        wg.Add(1)
+        go func(n string) {
+            defer wg.Done()
+            fmt.Printf("Goodbye, %s!\n", n)
+        }(name) // pass name as argument
+    }
+
+    wg.Wait()
+}</pre>
+    <div class="output">
+      <div class="output-label">Output (order varies)</div>
+Hello, Diana!
+Hello, Alice!
+Hello, Bob!
+Hello, Charlie!
+---
+Goodbye, Charlie!
+Goodbye, Alice!
+Goodbye, Diana!
+Goodbye, Bob!
+    </div>
+
+    <h4>Goroutine Leak: The Silent Killer</h4>
+<pre>package main
+
+import (
+    "fmt"
+    "runtime"
+    "time"
+)
+
+func leakyFunction() {
+    ch := make(chan int) // unbuffered channel
+
+    go func() {
+        // This goroutine will BLOCK FOREVER
+        // because nobody reads from ch
+        ch &lt;- 42
+        fmt.Println("This never prints")
+    }()
+
+    // We return without reading from ch — goroutine leaks!
+}
+
+func main() {
+    fmt.Println("Goroutines before:", runtime.NumGoroutine())
+
+    for i := 0; i &lt; 10; i++ {
+        leakyFunction()
+    }
+    time.Sleep(100 * time.Millisecond)
+
+    fmt.Println("Goroutines after:", runtime.NumGoroutine())
+    // 11: 1 main + 10 leaked goroutines!
+    fmt.Println("Leaked goroutines will consume memory forever!")
+}</pre>
+    <div class="output">
+      <div class="output-label">Output</div>
+Goroutines before: 1
+Goroutines after: 11
+Leaked goroutines will consume memory forever!
+    </div>
+
+    <h4>Worker Pool Pattern</h4>
+<pre>package main
+
+import (
+    "fmt"
+    "sync"
+)
+
+func main() {
+    const numWorkers = 3
+    const numJobs = 10
+
+    jobs := make(chan int, numJobs)
+    var wg sync.WaitGroup
+
+    // Start workers
+    for w := 1; w &lt;= numWorkers; w++ {
+        wg.Add(1)
+        go func(id int) {
+            defer wg.Done()
+            for job := range jobs {
+                fmt.Printf("Worker %d processing job %d\n", id, job)
+            }
+        }(w)
+    }
+
+    // Send jobs
+    for j := 1; j &lt;= numJobs; j++ {
+        jobs &lt;- j
+    }
+    close(jobs) // signal no more jobs
+
+    wg.Wait()
+    fmt.Println("All jobs completed!")
+}</pre>
+    <div class="output">
+      <div class="output-label">Output (order varies)</div>
+Worker 3 processing job 1
+Worker 1 processing job 2
+Worker 2 processing job 3
+Worker 3 processing job 4
+Worker 1 processing job 5
+Worker 2 processing job 6
+Worker 3 processing job 7
+Worker 1 processing job 8
+Worker 2 processing job 9
+Worker 3 processing job 10
+All jobs completed!
+    </div>
+
+    <h4>Common Mistakes</h4>
+    <div class="do-dont">
+      <div class="do-box">
+        <div class="label">Do: Add to WaitGroup before go</div>
+<pre>for i := 0; i &lt; n; i++ {
+    wg.Add(1)
+    go func() {
+        defer wg.Done()
+        // work...
+    }()
+}
+wg.Wait()</pre>
+      </div>
+      <div class="dont-box">
+        <div class="label">Don't: Add inside the goroutine</div>
+<pre>for i := 0; i &lt; n; i++ {
+    go func() {
+        wg.Add(1) // race: Wait() may return early!
+        defer wg.Done()
+        // work...
+    }()
+}
+wg.Wait()</pre>
+      </div>
+    </div>
+    <div class="do-dont">
+      <div class="do-box">
+        <div class="label">Do: Use WaitGroup or channels</div>
+<pre>var wg sync.WaitGroup
+wg.Add(1)
+go func() {
+    defer wg.Done()
+    doWork()
+}()
+wg.Wait() // deterministic</pre>
+      </div>
+      <div class="dont-box">
+        <div class="label">Don't: Use time.Sleep for sync</div>
+<pre>go doWork()
+time.Sleep(2 * time.Second)
+// might not be enough time!
+// fragile and slow</pre>
+      </div>
+    </div>
+
+    <h4>Key Rules</h4>
+    <ul class="rules-list">
+      <li>Goroutines are extremely lightweight (~2-8 KB initial stack) &mdash; launch thousands without worry</li>
+      <li>Always ensure goroutines can terminate: use <code>sync.WaitGroup</code>, channels, or <code>context</code></li>
+      <li>Call <code>wg.Add()</code> before <code>go func()</code>, not inside the goroutine</li>
+      <li>When <code>main()</code> returns, all goroutines are killed immediately</li>
+      <li>Use <code>runtime.NumGoroutine()</code> to detect goroutine leaks during testing</li>
+    </ul>
+
+    <div class="connection">
+      <strong>Connection:</strong> Goroutines are useless without synchronization &mdash; <em>Channels</em> (next) and the <em>sync Package</em> provide that. The <em>Context</em> package enables cancellation of goroutine trees. The closure capture rules from <em>First-class Functions</em> apply directly to anonymous goroutines.
+    </div>
+
+    <div class="exercise">
+      <div class="exercise-label">Exercise 1</div>
+      <p>Write a program that launches 10 goroutines, each computing the factorial of a different number (1 through 10). Use <code>sync.WaitGroup</code> to wait for all to complete. Print results as they finish.</p>
+    </div>
+    <div class="exercise">
+      <div class="exercise-label">Exercise 2</div>
+      <p>Implement a <code>ParallelMap[T, U any](items []T, fn func(T) U) []U</code> function that applies <code>fn</code> to each item in a separate goroutine. Results must be in the same order as the input. Use <code>sync.WaitGroup</code> and a pre-allocated result slice.</p>
+    </div>
+    <div class="exercise">
+      <div class="exercise-label">Exercise 3</div>
+      <p>Write a goroutine leak detector: a function <code>DetectLeaks(fn func()) int</code> that records the goroutine count before calling <code>fn</code>, waits briefly, then returns the number of leaked goroutines. Test with a function that intentionally leaks and one that doesn't.</p>
+    </div>
+  </div>
+
+  <!-- ========== CONCEPT 3: Channels ========== -->
+  <div class="concept" id="channels">
+    <div class="concept-header">
+      <h3>Channels</h3>
+      <span class="concept-meta">Concurrency &bull; New</span>
+    </div>
+
+    <p>Channels are Go's primary mechanism for communication between goroutines. They are typed conduits through which you can send and receive values. The Go proverb says: "Don't communicate by sharing memory; share memory by communicating."</p>
+
+    <h4>Why It Matters</h4>
+    <p>Channels provide safe, synchronized data transfer between goroutines without explicit locks. They enable powerful patterns like pipelines, fan-out/fan-in, and worker pools. Understanding buffered vs unbuffered channels and their blocking behavior is critical for writing correct concurrent code.</p>
+
+    <h4>Unbuffered Channels: Synchronous Communication</h4>
+<pre>package main
+
+import "fmt"
+
+func main() {
+    ch := make(chan string) // unbuffered: send blocks until receive
+
+    go func() {
+        fmt.Println("Goroutine: about to send...")
+        ch &lt;- "hello" // blocks until main receives
+        fmt.Println("Goroutine: sent!")
+    }()
+
+    fmt.Println("Main: about to receive...")
+    msg := &lt;-ch // blocks until goroutine sends
+    fmt.Println("Main: received:", msg)
+}</pre>
+    <div class="output">
+      <div class="output-label">Output</div>
+Main: about to receive...
+Goroutine: about to send...
+Goroutine: sent!
+Main: received: hello
+    </div>
+
+    <h4>Buffered Channels: Asynchronous Communication</h4>
+<pre>package main
+
+import "fmt"
+
+func main() {
+    ch := make(chan int, 3) // buffer of 3: send won't block until full
+
+    // Can send without a receiver (up to buffer size)
+    ch &lt;- 10
+    ch &lt;- 20
+    ch &lt;- 30
+    // ch &lt;- 40 would block here (buffer full)
+
+    fmt.Println("Buffer len:", len(ch), "cap:", cap(ch))
+
+    // Receive in FIFO order
+    fmt.Println(&lt;-ch) // 10
+    fmt.Println(&lt;-ch) // 20
+    fmt.Println(&lt;-ch) // 30
+}</pre>
+    <div class="output">
+      <div class="output-label">Output</div>
+Buffer len: 3 cap: 3
+10
+20
+30
+    </div>
+
+    <h4>Directional Channels</h4>
+<pre>package main
+
+import "fmt"
+
+// send-only channel parameter
+func producer(out chan&lt;- int) {
+    for i := 1; i &lt;= 5; i++ {
+        out &lt;- i * i
+    }
+    close(out) // producer closes the channel
+}
+
+// receive-only channel parameter
+func consumer(in &lt;-chan int) {
+    for val := range in { // range stops when channel is closed
+        fmt.Printf("Received: %d\n", val)
+    }
+}
+
+func main() {
+    ch := make(chan int, 5)
+
+    go producer(ch)
+    consumer(ch) // runs in main goroutine
+    fmt.Println("Done!")
+}</pre>
+    <div class="output">
+      <div class="output-label">Output</div>
+Received: 1
+Received: 4
+Received: 9
+Received: 16
+Received: 25
+Done!
+    </div>
+
+    <h4>Closing Channels &amp; Range</h4>
+<pre>package main
+
+import "fmt"
+
+func fibonacci(n int, ch chan&lt;- int) {
+    a, b := 0, 1
+    for i := 0; i &lt; n; i++ {
+        ch &lt;- a
+        a, b = b, a+b
+    }
+    close(ch) // signal: no more values
+}
+
+func main() {
+    ch := make(chan int)
+    go fibonacci(10, ch)
+
+    // Range over channel until closed
+    for val := range ch {
+        fmt.Print(val, " ")
+    }
+    fmt.Println()
+
+    // Comma-ok to detect closed channel
+    ch2 := make(chan string, 1)
+    ch2 &lt;- "data"
+    close(ch2)
+
+    val, ok := &lt;-ch2
+    fmt.Printf("val=%q, ok=%v\n", val, ok) // "data", true
+
+    val, ok = &lt;-ch2
+    fmt.Printf("val=%q, ok=%v\n", val, ok) // "", false (closed)
+}</pre>
+    <div class="output">
+      <div class="output-label">Output</div>
+0 1 1 2 3 5 8 13 21 34
+val="data", ok=true
+val="", ok=false
+    </div>
+
+    <h4>Channel Axioms</h4>
+<pre>package main
+
+import "fmt"
+
+func main() {
+    // Axiom 1: Send to nil channel blocks forever
+    // var nilCh chan int
+    // nilCh &lt;- 1 // deadlock!
+
+    // Axiom 2: Receive from nil channel blocks forever
+    // &lt;-nilCh // deadlock!
+
+    // Axiom 3: Send to closed channel panics
+    ch := make(chan int, 1)
+    close(ch)
+    // ch &lt;- 1 // panic: send on closed channel
+
+    // Axiom 4: Receive from closed channel returns zero value
+    val := &lt;-ch
+    fmt.Println("From closed channel:", val) // 0
+
+    // Axiom 5: Close nil channel panics
+    // var nilCh2 chan int
+    // close(nilCh2) // panic!
+
+    // Axiom 6: Double close panics
+    // close(ch) // panic: close of closed channel
+
+    fmt.Println("Channel axioms are important to memorize!")
+}</pre>
+    <div class="output">
+      <div class="output-label">Output</div>
+From closed channel: 0
+Channel axioms are important to memorize!
+    </div>
+
+    <h4>Pipeline Pattern</h4>
+<pre>package main
+
+import "fmt"
+
+// Stage 1: generate numbers
+func generate(nums ...int) &lt;-chan int {
+    out := make(chan int)
+    go func() {
+        for _, n := range nums {
+            out &lt;- n
+        }
+        close(out)
+    }()
+    return out
+}
+
+// Stage 2: square each number
+func square(in &lt;-chan int) &lt;-chan int {
+    out := make(chan int)
+    go func() {
+        for n := range in {
+            out &lt;- n * n
+        }
+        close(out)
+    }()
+    return out
+}
+
+// Stage 3: filter even numbers
+func filterEven(in &lt;-chan int) &lt;-chan int {
+    out := make(chan int)
+    go func() {
+        for n := range in {
+            if n%2 == 0 {
+                out &lt;- n
+            }
+        }
+        close(out)
+    }()
+    return out
+}
+
+func main() {
+    // Compose pipeline: generate -> square -> filterEven
+    nums := generate(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)
+    squared := square(nums)
+    evens := filterEven(squared)
+
+    for val := range evens {
+        fmt.Print(val, " ")
+    }
+    fmt.Println()
+}</pre>
+    <div class="output">
+      <div class="output-label">Output</div>
+4 16 36 64 100
+    </div>
+
+    <h4>Common Mistakes</h4>
+    <div class="do-dont">
+      <div class="do-box">
+        <div class="label">Do: Only producer closes the channel</div>
+<pre>func produce(ch chan&lt;- int) {
+    for i := 0; i &lt; 5; i++ {
+        ch &lt;- i
+    }
+    close(ch) // producer closes
+}</pre>
+      </div>
+      <div class="dont-box">
+        <div class="label">Don't: Consumer closes the channel</div>
+<pre>func consume(ch chan int) {
+    val := &lt;-ch
+    close(ch) // producer may still send!
+    // panic: send on closed channel
+}</pre>
+      </div>
+    </div>
+    <div class="do-dont">
+      <div class="do-box">
+        <div class="label">Do: Use directional types for safety</div>
+<pre>func writer(ch chan&lt;- int) { ... }
+func reader(ch &lt;-chan int) { ... }
+// compiler prevents misuse</pre>
+      </div>
+      <div class="dont-box">
+        <div class="label">Don't: Use bidirectional everywhere</div>
+<pre>func writer(ch chan int) { ... }
+func reader(ch chan int) { ... }
+// reader could accidentally send</pre>
+      </div>
+    </div>
+
+    <h4>Key Rules</h4>
+    <ul class="rules-list">
+      <li>Unbuffered channels synchronize sender and receiver &mdash; both block until the other is ready</li>
+      <li>Buffered channels decouple timing &mdash; send blocks only when the buffer is full</li>
+      <li>Only the producer should close a channel; closing signals "no more values"</li>
+      <li>Use <code>range</code> to receive all values until the channel is closed</li>
+      <li>Memorize the channel axioms: nil blocks, closed send panics, closed receive returns zero</li>
+      <li>Directional channel types (<code>chan&lt;-</code>, <code>&lt;-chan</code>) enforce correct usage at compile time</li>
+    </ul>
+
+    <div class="connection">
+      <strong>Connection:</strong> Channels are the communication backbone for <em>Goroutines</em>. The <em>Select Statement</em> (next) multiplexes multiple channel operations. The pipeline pattern here combines goroutines with <em>First-class Functions</em> (each stage is a function returning a channel). The comma-ok receive pattern mirrors the <em>Maps</em> lookup idiom.
+    </div>
+
+    <div class="exercise">
+      <div class="exercise-label">Exercise 1</div>
+      <p>Write a function <code>Merge[T any](channels ...&lt;-chan T) &lt;-chan T</code> that fans in multiple channels into a single output channel. The output channel should close when all input channels are closed. Test with 3 channels producing different values.</p>
+    </div>
+    <div class="exercise">
+      <div class="exercise-label">Exercise 2</div>
+      <p>Build a pipeline with three stages: (1) generate integers 1-20, (2) keep only primes, (3) format as strings like <code>"prime: 7"</code>. Each stage runs in its own goroutine. Collect and print all results from the final stage.</p>
+    </div>
+    <div class="exercise">
+      <div class="exercise-label">Exercise 3</div>
+      <p>Implement a bounded <code>Semaphore</code> using a buffered channel. It should have <code>Acquire()</code> and <code>Release()</code> methods. Use it to limit concurrent HTTP-like requests to 3 at a time across 10 goroutines.</p>
+    </div>
+  </div>
+
+  <!-- ========== CONCEPT 4: Select Statement ========== -->
+  <div class="concept" id="select-statement">
+    <div class="concept-header">
+      <h3>Select Statement</h3>
+      <span class="concept-meta">Concurrency &bull; New</span>
+    </div>
+
+    <p>The <code>select</code> statement lets a goroutine wait on multiple channel operations simultaneously. It's like a <code>switch</code> for channels &mdash; it blocks until one of its cases can proceed, then executes that case.</p>
+
+    <h4>Why It Matters</h4>
+    <p>Real concurrent programs rarely deal with a single channel. Servers need to handle incoming requests, shutdown signals, and timeouts all at once. The <code>select</code> statement is the tool for multiplexing these operations cleanly.</p>
+
+    <h4>Basic Select</h4>
+<pre>package main
+
+import (
+    "fmt"
+    "time"
+)
+
+func main() {
+    ch1 := make(chan string)
+    ch2 := make(chan string)
+
+    go func() {
+        time.Sleep(100 * time.Millisecond)
+        ch1 &lt;- "from channel 1"
+    }()
+
+    go func() {
+        time.Sleep(200 * time.Millisecond)
+        ch2 &lt;- "from channel 2"
+    }()
+
+    // Wait for whichever arrives first
+    for i := 0; i &lt; 2; i++ {
+        select {
+        case msg := &lt;-ch1:
+            fmt.Println("Received:", msg)
+        case msg := &lt;-ch2:
+            fmt.Println("Received:", msg)
+        }
+    }
+}</pre>
+    <div class="output">
+      <div class="output-label">Output</div>
+Received: from channel 1
+Received: from channel 2
+    </div>
+
+    <h4>Timeout Pattern</h4>
+<pre>package main
+
+import (
+    "fmt"
+    "time"
+)
+
+func slowOperation() chan string {
+    ch := make(chan string)
+    go func() {
+        time.Sleep(2 * time.Second) // simulate slow work
+        ch &lt;- "operation complete"
+    }()
+    return ch
+}
+
+func main() {
+    result := slowOperation()
+
+    select {
+    case msg := &lt;-result:
+        fmt.Println("Got result:", msg)
+    case &lt;-time.After(500 * time.Millisecond):
+        fmt.Println("Timeout! Operation took too long.")
+    }
+
+    // Another attempt with longer timeout
+    result2 := slowOperation()
+
+    select {
+    case msg := &lt;-result2:
+        fmt.Println("Got result:", msg)
+    case &lt;-time.After(3 * time.Second):
+        fmt.Println("Timeout!")
+    }
+}</pre>
+    <div class="output">
+      <div class="output-label">Output</div>
+Timeout! Operation took too long.
+Got result: operation complete
+    </div>
+
+    <h4>Non-blocking Operations with Default</h4>
+<pre>package main
+
+import "fmt"
+
+func main() {
+    ch := make(chan int, 1)
+
+    // Non-blocking send
+    select {
+    case ch &lt;- 42:
+        fmt.Println("Sent 42")
+    default:
+        fmt.Println("Channel full, skipping send")
+    }
+
+    // Non-blocking receive
+    select {
+    case val := &lt;-ch:
+        fmt.Println("Received:", val)
+    default:
+        fmt.Println("No value ready")
+    }
+
+    // Channel is now empty — default fires
+    select {
+    case val := &lt;-ch:
+        fmt.Println("Received:", val)
+    default:
+        fmt.Println("Channel empty, nothing to receive")
+    }
+}</pre>
+    <div class="output">
+      <div class="output-label">Output</div>
+Sent 42
+Received: 42
+Channel empty, nothing to receive
+    </div>
+
+    <h4>Done Channel Pattern (Graceful Shutdown)</h4>
+<pre>package main
+
+import (
+    "fmt"
+    "time"
+)
+
+func worker(done &lt;-chan struct{}, id int) {
+    for {
+        select {
+        case &lt;-done:
+            fmt.Printf("Worker %d: shutting down\n", id)
+            return
+        default:
+            fmt.Printf("Worker %d: working...\n", id)
+            time.Sleep(200 * time.Millisecond)
+        }
+    }
+}
+
+func main() {
+    done := make(chan struct{})
+
+    // Launch 3 workers
+    for i := 1; i &lt;= 3; i++ {
+        go worker(done, i)
+    }
+
+    // Let them work for a bit
+    time.Sleep(500 * time.Millisecond)
+
+    // Signal all workers to stop
+    fmt.Println("--- Shutting down ---")
+    close(done) // closing broadcasts to ALL receivers
+
+    time.Sleep(100 * time.Millisecond) // let them print shutdown msg
+    fmt.Println("All workers stopped")
+}</pre>
+    <div class="output">
+      <div class="output-label">Output (order varies)</div>
+Worker 1: working...
+Worker 2: working...
+Worker 3: working...
+Worker 1: working...
+Worker 3: working...
+Worker 2: working...
+--- Shutting down ---
+Worker 1: shutting down
+Worker 3: shutting down
+Worker 2: shutting down
+All workers stopped
+    </div>
+
+    <h4>Ticker: Periodic Work</h4>
+<pre>package main
+
+import (
+    "fmt"
+    "time"
+)
+
+func main() {
+    ticker := time.NewTicker(300 * time.Millisecond)
+    done := make(chan struct{})
+
+    go func() {
+        time.Sleep(1 * time.Second)
+        close(done)
+    }()
+
+    count := 0
+    for {
+        select {
+        case t := &lt;-ticker.C:
+            count++
+            fmt.Printf("Tick #%d at %s\n", count, t.Format("15:04:05.000"))
+        case &lt;-done:
+            ticker.Stop()
+            fmt.Println("Ticker stopped after", count, "ticks")
+            return
+        }
+    }
+}</pre>
+    <div class="output">
+      <div class="output-label">Output (timestamps vary)</div>
+Tick #1 at 14:30:00.300
+Tick #2 at 14:30:00.600
+Tick #3 at 14:30:00.900
+Ticker stopped after 3 ticks
+    </div>
+
+    <h4>Random Selection</h4>
+    <p>When multiple <code>select</code> cases are ready simultaneously, Go picks one <strong>at random</strong>. This prevents starvation and ensures fairness.</p>
+<pre>package main
+
+import "fmt"
+
+func main() {
+    ch1 := make(chan string, 10)
+    ch2 := make(chan string, 10)
+
+    // Fill both channels
+    for i := 0; i &lt; 10; i++ {
+        ch1 &lt;- "A"
+        ch2 &lt;- "B"
+    }
+
+    // Select randomly picks when both are ready
+    counts := map[string]int{}
+    for i := 0; i &lt; 20; i++ {
+        select {
+        case v := &lt;-ch1:
+            counts[v]++
+        case v := &lt;-ch2:
+            counts[v]++
+        }
+    }
+    fmt.Println("Distribution:", counts) // roughly equal
+}</pre>
+    <div class="output">
+      <div class="output-label">Output (varies)</div>
+Distribution: map[A:9 B:11]
+    </div>
+
+    <h4>Common Mistakes</h4>
+    <div class="do-dont">
+      <div class="do-box">
+        <div class="label">Do: Use select for timeouts</div>
+<pre>select {
+case result := &lt;-ch:
+    process(result)
+case &lt;-time.After(5 * time.Second):
+    log.Println("timeout")
+}</pre>
+      </div>
+      <div class="dont-box">
+        <div class="label">Don't: Block forever without timeout</div>
+<pre>result := &lt;-ch
+// if nobody sends, program hangs forever
+// with no way to recover</pre>
+      </div>
+    </div>
+    <div class="do-dont">
+      <div class="do-box">
+        <div class="label">Do: Use default sparingly</div>
+<pre>// Non-blocking check — appropriate in polling loop
+select {
+case msg := &lt;-ch:
+    handle(msg)
+default:
+    // no message, do something else
+}</pre>
+      </div>
+      <div class="dont-box">
+        <div class="label">Don't: Busy-spin with default</div>
+<pre>for {
+    select {
+    case msg := &lt;-ch:
+        handle(msg)
+    default:
+        // burns CPU! No sleep or yield!
+    }
+}</pre>
+      </div>
+    </div>
+
+    <h4>Key Rules</h4>
+    <ul class="rules-list">
+      <li><code>select</code> blocks until at least one case can proceed; if multiple are ready, one is chosen at random</li>
+      <li><code>default</code> makes the select non-blocking &mdash; use it sparingly to avoid busy-spinning</li>
+      <li><code>time.After</code> creates a channel that fires once after a duration &mdash; use for timeouts</li>
+      <li>Close a <code>done</code> channel to broadcast a shutdown signal to all goroutines simultaneously</li>
+      <li>A nil channel in a select case is silently ignored (never selected) &mdash; useful for dynamic enable/disable</li>
+    </ul>
+
+    <div class="connection">
+      <strong>Connection:</strong> <code>select</code> is the control structure that makes <em>Channels</em> truly powerful. The done channel pattern here evolves into the <em>Context</em> package's cancellation model. The ticker pattern is a building block for <em>Goroutine</em>-based monitoring. The <em>sync Package</em> (next) provides alternative synchronization when channels are overkill.
+    </div>
+
+    <div class="exercise">
+      <div class="exercise-label">Exercise 1</div>
+      <p>Write a function <code>First[T any](channels ...&lt;-chan T) T</code> that returns the first value received from any of the given channels. Use <code>reflect.Select</code> or build with goroutines and a single result channel. Test with 3 channels that send at different delays.</p>
+    </div>
+    <div class="exercise">
+      <div class="exercise-label">Exercise 2</div>
+      <p>Implement a <code>RateLimiter</code> that allows at most N operations per second. Use <code>time.NewTicker</code> and a select loop. Create a <code>Wait()</code> method that blocks until a token is available. Test by running 10 operations through a limiter set to 3/second.</p>
+    </div>
+    <div class="exercise">
+      <div class="exercise-label">Exercise 3</div>
+      <p>Write a <code>Heartbeat(interval time.Duration, done &lt;-chan struct{}) &lt;-chan time.Time</code> function that emits timestamps at regular intervals. The caller should be able to stop it via the done channel. Verify it stops cleanly with no leaked goroutines.</p>
+    </div>
+  </div>
+
+  <!-- ========== CONCEPT 5: sync Package ========== -->
+  <div class="concept" id="sync-package">
+    <div class="concept-header">
+      <h3>sync Package</h3>
+      <span class="concept-meta">Concurrency &bull; New</span>
+    </div>
+
+    <p>The <code>sync</code> package provides traditional synchronization primitives: mutexes, wait groups, and one-time initialization. While channels are preferred for communication, mutexes are often simpler for protecting shared state.</p>
+
+    <h4>Why It Matters</h4>
+    <p>Not every concurrency problem is a communication problem. When multiple goroutines need to read and write shared variables, a mutex is often cleaner and more efficient than a channel. The sync package gives you the low-level tools for safe shared-state access.</p>
+
+    <h4>sync.Mutex: Protecting Shared State</h4>
+<pre>package main
+
+import (
+    "fmt"
+    "sync"
+)
+
+type SafeCounter struct {
+    mu    sync.Mutex
+    count int
+}
+
+func (c *SafeCounter) Increment() {
+    c.mu.Lock()
+    defer c.mu.Unlock()
+    c.count++
+}
+
+func (c *SafeCounter) Value() int {
+    c.mu.Lock()
+    defer c.mu.Unlock()
+    return c.count
+}
+
+func main() {
+    counter := &amp;SafeCounter{}
+    var wg sync.WaitGroup
+
+    // 1000 goroutines incrementing concurrently
+    for i := 0; i &lt; 1000; i++ {
+        wg.Add(1)
+        go func() {
+            defer wg.Done()
+            counter.Increment()
+        }()
+    }
+
+    wg.Wait()
+    fmt.Println("Final count:", counter.Value()) // always 1000
+}</pre>
+    <div class="output">
+      <div class="output-label">Output</div>
+Final count: 1000
+    </div>
+
+    <h4>sync.RWMutex: Multiple Readers, Single Writer</h4>
+<pre>package main
+
+import (
+    "fmt"
+    "sync"
+    "time"
+)
+
+type Cache struct {
+    mu   sync.RWMutex
+    data map[string]string
+}
+
+func NewCache() *Cache {
+    return &amp;Cache{data: make(map[string]string)}
+}
+
+func (c *Cache) Get(key string) (string, bool) {
+    c.mu.RLock() // multiple readers allowed simultaneously
+    defer c.mu.RUnlock()
+    val, ok := c.data[key]
+    return val, ok
+}
+
+func (c *Cache) Set(key, value string) {
+    c.mu.Lock() // exclusive write access
+    defer c.mu.Unlock()
+    c.data[key] = value
+}
+
+func (c *Cache) Size() int {
+    c.mu.RLock()
+    defer c.mu.RUnlock()
+    return len(c.data)
+}
+
+func main() {
+    cache := NewCache()
+    var wg sync.WaitGroup
+
+    // Writers
+    for i := 0; i &lt; 5; i++ {
+        wg.Add(1)
+        go func(id int) {
+            defer wg.Done()
+            key := fmt.Sprintf("key-%d", id)
+            cache.Set(key, fmt.Sprintf("value-%d", id))
+            fmt.Printf("Writer %d: set %s\n", id, key)
+        }(i)
+    }
+
+    // Readers (start after a tiny delay to ensure some data exists)
+    time.Sleep(10 * time.Millisecond)
+    for i := 0; i &lt; 10; i++ {
+        wg.Add(1)
+        go func(id int) {
+            defer wg.Done()
+            key := fmt.Sprintf("key-%d", id%5)
+            if val, ok := cache.Get(key); ok {
+                fmt.Printf("Reader %d: got %s=%s\n", id, key, val)
+            }
+        }(i)
+    }
+
+    wg.Wait()
+    fmt.Println("Cache size:", cache.Size())
+}</pre>
+    <div class="output">
+      <div class="output-label">Output (order varies)</div>
+Writer 0: set key-0
+Writer 4: set key-4
+Writer 2: set key-2
+Writer 1: set key-1
+Writer 3: set key-3
+Reader 0: got key-0=value-0
+Reader 5: got key-0=value-0
+Reader 1: got key-1=value-1
+Reader 6: got key-1=value-1
+Reader 2: got key-2=value-2
+Reader 7: got key-2=value-2
+Reader 3: got key-3=value-3
+Reader 8: got key-3=value-3
+Reader 4: got key-4=value-4
+Reader 9: got key-4=value-4
+Cache size: 5
+    </div>
+
+    <h4>sync.Once: One-Time Initialization</h4>
+<pre>package main
+
+import (
+    "fmt"
+    "sync"
+)
+
+type Database struct {
+    connection string
+}
+
+var (
+    dbInstance *Database
+    dbOnce     sync.Once
+)
+
+func GetDB() *Database {
+    dbOnce.Do(func() {
+        fmt.Println("Initializing database connection...")
+        dbInstance = &amp;Database{connection: "postgres://localhost:5432"}
+    })
+    return dbInstance
+}
+
+func main() {
+    var wg sync.WaitGroup
+
+    // 10 goroutines all requesting the DB at once
+    for i := 0; i &lt; 10; i++ {
+        wg.Add(1)
+        go func(id int) {
+            defer wg.Done()
+            db := GetDB()
+            fmt.Printf("Goroutine %d: got DB at %p\n", id, db)
+        }(i)
+    }
+
+    wg.Wait()
+    fmt.Println("All goroutines got the same instance")
+}</pre>
+    <div class="output">
+      <div class="output-label">Output (order varies)</div>
+Initializing database connection...
+Goroutine 0: got DB at 0xc0000b6000
+Goroutine 3: got DB at 0xc0000b6000
+Goroutine 1: got DB at 0xc0000b6000
+Goroutine 2: got DB at 0xc0000b6000
+Goroutine 4: got DB at 0xc0000b6000
+Goroutine 5: got DB at 0xc0000b6000
+Goroutine 6: got DB at 0xc0000b6000
+Goroutine 7: got DB at 0xc0000b6000
+Goroutine 8: got DB at 0xc0000b6000
+Goroutine 9: got DB at 0xc0000b6000
+All goroutines got the same instance
+    </div>
+
+    <h4>Mutex Embedding Pattern</h4>
+<pre>package main
+
+import (
+    "fmt"
+    "sync"
+)
+
+// Embed mutex directly in the struct for cleaner code
+type SafeMap struct {
+    sync.RWMutex // embedded — methods promoted
+    items map[string]int
+}
+
+func NewSafeMap() *SafeMap {
+    return &amp;SafeMap{items: make(map[string]int)}
+}
+
+func (m *SafeMap) Set(key string, val int) {
+    m.Lock()
+    defer m.Unlock()
+    m.items[key] = val
+}
+
+func (m *SafeMap) Get(key string) (int, bool) {
+    m.RLock()
+    defer m.RUnlock()
+    val, ok := m.items[key]
+    return val, ok
+}
+
+func (m *SafeMap) Keys() []string {
+    m.RLock()
+    defer m.RUnlock()
+    keys := make([]string, 0, len(m.items))
+    for k := range m.items {
+        keys = append(keys, k)
+    }
+    return keys
+}
+
+func main() {
+    m := NewSafeMap()
+    m.Set("x", 10)
+    m.Set("y", 20)
+
+    if val, ok := m.Get("x"); ok {
+        fmt.Println("x =", val)
+    }
+    fmt.Println("Keys:", m.Keys())
+}</pre>
+    <div class="output">
+      <div class="output-label">Output</div>
+x = 10
+Keys: [x y]
+    </div>
+
+    <h4>sync.Map: Built-in Concurrent Map</h4>
+<pre>package main
+
+import (
+    "fmt"
+    "sync"
+)
+
+func main() {
+    var m sync.Map
+
+    // Store values (no initialization needed)
+    m.Store("name", "Alice")
+    m.Store("age", 30)
+    m.Store("city", "NYC")
+
+    // Load with comma-ok
+    if val, ok := m.Load("name"); ok {
+        fmt.Println("name:", val)
+    }
+
+    // LoadOrStore: load if exists, otherwise store and return
+    actual, loaded := m.LoadOrStore("name", "Bob")
+    fmt.Printf("name: %v (was loaded: %v)\n", actual, loaded)
+
+    actual, loaded = m.LoadOrStore("email", "alice@example.com")
+    fmt.Printf("email: %v (was loaded: %v)\n", actual, loaded)
+
+    // Range iterates over all entries
+    m.Range(func(key, value any) bool {
+        fmt.Printf("  %v: %v\n", key, value)
+        return true // return false to stop iteration
+    })
+
+    // Delete
+    m.Delete("age")
+    _, ok := m.Load("age")
+    fmt.Println("age exists after delete:", ok)
+}</pre>
+    <div class="output">
+      <div class="output-label">Output</div>
+name: Alice
+name: Alice (was loaded: true)
+email: alice@example.com (was loaded: false)
+  name: Alice
+  age: 30
+  city: NYC
+  email: alice@example.com
+age exists after delete: false
+    </div>
+
+    <h4>Common Mistakes</h4>
+    <div class="do-dont">
+      <div class="do-box">
+        <div class="label">Do: Use defer with Unlock</div>
+<pre>func (s *SafeState) Update(v int) {
+    s.mu.Lock()
+    defer s.mu.Unlock()
+    s.value = v
+    // always unlocked, even on panic
+}</pre>
+      </div>
+      <div class="dont-box">
+        <div class="label">Don't: Forget to unlock</div>
+<pre>func (s *SafeState) Update(v int) {
+    s.mu.Lock()
+    if v &lt; 0 {
+        return // DEADLOCK! forgot Unlock!
+    }
+    s.value = v
+    s.mu.Unlock()
+}</pre>
+      </div>
+    </div>
+    <div class="do-dont">
+      <div class="do-box">
+        <div class="label">Do: Copy-safe with pointer receiver</div>
+<pre>type Safe struct {
+    mu sync.Mutex
+    val int
+}
+// Always use *Safe, never copy Safe</pre>
+      </div>
+      <div class="dont-box">
+        <div class="label">Don't: Copy a mutex</div>
+<pre>s1 := Safe{val: 1}
+s2 := s1 // COPIES the mutex!
+// s1 and s2 have independent locks
+// go vet catches this</pre>
+      </div>
+    </div>
+
+    <h4>Key Rules</h4>
+    <ul class="rules-list">
+      <li>Always use <code>defer mu.Unlock()</code> immediately after <code>mu.Lock()</code> to prevent deadlocks</li>
+      <li>Use <code>sync.RWMutex</code> when reads vastly outnumber writes (read lock is shared, write lock is exclusive)</li>
+      <li>Never copy a <code>sync.Mutex</code> or <code>sync.WaitGroup</code> &mdash; pass by pointer or embed in a struct</li>
+      <li>Use <code>sync.Once</code> for lazy initialization (thread-safe singleton pattern)</li>
+      <li>Prefer <code>mutex + map</code> over <code>sync.Map</code> unless keys are stable or access patterns are write-once-read-many</li>
+    </ul>
+
+    <div class="connection">
+      <strong>Connection:</strong> Mutexes protect shared state accessed by <em>Goroutines</em>. <code>sync.WaitGroup</code> was already used in <em>Goroutines</em> for waiting. Choose mutexes for shared state and <em>Channels</em> for communication. The <em>Context</em> package (next) builds on these synchronization concepts for cancellation propagation.
+    </div>
+
+    <div class="exercise">
+      <div class="exercise-label">Exercise 1</div>
+      <p>Build a thread-safe <code>BoundedQueue[T any]</code> struct with a fixed capacity. Implement <code>Enqueue(val T) bool</code> (returns false if full) and <code>Dequeue() (T, bool)</code> (returns false if empty). Use a <code>sync.Mutex</code>. Test with 5 producer and 5 consumer goroutines.</p>
+    </div>
+    <div class="exercise">
+      <div class="exercise-label">Exercise 2</div>
+      <p>Implement a lazy-loading config system using <code>sync.Once</code>. Create a <code>Config</code> struct with a <code>Get(key string) string</code> method. The first call to <code>Get</code> should load the config (simulate with a map), and subsequent calls should return the cached value. Verify that loading happens exactly once even with concurrent access.</p>
+    </div>
+    <div class="exercise">
+      <div class="exercise-label">Exercise 3</div>
+      <p>Create a <code>ReadWriteCache[K comparable, V any]</code> using <code>sync.RWMutex</code>. Track hit/miss counts with a separate mutex (or atomic operations). Run a benchmark with 80% reads and 20% writes across 20 goroutines. Print the hit rate at the end.</p>
+    </div>
+  </div>
+
+  <!-- ========== CONCEPT 6: Context ========== -->
+  <div class="concept" id="context-package">
+    <div class="concept-header">
+      <h3>Context</h3>
+      <span class="concept-meta">Concurrency &bull; New</span>
+    </div>
+
+    <p>The <code>context</code> package provides a standard way to carry deadlines, cancellation signals, and request-scoped values across API boundaries and between goroutines. It's the foundation of graceful shutdown and request lifecycle management in Go servers.</p>
+
+    <h4>Why It Matters</h4>
+    <p>Without context, cancellation requires ad-hoc "done" channels threaded through every function. Context standardizes this pattern, and the entire Go ecosystem (HTTP servers, database drivers, gRPC) uses it. Every long-running or I/O operation should accept a <code>context.Context</code> as its first parameter.</p>
+
+    <h4>context.Background() and context.TODO()</h4>
+<pre>package main
+
+import (
+    "context"
+    "fmt"
+)
+
+func main() {
+    // Background: the root context, never cancelled
+    ctx := context.Background()
+    fmt.Println("Background ctx:", ctx)
+
+    // TODO: placeholder when you haven't decided which context to use
+    todo := context.TODO()
+    fmt.Println("TODO ctx:", todo)
+
+    // Both are non-nil, empty contexts
+    fmt.Println("Background.Err():", ctx.Err())       // nil
+    fmt.Println("Background.Done():", ctx.Done())     // nil channel (never closes)
+}</pre>
+    <div class="output">
+      <div class="output-label">Output</div>
+Background ctx: context.Background
+TODO ctx: context.TODO
+Background.Err(): &lt;nil&gt;
+Background.Done(): &lt;nil&gt;
+    </div>
+
+    <h4>context.WithCancel: Manual Cancellation</h4>
+<pre>package main
+
+import (
+    "context"
+    "fmt"
+    "time"
+)
+
+func worker(ctx context.Context, id int) {
+    for {
+        select {
+        case &lt;-ctx.Done():
+            fmt.Printf("Worker %d: stopped (%v)\n", id, ctx.Err())
+            return
+        default:
+            fmt.Printf("Worker %d: working...\n", id)
+            time.Sleep(200 * time.Millisecond)
+        }
+    }
+}
+
+func main() {
+    ctx, cancel := context.WithCancel(context.Background())
+
+    // Launch workers
+    for i := 1; i &lt;= 3; i++ {
+        go worker(ctx, i)
+    }
+
+    // Let them work
+    time.Sleep(500 * time.Millisecond)
+
+    // Cancel all workers at once
+    fmt.Println("--- Cancelling ---")
+    cancel() // signals all goroutines via ctx.Done()
+
+    time.Sleep(100 * time.Millisecond) // let workers print shutdown
+    fmt.Println("All workers stopped")
+}</pre>
+    <div class="output">
+      <div class="output-label">Output (order varies)</div>
+Worker 1: working...
+Worker 2: working...
+Worker 3: working...
+Worker 1: working...
+Worker 2: working...
+Worker 3: working...
+--- Cancelling ---
+Worker 1: stopped (context canceled)
+Worker 3: stopped (context canceled)
+Worker 2: stopped (context canceled)
+All workers stopped
+    </div>
+
+    <h4>context.WithTimeout: Auto-Cancellation</h4>
+<pre>package main
+
+import (
+    "context"
+    "fmt"
+    "time"
+)
+
+func slowQuery(ctx context.Context) (string, error) {
+    // Simulate a slow database query
+    select {
+    case &lt;-time.After(2 * time.Second):
+        return "query result", nil
+    case &lt;-ctx.Done():
+        return "", fmt.Errorf("query cancelled: %w", ctx.Err())
+    }
+}
+
+func main() {
+    // Timeout after 500ms
+    ctx, cancel := context.WithTimeout(context.Background(), 500*time.Millisecond)
+    defer cancel() // always call cancel to release resources
+
+    result, err := slowQuery(ctx)
+    if err != nil {
+        fmt.Println("Error:", err)
+    } else {
+        fmt.Println("Result:", result)
+    }
+
+    // Now with a longer timeout
+    ctx2, cancel2 := context.WithTimeout(context.Background(), 3*time.Second)
+    defer cancel2()
+
+    result, err = slowQuery(ctx2)
+    if err != nil {
+        fmt.Println("Error:", err)
+    } else {
+        fmt.Println("Result:", result)
+    }
+}</pre>
+    <div class="output">
+      <div class="output-label">Output</div>
+Error: query cancelled: context deadline exceeded
+Result: query result
+    </div>
+
+    <h4>context.WithDeadline: Cancel at Specific Time</h4>
+<pre>package main
+
+import (
+    "context"
+    "fmt"
+    "time"
+)
+
+func main() {
+    // Set an absolute deadline
+    deadline := time.Now().Add(300 * time.Millisecond)
+    ctx, cancel := context.WithDeadline(context.Background(), deadline)
+    defer cancel()
+
+    // Check the deadline
+    if d, ok := ctx.Deadline(); ok {
+        fmt.Println("Deadline set to:", d.Format("15:04:05.000"))
+    }
+
+    select {
+    case &lt;-time.After(1 * time.Second):
+        fmt.Println("Work completed")
+    case &lt;-ctx.Done():
+        fmt.Println("Deadline exceeded:", ctx.Err())
+    }
+}</pre>
+    <div class="output">
+      <div class="output-label">Output</div>
+Deadline set to: 14:30:00.300
+Deadline exceeded: context deadline exceeded
+    </div>
+
+    <h4>context.WithValue: Request-Scoped Data</h4>
+<pre>package main
+
+import (
+    "context"
+    "fmt"
+)
+
+// Use custom types for context keys to avoid collisions
+type contextKey string
+
+const (
+    userIDKey    contextKey = "userID"
+    requestIDKey contextKey = "requestID"
+)
+
+func handleRequest(ctx context.Context) {
+    userID := ctx.Value(userIDKey)
+    reqID := ctx.Value(requestIDKey)
+    fmt.Printf("Handling request %v for user %v\n", reqID, userID)
+
+    // Pass context down the call chain
+    processOrder(ctx)
+}
+
+func processOrder(ctx context.Context) {
+    userID := ctx.Value(userIDKey)
+    fmt.Printf("Processing order for user %v\n", userID)
+}
+
+func main() {
+    // Build up context with values
+    ctx := context.Background()
+    ctx = context.WithValue(ctx, userIDKey, "user-123")
+    ctx = context.WithValue(ctx, requestIDKey, "req-abc")
+
+    handleRequest(ctx)
+
+    // Values are immutable: each WithValue creates a new context
+    ctx2 := context.WithValue(ctx, userIDKey, "user-456")
+    fmt.Println("Original user:", ctx.Value(userIDKey))
+    fmt.Println("New user:", ctx2.Value(userIDKey))
+}</pre>
+    <div class="output">
+      <div class="output-label">Output</div>
+Handling request req-abc for user user-123
+Processing order for user user-123
+Original user: user-123
+New user: user-456
+    </div>
+
+    <h4>Real-World: HTTP-style Request Pipeline</h4>
+<pre>package main
+
+import (
+    "context"
+    "fmt"
+    "time"
+)
+
+type contextKey string
+
+const traceIDKey contextKey = "traceID"
+
+func fetchUser(ctx context.Context, id int) (string, error) {
+    select {
+    case &lt;-time.After(100 * time.Millisecond): // simulate DB call
+        return fmt.Sprintf("User-%d", id), nil
+    case &lt;-ctx.Done():
+        return "", fmt.Errorf("fetchUser: %w", ctx.Err())
+    }
+}
+
+func fetchOrders(ctx context.Context, user string) ([]string, error) {
+    select {
+    case &lt;-time.After(150 * time.Millisecond): // simulate DB call
+        return []string{"order-1", "order-2"}, nil
+    case &lt;-ctx.Done():
+        return nil, fmt.Errorf("fetchOrders: %w", ctx.Err())
+    }
+}
+
+func handleGetUser(ctx context.Context, userID int) {
+    traceID := ctx.Value(traceIDKey)
+    fmt.Printf("[%v] Handling user request for ID %d\n", traceID, userID)
+
+    user, err := fetchUser(ctx, userID)
+    if err != nil {
+        fmt.Printf("[%v] Error: %v\n", traceID, err)
+        return
+    }
+
+    orders, err := fetchOrders(ctx, user)
+    if err != nil {
+        fmt.Printf("[%v] Error: %v\n", traceID, err)
+        return
+    }
+
+    fmt.Printf("[%v] User: %s, Orders: %v\n", traceID, user, orders)
+}
+
+func main() {
+    // Simulate a request with 500ms timeout
+    ctx, cancel := context.WithTimeout(context.Background(), 500*time.Millisecond)
+    defer cancel()
+    ctx = context.WithValue(ctx, traceIDKey, "trace-001")
+
+    handleGetUser(ctx, 42)
+
+    // Simulate a request that times out (50ms is too short)
+    ctx2, cancel2 := context.WithTimeout(context.Background(), 50*time.Millisecond)
+    defer cancel2()
+    ctx2 = context.WithValue(ctx2, traceIDKey, "trace-002")
+
+    handleGetUser(ctx2, 99)
+}</pre>
+    <div class="output">
+      <div class="output-label">Output</div>
+[trace-001] Handling user request for ID 42
+[trace-001] User: User-42, Orders: [order-1 order-2]
+[trace-002] Handling user request for ID 99
+[trace-002] Error: fetchUser: context deadline exceeded
+    </div>
+
+    <h4>Common Mistakes</h4>
+    <div class="do-dont">
+      <div class="do-box">
+        <div class="label">Do: Always defer cancel()</div>
+<pre>ctx, cancel := context.WithTimeout(
+    context.Background(), 5*time.Second,
+)
+defer cancel() // releases resources even if
+               // operation completes early</pre>
+      </div>
+      <div class="dont-box">
+        <div class="label">Don't: Forget to call cancel</div>
+<pre>ctx, _ := context.WithTimeout(
+    context.Background(), 5*time.Second,
+)
+// resource leak! timer goroutine lives
+// until timeout expires</pre>
+      </div>
+    </div>
+    <div class="do-dont">
+      <div class="do-box">
+        <div class="label">Do: Use typed keys for values</div>
+<pre>type ctxKey string
+const userKey ctxKey = "user"
+ctx = context.WithValue(ctx, userKey, user)</pre>
+      </div>
+      <div class="dont-box">
+        <div class="label">Don't: Use string keys directly</div>
+<pre>ctx = context.WithValue(ctx, "user", user)
+// collisions with other packages using "user"!</pre>
+      </div>
+    </div>
+
+    <h4>Key Rules</h4>
+    <ul class="rules-list">
+      <li>Context should be the first parameter of any function: <code>func Foo(ctx context.Context, ...)</code></li>
+      <li>Always call the <code>cancel</code> function (use <code>defer cancel()</code>) to avoid resource leaks</li>
+      <li>Use <code>WithTimeout</code> for "N seconds from now" and <code>WithDeadline</code> for "at this exact time"</li>
+      <li>Use <code>WithValue</code> sparingly &mdash; only for request-scoped data (trace IDs, auth tokens), not for passing function arguments</li>
+      <li>Check <code>ctx.Done()</code> in long-running loops and before expensive operations</li>
+      <li>Child contexts inherit parent deadlines &mdash; a child timeout cannot exceed the parent's</li>
+    </ul>
+
+    <div class="connection">
+      <strong>Connection:</strong> Context replaces the ad-hoc "done channel" pattern from <em>Select Statement</em>. It propagates cancellation through <em>Goroutine</em> trees. The <code>ctx.Done()</code> channel works with <code>select</code>. The <em>sync Package</em>'s <code>sync.Once</code> pattern can be combined with context for lazy initialization with cancellation. Every real Go HTTP handler receives a <code>context.Context</code> via the request.
+    </div>
+
+    <div class="exercise">
+      <div class="exercise-label">Exercise 1</div>
+      <p>Write a function <code>FetchWithRetry(ctx context.Context, url string, maxRetries int) (string, error)</code> that simulates fetching a URL. Each attempt takes a random 100-500ms. If the context is cancelled, stop retrying immediately. Return the result or a wrapped error with the attempt count.</p>
+    </div>
+    <div class="exercise">
+      <div class="exercise-label">Exercise 2</div>
+      <p>Implement a <code>GracefulServer</code> struct with <code>Start(ctx context.Context)</code> and <code>Shutdown()</code>. Start should launch 3 worker goroutines. When the context is cancelled, all workers should finish their current work and exit cleanly. Use <code>sync.WaitGroup</code> to wait for workers. Print status messages showing the shutdown sequence.</p>
+    </div>
+    <div class="exercise">
+      <div class="exercise-label">Exercise 3</div>
+      <p>Build a request pipeline that passes a trace ID through context. Create functions <code>Authenticate(ctx context.Context) context.Context</code>, <code>FetchData(ctx context.Context) (string, error)</code>, and <code>FormatResponse(ctx context.Context, data string) string</code>. Each function should log the trace ID and respect the context's deadline. Test with both a completing and a timing-out scenario.</p>
+    </div>
+  </div>
+
+</div><!-- end section -->
+
+<!-- ============================================================ -->
+<!-- FOOTER -->
+<!-- ============================================================ -->
+<footer class="footer">
+  <h4>All Guides</h4>
+  <ul>
+    <li><a href="golang-guides/golang-guide-2026-07-09.html">2026-07-09</a> (Day 34)</li>
+    <li><a href="golang-guides/golang-guide-2026-07-08.html">2026-07-08</a> (Day 33)</li>
+    <li><a href="golang-guides/golang-guide-2026-07-07.html">2026-07-07</a> (Day 32)</li>
+    <li><a href="golang-guides/golang-guide-2026-07-06.html">2026-07-06</a> (Day 31)</li>
+    <li><a href="golang-guides/golang-guide-2026-07-05.html">2026-07-05</a> (Day 30)</li>
+    <li><a href="golang-guides/golang-guide-2026-07-04.html">2026-07-04</a> (Day 29)</li>
+    <li><a href="golang-guides/golang-guide-2026-07-03.html">2026-07-03</a> (Day 28)</li>
+    <li><a href="golang-guides/golang-guide-2026-07-02.html">2026-07-02</a> (Day 27)</li>
+    <li><a href="golang-guides/golang-guide-2026-07-01.html">2026-07-01</a> (Day 26)</li>
+    <li><a href="golang-guides/golang-guide-2026-06-30.html">2026-06-30</a> (Day 25)</li>
+    <li><a href="golang-guides/golang-guide-2026-06-29.html">2026-06-29</a> (Day 24)</li>
+    <li><a href="golang-guides/golang-guide-2026-06-28.html">2026-06-28</a> (Day 23)</li>
+    <li><a href="golang-guides/golang-guide-2026-06-27.html">2026-06-27</a> (Day 22)</li>
+    <li><a href="golang-guides/golang-guide-2026-06-26.html">2026-06-26</a> (Day 21)</li>
+    <li><a href="golang-guides/golang-guide-2026-06-25.html">2026-06-25</a> (Day 20)</li>
+    <li><a href="golang-guides/golang-guide-2026-06-24.html">2026-06-24</a> (Day 19)</li>
+    <li><a href="golang-guides/golang-guide-2026-06-23.html">2026-06-23</a> (Day 18)</li>
+    <li><a href="golang-guides/golang-guide-2026-06-22.html">2026-06-22</a> (Day 17)</li>
+    <li><a href="golang-guides/golang-guide-2026-06-19.html">2026-06-19</a> (Day 15)</li>
+    <li><a href="golang-guides/golang-guide-2026-06-18.html">2026-06-18</a> (Day 14)</li>
+    <li><a href="golang-guides/golang-guide-2026-06-17.html">2026-06-17</a> (Day 13)</li>
+    <li><a href="golang-guides/golang-guide-2026-06-15.html">2026-06-15</a> (Day 12)</li>
+    <li><a href="golang-guides/golang-guide-2026-06-13.html">2026-06-13</a> (Day 11)</li>
+    <li><a href="golang-guides/golang-guide-2026-06-12.html">2026-06-12</a> (Day 10)</li>
+    <li><a href="golang-guides/golang-guide-2026-06-11.html">2026-06-11</a> (Day 9)</li>
+    <li><a href="golang-guides/golang-guide-2026-06-10.html">2026-06-10</a> (Day 8)</li>
+    <li><a href="golang-guides/golang-guide-2026-06-09.html">2026-06-09</a> (Day 7)</li>
+    <li><a href="golang-guides/golang-guide-2026-06-08.html">2026-06-08</a> (Day 6)</li>
+    <li><a href="golang-guides/golang-guide-2026-06-07.html">2026-06-07</a> (Day 5)</li>
+    <li><a href="golang-guides/golang-guide-2026-06-05.html">2026-06-05</a> (Day 4)</li>
+    <li><a href="golang-guides/golang-guide-2026-06-04.html">2026-06-04</a> (Day 3)</li>
+    <li><a href="golang-guides/golang-guide-2026-06-03.html">2026-06-03</a> (Day 2)</li>
+    <li><a href="golang-guides/golang-guide-2026-06-02.html">2026-06-02</a> (Day 1)</li>
+  </ul>
+</footer>
+
+</div><!-- end main -->
+
+<script>
+// ===== Theme Toggle =====
+(function() {
+  const KEY = 'lc-goguide-theme';
+  const toggle = document.getElementById('theme-toggle');
+  const html = document.documentElement;
+
+  function setTheme(theme) {
+    html.setAttribute('data-theme', theme);
+    localStorage.setItem(KEY, theme);
+    toggle.textContent = theme === 'dark' ? '☽' : '☀';
+  }
+
+  const saved = localStorage.getItem(KEY) || 'dark';
+  setTheme(saved);
+
+  toggle.addEventListener('click', function() {
+    setTheme(html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
+  });
+})();
+
+// ===== Mobile Sidebar Toggle =====
+(function() {
+  const btn = document.getElementById('sidebar-toggle');
+  const sidebar = document.getElementById('sidebar');
+
+  btn.addEventListener('click', function() {
+    sidebar.classList.toggle('open');
+  });
+
+  // Close sidebar when clicking a link (mobile)
+  sidebar.querySelectorAll('.sidebar-link').forEach(function(link) {
+    link.addEventListener('click', function() {
+      if (window.innerWidth <= 900) {
+        sidebar.classList.remove('open');
+      }
+    });
+  });
+})();
+
+// ===== Active Sidebar Link on Scroll =====
+(function() {
+  const links = document.querySelectorAll('.sidebar-link');
+  const sections = [];
+
+  links.forEach(function(link) {
+    var id = link.getAttribute('href').replace('#', '');
+    var el = document.getElementById(id);
+    if (el) sections.push({ id: id, el: el, link: link });
+  });
+
+  function onScroll() {
+    var scrollTop = window.scrollY + 120;
+    var current = null;
+
+    for (var i = sections.length - 1; i >= 0; i--) {
+      if (sections[i].el.offsetTop <= scrollTop) {
+        current = sections[i];
+        break;
+      }
+    }
+
+    links.forEach(function(l) { l.classList.remove('active'); });
+    if  current.link.classList.add('active');
+  }
+
+  window.addEventListener('scroll', onScroll);
+  onScroll();
+})();
+</script>
+
+</body>
+</html>

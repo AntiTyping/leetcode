@@ -1,0 +1,1744 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Python Study Guide &mdash; Day 12 (2026-06-09)</title>
+<style>
+/* ===== CSS Variables ===== */
+:root {
+  --bg: #0d1117;
+  --surface1: #161b22;
+  --surface2: #1c2333;
+  --border: #30363d;
+  --text: #e6edf3;
+  --muted: #8b949e;
+  --accent: #58a6ff;
+  --accent-dim: #1f6feb33;
+  --green: #3fb950;
+  --green-dim: #23863633;
+  --yellow: #d29922;
+  --yellow-dim: #d2992233;
+  --red: #f85149;
+  --red-dim: #f8514933;
+  --purple: #bc8cff;
+  --purple-dim: #bc8cff22;
+  --orange: #f0883e;
+  --orange-dim: #f0883e22;
+  --code-bg: #0d1117;
+  --sidebar-w: 300px;
+  --font-mono: 'SF Mono', 'Cascadia Code', 'Fira Code', Consolas, monospace;
+  --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+  --radius: 8px;
+  --shadow: 0 1px 3px rgba(0,0,0,0.4);
+}
+
+[data-theme="light"] {
+  --bg: #ffffff;
+  --surface1: #f6f8fa;
+  --surface2: #f0f3f6;
+  --border: #d0d7de;
+  --text: #1f2328;
+  --muted: #656d76;
+  --accent: #0969da;
+  --accent-dim: #0969da1a;
+  --green: #1a7f37;
+  --green-dim: #1a7f3718;
+  --yellow: #9a6700;
+  --yellow-dim: #9a670018;
+  --red: #cf222e;
+  --red-dim: #cf222e18;
+  --purple: #8250df;
+  --purple-dim: #8250df18;
+  --orange: #bc4c00;
+  --orange-dim: #bc4c0018;
+  --code-bg: #f6f8fa;
+  --shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+/* ===== Reset & Base ===== */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: var(--font-sans);
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.7;
+  font-size: 15px;
+  transition: background 0.2s, color 0.2s;
+}
+
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+/* ===== Theme Toggle ===== */
+#theme-toggle {
+  position: fixed;
+  top: 16px;
+  right: 20px;
+  z-index: 1000;
+  background: var(--surface1);
+  border: 1px solid var(--border);
+  color: var(--text);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+  box-shadow: var(--shadow);
+}
+#theme-toggle:hover { background: var(--surface2); border-color: var(--accent); }
+
+/* ===== Sidebar ===== */
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: var(--sidebar-w);
+  height: 100vh;
+  background: var(--surface1);
+  border-right: 1px solid var(--border);
+  overflow-y: auto;
+  padding: 20px 0;
+  z-index: 100;
+  transition: transform 0.3s;
+}
+
+.sidebar-header {
+  padding: 0 20px 16px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 12px;
+}
+
+.sidebar-header h2 {
+  font-size: 16px;
+  color: var(--text);
+  font-weight: 700;
+}
+
+.sidebar-header .subtitle {
+  font-size: 12px;
+  color: var(--muted);
+  margin-top: 2px;
+}
+
+.sidebar-section {
+  margin-bottom: 8px;
+}
+
+.sidebar-section-title {
+  padding: 6px 20px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+}
+
+.sidebar-link {
+  display: block;
+  padding: 5px 20px 5px 28px;
+  font-size: 13px;
+  color: var(--muted);
+  text-decoration: none;
+  border-left: 2px solid transparent;
+  transition: all 0.15s;
+  line-height: 1.4;
+}
+
+.sidebar-link:hover {
+  color: var(--text);
+  background: var(--accent-dim);
+  border-left-color: var(--accent);
+  text-decoration: none;
+}
+
+.sidebar-link.active {
+  color: var(--accent);
+  border-left-color: var(--accent);
+  background: var(--accent-dim);
+}
+
+/* ===== Mobile sidebar toggle ===== */
+#sidebar-toggle {
+  display: none;
+  position: fixed;
+  top: 16px;
+  left: 16px;
+  z-index: 200;
+  background: var(--surface1);
+  border: 1px solid var(--border);
+  color: var(--text);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 20px;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--shadow);
+}
+
+/* ===== Main Content ===== */
+.main {
+  margin-left: var(--sidebar-w);
+  padding: 40px 48px 80px;
+  max-width: calc(860px + var(--sidebar-w) + 96px);
+}
+
+.page-title {
+  font-size: 32px;
+  font-weight: 800;
+  margin-bottom: 4px;
+  color: var(--text);
+}
+
+.page-subtitle {
+  font-size: 15px;
+  color: var(--muted);
+  margin-bottom: 36px;
+}
+
+/* ===== How-to Box ===== */
+.how-to {
+  background: var(--surface1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px 24px;
+  margin-bottom: 36px;
+}
+
+.how-to h3 {
+  font-size: 15px;
+  font-weight: 700;
+  margin-bottom: 8px;
+  color: var(--accent);
+}
+
+.how-to ul {
+  padding-left: 20px;
+  margin: 0;
+}
+
+.how-to li {
+  font-size: 14px;
+  color: var(--muted);
+  margin-bottom: 3px;
+}
+
+/* ===== Sections ===== */
+.section {
+  margin-bottom: 48px;
+}
+
+.section-label {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  padding: 3px 10px;
+  border-radius: 4px;
+  margin-bottom: 12px;
+}
+
+.section-label.review { background: var(--yellow-dim); color: var(--yellow); }
+.section-label.new { background: var(--green-dim); color: var(--green); }
+
+.section-title {
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 24px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--border);
+}
+
+/* ===== Concept Cards ===== */
+.concept {
+  background: var(--surface1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 28px;
+  margin-bottom: 28px;
+  box-shadow: var(--shadow);
+}
+
+.concept-header {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  margin-bottom: 6px;
+  flex-wrap: wrap;
+}
+
+.concept h3 {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.concept-meta {
+  font-size: 12px;
+  color: var(--muted);
+  background: var(--surface2);
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
+.concept h4 {
+  font-size: 15px;
+  font-weight: 600;
+  margin: 20px 0 8px;
+  color: var(--text);
+}
+
+.concept p, .concept li {
+  color: var(--text);
+  line-height: 1.7;
+}
+
+.concept ul, .concept ol {
+  padding-left: 22px;
+  margin: 8px 0;
+}
+
+.concept li {
+  margin-bottom: 4px;
+}
+
+/* ===== Code Blocks ===== */
+pre {
+  background: var(--code-bg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 16px 18px;
+  overflow-x: auto;
+  margin: 10px 0 14px;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--text);
+  position: relative;
+}
+
+code {
+  font-family: var(--font-mono);
+  font-size: 0.9em;
+}
+
+:not(pre) > code {
+  background: var(--surface2);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.88em;
+}
+
+/* ===== Good/Bad Examples ===== */
+.do-dont {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin: 10px 0;
+}
+
+.do-box, .dont-box {
+  border-radius: 6px;
+  padding: 14px;
+  border: 1px solid;
+}
+
+.do-box {
+  background: var(--green-dim);
+  border-color: var(--green);
+}
+
+.dont-box {
+  background: var(--red-dim);
+  border-color: var(--red);
+}
+
+.do-box .label, .dont-box .label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 6px;
+}
+
+.do-box .label { color: var(--green); }
+.dont-box .label { color: var(--red); }
+
+.do-box pre, .dont-box pre {
+  margin: 0;
+  border: none;
+  background: transparent;
+  padding: 0;
+  font-size: 12.5px;
+}
+
+/* ===== Key Rules ===== */
+.rules-list {
+  list-style: none;
+  padding: 0;
+  margin: 8px 0;
+}
+
+.rules-list li {
+  padding: 6px 0 6px 24px;
+  position: relative;
+}
+
+.rules-list li::before {
+  content: "\2192";
+  position: absolute;
+  left: 2px;
+  color: var(--accent);
+  font-weight: 700;
+}
+
+/* ===== Exercises ===== */
+.exercise {
+  background: var(--purple-dim);
+  border: 1px solid var(--purple);
+  border-radius: 6px;
+  padding: 14px 18px;
+  margin: 8px 0;
+}
+
+.exercise .exercise-label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--purple);
+  margin-bottom: 4px;
+}
+
+/* ===== Challenge (Review) ===== */
+.challenge {
+  background: var(--orange-dim);
+  border: 1px solid var(--orange);
+  border-radius: 6px;
+  padding: 14px 18px;
+  margin: 10px 0;
+}
+
+.challenge .challenge-label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--orange);
+  margin-bottom: 4px;
+}
+
+/* ===== Pitfall ===== */
+.pitfall {
+  background: var(--red-dim);
+  border-left: 3px solid var(--red);
+  border-radius: 0 6px 6px 0;
+  padding: 10px 14px;
+  margin: 10px 0;
+  font-size: 14px;
+}
+
+.pitfall strong {
+  color: var(--red);
+}
+
+/* ===== Connection ===== */
+.connection {
+  background: var(--accent-dim);
+  border-left: 3px solid var(--accent);
+  border-radius: 0 6px 6px 0;
+  padding: 10px 14px;
+  margin: 10px 0;
+  font-size: 14px;
+  color: var(--muted);
+}
+
+/* ===== Output Block ===== */
+.output {
+  background: var(--green-dim);
+  border: 1px solid var(--green);
+  border-radius: 6px;
+  padding: 12px 16px;
+  margin: 8px 0 14px;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--text);
+  white-space: pre-wrap;
+}
+
+.output .output-label {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--green);
+  margin-bottom: 4px;
+}
+
+/* ===== Footer ===== */
+.footer {
+  margin-top: 60px;
+  padding: 24px 0;
+  border-top: 1px solid var(--border);
+}
+
+.footer h4 {
+  font-size: 14px;
+  color: var(--muted);
+  margin-bottom: 10px;
+}
+
+.footer ul {
+  list-style: none;
+  padding: 0;
+}
+
+.footer li {
+  margin-bottom: 4px;
+  font-size: 14px;
+}
+
+.footer li a { color: var(--accent); }
+.footer .current { color: var(--green); font-weight: 600; }
+
+/* ===== Responsive ===== */
+@media (max-width: 900px) {
+  .sidebar {
+    transform: translateX(-100%);
+  }
+  .sidebar.open {
+    transform: translateX(0);
+    box-shadow: 4px 0 20px rgba(0,0,0,0.5);
+  }
+  #sidebar-toggle {
+    display: flex;
+  }
+  .main {
+    margin-left: 0;
+    padding: 60px 20px 60px;
+    max-width: 100%;
+  }
+  .do-dont {
+    grid-template-columns: 1fr;
+  }
+  #theme-toggle {
+    right: 14px;
+    top: 16px;
+  }
+}
+</style>
+</head>
+<body>
+
+<!-- Theme Toggle -->
+<button id="theme-toggle" aria-label="Toggle theme" title="Toggle light/dark theme">&#9789;</button>
+
+<!-- Mobile Sidebar Toggle -->
+<button id="sidebar-toggle" aria-label="Toggle sidebar">&#9776;</button>
+
+<!-- Sidebar -->
+<nav class="sidebar" id="sidebar">
+  <div class="sidebar-header">
+    <h2>Python Guide</h2>
+    <div class="subtitle">Day 12 &mdash; 2026-06-09</div>
+  </div>
+
+  <div class="sidebar-section">
+    <div class="sidebar-section-title">Review (6 concepts)</div>
+    <a href="#review-pathlib-basics" class="sidebar-link">pathlib for File System</a>
+    <a href="#review-json-csv" class="sidebar-link">JSON &amp; CSV Data Formats</a>
+    <a href="#review-re-module" class="sidebar-link">Regular Expressions</a>
+    <a href="#review-logging-module" class="sidebar-link">logging Module</a>
+    <a href="#review-classes-eq-hash" class="sidebar-link">Classes &mdash; __eq__ and __hash__</a>
+    <a href="#review-type-hints-optional" class="sidebar-link">Type Hints &mdash; Optional, Union</a>
+  </div>
+
+  <div class="sidebar-section">
+    <div class="sidebar-section-title">New Concepts (5 topics)</div>
+    <a href="#metaclasses" class="sidebar-link">Metaclasses</a>
+    <a href="#async-generators" class="sidebar-link">Async Generators &amp; async for</a>
+    <a href="#multiprocessing-patterns" class="sidebar-link">multiprocessing Patterns</a>
+    <a href="#packaging-distribution" class="sidebar-link">Packaging &amp; Distribution</a>
+    <a href="#debugging-pdb" class="sidebar-link">Debugging: pdb &amp; breakpoint()</a>
+  </div>
+</nav>
+
+<!-- Main Content -->
+<div class="main">
+
+<h1 class="page-title">Python Daily Guide</h1>
+<p class="page-subtitle">Day 12 &mdash; Monday, June 9, 2026 &bull; 6 reviews, 5 new concepts</p>
+
+<!-- How to Use -->
+<div class="how-to">
+  <h3>How to Use This Guide</h3>
+  <ul>
+    <li><strong>Review cards</strong> &mdash; skim the reminder, write the key pattern from memory, then try the challenge.</li>
+    <li><strong>New concepts</strong> &mdash; read the explanation, run every code example in a REPL, then do the exercises.</li>
+    <li><strong>Don't peek at solutions</strong> &mdash; struggle for at least 10 minutes before looking things up.</li>
+    <li><strong>Connections</strong> &mdash; pay attention to how concepts link together across days.</li>
+  </ul>
+</div>
+
+
+<!-- ============================================================ -->
+<!-- REVIEW SECTION -->
+<!-- ============================================================ -->
+<div class="section">
+  <span class="section-label review">Review</span>
+  <h2 class="section-title">Review &mdash; 6 Concepts</h2>
+
+  <!-- Review 1: pathlib for File System -->
+  <div class="concept" id="review-pathlib-basics">
+    <div class="concept-header">
+      <h3>pathlib for File System</h3>
+      <span class="concept-meta">Error Handling &amp; I/O &bull; 5 days overdue &bull; rep 0</span>
+    </div>
+
+    <h4>Quick Reminder</h4>
+    <p><code>Path</code> objects replace raw strings for file system paths. The <code>/</code> operator joins path segments: <code>Path("src") / "main.py"</code>. Key methods: <code>.read_text()</code>, <code>.write_text()</code>, <code>.exists()</code>, <code>.mkdir(parents=True)</code>, <code>.glob("*.py")</code>, and <code>.iterdir()</code>. Paths are OS-agnostic &mdash; the same code works on Windows, macOS, and Linux.</p>
+
+    <h4>Key Pattern &mdash; Path Navigation &amp; Globbing</h4>
+<pre>from pathlib import Path
+
+# Build paths with the / operator
+project = Path("myproject")
+src = project / "src"
+config = project / "config" / "settings.toml"
+
+print(config)            # myproject/config/settings.toml
+print(config.parent)     # myproject/config
+print(config.stem)       # settings
+print(config.suffix)     # .toml
+print(config.name)       # settings.toml
+
+# Glob for files
+root = Path(".")
+py_files = sorted(root.glob("**/*.py"))  # recursive
+print(f"Found {len(py_files)} Python files")
+
+# Read / write
+p = Path("/tmp/demo.txt")
+p.write_text("hello pathlib\n")
+content = p.read_text()
+print(content)  # hello pathlib</pre>
+
+    <div class="challenge">
+      <div class="challenge-label">Challenge</div>
+      <p>Walk a directory tree and find all <code>.py</code> files larger than 1 KB. Print each file's path and size in KB. Use only <code>pathlib</code> methods (no <code>os.walk</code>).</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>#1 Pitfall:</strong> Using string concatenation (<code>"src" + "/" + "file.py"</code>) instead of the <code>/</code> operator. String concatenation breaks on Windows where the separator is <code>\</code>. The <code>/</code> operator on <code>Path</code> objects is cross-platform.
+    </div>
+  </div>
+
+  <!-- Review 2: JSON & CSV Data Formats -->
+  <div class="concept" id="review-json-csv">
+    <div class="concept-header">
+      <h3>JSON &amp; CSV Data Formats</h3>
+      <span class="concept-meta">Error Handling &amp; I/O &bull; 5 days overdue &bull; rep 0</span>
+    </div>
+
+    <h4>Quick Reminder</h4>
+    <p><code>json.dumps(obj)</code> serializes to a string, <code>json.loads(s)</code> deserializes. <code>json.dump/load</code> work with file objects. <code>csv.DictReader</code> reads rows as dicts (using headers as keys), <code>csv.DictWriter</code> writes dicts as rows. For non-standard types (datetime, Decimal), provide a custom encoder or <code>default</code> function.</p>
+
+    <h4>Key Pattern &mdash; Round-Trip Conversion</h4>
+<pre>import json
+import csv
+import io
+from datetime import datetime
+
+# JSON with custom encoder
+data = [
+    {"name": "Alice", "score": 95, "ts": datetime(2026, 6, 9)},
+    {"name": "Bob", "score": 87, "ts": datetime(2026, 6, 8)},
+]
+
+def default_encoder(obj):
+    if isinstance(obj, datetime):
+        return obj.isoformat()
+    raise TypeError(f"Not serializable: {type(obj)}")
+
+j = json.dumps(data, default=default_encoder, indent=2)
+print(j[:80] + "...")
+
+# CSV round-trip
+buf = io.StringIO()
+writer = csv.DictWriter(buf, fieldnames=["name", "score"])
+writer.writeheader()
+for row in data:
+    writer.writerow({"name": row["name"], "score": row["score"]})
+
+buf.seek(0)
+reader = csv.DictReader(buf)
+for row in reader:
+    print(row)  # OrderedDict with string values</pre>
+
+    <div class="challenge">
+      <div class="challenge-label">Challenge</div>
+      <p>Convert a list of dicts to CSV format (as a string), then parse the CSV back to a list of dicts, and finally serialize that list to JSON. Verify the round-trip produces equivalent data.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>#1 Pitfall:</strong> <code>json.dumps</code> does not handle <code>datetime</code> objects. You must supply a <code>default</code> function or subclass <code>json.JSONEncoder</code>. Forgetting this raises <code>TypeError: Object of type datetime is not JSON serializable</code>.
+    </div>
+  </div>
+
+  <!-- Review 3: Regular Expressions -->
+  <div class="concept" id="review-re-module">
+    <div class="concept-header">
+      <h3>Regular Expressions</h3>
+      <span class="concept-meta">Error Handling &amp; I/O &bull; 5 days overdue &bull; rep 0</span>
+    </div>
+
+    <h4>Quick Reminder</h4>
+    <p><code>re.compile(pattern)</code> creates a reusable regex. Named groups <code>(?P&lt;name&gt;...)</code> make matches self-documenting. <code>re.findall</code> returns all matches as strings; <code>re.finditer</code> returns match objects (giving access to <code>.group()</code>, <code>.start()</code>, <code>.end()</code>). Use <code>re.VERBOSE</code> for readable multi-line patterns.</p>
+
+    <h4>Key Pattern &mdash; Log Parsing with Named Groups</h4>
+<pre>import re
+
+log_pattern = re.compile(
+    r"(?P&lt;timestamp&gt;\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2})"
+    r"\s+(?P&lt;level&gt;INFO|WARNING|ERROR)"
+    r"\s+(?P&lt;message&gt;.+)"
+)
+
+logs = [
+    "2026-06-09 10:15:30 INFO Server started on port 8080",
+    "2026-06-09 10:15:45 ERROR Connection refused: db-primary",
+    "2026-06-09 10:16:00 WARNING Memory usage at 85%",
+]
+
+for line in logs:
+    m = log_pattern.match(line)
+    if m:
+        print(f"[{m.group('level'):&lt;7}] {m.group('timestamp')} | {m.group('message')}")</pre>
+    <div class="output"><div class="output-label">Output</div>[INFO   ] 2026-06-09 10:15:30 | Server started on port 8080
+[ERROR  ] 2026-06-09 10:15:45 | Connection refused: db-primary
+[WARNING] 2026-06-09 10:16:00 | Memory usage at 85%</div>
+
+    <div class="challenge">
+      <div class="challenge-label">Challenge</div>
+      <p>Parse log lines extracting timestamp, level, and message using named groups. Process at least 5 lines and print a summary count of each log level.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>#1 Pitfall:</strong> Greedy vs non-greedy matching. <code>.*</code> is greedy (matches as much as possible), while <code>.*?</code> is non-greedy (matches as little as possible). In patterns like <code>&lt;.*&gt;</code>, greedy matching captures too much: <code>"&lt;a&gt;text&lt;/a&gt;"</code> matches the whole string, not just <code>"&lt;a&gt;"</code>.
+    </div>
+  </div>
+
+  <!-- Review 4: logging Module -->
+  <div class="concept" id="review-logging-module">
+    <div class="concept-header">
+      <h3>logging Module</h3>
+      <span class="concept-meta">Error Handling &amp; I/O &bull; 5 days overdue &bull; rep 0</span>
+    </div>
+
+    <h4>Quick Reminder</h4>
+    <p><code>logging.getLogger(name)</code> retrieves a named logger. Loggers form a hierarchy by dot-separated names. Handlers control output destinations (console, file, network). Formatters control the message format. Levels: <code>DEBUG &lt; INFO &lt; WARNING &lt; ERROR &lt; CRITICAL</code>. Always use <code>getLogger(__name__)</code> in modules.</p>
+
+    <h4>Key Pattern &mdash; Dual-Handler Setup</h4>
+<pre>import logging
+
+logger = logging.getLogger("myapp")
+logger.setLevel(logging.DEBUG)  # Capture everything
+
+# Console handler: INFO and above
+console = logging.StreamHandler()
+console.setLevel(logging.INFO)
+console.setFormatter(logging.Formatter(
+    "%(levelname)-8s %(message)s"
+))
+
+# File handler: DEBUG and above
+file_handler = logging.FileHandler("/tmp/myapp.log")
+file_handler.setLevel(logging.DEBUG)
+file_handler.setFormatter(logging.Formatter(
+    "%(asctime)s %(name)s %(levelname)-8s %(message)s"
+))
+
+logger.addHandler(console)
+logger.addHandler(file_handler)
+
+logger.debug("This goes to file only")
+logger.info("This goes to both console and file")
+logger.error("Errors go everywhere")</pre>
+    <div class="output"><div class="output-label">Output (console)</div>INFO     This goes to both console and file
+ERROR    Errors go everywhere</div>
+
+    <div class="challenge">
+      <div class="challenge-label">Challenge</div>
+      <p>Set up a logging configuration where <code>INFO+</code> messages go to the console and <code>DEBUG+</code> messages go to a file. Include timestamps in the file format but not in the console format.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>#1 Pitfall:</strong> Calling <code>logging.basicConfig()</code> after a handler has already been added to the root logger is a no-op. This commonly happens when a library configures logging before your <code>basicConfig</code> call. Always set up handlers explicitly with <code>getLogger()</code> for reliable control.
+    </div>
+  </div>
+
+  <!-- Review 5: Classes — __eq__ and __hash__ -->
+  <div class="concept" id="review-classes-eq-hash">
+    <div class="concept-header">
+      <h3>Classes &mdash; __eq__ and __hash__</h3>
+      <span class="concept-meta">OOP &bull; 4 days overdue &bull; rep 1</span>
+    </div>
+
+    <h4>Quick Reminder</h4>
+    <p>Defining <code>__eq__</code> makes <code>==</code> compare by value instead of identity. However, defining <code>__eq__</code> without <code>__hash__</code> makes instances unhashable (cannot be used as dict keys or in sets). For hashable value objects: implement both <code>__eq__</code> and <code>__hash__</code>, and ensure that equal objects always have equal hashes. Mutable objects generally should not be hashable.</p>
+
+    <h4>Key Pattern &mdash; Hashable Point Class</h4>
+<pre>class Point:
+    def __init__(self, x, y):
+        self.x = x
+        self.y = y
+
+    def __eq__(self, other):
+        if not isinstance(other, Point):
+            return NotImplemented
+        return self.x == other.x and self.y == other.y
+
+    def __hash__(self):
+        return hash((self.x, self.y))
+
+    def __repr__(self):
+        return f"Point({self.x}, {self.y})"
+
+# Works as dict key and in sets
+p1 = Point(1, 2)
+p2 = Point(1, 2)
+p3 = Point(3, 4)
+
+print(p1 == p2)              # True
+print({p1, p2, p3})          # {Point(1, 2), Point(3, 4)}
+print({p1: "origin"}[p2])    # origin (same hash + equal)</pre>
+    <div class="output"><div class="output-label">Output</div>True
+{Point(1, 2), Point(3, 4)}
+origin</div>
+
+    <div class="challenge">
+      <div class="challenge-label">Challenge</div>
+      <p>Create a <code>Point</code> class that works correctly as a dict key. Create two <code>Point(1, 2)</code> instances, use one as a dict key, and look up the value using the other instance.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>#1 Pitfall:</strong> Defining <code>__eq__</code> without <code>__hash__</code> makes your class unhashable. Python sets <code>__hash__ = None</code> when you define <code>__eq__</code> because mutable equality comparisons and hashing are generally incompatible. You must explicitly define <code>__hash__</code> to restore hashability.
+    </div>
+  </div>
+
+  <!-- Review 6: Type Hints — Optional, Union -->
+  <div class="concept" id="review-type-hints-optional">
+    <div class="concept-header">
+      <h3>Type Hints &mdash; Optional, Union</h3>
+      <span class="concept-meta">Type System &bull; 4 days overdue &bull; rep 1</span>
+    </div>
+
+    <h4>Quick Reminder</h4>
+    <p>In Python 3.10+, use <code>X | Y</code> instead of <code>Union[X, Y]</code>. <code>Optional[X]</code> is shorthand for <code>X | None</code> &mdash; it means the value can be <code>X</code> or <code>None</code>, not that the parameter is optional. Use <code>TypeGuard</code> for type-narrowing functions that tell the type checker a value is a specific type after a runtime check.</p>
+
+    <h4>Key Pattern &mdash; Union Types &amp; Type Narrowing</h4>
+<pre>from typing import TypeGuard
+
+# Python 3.10+ union syntax
+def parse_id(raw: str | int) -> int:
+    if isinstance(raw, str):
+        return int(raw)
+    return raw
+
+# Optional means "X or None"
+def find_user(user_id: int) -> dict | None:
+    users = {1: {"name": "Alice"}, 2: {"name": "Bob"}}
+    return users.get(user_id)
+
+# TypeGuard for custom narrowing
+def is_str_list(val: list[object]) -> TypeGuard[list[str]]:
+    return all(isinstance(x, str) for x in val)
+
+data: list[object] = ["a", "b", "c"]
+if is_str_list(data):
+    # type checker knows data is list[str] here
+    print(", ".join(data))  # a, b, c
+
+print(parse_id("42"))         # 42
+print(find_user(1))           # {'name': 'Alice'}
+print(find_user(999))         # None</pre>
+    <div class="output"><div class="output-label">Output</div>a, b, c
+42
+{'name': 'Alice'}
+None</div>
+
+    <div class="challenge">
+      <div class="challenge-label">Challenge</div>
+      <p>Type a function that accepts either a single string or a list of strings and always returns a list of strings. If given a string, wrap it in a list. Use the <code>X | Y</code> syntax.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>#1 Pitfall:</strong> <code>Optional[X]</code> means <code>X | None</code>, not that the parameter can be omitted. A parameter with a default value is optional (can be omitted), but <code>Optional[int]</code> just means the <em>type</em> can be <code>int</code> or <code>None</code>.
+    </div>
+  </div>
+
+</div><!-- end review section -->
+
+
+<!-- ============================================================ -->
+<!-- NEW CONCEPTS SECTION -->
+<!-- ============================================================ -->
+<div class="section">
+  <span class="section-label new">New</span>
+  <h2 class="section-title">New Concepts &mdash; 5 Topics</h2>
+
+  <!-- New 1: Metaclasses -->
+  <div class="concept" id="metaclasses">
+    <div class="concept-header">
+      <h3>Metaclasses</h3>
+      <span class="concept-meta">Advanced Topics &bull; New today</span>
+    </div>
+
+    <h4>Why It Matters</h4>
+    <p>Metaclasses control how classes themselves are created. They are the "class of a class." Understanding metaclasses explains the deepest level of Python's object model, even though you will rarely need to write one in practice. Most use cases are better served by <code>__init_subclass__</code> or class decorators.</p>
+
+    <h4>type() as the Default Metaclass</h4>
+    <p>Every class in Python is an instance of <code>type</code>. You can create classes dynamically by calling <code>type(name, bases, namespace)</code>:</p>
+
+<pre># Normal class creation
+class Dog:
+    sound = "woof"
+    def speak(self):
+        return self.sound
+
+# Equivalent dynamic creation with type()
+Dog2 = type("Dog2", (), {
+    "sound": "woof",
+    "speak": lambda self: self.sound,
+})
+
+d1 = Dog()
+d2 = Dog2()
+print(f"Dog: {d1.speak()}")       # woof
+print(f"Dog2: {d2.speak()}")      # woof
+print(f"type(Dog): {type(Dog)}")  # &lt;class 'type'&gt;
+print(f"type(Dog2): {type(Dog2)}")  # &lt;class 'type'&gt;</pre>
+    <div class="output"><div class="output-label">Output</div>Dog: woof
+Dog2: woof
+type(Dog): &lt;class 'type'&gt;
+type(Dog2): &lt;class 'type'&gt;</div>
+
+    <h4>Custom Metaclass &mdash; Auto-Registry</h4>
+    <p>A custom metaclass inherits from <code>type</code> and overrides <code>__new__</code> (called to create the class) or <code>__init__</code> (called after creation). This pattern lets you intercept class creation to register, validate, or transform classes automatically.</p>
+
+<pre>class RegistryMeta(type):
+    """Metaclass that auto-registers all subclasses."""
+    _registry = {}
+
+    def __new__(mcs, name, bases, namespace):
+        cls = super().__new__(mcs, name, bases, namespace)
+        # Don't register the base class itself
+        if bases:
+            RegistryMeta._registry[name] = cls
+        return cls
+
+class Plugin(metaclass=RegistryMeta):
+    """Base class for plugins."""
+    pass
+
+class JSONPlugin(Plugin):
+    format = "json"
+
+class XMLPlugin(Plugin):
+    format = "xml"
+
+class CSVPlugin(Plugin):
+    format = "csv"
+
+print("Registered plugins:")
+for name, cls in RegistryMeta._registry.items():
+    print(f"  {name} -> {cls.format}")</pre>
+    <div class="output"><div class="output-label">Output</div>Registered plugins:
+  JSONPlugin -> json
+  XMLPlugin -> xml
+  CSVPlugin -> csv</div>
+
+    <h4>Singleton via Metaclass</h4>
+<pre>class SingletonMeta(type):
+    _instances = {}
+
+    def __call__(cls, *args, **kwargs):
+        if cls not in cls._instances:
+            cls._instances[cls] = super().__call__(*args, **kwargs)
+        return cls._instances[cls]
+
+class Database(metaclass=SingletonMeta):
+    def __init__(self):
+        self.connection = "connected"
+
+db1 = Database()
+db2 = Database()
+print(f"Same instance? {db1 is db2}")      # True
+print(f"Connection: {db1.connection}")      # connected</pre>
+    <div class="output"><div class="output-label">Output</div>Same instance? True
+Connection: connected</div>
+
+    <h4>__init_subclass__ &mdash; The Simpler Alternative</h4>
+    <p>Python 3.6+ provides <code>__init_subclass__</code> as a hook that runs when a class is subclassed, without needing a metaclass. Prefer this for most registry and validation patterns:</p>
+
+<pre>class Plugin:
+    _registry = {}
+
+    def __init_subclass__(cls, **kwargs):
+        super().__init_subclass__(**kwargs)
+        if hasattr(cls, "format"):
+            Plugin._registry[cls.format] = cls
+
+class JSONPlugin(Plugin):
+    format = "json"
+
+class XMLPlugin(Plugin):
+    format = "xml"
+
+print("Registry:", Plugin._registry)
+# {'json': &lt;class 'JSONPlugin'&gt;, 'xml': &lt;class 'XMLPlugin'&gt;}</pre>
+    <div class="output"><div class="output-label">Output</div>Registry: {'json': &lt;class 'JSONPlugin'&gt;, 'xml': &lt;class 'XMLPlugin'&gt;}</div>
+
+    <h4>Key Rules</h4>
+    <ul class="rules-list">
+      <li>Use <code>__init_subclass__</code> or class decorators before reaching for metaclasses.</li>
+      <li>Metaclasses are appropriate when you need to control class creation at a fundamental level (e.g., ORMs, API frameworks).</li>
+      <li>Override <code>__new__</code> to modify the class before it is created; override <code>__init__</code> to modify it after.</li>
+      <li>A class can only have one metaclass &mdash; metaclass conflicts arise with multiple inheritance if bases use different metaclasses.</li>
+    </ul>
+
+    <div class="pitfall">
+      <strong>#1 Pitfall:</strong> Using a metaclass when <code>__init_subclass__</code> or a class decorator would suffice. Metaclasses add complexity and can cause conflicts with other metaclasses during multiple inheritance. Reach for simpler tools first.
+    </div>
+
+    <div class="connection">
+      <strong>Connection:</strong> This builds on the <em>Metaprogramming: __init_subclass__ &amp; __class_getitem__</em> concept from Day 10, showing the deeper mechanism that <code>__init_subclass__</code> was designed to replace. It also relates to <em>Descriptors</em> from Day 6 &mdash; both are mechanisms for controlling Python's object system at the meta-level.
+    </div>
+
+    <div class="exercise">
+      <div class="exercise-label">Exercise 1</div>
+      <p>Create a metaclass <code>NoUnderscoreMeta</code> that raises <code>TypeError</code> during class creation if any class attribute starts with an underscore (excluding dunder methods like <code>__init__</code>). Test it by trying to create a class with a <code>_private</code> attribute.</p>
+    </div>
+
+    <div class="exercise">
+      <div class="exercise-label">Exercise 2</div>
+      <p>Implement a plugin registry using <code>__init_subclass__</code>. The base class should store a mapping of <code>name -&gt; class</code> and provide a <code>get_plugin(name)</code> class method. Create three plugin subclasses and look them up by name.</p>
+    </div>
+  </div>
+
+  <!-- New 2: Async Generators & async for -->
+  <div class="concept" id="async-generators">
+    <div class="concept-header">
+      <h3>Async Generators &amp; async for</h3>
+      <span class="concept-meta">Concurrency &bull; New today</span>
+    </div>
+
+    <h4>Why It Matters</h4>
+    <p>Async generators combine lazy iteration with asynchronous I/O. They are perfect for streaming data from APIs, databases, or message queues where each item requires an <code>await</code> to fetch but you want to process results one at a time without loading everything into memory.</p>
+
+    <h4>Basic Async Generator</h4>
+    <p>An async generator is defined with <code>async def</code> and uses <code>yield</code>. You consume it with <code>async for</code>:</p>
+
+<pre>import asyncio
+
+async def countdown(n):
+    """Async generator that counts down with delays."""
+    while n > 0:
+        await asyncio.sleep(0.1)  # simulate async work
+        yield n
+        n -= 1
+
+async def main():
+    async for value in countdown(5):
+        print(f"  {value}...", end="")
+    print(" Go!")
+
+asyncio.run(main())</pre>
+    <div class="output"><div class="output-label">Output</div>  5...  4...  3...  2...  1... Go!</div>
+
+    <h4>Simulated Paginated API</h4>
+<pre>import asyncio
+
+async def fetch_pages(total_pages=3, items_per_page=2):
+    """Simulate fetching paginated API results."""
+    for page in range(1, total_pages + 1):
+        await asyncio.sleep(0.05)  # simulate network delay
+        items = [
+            {"id": (page - 1) * items_per_page + i, "name": f"item_{(page - 1) * items_per_page + i}"}
+            for i in range(1, items_per_page + 1)
+        ]
+        print(f"  Fetched page {page}")
+        for item in items:
+            yield item
+
+async def main():
+    results = []
+    async for item in fetch_pages():
+        results.append(item)
+    print(f"Total items: {len(results)}")
+    for r in results:
+        print(f"  {r}")
+
+asyncio.run(main())</pre>
+    <div class="output"><div class="output-label">Output</div>  Fetched page 1
+  Fetched page 2
+  Fetched page 3
+Total items: 6
+  {'id': 1, 'name': 'item_1'}
+  {'id': 2, 'name': 'item_2'}
+  {'id': 3, 'name': 'item_3'}
+  {'id': 4, 'name': 'item_4'}
+  {'id': 5, 'name': 'item_5'}
+  {'id': 6, 'name': 'item_6'}</div>
+
+    <h4>aiter() and anext() Built-ins (3.10+)</h4>
+<pre>import asyncio
+
+async def numbers():
+    for i in range(1, 6):
+        await asyncio.sleep(0.01)
+        yield i
+
+async def main():
+    gen = numbers()
+    # Manual iteration with aiter/anext
+    ait = aiter(gen)
+    first = await anext(ait)
+    second = await anext(ait)
+    print(f"First two: {first}, {second}")
+
+    # anext with default (like next())
+    rest = []
+    while True:
+        val = await anext(ait, None)
+        if val is None:
+            break
+        rest.append(val)
+    print(f"Rest: {rest}")
+
+asyncio.run(main())</pre>
+    <div class="output"><div class="output-label">Output</div>First two: 1, 2
+Rest: [3, 4, 5]</div>
+
+    <h4>Async Context Manager with @asynccontextmanager</h4>
+<pre>import asyncio
+from contextlib import asynccontextmanager
+
+@asynccontextmanager
+async def managed_connection(name):
+    print(f"  Opening connection to {name}...")
+    await asyncio.sleep(0.05)  # simulate connection
+    conn = {"name": name, "status": "open"}
+    try:
+        yield conn
+    finally:
+        await asyncio.sleep(0.02)  # simulate cleanup
+        conn["status"] = "closed"
+        print(f"  Closed connection to {name}")
+
+async def main():
+    async with managed_connection("database") as conn:
+        print(f"  Using: {conn}")
+    print("  Done!")
+
+asyncio.run(main())</pre>
+    <div class="output"><div class="output-label">Output</div>  Opening connection to database...
+  Using: {'name': 'database', 'status': 'open'}
+  Closed connection to database
+  Done!</div>
+
+    <h4>Key Rules</h4>
+    <ul class="rules-list">
+      <li>Use <code>async for</code> to consume async generators &mdash; regular <code>for</code> will not work.</li>
+      <li>Every <code>yield</code> in an async generator can be preceded by <code>await</code> calls.</li>
+      <li>Use <code>async with</code> for resources that need async setup and teardown.</li>
+      <li><code>aiter()</code> and <code>anext()</code> (Python 3.10+) are the async equivalents of <code>iter()</code> and <code>next()</code>.</li>
+    </ul>
+
+    <div class="pitfall">
+      <strong>#1 Pitfall:</strong> Forgetting <code>await</code> inside an async generator. If you call a coroutine without <code>await</code>, you get a coroutine object instead of the result, and Python will emit a "coroutine was never awaited" warning. Always <code>await</code> async calls inside async generators.
+    </div>
+
+    <div class="connection">
+      <strong>Connection:</strong> This extends the <em>async/await Basics</em> from Day 8 with lazy iteration. It also connects to <em>Generator Expressions</em> from Day 2 &mdash; async generators are the async equivalent of sync generators, using the same <code>yield</code> keyword but requiring <code>async def</code> and <code>async for</code>.
+    </div>
+
+    <div class="exercise">
+      <div class="exercise-label">Exercise 1</div>
+      <p>Write an async generator that yields Fibonacci numbers with a 0.1-second delay between each. Consume the first 10 values using <code>async for</code> and print them.</p>
+    </div>
+
+    <div class="exercise">
+      <div class="exercise-label">Exercise 2</div>
+      <p>Write an async generator that simulates reading from a paginated API: each "page" has 3 items, there are 4 pages total, and fetching each page takes 0.05 seconds. Collect all items into a list.</p>
+    </div>
+  </div>
+
+  <!-- New 3: multiprocessing Patterns -->
+  <div class="concept" id="multiprocessing-patterns">
+    <div class="concept-header">
+      <h3>multiprocessing Patterns</h3>
+      <span class="concept-meta">Concurrency &amp; Performance &bull; New today</span>
+    </div>
+
+    <h4>Why It Matters</h4>
+    <p><code>multiprocessing</code> creates separate processes, each with its own Python interpreter and GIL. This gives true CPU parallelism on multi-core machines, unlike <code>threading</code> which is limited by the GIL for CPU-bound work.</p>
+
+    <h4>Basic Process</h4>
+<pre>from multiprocessing import Process
+import os
+
+def worker(name):
+    print(f"Worker {name}: PID={os.getpid()}, Parent={os.getppid()}")
+
+if __name__ == "__main__":
+    print(f"Main process: PID={os.getpid()}")
+    procs = []
+    for i in range(3):
+        p = Process(target=worker, args=(f"P{i}",))
+        procs.append(p)
+        p.start()
+
+    for p in procs:
+        p.join()
+    print("All workers done")</pre>
+    <div class="output"><div class="output-label">Output</div>Main process: PID=12345
+Worker P0: PID=12346, Parent=12345
+Worker P1: PID=12347, Parent=12345
+Worker P2: PID=12348, Parent=12345
+All workers done</div>
+
+    <h4>Pool.map for Parallel Computation</h4>
+    <p><code>Pool.map(func, iterable)</code> distributes work across a pool of worker processes, similar to the built-in <code>map()</code> but parallel:</p>
+
+<pre>from multiprocessing import Pool
+import time
+
+def heavy_computation(n):
+    """CPU-bound: sum of squares up to n."""
+    return sum(i * i for i in range(n))
+
+if __name__ == "__main__":
+    numbers = [5_000_000] * 4
+
+    # Sequential
+    start = time.perf_counter()
+    sequential = list(map(heavy_computation, numbers))
+    seq_time = time.perf_counter() - start
+
+    # Parallel with Pool
+    start = time.perf_counter()
+    with Pool(processes=4) as pool:
+        parallel = pool.map(heavy_computation, numbers)
+    par_time = time.perf_counter() - start
+
+    print(f"Sequential: {seq_time:.3f}s")
+    print(f"Parallel:   {par_time:.3f}s")
+    print(f"Speedup:    {seq_time / par_time:.1f}x")
+    print(f"Results match: {sequential == parallel}")</pre>
+    <div class="output"><div class="output-label">Output</div>Sequential: 1.248s
+Parallel:   0.387s
+Speedup:    3.2x
+Results match: True</div>
+
+    <h4>Queue for Producer-Consumer</h4>
+<pre>from multiprocessing import Process, Queue
+import time
+
+def producer(queue, items):
+    for item in items:
+        time.sleep(0.01)  # simulate work
+        queue.put(item)
+        print(f"  Produced: {item}")
+    queue.put(None)  # sentinel
+
+def consumer(queue):
+    results = []
+    while True:
+        item = queue.get()
+        if item is None:
+            break
+        results.append(item * 2)
+        print(f"  Consumed: {item} -> {item * 2}")
+    return results
+
+if __name__ == "__main__":
+    q = Queue()
+    items = [1, 2, 3, 4, 5]
+
+    prod = Process(target=producer, args=(q, items))
+    cons = Process(target=consumer, args=(q,))
+
+    prod.start()
+    cons.start()
+
+    prod.join()
+    cons.join()
+    print("Done!")</pre>
+    <div class="output"><div class="output-label">Output</div>  Produced: 1
+  Consumed: 1 -> 2
+  Produced: 2
+  Consumed: 2 -> 4
+  Produced: 3
+  Consumed: 3 -> 6
+  Produced: 4
+  Consumed: 4 -> 8
+  Produced: 5
+  Consumed: 5 -> 10
+Done!</div>
+
+    <h4>Shared State with Value and Lock</h4>
+<pre>from multiprocessing import Process, Value, Lock
+
+def increment(counter, lock, n):
+    for _ in range(n):
+        with lock:
+            counter.value += 1
+
+if __name__ == "__main__":
+    counter = Value('i', 0)  # shared integer, initial value 0
+    lock = Lock()
+    n_per_process = 100_000
+
+    procs = [
+        Process(target=increment, args=(counter, lock, n_per_process))
+        for _ in range(4)
+    ]
+
+    for p in procs:
+        p.start()
+    for p in procs:
+        p.join()
+
+    print(f"Expected: {4 * n_per_process}")
+    print(f"Actual:   {counter.value}")
+    print(f"Correct:  {counter.value == 4 * n_per_process}")</pre>
+    <div class="output"><div class="output-label">Output</div>Expected: 400000
+Actual:   400000
+Correct:  True</div>
+
+    <h4>Key Rules</h4>
+    <ul class="rules-list">
+      <li>Always use <code>if __name__ == "__main__"</code> guard &mdash; without it, child processes re-import the module and cause infinite spawning on Windows/macOS.</li>
+      <li>Arguments passed to processes must be picklable (no lambdas, no open file handles).</li>
+      <li>Use <code>Pool.map</code> for simple data parallelism; use <code>Queue</code> for producer-consumer patterns.</li>
+      <li>Shared state (<code>Value</code>, <code>Array</code>) requires explicit locking to avoid race conditions.</li>
+      <li>Prefer <code>concurrent.futures.ProcessPoolExecutor</code> for a higher-level API.</li>
+    </ul>
+
+    <div class="pitfall">
+      <strong>#1 Pitfall:</strong> Forgetting the <code>if __name__ == "__main__"</code> guard. On macOS and Windows (which use "spawn" to start new processes), the child process re-imports the module. Without the guard, this triggers infinite process creation until the system runs out of resources.
+    </div>
+
+    <div class="connection">
+      <strong>Connection:</strong> This complements <em>CPython Internals: GIL &amp; Reference Counting</em> from Day 11. The GIL prevents threading from achieving CPU parallelism, making <code>multiprocessing</code> the go-to solution. It also relates to <em>concurrent.futures</em> from Day 8, which provides a simpler interface over <code>multiprocessing.Pool</code>.
+    </div>
+
+    <div class="exercise">
+      <div class="exercise-label">Exercise 1</div>
+      <p>Use <code>Pool.map</code> to compute the squares of numbers 1 through 1,000,000. Time it against a sequential <code>list(map(...))</code> and print the speedup ratio.</p>
+    </div>
+
+    <div class="exercise">
+      <div class="exercise-label">Exercise 2</div>
+      <p>Implement a producer-consumer pattern with <code>multiprocessing.Queue</code>. The producer should put numbers 1-20 into the queue. The consumer should read items, square them, and collect the results. Use a sentinel value (<code>None</code>) to signal completion.</p>
+    </div>
+  </div>
+
+  <!-- New 4: Packaging & Distribution -->
+  <div class="concept" id="packaging-distribution">
+    <div class="concept-header">
+      <h3>Packaging &amp; Distribution</h3>
+      <span class="concept-meta">Tooling &bull; New today</span>
+    </div>
+
+    <h4>Why It Matters</h4>
+    <p>Packaging lets you share Python code as installable libraries or command-line tools via PyPI. Understanding <code>pyproject.toml</code>, entry points, and build tools is essential for any Python developer who creates reusable code.</p>
+
+    <h4>Minimal pyproject.toml (PEP 621)</h4>
+    <p>The modern way to configure a Python package is <code>pyproject.toml</code>, replacing <code>setup.py</code> and <code>setup.cfg</code>:</p>
+
+<pre>[build-system]
+requires = ["setuptools>=68.0", "wheel"]
+build-backend = "setuptools.backends._legacy:_Backend"
+
+[project]
+name = "mypackage"
+version = "0.1.0"
+description = "A short description of my package"
+readme = "README.md"
+requires-python = ">=3.10"
+license = {text = "MIT"}
+authors = [
+    {name = "Your Name", email = "you@example.com"},
+]
+dependencies = [
+    "requests>=2.28",
+    "click>=8.0",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=7.0", "ruff"]
+
+[project.scripts]
+mycli = "mypackage.cli:main"</pre>
+
+    <h4>Package Structure</h4>
+<pre>mypackage/
+    pyproject.toml
+    README.md
+    src/
+        mypackage/
+            __init__.py
+            cli.py
+            core.py
+    tests/
+        test_core.py</pre>
+
+    <h4>CLI Entry Point</h4>
+    <p>The <code>[project.scripts]</code> table creates console scripts. When the package is installed, <code>mycli</code> becomes available as a command:</p>
+
+<pre># src/mypackage/cli.py
+import click
+from mypackage.core import process
+
+@click.command()
+@click.argument("name")
+@click.option("--greeting", default="Hello", help="Greeting to use")
+def main(name, greeting):
+    """Greet someone from the CLI."""
+    result = process(name, greeting)
+    click.echo(result)
+
+# After pip install: $ mycli Alice --greeting Hi
+# Output: Hi, Alice!</pre>
+
+    <h4>__main__.py for python -m</h4>
+    <p>Adding <code>__main__.py</code> lets users run your package with <code>python -m mypackage</code>:</p>
+
+<pre># src/mypackage/__main__.py
+from mypackage.cli import main
+
+if __name__ == "__main__":
+    main()
+
+# Usage: python -m mypackage Alice --greeting Hey</pre>
+
+    <h4>Building &amp; Publishing</h4>
+<pre># Install build tools
+pip install build twine
+
+# Build the package (creates dist/ with .whl and .tar.gz)
+python -m build
+
+# Check the package for common issues
+twine check dist/*
+
+# Upload to TestPyPI first
+twine upload --repository testpypi dist/*
+
+# Upload to real PyPI
+twine upload dist/*</pre>
+
+    <h4>Key Rules</h4>
+    <ul class="rules-list">
+      <li>Use <code>pyproject.toml</code> (PEP 621) instead of <code>setup.py</code> for new projects.</li>
+      <li>Use the <code>src/</code> layout to prevent accidental imports from the project root.</li>
+      <li>Pin minimum versions of dependencies (<code>requests>=2.28</code>), not exact versions.</li>
+      <li>Use <code>[project.scripts]</code> for CLI entry points and <code>__main__.py</code> for <code>python -m</code> support.</li>
+      <li>Always test on TestPyPI before publishing to the real PyPI.</li>
+    </ul>
+
+    <div class="pitfall">
+      <strong>#1 Pitfall:</strong> Forgetting <code>__init__.py</code> in package directories. Without it, Python will not recognize the directory as a package (in non-namespace-package mode). Also, using <code>setup.py</code> when <code>pyproject.toml</code> handles everything is outdated practice that adds unnecessary complexity.
+    </div>
+
+    <div class="connection">
+      <strong>Connection:</strong> This builds on <em>Virtual Environments &amp; pyproject.toml</em> from Day 10. That concept covered how to consume packages; this one covers how to create and publish them. The <code>[project.scripts]</code> entry points connect to <em>argparse for CLI Tools</em> from Day 8.
+    </div>
+
+    <div class="exercise">
+      <div class="exercise-label">Exercise 1</div>
+      <p>Write a complete <code>pyproject.toml</code> for a library called <code>mathutils</code> that depends on <code>numpy>=1.24</code> and <code>scipy>=1.10</code>, has a CLI entry point <code>mathcli</code> pointing to <code>mathutils.cli:main</code>, and requires Python 3.10+.</p>
+    </div>
+
+    <div class="exercise">
+      <div class="exercise-label">Exercise 2</div>
+      <p>Create a minimal package directory structure with <code>__init__.py</code>, <code>__main__.py</code>, and a <code>core.py</code> module. The <code>__main__.py</code> should call a function from <code>core.py</code> that prints "Running via python -m". Verify it works with <code>python -m yourpackage</code>.</p>
+    </div>
+  </div>
+
+  <!-- New 5: Debugging: pdb & breakpoint() -->
+  <div class="concept" id="debugging-pdb">
+    <div class="concept-header">
+      <h3>Debugging: pdb &amp; breakpoint()</h3>
+      <span class="concept-meta">Tooling &bull; New today</span>
+    </div>
+
+    <h4>Why It Matters</h4>
+    <p><code>breakpoint()</code> drops you into an interactive debugger at any point in your code. It is far more powerful than <code>print()</code> debugging because you can inspect variables, step through code line by line, evaluate expressions, and examine the call stack &mdash; all without restarting your program.</p>
+
+    <h4>breakpoint() Basics (Python 3.7+)</h4>
+    <p>Insert <code>breakpoint()</code> anywhere in your code. When execution reaches that line, Python drops into the pdb interactive debugger:</p>
+
+<pre>def find_bug(numbers):
+    total = 0
+    for i, n in enumerate(numbers):
+        total += n
+        if total > 10:
+            breakpoint()  # Drops into debugger here
+            # In the debugger, you can:
+            # (Pdb) p total      -> print total
+            # (Pdb) p i          -> print current index
+            # (Pdb) p numbers    -> print the list
+            # (Pdb) n            -> execute next line
+            # (Pdb) c            -> continue to next breakpoint or end
+    return total
+
+# When running:
+# find_bug([3, 5, 4, 2, 8])</pre>
+
+    <h4>Essential pdb Commands</h4>
+<pre># Navigation
+n             # (next) Execute current line, step OVER function calls
+s             # (step) Execute current line, step INTO function calls
+c             # (continue) Run until next breakpoint or end
+r             # (return) Run until current function returns
+unt 42        # (until) Run until line 42
+
+# Inspection
+p expr        # Print value of expression
+pp expr       # Pretty-print value of expression
+l             # List 11 lines of source around current line
+l 1, 20       # List lines 1-20
+w             # (where) Print full stack trace
+u             # (up) Move one frame up in the stack
+d             # (down) Move one frame down in the stack
+
+# Breakpoints
+b 42          # Set breakpoint at line 42
+b mymod.py:42 # Set breakpoint at line 42 of mymod.py
+b func        # Set breakpoint at first line of func
+condition 1 x > 5   # Breakpoint 1 only triggers when x > 5
+cl 1          # Clear breakpoint 1
+b             # List all breakpoints
+
+# Control
+q             # Quit debugger (and program)
+!stmt         # Execute a Python statement</pre>
+
+    <h4>Conditional Breakpoints</h4>
+<pre>def process_items(items):
+    results = []
+    for i, item in enumerate(items):
+        value = item ** 2
+        # Only break when we hit a specific condition
+        if value > 50:
+            breakpoint()
+            # (Pdb) p i, item, value
+            # (Pdb) c  -> continue to next occurrence
+        results.append(value)
+    return results
+
+# Alternatively, set a conditional breakpoint in pdb:
+# (Pdb) b 5, value > 50
+# This is cleaner than adding if-statements in code</pre>
+
+    <h4>Post-Mortem Debugging</h4>
+    <p>When an exception crashes your program, <code>pdb.pm()</code> lets you inspect the state at the point of failure:</p>
+
+<pre>import pdb
+
+def divide_all(numbers, divisor):
+    return [n / divisor for n in numbers]
+
+# In a REPL or script:
+try:
+    divide_all([1, 2, 3], 0)
+except ZeroDivisionError:
+    pdb.pm()
+    # Now you can inspect the state at the moment of the crash:
+    # (Pdb) p divisor    -> 0
+    # (Pdb) p numbers    -> [1, 2, 3]
+    # (Pdb) w            -> see the full traceback</pre>
+
+    <h4>PYTHONBREAKPOINT Environment Variable</h4>
+<pre># Disable all breakpoints (for production)
+# PYTHONBREAKPOINT=0 python my_script.py
+
+# Use a different debugger (e.g., ipdb)
+# PYTHONBREAKPOINT=ipdb.set_trace python my_script.py
+
+# Use web debugger
+# PYTHONBREAKPOINT=web_pdb.set_trace python my_script.py
+
+import os
+# Programmatically check if debugging is disabled
+print(f"PYTHONBREAKPOINT = {os.environ.get('PYTHONBREAKPOINT', '(not set)')}")
+# Default: calls pdb.set_trace
+# "0": breakpoint() does nothing
+# "module.function": calls that function instead</pre>
+
+    <h4>Key Rules</h4>
+    <ul class="rules-list">
+      <li>Use <code>breakpoint()</code> instead of <code>import pdb; pdb.set_trace()</code> &mdash; it respects <code>PYTHONBREAKPOINT</code>.</li>
+      <li>Learn the core commands: <code>n</code> (next), <code>s</code> (step), <code>c</code> (continue), <code>p</code> (print), <code>l</code> (list), <code>w</code> (where).</li>
+      <li>Use <code>pdb.pm()</code> after an exception to inspect the crash site without rerunning.</li>
+      <li>Set <code>PYTHONBREAKPOINT=0</code> in production to disable all breakpoints.</li>
+      <li>Never commit <code>breakpoint()</code> calls to production code. Use a pre-commit hook to catch them.</li>
+    </ul>
+
+    <div class="pitfall">
+      <strong>#1 Pitfall:</strong> Leaving <code>breakpoint()</code> calls in production code. Unlike print statements (which just add noise), a breakpoint will halt your program and wait for interactive input, effectively freezing a production server. Use a linter or pre-commit hook to catch stray <code>breakpoint()</code> calls.
+    </div>
+
+    <div class="connection">
+      <strong>Connection:</strong> Debugging complements <em>Profiling with timeit &amp; cProfile</em> from Day 8 &mdash; profiling tells you <em>where</em> the problem is, and pdb lets you understand <em>why</em>. The <code>w</code> (where) command shows the call stack, which connects to understanding <em>Closures &amp; nonlocal</em> (Day 6) since you can inspect variables in enclosing scopes.
+    </div>
+
+    <div class="exercise">
+      <div class="exercise-label">Exercise 1</div>
+      <p>Write a recursive Fibonacci function. Add <code>breakpoint()</code> inside it. When the debugger starts, use the <code>w</code> command to examine the call stack and observe how recursion builds up frames. Use <code>c</code> to continue and observe multiple breaks.</p>
+    </div>
+
+    <div class="exercise">
+      <div class="exercise-label">Exercise 2</div>
+      <p>Write a function that sorts a list using bubble sort but has a deliberate bug (e.g., wrong comparison or wrong loop bounds). Use <code>breakpoint()</code> and pdb commands (<code>p</code>, <code>n</code>, <code>l</code>) to identify exactly where the bug causes incorrect behavior. Describe the debugging steps you would take.</p>
+    </div>
+  </div>
+
+</div><!-- end new concepts section -->
+
+
+<!-- ============================================================ -->
+<!-- FOOTER -->
+<!-- ============================================================ -->
+<div class="footer">
+  <h4>All Python Study Guides</h4>
+    <ul>
+    <li><a href="python-guides/python-guide-2026-07-09.html">2026-07-09</a> (Day 39)</li>
+    <li><a href="python-guides/python-guide-2026-07-08.html">2026-07-08</a> (Day 38)</li>
+    <li><a href="python-guides/python-guide-2026-07-07.html">2026-07-07</a> (Day 37)</li>
+    <li><a href="python-guides/python-guide-2026-07-06.html">2026-07-06</a> (Day 36)</li>
+    <li><a href="python-guides/python-guide-2026-07-05.html">2026-07-05</a> (Day 35)</li>
+    <li><a href="python-guides/python-guide-2026-07-04.html">2026-07-04</a> (Day 34)</li>
+    <li><a href="python-guides/python-guide-2026-07-03.html">2026-07-03</a> (Day 33)</li>
+    <li><a href="python-guides/python-guide-2026-07-02.html">2026-07-02</a> (Day 32)</li>
+    <li><a href="python-guides/python-guide-2026-07-01.html">2026-07-01</a> (Day 31)</li>
+    <li><a href="python-guides/python-guide-2026-06-30.html">2026-06-30</a> (Day 30)</li>
+    <li><a href="python-guides/python-guide-2026-06-29.html">2026-06-29</a> (Day 29)</li>
+    <li><a href="python-guides/python-guide-2026-06-28.html">2026-06-28</a> (Day 28)</li>
+    <li><a href="python-guides/python-guide-2026-06-27.html">2026-06-27</a> (Day 27)</li>
+    <li><a href="python-guides/python-guide-2026-06-26.html">2026-06-26</a> (Day 26)</li>
+    <li><a href="python-guides/python-guide-2026-06-25.html">2026-06-25</a> (Day 25)</li>
+    <li><a href="python-guides/python-guide-2026-06-24.html">2026-06-24</a> (Day 24)</li>
+    <li><a href="python-guides/python-guide-2026-06-23.html">2026-06-23</a> (Day 23)</li>
+    <li><a href="python-guides/python-guide-2026-06-22.html">2026-06-22</a> (Day 22)</li>
+    <li><a href="python-guides/python-guide-2026-06-21.html">2026-06-21</a> (Day 21)</li>
+    <li><a href="python-guides/python-guide-2026-06-19.html">2026-06-19</a> (Day 20)</li>
+    <li><a href="python-guides/python-guide-2026-06-18.html">2026-06-18</a> (Day 19)</li>
+    <li><a href="python-guides/python-guide-2026-06-17.html">2026-06-17</a> (Day 18)</li>
+    <li><a href="python-guides/python-guide-2026-06-15.html">2026-06-15</a> (Day 17)</li>
+    <li><a href="python-guides/python-guide-2026-06-13.html">2026-06-13</a> (Day 16)</li>
+    <li><a href="python-guides/python-guide-2026-06-12.html">2026-06-12</a> (Day 15)</li>
+    <li><a href="python-guides/python-guide-2026-06-11.html">2026-06-11</a> (Day 14)</li>
+    <li><a href="python-guides/python-guide-2026-06-10.html">2026-06-10</a> (Day 13)</li>
+    <li class="current"><a href="python-guides/python-guide-2026-06-09.html">2026-06-09</a> </li>
+    <li><a href="python-guides/python-guide-2026-06-08.html">2026-06-08</a> (Day 11)</li>
+    <li><a href="python-guides/python-guide-2026-06-07.html">2026-06-07</a> (Day 10)</li>
+    <li><a href="python-guides/python-guide-2026-06-05.html">2026-06-05</a> (Day 9)</li>
+    <li><a href="python-guides/python-guide-2026-06-04.html">2026-06-04</a> (Day 8)</li>
+    <li><a href="python-guides/python-guide-2026-06-03.html">2026-06-03</a> (Day 7)</li>
+    <li><a href="python-guides/python-guide-2026-06-02.html">2026-06-02</a> (Day 6)</li>
+    <li><a href="python-guides/python-guide-2026-06-01.html">2026-06-01</a> (Day 5)</li>
+    <li><a href="python-guides/python-guide-2026-05-31.html">2026-05-31</a> (Day 4)</li>
+    <li><a href="python-guides/python-guide-2026-05-30.html">2026-05-30</a> (Day 3)</li>
+    <li><a href="python-guides/python-guide-2026-05-29.html">2026-05-29</a> (Day 2)</li>
+    <li><a href="python-guides/python-guide-2026-05-28.html">2026-05-28</a> (Day 1)</li>
+  </ul>
+</div>
+
+</div><!-- end main -->
+
+<script>
+(function() {
+  // ===== Theme Toggle =====
+  var THEME_KEY = 'lc-pyguide-theme';
+  var toggle = document.getElementById('theme-toggle');
+  var html = document.documentElement;
+
+  function setTheme(theme) {
+    html.setAttribute('data-theme', theme);
+    localStorage.setItem(THEME_KEY, theme);
+    toggle.textContent = theme === 'dark' ? '☽' : '☀';
+    toggle.title = theme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme';
+  }
+
+  var saved = localStorage.getItem(THEME_KEY) || 'dark';
+  setTheme(saved);
+
+  toggle.addEventListener('click', function() {
+    var current = html.getAttribute('data-theme');
+    setTheme;
+  });
+
+  // ===== Mobile Sidebar Toggle =====
+  var sidebarToggle = document.getElementById('sidebar-toggle');
+  var sidebar = document.getElementById('sidebar');
+
+  sidebarToggle.addEventListener('click', function() {
+    sidebar.classList.toggle('open');
+  });
+
+  // Close sidebar when clicking a link on mobile
+  sidebar.querySelectorAll('.sidebar-link').forEach(function(link) {
+    link.addEventListener('click', function() {
+      if (window.innerWidth <= 900) {
+        sidebar.classList.remove('open');
+      }
+    });
+  });
+
+  // ===== Active Sidebar Link on Scroll =====
+  var links = document.querySelectorAll('.sidebar-link');
+  var sections = [];
+
+  links.forEach(function(link) {
+    var id = link.getAttribute('href').slice(1);
+    var el = document.getElementById(id);
+    if (el) sections.push({ id: id, el: el, link: link });
+  });
+
+  function updateActive() {
+    var current = null;
+    var scrollY = window.scrollY + 100;
+
+    for (var i = sections.length - 1; i >= 0; i--) {
+      if (sections[i].el.offsetTop <= scrollY) {
+        current = sections[i];
+        break;
+      }
+    }
+
+    links.forEach(function(l) { l.classList.remove('active'); });
+    if  current.link.classList.add('active');
+  }
+
+  window.addEventListener('scroll', updateActive, { passive: true });
+  updateActive();
+})();
+</script>
+
+</body>
+</html>

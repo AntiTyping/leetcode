@@ -1,0 +1,1876 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Python Study Guide &mdash; Day 20 (2026-06-19)</title>
+<style>
+/* ===== CSS Variables ===== */
+:root {
+  --bg: #0d1117;
+  --surface1: #161b22;
+  --surface2: #1c2129;
+  --border: #30363d;
+  --text: #e6edf3;
+  --muted: #8b949e;
+  --accent: #58a6ff;
+  --accent-dim: #1f6feb33;
+  --green: #3fb950;
+  --green-dim: #23863633;
+  --yellow: #d29922;
+  --yellow-dim: #d2992233;
+  --red: #f85149;
+  --red-dim: #f8514933;
+  --purple: #bc8cff;
+  --purple-dim: #bc8cff22;
+  --orange: #f0883e;
+  --orange-dim: #f0883e22;
+  --code-bg: #0d1117;
+  --sidebar-w: 300px;
+  --font-mono: 'SF Mono', 'Cascadia Code', 'Fira Code', Consolas, monospace;
+  --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+  --radius: 8px;
+  --shadow: 0 1px 3px rgba(0,0,0,0.4);
+}
+
+[data-theme="light"] {
+  --bg: #ffffff;
+  --surface1: #f6f8fa;
+  --surface2: #eef1f5;
+  --border: #d0d7de;
+  --text: #1f2328;
+  --muted: #656d76;
+  --accent: #0969da;
+  --accent-dim: #0969da1a;
+  --green: #1a7f37;
+  --green-dim: #1a7f3718;
+  --yellow: #9a6700;
+  --yellow-dim: #9a670018;
+  --red: #cf222e;
+  --red-dim: #cf222e18;
+  --purple: #8250df;
+  --purple-dim: #8250df18;
+  --orange: #bc4c00;
+  --orange-dim: #bc4c0018;
+  --code-bg: #f6f8fa;
+  --shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+/* ===== Reset & Base ===== */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: var(--font-sans);
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.7;
+  font-size: 16px;
+  transition: background 0.2s, color 0.2s;
+}
+
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+/* ===== Theme Toggle ===== */
+#theme-toggle {
+  position: fixed;
+  top: 16px;
+  right: 20px;
+  z-index: 1000;
+  background: var(--surface1);
+  border: 1px solid var(--border);
+  color: var(--text);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+  box-shadow: var(--shadow);
+}
+#theme-toggle:hover { background: var(--surface2); border-color: var(--accent); }
+
+/* ===== Sidebar ===== */
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: var(--sidebar-w);
+  height: 100vh;
+  background: var(--surface1);
+  border-right: 1px solid var(--border);
+  overflow-y: auto;
+  padding: 20px 0;
+  z-index: 100;
+  transition: transform 0.3s;
+}
+
+.sidebar-header {
+  padding: 0 20px 16px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 12px;
+}
+
+.sidebar-header h2 {
+  font-size: 16px;
+  color: var(--text);
+  font-weight: 700;
+}
+
+.sidebar-header .subtitle {
+  font-size: 12px;
+  color: var(--muted);
+  margin-top: 2px;
+}
+
+.sidebar-section {
+  margin-bottom: 8px;
+}
+
+.sidebar-section-title {
+  padding: 6px 20px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+}
+
+.sidebar-link {
+  display: block;
+  padding: 5px 20px 5px 28px;
+  font-size: 13px;
+  color: var(--muted);
+  text-decoration: none;
+  border-left: 2px solid transparent;
+  transition: all 0.15s;
+  line-height: 1.4;
+}
+
+.sidebar-link:hover {
+  color: var(--text);
+  background: var(--accent-dim);
+  border-left-color: var(--accent);
+  text-decoration: none;
+}
+
+.sidebar-link.active {
+  color: var(--accent);
+  border-left-color: var(--accent);
+  background: var(--accent-dim);
+}
+
+/* ===== Mobile sidebar toggle ===== */
+#sidebar-toggle {
+  display: none;
+  position: fixed;
+  top: 16px;
+  left: 16px;
+  z-index: 200;
+  background: var(--surface1);
+  border: 1px solid var(--border);
+  color: var(--text);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 20px;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--shadow);
+}
+
+/* ===== Main Content ===== */
+.main {
+  margin-left: var(--sidebar-w);
+  padding: 40px 48px 80px;
+  max-width: calc(860px + var(--sidebar-w) + 96px);
+}
+
+.page-title {
+  font-size: 32px;
+  font-weight: 800;
+  margin-bottom: 4px;
+  color: var(--text);
+}
+
+.page-subtitle {
+  font-size: 15px;
+  color: var(--muted);
+  margin-bottom: 36px;
+}
+
+/* ===== How to Use ===== */
+.how-to {
+  background: var(--surface1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px 24px;
+  margin-bottom: 36px;
+}
+
+.how-to h3 {
+  font-size: 15px;
+  font-weight: 700;
+  margin-bottom: 8px;
+  color: var(--muted);
+}
+
+.how-to ul {
+  padding-left: 22px;
+  margin: 0;
+}
+
+.how-to li {
+  font-size: 14px;
+  color: var(--muted);
+  margin-bottom: 3px;
+}
+
+/* ===== Sections ===== */
+.section {
+  margin-bottom: 48px;
+}
+
+.section-label {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  padding: 3px 10px;
+  border-radius: 4px;
+  margin-bottom: 12px;
+}
+
+.section-label.review { background: var(--yellow-dim); color: var(--yellow); }
+.section-label.new { background: var(--green-dim); color: var(--green); }
+
+.section-title {
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 24px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--border);
+}
+
+/* ===== Concept Cards ===== */
+.concept {
+  background: var(--surface1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 28px;
+  margin-bottom: 28px;
+  box-shadow: var(--shadow);
+}
+
+.concept.review-card {
+  background: linear-gradient(135deg, var(--purple-dim), var(--surface1));
+  border-color: var(--purple);
+}
+
+.concept-header {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  margin-bottom: 6px;
+  flex-wrap: wrap;
+}
+
+.concept h3 {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.concept-meta {
+  font-size: 12px;
+  color: var(--muted);
+  background: var(--surface2);
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
+.concept h4 {
+  font-size: 15px;
+  font-weight: 600;
+  margin: 20px 0 8px;
+  color: var(--text);
+}
+
+.concept p, .concept li {
+  color: var(--text);
+  line-height: 1.7;
+}
+
+.concept ul, .concept ol {
+  padding-left: 22px;
+  margin: 8px 0;
+}
+
+.concept li {
+  margin-bottom: 4px;
+}
+
+/* ===== Topic Tags ===== */
+.ttag {
+  display: inline-block;
+  font-size: 10px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 8px;
+  background: rgba(56,139,253,0.12);
+  color: var(--accent);
+}
+
+/* ===== Code Blocks ===== */
+pre {
+  background: var(--code-bg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 16px 18px;
+  overflow-x: auto;
+  margin: 10px 0 14px;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--text);
+  position: relative;
+}
+
+.lang-badge {
+  position: absolute;
+  top: 0;
+  right: 0;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--muted);
+  background: var(--surface2);
+  padding: 2px 8px;
+  border-radius: 0 6px 0 6px;
+}
+
+code {
+  font-family: var(--font-mono);
+  font-size: 0.9em;
+}
+
+:not(pre) > code {
+  background: var(--surface2);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.88em;
+}
+
+.output {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 12px 18px;
+  margin: -8px 0 14px;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  line-height: 1.6;
+  white-space: pre-wrap;
+  color: var(--green);
+}
+
+.output::before {
+  content: "OUTPUT";
+  display: block;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+  margin-bottom: 6px;
+}
+
+/* ===== Good/Bad Examples ===== */
+.do-dont {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin: 10px 0;
+}
+
+.do-box, .dont-box {
+  border-radius: 6px;
+  padding: 14px;
+  border: 1px solid;
+}
+
+.do-box {
+  background: var(--green-dim);
+  border-color: var(--green);
+}
+
+.dont-box {
+  background: var(--red-dim);
+  border-color: var(--red);
+}
+
+.do-box .label, .dont-box .label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 6px;
+}
+
+.do-box .label { color: var(--green); }
+.dont-box .label { color: var(--red); }
+
+.do-box pre, .dont-box pre {
+  margin: 0;
+  border: none;
+  background: transparent;
+  padding: 0;
+  font-size: 12.5px;
+}
+
+/* ===== Key Rules ===== */
+.rules-list {
+  list-style: none;
+  padding: 0;
+  margin: 8px 0;
+}
+
+.rules-list li {
+  padding: 6px 0 6px 24px;
+  position: relative;
+}
+
+.rules-list li::before {
+  content: "\2192";
+  position: absolute;
+  left: 2px;
+  color: var(--accent);
+  font-weight: 700;
+}
+
+/* ===== Exercises ===== */
+.exercise {
+  background: var(--purple-dim);
+  border: 1px solid var(--purple);
+  border-radius: 6px;
+  padding: 14px 18px;
+  margin: 8px 0;
+}
+
+.exercise .exercise-label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--purple);
+  margin-bottom: 4px;
+}
+
+/* ===== Challenge (Review) ===== */
+.challenge {
+  background: var(--orange-dim);
+  border: 1px solid var(--orange);
+  border-radius: 6px;
+  padding: 14px 18px;
+  margin: 10px 0;
+}
+
+.challenge .challenge-label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--orange);
+  margin-bottom: 4px;
+}
+
+/* ===== Pitfall ===== */
+.pitfall {
+  background: var(--red-dim);
+  border-left: 3px solid var(--red);
+  border-radius: 0 6px 6px 0;
+  padding: 10px 14px;
+  margin: 10px 0;
+  font-size: 14px;
+}
+
+.pitfall strong {
+  color: var(--red);
+}
+
+/* ===== Connection ===== */
+.connection {
+  background: var(--accent-dim);
+  border-left: 3px solid var(--accent);
+  border-radius: 0 6px 6px 0;
+  padding: 10px 14px;
+  margin: 10px 0;
+  font-size: 14px;
+  color: var(--muted);
+}
+
+/* ===== Insight ===== */
+.insight {
+  background: var(--accent-dim);
+  border-left: 3px solid var(--accent);
+  border-radius: 0 6px 6px 0;
+  padding: 12px 16px;
+  margin: 12px 0;
+  font-size: 14px;
+}
+
+.insight strong {
+  color: var(--accent);
+}
+
+/* ===== Summary Box ===== */
+.summary-box {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px 20px;
+  margin: 16px 0;
+  font-size: 14px;
+}
+
+.summary-box h5 {
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--muted);
+  margin-bottom: 8px;
+}
+
+.summary-box table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.summary-box th, .summary-box td {
+  text-align: left;
+  padding: 4px 10px;
+  border-bottom: 1px solid var(--border);
+}
+
+.summary-box th {
+  color: var(--muted);
+  font-weight: 600;
+}
+
+/* ===== Footer ===== */
+.footer {
+  margin-top: 60px;
+  padding: 24px 0;
+  border-top: 1px solid var(--border);
+}
+
+.footer h4 {
+  font-size: 14px;
+  color: var(--muted);
+  margin-bottom: 10px;
+}
+
+.footer ul {
+  list-style: none;
+  padding: 0;
+}
+
+.footer li {
+  margin-bottom: 4px;
+  font-size: 14px;
+}
+
+.footer li a { color: var(--accent); }
+.footer .current { color: var(--green); font-weight: 600; }
+
+/* ===== Responsive ===== */
+@media (max-width: 900px) {
+  .sidebar {
+    transform: translateX(-100%);
+  }
+  .sidebar.open {
+    transform: translateX(0);
+    box-shadow: 4px 0 20px rgba(0,0,0,0.5);
+  }
+  #sidebar-toggle {
+    display: flex;
+  }
+  .main {
+    margin-left: 0;
+    padding: 60px 20px 60px;
+    max-width: 100%;
+  }
+  .do-dont {
+    grid-template-columns: 1fr;
+  }
+  #theme-toggle {
+    right: 14px;
+    top: 16px;
+  }
+}
+</style>
+</head>
+<body>
+
+<!-- Theme Toggle -->
+<button id="theme-toggle" aria-label="Toggle theme" title="Toggle light/dark theme">&#9789;</button>
+
+<!-- Mobile Sidebar Toggle -->
+<button id="sidebar-toggle" aria-label="Toggle sidebar">&#9776;</button>
+
+<!-- Sidebar -->
+<nav class="sidebar" id="sidebar">
+  <div class="sidebar-header">
+    <h2>Python Guide</h2>
+    <div class="subtitle">Day 20 &mdash; 2026-06-19</div>
+  </div>
+
+  <div class="sidebar-section">
+    <div class="sidebar-section-title">Review (6 concepts)</div>
+    <a href="#review-array" class="sidebar-link">array Module &amp; memoryview</a>
+    <a href="#review-weakref" class="sidebar-link">Weak References</a>
+    <a href="#review-itertools-recipes" class="sidebar-link">Advanced itertools Recipes</a>
+    <a href="#review-pathlib" class="sidebar-link">pathlib for File System</a>
+    <a href="#review-json-csv" class="sidebar-link">JSON &amp; CSV Data Formats</a>
+    <a href="#review-regex" class="sidebar-link">Regular Expressions</a>
+  </div>
+
+  <div class="sidebar-section">
+    <div class="sidebar-section-title">Standard Library Networking</div>
+    <a href="#queue-module" class="sidebar-link">Thread-Safe Queues</a>
+    <a href="#http-urllib" class="sidebar-link">Standard Library HTTP Tools</a>
+    <a href="#selectors-module" class="sidebar-link">I/O Multiplexing with selectors</a>
+  </div>
+
+  <div class="sidebar-section">
+    <div class="sidebar-section-title">Testing &amp; Data Modeling</div>
+    <a href="#unittest-module" class="sidebar-link">unittest Framework</a>
+    <a href="#enum-advanced" class="sidebar-link">Advanced Enum</a>
+  </div>
+</nav>
+
+<!-- Main Content -->
+<div class="main">
+
+<h1 class="page-title">Python Daily Guide</h1>
+<p class="page-subtitle">Day 20 &mdash; Friday, June 19, 2026 &bull; 11 concepts (6 review + 5 new)</p>
+
+<!-- How to Use -->
+<div class="how-to">
+  <h3>How to Use This Guide</h3>
+  <ul>
+    <li><strong>Review cards</strong> &mdash; skim the reminder, write the key pattern from memory, then try the challenge.</li>
+    <li><strong>New concepts</strong> &mdash; read the explanation, run every code example in a REPL, then do the exercises.</li>
+    <li><strong>Don&rsquo;t peek at solutions</strong> &mdash; struggle for at least 10 minutes before looking things up.</li>
+    <li><strong>Connections</strong> &mdash; pay attention to how concepts link together across days.</li>
+    <li><strong>Common Mistakes</strong> &mdash; study both the WRONG and RIGHT patterns; these are the traps you&rsquo;ll hit in real code.</li>
+  </ul>
+</div>
+
+
+<!-- ============================================================ -->
+<!-- REVIEW SECTION -->
+<!-- ============================================================ -->
+<div class="section">
+  <span class="section-label review">Review</span>
+  <h2 class="section-title">Review &mdash; 6 Concepts</h2>
+
+  <!-- Review 1: array Module & memoryview -->
+  <div class="concept review-card" id="review-array">
+    <div class="concept-header">
+      <h3>array Module &amp; memoryview</h3>
+      <span class="concept-meta">Advanced Topics &bull; 10 days since review</span>
+    </div>
+
+    <h4>Quick Reminder</h4>
+    <p><code>array.array(typecode, init)</code> stores homogeneous numeric data in a compact C array &mdash; far less memory than a <code>list</code> of boxed Python ints. <code>memoryview</code> wraps any buffer-protocol object (bytes, bytearray, array) and lets you slice and mutate it <strong>without copying</strong> the underlying data.</p>
+
+    <h4>Key Pattern</h4>
+<pre><span class="lang-badge">Python</span>from array import array
+
+a = array('i', [1, 2, 3])      # 'i' = signed int
+mv = memoryview(a)
+mv[1] = 42                      # mutates the array in place
+print(a)                       # array('i', [1, 42, 3])
+
+# Zero-copy byte view of the same buffer
+raw = mv.cast('B')             # reinterpret as unsigned bytes
+print(len(raw))                # 12 (3 ints x 4 bytes)</pre>
+<div class="output">array('i', [1, 42, 3])
+12</div>
+
+    <div class="challenge">
+      <div class="challenge-label">Challenge</div>
+      <p>Create an <code>array</code> of doubles (<code>'d'</code>), obtain a <code>memoryview</code>, and reverse it via slice assignment (<code>mv[:] = mv[::-1].tolist()</code> won&rsquo;t do &mdash; figure out the truly zero-copy approach). Verify the original <code>array</code> reflects the reversal and that no new buffer was allocated by comparing <code>id()</code> of the underlying object.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>Pitfall:</strong> A <code>memoryview</code> of an <code>array</code> has an item size matching the typecode &mdash; indexing <code>mv[i]</code> returns whole items, not bytes. For byte-level access use <code>mv.cast('B')</code>, and remember you cannot resize the array while a memoryview is exported (you&rsquo;ll get <code>BufferError</code>).
+    </div>
+  </div>
+
+  <!-- Review 2: Weak References -->
+  <div class="concept review-card" id="review-weakref">
+    <div class="concept-header">
+      <h3>Weak References</h3>
+      <span class="concept-meta">Memory Management &bull; 10 days since review</span>
+    </div>
+
+    <h4>Quick Reminder</h4>
+    <p><code>weakref.ref(obj)</code> creates a reference that does <strong>not</strong> keep <code>obj</code> alive &mdash; when the last strong reference is gone, the object is collected and calling the weakref returns <code>None</code>. <code>WeakValueDictionary</code> builds caches that auto-evict entries once nothing else references the value.</p>
+
+    <h4>Key Pattern</h4>
+<pre><span class="lang-badge">Python</span>import weakref
+
+class Node:
+    def __init__(self, name): self.name = name
+
+n = Node("root")
+r = weakref.ref(n)
+print(r())          # &lt;Node ...&gt;  -- object still alive
+del n
+print(r())          # None         -- object was collected
+
+cache = weakref.WeakValueDictionary()
+obj = Node("a")
+cache["a"] = obj
+print("a" in cache) # True
+del obj
+print(list(cache))  # []  -- auto-evicted</pre>
+<div class="output">&lt;__main__.Node object at 0x...&gt;
+None
+True
+[]</div>
+
+    <div class="challenge">
+      <div class="challenge-label">Challenge</div>
+      <p>Build a registry that stores objects by an integer ID in a <code>WeakValueDictionary</code> so they can still be garbage-collected when no other code holds them. Add a <code>weakref.finalize(obj, callback)</code> that prints which ID was evicted, and demonstrate that dropping the last strong reference triggers the callback.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>Pitfall:</strong> You cannot create a weakref to built-in types like <code>int</code>, <code>str</code>, <code>tuple</code>, <code>list</code>, or <code>dict</code> &mdash; only to instances of user-defined classes (or subclasses that allow it). Trying raises <code>TypeError: cannot create weak reference to 'list' object</code>.
+    </div>
+  </div>
+
+  <!-- Review 3: Advanced itertools Recipes -->
+  <div class="concept review-card" id="review-itertools-recipes">
+    <div class="concept-header">
+      <h3>Advanced itertools Recipes</h3>
+      <span class="concept-meta">Advanced Iteration &bull; 10 days since review</span>
+    </div>
+
+    <h4>Quick Reminder</h4>
+    <p><code>itertools</code> functions compose into powerful recipes. <code>batched(it, n)</code> (3.12+) chunks an iterable; <code>pairwise(it)</code> yields overlapping pairs; classic recipes include <code>flatten</code>, <code>unique_everseen</code>, and <code>roundrobin</code>. They&rsquo;re lazy and memory-efficient.</p>
+
+    <h4>Key Pattern</h4>
+<pre><span class="lang-badge">Python</span>from itertools import batched, pairwise, chain
+
+print(list(batched('ABCDEF', 3)))
+# [('A','B','C'), ('D','E','F')]
+
+print(list(pairwise([1, 2, 3, 4])))
+# [(1, 2), (2, 3), (3, 4)]
+
+# flatten recipe
+flatten = lambda nested: chain.from_iterable(nested)
+print(list(flatten([[1, 2], [3], [4, 5]])))
+# [1, 2, 3, 4, 5]</pre>
+<div class="output">[('A', 'B', 'C'), ('D', 'E', 'F')]
+[(1, 2), (2, 3), (3, 4)]
+[1, 2, 3, 4, 5]</div>
+
+    <div class="challenge">
+      <div class="challenge-label">Challenge</div>
+      <p>Implement <code>unique_everseen(iterable, key=None)</code> from scratch using a <code>set</code> and <code>itertools.filterfalse</code> (do not import the recipe). It must preserve first-seen order, support an optional <code>key</code> function, and remain lazy so it works on an infinite iterator until consumed.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>Pitfall:</strong> <code>groupby()</code> groups only <strong>consecutive</strong> matching elements &mdash; not all matching elements globally. You must <code>sorted(data, key=...)</code> with the same key before grouping, or identical keys scattered through the input become separate groups.
+    </div>
+  </div>
+
+  <!-- Review 4: pathlib for File System -->
+  <div class="concept review-card" id="review-pathlib">
+    <div class="concept-header">
+      <h3>pathlib for File System</h3>
+      <span class="concept-meta">Error Handling &amp; I/O &bull; 9 days since review</span>
+    </div>
+
+    <h4>Quick Reminder</h4>
+    <p><code>Path</code> objects model filesystem paths in an OO way. The <code>/</code> operator joins segments; <code>.read_text()</code>/<code>.write_text()</code> handle small files in one call; <code>.glob()</code> matches a single level and <code>.rglob()</code> recurses. <code>.mkdir(parents=True, exist_ok=True)</code> is the idempotent &ldquo;make this directory tree&rdquo; pattern.</p>
+
+    <h4>Key Pattern</h4>
+<pre><span class="lang-badge">Python</span>from pathlib import Path
+
+p = Path('data') / 'reports' / 'file.txt'
+p.parent.mkdir(parents=True, exist_ok=True)
+p.write_text('hello\n')
+
+print(p.name, p.suffix, p.stem)   # file.txt .txt file
+print(p.read_text().strip())      # hello
+
+# Recursive search for python files
+for py in Path('.').rglob('*.py'):
+    print(py)</pre>
+<div class="output">file.txt .txt file
+hello</div>
+
+    <div class="challenge">
+      <div class="challenge-label">Challenge</div>
+      <p>Walk a directory tree using only <code>pathlib</code>, find all <code>.py</code> files with <code>rglob</code>, and print each path with its size in bytes (<code>p.stat().st_size</code>) sorted largest-first. Then print the total size and the single largest file &mdash; all without importing <code>os</code>.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>Pitfall:</strong> <code>Path.home() / '~/.config'</code> does <strong>not</strong> expand the tilde &mdash; you&rsquo;d get a literal <code>~</code> segment nested under your home dir. Use <code>Path('~/.config').expanduser()</code> instead. Likewise <code>$VARS</code> are not expanded; use <code>os.path.expandvars</code> if you need that.
+    </div>
+  </div>
+
+  <!-- Review 5: JSON & CSV Data Formats -->
+  <div class="concept review-card" id="review-json-csv">
+    <div class="concept-header">
+      <h3>JSON &amp; CSV Data Formats</h3>
+      <span class="concept-meta">Error Handling &amp; I/O &bull; 9 days since review</span>
+    </div>
+
+    <h4>Quick Reminder</h4>
+    <p><code>json.dumps(obj, indent=2)</code> serializes; <code>json.loads(s)</code> parses. The <code>default=</code> hook converts otherwise-unserializable values. <code>csv.DictReader</code> yields each row as a dict keyed by header; <code>csv.DictWriter</code> writes them back (remember <code>writeheader()</code>).</p>
+
+    <h4>Key Pattern</h4>
+<pre><span class="lang-badge">Python</span>import json, io, csv
+from datetime import date
+
+data = {"name": "Ada", "joined": date(2026, 6, 19)}
+print(json.dumps(data, default=str, indent=2))
+
+buf = io.StringIO("name,age\nAda,36\nGrace,40\n")
+reader = csv.DictReader(buf)
+rows = [{**r, "age": int(r["age"])} for r in reader]
+print(rows)</pre>
+<div class="output">{
+  "name": "Ada",
+  "joined": "2026-06-19"
+}
+[{'name': 'Ada', 'age': 36}, {'name': 'Grace', 'age': 40}]</div>
+
+    <div class="challenge">
+      <div class="challenge-label">Challenge</div>
+      <p>Read a CSV with <code>DictReader</code> (use an <code>io.StringIO</code> sample), transform each row (parse numeric columns, add a derived field), then serialize the result to JSON with a custom encoder that renders <code>datetime</code> objects as ISO strings via a <code>default=</code> handler. Round-trip it back with <code>json.loads</code> and confirm equality.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>Pitfall:</strong> <code>json.dumps</code> raises <code>TypeError</code> on <code>datetime</code>, <code>set</code>, and <code>bytes</code> &mdash; JSON has no native types for them. Supply a <code>default=</code> function (or a <code>JSONEncoder</code> subclass) to convert; <code>default=str</code> is a quick catch-all but loses round-trip fidelity.
+    </div>
+  </div>
+
+  <!-- Review 6: Regular Expressions -->
+  <div class="concept review-card" id="review-regex">
+    <div class="concept-header">
+      <h3>Regular Expressions</h3>
+      <span class="concept-meta">Error Handling &amp; I/O &bull; 9 days since review</span>
+    </div>
+
+    <h4>Quick Reminder</h4>
+    <p><code>re.compile(pattern)</code> caches a pattern for reuse. <code>match()</code> anchors at the <em>start</em>, <code>search()</code> finds the first match <em>anywhere</em>, <code>fullmatch()</code> requires the whole string, and <code>findall()</code> returns all non-overlapping matches. Named groups use <code>(?P&lt;name&gt;...)</code> and are read back with <code>m.group('name')</code>.</p>
+
+    <h4>Key Pattern</h4>
+<pre><span class="lang-badge">Python</span>import re
+
+pat = re.compile(r'(?P&lt;year&gt;\d{4})-(?P&lt;month&gt;\d{2})')
+m = pat.search("log from 2026-06 onward")
+print(m.group('year'), m.group('month'))   # 2026 06
+print(m.groupdict())                       # {'year': '2026', 'month': '06'}
+
+print(re.findall(r'\d+', "a1b22c333"))     # ['1', '22', '333']</pre>
+<div class="output">2026 06
+{'year': '2026', 'month': '06'}
+['1', '22', '333']</div>
+
+    <div class="challenge">
+      <div class="challenge-label">Challenge</div>
+      <p>Write a regex that validates a simple email address and extracts the <code>username</code> and <code>domain</code> as named groups. Use <code>re.fullmatch</code> so partial matches are rejected, then run it against a list of valid and invalid inputs and print which ones pass with their captured parts.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>Pitfall:</strong> <code>re.match()</code> only anchors at the string start &mdash; it returns <code>None</code> for a pattern that occurs later, which surprises people expecting &ldquo;contains&rdquo; behavior. Use <code>re.search()</code> for &ldquo;anywhere&rdquo; and <code>re.fullmatch()</code> when the entire string must match.
+    </div>
+  </div>
+
+</div><!-- end Review section -->
+
+
+<!-- ============================================================ -->
+<!-- NEW CONCEPTS SECTION -->
+<!-- ============================================================ -->
+<div class="section">
+  <span class="section-label new">New</span>
+  <h2 class="section-title">New Concepts &mdash; 5 Concepts</h2>
+
+  <!-- ===== New 1: Thread-Safe Queues ===== -->
+  <div class="concept" id="queue-module">
+    <div class="concept-header">
+      <h3>Thread-Safe Queues</h3>
+      <span class="ttag">Standard Library Networking</span>
+    </div>
+
+    <h4>Why It Matters</h4>
+    <p><code>queue.Queue</code> is the primary mechanism for <strong>safe communication between threads</strong>. It handles all the locking internally, so producer/consumer patterns, task pipelines, and worker pools become simple to write correctly &mdash; you never touch a <code>Lock</code> yourself. It is the backbone of nearly every multi-threaded Python program.</p>
+
+    <h4>Core Ideas</h4>
+    <ul>
+    <li><a href="python-guides/python-guide-2026-07-08.html">2026-07-08</a> (Day 38)</li>
+      <li><strong>Queue basics:</strong> <code>put(item)</code> adds, <code>get()</code> removes (blocking by default), <code>task_done()</code> signals a unit finished, <code>join()</code> blocks until every put item has been marked done.</li>
+      <li><strong>PriorityQueue:</strong> items come out smallest-first; uses <code>heapq</code> internally. Push <code>(priority, payload)</code> tuples.</li>
+      <li><strong>LifoQueue:</strong> stack-like, last-in-first-out.</li>
+      <li><strong>Blocking vs non-blocking:</strong> <code>get(block=False)</code> or <code>get(timeout=5)</code> raise <code>queue.Empty</code> instead of waiting forever.</li>
+      <li><strong>Sentinel pattern:</strong> put a special <code>None</code> marker per worker to tell them to shut down cleanly.</li>
+    </ul>
+
+    <h4>Example 1 &mdash; Basic Producer/Consumer</h4>
+<pre><span class="lang-badge">Python</span>import queue, threading
+
+q = queue.Queue()
+
+def consumer():
+    while True:
+        item = q.get()
+        if item is None:           # sentinel
+            q.task_done()
+            break
+        print(f"consumed {item}")
+        q.task_done()
+
+t = threading.Thread(target=consumer)
+t.start()
+
+for i in range(1, 4):
+    q.put(i)
+q.put(None)                        # signal shutdown
+q.join()                           # wait for all task_done()
+t.join()
+print("done")</pre>
+<div class="output">consumed 1
+consumed 2
+consumed 3
+done</div>
+
+    <h4>Example 2 &mdash; PriorityQueue for Task Scheduling</h4>
+<pre><span class="lang-badge">Python</span>import queue
+
+pq = queue.PriorityQueue()
+pq.put((2, "send email"))
+pq.put((1, "page oncall"))
+pq.put((3, "write log"))
+
+while not pq.empty():
+    priority, task = pq.get()
+    print(f"[{priority}] {task}")
+    pq.task_done()</pre>
+<div class="output">[1] page oncall
+[2] send email
+[3] write log</div>
+
+    <h4>Example 3 &mdash; Worker Pool with Sentinel Shutdown</h4>
+<pre><span class="lang-badge">Python</span>import queue, threading
+
+NUM_WORKERS = 3
+q = queue.Queue()
+results = []
+lock = threading.Lock()
+
+def worker():
+    while True:
+        n = q.get()
+        if n is None:
+            q.task_done()
+            return
+        with lock:
+            results.append(n * n)
+        q.task_done()
+
+threads = [threading.Thread(target=worker) for _ in range(NUM_WORKERS)]
+for t in threads: t.start()
+
+for n in range(1, 6):
+    q.put(n)
+for _ in threads:                  # one sentinel per worker
+    q.put(None)
+
+q.join()
+for t in threads: t.join()
+print(sorted(results))</pre>
+<div class="output">[1, 4, 9, 16, 25]</div>
+
+    <h4>Example 4 &mdash; Non-Blocking Get with Exception Handling</h4>
+<pre><span class="lang-badge">Python</span>import queue
+
+q = queue.Queue()
+q.put("only item")
+
+while True:
+    try:
+        item = q.get(timeout=0.1)
+    except queue.Empty:
+        print("queue drained")
+        break
+    print(f"got {item}")
+    q.task_done()</pre>
+<div class="output">got only item
+queue drained</div>
+
+    <h4>Common Mistakes</h4>
+    <div class="do-dont">
+      <div class="dont-box">
+        <div class="label">Wrong &mdash; missing task_done()</div>
+<pre><span class="lang-badge">Python</span>def worker():
+    while True:
+        item = q.get()
+        process(item)
+        # forgot q.task_done()
+# q.join() hangs forever -- the
+# internal unfinished count never
+# reaches zero.</pre>
+      </div>
+      <div class="do-box">
+        <div class="label">Right &mdash; pair get with task_done</div>
+<pre><span class="lang-badge">Python</span>def worker():
+    while True:
+        item = q.get()
+        try:
+            process(item)
+        finally:
+            q.task_done()
+# Every get() is balanced by exactly
+# one task_done(), even on errors.</pre>
+      </div>
+    </div>
+
+    <div class="do-dont">
+      <div class="dont-box">
+        <div class="label">Wrong &mdash; qsize() for flow control</div>
+<pre><span class="lang-badge">Python</span>if q.qsize() &lt; 10:        # approximate!
+    q.put(work)
+# qsize() may be stale across threads;
+# decisions based on it race.</pre>
+      </div>
+      <div class="do-box">
+        <div class="label">Right &mdash; block or use timeout</div>
+<pre><span class="lang-badge">Python</span>bounded = queue.Queue(maxsize=10)
+bounded.put(work)         # blocks if full
+# Let the queue itself apply
+# backpressure instead of polling.</pre>
+      </div>
+    </div>
+
+    <h4>Key Rules</h4>
+    <ul class="rules-list">
+      <li>Always pair each <code>get()</code> with exactly one <code>task_done()</code>, ideally in a <code>try/finally</code>.</li>
+      <li>Use a sentinel value (commonly <code>None</code>) &mdash; one per worker &mdash; to shut down a pool cleanly.</li>
+      <li><code>PriorityQueue</code> needs orderable items; wrap payloads as <code>(priority, payload)</code> tuples (add a tiebreaker counter if payloads aren&rsquo;t comparable).</li>
+      <li>Treat <code>qsize()</code> and <code>empty()</code> as advisory only &mdash; never as a synchronization primitive.</li>
+    </ul>
+
+    <div class="exercise">
+      <div class="exercise-label">Exercise 1</div>
+      <p>Create a producer that generates the numbers 1&ndash;20 and three consumer threads that print each number alongside their own thread name. Use sentinels so all consumers exit cleanly, and confirm with <code>q.join()</code> that everything was processed before the program ends.</p>
+    </div>
+
+    <div class="exercise">
+      <div class="exercise-label">Exercise 2</div>
+      <p>Implement a task scheduler using <code>PriorityQueue</code> where tasks are <code>(priority, name)</code> with priorities 1&ndash;5. Enqueue tasks out of priority order and verify they are processed strictly in priority order. Add a monotonically increasing counter to the tuple so two tasks with equal priority never raise a comparison error.</p>
+    </div>
+
+    <div class="exercise">
+      <div class="exercise-label">Exercise 3</div>
+      <p>Build a three-stage pipeline connected by two queues: a reader thread emits lines, a processor thread transforms them (e.g. uppercases), and a writer thread collects results. Use sentinels to propagate shutdown from stage to stage and print the final collected output.</p>
+    </div>
+
+    <div class="connection">
+      <strong>Connections:</strong> <code>threading</code> patterns (Locks, Events) &bull; <code>heapq</code> (powers <code>PriorityQueue</code>) &bull; <code>concurrent.futures</code> (higher-level pool that hides queues) &bull; <code>selectors</code> (today &mdash; single-threaded alternative to thread pools) &bull; the GIL (why thread pools shine for I/O-bound work)
+    </div>
+  </div>
+
+  <!-- ===== New 2: Standard Library HTTP Tools ===== -->
+  <div class="concept" id="http-urllib">
+    <div class="concept-header">
+      <h3>Standard Library HTTP Tools</h3>
+      <span class="ttag">Standard Library Networking</span>
+    </div>
+
+    <h4>Why It Matters</h4>
+    <p><code>urllib.request</code> and <code>http.server</code> let you make HTTP requests and serve responses with <strong>zero third-party dependencies</strong>. That matters for bootstrapping scripts, writing tests against a throwaway server, and genuinely understanding HTTP instead of treating <code>requests</code> as magic.</p>
+
+    <h4>Core Ideas</h4>
+    <ul>
+      <li><code>urllib.request.urlopen(url)</code> performs a GET; the response is a file-like object you <code>.read()</code> (bytes) and decode.</li>
+      <li><code>urllib.request.Request(url, data=..., headers=..., method=...)</code> customizes headers and turns it into a POST when <code>data</code> is given.</li>
+      <li><code>urllib.parse</code> provides <code>urlencode</code>, <code>quote</code>, <code>urlparse</code>, and <code>urljoin</code> for safe URL handling.</li>
+      <li><code>http.server.HTTPServer</code> + a <code>BaseHTTPRequestHandler</code> subclass gives you a minimal server with <code>do_GET</code>/<code>do_POST</code> hooks.</li>
+      <li>The instant file server: <code>python -m http.server 8000</code>.</li>
+    </ul>
+
+    <h4>Example 1 &mdash; GET Request, Parse JSON Response</h4>
+<pre><span class="lang-badge">Python</span>import json
+from urllib.request import urlopen
+
+# (Illustrative endpoint that returns JSON)
+with urlopen("https://httpbin.org/json") as resp:
+    print(resp.status)                 # 200
+    payload = json.loads(resp.read().decode())
+
+print(payload["slideshow"]["title"])   # Sample Slide Show</pre>
+<div class="output">200
+Sample Slide Show</div>
+
+    <h4>Example 2 &mdash; POST with Custom Headers</h4>
+<pre><span class="lang-badge">Python</span>import json
+from urllib.request import Request, urlopen
+
+body = json.dumps({"name": "Ada"}).encode()
+req = Request(
+    "https://httpbin.org/post",
+    data=body,                         # presence of data -&gt; POST
+    headers={"Content-Type": "application/json"},
+    method="POST",
+)
+with urlopen(req) as resp:
+    echoed = json.loads(resp.read().decode())
+
+print(echoed["json"])                  # {'name': 'Ada'}</pre>
+<div class="output">{'name': 'Ada'}</div>
+
+    <h4>Example 3 &mdash; URL Parsing &amp; Construction</h4>
+<pre><span class="lang-badge">Python</span>from urllib.parse import urlencode, urlparse, urljoin
+
+query = urlencode({"q": "python urllib", "page": 2})
+print(query)                       # q=python+urllib&amp;page=2
+
+url = urljoin("https://api.example.com/v1/", "users?" + query)
+print(url)
+
+parts = urlparse(url)
+print(parts.scheme, parts.netloc, parts.path, parts.query)</pre>
+<div class="output">q=python+urllib&amp;page=2
+https://api.example.com/v1/users?q=python+urllib&amp;page=2
+https api.example.com /v1/users q=python+urllib&amp;page=2</div>
+
+    <h4>Example 4 &mdash; Minimal Custom HTTP Server</h4>
+<pre><span class="lang-badge">Python</span>import json
+from http.server import HTTPServer, BaseHTTPRequestHandler
+
+class Handler(BaseHTTPRequestHandler):
+    def do_GET(self):
+        if self.path == "/api/status":
+            body = json.dumps({"status": "ok"}).encode()
+            self.send_response(200)
+            self.send_header("Content-Type", "application/json")
+            self.send_header("Content-Length", str(len(body)))
+            self.end_headers()
+            self.wfile.write(body)
+        else:
+            self.send_error(404, "Not Found")
+
+# Run it (Ctrl-C to stop):
+# HTTPServer(("", 8000), Handler).serve_forever()
+#
+# $ curl localhost:8000/api/status
+# {"status": "ok"}</pre>
+<div class="output">{"status": "ok"}</div>
+
+    <h4>Common Mistakes</h4>
+    <div class="do-dont">
+      <div class="dont-box">
+        <div class="label">Wrong &mdash; unhandled errors</div>
+<pre><span class="lang-badge">Python</span>resp = urlopen(url)
+data = resp.read()
+# A 404 raises HTTPError; a DNS
+# failure raises URLError. Uncaught,
+# the script crashes ungracefully.</pre>
+      </div>
+      <div class="do-box">
+        <div class="label">Right &mdash; catch URL/HTTP errors</div>
+<pre><span class="lang-badge">Python</span>from urllib.error import URLError, HTTPError
+try:
+    with urlopen(url) as resp:
+        data = resp.read()
+except HTTPError as e:
+    print("HTTP", e.code)
+except URLError as e:
+    print("network:", e.reason)</pre>
+      </div>
+    </div>
+
+    <div class="do-dont">
+      <div class="dont-box">
+        <div class="label">Wrong &mdash; building URLs by hand</div>
+<pre><span class="lang-badge">Python</span>url = base + "?q=" + user_input
+# Breaks on spaces, &amp;, =, unicode.
+# Injection and encoding bugs.</pre>
+      </div>
+      <div class="do-box">
+        <div class="label">Right &mdash; urljoin + urlencode</div>
+<pre><span class="lang-badge">Python</span>from urllib.parse import urljoin, urlencode
+qs = urlencode({"q": user_input})
+url = urljoin(base, "search?" + qs)
+# Everything escaped correctly.</pre>
+      </div>
+    </div>
+
+    <h4>Key Rules</h4>
+    <ul class="rules-list">
+      <li>Always wrap requests in <code>try/except</code> for <code>HTTPError</code> (check <code>e.code</code>) and <code>URLError</code> (check <code>e.reason</code>).</li>
+      <li>Use the <code>urlopen</code> response as a context manager so the connection is closed.</li>
+      <li>Build URLs with <code>urlencode</code> and <code>urljoin</code> &mdash; never string concatenation.</li>
+      <li>In a handler, always call <code>send_response</code>, then headers, then <code>end_headers()</code> before writing to <code>self.wfile</code>.</li>
+    </ul>
+
+    <div class="exercise">
+      <div class="exercise-label">Exercise 1</div>
+      <p>Fetch JSON from a public endpoint and print a single nested field, handling both <code>HTTPError</code> and <code>URLError</code> so a network failure prints a friendly message instead of a traceback.</p>
+    </div>
+
+    <div class="exercise">
+      <div class="exercise-label">Exercise 2</div>
+      <p>Given a base URL and a dict of parameters, build a complete request URL using <code>urlencode</code> and <code>urljoin</code>, then parse it back with <code>urlparse</code> and assert the reconstructed query equals what you started with.</p>
+    </div>
+
+    <div class="exercise">
+      <div class="exercise-label">Exercise 3</div>
+      <p>Write a minimal HTTP server that responds to <code>GET /api/status</code> with a JSON body and returns 404 for anything else. Start it in a background thread, hit it with <code>urlopen</code> from the same script, assert the parsed status is <code>"ok"</code>, then shut the server down.</p>
+    </div>
+
+    <div class="connection">
+      <strong>Connections:</strong> <code>json</code> (today&rsquo;s review &mdash; encode/decode bodies) &bull; <code>socket</code> (what <code>http.server</code> sits on) &bull; <code>selectors</code> (today &mdash; serve many clients in one thread) &bull; <code>threading</code>/<code>queue</code> (today &mdash; run the server off the main thread) &bull; <code>urllib.parse</code> (safe URL construction)
+    </div>
+  </div>
+
+  <!-- ===== New 3: I/O Multiplexing with selectors ===== -->
+  <div class="concept" id="selectors-module">
+    <div class="concept-header">
+      <h3>I/O Multiplexing with selectors</h3>
+      <span class="ttag">Standard Library Networking</span>
+    </div>
+
+    <h4>Why It Matters</h4>
+    <p><code>selectors</code> provides high-level I/O multiplexing &mdash; a <strong>single thread</strong> can watch hundreds of sockets and react only to the ones that are ready. This is the foundation of event-driven servers and is exactly the mechanism <code>asyncio</code> uses under the hood.</p>
+
+    <h4>Core Ideas</h4>
+    <ul>
+      <li><strong>The problem:</strong> a blocking <code>recv()</code> stalls the whole thread, so naive servers need one thread per connection &mdash; expensive at scale.</li>
+      <li><code>selectors.DefaultSelector()</code> picks the best available backend (epoll on Linux, kqueue on BSD/macOS, select elsewhere).</li>
+      <li><code>register(fileobj, events, data)</code> watches a file/socket; <code>select(timeout)</code> returns the ones currently ready as <code>(key, events)</code> pairs.</li>
+      <li><code>EVENT_READ</code> and <code>EVENT_WRITE</code> are the event masks; combine with <code>|</code>.</li>
+      <li>The <code>data</code> attached at registration is your place to stash per-connection state or a callback.</li>
+    </ul>
+
+    <h4>Example 1 &mdash; Register a Socket for Read Events</h4>
+<pre><span class="lang-badge">Python</span>import selectors, socket
+
+sel = selectors.DefaultSelector()
+
+lsock = socket.socket()
+lsock.bind(("localhost", 0))            # port 0 = OS picks free port
+lsock.listen()
+lsock.setblocking(False)
+sel.register(lsock, selectors.EVENT_READ, data="listener")
+
+print("registered fd", lsock.fileno(), "on port", lsock.getsockname()[1])
+# events = sel.select(timeout=1)  -&gt; [(key, mask), ...]
+sel.close(); lsock.close()</pre>
+<div class="output">registered fd 7 on port 54123</div>
+
+    <h4>Example 2 &mdash; Single-Thread Echo Server</h4>
+<pre><span class="lang-badge">Python</span>import selectors, socket
+
+sel = selectors.DefaultSelector()
+
+def accept(sock):
+    conn, addr = sock.accept()
+    conn.setblocking(False)
+    sel.register(conn, selectors.EVENT_READ, data=addr)
+
+def serve(conn, addr):
+    data = conn.recv(1024)
+    if data:
+        conn.sendall(data)              # echo it back
+    else:
+        sel.unregister(conn)
+        conn.close()
+
+lsock = socket.socket()
+lsock.bind(("localhost", 9009)); lsock.listen(); lsock.setblocking(False)
+sel.register(lsock, selectors.EVENT_READ, data=None)
+
+# Event loop (one thread handles every client):
+# while True:
+#     for key, mask in sel.select(timeout=None):
+#         if key.data is None:
+#             accept(key.fileobj)
+#         else:
+#             serve(key.fileobj, key.data)</pre>
+<div class="output"># client: echo "hi" | nc localhost 9009  ->  hi</div>
+
+    <h4>Example 3 &mdash; Non-Blocking Accept with Per-Connection State</h4>
+<pre><span class="lang-badge">Python</span>import selectors, types
+
+def make_state(addr):
+    return types.SimpleNamespace(addr=addr, msgs=0, bytes=0)
+
+def on_read(sel, key):
+    state = key.data
+    data = key.fileobj.recv(1024)
+    if data:
+        state.msgs += 1
+        state.bytes += len(data)
+        key.fileobj.sendall(data)
+        print(f"{state.addr}: {state.msgs} msgs, {state.bytes} bytes")
+    else:
+        sel.unregister(key.fileobj)
+        key.fileobj.close()
+# Attach make_state(addr) as `data` when registering each accepted conn.</pre>
+<div class="output">('127.0.0.1', 51544): 1 msgs, 5 bytes</div>
+
+    <h4>Common Mistakes</h4>
+    <div class="do-dont">
+      <div class="dont-box">
+        <div class="label">Wrong &mdash; blocking socket</div>
+<pre><span class="lang-badge">Python</span>conn, addr = lsock.accept()
+sel.register(conn, EVENT_READ, data=addr)
+# conn is still blocking! A slow client
+# stalls the entire event loop on recv.</pre>
+      </div>
+      <div class="do-box">
+        <div class="label">Right &mdash; setblocking(False) first</div>
+<pre><span class="lang-badge">Python</span>conn, addr = lsock.accept()
+conn.setblocking(False)
+sel.register(conn, EVENT_READ, data=addr)
+# Now recv returns immediately and the
+# loop stays responsive.</pre>
+      </div>
+    </div>
+
+    <div class="do-dont">
+      <div class="dont-box">
+        <div class="label">Wrong &mdash; closing without unregister</div>
+<pre><span class="lang-badge">Python</span>conn.close()
+# Selector still references a dead fd.
+# Next select() may raise or misfire.</pre>
+      </div>
+      <div class="do-box">
+        <div class="label">Right &mdash; unregister then close</div>
+<pre><span class="lang-badge">Python</span>sel.unregister(conn)
+conn.close()
+# Remove from the selector before
+# releasing the socket.</pre>
+      </div>
+    </div>
+
+    <h4>Key Rules</h4>
+    <ul class="rules-list">
+      <li>Call <code>sock.setblocking(False)</code> on every socket <em>before</em> registering it.</li>
+      <li>Always <code>sel.unregister(sock)</code> before <code>sock.close()</code> during cleanup.</li>
+      <li>Use <code>key.data</code> to distinguish the listening socket (e.g. <code>None</code>) from connections, and to hold per-connection state.</li>
+      <li>An empty <code>recv()</code> result (<code>b""</code>) means the peer closed &mdash; unregister and close that connection.</li>
+    </ul>
+
+    <div class="exercise">
+      <div class="exercise-label">Exercise 1</div>
+      <p>Write a program that registers <code>sys.stdin</code> and a second readable source (e.g. a socketpair acting as a timer) with one selector, then prints which source became ready first using a single <code>select()</code> loop.</p>
+    </div>
+
+    <div class="exercise">
+      <div class="exercise-label">Exercise 2</div>
+      <p>Build a tiny chat server where one thread, driven entirely by a selector, accepts multiple clients and broadcasts each received line to all other connected clients. Track the set of active connections in the loop.</p>
+    </div>
+
+    <div class="exercise">
+      <div class="exercise-label">Exercise 3</div>
+      <p>Extend the echo server so each connection carries its own state object (message count and total bytes transferred). On disconnect, print a one-line summary for that client before unregistering and closing it.</p>
+    </div>
+
+    <div class="connection">
+      <strong>Connections:</strong> <code>socket</code> (the file objects selectors watch) &bull; <code>asyncio</code> internals (the event loop is a selector loop) &bull; <code>threading</code>/<code>queue</code> (today &mdash; the thread-per-connection alternative) &bull; <code>http.server</code> (today &mdash; can be reimplemented on a selector) &bull; <code>types.SimpleNamespace</code> (handy per-connection state)
+    </div>
+  </div>
+
+  <!-- ===== New 4: unittest Framework ===== -->
+  <div class="concept" id="unittest-module">
+    <div class="concept-header">
+      <h3>unittest Framework</h3>
+      <span class="ttag">Testing &amp; Data Modeling</span>
+    </div>
+
+    <h4>Why It Matters</h4>
+    <p><code>unittest</code> is Python&rsquo;s built-in xUnit-style test framework &mdash; it ships with the interpreter, appears across countless codebases, and is the foundation <code>pytest</code> builds on. Understanding its <code>setUp</code>/<code>tearDown</code> lifecycle and assertion methods makes every other testing tool click into place.</p>
+
+    <h4>Core Ideas</h4>
+    <ul>
+      <li>Subclass <code>unittest.TestCase</code>; every method named <code>test_*</code> is a separate test.</li>
+      <li>Rich assertions: <code>assertEqual</code>, <code>assertTrue</code>, <code>assertRaises</code>, <code>assertIn</code>, <code>assertAlmostEqual</code> &mdash; each produces a descriptive failure message.</li>
+      <li><code>setUp()</code>/<code>tearDown()</code> run before/after <em>each</em> test for fresh fixtures.</li>
+      <li><code>setUpClass()</code>/<code>tearDownClass()</code> (classmethods) run once per class for expensive shared resources.</li>
+      <li>Decorators <code>@unittest.skip</code>, <code>@unittest.skipIf(cond, reason)</code>, <code>@unittest.expectedFailure</code> control which tests run.</li>
+      <li><code>self.subTest(...)</code> reports each parameterized iteration separately, so one bad case doesn&rsquo;t mask the rest.</li>
+    </ul>
+
+    <h4>Example 1 &mdash; Basic TestCase with Assertions</h4>
+<pre><span class="lang-badge">Python</span>import unittest
+
+def add(a, b):
+    return a + b
+
+class TestAdd(unittest.TestCase):
+    def test_positive(self):
+        self.assertEqual(add(2, 3), 5)
+
+    def test_types(self):
+        self.assertIsInstance(add(1, 1), int)
+        self.assertAlmostEqual(add(0.1, 0.2), 0.3, places=7)
+
+if __name__ == "__main__":
+    unittest.main(verbosity=2)</pre>
+<div class="output">test_positive (__main__.TestAdd) ... ok
+test_types (__main__.TestAdd) ... ok
+
+----------------------------------------------------------------------
+Ran 2 tests in 0.000s
+
+OK</div>
+
+    <h4>Example 2 &mdash; setUp / tearDown Fixtures</h4>
+<pre><span class="lang-badge">Python</span>import unittest
+
+class Account:
+    def __init__(self): self.balance = 0
+    def deposit(self, n): self.balance += n
+
+class TestAccount(unittest.TestCase):
+    def setUp(self):
+        self.acct = Account()          # fresh per test
+        self.acct.deposit(100)
+
+    def tearDown(self):
+        self.acct = None               # cleanup
+
+    def test_initial(self):
+        self.assertEqual(self.acct.balance, 100)
+
+    def test_deposit(self):
+        self.acct.deposit(50)
+        self.assertEqual(self.acct.balance, 150)
+
+unittest.main(argv=[""], exit=False, verbosity=2)</pre>
+<div class="output">test_deposit (__main__.TestAccount) ... ok
+test_initial (__main__.TestAccount) ... ok
+
+----------------------------------------------------------------------
+Ran 2 tests in 0.000s
+
+OK</div>
+
+    <h4>Example 3 &mdash; assertRaises as a Context Manager</h4>
+<pre><span class="lang-badge">Python</span>import unittest
+
+def divide(a, b):
+    return a / b
+
+class TestDivide(unittest.TestCase):
+    def test_zero(self):
+        with self.assertRaises(ZeroDivisionError):
+            divide(1, 0)
+
+    def test_message(self):
+        with self.assertRaisesRegex(TypeError, "unsupported"):
+            divide("a", 1)
+
+unittest.main(argv=[""], exit=False, verbosity=2)</pre>
+<div class="output">test_message (__main__.TestDivide) ... ok
+test_zero (__main__.TestDivide) ... ok
+
+----------------------------------------------------------------------
+Ran 2 tests in 0.000s
+
+OK</div>
+
+    <h4>Example 4 &mdash; subTest for Many Inputs</h4>
+<pre><span class="lang-badge">Python</span>import unittest
+
+def fib(n):
+    a, b = 0, 1
+    for _ in range(n):
+        a, b = b, a + b
+    return a
+
+class TestFib(unittest.TestCase):
+    def test_table(self):
+        expected = [0, 1, 1, 2, 3, 5, 8, 13]
+        for n, want in enumerate(expected):
+            with self.subTest(n=n):
+                self.assertEqual(fib(n), want)
+
+unittest.main(argv=[""], exit=False, verbosity=2)</pre>
+<div class="output">test_table (__main__.TestFib) ... ok
+
+----------------------------------------------------------------------
+Ran 1 test in 0.000s
+
+OK</div>
+
+    <h4>Common Mistakes</h4>
+    <div class="do-dont">
+      <div class="dont-box">
+        <div class="label">Wrong &mdash; forgetting super()</div>
+<pre><span class="lang-badge">Python</span>class Base(unittest.TestCase):
+    def setUp(self):
+        self.db = connect()
+
+class TestX(Base):
+    def setUp(self):
+        self.x = 1        # Base.setUp never runs!
+# self.db is missing in TestX.</pre>
+      </div>
+      <div class="do-box">
+        <div class="label">Right &mdash; call super().setUp()</div>
+<pre><span class="lang-badge">Python</span>class TestX(Base):
+    def setUp(self):
+        super().setUp()   # gets self.db
+        self.x = 1
+# Both fixtures available.</pre>
+      </div>
+    </div>
+
+    <div class="do-dont">
+      <div class="dont-box">
+        <div class="label">Wrong &mdash; bare assert</div>
+<pre><span class="lang-badge">Python</span>def test_eq(self):
+    assert add(2, 2) == 5
+# Failure: just "AssertionError",
+# no values shown.</pre>
+      </div>
+      <div class="do-box">
+        <div class="label">Right &mdash; assertion methods</div>
+<pre><span class="lang-badge">Python</span>def test_eq(self):
+    self.assertEqual(add(2, 2), 5)
+# Failure: "5 != 4" -- shows both
+# actual and expected.</pre>
+      </div>
+    </div>
+
+    <h4>Key Rules</h4>
+    <ul class="rules-list">
+      <li>Always call <code>super().setUp()</code>/<code>super().tearDown()</code> when overriding them in a subclass.</li>
+      <li>Prefer the <code>assert*</code> methods over bare <code>assert</code> &mdash; they produce readable diffs on failure.</li>
+      <li>Use <code>setUpClass</code>/<code>tearDownClass</code> only for expensive resources shared safely across tests; per-test state belongs in <code>setUp</code>.</li>
+      <li>Wrap parameterized loops in <code>subTest</code> so a single failing input doesn&rsquo;t stop the others.</li>
+    </ul>
+
+    <div class="exercise">
+      <div class="exercise-label">Exercise 1</div>
+      <p>Write a <code>TestCase</code> for a <code>Stack</code> class with <code>push</code>, <code>pop</code>, <code>peek</code>, and <code>is_empty</code>. Cover the happy path plus error cases (popping an empty stack should raise) using <code>assertRaises</code>.</p>
+    </div>
+
+    <div class="exercise">
+      <div class="exercise-label">Exercise 2</div>
+      <p>Refactor the stack tests so a <code>setUp</code> method creates a fresh, pre-populated <code>Stack</code> before each test method &mdash; proving that tests don&rsquo;t leak state into each other.</p>
+    </div>
+
+    <div class="exercise">
+      <div class="exercise-label">Exercise 3</div>
+      <p>Write a single test that uses a <code>subTest</code> loop to check <code>fibonacci(n)</code> for <code>n</code> from 0 through 10 against a hand-written expected table, and confirm that introducing one wrong expected value reports only that case as failed.</p>
+    </div>
+
+    <div class="connection">
+      <strong>Connections:</strong> <code>pytest</code> (builds on these primitives) &bull; <code>unittest.mock</code> (patch dependencies inside tests) &bull; context managers (<code>assertRaises</code> is one) &bull; <code>dataclasses</code> (great as test fixtures) &bull; exception hierarchy (what <code>assertRaises</code> matches against)
+    </div>
+  </div>
+
+  <!-- ===== New 5: Advanced Enum ===== -->
+  <div class="concept" id="enum-advanced">
+    <div class="concept-header">
+      <h3>Advanced Enum: IntEnum, Flag, StrEnum, auto()</h3>
+      <span class="ttag">Testing &amp; Data Modeling</span>
+    </div>
+
+    <h4>Why It Matters</h4>
+    <p>Beyond the plain <code>Enum</code>, Python offers <code>IntEnum</code> (integer-compatible members), <code>StrEnum</code> (string-compatible, 3.11+), <code>Flag</code>/<code>IntFlag</code> (bitmask combinations), and <code>auto()</code> for automatic values. These let you design robust, self-documenting APIs &mdash; status codes, permission masks, method names &mdash; with type safety and readable representations.</p>
+
+    <h4>Core Ideas</h4>
+    <ul>
+      <li><strong>IntEnum:</strong> members <em>are</em> ints &mdash; comparable with <code>&lt;</code>, usable in arithmetic and as indices.</li>
+      <li><strong>StrEnum (3.11+):</strong> members <em>are</em> strings &mdash; drop them anywhere a string is expected.</li>
+      <li><strong>Flag / IntFlag:</strong> combine members with <code>|</code>, test membership with <code>in</code>, do bitmask operations.</li>
+      <li><strong>auto():</strong> generates the next value automatically; customize via <code>_generate_next_value_</code>.</li>
+      <li><strong>Functional API:</strong> <code>Color = Enum('Color', ['RED', 'GREEN', 'BLUE'])</code> for dynamic creation.</li>
+      <li><strong>@unique:</strong> rejects duplicate values at class-definition time.</li>
+    </ul>
+
+    <h4>Example 1 &mdash; IntEnum for HTTP Status Codes</h4>
+<pre><span class="lang-badge">Python</span>from enum import IntEnum
+
+class Status(IntEnum):
+    OK = 200
+    NOT_FOUND = 404
+    SERVER_ERROR = 500
+
+code = Status.NOT_FOUND
+print(code, int(code))             # Status.NOT_FOUND 404
+print(code &gt;= 400)                  # True -- it's an int
+print(code == 404)                 # True
+print(Status(200).name)            # OK</pre>
+<div class="output">Status.NOT_FOUND 404
+True
+True
+OK</div>
+
+    <h4>Example 2 &mdash; Flag for Unix Permissions</h4>
+<pre><span class="lang-badge">Python</span>from enum import Flag, auto
+
+class Permission(Flag):
+    READ = auto()      # 1
+    WRITE = auto()     # 2
+    EXECUTE = auto()   # 4
+
+perms = Permission.READ | Permission.WRITE
+print(perms)                       # Permission.READ|WRITE
+print(Permission.READ in perms)    # True
+print(Permission.EXECUTE in perms) # False
+print(perms.value)                 # 3</pre>
+<div class="output">Permission.READ|WRITE
+True
+False
+3</div>
+
+    <h4>Example 3 &mdash; StrEnum for API Response Types</h4>
+<pre><span class="lang-badge">Python</span>from enum import StrEnum   # Python 3.11+
+
+class Method(StrEnum):
+    GET = "GET"
+    POST = "POST"
+    DELETE = "DELETE"
+
+m = Method.POST
+print(m == "POST")                 # True -- it IS a str
+print(m.lower())                   # post
+print("|".join(Method))            # GET|POST|DELETE</pre>
+<div class="output">True
+post
+GET|POST|DELETE</div>
+
+    <h4>Example 4 &mdash; auto() with Custom Value Generation</h4>
+<pre><span class="lang-badge">Python</span>from enum import Enum, auto
+
+class Stage(Enum):
+    def _generate_next_value_(name, start, count, last_values):
+        return name.lower()        # value = lowercase name
+
+    PARSE = auto()
+    VALIDATE = auto()
+    EXECUTE = auto()
+
+print([(s.name, s.value) for s in Stage])</pre>
+<div class="output">[('PARSE', 'parse'), ('VALIDATE', 'validate'), ('EXECUTE', 'execute')]</div>
+
+    <h4>Common Mistakes</h4>
+    <div class="do-dont">
+      <div class="dont-box">
+        <div class="label">Wrong &mdash; IntEnum by default</div>
+<pre><span class="lang-badge">Python</span>class Color(IntEnum):
+    RED = 1
+    GREEN = 2
+# Now Color.RED == 1 and
+# Color.RED + Color.GREEN == 3.
+# Accidental arithmetic, weak typing.</pre>
+      </div>
+      <div class="do-box">
+        <div class="label">Right &mdash; plain Enum unless needed</div>
+<pre><span class="lang-badge">Python</span>class Color(Enum):
+    RED = auto()
+    GREEN = auto()
+# Color.RED is only equal to itself;
+# use IntEnum only when integer
+# behavior is genuinely required.</pre>
+      </div>
+    </div>
+
+    <div class="do-dont">
+      <div class="dont-box">
+        <div class="label">Wrong &mdash; == on combined flags</div>
+<pre><span class="lang-badge">Python</span>perms = Permission.READ | Permission.WRITE
+if perms == Permission.READ:   # False!
+    ...
+# Equality checks the whole mask, not
+# membership.</pre>
+      </div>
+      <div class="do-box">
+        <div class="label">Right &mdash; use `in` to test a flag</div>
+<pre><span class="lang-badge">Python</span>if Permission.READ in perms:   # True
+    ...
+# `in` tests whether the bit is set
+# within the combined value.</pre>
+      </div>
+    </div>
+
+    <h4>Key Rules</h4>
+    <ul class="rules-list">
+      <li>Default to plain <code>Enum</code>; reach for <code>IntEnum</code>/<code>StrEnum</code> only when interop with ints/strings is truly required.</li>
+      <li>Use <code>Flag</code>/<code>IntFlag</code> for combinable options and test individual flags with <code>in</code>, not <code>==</code>.</li>
+      <li>Apply <code>@unique</code> when distinct values matter; use aliases deliberately when they don&rsquo;t.</li>
+      <li>Override <code>_generate_next_value_</code> to control what <code>auto()</code> produces (e.g. lowercase names, sequential codes).</li>
+    </ul>
+
+    <div class="exercise">
+      <div class="exercise-label">Exercise 1</div>
+      <p>Create a <code>Permission</code> <code>Flag</code> enum with <code>READ=1</code>, <code>WRITE=2</code>, <code>EXECUTE=4</code>. Demonstrate combining flags with <code>|</code>, removing one with <code>&amp;~</code>, and checking membership with <code>in</code> &mdash; printing a human-readable list of which permissions a combined value holds.</p>
+    </div>
+
+    <div class="exercise">
+      <div class="exercise-label">Exercise 2</div>
+      <p>Define an <code>HttpMethod</code> <code>StrEnum</code> and write a function that validates a method string supplied by a user, raising a clear error for unknown methods and otherwise returning the matching enum member (which still compares equal to the original string).</p>
+    </div>
+
+    <div class="exercise">
+      <div class="exercise-label">Exercise 3</div>
+      <p>Create an <code>ErrorCode</code> <code>IntEnum</code> whose values start at 1000 and increment using <code>auto()</code> &mdash; override <code>_generate_next_value_</code> so the first member is 1000, the next 1001, and so on. Verify the codes and look one up by value.</p>
+    </div>
+
+    <div class="connection">
+      <strong>Connections:</strong> <code>Enum</code> basics (earlier review) &bull; <code>dataclasses</code> (enums as typed fields) &bull; <code>match</code>/<code>case</code> (pattern-match on enum members) &bull; <code>__eq__</code>/<code>__hash__</code> (enums are hashable singletons) &bull; <code>StrEnum</code> + <code>argparse</code> choices (validating CLI input)
+    </div>
+
+    <div class="insight">
+      <strong>Insight:</strong> Every enum member is a <em>singleton</em> &mdash; <code>Status.OK is Status(200)</code> is <code>True</code>. That&rsquo;s why identity comparison (<code>is</code>) works and why enums are safe dict keys. <code>Flag</code> combinations are computed on the fly but cached, so <code>(READ | WRITE) is (READ | WRITE)</code> also holds.
+    </div>
+  </div>
+
+</div><!-- end New Concepts section -->
+
+
+<!-- ============================================================ -->
+<!-- FOOTER -->
+<!-- ============================================================ -->
+<div class="footer">
+  <h4>All Python Study Guides</h4>
+    <ul>
+    <li><a href="python-guides/python-guide-2026-07-09.html">2026-07-09</a> (Day 39)</li>
+    <li><a href="python-guides/python-guide-2026-07-08.html">2026-07-08</a> (Day 38)</li>
+    <li><a href="python-guides/python-guide-2026-07-07.html">2026-07-07</a> (Day 37)</li>
+    <li><a href="python-guides/python-guide-2026-07-06.html">2026-07-06</a> (Day 36)</li>
+    <li><a href="python-guides/python-guide-2026-07-05.html">2026-07-05</a> (Day 35)</li>
+    <li><a href="python-guides/python-guide-2026-07-04.html">2026-07-04</a> (Day 34)</li>
+    <li><a href="python-guides/python-guide-2026-07-03.html">2026-07-03</a> (Day 33)</li>
+    <li><a href="python-guides/python-guide-2026-07-02.html">2026-07-02</a> (Day 32)</li>
+    <li><a href="python-guides/python-guide-2026-07-01.html">2026-07-01</a> (Day 31)</li>
+    <li><a href="python-guides/python-guide-2026-06-30.html">2026-06-30</a> (Day 30)</li>
+    <li><a href="python-guides/python-guide-2026-06-29.html">2026-06-29</a> (Day 29)</li>
+    <li><a href="python-guides/python-guide-2026-06-28.html">2026-06-28</a> (Day 28)</li>
+    <li><a href="python-guides/python-guide-2026-06-27.html">2026-06-27</a> (Day 27)</li>
+    <li><a href="python-guides/python-guide-2026-06-26.html">2026-06-26</a> (Day 26)</li>
+    <li><a href="python-guides/python-guide-2026-06-25.html">2026-06-25</a> (Day 25)</li>
+    <li><a href="python-guides/python-guide-2026-06-24.html">2026-06-24</a> (Day 24)</li>
+    <li><a href="python-guides/python-guide-2026-06-23.html">2026-06-23</a> (Day 23)</li>
+    <li><a href="python-guides/python-guide-2026-06-22.html">2026-06-22</a> (Day 22)</li>
+    <li><a href="python-guides/python-guide-2026-06-21.html">2026-06-21</a> (Day 21)</li>
+    <li class="current"><a href="python-guides/python-guide-2026-06-19.html">2026-06-19</a> </li>
+    <li><a href="python-guides/python-guide-2026-06-18.html">2026-06-18</a> (Day 19)</li>
+    <li><a href="python-guides/python-guide-2026-06-17.html">2026-06-17</a> (Day 18)</li>
+    <li><a href="python-guides/python-guide-2026-06-15.html">2026-06-15</a> (Day 17)</li>
+    <li><a href="python-guides/python-guide-2026-06-13.html">2026-06-13</a> (Day 16)</li>
+    <li><a href="python-guides/python-guide-2026-06-12.html">2026-06-12</a> (Day 15)</li>
+    <li><a href="python-guides/python-guide-2026-06-11.html">2026-06-11</a> (Day 14)</li>
+    <li><a href="python-guides/python-guide-2026-06-10.html">2026-06-10</a> (Day 13)</li>
+    <li><a href="python-guides/python-guide-2026-06-09.html">2026-06-09</a> (Day 12)</li>
+    <li><a href="python-guides/python-guide-2026-06-08.html">2026-06-08</a> (Day 11)</li>
+    <li><a href="python-guides/python-guide-2026-06-07.html">2026-06-07</a> (Day 10)</li>
+    <li><a href="python-guides/python-guide-2026-06-05.html">2026-06-05</a> (Day 9)</li>
+    <li><a href="python-guides/python-guide-2026-06-04.html">2026-06-04</a> (Day 8)</li>
+    <li><a href="python-guides/python-guide-2026-06-03.html">2026-06-03</a> (Day 7)</li>
+    <li><a href="python-guides/python-guide-2026-06-02.html">2026-06-02</a> (Day 6)</li>
+    <li><a href="python-guides/python-guide-2026-06-01.html">2026-06-01</a> (Day 5)</li>
+    <li><a href="python-guides/python-guide-2026-05-31.html">2026-05-31</a> (Day 4)</li>
+    <li><a href="python-guides/python-guide-2026-05-30.html">2026-05-30</a> (Day 3)</li>
+    <li><a href="python-guides/python-guide-2026-05-29.html">2026-05-29</a> (Day 2)</li>
+    <li><a href="python-guides/python-guide-2026-05-28.html">2026-05-28</a> (Day 1)</li>
+  </ul>
+</div>
+
+</div><!-- end main -->
+
+<script>
+(function() {
+  // ===== Theme Toggle =====
+  var THEME_KEY = 'lc-pyguide-theme';
+  var toggle = document.getElementById('theme-toggle');
+  var html = document.documentElement;
+
+  function setTheme(theme) {
+    html.setAttribute('data-theme', theme);
+    localStorage.setItem(THEME_KEY, theme);
+    toggle.textContent = theme === 'dark' ? '☽' : '☀';
+    toggle.title = theme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme';
+  }
+
+  var saved = localStorage.getItem(THEME_KEY) || 'dark';
+  setTheme(saved);
+
+  toggle.addEventListener('click', function() {
+    var current = html.getAttribute('data-theme');
+    setTheme;
+  });
+
+  // ===== Mobile Sidebar Toggle =====
+  var sidebarToggle = document.getElementById('sidebar-toggle');
+  var sidebar = document.getElementById('sidebar');
+
+  sidebarToggle.addEventListener('click', function() {
+    sidebar.classList.toggle('open');
+  });
+
+  // Close sidebar when clicking a link on mobile
+  sidebar.querySelectorAll('.sidebar-link').forEach(function(link) {
+    link.addEventListener('click', function() {
+      if (window.innerWidth <= 900) {
+        sidebar.classList.remove('open');
+      }
+    });
+  });
+
+  // ===== Active Sidebar Link on Scroll =====
+  var links = document.querySelectorAll('.sidebar-link');
+  var sections = [];
+
+  links.forEach(function(link) {
+    var id = link.getAttribute('href').slice(1);
+    var el = document.getElementById(id);
+    if (el) sections.push({ id: id, el: el, link: link });
+  });
+
+  function updateActive() {
+    var current = null;
+    var scrollY = window.scrollY + 100;
+
+    for (var i = sections.length - 1; i >= 0; i--) {
+      if (sections[i].el.offsetTop <= scrollY) {
+        current = sections[i];
+        break;
+      }
+    }
+
+    links.forEach(function(l) { l.classList.remove('active'); });
+    if  current.link.classList.add('active');
+  }
+
+  window.addEventListener('scroll', updateActive, { passive: true });
+  updateActive();
+})();
+</script>
+
+</body>
+</html>

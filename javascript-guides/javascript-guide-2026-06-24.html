@@ -1,0 +1,1076 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JavaScript Daily Guide — 2026-06-24 (Day 13)</title>
+<style>
+:root {
+  --bg: #0d1117;
+  --surface: #161b22;
+  --surface2: #1c2128;
+  --border: #30363d;
+  --text: #e6edf3;
+  --text-dim: #9da7b3;
+  --accent: #58a6ff;
+  --blue-tint-bg: rgba(56,139,253,0.12);
+  --blue-tint-border: rgba(56,139,253,0.4);
+  --purple-tint-bg: rgba(163,113,247,0.10);
+  --purple-tint-border: rgba(163,113,247,0.4);
+  --warn-bg: rgba(187,128,9,0.12);
+  --warn-border: rgba(187,128,9,0.4);
+  --green: #3fb950;
+  --red: #f85149;
+  --output-bg: #0a0e13;
+}
+[data-theme="light"] {
+  --bg: #ffffff;
+  --surface: #f6f8fa;
+  --surface2: #eef1f4;
+  --border: #d0d7de;
+  --text: #1f2328;
+  --text-dim: #57606a;
+  --accent: #0969da;
+  --blue-tint-bg: rgba(9,105,218,0.08);
+  --blue-tint-border: rgba(9,105,218,0.3);
+  --purple-tint-bg: rgba(130,80,223,0.07);
+  --purple-tint-border: rgba(130,80,223,0.3);
+  --warn-bg: rgba(154,103,0,0.08);
+  --warn-border: rgba(154,103,0,0.3);
+  --green: #1a7f37;
+  --red: #cf222e;
+  --output-bg: #f0f3f6;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+  font-size: 16px;
+  line-height: 1.7;
+  background: var(--bg);
+  color: var(--text);
+}
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+code, pre { font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace; }
+
+/* Sidebar */
+.sidebar {
+  position: fixed;
+  top: 0; left: 0; bottom: 0;
+  width: 300px;
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+  overflow-y: auto;
+  padding: 20px 16px;
+}
+.sidebar h3 {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-dim);
+  margin: 18px 0 8px;
+}
+.sidebar h3:first-child { margin-top: 0; }
+.sidebar a {
+  display: block;
+  padding: 4px 8px;
+  border-radius: 6px;
+  color: var(--text);
+  font-size: 14px;
+}
+.sidebar a:hover { background: var(--surface2); text-decoration: none; }
+.sidebar .review-link { color: #d2a8ff; }
+
+.content {
+  margin-left: 300px;
+  padding: 32px 40px 80px;
+}
+.inner { max-width: 860px; margin: 0 auto; }
+
+/* Header */
+header.main-header { margin-bottom: 24px; }
+header.main-header h1 { font-size: 30px; margin: 0 0 4px; }
+.date { color: var(--text-dim); font-size: 15px; }
+.count-badge {
+  display: inline-block;
+  margin-top: 10px;
+  background: var(--blue-tint-bg);
+  border: 1px solid var(--blue-tint-border);
+  border-radius: 20px;
+  padding: 3px 14px;
+  font-size: 13px;
+  color: var(--accent);
+}
+
+.theme-toggle {
+  position: fixed;
+  top: 16px; right: 20px;
+  z-index: 10;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  color: var(--text);
+  border-radius: 8px;
+  padding: 7px 12px;
+  cursor: pointer;
+  font-size: 13px;
+}
+
+.howto {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 14px 20px;
+  margin-bottom: 28px;
+}
+.howto strong { color: var(--accent); }
+.howto ol { margin: 8px 0 0; padding-left: 20px; }
+
+h2.section-title {
+  font-size: 22px;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 6px;
+  margin-top: 44px;
+}
+.section-sub { color: var(--text-dim); font-size: 14px; margin-top: -6px; }
+
+/* Concept cards */
+.concept-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 22px 24px;
+  margin: 22px 0;
+}
+.review-card {
+  background: var(--purple-tint-bg);
+  border-color: var(--purple-tint-border);
+}
+.concept-header { display: flex; align-items: center; flex-wrap: wrap; gap: 10px; margin-bottom: 8px; }
+.concept-title { font-size: 20px; font-weight: 700; }
+.ttag {
+  background: var(--blue-tint-bg);
+  border: 1px solid var(--blue-tint-border);
+  color: var(--accent);
+  border-radius: 20px;
+  padding: 1px 11px;
+  font-size: 12px;
+  font-weight: 600;
+}
+.days-since {
+  margin-left: auto;
+  font-size: 12px;
+  color: var(--text-dim);
+  font-style: italic;
+}
+.why-matters {
+  background: var(--blue-tint-bg);
+  border-left: 3px solid var(--accent);
+  padding: 8px 14px;
+  border-radius: 0 6px 6px 0;
+  margin: 12px 0;
+  font-size: 15px;
+}
+.explanation { margin: 14px 0; }
+.explanation p { margin: 10px 0; }
+.step {
+  display: inline-block;
+  background: var(--accent);
+  color: var(--bg);
+  font-weight: 700;
+  font-size: 12px;
+  width: 20px; height: 20px;
+  line-height: 20px;
+  text-align: center;
+  border-radius: 50%;
+  margin-right: 6px;
+}
+
+.code-example, .key-pattern { margin: 16px 0; }
+.lang-badge {
+  display: inline-block;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-bottom: none;
+  border-radius: 6px 6px 0 0;
+  padding: 2px 12px;
+  font-size: 11px;
+  color: var(--text-dim);
+  font-weight: 600;
+}
+pre {
+  margin: 0;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 0 8px 8px 8px;
+  padding: 14px 16px;
+  overflow-x: auto;
+  font-size: 13.5px;
+  line-height: 1.55;
+}
+.output {
+  background: var(--output-bg);
+  border: 1px solid var(--border);
+  border-top: none;
+  border-radius: 0 0 8px 8px;
+  padding: 10px 16px;
+  font-family: ui-monospace, monospace;
+  font-size: 13px;
+  color: var(--text-dim);
+  white-space: pre-wrap;
+}
+.output::before {
+  content: "output";
+  display: block;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-dim);
+  opacity: 0.7;
+  margin-bottom: 4px;
+}
+
+.callout-warning {
+  background: var(--warn-bg);
+  border: 1px solid var(--warn-border);
+  border-radius: 8px;
+  padding: 12px 16px;
+  margin: 16px 0;
+}
+.mistake { color: var(--red); margin: 8px 0; font-family: ui-monospace, monospace; font-size: 13px; white-space: pre-wrap; }
+.correct { color: var(--green); margin: 8px 0; font-family: ui-monospace, monospace; font-size: 13px; white-space: pre-wrap; }
+
+.key-rules {
+  background: var(--surface2);
+  border-radius: 8px;
+  padding: 10px 16px;
+  margin: 16px 0;
+}
+.key-rules ul { margin: 6px 0; padding-left: 20px; }
+
+.exercises { margin: 16px 0; }
+.exercise {
+  border: 1px dashed var(--blue-tint-border);
+  border-radius: 8px;
+  padding: 10px 14px 10px 44px;
+  margin: 10px 0 10px 8px;
+  position: relative;
+  background: var(--blue-tint-bg);
+}
+.exercises { counter-reset: ex; }
+.exercise::before {
+  counter-increment: ex;
+  content: counter(ex);
+  position: absolute;
+  left: 12px; top: 10px;
+  background: var(--accent);
+  color: var(--bg);
+  width: 22px; height: 22px;
+  line-height: 22px;
+  text-align: center;
+  border-radius: 50%;
+  font-weight: 700;
+  font-size: 12px;
+}
+.connections {
+  font-size: 14px;
+  color: var(--text-dim);
+  border-top: 1px solid var(--border);
+  padding-top: 10px;
+  margin-top: 16px;
+}
+.connections strong { color: var(--text); }
+.reminder { margin: 10px 0; font-size: 15px; }
+
+footer.guide-footer {
+  margin-left: 300px;
+  padding: 30px 40px 60px;
+  border-top: 1px solid var(--border);
+  color: var(--text-dim);
+}
+footer.guide-footer ul { list-style: none; padding: 0; columns: 2; }
+footer.guide-footer li { margin: 3px 0; }
+.cross-links { margin-top: 20px; }
+.cross-links a { margin-right: 16px; }
+
+@media (max-width: 900px) {
+  .sidebar { display: none; }
+  .content, footer.guide-footer { margin-left: 0; }
+  .content { padding: 24px 18px 60px; }
+}
+</style>
+</head>
+<body data-theme="dark">
+
+<button class="theme-toggle" onclick="toggleTheme()">☀ / ☾ Theme</button>
+
+<!-- ===================== SIDEBAR ===================== -->
+<nav class="sidebar">
+  <h3>Review (Due Today)</h3>
+  <a class="review-link" href="#r-perf">Performance Optimization</a>
+  <a class="review-link" href="#r-security">Security: XSS, CSP</a>
+  <a class="review-link" href="#r-wasm">WebAssembly Interop</a>
+  <a class="review-link" href="#r-debug">Advanced Debugging</a>
+  <a class="review-link" href="#r-nodeloop">Node.js Event Loop</a>
+  <a class="review-link" href="#r-nodestreams">Node.js Streams</a>
+
+  <h3>Node.js Core Modules</h3>
+  <a href="#buffer">Buffer &amp; Binary Data</a>
+  <a href="#crypto">node:crypto</a>
+  <a href="#url">URL &amp; URLSearchParams</a>
+
+  <h3>Concurrency &amp; Testing</h3>
+  <a href="#worker-threads">worker_threads</a>
+  <a href="#testing">Vitest &amp; Jest</a>
+</nav>
+
+<div class="content">
+<div class="inner">
+
+<header class="main-header">
+  <h1>JavaScript Daily Guide</h1>
+  <div class="date">June 24, 2026 &mdash; Day 13</div>
+  <span class="count-badge">11 concepts &middot; 6 review + 5 new</span>
+</header>
+
+<div class="howto">
+  <strong>How to use this guide</strong>
+  <ol>
+    <li>Start with the <em>Review</em> section. For each card, read the reminder, then attempt the challenge from memory before peeking.</li>
+    <li>For new concepts, read the explanation and run every example yourself (Node 22+ or a modern browser console).</li>
+    <li>Study the <em>Common Mistakes</em> — anti-patterns stick better than rules.</li>
+    <li>Attempt the practice exercises <strong>without</strong> looking back at the examples. Solutions are intentionally omitted.</li>
+  </ol>
+</div>
+
+<!-- ===================== REVIEW SECTION ===================== -->
+<h2 class="section-title">🔁 Review Section</h2>
+<p class="section-sub">Six concepts are due for retrieval practice today. Recall first, verify second.</p>
+
+<div class="concept-card review-card" id="r-perf">
+  <div class="concept-header">
+    <span class="concept-title">Performance Optimization</span>
+    <span class="ttag">Performance &amp; Security</span>
+    <span class="days-since">9 days since review</span>
+  </div>
+  <div class="reminder">Defer non-urgent work with <code>requestIdleCallback</code>; measure with the User Timing API (<code>performance.mark</code>/<code>measure</code>); avoid recomputation with memoization and lazy evaluation. Measure <em>before</em> optimizing — guesses about hot paths are usually wrong.</div>
+  <div class="key-pattern">
+    <div class="lang-badge">JavaScript</div>
+<pre><code>performance.mark('start');
+const memo = new Map();
+function fib(n) {
+  if (n < 2) return n;
+  if (memo.has(n)) return memo.get(n);
+  const v = fib(n - 1) + fib(n - 2);
+  memo.set(n, v);
+  return v;
+}
+fib(40);
+performance.mark('end');
+performance.measure('fib', 'start', 'end');
+console.log(performance.getEntriesByName('fib')[0].duration.toFixed(2), 'ms');</code></pre>
+  </div>
+  <div class="exercises">
+    <strong>Challenge:</strong>
+    <div class="exercise">Write a generic <code>memoize(fn)</code> that supports multiple arguments (keyed by a serialized arg list), then use <code>performance.measure</code> to prove the second call to an expensive function is at least 100x faster than the first. Bonus: schedule the warm-up call inside <code>requestIdleCallback</code> so it doesn't block first paint.</div>
+  </div>
+  <div class="callout-warning">
+    <strong>#1 Pitfall:</strong> Memoizing a function with object/array arguments using identity as the key — two structurally-equal objects are different references, so the cache never hits. Serialize the key (e.g. <code>JSON.stringify</code>) or use a <code>WeakMap</code> keyed on the actual object reference.
+  </div>
+</div>
+
+<div class="concept-card review-card" id="r-security">
+  <div class="concept-header">
+    <span class="concept-title">Security: XSS Prevention, CSP &amp; Trusted Types</span>
+    <span class="ttag">Performance &amp; Security</span>
+    <span class="days-since">9 days since review</span>
+  </div>
+  <div class="reminder">Never build HTML by concatenating untrusted input. Insert text with <code>textContent</code> (never <code>innerHTML</code>). Lock down what can execute with a Content-Security-Policy header, and require sanitized values for dangerous sinks with Trusted Types.</div>
+  <div class="key-pattern">
+    <div class="lang-badge">JavaScript</div>
+<pre><code>// ❌ XSS sink
+el.innerHTML = '&lt;p&gt;' + userInput + '&lt;/p&gt;';
+
+// ✅ text is escaped automatically
+el.textContent = userInput;
+
+// CSP (sent as a response header) blocks inline &amp; eval'd script:
+// Content-Security-Policy: default-src 'self'; script-src 'self'
+
+// Trusted Types force sanitization before assignment to innerHTML:
+const policy = trustedTypes.createPolicy('app', {
+  createHTML: (s) =&gt; DOMPurify.sanitize(s)
+});
+el.innerHTML = policy.createHTML(userInput);</code></pre>
+  </div>
+  <div class="exercises">
+    <strong>Challenge:</strong>
+    <div class="exercise">Write <code>escapeHtml(str)</code> that converts <code>&amp; &lt; &gt; " '</code> to their HTML entities, then build a <code>render(template, data)</code> tag function that auto-escapes every interpolated value (so <code>render`&lt;b&gt;${userInput}&lt;/b&gt;`</code> is XSS-safe). Explain why a CSP header would still be a valuable second layer of defense.</div>
+  </div>
+  <div class="callout-warning">
+    <strong>#1 Pitfall:</strong> Trusting client-side escaping alone. Escaping must happen at the correct sink and context (HTML vs attribute vs URL vs JS), and a single missed sink reopens XSS. Defense in depth — escaping <em>plus</em> a strict CSP — is the standard, not either/or.
+  </div>
+</div>
+
+<div class="concept-card review-card" id="r-wasm">
+  <div class="concept-header">
+    <span class="concept-title">WebAssembly Interop</span>
+    <span class="ttag">Performance &amp; Security</span>
+    <span class="days-since">9 days since review</span>
+  </div>
+  <div class="reminder">Stream-compile and instantiate a <code>.wasm</code> module, then call exported functions like plain JS functions. WASM and JS share a single <code>WebAssembly.Memory</code> (an <code>ArrayBuffer</code>); pass complex data by writing bytes into that memory and passing offsets.</div>
+  <div class="key-pattern">
+    <div class="lang-badge">JavaScript</div>
+<pre><code>// Browser: stream + compile + instantiate in one call
+const { instance } = await WebAssembly.instantiateStreaming(
+  fetch('add.wasm'),
+  { env: { log: (x) =&gt; console.log('wasm:', x) } } // imports JS gives to WASM
+);
+console.log(instance.exports.add(2, 3)); // call an exported function -> 5
+
+// Shared linear memory is just an ArrayBuffer view:
+const mem = new Uint8Array(instance.exports.memory.buffer);
+mem[0] = 42; // JS and WASM see the same byte</code></pre>
+  </div>
+  <div class="exercises">
+    <strong>Challenge:</strong>
+    <div class="exercise">Given a WASM module that exports <code>sumBytes(ptr, len)</code> and a <code>memory</code>, write the JS glue that copies a <code>Uint8Array</code> into the module's linear memory at some offset, calls <code>sumBytes</code> with the pointer and length, and returns the sum. Account for the fact that JS and WASM share the same buffer (no copy back needed).</div>
+  </div>
+  <div class="callout-warning">
+    <strong>#1 Pitfall:</strong> Caching a typed-array view of <code>memory.buffer</code> and reusing it after the WASM module grows its memory. Growing memory detaches the old <code>ArrayBuffer</code>, so the stale view throws or reads garbage. Re-create the view after any <code>memory.grow()</code>.
+  </div>
+</div>
+
+<div class="concept-card review-card" id="r-debug">
+  <div class="concept-header">
+    <span class="concept-title">Advanced Debugging</span>
+    <span class="ttag">Performance &amp; Security</span>
+    <span class="days-since">9 days since review</span>
+  </div>
+  <div class="reminder">Go beyond <code>console.log</code>: <code>console.table</code> for arrays of objects, <code>console.group</code> for nested structure, <code>console.time</code>/<code>timeEnd</code> for ad-hoc timing, <code>console.trace</code> for a stack snapshot, and <code>console.assert</code> to log only when an invariant fails.</div>
+  <div class="key-pattern">
+    <div class="lang-badge">JavaScript</div>
+<pre><code>console.table([{ id: 1, name: 'Ada' }, { id: 2, name: 'Linus' }]);
+
+console.group('request');
+console.log('url', '/api/users');
+console.time('fetch');
+// ... work ...
+console.timeEnd('fetch');     // "fetch: 12.3ms"
+console.groupEnd();
+
+console.assert(1 + 1 === 3, 'math is broken'); // logs ONLY when assertion fails
+console.trace('how did we get here?');         // prints the call stack</code></pre>
+  </div>
+  <div class="exercises">
+    <strong>Challenge:</strong>
+    <div class="exercise">Build a <code>debugWrap(fn, name)</code> that returns a wrapped function which, on each call, opens a <code>console.group(name)</code>, logs the arguments as a <code>console.table</code>, times the execution with <code>console.time</code>/<code>timeEnd</code>, logs the return value, and closes the group — even if <code>fn</code> throws (clean up the group in a <code>finally</code>).</div>
+  </div>
+  <div class="callout-warning">
+    <strong>#1 Pitfall:</strong> Logging a mutable object reference (<code>console.log(obj)</code>) and reading the console later. Many consoles show the object's <em>current</em> (mutated) state when you expand it, not its state at log time. Log a snapshot — <code>console.log(structuredClone(obj))</code> or <code>console.log(JSON.stringify(obj))</code> — when you need a point-in-time value.
+  </div>
+</div>
+
+<div class="concept-card review-card" id="r-nodeloop">
+  <div class="concept-header">
+    <span class="concept-title">Node.js Event Loop &amp; Timers</span>
+    <span class="ttag">Node.js Runtime</span>
+    <span class="days-since">7 days since review</span>
+  </div>
+  <div class="reminder"><code>process.nextTick</code> callbacks run before any other microtasks/timers, after the current operation. Promise microtasks drain next. <code>setImmediate</code> fires in the check phase (after I/O); <code>setTimeout(fn, 0)</code> in the timers phase. Inside an I/O callback, <code>setImmediate</code> always beats <code>setTimeout(0)</code>.</div>
+  <div class="key-pattern">
+    <div class="lang-badge">JavaScript</div>
+<pre><code>console.log('sync');
+setTimeout(() =&gt; console.log('timeout'), 0);
+setImmediate(() =&gt; console.log('immediate'));
+Promise.resolve().then(() =&gt; console.log('promise'));
+process.nextTick(() =&gt; console.log('nextTick'));
+console.log('sync end');
+
+// Order: sync, sync end, nextTick, promise, (timeout/immediate order varies at top level)</code></pre>
+  </div>
+  <div class="exercises">
+    <strong>Challenge:</strong>
+    <div class="exercise">Predict the exact output order of a script that mixes <code>process.nextTick</code>, a resolved Promise <code>.then</code>, <code>setImmediate</code>, and <code>setTimeout(fn, 0)</code> — first at the top level, then with all four scheduled <em>inside</em> a <code>fs.readFile</code> callback. Explain why the <code>setImmediate</code> vs <code>setTimeout</code> ordering becomes deterministic inside the I/O callback.</div>
+  </div>
+  <div class="callout-warning">
+    <strong>#1 Pitfall:</strong> Recursively scheduling <code>process.nextTick</code> (or chaining microtasks) so the queue never drains. Because nextTick callbacks run before the loop continues, this starves I/O and timers entirely — the program appears hung. Use <code>setImmediate</code> for "run after I/O gets a turn" work.
+  </div>
+</div>
+
+<div class="concept-card review-card" id="r-nodestreams">
+  <div class="concept-header">
+    <span class="concept-title">Node.js Streams</span>
+    <span class="ttag">Node.js Runtime</span>
+    <span class="days-since">7 days since review</span>
+  </div>
+  <div class="reminder">Process data incrementally instead of buffering it all in memory. <code>Readable</code> → <code>Transform</code> → <code>Writable</code>, connected with <code>pipeline()</code> (which propagates errors and cleans up, unlike raw <code>.pipe()</code>). Backpressure is handled for you: a slow writable pauses the readable.</div>
+  <div class="key-pattern">
+    <div class="lang-badge">JavaScript</div>
+<pre><code>import { pipeline } from 'node:stream/promises';
+import { createReadStream, createWriteStream } from 'node:fs';
+import { Transform } from 'node:stream';
+
+const upper = new Transform({
+  transform(chunk, _enc, cb) { cb(null, chunk.toString().toUpperCase()); }
+});
+
+await pipeline(
+  createReadStream('in.txt'),
+  upper,
+  createWriteStream('out.txt')
+);                       // resolves when done; rejects (and cleans up) on error
+console.log('done');</code></pre>
+  </div>
+  <div class="exercises">
+    <strong>Challenge:</strong>
+    <div class="exercise">Write a <code>Transform</code> stream that splits an incoming text stream into lines and emits a JSON object <code>{ line, num }</code> per line (handle chunk boundaries that split a line in the middle). Wire it with <code>pipeline()</code> from a file read stream to <code>process.stdout</code>, and ensure errors reject the pipeline promise.</div>
+  </div>
+  <div class="callout-warning">
+    <strong>#1 Pitfall:</strong> Using raw <code>readable.pipe(writable)</code> and forgetting that <code>.pipe()</code> does <em>not</em> forward errors or auto-destroy the source on failure — a mid-stream error leaks file descriptors. Prefer <code>stream.pipeline()</code> (or <code>stream/promises</code>), which destroys all streams and surfaces the error.
+  </div>
+</div>
+
+<!-- ===================== NEW: SECTION 1 ===================== -->
+<h2 class="section-title">🆕 Node.js Core Modules</h2>
+<p class="section-sub">The binary, cryptographic, and URL-parsing primitives every Node service leans on.</p>
+
+<!-- BUFFER -->
+<div class="concept-card" id="buffer">
+  <div class="concept-header">
+    <span class="concept-title">Buffer &amp; Binary Data</span>
+    <span class="ttag">Node.js Runtime</span>
+  </div>
+  <p class="why-matters"><code>Buffer</code> is Node's view over raw bytes — every file read, socket payload, and hash digest is a Buffer. Knowing how to allocate, slice, encode, and decode them is unavoidable in any I/O or networking code.</p>
+
+  <div class="explanation">
+    <p>A <code>Buffer</code> is a subclass of <code>Uint8Array</code> with extra encoding/decoding helpers. It's a fixed-length sequence of bytes living outside the V8 heap.</p>
+    <p><span class="step">1</span><strong>Create &amp; convert.</strong> <code>Buffer.from</code> builds from a string (with an encoding), an array, or another buffer. Decode back to a string with <code>.toString(encoding)</code>.</p>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">JavaScript</div>
+<pre><code>const buf = Buffer.from('Café', 'utf8');
+console.log(buf);              // raw bytes
+console.log(buf.length);      // BYTE length, not character length
+console.log(buf.toString('hex'));
+console.log(buf.toString('base64'));
+console.log(Buffer.from('SGk=', 'base64').toString('utf8')); // decode base64</code></pre>
+    <div class="output">&lt;Buffer 43 61 66 c3 a9&gt;
+5
+436166c3a9
+Q2Fmw6k=
+Hi</div>
+  </div>
+
+  <div class="explanation">
+    <p><span class="step">2</span><strong>Allocate.</strong> Use <code>Buffer.alloc(n)</code> for a zero-filled buffer. <code>Buffer.allocUnsafe(n)</code> skips zeroing for speed but may contain old memory — only use it if you overwrite every byte.</p>
+  </div>
+  <div class="code-example">
+    <div class="lang-badge">JavaScript</div>
+<pre><code>const b = Buffer.alloc(4);     // safe: 00 00 00 00
+b.writeUInt16BE(0x1234, 0);    // write a big-endian 16-bit int at offset 0
+b.writeUInt16LE(0x1234, 2);    // little-endian at offset 2
+console.log(b.toString('hex'));
+console.log(b.readUInt16BE(0).toString(16));</code></pre>
+    <div class="output">12343412
+1234</div>
+  </div>
+
+  <div class="explanation">
+    <p><span class="step">3</span><strong>Concatenate &amp; slice.</strong> <code>Buffer.concat</code> joins chunks (e.g. accumulated from a stream). Note <code>.subarray()</code> shares memory with the original — it is <em>not</em> a copy.</p>
+  </div>
+  <div class="code-example">
+    <div class="lang-badge">JavaScript</div>
+<pre><code>const chunks = [Buffer.from('Hello, '), Buffer.from('world')];
+const joined = Buffer.concat(chunks);
+console.log(joined.toString());            // Hello, world
+
+const view = joined.subarray(0, 5);        // SHARES memory with joined
+view[0] = 0x4a;                            // mutates joined too!
+console.log(joined.toString());            // Jello, world</code></pre>
+    <div class="output">Hello, world
+Jello, world</div>
+  </div>
+
+  <div class="callout-warning">
+    <strong>Common Mistakes:</strong>
+    <div class="mistake">❌ Confusing byte length with character length:
+   const b = Buffer.from('Café');
+   b.length; // 5, not 4 — 'é' is two UTF-8 bytes</div>
+    <div class="correct">✅ For character count use the string: 'Café'.length // 4
+   Buffer.length / byteLength('Café') gives the BYTE count, which is what
+   matters for buffers, offsets, and Content-Length.</div>
+  </div>
+
+  <div class="key-rules">
+    <strong>Key Rules:</strong>
+    <ul>
+      <li>Always pass an explicit encoding to <code>Buffer.from(str, enc)</code> and <code>buf.toString(enc)</code> — the default <code>'utf8'</code> can silently corrupt binary data.</li>
+      <li><code>Buffer.alloc</code> is safe (zero-filled); <code>Buffer.allocUnsafe</code> is faster but may leak old memory — only use it when you immediately overwrite the whole buffer.</li>
+      <li><code>.subarray()</code>/<code>.slice()</code> share the underlying memory; use <code>Buffer.from(buf)</code> to get an independent copy.</li>
+    </ul>
+  </div>
+
+  <div class="exercises">
+    <strong>Practice Exercises:</strong>
+    <div class="exercise">Write <code>toBase64Url(str)</code> and <code>fromBase64Url(b64)</code> that encode/decode using URL-safe base64 (replace <code>+/</code> with <code>-_</code> and strip <code>=</code> padding). Verify a round trip restores the original string.</div>
+    <div class="exercise">Implement <code>concatStream(readable)</code> that collects all chunks from a Readable stream into a single Buffer (push chunks into an array, then <code>Buffer.concat</code> at the end) and returns it via a Promise.</div>
+    <div class="exercise">Given a 12-byte buffer, write a function that parses it as three big-endian 32-bit unsigned integers and returns them as an array. Then write the inverse that packs an array of three numbers back into a 12-byte buffer.</div>
+  </div>
+
+  <div class="connections">
+    <strong>Connections:</strong> <code>Buffer</code> extends <code>Uint8Array</code>, so everything you learned about <a href="#">Typed Arrays &amp; ArrayBuffer</a> applies. Stream chunks (reviewed today in <a href="#r-nodestreams">Node Streams</a>) arrive as Buffers. The <a href="#crypto">crypto</a> and <a href="#worker-threads">worker_threads</a> sections below both pass data as Buffers/typed arrays.
+  </div>
+</div>
+
+<!-- CRYPTO -->
+<div class="concept-card" id="crypto">
+  <div class="concept-header">
+    <span class="concept-title"><code>node:crypto</code> — Hashing, HMAC &amp; Random</span>
+    <span class="ttag">Node.js Runtime</span>
+  </div>
+  <p class="why-matters">Password hashing, request signing, token generation, and integrity checks all run through <code>node:crypto</code>. Getting these right (and knowing the safe defaults) is the difference between secure and trivially-breakable code.</p>
+
+  <div class="explanation">
+    <p><span class="step">1</span><strong>Hashing &amp; HMAC.</strong> <code>createHash</code> produces a one-way digest (e.g. for content addressing). <code>createHmac</code> adds a secret key — use it to sign and verify payloads (webhooks, tokens).</p>
+  </div>
+  <div class="code-example">
+    <div class="lang-badge">JavaScript</div>
+<pre><code>import { createHash, createHmac } from 'node:crypto';
+
+const digest = createHash('sha256').update('hello').digest('hex');
+console.log(digest.slice(0, 16), '...');
+
+const sig = createHmac('sha256', 'secret-key')
+  .update('payload')
+  .digest('hex');
+console.log('sig:', sig.slice(0, 16), '...');</code></pre>
+    <div class="output">2cf24dba5fb0a30e ...
+sig: aa54f... (depends on key)</div>
+  </div>
+
+  <div class="explanation">
+    <p><span class="step">2</span><strong>Secure randomness.</strong> Never use <code>Math.random()</code> for tokens. <code>randomUUID()</code> gives a v4 UUID; <code>randomBytes</code> gives raw entropy you can encode however you like.</p>
+  </div>
+  <div class="code-example">
+    <div class="lang-badge">JavaScript</div>
+<pre><code>import { randomUUID, randomBytes, randomInt } from 'node:crypto';
+
+console.log(randomUUID());                       // e.g. 3b12...-...-...
+console.log(randomBytes(16).toString('base64url')); // 22-char URL-safe token
+console.log(randomInt(1, 7));                    // unbiased dice roll 1..6</code></pre>
+    <div class="output">a3f1c2d4-5e6f-4a7b-8c9d-0e1f2a3b4c5d
+Xy9_aB3cD7eF1gH2iJ3kL
+4</div>
+  </div>
+
+  <div class="explanation">
+    <p><span class="step">3</span><strong>Password hashing &amp; constant-time compare.</strong> Use <code>scrypt</code> (slow, salted) for passwords — never a plain SHA. Compare secrets with <code>timingSafeEqual</code> to avoid timing attacks.</p>
+  </div>
+  <div class="code-example">
+    <div class="lang-badge">JavaScript</div>
+<pre><code>import { scryptSync, randomBytes, timingSafeEqual } from 'node:crypto';
+
+function hashPassword(pw) {
+  const salt = randomBytes(16);
+  const key = scryptSync(pw, salt, 32);
+  return salt.toString('hex') + ':' + key.toString('hex');
+}
+function verify(pw, stored) {
+  const [saltHex, keyHex] = stored.split(':');
+  const key = scryptSync(pw, Buffer.from(saltHex, 'hex'), 32);
+  return timingSafeEqual(key, Buffer.from(keyHex, 'hex'));
+}
+const h = hashPassword('hunter2');
+console.log(verify('hunter2', h), verify('wrong', h));</code></pre>
+    <div class="output">true false</div>
+  </div>
+
+  <div class="callout-warning">
+    <strong>Common Mistakes:</strong>
+    <div class="mistake">❌ Comparing secrets with === or a plain hash for passwords:
+   if (userMac === expectedMac) { ... }   // timing attack leaks the answer
+   storedHash = createHash('sha256').update(pw).digest('hex'); // unsalted, fast</div>
+    <div class="correct">✅ Use timingSafeEqual for MAC/token comparison, and a slow salted KDF
+   (scrypt / argon2 / bcrypt) for passwords:
+   crypto.timingSafeEqual(Buffer.from(a), Buffer.from(b));</div>
+  </div>
+
+  <div class="key-rules">
+    <strong>Key Rules:</strong>
+    <ul>
+      <li>Use <code>randomBytes</code>/<code>randomUUID</code>/<code>randomInt</code> for anything security-sensitive — <code>Math.random()</code> is predictable.</li>
+      <li>Passwords need a slow, salted KDF (<code>scrypt</code>); fast hashes (SHA-256) are for integrity/content addressing, not passwords.</li>
+      <li>Compare secrets/MACs with <code>timingSafeEqual</code> (equal-length buffers) so comparison time doesn't leak how many bytes matched.</li>
+    </ul>
+  </div>
+
+  <div class="exercises">
+    <strong>Practice Exercises:</strong>
+    <div class="exercise">Write <code>signWebhook(body, secret)</code> returning an HMAC-SHA256 hex signature, and <code>verifyWebhook(body, secret, sig)</code> that recomputes the HMAC and compares it with <code>timingSafeEqual</code> (guard against length mismatch first).</div>
+    <div class="exercise">Implement a <code>contentHash(buffer)</code> that returns the first 12 hex chars of the SHA-256 digest — a short content-addressed id. Verify identical input yields an identical id and a one-byte change yields a different one.</div>
+    <div class="exercise">Build a <code>genToken(bytes = 32)</code> that returns a URL-safe random token using <code>randomBytes(...).toString('base64url')</code>, and explain why you'd pick this over <code>randomUUID()</code> when you need more than 122 bits of entropy.</div>
+  </div>
+
+  <div class="connections">
+    <strong>Connections:</strong> Digests and keys are returned as <a href="#buffer">Buffers</a>. This is the Node counterpart to the browser <a href="#">Web Crypto API</a> (note: Web Crypto's <code>subtle</code> methods are async/Promise-based, while these <code>*Sync</code> variants block). HMAC verification is the server side of the webhook signing you'd protect against in <a href="#r-security">XSS/Security</a>.
+  </div>
+</div>
+
+<!-- URL -->
+<div class="concept-card" id="url">
+  <div class="concept-header">
+    <span class="concept-title"><code>URL</code> &amp; <code>URLSearchParams</code></span>
+    <span class="ttag">Node.js Runtime</span>
+  </div>
+  <p class="why-matters">Parsing URLs and query strings by hand with <code>split('?')</code> and regex is a perennial source of bugs (encoding, repeated keys, missing parts). The WHATWG <code>URL</code> API — identical in Node and the browser — does it correctly and safely.</p>
+
+  <div class="explanation">
+    <p><span class="step">1</span><strong>Parse &amp; build.</strong> The <code>URL</code> constructor splits a URL into typed parts. A second <em>base</em> argument resolves relative URLs.</p>
+  </div>
+  <div class="code-example">
+    <div class="lang-badge">JavaScript</div>
+<pre><code>const u = new URL('https://ex.com:8080/path/page?q=js&amp;sort=new#sec');
+console.log(u.protocol, u.hostname, u.port);
+console.log(u.pathname, u.hash);
+console.log(u.searchParams.get('q'));
+
+// Resolve a relative path against a base:
+console.log(new URL('../about', 'https://ex.com/a/b/c').href);</code></pre>
+    <div class="output">https: ex.com 8080
+/path/page #sec
+js
+https://ex.com/a/about</div>
+  </div>
+
+  <div class="explanation">
+    <p><span class="step">2</span><strong>Query strings.</strong> <code>URLSearchParams</code> handles encoding, multiple values per key, and iteration. Mutating <code>url.searchParams</code> updates <code>url.href</code> live.</p>
+  </div>
+  <div class="code-example">
+    <div class="lang-badge">JavaScript</div>
+<pre><code>const params = new URLSearchParams('tag=js&amp;tag=node&amp;page=2');
+console.log(params.getAll('tag'));   // repeated keys -> array
+console.log(params.get('page'));
+
+params.append('tag', 'wasm');
+params.set('page', '3');
+console.log(params.toString());      // auto-encoded</code></pre>
+    <div class="output">[ 'js', 'node' ]
+2
+tag=js&amp;tag=node&amp;page=2&amp;tag=wasm</div>
+  </div>
+
+  <div class="explanation">
+    <p><span class="step">3</span><strong>Build from an object &amp; encode safely.</strong> Pass a plain object to <code>URLSearchParams</code> and it encodes special characters for you — no manual <code>encodeURIComponent</code> juggling.</p>
+  </div>
+  <div class="code-example">
+    <div class="lang-badge">JavaScript</div>
+<pre><code>const qs = new URLSearchParams({ q: 'a b&amp;c', lang: 'en' });
+console.log(qs.toString());          // spaces/&amp; encoded automatically
+
+const api = new URL('https://api.ex.com/search');
+api.search = qs.toString();
+console.log(api.href);</code></pre>
+    <div class="output">q=a+b%26c&amp;lang=en
+https://api.ex.com/search?q=a+b%26c&amp;lang=en</div>
+  </div>
+
+  <div class="callout-warning">
+    <strong>Common Mistakes:</strong>
+    <div class="mistake">❌ Hand-rolling query parsing / concatenation:
+   const q = url.split('?')[1];
+   const val = q.split('&amp;')[0].split('=')[1]; // breaks on encoding, order, repeats
+   const href = base + '?q=' + userInput;       // unencoded -> broken/unsafe URL</div>
+    <div class="correct">✅ Let the platform parse and encode:
+   const val = new URL(url).searchParams.get('q');
+   u.searchParams.set('q', userInput);          // encodes correctly</div>
+  </div>
+
+  <div class="key-rules">
+    <strong>Key Rules:</strong>
+    <ul>
+      <li><code>new URL(input)</code> throws on an invalid absolute URL — wrap in try/catch or use <code>URL.canParse(input)</code> to validate user input.</li>
+      <li>Use <code>getAll()</code> for keys that can repeat; <code>get()</code> returns only the first value.</li>
+      <li>Build query strings with <code>URLSearchParams</code> (it encodes for you) instead of string concatenation + <code>encodeURIComponent</code>.</li>
+    </ul>
+  </div>
+
+  <div class="exercises">
+    <strong>Practice Exercises:</strong>
+    <div class="exercise">Write <code>addParams(url, obj)</code> that returns a new URL string with the key/value pairs from <code>obj</code> merged into the existing query string (overwriting existing keys), leaving the rest of the URL untouched.</div>
+    <div class="exercise">Implement <code>parseQuery(qs)</code> that turns a query string into an object, collapsing single-value keys to a string and repeated keys to an array (e.g. <code>tag=a&amp;tag=b&amp;p=1</code> → <code>{ tag: ['a','b'], p: '1' }</code>).</div>
+    <div class="exercise">Write <code>isSameOrigin(a, b)</code> that returns true only when two URLs share the same protocol, hostname, and port — using the parsed <code>URL</code> fields, not string matching.</div>
+  </div>
+
+  <div class="connections">
+    <strong>Connections:</strong> The same <code>URL</code>/<code>URLSearchParams</code> objects are used by <a href="#r-nodestreams">fetch</a> in both Node and the browser, so this knowledge is fully portable. Building request URLs here feeds directly into the <a href="#">Fetch Advanced</a> patterns from earlier days.
+  </div>
+</div>
+
+<!-- ===================== NEW: SECTION 2 ===================== -->
+<h2 class="section-title">🆕 Concurrency &amp; Testing</h2>
+<p class="section-sub">Run CPU-bound work off the main thread, and lock behavior in with a fast test runner.</p>
+
+<!-- WORKER THREADS -->
+<div class="concept-card" id="worker-threads">
+  <div class="concept-header">
+    <span class="concept-title">Node.js <code>worker_threads</code></span>
+    <span class="ttag">Node.js Runtime</span>
+  </div>
+  <p class="why-matters">Node's event loop is single-threaded, so a heavy synchronous computation (parsing, hashing, image work) blocks every other request. <code>worker_threads</code> moves that work to a real OS thread, keeping the main thread responsive.</p>
+
+  <div class="explanation">
+    <p><span class="step">1</span><strong>Spawn a worker.</strong> The main thread creates a <code>Worker</code> and exchanges data via <code>postMessage</code> / the <code>message</code> event. Inside the worker, <code>parentPort</code> is the channel back.</p>
+  </div>
+  <div class="code-example">
+    <div class="lang-badge">JavaScript — main.mjs</div>
+<pre><code>import { Worker } from 'node:worker_threads';
+
+const worker = new Worker(new URL('./worker.mjs', import.meta.url));
+worker.postMessage(40);                         // send input
+worker.on('message', (result) =&gt; {
+  console.log('fib(40) =', result);
+  worker.terminate();
+});
+worker.on('error', (err) =&gt; console.error(err));
+console.log('main thread is NOT blocked');</code></pre>
+    <div class="output">main thread is NOT blocked
+fib(40) = 102334155</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">JavaScript — worker.mjs</div>
+<pre><code>import { parentPort } from 'node:worker_threads';
+
+function fib(n) { return n &lt; 2 ? n : fib(n - 1) + fib(n - 2); }
+
+parentPort.on('message', (n) =&gt; {
+  parentPort.postMessage(fib(n));               // CPU work happens off-main
+});</code></pre>
+    <div class="output">// runs on a separate OS thread</div>
+  </div>
+
+  <div class="explanation">
+    <p><span class="step">2</span><strong>workerData &amp; one-shot tasks.</strong> Pass startup data via the <code>workerData</code> option, and wrap a worker in a Promise for a clean async API.</p>
+  </div>
+  <div class="code-example">
+    <div class="lang-badge">JavaScript</div>
+<pre><code>import { Worker } from 'node:worker_threads';
+
+function runTask(file, data) {
+  return new Promise((resolve, reject) =&gt; {
+    const w = new Worker(file, { workerData: data });
+    w.once('message', resolve);
+    w.once('error', reject);
+    w.once('exit', (code) =&gt; {
+      if (code !== 0) reject(new Error('worker exit ' + code));
+    });
+  });
+}
+// const sum = await runTask('./sum-worker.mjs', [1, 2, 3]);</code></pre>
+    <div class="output">// resolves with the worker's first posted message</div>
+  </div>
+
+  <div class="explanation">
+    <p><span class="step">3</span><strong>Zero-copy transfer.</strong> Messages are structured-cloned (copied) by default. Pass an <code>ArrayBuffer</code> in the transfer list to move ownership without copying — the sender can no longer use it.</p>
+  </div>
+  <div class="code-example">
+    <div class="lang-badge">JavaScript</div>
+<pre><code>const big = new Uint8Array(1_000_000);
+// Transfer the underlying buffer (no copy); 'big' becomes detached after this:
+worker.postMessage(big, [big.buffer]);
+console.log(big.byteLength);   // 0 — ownership moved to the worker</code></pre>
+    <div class="output">0</div>
+  </div>
+
+  <div class="callout-warning">
+    <strong>Common Mistakes:</strong>
+    <div class="mistake">❌ Spawning a worker per request for tiny tasks:
+   for (const job of jobs) new Worker('./w.mjs'); // thread startup cost dwarfs the work</div>
+    <div class="correct">✅ Reuse workers via a pool (e.g. a fixed set of N workers, or the 'piscina'
+   library). Only offload work that is genuinely CPU-bound and long enough to
+   amortize the messaging/startup overhead.</div>
+  </div>
+
+  <div class="key-rules">
+    <strong>Key Rules:</strong>
+    <ul>
+      <li>Use workers for <em>CPU-bound</em> work; for I/O-bound work, async APIs on the single thread are already non-blocking and simpler.</li>
+      <li>Messages are copied (structured clone) — functions, DOM nodes, and class instances don't survive; use the transfer list for large <code>ArrayBuffer</code>s to avoid the copy.</li>
+      <li>Workers have startup and per-message cost — pool and reuse them instead of spawning per task.</li>
+    </ul>
+  </div>
+
+  <div class="exercises">
+    <strong>Practice Exercises:</strong>
+    <div class="exercise">Write a <code>runTask(file, data)</code> helper (Promise-wrapped worker) and a worker that sums an array passed via <code>workerData</code>, posting the total back. Confirm the main thread logs a message <em>before</em> the worker's result.</div>
+    <div class="exercise">Build a minimal fixed-size worker pool: given N worker files and a queue of jobs, dispatch jobs to idle workers and resolve each job's Promise when its worker replies. Ensure no more than N workers run concurrently.</div>
+    <div class="exercise">Transfer a large <code>Uint8Array</code> to a worker that reverses its bytes in place and transfers it back. Verify the original buffer is detached (length 0) on the main side after sending.</div>
+  </div>
+
+  <div class="connections">
+    <strong>Connections:</strong> This is the Node analogue of browser <a href="#">Web Workers</a> — same <code>postMessage</code>/transfer model. Transferable <code>ArrayBuffer</code>s build on <a href="#">Typed Arrays</a> and <a href="#buffer">Buffer</a>. Offloading CPU work is the structural fix for the event-loop-starvation pitfall in today's <a href="#r-nodeloop">Node Event Loop</a> review.
+  </div>
+</div>
+
+<!-- TESTING -->
+<div class="concept-card" id="testing">
+  <div class="concept-header">
+    <span class="concept-title">Testing with Vitest &amp; Jest</span>
+    <span class="ttag">Testing &amp; Quality</span>
+  </div>
+  <p class="why-matters">Vitest and Jest are the dominant JS test runners. They share a near-identical API (<code>describe</code>/<code>it</code>/<code>expect</code>), so learning one transfers to the other — Vitest is the modern, ESM-native, faster choice for new projects.</p>
+
+  <div class="explanation">
+    <p><span class="step">1</span><strong>Structure &amp; assertions.</strong> Group with <code>describe</code>, define cases with <code>it</code>/<code>test</code>, assert with <code>expect(value).matcher()</code>.</p>
+  </div>
+  <div class="code-example">
+    <div class="lang-badge">JavaScript — math.test.js</div>
+<pre><code>import { describe, it, expect } from 'vitest'; // or 'from "@jest/globals"'
+import { add } from './math.js';
+
+describe('add', () =&gt; {
+  it('sums two numbers', () =&gt; {
+    expect(add(2, 3)).toBe(5);            // strict ===
+  });
+  it('matches objects by value', () =&gt; {
+    expect({ a: 1 }).toEqual({ a: 1 });   // deep equality
+  });
+});</code></pre>
+    <div class="output">✓ add &gt; sums two numbers
+✓ add &gt; matches objects by value
+2 passed</div>
+  </div>
+
+  <div class="explanation">
+    <p><span class="step">2</span><strong>Async &amp; errors.</strong> Return or <code>await</code> a Promise; assert rejections/throws with <code>.rejects</code> / <code>.toThrow()</code>.</p>
+  </div>
+  <div class="code-example">
+    <div class="lang-badge">JavaScript</div>
+<pre><code>it('awaits async results', async () =&gt; {
+  await expect(Promise.resolve(42)).resolves.toBe(42);
+});
+
+it('throws on bad input', () =&gt; {
+  expect(() =&gt; JSON.parse('{bad')).toThrow();
+  expect(() =&gt; JSON.parse('{bad')).toThrow(SyntaxError);
+});
+
+it('rejects', async () =&gt; {
+  await expect(Promise.reject(new Error('nope'))).rejects.toThrow('nope');
+});</code></pre>
+    <div class="output">✓ awaits async results
+✓ throws on bad input
+✓ rejects</div>
+  </div>
+
+  <div class="explanation">
+    <p><span class="step">3</span><strong>Mocks &amp; spies.</strong> <code>vi.fn()</code> (Vitest) / <code>jest.fn()</code> creates a spy you can assert calls on. Lifecycle hooks (<code>beforeEach</code>) reset state between tests.</p>
+  </div>
+  <div class="code-example">
+    <div class="lang-badge">JavaScript</div>
+<pre><code>import { it, expect, vi, beforeEach } from 'vitest';
+
+let onSave;
+beforeEach(() =&gt; { onSave = vi.fn(); });
+
+it('calls the callback once with the payload', () =&gt; {
+  function save(data, cb) { cb({ ok: true, data }); }
+  save('hi', onSave);
+  expect(onSave).toHaveBeenCalledTimes(1);
+  expect(onSave).toHaveBeenCalledWith({ ok: true, data: 'hi' });
+});</code></pre>
+    <div class="output">✓ calls the callback once with the payload</div>
+  </div>
+
+  <div class="callout-warning">
+    <strong>Common Mistakes:</strong>
+    <div class="mistake">❌ Forgetting to await an async assertion:
+   it('x', () =&gt; { expect(Promise.reject('e')).rejects.toThrow(); });
+   // test PASSES even though it never waited — the rejection is unhandled</div>
+    <div class="correct">✅ await (or return) the assertion so the runner waits for it:
+   it('x', async () =&gt; { await expect(p).rejects.toThrow(); });</div>
+  </div>
+
+  <div class="key-rules">
+    <strong>Key Rules:</strong>
+    <ul>
+      <li>Use <code>toBe</code> for primitives/identity (<code>===</code>) and <code>toEqual</code> for deep structural equality — mixing them causes confusing failures.</li>
+      <li>Always <code>await</code> or <code>return</code> async assertions (<code>resolves</code>/<code>rejects</code>), or the test can pass without actually checking anything.</li>
+      <li>Reset mocks/state between tests with <code>beforeEach</code> (or <code>vi.clearAllMocks()</code>) so test order never affects results.</li>
+    </ul>
+  </div>
+
+  <div class="exercises">
+    <strong>Practice Exercises:</strong>
+    <div class="exercise">Write tests for a <code>clamp(n, min, max)</code> function covering: a value inside the range, below the min, above the max, and the boundary values. Use <code>toBe</code> for each.</div>
+    <div class="exercise">Test an async <code>fetchUser(id)</code> that returns a Promise: assert it resolves to the right object for a valid id, and <code>rejects.toThrow('not found')</code> for a missing one — remembering to <code>await</code> both.</div>
+    <div class="exercise">Test an <code>EventEmitter</code>-style <code>once(event, cb)</code>: use a spy (<code>vi.fn()</code>/<code>jest.fn()</code>) as the callback, emit the event twice, and assert the spy was called exactly once with the emitted payload.</div>
+  </div>
+
+  <div class="connections">
+    <strong>Connections:</strong> Tests are the safety net for everything else in this curriculum — especially the async assertions, which lean on your <a href="#">Promise / async-await</a> knowledge. Mocks/spies are <a href="#">closures</a> tracking call records. Vitest runs your <a href="#">ES modules</a> natively, no transpile step.
+  </div>
+</div>
+
+</div><!-- /inner -->
+</div><!-- /content -->
+
+<!-- ===================== FOOTER ===================== -->
+<footer class="guide-footer">
+  <h2>All Guides</h2>
+      <ul>
+    <li><a href="javascript-guides/javascript-guide-2026-07-09.html">2026-07-09</a> (Day 28)</li>
+    <li><a href="javascript-guides/javascript-guide-2026-07-08.html">2026-07-08</a> (current &mdash; Day 27)</li>
+    <li><a href="javascript-guides/javascript-guide-2026-07-07.html">2026-07-07</a> (Day 26)</li>
+    <li><a href="javascript-guides/javascript-guide-2026-07-06.html">2026-07-06</a> (Day 25)</li>
+    <li><a href="javascript-guides/javascript-guide-2026-07-05.html">2026-07-05</a> (Day 24)</li>
+    <li><a href="javascript-guides/javascript-guide-2026-07-04.html">2026-07-04</a> (Day 23)</li>
+    <li><a href="javascript-guides/javascript-guide-2026-07-03.html">2026-07-03</a> (Day 22)</li>
+    <li><a href="javascript-guides/javascript-guide-2026-07-02.html">2026-07-02</a> (Day 21)</li>
+    <li><a href="javascript-guides/javascript-guide-2026-07-01.html">2026-07-01</a> (Day 20)</li>
+    <li><a href="javascript-guides/javascript-guide-2026-06-30.html">2026-06-30</a> (Day 19)</li>
+    <li><a href="javascript-guides/javascript-guide-2026-06-29.html">2026-06-29</a> (Day 18)</li>
+    <li><a href="javascript-guides/javascript-guide-2026-06-28.html">2026-06-28</a> (Day 17)</li>
+    <li><a href="javascript-guides/javascript-guide-2026-06-27.html">2026-06-27</a> (Day 16)</li>
+    <li><a href="javascript-guides/javascript-guide-2026-06-26.html">2026-06-26</a> (Day 15)</li>
+    <li><a href="javascript-guides/javascript-guide-2026-06-25.html">2026-06-25</a> (Day 14)</li>
+    <li><a href="javascript-guides/javascript-guide-2026-06-24.html">2026-06-24</a> (Day 13)</li>
+    <li><a href="javascript-guides/javascript-guide-2026-06-23.html">2026-06-23</a> (Day 12)</li>
+    <li><a href="javascript-guides/javascript-guide-2026-06-22.html">2026-06-22</a> (Day 11)</li>
+    <li><a href="javascript-guides/javascript-guide-2026-06-19.html">2026-06-19</a> (Day 10)</li>
+    <li><a href="javascript-guides/javascript-guide-2026-06-18.html">2026-06-18</a> (Day 9)</li>
+    <li><a href="javascript-guides/javascript-guide-2026-06-17.html">2026-06-17</a> (Day 8)</li>
+    <li><a href="javascript-guides/javascript-guide-2026-06-15.html">2026-06-15</a> (Day 7)</li>
+    <li><a href="javascript-guides/javascript-guide-2026-06-13.html">2026-06-13</a> (Day 6)</li>
+    <li><a href="javascript-guides/javascript-guide-2026-06-12.html">2026-06-12</a> (Day 5)</li>
+    <li><a href="javascript-guides/javascript-guide-2026-06-11.html">2026-06-11</a> (Day 4)</li>
+    <li><a href="javascript-guides/javascript-guide-2026-06-10.html">2026-06-10</a> (Day 3)</li>
+    <li><a href="javascript-guides/javascript-guide-2026-06-09.html">2026-06-09</a> (Day 2)</li>
+    <li><a href="javascript-guides/javascript-guide-2026-06-08.html">2026-06-08</a> (Day 1)</li>
+  </ul>
+
+  <div class="cross-links">
+    <strong>Other Guides</strong>
+    <a href="guide.html">LeetCode Guide</a>
+    <a href="lang-guide.html">Multi-Language</a>
+    <a href="python-guide.html">Python</a>
+    <a href="typescript-guide.html">TypeScript</a>
+  </div>
+</footer>
+
+<script>
+function toggleTheme() {
+  const b = document.body;
+  const next = b.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+  b.setAttribute('data-theme', next);
+  localStorage.setItem('lc-jsguide-theme', next);
+}
+(function () {
+  const saved = localStorage.getItem('lc-jsguide-theme') || 'dark';
+  document.body.setAttribute('data-theme', saved);
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,2956 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Python Study Guide &mdash; Day 18 (2026-06-17)</title>
+<style>
+/* ===== CSS Variables ===== */
+:root {
+  --bg: #0d1117;
+  --surface1: #161b22;
+  --surface2: #1c2333;
+  --border: #30363d;
+  --text: #e6edf3;
+  --muted: #8b949e;
+  --accent: #58a6ff;
+  --accent-dim: #1f6feb33;
+  --green: #3fb950;
+  --green-dim: #23863633;
+  --yellow: #d29922;
+  --yellow-dim: #d2992233;
+  --red: #f85149;
+  --red-dim: #f8514933;
+  --purple: #bc8cff;
+  --purple-dim: #bc8cff22;
+  --orange: #f0883e;
+  --orange-dim: #f0883e22;
+  --code-bg: #0d1117;
+  --sidebar-w: 300px;
+  --font-mono: 'SF Mono', 'Cascadia Code', 'Fira Code', Consolas, monospace;
+  --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+  --radius: 8px;
+  --shadow: 0 1px 3px rgba(0,0,0,0.4);
+}
+
+[data-theme="light"] {
+  --bg: #ffffff;
+  --surface1: #f6f8fa;
+  --surface2: #f0f3f6;
+  --border: #d0d7de;
+  --text: #1f2328;
+  --muted: #656d76;
+  --accent: #0969da;
+  --accent-dim: #0969da1a;
+  --green: #1a7f37;
+  --green-dim: #1a7f3718;
+  --yellow: #9a6700;
+  --yellow-dim: #9a670018;
+  --red: #cf222e;
+  --red-dim: #cf222e18;
+  --purple: #8250df;
+  --purple-dim: #8250df18;
+  --orange: #bc4c00;
+  --orange-dim: #bc4c0018;
+  --code-bg: #f6f8fa;
+  --shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+/* ===== Reset & Base ===== */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: var(--font-sans);
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.7;
+  font-size: 16px;
+  transition: background 0.2s, color 0.2s;
+}
+
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+/* ===== Theme Toggle ===== */
+#theme-toggle {
+  position: fixed;
+  top: 16px;
+  right: 20px;
+  z-index: 1000;
+  background: var(--surface1);
+  border: 1px solid var(--border);
+  color: var(--text);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+  box-shadow: var(--shadow);
+}
+#theme-toggle:hover { background: var(--surface2); border-color: var(--accent); }
+
+/* ===== Sidebar ===== */
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: var(--sidebar-w);
+  height: 100vh;
+  background: var(--surface1);
+  border-right: 1px solid var(--border);
+  overflow-y: auto;
+  padding: 20px 0;
+  z-index: 100;
+  transition: transform 0.3s;
+}
+
+.sidebar-header {
+  padding: 0 20px 16px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 12px;
+}
+
+.sidebar-header h2 {
+  font-size: 16px;
+  color: var(--text);
+  font-weight: 700;
+}
+
+.sidebar-header .subtitle {
+  font-size: 12px;
+  color: var(--muted);
+  margin-top: 2px;
+}
+
+.sidebar-section {
+  margin-bottom: 8px;
+}
+
+.sidebar-section-title {
+  padding: 6px 20px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+}
+
+.sidebar-link {
+  display: block;
+  padding: 5px 20px 5px 28px;
+  font-size: 13px;
+  color: var(--muted);
+  text-decoration: none;
+  border-left: 2px solid transparent;
+  transition: all 0.15s;
+  line-height: 1.4;
+}
+
+.sidebar-link:hover {
+  color: var(--text);
+  background: var(--accent-dim);
+  border-left-color: var(--accent);
+  text-decoration: none;
+}
+
+.sidebar-link.active {
+  color: var(--accent);
+  border-left-color: var(--accent);
+  background: var(--accent-dim);
+}
+
+/* ===== Mobile sidebar toggle ===== */
+#sidebar-toggle {
+  display: none;
+  position: fixed;
+  top: 16px;
+  left: 16px;
+  z-index: 200;
+  background: var(--surface1);
+  border: 1px solid var(--border);
+  color: var(--text);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 20px;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--shadow);
+}
+
+/* ===== Main Content ===== */
+.main {
+  margin-left: var(--sidebar-w);
+  padding: 40px 48px 80px;
+  max-width: calc(860px + var(--sidebar-w) + 96px);
+}
+
+.page-title {
+  font-size: 32px;
+  font-weight: 800;
+  margin-bottom: 4px;
+  color: var(--text);
+}
+
+.page-subtitle {
+  font-size: 15px;
+  color: var(--muted);
+  margin-bottom: 36px;
+}
+
+/* ===== How to Use ===== */
+.how-to {
+  background: var(--surface1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px 24px;
+  margin-bottom: 36px;
+}
+
+.how-to h3 {
+  font-size: 15px;
+  font-weight: 700;
+  margin-bottom: 8px;
+  color: var(--muted);
+}
+
+.how-to ul {
+  padding-left: 22px;
+  margin: 0;
+}
+
+.how-to li {
+  font-size: 14px;
+  color: var(--muted);
+  margin-bottom: 3px;
+}
+
+/* ===== Sections ===== */
+.section {
+  margin-bottom: 48px;
+}
+
+.section-label {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  padding: 3px 10px;
+  border-radius: 4px;
+  margin-bottom: 12px;
+}
+
+.section-label.review { background: var(--yellow-dim); color: var(--yellow); }
+.section-label.new { background: var(--green-dim); color: var(--green); }
+
+.section-title {
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 24px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--border);
+}
+
+/* ===== Concept Cards ===== */
+.concept {
+  background: var(--surface1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 28px;
+  margin-bottom: 28px;
+  box-shadow: var(--shadow);
+}
+
+.concept.review-card {
+  background: linear-gradient(135deg, var(--purple-dim), var(--surface1));
+  border-color: var(--purple);
+}
+
+.concept-header {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  margin-bottom: 6px;
+  flex-wrap: wrap;
+}
+
+.concept h3 {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.concept-meta {
+  font-size: 12px;
+  color: var(--muted);
+  background: var(--surface2);
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
+.concept h4 {
+  font-size: 15px;
+  font-weight: 600;
+  margin: 20px 0 8px;
+  color: var(--text);
+}
+
+.concept p, .concept li {
+  color: var(--text);
+  line-height: 1.7;
+}
+
+.concept ul, .concept ol {
+  padding-left: 22px;
+  margin: 8px 0;
+}
+
+.concept li {
+  margin-bottom: 4px;
+}
+
+/* ===== Topic Tags ===== */
+.ttag {
+  display: inline-block;
+  font-size: 10px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 8px;
+  background: rgba(56,139,253,0.12);
+  color: var(--accent);
+}
+
+/* ===== Code Blocks ===== */
+pre {
+  background: var(--code-bg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 16px 18px;
+  overflow-x: auto;
+  margin: 10px 0 14px;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--text);
+  position: relative;
+}
+
+code {
+  font-family: var(--font-mono);
+  font-size: 0.9em;
+}
+
+:not(pre) > code {
+  background: var(--surface2);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.88em;
+}
+
+.output {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 12px 18px;
+  margin: -8px 0 14px;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  line-height: 1.6;
+  white-space: pre-wrap;
+  color: var(--green);
+}
+
+/* ===== Good/Bad Examples ===== */
+.do-dont {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin: 10px 0;
+}
+
+.do-box, .dont-box {
+  border-radius: 6px;
+  padding: 14px;
+  border: 1px solid;
+}
+
+.do-box {
+  background: var(--green-dim);
+  border-color: var(--green);
+}
+
+.dont-box {
+  background: var(--red-dim);
+  border-color: var(--red);
+}
+
+.do-box .label, .dont-box .label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 6px;
+}
+
+.do-box .label { color: var(--green); }
+.dont-box .label { color: var(--red); }
+
+.do-box pre, .dont-box pre {
+  margin: 0;
+  border: none;
+  background: transparent;
+  padding: 0;
+  font-size: 12.5px;
+}
+
+/* ===== Key Rules ===== */
+.rules-list {
+  list-style: none;
+  padding: 0;
+  margin: 8px 0;
+}
+
+.rules-list li {
+  padding: 6px 0 6px 24px;
+  position: relative;
+}
+
+.rules-list li::before {
+  content: "\2192";
+  position: absolute;
+  left: 2px;
+  color: var(--accent);
+  font-weight: 700;
+}
+
+/* ===== Exercises ===== */
+.exercise {
+  background: var(--purple-dim);
+  border: 1px solid var(--purple);
+  border-radius: 6px;
+  padding: 14px 18px;
+  margin: 8px 0;
+}
+
+.exercise .exercise-label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--purple);
+  margin-bottom: 4px;
+}
+
+/* ===== Challenge (Review) ===== */
+.challenge {
+  background: var(--orange-dim);
+  border: 1px solid var(--orange);
+  border-radius: 6px;
+  padding: 14px 18px;
+  margin: 10px 0;
+}
+
+.challenge .challenge-label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--orange);
+  margin-bottom: 4px;
+}
+
+/* ===== Pitfall ===== */
+.pitfall {
+  background: var(--red-dim);
+  border-left: 3px solid var(--red);
+  border-radius: 0 6px 6px 0;
+  padding: 10px 14px;
+  margin: 10px 0;
+  font-size: 14px;
+}
+
+.pitfall strong {
+  color: var(--red);
+}
+
+/* ===== Connection ===== */
+.connection {
+  background: var(--accent-dim);
+  border-left: 3px solid var(--accent);
+  border-radius: 0 6px 6px 0;
+  padding: 10px 14px;
+  margin: 10px 0;
+  font-size: 14px;
+  color: var(--muted);
+}
+
+/* ===== Insight ===== */
+.insight {
+  background: var(--accent-dim);
+  border-left: 3px solid var(--accent);
+  border-radius: 0 6px 6px 0;
+  padding: 12px 16px;
+  margin: 12px 0;
+  font-size: 14px;
+}
+
+.insight strong {
+  color: var(--accent);
+}
+
+/* ===== Summary Box ===== */
+.summary-box {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px 20px;
+  margin: 16px 0;
+  font-size: 14px;
+}
+
+.summary-box h5 {
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--muted);
+  margin-bottom: 8px;
+}
+
+.summary-box table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.summary-box th, .summary-box td {
+  text-align: left;
+  padding: 4px 10px;
+  border-bottom: 1px solid var(--border);
+}
+
+.summary-box th {
+  color: var(--muted);
+  font-weight: 600;
+}
+
+/* ===== Footer ===== */
+.footer {
+  margin-top: 60px;
+  padding: 24px 0;
+  border-top: 1px solid var(--border);
+}
+
+.footer h4 {
+  font-size: 14px;
+  color: var(--muted);
+  margin-bottom: 10px;
+}
+
+.footer ul {
+  list-style: none;
+  padding: 0;
+}
+
+.footer li {
+  margin-bottom: 4px;
+  font-size: 14px;
+}
+
+.footer li a { color: var(--accent); }
+.footer .current { color: var(--green); font-weight: 600; }
+
+/* ===== Responsive ===== */
+@media (max-width: 900px) {
+  .sidebar {
+    transform: translateX(-100%);
+  }
+  .sidebar.open {
+    transform: translateX(0);
+    box-shadow: 4px 0 20px rgba(0,0,0,0.5);
+  }
+  #sidebar-toggle {
+    display: flex;
+  }
+  .main {
+    margin-left: 0;
+    padding: 60px 20px 60px;
+    max-width: 100%;
+  }
+  .do-dont {
+    grid-template-columns: 1fr;
+  }
+  #theme-toggle {
+    right: 14px;
+    top: 16px;
+  }
+}
+</style>
+</head>
+<body>
+
+<!-- Theme Toggle -->
+<button id="theme-toggle" aria-label="Toggle theme" title="Toggle light/dark theme">&#9789;</button>
+
+<!-- Mobile Sidebar Toggle -->
+<button id="sidebar-toggle" aria-label="Toggle sidebar">&#9776;</button>
+
+<!-- Sidebar -->
+<nav class="sidebar" id="sidebar">
+  <div class="sidebar-header">
+    <h2>Python Guide</h2>
+    <div class="subtitle">Day 18 &mdash; 2026-06-17</div>
+  </div>
+
+  <div class="sidebar-section">
+    <div class="sidebar-section-title">Review (6 concepts)</div>
+    <a href="#review-chainmap" class="sidebar-link">ChainMap</a>
+    <a href="#review-closures" class="sidebar-link">Closures &amp; nonlocal</a>
+    <a href="#review-context-managers" class="sidebar-link">Context Managers</a>
+    <a href="#review-lambda" class="sidebar-link">Lambda Functions</a>
+    <a href="#review-functools" class="sidebar-link">functools</a>
+    <a href="#review-import-system" class="sidebar-link">Import System</a>
+  </div>
+
+  <div class="sidebar-section">
+    <div class="sidebar-section-title">Advanced Standard Library II</div>
+    <a href="#weakref" class="sidebar-link">weakref &mdash; Weak References</a>
+    <a href="#cached-property" class="sidebar-link">functools.cached_property</a>
+    <a href="#property-setters" class="sidebar-link">property Setters &amp; Deleters</a>
+  </div>
+
+  <div class="sidebar-section">
+    <div class="sidebar-section-title">Debugging &amp; Introspection</div>
+    <a href="#traceback-module" class="sidebar-link">traceback Module</a>
+    <a href="#signal-atexit" class="sidebar-link">signal &amp; atexit</a>
+  </div>
+</nav>
+
+<!-- Main Content -->
+<div class="main">
+
+<h1 class="page-title">Python Daily Guide</h1>
+<p class="page-subtitle">Day 18 &mdash; Wednesday, June 17, 2026 &bull; 11 concepts (6 review + 5 new)</p>
+
+<!-- How to Use -->
+<div class="how-to">
+  <h3>How to Use This Guide</h3>
+  <ul>
+    <li><strong>Review cards</strong> &mdash; skim the reminder, write the key pattern from memory, then try the challenge.</li>
+    <li><strong>New concepts</strong> &mdash; read the explanation, run every code example in a REPL, then do the exercises.</li>
+    <li><strong>Don&rsquo;t peek at solutions</strong> &mdash; struggle for at least 10 minutes before looking things up.</li>
+    <li><strong>Connections</strong> &mdash; pay attention to how concepts link together across days.</li>
+    <li><strong>Common Mistakes</strong> &mdash; study both the WRONG and RIGHT patterns; these are the traps you&rsquo;ll hit in real code.</li>
+  </ul>
+</div>
+
+
+<!-- ============================================================ -->
+<!-- REVIEW SECTION -->
+<!-- ============================================================ -->
+<div class="section">
+  <span class="section-label review">Review</span>
+  <h2 class="section-title">Review &mdash; 6 Concepts</h2>
+
+  <!-- Review 1: ChainMap -->
+  <div class="concept review-card" id="review-chainmap">
+    <div class="concept-header">
+      <h3>ChainMap</h3>
+      <span class="concept-meta">Collections &bull; 9 days overdue &bull; rep 2</span>
+    </div>
+
+    <h4>Quick Reminder</h4>
+    <p><code>collections.ChainMap</code> overlays multiple dictionaries into a single logical mapping. Lookups search the maps in order &mdash; <strong>first match wins</strong>. This makes it ideal for layered configuration where user settings override defaults without copying or merging dicts.</p>
+
+    <h4>Key Pattern</h4>
+<pre>from collections import ChainMap
+
+defaults = {"color": "blue", "size": "medium", "debug": False}
+user_config = {"color": "red", "debug": True}
+
+config = ChainMap(user_config, defaults)
+print(config["color"])   # red   (from user_config — first map wins)
+print(config["size"])    # medium (falls through to defaults)
+print(config["debug"])   # True  (from user_config)
+
+# Iterate sees all unique keys
+print(list(config.keys()))
+
+# .maps gives you the underlying list of dicts
+print(len(config.maps))  # 2</pre>
+    <div class="output">red
+medium
+True
+['color', 'debug', 'size']
+2</div>
+
+    <div class="challenge">
+      <div class="challenge-label">Challenge</div>
+      <p>Implement a 3-layer config system: environment variables (highest priority) &gt; config file (dict) &gt; hard-coded defaults. Use <code>ChainMap</code> with <code>os.environ</code> as the first map. Look up keys <code>"APP_HOST"</code> and <code>"APP_PORT"</code>. Set an env var with <code>os.environ["APP_HOST"] = "0.0.0.0"</code> before building the chain and verify it overrides the file config.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>Pitfall:</strong> Mutations (assignments, deletions) only affect the <strong>first</strong> mapping in the chain. Writing <code>config["size"] = "large"</code> stores the value in <code>user_config</code>, not <code>defaults</code>. And <code>del config["size"]</code> raises <code>KeyError</code> because <code>"size"</code> lives in <code>defaults</code>, not the first map.
+    </div>
+  </div>
+
+  <!-- Review 2: Closures & nonlocal -->
+  <div class="concept review-card" id="review-closures">
+    <div class="concept-header">
+      <h3>Closures &amp; nonlocal</h3>
+      <span class="concept-meta">Functions &bull; 9 days overdue &bull; rep 2</span>
+    </div>
+
+    <h4>Quick Reminder</h4>
+    <p>An inner function <strong>captures variables</strong> from its enclosing scope, forming a closure. The inner function retains access to those variables even after the outer function returns. Use <code>nonlocal</code> to <strong>mutate</strong> captured variables &mdash; without it, assignment creates a new local variable instead of modifying the captured one.</p>
+
+    <h4>Key Pattern</h4>
+<pre>def make_counter(start=0):
+    count = start
+    def counter():
+        nonlocal count
+        count += 1
+        return count
+    return counter
+
+c = make_counter(10)
+print(c())  # 11
+print(c())  # 12
+print(c())  # 13
+
+# Each call to make_counter creates a separate closure
+d = make_counter(100)
+print(d())  # 101
+print(c())  # 14 — c's state is independent</pre>
+    <div class="output">11
+12
+13
+101
+14</div>
+
+    <div class="challenge">
+      <div class="challenge-label">Challenge</div>
+      <p>Write a <code>rate_limiter(max_calls, period_seconds)</code> closure that returns a function <code>allow() -&gt; bool</code>. It returns <code>True</code> if fewer than <code>max_calls</code> have been made in the last <code>period_seconds</code>, <code>False</code> otherwise. Track timestamps with a list. Use <code>time.time()</code> for the current time. Prune old timestamps on each call.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>Pitfall:</strong> Late binding &mdash; closures capture the <em>variable</em>, not its <em>value</em> at the time of creation. Classic trap:
+      <code>funcs = [lambda: i for i in range(3)]</code> &mdash; all three lambdas return <code>2</code> because they all reference the same <code>i</code> variable, which is <code>2</code> after the loop. Fix with a default argument: <code>lambda i=i: i</code>.
+    </div>
+  </div>
+
+  <!-- Review 3: Context Managers -->
+  <div class="concept review-card" id="review-context-managers">
+    <div class="concept-header">
+      <h3>Context Managers</h3>
+      <span class="concept-meta">Resource Mgmt &bull; 9 days overdue &bull; rep 1</span>
+    </div>
+
+    <h4>Quick Reminder</h4>
+    <p>The <code>with</code> statement guarantees cleanup via <code>__enter__</code>/<code>__exit__</code> (class-based) or <code>@contextmanager</code> from <code>contextlib</code> (generator-based). Use them for file handles, locks, database connections, timers, temporary state changes &mdash; anything that needs deterministic cleanup.</p>
+
+    <h4>Key Pattern</h4>
+<pre>from contextlib import contextmanager
+import time
+
+@contextmanager
+def timer(label):
+    start = time.perf_counter()
+    try:
+        yield start  # value available as 'as' target
+    finally:
+        elapsed = time.perf_counter() - start
+        print(f"{label}: {elapsed:.4f}s")
+
+with timer("sort") as t:
+    data = sorted(range(100_000, 0, -1))
+    print(f"Sorted {len(data)} items")</pre>
+    <div class="output">Sorted 100000 items
+sort: 0.0054s</div>
+
+    <div class="challenge">
+      <div class="challenge-label">Challenge</div>
+      <p>Write a <code>@contextmanager</code> called <code>db_transaction(conn)</code> that calls <code>conn.begin()</code> on entry, yields the connection, calls <code>conn.commit()</code> on success, or <code>conn.rollback()</code> on any exception. The exception must be re-raised after rollback so callers see it. Test with a mock connection object.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>Pitfall:</strong> Forgetting to <code>yield</code> inside a <code>@contextmanager</code> function. Without <code>yield</code>, the function is a regular generator that never pauses for the <code>with</code> block body to execute. The <code>with</code> block appears to do nothing.
+    </div>
+  </div>
+
+  <!-- Review 4: Lambda Functions -->
+  <div class="concept review-card" id="review-lambda">
+    <div class="concept-header">
+      <h3>Lambda Functions</h3>
+      <span class="concept-meta">Functions &bull; 9 days overdue &bull; rep 2</span>
+    </div>
+
+    <h4>Quick Reminder</h4>
+    <p>Anonymous single-expression functions: <code>lambda args: expression</code>. They return the value of the expression automatically. Best used as short, throwaway callbacks for <code>sorted()</code>, <code>map()</code>, <code>filter()</code>, and similar higher-order functions.</p>
+
+    <h4>Key Pattern</h4>
+<pre>students = [
+    {"name": "Alice", "age": 22, "gpa": 3.8},
+    {"name": "Bob", "age": 19, "gpa": 3.5},
+    {"name": "Carol", "age": 25, "gpa": 3.9},
+]
+
+# Sort by age
+by_age = sorted(students, key=lambda s: s["age"])
+print("By age:", [s["name"] for s in by_age])
+
+# Sort by GPA descending, then name ascending
+by_gpa = sorted(students, key=lambda s: (-s["gpa"], s["name"]))
+print("By GPA:", [s["name"] for s in by_gpa])
+
+# Filter with lambda
+adults = list(filter(lambda s: s["age"] >= 21, students))
+print("Adults:", [s["name"] for s in adults])</pre>
+    <div class="output">By age: ['Bob', 'Alice', 'Carol']
+By GPA: ['Carol', 'Alice', 'Bob']
+Adults: ['Alice', 'Carol']</div>
+
+    <div class="challenge">
+      <div class="challenge-label">Challenge</div>
+      <p>Using only <code>map()</code>, <code>filter()</code>, and <code>functools.reduce()</code> with lambdas, take a list of integers <code>[1, 2, 3, 4, 5, 6, 7]</code> and: (1) square each value, (2) keep only values greater than 10, (3) sum the remaining values. Write it as one chained expression without intermediate variables.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>Pitfall:</strong> Assigning a lambda to a variable violates PEP 8. Instead of <code>double = lambda x: x * 2</code>, write <code>def double(x): return x * 2</code>. Named functions have better debugging output (<code>double</code> vs <code>&lt;lambda&gt;</code> in tracebacks) and support docstrings.
+    </div>
+  </div>
+
+  <!-- Review 5: functools -->
+  <div class="concept review-card" id="review-functools">
+    <div class="concept-header">
+      <h3>functools</h3>
+      <span class="concept-meta">Functional &bull; 9 days overdue &bull; rep 2</span>
+    </div>
+
+    <h4>Quick Reminder</h4>
+    <p>Key tools: <code>partial</code> (freeze some arguments), <code>reduce</code> (fold a sequence), <code>lru_cache</code> (memoize function calls), <code>total_ordering</code> (auto-generate comparison methods from <code>__eq__</code> + one other), <code>singledispatch</code> (function overloading by argument type).</p>
+
+    <h4>Key Pattern</h4>
+<pre>from functools import lru_cache
+
+@lru_cache(maxsize=256)
+def fibonacci(n):
+    if n &lt; 2:
+        return n
+    return fibonacci(n - 1) + fibonacci(n - 2)
+
+print(fibonacci(50))
+info = fibonacci.cache_info()
+print(f"Hits: {info.hits}, Misses: {info.misses}, Size: {info.currsize}")</pre>
+    <div class="output">12586269025
+Hits: 48, Misses: 51, Size: 51</div>
+
+    <div class="challenge">
+      <div class="challenge-label">Challenge</div>
+      <p>Implement memoized Fibonacci with <code>@lru_cache</code>. Compute <code>fib(100)</code>, then print the cache stats showing hits vs. misses. Also use <code>functools.partial</code> to create a <code>fib_mod</code> function that computes <code>fibonacci(n) % m</code> for a fixed modulus.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>Pitfall:</strong> Passing unhashable arguments (lists, dicts, sets) to an <code>@lru_cache</code>-decorated function raises <code>TypeError</code>. Convert to tuples or frozensets before calling. Example: <code>f(tuple(my_list))</code> instead of <code>f(my_list)</code>.
+    </div>
+  </div>
+
+  <!-- Review 6: Import System -->
+  <div class="concept review-card" id="review-import-system">
+    <div class="concept-header">
+      <h3>Import System</h3>
+      <span class="concept-meta">Modules &bull; 9 days overdue &bull; rep 0</span>
+    </div>
+
+    <h4>Quick Reminder</h4>
+    <p>Python&rsquo;s import system searches <code>sys.path</code> for modules. <code>import foo</code> and <code>from foo import bar</code> are the basic forms. Use <code>importlib.import_module("foo.bar")</code> for dynamic/lazy imports (e.g., plugin systems). <code>__all__</code> controls what <code>from pkg import *</code> exports. Modules are cached in <code>sys.modules</code> after first import.</p>
+
+    <h4>Key Pattern</h4>
+<pre>import importlib
+import sys
+
+# Dynamic import — useful for plugin systems
+def load_module(module_name):
+    """Lazily import a module by name."""
+    if module_name in sys.modules:
+        print(f"  {module_name} already cached")
+        return sys.modules[module_name]
+    print(f"  Loading {module_name}...")
+    return importlib.import_module(module_name)
+
+json_mod = load_module("json")
+parser = json_mod.loads
+data = parser('{"key": "value", "count": 42}')
+print(data)
+
+# Second import hits the cache
+json_again = load_module("json")
+print(f"Same module? {json_mod is json_again}")</pre>
+    <div class="output">  Loading json...
+{'key': 'value', 'count': 42}
+  json already cached
+Same module? True</div>
+
+    <div class="challenge">
+      <div class="challenge-label">Challenge</div>
+      <p>Write a plugin loader: given a package name (e.g., <code>"plugins"</code>) and a base class, use <code>importlib.import_module()</code> combined with <code>inspect.getmembers()</code> and <code>inspect.isclass()</code> to discover all subclasses of the base class defined in that package&rsquo;s modules. Return a dict mapping class names to class objects.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>Pitfall:</strong> Circular imports &mdash; module A imports from B, which imports from A. The import partially completes, leading to <code>ImportError</code> or <code>AttributeError</code> for names that haven&rsquo;t been defined yet. Fix: (1) move the import inside the function that needs it, (2) restructure so shared code lives in a third module, or (3) use lazy imports.
+    </div>
+  </div>
+
+</div><!-- end review section -->
+
+
+<!-- ============================================================ -->
+<!-- NEW CONCEPTS — SECTION: Advanced Standard Library II -->
+<!-- ============================================================ -->
+<div class="section">
+  <span class="section-label new">New</span>
+  <h2 class="section-title">Advanced Standard Library II</h2>
+
+  <!-- ============================================================ -->
+  <!-- New 1: weakref — Weak References -->
+  <!-- ============================================================ -->
+  <div class="concept" id="weakref">
+    <div class="concept-header">
+      <h3>weakref &mdash; Weak References</h3>
+      <span class="ttag">Memory</span>
+      <span class="ttag">GC</span>
+    </div>
+
+    <h4>Why It Matters</h4>
+    <p>Every normal variable assignment in Python creates a <strong>strong reference</strong> that keeps the object alive. This is usually what you want, but in three common patterns it causes <strong>memory leaks</strong>:</p>
+    <ul>
+    <li><a href="python-guides/python-guide-2026-07-08.html">2026-07-08</a> (Day 38)</li>
+      <li><strong>Caches</strong> &mdash; a cache dict keeps objects alive even after every other part of the program has forgotten them.</li>
+      <li><strong>Observer patterns</strong> &mdash; a subject holds references to listeners, preventing their garbage collection when they are no longer needed.</li>
+      <li><strong>Parent-child cycles</strong> &mdash; child objects reference their parent, creating reference cycles that defeat simple reference counting.</li>
+    </ul>
+    <p>The <code>weakref</code> module provides references that do <em>not</em> prevent garbage collection. When the last strong reference is deleted, the object is collected and any weak references to it return <code>None</code>.</p>
+
+    <h4>Core API at a Glance</h4>
+    <div class="summary-box">
+      <table>
+        <tr><th>Function / Class</th><th>Purpose</th></tr>
+        <tr><td><code>weakref.ref(obj, callback=None)</code></td><td>Create a weak reference; call it to get obj or None</td></tr>
+        <tr><td><code>weakref.proxy(obj)</code></td><td>Transparent proxy; raises <code>ReferenceError</code> on dead access</td></tr>
+        <tr><td><code>weakref.WeakValueDictionary()</code></td><td>Dict whose values are weak refs (auto-evict on GC)</td></tr>
+        <tr><td><code>weakref.WeakKeyDictionary()</code></td><td>Dict whose keys are weak refs</td></tr>
+        <tr><td><code>weakref.WeakSet()</code></td><td>Set of weak references</td></tr>
+        <tr><td><code>weakref.finalize(obj, func, *args)</code></td><td>Call func when obj is collected (more robust than callbacks)</td></tr>
+      </table>
+    </div>
+
+    <h4>Example 1 &mdash; Basic weakref.ref() and Callback on Deletion</h4>
+<pre>import weakref
+
+class Sensor:
+    def __init__(self, name):
+        self.name = name
+    def __repr__(self):
+        return f"Sensor({self.name!r})"
+
+def on_finalize(ref):
+    """Called when the referent is about to be collected."""
+    print(f"Callback fired! ref() -> {ref()}")
+
+# Create a sensor and a weak reference to it
+sensor = Sensor("temperature")
+weak = weakref.ref(sensor, on_finalize)
+
+# Access the object through the weak reference by CALLING it
+print(f"weak() = {weak()}")
+print(f"Same object? {weak() is sensor}")
+
+# Check reference count
+import sys
+print(f"Strong ref count: {sys.getrefcount(sensor) - 1}")  # subtract 1 for getrefcount's own ref
+
+# Delete the only strong reference
+del sensor
+# The callback fires BEFORE the ref becomes None
+print(f"After del: weak() = {weak()}")</pre>
+    <div class="output">weak() = Sensor('temperature')
+Same object? True
+Strong ref count: 1
+Callback fired! ref() -> None
+After del: weak() = None</div>
+
+    <p>Key points: (1) you <strong>call</strong> the weak reference with <code>()</code> to get the object &mdash; it returns <code>None</code> if collected; (2) the callback receives the <em>dead</em> ref as its argument, so <code>ref()</code> is already <code>None</code> inside the callback.</p>
+
+    <h4>Example 2 &mdash; WeakValueDictionary for Caches That Don&rsquo;t Prevent GC</h4>
+    <p>A regular dict keeps its values alive forever. A <code>WeakValueDictionary</code> holds weak references as values &mdash; entries disappear automatically when the value object is garbage-collected elsewhere. This is perfect for caches that should not be the reason an object stays in memory.</p>
+
+<pre>import weakref
+
+class ExpensiveResource:
+    _id_counter = 0
+
+    def __init__(self, name):
+        ExpensiveResource._id_counter += 1
+        self.id = ExpensiveResource._id_counter
+        self.name = name
+        self.data = list(range(1000))  # simulate large payload
+        print(f"  Created {self!r}")
+
+    def __repr__(self):
+        return f"Resource(id={self.id}, name={self.name!r})"
+
+    def __del__(self):
+        print(f"  GC'd {self!r}")
+
+# Build a cache with weak values
+cache = weakref.WeakValueDictionary()
+
+def get_resource(name):
+    """Fetch from cache or create new."""
+    resource = cache.get(name)
+    if resource is not None:
+        print(f"  Cache HIT for {name!r}")
+        return resource
+    print(f"  Cache MISS for {name!r}")
+    resource = ExpensiveResource(name)
+    cache[name] = resource
+    return resource
+
+# First load — cache miss
+r1 = get_resource("database")
+r2 = get_resource("database")  # cache hit
+print(f"Same object? {r1 is r2}")
+print(f"Cache keys: {list(cache.keys())}")
+
+# Hold a strong ref, then release it
+r3 = get_resource("network")
+print(f"Cache keys: {list(cache.keys())}")
+
+del r3  # network resource has no more strong refs
+print(f"Cache keys after del r3: {list(cache.keys())}")
+
+# database is still alive because r1 and r2 hold strong refs
+del r1, r2
+print(f"Cache keys after del r1, r2: {list(cache.keys())}")</pre>
+    <div class="output">  Cache MISS for 'database'
+  Created Resource(id=1, name='database')
+  Cache HIT for 'database'
+Same object? True
+Cache keys: ['database']
+  Cache MISS for 'network'
+  Created Resource(id=2, name='network')
+Cache keys: ['database', 'network']
+  GC'd Resource(id=2, name='network')
+Cache keys after del r3: ['database']
+  GC'd Resource(id=1, name='database')
+Cache keys after del r1, r2: []</div>
+
+    <h4>Example 3 &mdash; Observer Pattern with Weak References (Real-World)</h4>
+    <p>In event-driven systems, the publisher (subject) holds references to subscribers (observers). If those references are strong, deleting a subscriber elsewhere does <em>not</em> actually free it &mdash; the publisher keeps it alive. Weak references fix this by letting subscribers be collected when they are no longer needed.</p>
+
+<pre>import weakref
+
+class EventBus:
+    """Publish-subscribe hub with automatic dead-observer cleanup."""
+
+    def __init__(self):
+        self._subscribers = {}  # event_name -> list of (weakref, method_name)
+
+    def subscribe(self, event, observer, method_name):
+        """Subscribe an observer's method to an event using a weak reference."""
+        ref = weakref.ref(observer, lambda dead_ref: self._prune(event))
+        self._subscribers.setdefault(event, []).append((ref, method_name))
+        print(f"  Subscribed {type(observer).__name__}.{method_name} to '{event}'")
+
+    def _prune(self, event):
+        """Remove dead weak references for a given event."""
+        if event in self._subscribers:
+            before = len(self._subscribers[event])
+            self._subscribers[event] = [
+                (r, m) for r, m in self._subscribers[event] if r() is not None
+            ]
+            after = len(self._subscribers[event])
+            if before != after:
+                print(f"  Pruned {before - after} dead subscriber(s) from '{event}'")
+
+    def publish(self, event, *args, **kwargs):
+        """Notify all living subscribers."""
+        live = 0
+        for ref, method_name in self._subscribers.get(event, []):
+            obj = ref()
+            if obj is not None:
+                getattr(obj, method_name)(*args, **kwargs)
+                live += 1
+        print(f"  Published '{event}' to {live} subscriber(s)")
+
+class FileLogger:
+    def __init__(self, path):
+        self.path = path
+    def handle_event(self, msg):
+        print(f"    [FileLogger:{self.path}] {msg}")
+
+class MetricsCollector:
+    def __init__(self, name):
+        self.name = name
+    def handle_event(self, msg):
+        print(f"    [Metrics:{self.name}] {msg}")
+
+# Set up the event bus
+bus = EventBus()
+
+# Create observers
+file_log = FileLogger("/var/log/app.log")
+metrics = MetricsCollector("prometheus")
+
+# Subscribe
+bus.subscribe("user.signup", file_log, "handle_event")
+bus.subscribe("user.signup", metrics, "handle_event")
+
+# Publish — both receive
+print("\n--- Both alive ---")
+bus.publish("user.signup", "User alice@example.com signed up")
+
+# Delete the file logger
+del file_log
+print("\n--- After deleting FileLogger ---")
+bus.publish("user.signup", "User bob@example.com signed up")
+
+# Delete the metrics collector
+del metrics
+print("\n--- After deleting MetricsCollector ---")
+bus.publish("user.signup", "User carol@example.com signed up")</pre>
+    <div class="output">  Subscribed FileLogger.handle_event to 'user.signup'
+  Subscribed MetricsCollector.handle_event to 'user.signup'
+
+--- Both alive ---
+    [FileLogger:/var/log/app.log] User alice@example.com signed up
+    [Metrics:prometheus] User alice@example.com signed up
+  Published 'user.signup' to 2 subscriber(s)
+
+--- After deleting FileLogger ---
+  Pruned 1 dead subscriber(s) from 'user.signup'
+    [Metrics:prometheus] User bob@example.com signed up
+  Published 'user.signup' to 1 subscriber(s)
+
+--- After deleting MetricsCollector ---
+  Pruned 1 dead subscriber(s) from 'user.signup'
+  Published 'user.signup' to 0 subscriber(s)</div>
+
+    <div class="insight">
+      <strong>Key Insight:</strong> The <code>EventBus</code> never explicitly unsubscribes anyone. Subscribers are automatically removed when they are garbage-collected. This eliminates an entire class of bugs where forgotten unsubscribe calls cause memory leaks or stale callbacks.
+    </div>
+
+    <h4>Common Mistakes</h4>
+
+    <div class="do-dont">
+      <div class="dont-box">
+        <div class="label">Wrong &mdash; weakref to built-in immutable types</div>
+<pre>import weakref
+
+# These all FAIL with TypeError:
+# weakref.ref(42)         # int
+# weakref.ref("hello")    # str
+# weakref.ref((1, 2, 3))  # tuple
+# weakref.ref(None)       # NoneType
+
+# Most built-in types don't support
+# weak references to save memory</pre>
+      </div>
+      <div class="do-box">
+        <div class="label">Right &mdash; subclass or wrap in a user class</div>
+<pre>import weakref
+
+class MyInt(int):
+    """Subclass adds __weakref__ slot."""
+    pass
+
+x = MyInt(42)
+ref = weakref.ref(x)
+print(ref())   # 42
+print(ref() + 8)  # 50 — still behaves like int</pre>
+      </div>
+    </div>
+
+    <div class="do-dont">
+      <div class="dont-box">
+        <div class="label">Wrong &mdash; using ref() result inside callback</div>
+<pre>def on_death(ref):
+    # ref() is ALWAYS None here — the object
+    # is already dead when the callback fires!
+    obj = ref()
+    print(obj.name)  # AttributeError: NoneType</pre>
+      </div>
+      <div class="do-box">
+        <div class="label">Right &mdash; capture info before the object dies</div>
+<pre>def make_callback(name):
+    """Capture data we need before the ref dies."""
+    def on_death(ref):
+        print(f"Object '{name}' was garbage collected")
+    return on_death
+
+sensor = Sensor("temp")
+ref = weakref.ref(sensor, make_callback(sensor.name))</pre>
+      </div>
+    </div>
+
+    <h4>Key Rules</h4>
+    <ul class="rules-list">
+      <li>Use <code>WeakValueDictionary</code> for caches where you want automatic eviction when objects leave scope</li>
+      <li>Use <code>weakref.ref()</code> or <code>WeakSet</code> for observer/listener patterns to prevent subjects from keeping observers alive</li>
+      <li>Use <code>weakref.finalize(obj, func, *args)</code> for guaranteed cleanup actions &mdash; it is more robust than ref callbacks because it survives even if the finalizer itself is not referenced</li>
+      <li>You cannot create weak references to most built-in types: <code>int</code>, <code>str</code>, <code>tuple</code>, <code>list</code>, <code>dict</code>, <code>set</code>, <code>bytes</code>, <code>NoneType</code></li>
+      <li>Don&rsquo;t use weak references for simple ownership &mdash; use normal (strong) references when you <em>want</em> the object to stay alive</li>
+      <li>Always check if <code>ref()</code> returns <code>None</code> before using the object</li>
+    </ul>
+
+    <h4>Practice Exercises</h4>
+
+    <div class="exercise">
+      <div class="exercise-label">Exercise 1</div>
+      <p>Build a <code>WeakCache</code> class with <code>get(key)</code> and <code>put(key, value)</code> methods backed by a <code>WeakValueDictionary</code>. Add a <code>stats()</code> method that reports total <code>hits</code>, <code>misses</code>, and <code>evictions</code>. Track evictions using <code>weakref.finalize()</code> on each cached value. Demonstrate with a loop that creates 10 objects, caches them, then deletes half and checks the stats.</p>
+    </div>
+
+    <div class="exercise">
+      <div class="exercise-label">Exercise 2</div>
+      <p>Implement a <code>TreeNode</code> class where each node has a <code>parent</code> (stored as a weak reference to avoid cycles) and a <code>children</code> list (strong references). Write an <code>add_child(child_node)</code> method that appends to <code>children</code> and sets the child&rsquo;s <code>parent</code> weak ref. Write a <code>get_parent()</code> method that returns the parent object or <code>None</code>. Verify: (a) children can access their parent while it&rsquo;s alive, (b) after deleting the parent, <code>get_parent()</code> returns <code>None</code> but children and their data remain intact.</p>
+    </div>
+
+    <div class="connection">
+      <strong>Connections:</strong> <code>gc</code> module (force collection, detect reference cycles) &bull; Context managers (alternative cleanup pattern) &bull; Observer pattern (Day 17 Design Patterns) &bull; <code>weakref.finalize()</code> as a safer replacement for <code>__del__</code>
+    </div>
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- New 2: functools.cached_property -->
+  <!-- ============================================================ -->
+  <div class="concept" id="cached-property">
+    <div class="concept-header">
+      <h3>functools.cached_property</h3>
+      <span class="ttag">Descriptors</span>
+      <span class="ttag">Performance</span>
+    </div>
+
+    <h4>Why It Matters</h4>
+    <p>Sometimes an attribute is expensive to compute &mdash; a database query, file parsing, matrix multiplication, or API call &mdash; but its value <strong>never changes</strong> for the lifetime of the object. Recomputing it on every access wastes resources. <code>functools.cached_property</code> computes the value <strong>once</strong> on first access and stores it directly in the instance&rsquo;s <code>__dict__</code>. Subsequent accesses find the cached value in <code>__dict__</code> without invoking the descriptor at all. Zero boilerplate memoization for attributes.</p>
+
+    <h4>How It Works Under the Hood</h4>
+    <p><code>cached_property</code> is a <strong>non-data descriptor</strong> (it only defines <code>__get__</code>, not <code>__set__</code>). On first access:</p>
+    <ol>
+      <li>Python doesn&rsquo;t find the name in the instance <code>__dict__</code>.</li>
+      <li>It falls through to the class and finds the <code>cached_property</code> descriptor.</li>
+      <li>The descriptor&rsquo;s <code>__get__</code> calls your function, stores the result in <code>instance.__dict__[name]</code>.</li>
+      <li>On subsequent accesses, Python finds the name in <code>__dict__</code> first (instance dict takes priority over non-data descriptors), so the descriptor is never called again.</li>
+    </ol>
+
+    <h4>Example 1 &mdash; Basic cached_property vs property</h4>
+<pre>from functools import cached_property
+import time
+
+class DataAnalyzer:
+    def __init__(self, data):
+        self._data = data
+
+    @property
+    def mean_property(self):
+        """Recomputed on EVERY access."""
+        print("  [property] Computing mean...")
+        return sum(self._data) / len(self._data)
+
+    @cached_property
+    def mean_cached(self):
+        """Computed ONCE, then cached in __dict__."""
+        print("  [cached_property] Computing mean...")
+        return sum(self._data) / len(self._data)
+
+analyzer = DataAnalyzer(range(1_000_000))
+
+print("=== @property (accessed 3 times) ===")
+for _ in range(3):
+    val = analyzer.mean_property  # prints each time!
+print(f"  Result: {val}")
+
+print("\n=== @cached_property (accessed 3 times) ===")
+for _ in range(3):
+    val = analyzer.mean_cached  # prints only ONCE
+print(f"  Result: {val}")
+
+# Proof: the value is now in __dict__
+print(f"\n'mean_cached' in __dict__: {'mean_cached' in analyzer.__dict__}")
+print(f"'mean_property' in __dict__: {'mean_property' in analyzer.__dict__}")</pre>
+    <div class="output">=== @property (accessed 3 times) ===
+  [property] Computing mean...
+  [property] Computing mean...
+  [property] Computing mean...
+  Result: 499999.5
+
+=== @cached_property (accessed 3 times) ===
+  [cached_property] Computing mean...
+  Result: 499999.5
+
+'mean_cached' in __dict__: True
+'mean_property' in __dict__: False</div>
+
+    <h4>Example 2 &mdash; Using with dataclasses</h4>
+<pre>from dataclasses import dataclass, field
+from functools import cached_property
+from typing import List
+import hashlib
+
+@dataclass
+class Document:
+    title: str
+    content: str
+    tags: List[str] = field(default_factory=list)
+
+    @cached_property
+    def word_count(self):
+        """Expensive-ish computation done once."""
+        print(f"  Computing word count for '{self.title}'...")
+        return len(self.content.split())
+
+    @cached_property
+    def content_hash(self):
+        """SHA-256 hash of content, computed once."""
+        print(f"  Computing hash for '{self.title}'...")
+        return hashlib.sha256(self.content.encode()).hexdigest()[:16]
+
+    @cached_property
+    def summary(self):
+        """First 50 chars + word count."""
+        return f"{self.content[:50]}... ({self.word_count} words)"
+
+doc = Document(
+    title="My Article",
+    content="Python is a versatile programming language " * 100,
+    tags=["python", "tutorial"]
+)
+
+print(f"Word count: {doc.word_count}")
+print(f"Word count: {doc.word_count}")  # no recomputation
+print(f"Hash: {doc.content_hash}")
+print(f"Summary: {doc.summary}")  # word_count already cached</pre>
+    <div class="output">  Computing word count for 'My Article'...
+Word count: 600
+Word count: 600
+  Computing hash for 'My Article'...
+Hash: 3c989d4a4f3b8e55
+  Computing word count for 'My Article'...
+Summary: Python is a versatile programming language Python... (600 words)</div>
+
+    <p>Notice that <code>summary</code> uses <code>self.word_count</code> internally. If <code>word_count</code> was already cached from a prior access, the computation is not repeated.</p>
+
+    <h4>Example 3 &mdash; Lazy-Loaded Configuration (Real-World Pattern)</h4>
+<pre>from functools import cached_property
+
+class AppConfig:
+    """
+    Lazy-loading config: nothing is read until first attribute access.
+    Supports invalidation for config reload.
+    """
+
+    def __init__(self, env="production"):
+        self._env = env
+        self._load_count = 0
+
+    @cached_property
+    def _raw(self):
+        """Simulate expensive config load (file I/O, API call, etc.)."""
+        self._load_count += 1
+        print(f"  [{self._load_count}] Loading config for env='{self._env}'...")
+        configs = {
+            "production": {
+                "host": "prod.db.internal",
+                "port": 5432,
+                "pool_size": 20,
+                "debug": False,
+                "log_level": "WARNING",
+            },
+            "development": {
+                "host": "localhost",
+                "port": 5432,
+                "pool_size": 5,
+                "debug": True,
+                "log_level": "DEBUG",
+            },
+        }
+        return configs.get(self._env, {})
+
+    @cached_property
+    def db_host(self):
+        return self._raw["host"]
+
+    @cached_property
+    def db_port(self):
+        return self._raw["port"]
+
+    @cached_property
+    def pool_size(self):
+        return self._raw["pool_size"]
+
+    @cached_property
+    def debug(self):
+        return self._raw["debug"]
+
+    def invalidate(self):
+        """Clear all cached properties to force a fresh load on next access."""
+        for attr in ("_raw", "db_host", "db_port", "pool_size", "debug"):
+            self.__dict__.pop(attr, None)
+        print("  Config cache invalidated")
+
+# Create config — nothing loaded yet
+app = AppConfig("development")
+print("Config created, nothing loaded yet")
+print(f"Load count: {app._load_count}\n")
+
+# First access triggers the load
+print(f"Host: {app.db_host}")
+print(f"Port: {app.db_port}")
+print(f"Pool: {app.pool_size}")
+print(f"Debug: {app.debug}")
+print(f"Load count: {app._load_count}\n")
+
+# All subsequent accesses are free
+print(f"Host again: {app.db_host}")
+print(f"Load count: {app._load_count}\n")
+
+# Invalidate and reload
+app.invalidate()
+print(f"Host after invalidate: {app.db_host}")
+print(f"Load count: {app._load_count}")</pre>
+    <div class="output">Config created, nothing loaded yet
+Load count: 0
+
+  [1] Loading config for env='development'...
+Host: localhost
+Port: 5432
+Pool: 5
+Debug: True
+Load count: 1
+
+Host again: localhost
+Load count: 1
+
+  Config cache invalidated
+  [2] Loading config for env='development'...
+Host after invalidate: localhost
+Load count: 2</div>
+
+    <h4>Common Mistakes</h4>
+
+    <div class="do-dont">
+      <div class="dont-box">
+        <div class="label">Wrong &mdash; using cached_property with mutable data</div>
+<pre>from dataclasses import dataclass
+from functools import cached_property
+
+@dataclass
+class Stats:
+    values: list
+
+    @cached_property
+    def total(self):
+        return sum(self.values)
+
+s = Stats([1, 2, 3])
+print(s.total)  # 6
+s.values.append(100)
+print(s.total)  # Still 6! The cache is stale!</pre>
+      </div>
+      <div class="do-box">
+        <div class="label">Right &mdash; use @property for mutable data</div>
+<pre>from dataclasses import dataclass
+
+@dataclass
+class Stats:
+    values: list
+
+    @property
+    def total(self):
+        return sum(self.values)
+
+s = Stats([1, 2, 3])
+print(s.total)  # 6
+s.values.append(100)
+print(s.total)  # 106 — always fresh</pre>
+      </div>
+    </div>
+
+    <div class="do-dont">
+      <div class="dont-box">
+        <div class="label">Wrong &mdash; using with __slots__ (no __dict__)</div>
+<pre>from functools import cached_property
+
+class Broken:
+    __slots__ = ("x",)
+
+    @cached_property
+    def expensive(self):
+        return 42
+
+b = Broken()
+b.expensive  # TypeError! cached_property needs __dict__</pre>
+      </div>
+      <div class="do-box">
+        <div class="label">Right &mdash; include __dict__ in __slots__</div>
+<pre>from functools import cached_property
+
+class Works:
+    __slots__ = ("x", "__dict__")
+
+    @cached_property
+    def expensive(self):
+        return 42
+
+w = Works()
+print(w.expensive)  # 42 — works because __dict__ exists</pre>
+      </div>
+    </div>
+
+    <div class="do-dont">
+      <div class="dont-box">
+        <div class="label">Wrong &mdash; expecting thread safety (pre-3.12)</div>
+<pre># Python &lt; 3.12: two threads can call the
+# cached_property simultaneously, leading to
+# double computation or race conditions
+
+# No built-in locking!</pre>
+      </div>
+      <div class="do-box">
+        <div class="label">Right &mdash; add locking for thread safety</div>
+<pre>import threading
+from functools import cached_property
+
+class ThreadSafe:
+    _lock = threading.Lock()
+
+    @cached_property
+    def value(self):
+        with self._lock:
+            # Double-check: another thread may have
+            # cached it while we waited for the lock
+            if "value" in self.__dict__:
+                return self.__dict__["value"]
+            return expensive_computation()</pre>
+      </div>
+    </div>
+
+    <h4>Key Rules</h4>
+    <ul class="rules-list">
+      <li>Use <code>@cached_property</code> for expensive, <strong>immutable</strong> computed attributes that should be calculated once</li>
+      <li>Use <code>@property</code> when the underlying data can change and the value must stay fresh</li>
+      <li>The cache lives in the instance&rsquo;s <code>__dict__</code> &mdash; it will not work with <code>__slots__</code> unless you include <code>"__dict__"</code></li>
+      <li>Invalidate the cache by deleting the attribute: <code>del obj.attr_name</code> &mdash; next access recomputes</li>
+      <li>Thread-safe in Python 3.12+ (uses a per-instance lock internally), but <em>not</em> in earlier versions</li>
+      <li><code>cached_property</code> replaces the descriptor with the value in <code>__dict__</code> &mdash; there is no setter or deleter like <code>@property</code></li>
+    </ul>
+
+    <h4>Practice Exercises</h4>
+
+    <div class="exercise">
+      <div class="exercise-label">Exercise 1</div>
+      <p>Create a <code>FileStats</code> class that takes a file path in its constructor and provides <code>cached_property</code> attributes for <code>line_count</code>, <code>word_count</code>, and <code>char_count</code>. All three should share a single cached <code>_content</code> property to avoid reading the file multiple times. Add an <code>invalidate()</code> method that clears all four caches. Demonstrate that the file is read only once even when accessing all three stats, and that invalidation causes a re-read.</p>
+    </div>
+
+    <div class="exercise">
+      <div class="exercise-label">Exercise 2</div>
+      <p>Build a <code>DatabaseModel</code> base class with a <code>@cached_property</code> called <code>schema</code> that uses <code>typing.get_type_hints()</code> to introspect the class&rsquo;s type-annotated fields and builds a dict of <code>{"field_name": type_obj}</code>. Subclass it with <code>User(name: str, age: int, email: str)</code> and <code>Product(sku: str, price: float, stock: int)</code>. Verify the schema is computed once per class even when accessed multiple times, and that different subclasses have different schemas.</p>
+    </div>
+
+    <div class="connection">
+      <strong>Connections:</strong> <code>@property</code> (non-caching version &mdash; covered next) &bull; Descriptors (how <code>cached_property</code> works: a non-data descriptor) &bull; <code>@lru_cache</code> (memoization for <em>functions</em>, not attributes) &bull; <code>__slots__</code> (conflicts because <code>cached_property</code> needs <code>__dict__</code>)
+    </div>
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- New 3: property Setters & Deleters -->
+  <!-- ============================================================ -->
+  <div class="concept" id="property-setters">
+    <div class="concept-header">
+      <h3>property Setters &amp; Deleters</h3>
+      <span class="ttag">OOP</span>
+      <span class="ttag">Descriptors</span>
+    </div>
+
+    <h4>Why It Matters</h4>
+    <p>Properties let you add validation, computation, logging, or side effects to attribute access <strong>without changing the caller&rsquo;s interface</strong>. Code that previously did <code>obj.x = value</code> still works, but now the assignment can validate input, transform data, or trigger actions. This is Python&rsquo;s answer to Java-style getters/setters &mdash; but with a much cleaner syntax.</p>
+
+    <h4>Core Idea</h4>
+    <p>The <code>@property</code> decorator creates a <strong>getter</strong>. You chain <code>@name.setter</code> to intercept assignment and <code>@name.deleter</code> to intercept <code>del</code>. The actual data is stored in a &ldquo;backing attribute&rdquo; (conventionally prefixed with <code>_</code>). Under the hood, <code>property</code> is a <strong>data descriptor</strong> (it defines both <code>__get__</code> and <code>__set__</code>), which means it takes priority over instance <code>__dict__</code> entries.</p>
+
+    <h4>Example 1 &mdash; Basic @property Getter (Read-Only)</h4>
+<pre>import math
+
+class Circle:
+    def __init__(self, radius):
+        self._radius = radius  # backing attribute
+
+    @property
+    def radius(self):
+        """Read-only access to the radius."""
+        return self._radius
+
+    @property
+    def diameter(self):
+        """Computed property: always 2x radius."""
+        return self._radius * 2
+
+    @property
+    def area(self):
+        """Computed property: always up to date."""
+        return math.pi * self._radius ** 2
+
+    @property
+    def circumference(self):
+        return 2 * math.pi * self._radius
+
+c = Circle(5)
+print(f"Radius: {c.radius}")
+print(f"Diameter: {c.diameter}")
+print(f"Area: {c.area:.4f}")
+print(f"Circumference: {c.circumference:.4f}")
+
+# Attempting to set a read-only property
+try:
+    c.radius = 10
+except AttributeError as e:
+    print(f"\nAttributeError: {e}")
+
+# But we can still set _radius directly (no protection)
+c._radius = 10
+print(f"\nAfter _radius = 10:")
+print(f"Radius: {c.radius}, Diameter: {c.diameter}, Area: {c.area:.4f}")</pre>
+    <div class="output">Radius: 5
+Diameter: 10
+Area: 78.5398
+Circumference: 31.4159
+
+AttributeError: property 'radius' of 'Circle' object has no setter
+
+After _radius = 10:
+Radius: 10, Diameter: 20, Area: 314.1593</div>
+
+    <p>Without a <code>@radius.setter</code>, the property is read-only. Note that Python&rsquo;s <code>_</code> prefix is a <em>convention</em>, not enforcement &mdash; users can still access <code>_radius</code> directly.</p>
+
+    <h4>Example 2 &mdash; Adding @name.setter with Validation</h4>
+<pre>class User:
+    def __init__(self, name, email, age):
+        # These assignments go through the setters!
+        self.name = name
+        self.email = email
+        self.age = age
+
+    @property
+    def name(self):
+        return self._name
+
+    @name.setter
+    def name(self, value):
+        if not isinstance(value, str) or not value.strip():
+            raise ValueError("Name must be a non-empty string")
+        self._name = value.strip().title()
+
+    @property
+    def email(self):
+        return self._email
+
+    @email.setter
+    def email(self, value):
+        if not isinstance(value, str):
+            raise TypeError(f"Email must be a string, got {type(value).__name__}")
+        if "@" not in value or "." not in value.split("@")[-1]:
+            raise ValueError(f"Invalid email format: {value!r}")
+        self._email = value.lower().strip()
+
+    @property
+    def age(self):
+        return self._age
+
+    @age.setter
+    def age(self, value):
+        if not isinstance(value, int):
+            raise TypeError(f"Age must be an integer, got {type(value).__name__}")
+        if not 0 &lt;= value &lt;= 150:
+            raise ValueError(f"Age must be 0-150, got {value}")
+        self._age = value
+
+# Valid construction
+u = User("  alice jones  ", "Alice.Jones@EXAMPLE.COM", 30)
+print(f"Name: {u.name!r}")
+print(f"Email: {u.email!r}")
+print(f"Age: {u.age}")
+
+# Valid update
+u.name = "bob smith"
+print(f"\nUpdated name: {u.name!r}")
+
+# Invalid updates
+errors = [
+    lambda: setattr(u, "name", ""),
+    lambda: setattr(u, "email", "not-an-email"),
+    lambda: setattr(u, "age", -5),
+    lambda: setattr(u, "age", "thirty"),
+]
+
+print()
+for fn in errors:
+    try:
+        fn()
+    except (ValueError, TypeError) as e:
+        print(f"Rejected: {e}")</pre>
+    <div class="output">Name: 'Alice Jones'
+Email: 'alice.jones@example.com'
+Age: 30
+
+Updated name: 'Bob Smith'
+
+Rejected: Name must be a non-empty string
+Rejected: Invalid email format: 'not-an-email'
+Rejected: Age must be 0-150, got -5
+Rejected: Age must be an integer, got str</div>
+
+    <h4>Example 3 &mdash; @name.deleter for Cleanup / Cache Invalidation</h4>
+<pre>class CachedFile:
+    """Lazy-loading file with explicit cache management via deleter."""
+
+    def __init__(self, path):
+        self._path = path
+        self._content = None
+        self._access_count = 0
+
+    @property
+    def content(self):
+        self._access_count += 1
+        if self._content is None:
+            print(f"  [READ] Loading {self._path} (access #{self._access_count})")
+            # Simulate file read
+            self._content = f"=== Contents of {self._path} ==="
+        else:
+            print(f"  [CACHE HIT] (access #{self._access_count})")
+        return self._content
+
+    @content.setter
+    def content(self, value):
+        print(f"  [WRITE] Updating content of {self._path}")
+        self._content = value
+
+    @content.deleter
+    def content(self):
+        print(f"  [INVALIDATE] Clearing cache for {self._path}")
+        self._content = None
+
+f = CachedFile("/etc/config.yaml")
+
+# First access — triggers load
+print(f.content)
+
+# Second access — cache hit
+print(f.content)
+
+# Overwrite content
+f.content = "new configuration data"
+print(f.content)
+
+# Invalidate cache
+del f.content
+
+# Next access reloads
+print(f.content)</pre>
+    <div class="output">  [READ] Loading /etc/config.yaml (access #1)
+=== Contents of /etc/config.yaml ===
+  [CACHE HIT] (access #2)
+=== Contents of /etc/config.yaml ===
+  [WRITE] Updating content of /etc/config.yaml
+  [CACHE HIT] (access #3)
+new configuration data
+  [INVALIDATE] Clearing cache for /etc/config.yaml
+  [READ] Loading /etc/config.yaml (access #4)
+=== Contents of /etc/config.yaml ===</div>
+
+    <h4>Example 4 &mdash; Temperature Class with Celsius/Fahrenheit/Kelvin</h4>
+    <p>This real-world example shows how multiple properties can share a single backing attribute, providing different &ldquo;views&rdquo; of the same data with automatic conversion:</p>
+
+<pre>class Temperature:
+    """Temperature with automatic unit conversion via properties."""
+
+    ABSOLUTE_ZERO_C = -273.15
+
+    def __init__(self, celsius=0.0):
+        self.celsius = celsius  # goes through the setter!
+
+    # --- Celsius (primary storage) ---
+    @property
+    def celsius(self):
+        return self._celsius
+
+    @celsius.setter
+    def celsius(self, value):
+        if value &lt; self.ABSOLUTE_ZERO_C:
+            raise ValueError(
+                f"Temperature {value}C is below absolute zero ({self.ABSOLUTE_ZERO_C}C)"
+            )
+        self._celsius = round(float(value), 2)
+
+    # --- Fahrenheit (computed from celsius) ---
+    @property
+    def fahrenheit(self):
+        return round(self._celsius * 9 / 5 + 32, 2)
+
+    @fahrenheit.setter
+    def fahrenheit(self, value):
+        self.celsius = (value - 32) * 5 / 9  # delegates to celsius setter
+
+    # --- Kelvin (computed from celsius) ---
+    @property
+    def kelvin(self):
+        return round(self._celsius + 273.15, 2)
+
+    @kelvin.setter
+    def kelvin(self, value):
+        self.celsius = value - 273.15  # delegates to celsius setter
+
+    def __repr__(self):
+        return f"Temperature({self._celsius}C | {self.fahrenheit}F | {self.kelvin}K)"
+
+    def __eq__(self, other):
+        if isinstance(other, Temperature):
+            return self._celsius == other._celsius
+        return NotImplemented
+
+# Create using Celsius
+water_boil = Temperature(100)
+print(f"Water boils at: {water_boil}")
+
+# Create using Fahrenheit
+body_temp = Temperature()
+body_temp.fahrenheit = 98.6
+print(f"Body temperature: {body_temp}")
+
+# Create using Kelvin
+absolute_zero = Temperature()
+absolute_zero.kelvin = 0
+print(f"Absolute zero: {absolute_zero}")
+
+# Freezing point
+freezing = Temperature(0)
+print(f"Water freezes at: {freezing}")
+print(f"0C == 32F? {freezing.fahrenheit == 32.0}")
+
+# Validation works through any setter
+print("\nValidation tests:")
+try:
+    cold = Temperature()
+    cold.kelvin = -1  # below absolute zero
+except ValueError as e:
+    print(f"  Kelvin setter: {e}")
+
+try:
+    bad = Temperature(-300)  # below absolute zero
+except ValueError as e:
+    print(f"  Celsius constructor: {e}")</pre>
+    <div class="output">Water boils at: Temperature(100C | 212.0F | 373.15K)
+Body temperature: Temperature(37.0C | 98.6F | 310.15K)
+Absolute zero: Temperature(-273.15C | -459.67F | 0.0K)
+Water freezes at: Temperature(0C | 32.0F | 273.15K)
+0C == 32F? True
+
+Validation tests:
+  Kelvin setter: Temperature -274.15C is below absolute zero (-273.15C)
+  Celsius constructor: Temperature -300C is below absolute zero (-273.15C)</div>
+
+    <div class="insight">
+      <strong>Design pattern:</strong> Notice how <code>fahrenheit.setter</code> and <code>kelvin.setter</code> both delegate to <code>self.celsius = ...</code> instead of setting <code>self._celsius</code> directly. This ensures that <strong>all validation runs through a single path</strong> regardless of which unit the caller uses.
+    </div>
+
+    <h4>Common Mistakes</h4>
+
+    <div class="do-dont">
+      <div class="dont-box">
+        <div class="label">Wrong &mdash; infinite recursion (most common bug)</div>
+<pre>class Bad:
+    @property
+    def x(self):
+        return self.x  # calls the getter AGAIN!
+
+    @x.setter
+    def x(self, value):
+        self.x = value  # calls the setter AGAIN!
+
+# b = Bad()
+# b.x = 5  # RecursionError: maximum recursion depth</pre>
+      </div>
+      <div class="do-box">
+        <div class="label">Right &mdash; use underscore-prefixed backing attr</div>
+<pre>class Good:
+    @property
+    def x(self):
+        return self._x  # different name!
+
+    @x.setter
+    def x(self, value):
+        self._x = value  # different name!</pre>
+      </div>
+    </div>
+
+    <div class="do-dont">
+      <div class="dont-box">
+        <div class="label">Wrong &mdash; __init__ bypasses validation</div>
+<pre>class Account:
+    def __init__(self, balance):
+        self._balance = balance  # BYPASSES setter!
+
+    @property
+    def balance(self):
+        return self._balance
+
+    @balance.setter
+    def balance(self, value):
+        if value &lt; 0:
+            raise ValueError("Balance cannot be negative!")
+        self._balance = value
+
+a = Account(-1000)  # No error! Validation skipped!</pre>
+      </div>
+      <div class="do-box">
+        <div class="label">Right &mdash; __init__ goes through the setter</div>
+<pre>class Account:
+    def __init__(self, balance):
+        self.balance = balance  # USES setter! Validates!
+
+    @property
+    def balance(self):
+        return self._balance
+
+    @balance.setter
+    def balance(self, value):
+        if value &lt; 0:
+            raise ValueError("Balance cannot be negative!")
+        self._balance = value
+
+# a = Account(-1000)  # ValueError! Caught!</pre>
+      </div>
+    </div>
+
+    <div class="do-dont">
+      <div class="dont-box">
+        <div class="label">Wrong &mdash; property for everything</div>
+<pre>class OverEngineered:
+    @property
+    def name(self):
+        return self._name
+
+    @name.setter
+    def name(self, value):
+        self._name = value  # no validation, no logic!
+
+# Pointless! A plain attribute does the same thing.</pre>
+      </div>
+      <div class="do-box">
+        <div class="label">Right &mdash; plain attrs when no logic needed</div>
+<pre>class Simple:
+    def __init__(self, name):
+        self.name = name  # plain attribute — fast, simple
+
+# You can always add a property LATER if you need
+# validation — Python's uniform access principle.</pre>
+      </div>
+    </div>
+
+    <h4>Key Rules</h4>
+    <ul class="rules-list">
+      <li>Use <code>@property</code> when you need validation, computation, logging, or side effects on attribute access</li>
+      <li>Prefer plain attributes when no logic is needed &mdash; don&rsquo;t wrap everything in properties (YAGNI)</li>
+      <li>Always use a backing attribute with a different name (conventionally <code>_name</code>) to avoid infinite recursion</li>
+      <li>Route <code>__init__</code> assignments through the setter (<code>self.name = value</code>) to get validation on construction</li>
+      <li>Use <code>@name.deleter</code> sparingly &mdash; mainly for cache invalidation or resource cleanup</li>
+      <li>Properties are <strong>data descriptors</strong>, so they override instance <code>__dict__</code> &mdash; unlike <code>cached_property</code></li>
+    </ul>
+
+    <h4>Practice Exercises</h4>
+
+    <div class="exercise">
+      <div class="exercise-label">Exercise 1</div>
+      <p>Create a <code>BankAccount</code> class with a <code>balance</code> property that: (a) rejects negative values on set with <code>ValueError</code>, (b) logs every change with a timestamp to a <code>self.history</code> list as tuples of <code>(timestamp, old_balance, new_balance)</code>, (c) has a deleter that resets balance to 0 and appends &ldquo;RESET&rdquo; to the history. Demonstrate deposits, withdrawals, a validation error, and a reset.</p>
+    </div>
+
+    <div class="exercise">
+      <div class="exercise-label">Exercise 2</div>
+      <p>Build a <code>Color</code> class that stores color internally as an RGB tuple <code>(r, g, b)</code>. Provide <code>hex</code> and <code>rgb</code> properties with both getters and setters. Setting <code>color.hex = "#FF0000"</code> should update the internal RGB to <code>(255, 0, 0)</code>. Setting <code>color.rgb = (0, 255, 0)</code> should make <code>color.hex</code> return <code>"#00FF00"</code>. Validate that each RGB component is an integer in range 0&ndash;255. Add a <code>luminance</code> read-only property using the formula <code>0.299*R + 0.587*G + 0.114*B</code>.</p>
+    </div>
+
+    <div class="connection">
+      <strong>Connections:</strong> Descriptors (properties <em>are</em> data descriptors &mdash; they define <code>__get__</code>, <code>__set__</code>, <code>__delete__</code>) &bull; <code>__slots__</code> (properties work with slots since they live on the class, not the instance) &bull; <code>@dataclass</code> (combine with <code>__post_init__</code> for validation, or use property with a backing field) &bull; <code>cached_property</code> (non-data descriptor variant that caches the result)
+    </div>
+  </div>
+
+</div><!-- end Advanced Standard Library II section -->
+
+
+<!-- ============================================================ -->
+<!-- NEW CONCEPTS — SECTION: Debugging & Introspection -->
+<!-- ============================================================ -->
+<div class="section">
+  <span class="section-label new">New</span>
+  <h2 class="section-title">Debugging &amp; Introspection</h2>
+
+  <!-- ============================================================ -->
+  <!-- New 4: traceback Module -->
+  <!-- ============================================================ -->
+  <div class="concept" id="traceback-module">
+    <div class="concept-header">
+      <h3>traceback Module</h3>
+      <span class="ttag">Debugging</span>
+      <span class="ttag">Error Handling</span>
+    </div>
+
+    <h4>Why It Matters</h4>
+    <p>When you catch exceptions, the traceback is often the most valuable debugging information. Python prints it automatically for uncaught exceptions, but in production you need to <strong>capture, format, filter, and route</strong> tracebacks programmatically &mdash; to logging systems, error aggregators (Sentry, Datadog), structured JSON logs, or custom dashboards. The <code>traceback</code> module gives you full control.</p>
+
+    <h4>Core API at a Glance</h4>
+    <div class="summary-box">
+      <table>
+        <tr><th>Function</th><th>Returns</th><th>Use Case</th></tr>
+        <tr><td><code>format_exc()</code></td><td>String</td><td>Current exception as formatted text (inside <code>except</code>)</td></tr>
+        <tr><td><code>print_exc()</code></td><td>None</td><td>Print current exception to stderr</td></tr>
+        <tr><td><code>extract_tb(tb)</code></td><td>StackSummary</td><td>Structured list of FrameSummary objects</td></tr>
+        <tr><td><code>format_tb(tb)</code></td><td>List[str]</td><td>Each frame as a formatted string</td></tr>
+        <tr><td><code>format_exception(exc)</code></td><td>List[str]</td><td>Full formatted traceback from exception object (3.10+)</td></tr>
+        <tr><td><code>print_stack()</code></td><td>None</td><td>Print current call stack (not an exception)</td></tr>
+      </table>
+    </div>
+
+    <h4>Example 1 &mdash; traceback.format_exc() in except Blocks</h4>
+    <p>The most common usage: capture the current exception&rsquo;s traceback as a string for logging or error reporting.</p>
+
+<pre>import traceback
+
+def validate_age(age):
+    if age &lt; 0:
+        raise ValueError(f"Age cannot be negative: {age}")
+    return age
+
+def process_user(data):
+    name = data["name"]
+    age = validate_age(data["age"])
+    return {"name": name, "age": age}
+
+# Capture traceback as a string
+try:
+    result = process_user({"name": "Alice", "age": -5})
+except ValueError:
+    tb_string = traceback.format_exc()
+    print("=== Captured Traceback (as string) ===")
+    print(tb_string)
+    print("=== End of traceback ===")
+    print("Program continues running normally!")
+    print(f"String length: {len(tb_string)} characters")</pre>
+    <div class="output">=== Captured Traceback (as string) ===
+Traceback (most recent call last):
+  File "&lt;stdin&gt;", line 2, in &lt;module&gt;
+  File "&lt;stdin&gt;", line 3, in process_user
+  File "&lt;stdin&gt;", line 3, in validate_age
+ValueError: Age cannot be negative: -5
+
+=== End of traceback ===
+Program continues running normally!
+String length: 207 characters</div>
+
+    <p>Key insight: <code>format_exc()</code> returns the traceback as a string &mdash; the program keeps running. Compare to letting the exception propagate, which terminates the program.</p>
+
+    <h4>Example 2 &mdash; traceback.extract_tb() for Structured Frame Access</h4>
+    <p>When you need to programmatically analyze the traceback &mdash; filter frames, extract specific info, build structured logs &mdash; use <code>extract_tb()</code>:</p>
+
+<pre>import traceback
+import sys
+
+def layer_3():
+    data = {"key": "value"}
+    return data["missing_key"]  # KeyError
+
+def layer_2():
+    return layer_3()
+
+def layer_1():
+    return layer_2()
+
+try:
+    layer_1()
+except KeyError:
+    # Get the traceback object from sys.exc_info()
+    exc_type, exc_value, exc_tb = sys.exc_info()
+
+    # extract_tb returns a StackSummary (list of FrameSummary)
+    frames = traceback.extract_tb(exc_tb)
+
+    print(f"Exception: {exc_type.__name__}: {exc_value}")
+    print(f"Call depth: {len(frames)} frames\n")
+
+    for i, frame in enumerate(frames):
+        print(f"Frame {i}:")
+        print(f"  File:     {frame.filename}")
+        print(f"  Line:     {frame.lineno}")
+        print(f"  Function: {frame.name}")
+        print(f"  Code:     {frame.line}")
+        print()
+
+    # FrameSummary objects also support named tuple-style access
+    last_frame = frames[-1]
+    print(f"Error originated in: {last_frame.name}() at line {last_frame.lineno}")
+    print(f"Offending code: {last_frame.line!r}")</pre>
+    <div class="output">Exception: KeyError: 'missing_key'
+Call depth: 4 frames
+
+Frame 0:
+  File:     &lt;stdin&gt;
+  Line:     2
+  Function: &lt;module&gt;
+  Code:     layer_1()
+
+Frame 1:
+  File:     &lt;stdin&gt;
+  Line:     2
+  Function: layer_1
+  Code:     return layer_2()
+
+Frame 2:
+  File:     &lt;stdin&gt;
+  Line:     2
+  Function: layer_2
+  Code:     return layer_3()
+
+Frame 3:
+  File:     &lt;stdin&gt;
+  Line:     3
+  Function: layer_3
+  Code:     return data["missing_key"]
+
+Error originated in: layer_3() at line 3
+Offending code: 'return data["missing_key"]'</div>
+
+    <h4>Example 3 &mdash; Custom Error Reporter with Context (Real-World)</h4>
+    <p>Production services need structured error reports with context &mdash; request IDs, user info, timestamps. Here is a reusable error reporter:</p>
+
+<pre>import traceback
+import sys
+from datetime import datetime
+
+class ErrorReporter:
+    """
+    Collects structured error reports for a service.
+    In production, these would be sent to Sentry/Datadog/etc.
+    """
+
+    def __init__(self, service_name):
+        self.service_name = service_name
+        self.errors = []
+
+    def capture(self, context=None):
+        """Call inside an except block to capture the current exception."""
+        exc_type, exc_value, exc_tb = sys.exc_info()
+        if exc_type is None:
+            return None
+
+        frames = traceback.extract_tb(exc_tb)
+
+        error_record = {
+            "timestamp": datetime.now().isoformat(),
+            "service": self.service_name,
+            "error_type": exc_type.__name__,
+            "error_module": exc_type.__module__,
+            "message": str(exc_value),
+            "context": context or {},
+            "stack_depth": len(frames),
+            "stack": [
+                {
+                    "file": f.filename,
+                    "line": f.lineno,
+                    "function": f.name,
+                    "code": f.line,
+                }
+                for f in frames
+            ],
+            "origin": {
+                "function": frames[-1].name if frames else "unknown",
+                "file": frames[-1].filename if frames else "unknown",
+                "line": frames[-1].lineno if frames else -1,
+            },
+        }
+        self.errors.append(error_record)
+        return error_record
+
+    def summary(self):
+        """Group errors by type."""
+        by_type = {}
+        for err in self.errors:
+            t = err["error_type"]
+            by_type[t] = by_type.get(t, 0) + 1
+        return {
+            "total": len(self.errors),
+            "by_type": by_type,
+            "service": self.service_name,
+        }
+
+# --- Usage demo ---
+reporter = ErrorReporter("payment-service")
+
+# Simulate various errors with context
+test_cases = [
+    (lambda: 10 / 0, {"user_id": "u123", "action": "charge"}),
+    (lambda: int("not_a_number"), {"user_id": "u456", "action": "parse_amount"}),
+    (lambda: [1, 2, 3][99], {"user_id": "u789", "action": "get_item"}),
+    (lambda: {"a": 1}["b"], {"user_id": "u101", "action": "lookup_plan"}),
+]
+
+for fn, ctx in test_cases:
+    try:
+        fn()
+    except Exception:
+        record = reporter.capture(context=ctx)
+        origin = record["origin"]
+        print(f"Captured {record['error_type']}: {record['message']}")
+        print(f"  Origin: {origin['function']}() line {origin['line']}")
+        print(f"  Context: {record['context']}")
+
+print(f"\n--- Summary ---")
+summary = reporter.summary()
+print(f"Total errors: {summary['total']}")
+for err_type, count in summary["by_type"].items():
+    print(f"  {err_type}: {count}")</pre>
+    <div class="output">Captured ZeroDivisionError: division by zero
+  Origin: &lt;lambda&gt;() line 1
+  Context: {'user_id': 'u123', 'action': 'charge'}
+Captured ValueError: invalid literal for int() with base 10: 'not_a_number'
+  Origin: &lt;lambda&gt;() line 1
+  Context: {'user_id': 'u456', 'action': 'parse_amount'}
+Captured IndexError: list index out of range
+  Origin: &lt;lambda&gt;() line 1
+  Context: {'user_id': 'u789', 'action': 'get_item'}
+Captured KeyError: 'b'
+  Origin: &lt;lambda&gt;() line 1
+  Context: {'user_id': 'u101', 'action': 'lookup_plan'}
+
+--- Summary ---
+Total errors: 4
+  ZeroDivisionError: 1
+  ValueError: 1
+  IndexError: 1
+  KeyError: 1</div>
+
+    <h4>Common Mistakes</h4>
+
+    <div class="do-dont">
+      <div class="dont-box">
+        <div class="label">Wrong &mdash; printing traceback to stdout in production</div>
+<pre>try:
+    risky_operation()
+except Exception:
+    # Goes to stdout — gets mixed with
+    # normal program output!
+    print(traceback.format_exc())
+
+    # Or worse: silently swallowing it
+    pass  # NO!</pre>
+      </div>
+      <div class="do-box">
+        <div class="label">Right &mdash; use logging.exception()</div>
+<pre>import logging
+logger = logging.getLogger(__name__)
+
+try:
+    risky_operation()
+except Exception:
+    # .exception() automatically includes
+    # the full traceback in the log record
+    logger.exception("Unexpected error in risky_operation")
+    # Goes to stderr/file/aggregator, with level ERROR</pre>
+      </div>
+    </div>
+
+    <div class="do-dont">
+      <div class="dont-box">
+        <div class="label">Wrong &mdash; losing the exception chain</div>
+<pre>try:
+    result = parse_config(path)
+except ValueError:
+    # The original traceback is LOST
+    msg = str(sys.exc_info()[1])
+    raise RuntimeError(msg)
+    # Caller only sees RuntimeError, not the
+    # original ValueError and where it happened</pre>
+      </div>
+      <div class="do-box">
+        <div class="label">Right &mdash; preserve the chain with raise...from</div>
+<pre>try:
+    result = parse_config(path)
+except ValueError as original:
+    # Both tracebacks are preserved!
+    raise RuntimeError(
+        f"Config error in {path}"
+    ) from original
+    # Caller sees: "RuntimeError ... caused by ValueError ..."</pre>
+      </div>
+    </div>
+
+    <div class="do-dont">
+      <div class="dont-box">
+        <div class="label">Wrong &mdash; bare except that hides bugs</div>
+<pre>try:
+    complex_operation()
+except:  # catches EVERYTHING including KeyboardInterrupt!
+    traceback.print_exc()
+    # Might swallow SystemExit, KeyboardInterrupt...</pre>
+      </div>
+      <div class="do-box">
+        <div class="label">Right &mdash; catch specific exceptions</div>
+<pre>try:
+    complex_operation()
+except Exception as e:  # does NOT catch SystemExit, KeyboardInterrupt
+    logger.exception("Operation failed")
+    raise  # re-raise after logging</pre>
+      </div>
+    </div>
+
+    <h4>Key Rules</h4>
+    <ul class="rules-list">
+      <li>Use <code>traceback.format_exc()</code> to get the current exception traceback as a string for logging</li>
+      <li>Use <code>traceback.extract_tb(tb)</code> for programmatic access to individual stack frames</li>
+      <li>Use <code>logging.exception(msg)</code> instead of <code>print()</code> for production error reporting</li>
+      <li>Never silently swallow tracebacks &mdash; at minimum, log them at WARNING or ERROR level</li>
+      <li>Use <code>raise NewError(...) from original_error</code> to preserve exception chains</li>
+      <li>Use <code>traceback.format_exception(exc)</code> (Python 3.10+) when you have the exception object but not <code>sys.exc_info()</code></li>
+    </ul>
+
+    <h4>Practice Exercises</h4>
+
+    <div class="exercise">
+      <div class="exercise-label">Exercise 1</div>
+      <p>Write a decorator <code>@log_errors(logger_instance)</code> that wraps any function: on success it does nothing extra; on exception it logs the full traceback using <code>logger.error()</code> with the traceback string from <code>traceback.format_exc()</code>, then re-raises the exception. Test it with three functions that raise different exception types (<code>ValueError</code>, <code>TypeError</code>, <code>KeyError</code>). Verify the log output includes the full stack trace.</p>
+    </div>
+
+    <div class="exercise">
+      <div class="exercise-label">Exercise 2</div>
+      <p>Build a <code>retry_with_trace(max_retries, exceptions=(Exception,))</code> decorator that retries a function up to <code>max_retries</code> times, catching only the specified exception types. On each failure, collect the traceback string. If all retries are exhausted, raise a custom <code>RetryExhaustedError</code> whose message includes the attempt number and traceback for <em>each</em> failed attempt. Chain it to the last original exception with <code>from</code>.</p>
+    </div>
+
+    <div class="connection">
+      <strong>Connections:</strong> <code>logging</code> module (<code>logger.exception()</code> is the standard way to report errors) &bull; Exception hierarchy &amp; custom exceptions (structured error context) &bull; <code>sys.exc_info()</code> (raw access to current exception) &bull; <code>raise ... from</code> (exception chaining, PEP 3134)
+    </div>
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- New 5: signal & atexit — Process Lifecycle -->
+  <!-- ============================================================ -->
+  <div class="concept" id="signal-atexit">
+    <div class="concept-header">
+      <h3>signal &amp; atexit &mdash; Process Lifecycle</h3>
+      <span class="ttag">OS</span>
+      <span class="ttag">Systems</span>
+    </div>
+
+    <h4>Why It Matters</h4>
+    <p>Production services need <strong>graceful shutdown</strong>: flush write buffers, close database connections, finish in-flight requests, save checkpoint state. Without explicit handling, Ctrl+C kills your process instantly, and <code>kill</code> from an orchestrator (Kubernetes, systemd) terminates it after a timeout. The <code>atexit</code> and <code>signal</code> modules give you hooks to run cleanup code in both scenarios.</p>
+
+    <h4>Core API at a Glance</h4>
+    <div class="summary-box">
+      <h5>atexit module</h5>
+      <table>
+        <tr><th>Function</th><th>Purpose</th></tr>
+        <tr><td><code>atexit.register(func, *args)</code></td><td>Schedule <code>func(*args)</code> to run at interpreter shutdown</td></tr>
+        <tr><td><code>atexit.unregister(func)</code></td><td>Remove all instances of <code>func</code> from the atexit list</td></tr>
+        <tr><td><code>@atexit.register</code></td><td>Decorator form (no arguments to the function)</td></tr>
+      </table>
+    </div>
+
+    <div class="summary-box">
+      <h5>signal module</h5>
+      <table>
+        <tr><th>Signal</th><th>Default Action</th><th>Common Source</th></tr>
+        <tr><td><code>SIGINT</code> (2)</td><td>Raise <code>KeyboardInterrupt</code></td><td>Ctrl+C</td></tr>
+        <tr><td><code>SIGTERM</code> (15)</td><td>Terminate process</td><td><code>kill</code> command, Kubernetes</td></tr>
+        <tr><td><code>SIGALRM</code></td><td>Terminate</td><td><code>signal.alarm()</code> (Unix only)</td></tr>
+        <tr><td><code>SIGKILL</code> (9)</td><td>Terminate (UNCATCHABLE)</td><td><code>kill -9</code></td></tr>
+        <tr><td><code>SIGHUP</code> (1)</td><td>Terminate</td><td>Terminal disconnect, config reload</td></tr>
+      </table>
+    </div>
+
+    <h4>Example 1 &mdash; atexit.register() for Cleanup on Exit</h4>
+    <p><code>atexit</code> functions run in LIFO (last registered, first called) order when the Python interpreter exits normally &mdash; via <code>sys.exit()</code>, end of <code>main()</code>, or unhandled exception (but NOT <code>SIGKILL</code> or <code>os._exit()</code>).</p>
+
+<pre>import atexit
+import tempfile
+import os
+
+# Simulate resources that need cleanup
+_temp_files = []
+_open_connections = []
+
+def cleanup_temp_files():
+    """Remove all temporary files we created."""
+    print(f"[atexit] Cleaning up {len(_temp_files)} temp files...")
+    for path in _temp_files:
+        if os.path.exists(path):
+            os.unlink(path)
+            print(f"  Deleted {path}")
+    _temp_files.clear()
+
+def cleanup_connections():
+    """Close all open connections."""
+    print(f"[atexit] Closing {len(_open_connections)} connections...")
+    for conn in _open_connections:
+        print(f"  Closed {conn}")
+    _open_connections.clear()
+
+# Register cleanup functions — LIFO order
+atexit.register(cleanup_temp_files)    # runs second
+atexit.register(cleanup_connections)   # runs first (LIFO)
+
+# Simulate app work
+_open_connections.append("postgres://localhost/mydb")
+_open_connections.append("redis://localhost:6379")
+_temp_files.append("/tmp/session_abc123.json")
+_temp_files.append("/tmp/upload_xyz789.dat")
+
+print("Application running...")
+print(f"Open connections: {_open_connections}")
+print(f"Temp files: {_temp_files}")
+print("Application shutting down...")
+
+# When the script ends, atexit handlers fire automatically.
+# Simulated output shows what happens at exit:</pre>
+    <div class="output">Application running...
+Open connections: ['postgres://localhost/mydb', 'redis://localhost:6379']
+Temp files: ['/tmp/session_abc123.json', '/tmp/upload_xyz789.dat']
+Application shutting down...
+[atexit] Closing 2 connections...
+  Closed postgres://localhost/mydb
+  Closed redis://localhost:6379
+[atexit] Cleaning up 2 temp files...
+  Deleted /tmp/session_abc123.json
+  Deleted /tmp/upload_xyz789.dat</div>
+
+    <p>You can also use <code>atexit.register</code> as a decorator for functions that take no arguments:</p>
+
+<pre>import atexit
+
+@atexit.register
+def say_goodbye():
+    print("[atexit] Goodbye! Application exiting cleanly.")
+
+# Can also register with arguments:
+def log_shutdown(service_name, code):
+    print(f"[atexit] Service '{service_name}' exiting with code {code}")
+
+atexit.register(log_shutdown, "api-gateway", 0)
+
+print("Working...")</pre>
+    <div class="output">Working...
+[atexit] Service 'api-gateway' exiting with code 0
+[atexit] Goodbye! Application exiting cleanly.</div>
+
+    <h4>Example 2 &mdash; signal.signal() for Ctrl+C and SIGTERM Handling</h4>
+    <p>Signal handlers let you intercept OS signals before they kill your process. The handler receives two arguments: the signal number and the current stack frame.</p>
+
+<pre>import signal
+import sys
+
+class GracefulShutdown:
+    """
+    Intercept SIGINT (Ctrl+C) and SIGTERM (kill)
+    to perform graceful shutdown.
+    """
+
+    def __init__(self):
+        self.shutdown_requested = False
+        self.request_count = 0
+
+        # Install signal handlers
+        signal.signal(signal.SIGINT, self._handle_signal)
+        signal.signal(signal.SIGTERM, self._handle_signal)
+
+    def _handle_signal(self, signum, frame):
+        """Called when SIGINT or SIGTERM is received."""
+        self.request_count += 1
+        sig_name = signal.Signals(signum).name
+        print(f"\n[SIGNAL] Received {sig_name} (#{self.request_count})")
+
+        if self.request_count == 1:
+            print("[SIGNAL] Graceful shutdown initiated. Finishing current work...")
+            self.shutdown_requested = True
+        else:
+            print("[SIGNAL] Second signal! Forcing immediate exit.")
+            sys.exit(1)
+
+# Demo
+shutdown = GracefulShutdown()
+print("Server ready. Press Ctrl+C to initiate graceful shutdown.")
+print("(Simulating signal delivery for demo)\n")
+
+# Simulate work loop
+tasks = ["process_order_101", "send_email_202", "update_cache_303"]
+
+for task in tasks:
+    if shutdown.shutdown_requested:
+        print(f"  Skipping {task} — shutting down")
+        continue
+    print(f"  Completed: {task}")
+
+    # Simulate receiving SIGTERM after the first task
+    if task == tasks[0]:
+        print("\n  --- SIGTERM arrives here ---")
+        shutdown._handle_signal(signal.SIGTERM, None)
+
+print("\nAll in-flight work complete.")
+print(f"Shutdown was requested: {shutdown.shutdown_requested}")</pre>
+    <div class="output">Server ready. Press Ctrl+C to initiate graceful shutdown.
+(Simulating signal delivery for demo)
+
+  Completed: process_order_101
+
+  --- SIGTERM arrives here ---
+
+[SIGNAL] Received SIGTERM (#1)
+[SIGNAL] Graceful shutdown initiated. Finishing current work...
+  Skipping send_email_202 — shutting down
+  Skipping update_cache_303 — shutting down
+
+All in-flight work complete.
+Shutdown was requested: True</div>
+
+    <h4>Example 3 &mdash; signal.alarm() for Timeouts (Unix Only)</h4>
+    <p><code>signal.alarm(seconds)</code> schedules a <code>SIGALRM</code> to be delivered after the specified time. By installing a handler that raises an exception, you can enforce timeouts on any synchronous operation:</p>
+
+<pre>import signal
+
+class OperationTimeout(Exception):
+    """Raised when an operation exceeds its time limit."""
+    pass
+
+def timeout_handler(signum, frame):
+    raise OperationTimeout("Operation exceeded time limit!")
+
+# Install the handler
+signal.signal(signal.SIGALRM, timeout_handler)
+
+def slow_computation():
+    """Simulate a function that might run too long."""
+    total = 0
+    for i in range(50_000_000):
+        total += i
+    return total
+
+def fast_computation():
+    """A quick function that finishes in time."""
+    return sum(range(1_000_000))
+
+# Test 1: Timeout fires
+signal.alarm(1)  # 1-second deadline
+try:
+    print("Starting slow computation (1s timeout)...")
+    result = slow_computation()
+    signal.alarm(0)  # cancel alarm on success
+    print(f"Result: {result}")
+except OperationTimeout as e:
+    print(f"TIMEOUT: {e}")
+
+# Test 2: Finishes in time
+signal.alarm(10)  # generous 10-second deadline
+try:
+    print("\nStarting fast computation (10s timeout)...")
+    result = fast_computation()
+    signal.alarm(0)  # cancel alarm
+    print(f"Result: {result}")
+except OperationTimeout:
+    print("TIMEOUT: unexpected!")
+
+print("\nBoth tests complete.")</pre>
+    <div class="output">Starting slow computation (1s timeout)...
+TIMEOUT: Operation exceeded time limit!
+
+Starting fast computation (10s timeout)...
+Result: 499999500000
+
+Both tests complete.</div>
+
+    <div class="insight">
+      <strong>Important:</strong> Always call <code>signal.alarm(0)</code> to cancel the alarm after the operation succeeds! Otherwise the <code>SIGALRM</code> will fire later and interrupt whatever code is running at that point.
+    </div>
+
+    <h4>Example 4 &mdash; Graceful Server Shutdown (Production Pattern)</h4>
+    <p>Real services combine <code>atexit</code> (normal exit cleanup) with <code>signal</code> handlers (external termination) for robust lifecycle management:</p>
+
+<pre>import signal
+import atexit
+import time
+import sys
+
+class ProductionServer:
+    """
+    Demonstrates the full lifecycle pattern used in production services:
+    1. atexit handles normal shutdown cleanup
+    2. signal handlers handle external termination (Ctrl+C, kill)
+    3. Double-signal forces immediate exit
+    """
+
+    def __init__(self, name, port):
+        self.name = name
+        self.port = port
+        self.running = False
+        self._clients = []
+        self._request_count = 0
+        self._shutdown_count = 0
+        self._setup_lifecycle()
+
+    def _setup_lifecycle(self):
+        """Register all lifecycle hooks."""
+        # atexit: runs on normal exit (sys.exit, end of script)
+        atexit.register(self._final_cleanup)
+
+        # signals: run on external termination
+        signal.signal(signal.SIGINT, self._on_signal)
+        signal.signal(signal.SIGTERM, self._on_signal)
+
+    def _on_signal(self, signum, frame):
+        """Handle termination signals."""
+        self._shutdown_count += 1
+        sig_name = signal.Signals(signum).name
+        print(f"\n[{self.name}] Received {sig_name} (attempt #{self._shutdown_count})")
+
+        if self._shutdown_count >= 2:
+            print(f"[{self.name}] Forced shutdown!")
+            sys.exit(1)
+
+        self.stop()
+
+    def _final_cleanup(self):
+        """Last-resort cleanup — runs even if stop() wasn't called."""
+        if self._clients:
+            print(f"[{self.name}] FINAL CLEANUP: {len(self._clients)} orphaned clients")
+            self._clients.clear()
+        print(f"[{self.name}] Total requests served: {self._request_count}")
+        print(f"[{self.name}] Goodbye.")
+
+    def start(self):
+        """Start the server."""
+        print(f"[{self.name}] Starting on port {self.port}...")
+        self.running = True
+        # Simulate accepting connections
+        self._clients = ["client-alpha", "client-beta", "client-gamma"]
+        print(f"[{self.name}] Ready. Serving {len(self._clients)} clients.")
+
+    def handle_request(self, request_id):
+        """Simulate handling a request."""
+        self._request_count += 1
+        print(f"[{self.name}] Handled request #{request_id}")
+
+    def stop(self):
+        """Graceful shutdown: drain connections, save state."""
+        if not self.running:
+            print(f"[{self.name}] Already stopped.")
+            return
+
+        print(f"[{self.name}] Initiating graceful shutdown...")
+        print(f"[{self.name}] Draining {len(self._clients)} client connections...")
+
+        for client in self._clients:
+            print(f"  Gracefully closing {client}...")
+            time.sleep(0.01)  # simulate drain time
+
+        self._clients.clear()
+        self.running = False
+        print(f"[{self.name}] Shutdown complete.")
+
+# --- Demo ---
+server = ProductionServer("api-server", 8080)
+server.start()
+
+# Handle some requests
+for i in range(1, 4):
+    server.handle_request(i)
+
+# Simulate receiving SIGTERM from Kubernetes
+print("\n--- Kubernetes sends SIGTERM ---")
+server._on_signal(signal.SIGTERM, None)
+print("\n--- Script exit (atexit handlers run) ---")</pre>
+    <div class="output">[api-server] Starting on port 8080...
+[api-server] Ready. Serving 3 clients.
+[api-server] Handled request #1
+[api-server] Handled request #2
+[api-server] Handled request #3
+
+--- Kubernetes sends SIGTERM ---
+
+[api-server] Received SIGTERM (attempt #1)
+[api-server] Initiating graceful shutdown...
+[api-server] Draining 3 client connections...
+  Gracefully closing client-alpha...
+  Gracefully closing client-beta...
+  Gracefully closing client-gamma...
+[api-server] Shutdown complete.
+
+--- Script exit (atexit handlers run) ---
+[api-server] Total requests served: 3
+[api-server] Goodbye.</div>
+
+    <h4>Common Mistakes</h4>
+
+    <div class="do-dont">
+      <div class="dont-box">
+        <div class="label">Wrong &mdash; signal handlers in non-main threads</div>
+<pre>import signal
+import threading
+
+def worker():
+    # FAILS! Signals can only be registered
+    # in the main thread.
+    signal.signal(signal.SIGINT, my_handler)
+    # ValueError: signal only works in main thread</pre>
+      </div>
+      <div class="do-box">
+        <div class="label">Right &mdash; register in main thread, share via Event</div>
+<pre>import signal
+import threading
+
+shutdown_event = threading.Event()
+
+# Register in main thread
+def handler(signum, frame):
+    print("Signal received, setting shutdown event")
+    shutdown_event.set()
+
+signal.signal(signal.SIGINT, handler)
+
+# Workers check the event
+def worker():
+    while not shutdown_event.is_set():
+        do_work()
+        shutdown_event.wait(timeout=1.0)
+    print("Worker exiting gracefully")</pre>
+      </div>
+    </div>
+
+    <div class="do-dont">
+      <div class="dont-box">
+        <div class="label">Wrong &mdash; assuming atexit runs on kill -9</div>
+<pre>import atexit
+
+def save_critical_data():
+    write_to_disk(important_data)
+
+atexit.register(save_critical_data)
+
+# atexit does NOT run on:
+#   - SIGKILL (kill -9) — cannot be caught!
+#   - os._exit() — bypasses all cleanup
+#   - Fatal Python errors (segfault)
+# Data may be LOST!</pre>
+      </div>
+      <div class="do-box">
+        <div class="label">Right &mdash; combine signal + atexit + periodic saves</div>
+<pre>import signal, atexit
+
+def save_critical_data():
+    write_to_disk(important_data)
+
+# atexit: covers normal exit
+atexit.register(save_critical_data)
+
+# signal: covers SIGTERM/SIGINT
+def graceful_exit(signum, frame):
+    save_critical_data()
+    sys.exit(0)  # this WILL trigger atexit
+
+signal.signal(signal.SIGTERM, graceful_exit)
+signal.signal(signal.SIGINT, graceful_exit)
+
+# For kill -9 protection: periodic checkpoint saves
+# save_critical_data() every N minutes in the main loop</pre>
+      </div>
+    </div>
+
+    <div class="do-dont">
+      <div class="dont-box">
+        <div class="label">Wrong &mdash; complex work in signal handler</div>
+<pre>def handler(signum, frame):
+    # BAD: signal handlers should be fast!
+    # This could deadlock or cause issues.
+    save_to_database(data)  # I/O in handler!
+    send_email("shutting down")  # network in handler!
+    cleanup_all_resources()  # too much work!</pre>
+      </div>
+      <div class="do-box">
+        <div class="label">Right &mdash; set a flag, do work in main loop</div>
+<pre>shutdown_requested = False
+
+def handler(signum, frame):
+    global shutdown_requested
+    shutdown_requested = True  # just set a flag!
+
+# Main loop does the actual work
+while not shutdown_requested:
+    process_next_request()
+
+# After loop: safe to do cleanup
+save_to_database(data)
+send_email("shutting down")</pre>
+      </div>
+    </div>
+
+    <h4>Key Rules</h4>
+    <ul class="rules-list">
+      <li>Use <code>atexit.register()</code> for cleanup on normal program exit: temp file deletion, connection closing, state saving</li>
+      <li>Use <code>signal.signal()</code> to intercept OS signals: <code>SIGINT</code> (Ctrl+C), <code>SIGTERM</code> (<code>kill</code>), <code>SIGHUP</code> (config reload)</li>
+      <li>Signal handlers can only be registered in the <strong>main thread</strong> &mdash; use <code>threading.Event</code> to communicate with worker threads</li>
+      <li><code>atexit</code> does NOT run on <code>SIGKILL</code> (<code>kill -9</code>) or <code>os._exit()</code> &mdash; nothing can catch <code>SIGKILL</code></li>
+      <li>Keep signal handlers <strong>minimal</strong> &mdash; set a flag or event, do actual cleanup in the main thread</li>
+      <li>For production services, combine all three: signal handler sets flag, main loop checks flag and cleans up, atexit handles the final edge cases</li>
+      <li><code>signal.alarm()</code> is <strong>Unix-only</strong>; for cross-platform timeouts, use <code>threading.Timer</code> or <code>concurrent.futures</code> with timeout</li>
+    </ul>
+
+    <h4>Practice Exercises</h4>
+
+    <div class="exercise">
+      <div class="exercise-label">Exercise 1</div>
+      <p>Write a <code>TempFileManager</code> class that creates temporary files (using <code>tempfile.NamedTemporaryFile(delete=False)</code>) and registers an <code>atexit</code> handler to delete them all on exit. Provide methods: <code>create(prefix) -&gt; path</code>, <code>list_files() -&gt; list</code>, <code>cleanup()</code>. Verify that (a) files are created on disk, (b) they still exist during normal execution, and (c) they are deleted automatically when the script ends. Also write a manual <code>cleanup()</code> call and verify it prevents double-deletion on exit.</p>
+    </div>
+
+    <div class="exercise">
+      <div class="exercise-label">Exercise 2</div>
+      <p>Build a <code>WorkerPool</code> class that: (a) spawns <code>N</code> worker threads, each running a loop that processes items from a <code>queue.Queue</code>; (b) installs a <code>SIGINT</code> handler in the main thread that sets a <code>threading.Event</code>; (c) each worker checks the event and finishes its current task before exiting (printing &ldquo;Worker N: finishing current task... done&rdquo;); (d) uses <code>atexit</code> for a final summary log (&ldquo;Pool shut down, N tasks completed&rdquo;). Add 20 tasks to the queue, start the pool with 4 workers, then simulate <code>SIGINT</code>. Workers should complete their in-progress tasks but not start new ones.</p>
+    </div>
+
+    <div class="connection">
+      <strong>Connections:</strong> Context managers (resource cleanup pattern &mdash; complementary to atexit) &bull; <code>asyncio</code> (has its own signal handling via <code>loop.add_signal_handler()</code>) &bull; <code>multiprocessing</code> (child processes inherit signal disposition) &bull; <code>threading.Event</code> (cross-thread shutdown coordination) &bull; <code>concurrent.futures</code> (executor <code>.shutdown(wait=True)</code> for clean pool termination)
+    </div>
+  </div>
+
+</div><!-- end Debugging & Introspection section -->
+
+
+<!-- ============================================================ -->
+<!-- FOOTER -->
+<!-- ============================================================ -->
+<div class="footer">
+  <h4>All Python Study Guides</h4>
+    <ul>
+    <li><a href="python-guides/python-guide-2026-07-09.html">2026-07-09</a> (Day 39)</li>
+    <li><a href="python-guides/python-guide-2026-07-08.html">2026-07-08</a> (Day 38)</li>
+    <li><a href="python-guides/python-guide-2026-07-07.html">2026-07-07</a> (Day 37)</li>
+    <li><a href="python-guides/python-guide-2026-07-06.html">2026-07-06</a> (Day 36)</li>
+    <li><a href="python-guides/python-guide-2026-07-05.html">2026-07-05</a> (Day 35)</li>
+    <li><a href="python-guides/python-guide-2026-07-04.html">2026-07-04</a> (Day 34)</li>
+    <li><a href="python-guides/python-guide-2026-07-03.html">2026-07-03</a> (Day 33)</li>
+    <li><a href="python-guides/python-guide-2026-07-02.html">2026-07-02</a> (Day 32)</li>
+    <li><a href="python-guides/python-guide-2026-07-01.html">2026-07-01</a> (Day 31)</li>
+    <li><a href="python-guides/python-guide-2026-06-30.html">2026-06-30</a> (Day 30)</li>
+    <li><a href="python-guides/python-guide-2026-06-29.html">2026-06-29</a> (Day 29)</li>
+    <li><a href="python-guides/python-guide-2026-06-28.html">2026-06-28</a> (Day 28)</li>
+    <li><a href="python-guides/python-guide-2026-06-27.html">2026-06-27</a> (Day 27)</li>
+    <li><a href="python-guides/python-guide-2026-06-26.html">2026-06-26</a> (Day 26)</li>
+    <li><a href="python-guides/python-guide-2026-06-25.html">2026-06-25</a> (Day 25)</li>
+    <li><a href="python-guides/python-guide-2026-06-24.html">2026-06-24</a> (Day 24)</li>
+    <li><a href="python-guides/python-guide-2026-06-23.html">2026-06-23</a> (Day 23)</li>
+    <li><a href="python-guides/python-guide-2026-06-22.html">2026-06-22</a> (Day 22)</li>
+    <li><a href="python-guides/python-guide-2026-06-21.html">2026-06-21</a> (Day 21)</li>
+    <li><a href="python-guides/python-guide-2026-06-19.html">2026-06-19</a> (Day 20)</li>
+    <li><a href="python-guides/python-guide-2026-06-18.html">2026-06-18</a> (Day 19)</li>
+    <li class="current"><a href="python-guides/python-guide-2026-06-17.html">2026-06-17</a> </li>
+    <li><a href="python-guides/python-guide-2026-06-15.html">2026-06-15</a> (Day 17)</li>
+    <li><a href="python-guides/python-guide-2026-06-13.html">2026-06-13</a> (Day 16)</li>
+    <li><a href="python-guides/python-guide-2026-06-12.html">2026-06-12</a> (Day 15)</li>
+    <li><a href="python-guides/python-guide-2026-06-11.html">2026-06-11</a> (Day 14)</li>
+    <li><a href="python-guides/python-guide-2026-06-10.html">2026-06-10</a> (Day 13)</li>
+    <li><a href="python-guides/python-guide-2026-06-09.html">2026-06-09</a> (Day 12)</li>
+    <li><a href="python-guides/python-guide-2026-06-08.html">2026-06-08</a> (Day 11)</li>
+    <li><a href="python-guides/python-guide-2026-06-07.html">2026-06-07</a> (Day 10)</li>
+    <li><a href="python-guides/python-guide-2026-06-05.html">2026-06-05</a> (Day 9)</li>
+    <li><a href="python-guides/python-guide-2026-06-04.html">2026-06-04</a> (Day 8)</li>
+    <li><a href="python-guides/python-guide-2026-06-03.html">2026-06-03</a> (Day 7)</li>
+    <li><a href="python-guides/python-guide-2026-06-02.html">2026-06-02</a> (Day 6)</li>
+    <li><a href="python-guides/python-guide-2026-06-01.html">2026-06-01</a> (Day 5)</li>
+    <li><a href="python-guides/python-guide-2026-05-31.html">2026-05-31</a> (Day 4)</li>
+    <li><a href="python-guides/python-guide-2026-05-30.html">2026-05-30</a> (Day 3)</li>
+    <li><a href="python-guides/python-guide-2026-05-29.html">2026-05-29</a> (Day 2)</li>
+    <li><a href="python-guides/python-guide-2026-05-28.html">2026-05-28</a> (Day 1)</li>
+  </ul>
+</div>
+
+</div><!-- end main -->
+
+<script>
+(function() {
+  // ===== Theme Toggle =====
+  var THEME_KEY = 'lc-pyguide-theme';
+  var toggle = document.getElementById('theme-toggle');
+  var html = document.documentElement;
+
+  function setTheme(theme) {
+    html.setAttribute('data-theme', theme);
+    localStorage.setItem(THEME_KEY, theme);
+    toggle.textContent = theme === 'dark' ? '☽' : '☀';
+    toggle.title = theme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme';
+  }
+
+  var saved = localStorage.getItem(THEME_KEY) || 'dark';
+  setTheme(saved);
+
+  toggle.addEventListener('click', function() {
+    var current = html.getAttribute('data-theme');
+    setTheme;
+  });
+
+  // ===== Mobile Sidebar Toggle =====
+  var sidebarToggle = document.getElementById('sidebar-toggle');
+  var sidebar = document.getElementById('sidebar');
+
+  sidebarToggle.addEventListener('click', function() {
+    sidebar.classList.toggle('open');
+  });
+
+  // Close sidebar when clicking a link on mobile
+  sidebar.querySelectorAll('.sidebar-link').forEach(function(link) {
+    link.addEventListener('click', function() {
+      if (window.innerWidth <= 900) {
+        sidebar.classList.remove('open');
+      }
+    });
+  });
+
+  // ===== Active Sidebar Link on Scroll =====
+  var links = document.querySelectorAll('.sidebar-link');
+  var sections = [];
+
+  links.forEach(function(link) {
+    var id = link.getAttribute('href').slice(1);
+    var el = document.getElementById(id);
+    if (el) sections.push({ id: id, el: el, link: link });
+  });
+
+  function updateActive() {
+    var current = null;
+    var scrollY = window.scrollY + 100;
+
+    for (var i = sections.length - 1; i >= 0; i--) {
+      if (sections[i].el.offsetTop <= scrollY) {
+        current = sections[i];
+        break;
+      }
+    }
+
+    links.forEach(function(l) { l.classList.remove('active'); });
+    if  current.link.classList.add('active');
+  }
+
+  window.addEventListener('scroll', updateActive, { passive: true });
+  updateActive();
+})();
+</script>
+
+</body>
+</html>

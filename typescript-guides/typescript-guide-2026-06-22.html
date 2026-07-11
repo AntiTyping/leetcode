@@ -1,0 +1,1446 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TypeScript Daily Guide — 2026-06-22 (Day 19)</title>
+<style>
+:root {
+  --bg: #0d1117;
+  --surface: #161b22;
+  --surface2: #1c2129;
+  --border: #30363d;
+  --text: #e6edf3;
+  --text-muted: #8b949e;
+  --accent: #58a6ff;
+  --accent-bg: rgba(56,139,253,0.15);
+  --green: #3fb950;
+  --green-bg: rgba(63,185,80,0.08);
+  --red: #f85149;
+  --red-bg: rgba(248,81,73,0.08);
+  --yellow: #d29922;
+  --yellow-bg: rgba(210,153,34,0.1);
+  --orange: #db6d28;
+  --purple: #bc8cff;
+  --purple-bg: rgba(188,140,255,0.08);
+  --purple-border: rgba(188,140,255,0.2);
+  --link: #58a6ff;
+  --code-bg: #1c2129;
+  --output-bg: #0e1c0e;
+  --output-border: #1a3a1a;
+  --sidebar-bg: #161b22;
+  --sidebar-active: rgba(56,139,253,0.15);
+  --exercise-border: #30363d;
+}
+[data-theme="light"] {
+  --bg: #ffffff;
+  --surface: #f6f8fa;
+  --surface2: #eef1f5;
+  --border: #d0d7de;
+  --text: #1f2328;
+  --text-muted: #656d76;
+  --accent: #0969da;
+  --accent-bg: rgba(9,105,218,0.1);
+  --green: #1a7f37;
+  --green-bg: rgba(26,127,55,0.06);
+  --red: #cf222e;
+  --red-bg: rgba(207,34,46,0.06);
+  --yellow: #9a6700;
+  --yellow-bg: rgba(154,103,0,0.06);
+  --orange: #bc4c00;
+  --purple: #8250df;
+  --purple-bg: rgba(130,80,223,0.06);
+  --purple-border: rgba(130,80,223,0.15);
+  --link: #0969da;
+  --code-bg: #eef1f5;
+  --output-bg: #f0faf0;
+  --output-border: #c6e6c6;
+  --sidebar-bg: #f6f8fa;
+  --sidebar-active: rgba(9,105,218,0.1);
+  --exercise-border: #d0d7de;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;font-size:16px;line-height:1.7;color:var(--text);background:var(--bg);display:flex;min-height:100vh}
+a{color:var(--link);text-decoration:none}
+a:hover{text-decoration:underline}
+
+/* Sidebar */
+.sidebar{position:fixed;top:0;left:0;width:300px;height:100vh;background:var(--sidebar-bg);border-right:1px solid var(--border);overflow-y:auto;padding:20px 0;z-index:100}
+.sidebar-header{padding:16px 20px;border-bottom:1px solid var(--border);margin-bottom:12px}
+.sidebar-header h2{font-size:15px;font-weight:600;color:var(--text)}
+.sidebar-header .date{font-size:13px;color:var(--text-muted);margin-top:2px}
+.sidebar-section{padding:8px 20px 4px;font-size:12px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px}
+.sidebar-section.review-label{color:var(--purple)}
+.sidebar-nav{list-style:none;padding:0}
+.sidebar-nav li a{display:block;padding:6px 20px 6px 28px;font-size:14px;color:var(--text-muted);transition:all 0.15s}
+.sidebar-nav li a:hover,.sidebar-nav li a.active{color:var(--accent);background:var(--sidebar-active);text-decoration:none}
+.sidebar-nav li a .nav-id{font-size:11px;color:var(--text-muted);opacity:0.6;margin-left:6px}
+
+/* Main */
+.main{margin-left:300px;flex:1;padding:40px;max-width:1160px}
+.content{max-width:860px;margin:0 auto}
+
+/* Theme Toggle */
+.theme-toggle{position:fixed;top:16px;right:20px;z-index:200;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:8px 12px;cursor:pointer;color:var(--text);font-size:18px;line-height:1;transition:all 0.15s}
+.theme-toggle:hover{border-color:var(--accent)}
+
+/* Header */
+.guide-header{text-align:center;padding:32px 0 40px;border-bottom:1px solid var(--border);margin-bottom:40px}
+.guide-header h1{font-size:28px;font-weight:700;margin-bottom:8px}
+.guide-header .meta{font-size:15px;color:var(--text-muted)}
+.guide-header .meta span{margin:0 8px}
+.badge{display:inline-block;padding:2px 10px;border-radius:12px;font-size:13px;font-weight:500}
+.badge-blue{background:var(--accent-bg);color:var(--accent)}
+.badge-purple{background:var(--purple-bg);color:var(--purple)}
+
+/* How To Use */
+.how-to-use{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:24px 28px;margin-bottom:40px}
+.how-to-use h2{font-size:18px;margin-bottom:12px}
+.how-to-use ol{padding-left:24px}
+.how-to-use li{margin-bottom:6px;color:var(--text-muted)}
+
+/* Review Section */
+.review-section{margin-bottom:48px}
+.review-section-header{font-size:22px;font-weight:700;padding-bottom:12px;border-bottom:2px solid var(--purple);margin-bottom:28px;display:flex;align-items:center;gap:12px;color:var(--purple)}
+
+/* Review Card */
+.review-card{background:var(--purple-bg);border:1px solid var(--purple-border);border-left:4px solid var(--purple);border-radius:10px;padding:28px;margin-bottom:24px}
+.review-card .review-header{display:flex;align-items:center;gap:12px;margin-bottom:12px;flex-wrap:wrap}
+.review-card .review-title{font-size:18px;font-weight:700;color:var(--purple)}
+.review-card .review-meta{font-size:13px;color:var(--text-muted)}
+.review-card .review-reminder{color:var(--text-muted);font-style:italic;margin-bottom:16px;padding-left:14px;border-left:3px solid var(--purple)}
+.review-card .review-pattern{margin-bottom:16px}
+.review-card .review-pattern strong{display:block;margin-bottom:8px;font-size:14px;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px}
+.review-card .review-challenge{margin-bottom:12px}
+.review-card .review-challenge strong{display:block;margin-bottom:8px;font-size:14px;color:var(--yellow);text-transform:uppercase;letter-spacing:0.5px}
+.review-card .review-challenge p{line-height:1.6}
+.review-card .review-pitfall{background:var(--red-bg);border:1px solid rgba(248,81,73,0.15);border-radius:6px;padding:12px 16px;font-size:14px;line-height:1.6}
+.review-card .review-pitfall strong{color:var(--red);margin-right:4px}
+.review-card code{background:var(--code-bg);padding:2px 6px;border-radius:4px;font-family:'SF Mono','Fira Code','Consolas',monospace;font-size:13px}
+
+/* Topic Section */
+.topic-section{margin-bottom:48px}
+.topic-section-header{font-size:22px;font-weight:700;padding-bottom:12px;border-bottom:2px solid var(--accent);margin-bottom:28px;display:flex;align-items:center;gap:12px}
+.topic-section-header .section-num{background:var(--accent);color:#fff;width:32px;height:32px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:15px;font-weight:700;flex-shrink:0}
+
+/* Concept Card */
+.concept-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:28px;margin-bottom:32px}
+.concept-header{display:flex;align-items:center;gap:12px;margin-bottom:16px;flex-wrap:wrap}
+.concept-title{font-size:20px;font-weight:700}
+.ttag{display:inline-block;padding:2px 10px;border-radius:12px;font-size:12px;font-weight:500;background:var(--accent-bg);color:var(--accent)}
+
+.why-matters{color:var(--text-muted);font-style:italic;margin-bottom:20px;padding-left:14px;border-left:3px solid var(--accent)}
+.explanation{margin-bottom:20px;line-height:1.8}
+.explanation p{margin-bottom:12px}
+.explanation ul,.explanation ol{padding-left:24px;margin-bottom:12px}
+.explanation li{margin-bottom:4px}
+.explanation code{background:var(--code-bg);padding:2px 6px;border-radius:4px;font-family:'SF Mono','Fira Code','Consolas',monospace;font-size:14px}
+.step{display:flex;gap:12px;margin-bottom:10px;align-items:flex-start}
+.step-num{background:var(--accent-bg);color:var(--accent);width:24px;height:24px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;margin-top:3px}
+
+/* Code Examples */
+.code-example{margin-bottom:20px;border:1px solid var(--border);border-radius:8px;overflow:hidden}
+.lang-badge{background:var(--surface2);color:var(--text-muted);font-size:12px;font-weight:600;padding:6px 14px;border-bottom:1px solid var(--border);font-family:'SF Mono','Fira Code','Consolas',monospace}
+pre{margin:0;padding:16px;overflow-x:auto;background:var(--code-bg);font-family:'SF Mono','Fira Code','Consolas',monospace;font-size:13.5px;line-height:1.6;white-space:pre-wrap}
+pre code{background:none;padding:0;font-size:inherit}
+.output{background:var(--output-bg);border-top:1px solid var(--output-border);padding:12px 16px;font-family:'SF Mono','Fira Code','Consolas',monospace;font-size:13px;color:var(--green);white-space:pre-wrap}
+.output::before{content:"Output:";display:block;font-size:11px;font-weight:600;color:var(--text-muted);margin-bottom:4px;text-transform:uppercase;letter-spacing:0.5px}
+.type-result{background:var(--output-bg);border-top:1px solid var(--output-border);padding:12px 16px;font-family:'SF Mono','Fira Code','Consolas',monospace;font-size:13px;color:var(--green);white-space:pre-wrap}
+.type-result::before{content:"Type Result:";display:block;font-size:11px;font-weight:600;color:var(--text-muted);margin-bottom:4px;text-transform:uppercase;letter-spacing:0.5px}
+.type-error{background:var(--red-bg);border-top:1px solid rgba(248,81,73,0.2);padding:12px 16px;font-family:'SF Mono','Fira Code','Consolas',monospace;font-size:13px;color:var(--red);white-space:pre-wrap}
+.type-error::before{content:"Type Error:";display:block;font-size:11px;font-weight:600;color:var(--red);margin-bottom:4px;text-transform:uppercase;letter-spacing:0.5px}
+
+/* Callouts */
+.callout-warning{background:var(--yellow-bg);border:1px solid rgba(210,153,34,0.2);border-radius:8px;padding:20px;margin-bottom:20px}
+.callout-warning strong{color:var(--yellow);display:block;margin-bottom:12px;font-size:16px}
+.mistake,.correct{padding:10px 14px;border-radius:6px;margin-bottom:10px;font-size:14px;line-height:1.6}
+.mistake{background:var(--red-bg);border-left:3px solid var(--red)}
+.mistake code,.correct code{background:var(--code-bg);padding:2px 6px;border-radius:4px;font-family:'SF Mono','Fira Code','Consolas',monospace;font-size:13px}
+.correct{background:var(--green-bg);border-left:3px solid var(--green)}
+
+/* Key Rules */
+.key-rules{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:20px;margin-bottom:20px}
+.key-rules strong{display:block;margin-bottom:10px;font-size:16px}
+.key-rules ul{padding-left:20px}
+.key-rules li{margin-bottom:6px}
+.key-rules code{background:var(--code-bg);padding:2px 6px;border-radius:4px;font-family:'SF Mono','Fira Code','Consolas',monospace;font-size:13px}
+
+/* Exercises */
+.exercises{border:2px dashed var(--exercise-border);border-radius:8px;padding:20px;margin-bottom:20px;margin-left:12px}
+.exercises strong{display:block;margin-bottom:14px;font-size:16px;color:var(--purple)}
+.exercise{margin-bottom:14px;padding-left:38px;position:relative;line-height:1.6}
+.exercise:last-child{margin-bottom:0}
+.exercise-num{position:absolute;left:0;top:2px;background:var(--purple);color:#fff;width:24px;height:24px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:12px;font-weight:700}
+.exercise code{background:var(--code-bg);padding:2px 6px;border-radius:4px;font-family:'SF Mono','Fira Code','Consolas',monospace;font-size:13px}
+
+/* Connections */
+.connections{background:var(--accent-bg);border:1px solid rgba(56,139,253,0.2);border-radius:8px;padding:16px 20px;font-size:14px;color:var(--text-muted)}
+.connections strong{color:var(--accent);margin-right:6px}
+
+/* Cross-links */
+.cross-links{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:20px 24px;margin-bottom:40px;text-align:center}
+.cross-links a{margin:0 10px;font-weight:500}
+
+/* Footer */
+.guide-footer{border-top:1px solid var(--border);padding-top:32px;margin-top:48px}
+.guide-footer h2{font-size:18px;margin-bottom:16px}
+.guide-footer ul{list-style:none;padding:0}
+.guide-footer li{padding:6px 0}
+.guide-footer li a{font-weight:500}
+
+/* Responsive */
+@media(max-width:900px){
+  .sidebar{display:none}
+  .main{margin-left:0}
+  .theme-toggle{top:12px;right:12px}
+}
+</style>
+</head>
+<body>
+
+<!-- Theme Toggle -->
+<button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">&#x1F319;</button>
+
+<!-- Sidebar -->
+<nav class="sidebar">
+  <div class="sidebar-header">
+    <h2>TypeScript Daily Guide</h2>
+    <div class="date">2026-06-22 &mdash; Day 19</div>
+  </div>
+
+  <div class="sidebar-section review-label">Review (6 concepts)</div>
+  <ul class="sidebar-nav">
+    <li><a href="#review_mapped_key_remap">Mapped Type Key Remapping <span class="nav-id">R1</span></a></li>
+    <li><a href="#review_this_fluent">this Types &amp; Fluent Interfaces <span class="nav-id">R2</span></a></li>
+    <li><a href="#review_async_patterns">Async Patterns &amp; Promise Typing <span class="nav-id">R3</span></a></li>
+    <li><a href="#review_ts_performance">TypeScript Performance <span class="nav-id">R4</span></a></li>
+    <li><a href="#review_react_props">React Component Props <span class="nav-id">R5</span></a></li>
+    <li><a href="#review_pipe_compose">Type-Safe pipe() &amp; compose() <span class="nav-id">R6</span></a></li>
+  </ul>
+
+  <div class="sidebar-section">Practical TypeScript Tooling</div>
+  <ul class="sidebar-nav">
+    <li><a href="#cli_tools">CLI Tools with Commander &amp; Yargs <span class="nav-id">#1</span></a></li>
+    <li><a href="#ts_morph">ts-morph &mdash; Programmatic TS <span class="nav-id">#2</span></a></li>
+    <li><a href="#import_attributes">Import Attributes &amp; Modules <span class="nav-id">#3</span></a></li>
+  </ul>
+
+  <div class="sidebar-section">Advanced Type Patterns</div>
+  <ul class="sidebar-nav">
+    <li><a href="#const_enum_alternatives">Const Enum Alternatives <span class="nav-id">#4</span></a></li>
+    <li><a href="#type_safe_env">Type-Safe Environment Variables <span class="nav-id">#5</span></a></li>
+  </ul>
+</nav>
+
+<!-- Main Content -->
+<div class="main">
+<div class="content">
+
+<!-- Header -->
+<header class="guide-header">
+  <h1>TypeScript Daily Guide &mdash; Day 19</h1>
+  <div class="meta">
+    <span>2026-06-22</span>
+    <span>&middot;</span>
+    <span>Day 19 of 19</span>
+    <span>&middot;</span>
+    <span class="badge badge-purple">6 reviews</span>
+    <span class="badge badge-blue">5 new concepts</span>
+  </div>
+</header>
+
+<!-- How to Use -->
+<div class="how-to-use">
+  <h2>How to Use This Guide</h2>
+  <ol>
+    <li><strong>Review first</strong> &mdash; scan each purple review card; if the concept feels solid, move on; if fuzzy, re-read the code pattern</li>
+    <li><strong>Attempt the challenge exercise</strong> on any review card that felt shaky &mdash; this is your best reinforcement signal</li>
+    <li><strong>Work through new concepts</strong> top to bottom &mdash; each builds on the previous</li>
+    <li><strong>Type every code example</strong> yourself in a .ts or .tsx file &mdash; hover over types in your editor to build intuition</li>
+    <li><strong>Do at least 2 exercises per concept</strong> before moving to the next one</li>
+  </ol>
+</div>
+
+<!-- Cross-links -->
+<div class="cross-links">
+  <a href="guide.html">LeetCode Guide</a>
+  <a href="lang-guide.html">Lang Guide</a>
+  <a href="python-guide.html">Python Guide</a>
+  <a href="golang-guide.html">Go Guide</a>
+  <a href="javascript-guide.html">JS Guide</a>
+  <a href="report.html">Report</a>
+</div>
+
+<!-- ============================================================ -->
+<!-- REVIEW SECTION                                                -->
+<!-- ============================================================ -->
+<div class="review-section">
+<div class="review-section-header">Review &mdash; 6 Concepts</div>
+
+<!-- R1: Mapped Type Key Remapping -->
+<div class="review-card" id="review_mapped_key_remap">
+  <div class="review-header">
+    <span class="review-title">R1. Mapped Type Key Remapping</span>
+    <span class="badge badge-purple">Advanced Types</span>
+    <span class="review-meta">10 days overdue &middot; rep 0</span>
+  </div>
+  <div class="review-reminder">Remap keys with <code>as</code> in mapped types: <code>{ [K in keyof T as NewKey]: T[K] }</code>. This lets you rename, filter, or transform property keys at the type level.</div>
+
+  <div class="review-pattern">
+    <strong>Key Pattern</strong>
+    <div class="code-example">
+<pre><code>// Remap every key to a getter name using template literals.
+type Getters&lt;T&gt; = {
+  [K in keyof T as `get${Capitalize&lt;string &amp; K&gt;}`]: () =&gt; T[K];
+};
+
+interface User { name: string; age: number }
+
+type UserGetters = Getters&lt;User&gt;;
+// { getName: () =&gt; string; getAge: () =&gt; number }</code></pre>
+<div class="type-result">{ getName: () => string; getAge: () => number }</div>
+    </div>
+  </div>
+
+  <div class="review-challenge">
+    <strong>Challenge Exercise</strong>
+    <p>Create a type <code>Setters&lt;T&gt;</code> that maps <code>{name: string}</code> to <code>{setName: (v: string) =&gt; void}</code>. Each property <code>foo</code> becomes <code>setFoo(v: T[foo]) =&gt; void</code>.</p>
+  </div>
+
+  <div class="review-pitfall">
+    <strong>Pitfall:</strong> Forgetting <code>string &amp;</code> before <code>K</code> when using template literals. Keys can be <code>string | number | symbol</code>, but template literals only accept <code>string</code>. The intersection <code>string &amp; K</code> filters out non-string keys.
+  </div>
+</div>
+
+<!-- R2: this Types & Fluent Interfaces -->
+<div class="review-card" id="review_this_fluent">
+  <div class="review-header">
+    <span class="review-title">R2. this Types &amp; Fluent Interfaces</span>
+    <span class="badge badge-purple">OOP Patterns</span>
+    <span class="review-meta">9 days overdue &middot; rep 2</span>
+  </div>
+  <div class="review-reminder"><code>this</code> as a return type enables fluent method chains that preserve the subclass type. The returned <code>this</code> is polymorphic &mdash; it refers to the actual runtime class, not the declaring class.</div>
+
+  <div class="review-pattern">
+    <strong>Key Pattern</strong>
+    <div class="code-example">
+<pre><code>class Builder {
+  private name = "";
+  private age = 0;
+
+  setName(n: string): this {
+    this.name = n;
+    return this;  // returns the subclass type, not just Builder
+  }
+
+  setAge(a: number): this {
+    this.age = a;
+    return this;
+  }
+}
+
+class UserBuilder extends Builder {
+  private role = "";
+  setRole(r: string): this {
+    this.role = r;
+    return this;
+  }
+}
+
+// Fluent chain preserves UserBuilder through inherited methods
+const user = new UserBuilder()
+  .setName("Alice")   // returns UserBuilder, not Builder
+  .setAge(30)          // still UserBuilder
+  .setRole("admin");   // UserBuilder &mdash; would fail if setName returned Builder</code></pre>
+    </div>
+  </div>
+
+  <div class="review-challenge">
+    <strong>Challenge Exercise</strong>
+    <p>Create a <code>FluentValidator</code> class with <code>.required()</code>, <code>.minLength(n)</code>, and <code>.email()</code> methods that all return <code>this</code>. Then create a subclass <code>PasswordValidator</code> that adds <code>.hasUpperCase()</code> and <code>.hasDigit()</code>. Verify that chaining inherited methods still returns the subclass type.</p>
+  </div>
+
+  <div class="review-pitfall">
+    <strong>Pitfall:</strong> Arrow functions don&rsquo;t have their own <code>this</code> &mdash; they capture the enclosing lexical <code>this</code>. You cannot use polymorphic <code>this</code> return types in arrow function properties. Stick with regular method declarations for fluent chains.
+  </div>
+</div>
+
+<!-- R3: Async Patterns & Promise Typing -->
+<div class="review-card" id="review_async_patterns">
+  <div class="review-header">
+    <span class="review-title">R3. Async Patterns &amp; Promise Typing</span>
+    <span class="badge badge-purple">Async</span>
+    <span class="review-meta">9 days overdue &middot; rep 2</span>
+  </div>
+  <div class="review-reminder"><code>Awaited&lt;T&gt;</code> recursively unwraps nested Promises. <code>Promise.allSettled</code> returns <code>PromiseSettledResult&lt;T&gt;[]</code>, which is a union of <code>PromiseFulfilledResult&lt;T&gt;</code> and <code>PromiseRejectedResult</code>.</div>
+
+  <div class="review-pattern">
+    <strong>Key Pattern</strong>
+    <div class="code-example">
+<pre><code>// Awaited unwraps nested Promise types
+type Nested = Promise&lt;Promise&lt;string&gt;&gt;;
+type Flat = Awaited&lt;Nested&gt;;  // string
+
+// Extract the resolved type from any async function
+async function fetchUser() {
+  return { id: 1, name: "Alice" };
+}
+type User = Awaited&lt;ReturnType&lt;typeof fetchUser&gt;&gt;;
+// { id: number; name: string }</code></pre>
+<div class="type-result">User = { id: number; name: string }</div>
+    </div>
+  </div>
+
+  <div class="review-challenge">
+    <strong>Challenge Exercise</strong>
+    <p>Type a function <code>parallel&lt;T extends readonly (() =&gt; Promise&lt;any&gt;)[]&gt;(...fns: T)</code> that returns <code>Promise&lt;{ [K in keyof T]: Awaited&lt;ReturnType&lt;T[K]&gt;&gt; }&gt;</code>. Test it with functions returning different types and verify the tuple result is correctly inferred.</p>
+  </div>
+
+  <div class="review-pitfall">
+    <strong>Pitfall:</strong> <code>Promise.all</code> with mixed types requires explicit tuple typing. Passing <code>[fetchUser(), fetchPosts()]</code> as an array loses the per-element type &mdash; use <code>as const</code> or declare the array as a tuple to preserve each position&rsquo;s type.
+  </div>
+</div>
+
+<!-- R4: TypeScript Performance -->
+<div class="review-card" id="review_ts_performance">
+  <div class="review-header">
+    <span class="review-title">R4. TypeScript Performance</span>
+    <span class="badge badge-purple">Tooling</span>
+    <span class="review-meta">9 days overdue &middot; rep 1</span>
+  </div>
+  <div class="review-reminder"><code>--generateTrace</code> outputs a Chrome-compatible trace for profiling type-checking. Avoid deep recursive types, excessive conditional chains, and distributing over large unions (100+ members causes exponential instantiation).</div>
+
+  <div class="review-pattern">
+    <strong>Key Pattern</strong>
+    <div class="code-example">
+<pre><code>// Generate a trace, then open it in chrome://tracing
+// $ tsc --generateTrace traceDir
+// $ open chrome://tracing  &rarr;  Load &rarr;  traceDir/trace.json
+
+// Bad: unbounded recursion
+type DeepPartialSlow&lt;T&gt; = {
+  [K in keyof T]?: T[K] extends object ? DeepPartialSlow&lt;T[K]&gt; : T[K];
+};
+
+// Better: limit recursion depth with a counter tuple
+type DeepPartial&lt;T, Depth extends unknown[] = []&gt; =
+  Depth["length"] extends 5 ? T :  // bail out at depth 5
+  {
+    [K in keyof T]?: T[K] extends object
+      ? DeepPartial&lt;T[K], [...Depth, unknown]&gt;
+      : T[K];
+  };</code></pre>
+    </div>
+  </div>
+
+  <div class="review-challenge">
+    <strong>Challenge Exercise</strong>
+    <p>Refactor a type <code>DeepPartial&lt;T&gt;</code> that&rsquo;s slow on large objects &mdash; limit recursion depth with a counter tuple. Measure with <code>--generateTrace</code> before and after on a 10-level nested object type.</p>
+  </div>
+
+  <div class="review-pitfall">
+    <strong>Pitfall:</strong> Distributing over large unions (100+ members) causes exponential type instantiation. Each conditional type distributes over every member individually. Wrap the checked type in a tuple (<code>[T] extends [U]</code>) to disable distribution when you don&rsquo;t need it.
+  </div>
+</div>
+
+<!-- R5: React Component Props -->
+<div class="review-card" id="review_react_props">
+  <div class="review-header">
+    <span class="review-title">R5. React Component Props</span>
+    <span class="badge badge-purple">React + TS</span>
+    <span class="review-meta">9 days overdue &middot; rep 1</span>
+  </div>
+  <div class="review-reminder"><code>React.FC&lt;Props&gt;</code> (optional), <code>ComponentPropsWithRef&lt;&quot;button&quot;&gt;</code>, and <code>PropsWithChildren&lt;Props&gt;</code> are the core utility types for React component typing. Prefer <code>ComponentPropsWithoutRef</code> for most components.</div>
+
+  <div class="review-pattern">
+    <strong>Key Pattern</strong>
+    <div class="code-example">
+<pre><code>import React from "react";
+
+// Extend native button props with custom variants
+type ButtonProps = React.ComponentPropsWithoutRef&lt;"button"&gt; &amp; {
+  variant: "primary" | "secondary";
+  size?: "sm" | "md" | "lg";
+};
+
+function Button({ variant, size = "md", children, ...rest }: ButtonProps) {
+  return (
+    &lt;button className={`btn btn-${variant} btn-${size}`} {...rest}&gt;
+      {children}
+    &lt;/button&gt;
+  );
+}
+
+// All native button props work + custom props are type-checked
+&lt;Button variant="primary" onClick={handleClick} disabled /&gt;  // OK
+&lt;Button variant="tertiary" /&gt;  // Error: not in union</code></pre>
+    </div>
+  </div>
+
+  <div class="review-challenge">
+    <strong>Challenge Exercise</strong>
+    <p>Type a polymorphic <code>&lt;Box as={...}&gt;</code> component where the allowed props change based on the <code>as</code> prop. When <code>as=&quot;a&quot;</code>, it should accept <code>href</code>; when <code>as=&quot;button&quot;</code>, it should accept <code>onClick</code> but not <code>href</code>.</p>
+  </div>
+
+  <div class="review-pitfall">
+    <strong>Pitfall:</strong> Using <code>React.FC</code> implicitly added <code>children</code> in older React types &mdash; this was removed in React 18 types. If you rely on implicit children, your component will break after upgrading. Always explicitly type <code>children</code> with <code>PropsWithChildren&lt;Props&gt;</code>.
+  </div>
+</div>
+
+<!-- R6: Type-Safe pipe() and compose() -->
+<div class="review-card" id="review_pipe_compose">
+  <div class="review-header">
+    <span class="review-title">R6. Type-Safe pipe() &amp; compose()</span>
+    <span class="badge badge-purple">Functional Patterns</span>
+    <span class="review-meta">Due today &middot; rep 0</span>
+  </div>
+  <div class="review-reminder"><code>pipe(value, fn1, fn2, ...)</code> passes a value through functions left-to-right with full type inference between each step. TypeScript can&rsquo;t infer variadic function composition &mdash; you need overload signatures for each arity.</div>
+
+  <div class="review-pattern">
+    <strong>Key Pattern</strong>
+    <div class="code-example">
+<pre><code>// Overloaded pipe with type inference between each step
+function pipe&lt;A&gt;(value: A): A;
+function pipe&lt;A, B&gt;(value: A, fn1: (a: A) =&gt; B): B;
+function pipe&lt;A, B, C&gt;(value: A, fn1: (a: A) =&gt; B, fn2: (b: B) =&gt; C): C;
+function pipe&lt;A, B, C, D&gt;(
+  value: A, fn1: (a: A) =&gt; B, fn2: (b: B) =&gt; C, fn3: (c: C) =&gt; D
+): D;
+function pipe(value: unknown, ...fns: Function[]): unknown {
+  return fns.reduce((acc, fn) =&gt; fn(acc), value);
+}
+
+// Usage &mdash; each step&rsquo;s type flows to the next
+const result = pipe(
+  "  Hello World  ",
+  (s) =&gt; s.trim(),         // string &rarr; string
+  (s) =&gt; s.toLowerCase(),  // string &rarr; string
+  (s) =&gt; s.split(" ")      // string &rarr; string[]
+);
+// result: string[]</code></pre>
+<div class="type-result">result: string[]</div>
+    </div>
+  </div>
+
+  <div class="review-challenge">
+    <strong>Challenge Exercise</strong>
+    <p>Implement a variadic <code>pipe</code> that accepts up to 6 functions with full type inference between each step. Verify that passing a mismatched function (e.g., <code>number =&gt; string</code> after <code>string =&gt; number</code> slot) produces a type error.</p>
+  </div>
+
+  <div class="review-pitfall">
+    <strong>Pitfall:</strong> TS can&rsquo;t infer variadic function composition generically &mdash; a single generic signature for <em>N</em> functions won&rsquo;t propagate types between steps. You need one overload signature per supported arity (typically 1&ndash;6 or 1&ndash;10).
+  </div>
+</div>
+
+</div><!-- end review-section -->
+
+<!-- ============================================================ -->
+<!-- SECTION 1: Practical TypeScript Tooling                       -->
+<!-- ============================================================ -->
+<div class="topic-section">
+<div class="topic-section-header">
+  <span class="section-num">1</span> Practical TypeScript Tooling
+</div>
+
+<!-- Concept 1: Type-Safe CLI Tools -->
+<div class="concept-card" id="cli_tools">
+  <div class="concept-header">
+    <span class="concept-title">1. Type-Safe CLI Tools with Commander &amp; Yargs</span>
+    <span class="ttag">Tooling</span>
+  </div>
+
+  <div class="why-matters">Every Node.js CLI tool needs argument parsing. Type-safe parsing catches flag typos and wrong types at compile time, eliminating an entire class of runtime bugs in your dev tooling.</div>
+
+  <div class="explanation">
+    <p>Two dominant libraries exist for CLI argument parsing in TypeScript: <code>commander</code> and <code>yargs</code>. Both can be used with strong types, but the approaches differ. Commander relies on explicit interface definitions and manual casting, while yargs has built-in chaining that infers option types from the <code>.option()</code> calls.</p>
+    <p>The key insight is to define your CLI options as an interface <em>first</em>, then ensure the parser produces that exact shape. This makes the rest of your CLI code downstream of a single, well-typed options object.</p>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 1 of 3 &mdash; Commander with typed options</div>
+<pre><code>import { Command } from "commander";
+
+// 1. Define the shape your CLI expects
+interface CliOptions {
+  readonly port: number;
+  readonly host: string;
+  readonly verbose: boolean;
+  readonly config?: string;
+}
+
+// 2. Build the command, mapping flags to the interface
+const program = new Command()
+  .name("my-server")
+  .option("-p, --port &lt;number&gt;", "port to listen on", "3000")
+  .option("-H, --host &lt;string&gt;", "hostname", "localhost")
+  .option("-v, --verbose", "enable verbose logging", false)
+  .option("-c, --config &lt;path&gt;", "path to config file")
+  .parse();
+
+// 3. Cast once at the boundary, typed everywhere after
+const opts: CliOptions = {
+  port: Number(program.opts().port),
+  host: program.opts().host as string,
+  verbose: program.opts().verbose as boolean,
+  config: program.opts().config as string | undefined,
+};
+
+// 4. All downstream code uses the typed object
+function startServer(options: CliOptions): void {
+  console.log(`Listening on ${options.host}:${options.port}`);
+  if (options.verbose) {
+    console.log("Verbose mode enabled");
+  }
+}</code></pre>
+<div class="output">Listening on localhost:3000</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 2 of 3 &mdash; Yargs with .option() type inference</div>
+<pre><code>import yargs from "yargs";
+import { hideBin } from "yargs/helpers";
+
+// Yargs infers types from .option() chains
+const argv = yargs(hideBin(process.argv))
+  .option("port", {
+    alias: "p",
+    type: "number",
+    default: 3000,
+    describe: "Port to listen on",
+  })
+  .option("host", {
+    alias: "H",
+    type: "string",
+    default: "localhost",
+    describe: "Hostname to bind",
+  })
+  .option("verbose", {
+    alias: "v",
+    type: "boolean",
+    default: false,
+  })
+  .strict()         // reject unknown flags
+  .parseSync();     // synchronous parse
+
+// argv.port is number, argv.host is string, argv.verbose is boolean
+// No manual casting needed &mdash; yargs infers from the option config
+console.log(argv.port);    // number
+console.log(argv.host);    // string
+console.log(argv.verbose); // boolean</code></pre>
+<div class="type-result">argv: { port: number; host: string; verbose: boolean; _: (string | number)[]; $0: string }</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 3 of 3 &mdash; Type-safe command registry</div>
+<pre><code>// Build a registry where each command is typed independently
+interface CommandDef&lt;T&gt; {
+  name: string;
+  description: string;
+  parse: (args: string[]) =&gt; T;
+  execute: (opts: T) =&gt; Promise&lt;void&gt;;
+}
+
+function defineCommand&lt;T&gt;(def: CommandDef&lt;T&gt;): CommandDef&lt;T&gt; {
+  return def;
+}
+
+// Each command defines its own option shape
+const buildCmd = defineCommand({
+  name: "build",
+  description: "Build the project",
+  parse: (args) =&gt; ({
+    watch: args.includes("--watch"),
+    outDir: args.find((a) =&gt; a.startsWith("--out="))?.slice(6) ?? "dist",
+  }),
+  execute: async (opts) =&gt; {
+    // opts is { watch: boolean; outDir: string } &mdash; fully inferred
+    console.log(`Building to ${opts.outDir}, watch: ${opts.watch}`);
+  },
+});
+
+const commands = [buildCmd] as const;
+
+// Dispatcher looks up by name and runs with the correct type
+async function dispatch(name: string, args: string[]): Promise&lt;void&gt; {
+  const cmd = commands.find((c) =&gt; c.name === name);
+  if (!cmd) throw new Error(`Unknown command: ${name}`);
+  const opts = cmd.parse(args);
+  await cmd.execute(opts);
+}</code></pre>
+  </div>
+
+  <div class="callout-warning">
+    <strong>Common Mistakes:</strong>
+    <div class="mistake">&#10060; Using <code>as any</code> for parsed CLI arguments: <code>const port = opts.port as any</code>. This silences the compiler but hides type mismatches (e.g., port is actually a string from the parser).</div>
+    <div class="correct">&#9989; Define an interface and cast once at the boundary: <code>const opts: CliOptions = { port: Number(program.opts().port) }</code>. All downstream code stays typed.</div>
+    <div class="mistake">&#10060; Forgetting to coerce numeric options from Commander (which returns strings by default).</div>
+    <div class="correct">&#9989; Always use <code>Number()</code> or a custom coercion function for numeric flags, or switch to yargs which handles <code>type: "number"</code> natively.</div>
+  </div>
+
+  <div class="key-rules">
+    <strong>Key Rules:</strong>
+    <ul>
+    <li><a href="typescript-guides/typescript-guide-2026-07-04.html">2026-07-04</a> (Day 31)</li>
+      <li>Define your CLI option interface first, then make the parser produce that shape &mdash; not the other way around.</li>
+      <li>Cast at the boundary (where raw args become typed objects) and nowhere else. All downstream code should receive the typed interface.</li>
+      <li>Use <code>.strict()</code> in yargs or <code>.allowUnknownOption(false)</code> in commander to reject typos at runtime.</li>
+      <li>For complex CLIs with subcommands, define each command&rsquo;s options independently with a generic <code>CommandDef&lt;T&gt;</code> pattern.</li>
+    </ul>
+  </div>
+
+  <div class="exercises">
+    <strong>Practice Exercises:</strong>
+    <div class="exercise"><span class="exercise-num">1</span>Build a CLI tool with yargs that accepts <code>--input &lt;file&gt;</code>, <code>--output &lt;file&gt;</code>, and <code>--format json|csv</code> options. Make <code>format</code> a union type, not just a string. Verify that passing <code>--format xml</code> fails at runtime with <code>.choices()</code>.</div>
+    <div class="exercise"><span class="exercise-num">2</span>Create a type-safe command registry using the <code>CommandDef&lt;T&gt;</code> pattern. Add three commands (<code>init</code>, <code>build</code>, <code>deploy</code>) with different option shapes. Write a dispatcher that routes to the correct handler.</div>
+    <div class="exercise"><span class="exercise-num">3</span>Refactor a CLI that uses <code>process.argv</code> slicing and manual parsing into a yargs-based solution. Compare the type safety: add a new flag and verify the compiler catches all call sites that need updating.</div>
+  </div>
+
+  <div class="connections"><strong>Connections:</strong> The <code>CommandDef&lt;T&gt;</code> pattern uses the same generic inference trick as <em>Builder Pattern (Type State)</em> from earlier guides. CLI option typing pairs naturally with <em>Type-Safe Environment Variables</em> (Concept 5 below) &mdash; both validate external input at the program boundary.</div>
+</div>
+
+<!-- Concept 2: ts-morph -->
+<div class="concept-card" id="ts_morph">
+  <div class="concept-header">
+    <span class="concept-title">2. ts-morph &mdash; Programmatic TypeScript Manipulation</span>
+    <span class="ttag">Tooling</span>
+  </div>
+
+  <div class="why-matters">Generate code, refactor safely, extract types from source files. ts-morph wraps the TypeScript compiler API in a developer-friendly interface. Used by codegen tools, migration scripts, and custom transformers.</div>
+
+  <div class="explanation">
+    <p>The raw TypeScript compiler API (<code>ts.createSourceFile</code>, etc.) is powerful but extremely verbose. <code>ts-morph</code> provides a fluent, high-level wrapper that makes reading, modifying, and generating TypeScript source files straightforward.</p>
+    <p>Common use cases include: generating barrel files (<code>index.ts</code>), adding properties to interfaces across a codebase, extracting type information for documentation, and building custom codemods that are type-aware (unlike regex-based find-and-replace).</p>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 1 of 3 &mdash; Reading exports from a source file</div>
+<pre><code>import { Project } from "ts-morph";
+
+const project = new Project({
+  tsConfigFilePath: "./tsconfig.json",
+});
+
+// Load a specific source file
+const sourceFile = project.getSourceFileOrThrow("src/utils.ts");
+
+// List all exported functions with their signatures
+const exportedFunctions = sourceFile.getFunctions()
+  .filter((fn) =&gt; fn.isExported());
+
+for (const fn of exportedFunctions) {
+  const name = fn.getName();
+  const params = fn.getParameters()
+    .map((p) =&gt; `${p.getName()}: ${p.getType().getText()}`)
+    .join(", ");
+  const returnType = fn.getReturnType().getText();
+
+  console.log(`export function ${name}(${params}): ${returnType}`);
+}
+
+// Example output:
+// export function clamp(value: number, min: number, max: number): number
+// export function slugify(text: string): string</code></pre>
+<div class="output">export function clamp(value: number, min: number, max: number): number
+export function slugify(text: string): string</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 2 of 3 &mdash; Adding a property to an interface</div>
+<pre><code>import { Project } from "ts-morph";
+
+const project = new Project();
+const sourceFile = project.addSourceFileAtPath("src/models/user.ts");
+
+// Find the User interface
+const userInterface = sourceFile.getInterfaceOrThrow("User");
+
+// Add a new property if it doesn't already exist
+if (!userInterface.getProperty("createdAt")) {
+  userInterface.addProperty({
+    name: "createdAt",
+    type: "Date",
+    hasQuestionToken: false,  // required property
+  });
+}
+
+// Add a readonly optional property
+if (!userInterface.getProperty("deletedAt")) {
+  userInterface.addProperty({
+    name: "deletedAt",
+    type: "Date",
+    hasQuestionToken: true,   // optional
+    isReadonly: true,
+  });
+}
+
+// IMPORTANT: save changes back to disk
+sourceFile.saveSync();
+console.log(sourceFile.getFullText());</code></pre>
+<div class="output">interface User {
+  id: string;
+  name: string;
+  email: string;
+  createdAt: Date;
+  readonly deletedAt?: Date;
+}</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 3 of 3 &mdash; Generating a module from a schema</div>
+<pre><code>import { Project, StructureKind } from "ts-morph";
+
+// Schema definition (could come from an API spec, DB, etc.)
+const schema = {
+  name: "Product",
+  fields: [
+    { name: "id", type: "string", readonly: true },
+    { name: "title", type: "string", readonly: false },
+    { name: "price", type: "number", readonly: false },
+    { name: "tags", type: "string[]", readonly: false },
+  ],
+};
+
+const project = new Project();
+
+// Create a brand-new source file
+const file = project.createSourceFile(`src/generated/${schema.name.toLowerCase()}.ts`, {
+  statements: [
+    // Generate the interface
+    {
+      kind: StructureKind.Interface,
+      name: schema.name,
+      isExported: true,
+      properties: schema.fields.map((f) =&gt; ({
+        name: f.name,
+        type: f.type,
+        isReadonly: f.readonly,
+      })),
+    },
+    // Generate a factory function
+    {
+      kind: StructureKind.Function,
+      name: `create${schema.name}`,
+      isExported: true,
+      parameters: [{ name: "data", type: `Omit&lt;${schema.name}, "id"&gt;` }],
+      returnType: schema.name,
+      statements: [
+        `return { ...data, id: crypto.randomUUID() };`,
+      ],
+    },
+  ],
+});
+
+file.saveSync();
+console.log(file.getFullText());</code></pre>
+<div class="output">export interface Product {
+    readonly id: string;
+    title: string;
+    price: number;
+    tags: string[];
+}
+
+export function createProduct(data: Omit&lt;Product, "id"&gt;): Product {
+    return { ...data, id: crypto.randomUUID() };
+}</div>
+  </div>
+
+  <div class="callout-warning">
+    <strong>Common Mistakes:</strong>
+    <div class="mistake">&#10060; Modifying the AST without calling <code>saveSync()</code> or <code>save()</code>. Changes are held in memory only &mdash; forgetting to save means your modifications are silently lost.</div>
+    <div class="correct">&#9989; Always call <code>sourceFile.saveSync()</code> (or <code>await sourceFile.save()</code>) after mutations. Or use <code>project.saveSync()</code> to save all modified files at once.</div>
+    <div class="mistake">&#10060; Creating a <code>Project</code> without a tsconfig, then wondering why type resolution fails for imports.</div>
+    <div class="correct">&#9989; Pass <code>{ tsConfigFilePath: "./tsconfig.json" }</code> to <code>new Project()</code> so ts-morph can resolve module paths and infer types correctly.</div>
+  </div>
+
+  <div class="key-rules">
+    <strong>Key Rules:</strong>
+    <ul>
+      <li><code>ts-morph</code> wraps the TS compiler API &mdash; it loads the real type checker, so <code>getType()</code> returns fully resolved types.</li>
+      <li>Use <code>getOrThrow</code> variants (e.g., <code>getInterfaceOrThrow</code>) during codegen &mdash; fail fast if the expected structure is missing.</li>
+      <li>For large codebases, create the <code>Project</code> once and reuse it. Each <code>new Project()</code> call re-parses the entire program.</li>
+      <li>Always save after mutations. Batch multiple changes, then save once for efficiency.</li>
+    </ul>
+  </div>
+
+  <div class="exercises">
+    <strong>Practice Exercises:</strong>
+    <div class="exercise"><span class="exercise-num">1</span>Write a script that uses ts-morph to generate a barrel <code>index.ts</code> file that re-exports every named export from all <code>.ts</code> files in a <code>src/utils/</code> directory.</div>
+    <div class="exercise"><span class="exercise-num">2</span>Build a codemod that finds all interfaces with a <code>createdAt: string</code> property and changes the type to <code>Date</code>. Run it against a test file and verify the output.</div>
+    <div class="exercise"><span class="exercise-num">3</span>Create a schema-to-code generator: given a JSON array of <code>{name, type, optional}</code> fields, generate a TypeScript interface, a Zod schema, and a factory function in a single source file.</div>
+  </div>
+
+  <div class="connections"><strong>Connections:</strong> ts-morph is the tool behind many TypeScript code generators. It pairs with <em>Type-Safe CLI Tools</em> (Concept 1) &mdash; build a CLI that runs your codegen. The AST manipulation here also connects to <em>TypeScript Performance</em> (Review R4) &mdash; understanding the compiler&rsquo;s internals helps you write faster types.</div>
+</div>
+
+<!-- Concept 3: Import Attributes & JSON/CSS Modules -->
+<div class="concept-card" id="import_attributes">
+  <div class="concept-header">
+    <span class="concept-title">3. Import Attributes &amp; JSON/CSS Modules</span>
+    <span class="ttag">TypeScript 5.x</span>
+  </div>
+
+  <div class="why-matters"><code>import data from './config.json' with { type: 'json' }</code> &mdash; TC39 stage 3, supported in TS 5.3+. Type-safe imports of non-JS resources eliminate <code>require()</code> hacks and enable bundler-native module handling.</div>
+
+  <div class="explanation">
+    <p>Import attributes (formerly &ldquo;import assertions&rdquo;) tell the runtime and bundler the expected type of the imported module. This is critical for security (preventing a JSON file from being executed as JavaScript) and for tooling (bundlers can handle each type appropriately).</p>
+    <p>The syntax changed from <code>assert { type: 'json' }</code> (deprecated) to <code>with { type: 'json' }</code>. TypeScript 5.3+ supports the <code>with</code> keyword. You also need <code>resolveJsonModule: true</code> and typically <code>moduleResolution: "bundler"</code> in your tsconfig.</p>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 1 of 3 &mdash; JSON imports with import attributes</div>
+<pre><code>// tsconfig.json: { "compilerOptions": { "resolveJsonModule": true, "moduleResolution": "bundler" } }
+
+// OLD (deprecated) &mdash; import assertion with "assert"
+// import config from "./config.json" assert { type: "json" };
+
+// NEW (TS 5.3+) &mdash; import attribute with "with"
+import config from "./config.json" with { type: "json" };
+
+// TypeScript infers the JSON structure as a type
+// config: { port: number; host: string; debug: boolean }
+
+console.log(config.port);    // number &mdash; fully typed
+console.log(config.host);    // string &mdash; autocomplete works
+// config.missing;            // Error: Property 'missing' does not exist
+
+// Dynamic import with attributes
+async function loadLocale(lang: string) {
+  const messages = await import(`./locales/${lang}.json`, {
+    with: { type: "json" },
+  });
+  return messages.default;
+}</code></pre>
+<div class="type-result">config: { port: number; host: string; debug: boolean }</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 2 of 3 &mdash; CSS module typing</div>
+<pre><code>// src/types/css.d.ts &mdash; declare module for CSS modules
+declare module "*.module.css" {
+  const classes: Readonly&lt;Record&lt;string, string&gt;&gt;;
+  export default classes;
+}
+
+// For more precise typing, use typed-css-modules or ts-css-modules
+// to generate per-file .d.ts files:
+//
+// styles.module.css.d.ts (auto-generated):
+// declare const styles: {
+//   readonly container: string;
+//   readonly header: string;
+//   readonly active: string;
+// };
+// export default styles;
+
+// Usage in a component
+import styles from "./App.module.css";
+
+// styles.container &mdash; string (className)
+// styles.nonexistent &mdash; Error if using generated .d.ts
+function App() {
+  return (
+    &lt;div className={styles.container}&gt;
+      &lt;h1 className={styles.header}&gt;Hello&lt;/h1&gt;
+    &lt;/div&gt;
+  );
+}</code></pre>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 3 of 3 &mdash; tsconfig for module resolution</div>
+<pre><code>// tsconfig.json for modern projects using import attributes
+{
+  "compilerOptions": {
+    // Enable JSON imports
+    "resolveJsonModule": true,
+
+    // "bundler" mode: lets TS understand bare specifiers, .json,
+    // .css, and other non-JS imports that your bundler resolves
+    "moduleResolution": "bundler",
+
+    // Required for import attributes
+    "module": "esnext",
+
+    // Emit import attributes in output (Node 20.10+ supports them)
+    "target": "esnext",
+
+    // Allow importing .ts files with .js extensions (bundler handles it)
+    "allowImportingTsExtensions": true,
+    "noEmit": true
+  }
+}
+
+// With this config, all of these work:
+// import data from "./data.json" with { type: "json" };
+// import styles from "./App.module.css";
+// import { helper } from "./utils.js";  // resolves to utils.ts</code></pre>
+  </div>
+
+  <div class="callout-warning">
+    <strong>Common Mistakes:</strong>
+    <div class="mistake">&#10060; Using the deprecated <code>assert</code> keyword: <code>import x from "y" assert { type: "json" }</code>. The <code>assert</code> syntax was renamed to <code>with</code> in the TC39 proposal and is being removed from engines.</div>
+    <div class="correct">&#9989; Use the <code>with</code> keyword: <code>import x from "y" with { type: "json" }</code>. This is the final syntax standardized by TC39.</div>
+    <div class="mistake">&#10060; Setting <code>moduleResolution: "node"</code> in a project that uses bundler-style imports (.json, .css, extensionless).</div>
+    <div class="correct">&#9989; Use <code>moduleResolution: "bundler"</code> for projects built with Vite, webpack, esbuild, or similar. Use <code>"node16"</code> or <code>"nodenext"</code> for pure Node.js projects.</div>
+  </div>
+
+  <div class="key-rules">
+    <strong>Key Rules:</strong>
+    <ul>
+      <li>Import attributes use <code>with</code>, not <code>assert</code>. The old syntax is deprecated and will be removed.</li>
+      <li><code>resolveJsonModule: true</code> + <code>moduleResolution: "bundler"</code> is the standard config for modern frontend projects.</li>
+      <li>For CSS modules, use a wildcard declaration (<code>*.module.css</code>) for basic support, or a code generator (<code>typed-css-modules</code>) for per-file precise types.</li>
+      <li>Dynamic imports support attributes too: <code>await import("./x.json", { with: { type: "json" } })</code>.</li>
+    </ul>
+  </div>
+
+  <div class="exercises">
+    <strong>Practice Exercises:</strong>
+    <div class="exercise"><span class="exercise-num">1</span>Set up a TypeScript project with <code>resolveJsonModule</code> and <code>moduleResolution: "bundler"</code>. Import a JSON config file using <code>with { type: "json" }</code> and verify that the compiler infers the correct shape.</div>
+    <div class="exercise"><span class="exercise-num">2</span>Create a <code>*.module.css</code> declaration file and import a CSS module in a React component. Then install <code>typed-css-modules</code> and compare the generated per-file <code>.d.ts</code> against the wildcard approach.</div>
+    <div class="exercise"><span class="exercise-num">3</span>Write a dynamic import function that loads locale JSON files based on a language code parameter. Type the return value so that accessing a missing translation key is a compile error.</div>
+  </div>
+
+  <div class="connections"><strong>Connections:</strong> Import attributes connect to <em>Const Enum Alternatives</em> (Concept 4 below) &mdash; both deal with how modules are resolved and bundled. The tsconfig settings here also affect <em>TypeScript Performance</em> (Review R4) &mdash; <code>moduleResolution: "bundler"</code> can speed up resolution compared to <code>"node"</code>.</div>
+</div>
+
+</div><!-- end topic-section 1 -->
+
+<!-- ============================================================ -->
+<!-- SECTION 2: Advanced Type Patterns                             -->
+<!-- ============================================================ -->
+<div class="topic-section">
+<div class="topic-section-header">
+  <span class="section-num">2</span> Advanced Type Patterns
+</div>
+
+<!-- Concept 4: Const Enum Alternatives & Tree-Shaking -->
+<div class="concept-card" id="const_enum_alternatives">
+  <div class="concept-header">
+    <span class="concept-title">4. Const Enum Alternatives &amp; Tree-Shaking</span>
+    <span class="ttag">Build Optimization</span>
+  </div>
+
+  <div class="why-matters"><code>const enum</code> inlines values but breaks <code>--isolatedModules</code> (required by esbuild, swc, Babel, and Vite). Alternatives like literal unions and <code>as const</code> objects tree-shake better and work with every build tool.</div>
+
+  <div class="explanation">
+    <p><code>const enum</code> was designed to inline enum values at compile time, avoiding the runtime object that regular enums create. However, it requires the full TypeScript type-checker to resolve &mdash; meaning tools that transpile file-by-file (<code>--isolatedModules</code> mode) cannot handle them.</p>
+    <p>Since most modern build pipelines use esbuild, swc, or Babel for speed (all of which require <code>isolatedModules</code>), <code>const enum</code> is effectively unusable in modern projects. The alternatives &mdash; <code>as const</code> objects and string literal unions &mdash; produce the same developer experience with better tooling compatibility.</p>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 1 of 4 &mdash; The problem with const enum</div>
+<pre><code>// This works with tsc but BREAKS with --isolatedModules
+const enum Direction {
+  Up = "UP",
+  Down = "DOWN",
+  Left = "LEFT",
+  Right = "RIGHT",
+}
+
+// tsc inlines the values:
+// const d = "UP";
+const d = Direction.Up;
+
+// But esbuild/swc/Babel can't do this &mdash; they see:
+// Error: Cannot access ambient const enums when
+//        'isolatedModules' is enabled.
+
+// Also broken when const enum is in a .d.ts from a library:
+// consumers can't inline values they didn't compile</code></pre>
+<div class="type-error">Cannot access ambient const enums when 'isolatedModules' is enabled. ts(2748)</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 2 of 4 &mdash; as const objects as enum replacement</div>
+<pre><code>// The "as const" object pattern &mdash; works everywhere
+const Direction = {
+  Up: "UP",
+  Down: "DOWN",
+  Left: "LEFT",
+  Right: "RIGHT",
+} as const;
+
+// Extract the union type from the object values
+type Direction = (typeof Direction)[keyof typeof Direction];
+// type Direction = "UP" | "DOWN" | "LEFT" | "RIGHT"
+
+// Usage is identical to an enum
+function move(dir: Direction): void {
+  console.log(`Moving ${dir}`);
+}
+
+move(Direction.Up);    // OK &mdash; "UP"
+move(Direction.Down);  // OK &mdash; "DOWN"
+move("UP");            // OK &mdash; literal value also works
+move("DIAGONAL");      // Error: not in the union</code></pre>
+<div class="type-result">Direction = "UP" | "DOWN" | "LEFT" | "RIGHT"</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 3 of 4 &mdash; String literal unions with exhaustive switch</div>
+<pre><code>// Sometimes you don't even need the object &mdash; just the union
+type Status = "idle" | "loading" | "success" | "error";
+
+// Exhaustive switch with never check
+function getStatusMessage(status: Status): string {
+  switch (status) {
+    case "idle":    return "Waiting to start...";
+    case "loading": return "Loading data...";
+    case "success": return "Done!";
+    case "error":   return "Something went wrong.";
+    default: {
+      // If you add a new Status but forget a case,
+      // this line will produce a compile error
+      const _exhaustive: never = status;
+      return _exhaustive;
+    }
+  }
+}
+
+// Adding "retrying" to Status without updating the switch:
+// Error: Type '"retrying"' is not assignable to type 'never'</code></pre>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 4 of 4 &mdash; Helper function pattern</div>
+<pre><code>// Full pattern: object for namespacing + type for constraint
+const HttpMethod = {
+  Get: "GET",
+  Post: "POST",
+  Put: "PUT",
+  Patch: "PATCH",
+  Delete: "DELETE",
+} as const;
+
+type HttpMethod = (typeof HttpMethod)[keyof typeof HttpMethod];
+
+// Helper: create a typeguard for any as-const object
+function isValueOf&lt;T extends Record&lt;string, string&gt;&gt;(
+  obj: T,
+  value: string
+): value is T[keyof T] {
+  return Object.values(obj).includes(value);
+}
+
+// Runtime validation with type narrowing
+function handleRequest(method: string): void {
+  if (isValueOf(HttpMethod, method)) {
+    // method is now HttpMethod (narrowed from string)
+    console.log(`Valid method: ${method}`);
+  } else {
+    console.log(`Unknown method: ${method}`);
+  }
+}
+
+handleRequest("GET");     // Valid method: GET
+handleRequest("CONNECT"); // Unknown method: CONNECT</code></pre>
+<div class="output">Valid method: GET
+Unknown method: CONNECT</div>
+  </div>
+
+  <div class="callout-warning">
+    <strong>Common Mistakes:</strong>
+    <div class="mistake">&#10060; Using <code>const enum</code> in a library published to npm. Consumers using esbuild, swc, or Babel (i.e., most projects) cannot resolve the inlined values and get a compile error.</div>
+    <div class="correct">&#9989; Use <code>as const</code> objects in libraries. They work with every build tool and every consumer, regardless of their <code>isolatedModules</code> setting.</div>
+    <div class="mistake">&#10060; Using a regular <code>enum</code> and expecting tree-shaking to remove unused members. Enums compile to an IIFE that bundlers often can&rsquo;t analyze.</div>
+    <div class="correct">&#9989; <code>as const</code> objects and literal unions tree-shake perfectly because they&rsquo;re just plain objects and strings &mdash; no IIFE wrapper.</div>
+  </div>
+
+  <div class="key-rules">
+    <strong>Key Rules:</strong>
+    <ul>
+      <li><code>const enum</code> is incompatible with <code>--isolatedModules</code> (required by esbuild, swc, Babel, Vite). Avoid it in modern projects.</li>
+      <li>The <code>as const</code> object + extracted union pattern gives you the same DX as enums: dot-access, autocomplete, and exhaustive checking.</li>
+      <li>For simple cases, a bare string literal union (<code>type X = "a" | "b"</code>) is the simplest and most tree-shakeable option.</li>
+      <li>Use the <code>never</code> default case pattern in switch statements to catch missing cases at compile time.</li>
+    </ul>
+  </div>
+
+  <div class="exercises">
+    <strong>Practice Exercises:</strong>
+    <div class="exercise"><span class="exercise-num">1</span>Refactor a codebase that uses <code>const enum Color { Red, Green, Blue }</code> to an <code>as const</code> object. Verify that all usages (<code>Color.Red</code>, switch statements, function parameters) still work identically.</div>
+    <div class="exercise"><span class="exercise-num">2</span>Create a <code>Permission</code> enum alternative with <code>as const</code> that supports bitwise flags: <code>Read = 1</code>, <code>Write = 2</code>, <code>Execute = 4</code>. Type a function that accepts a union of these values and performs bitwise checks.</div>
+    <div class="exercise"><span class="exercise-num">3</span>Build a generic <code>createEnum&lt;T extends Record&lt;string, string&gt;&gt;(obj: T)</code> helper that returns the frozen object <em>and</em> a type guard function. Use it to define three different enum-like constants in one project.</div>
+  </div>
+
+  <div class="connections"><strong>Connections:</strong> This topic directly relates to <em>TypeScript Performance</em> (Review R4) &mdash; regular enums generate runtime code that can bloat bundles, while <code>as const</code> inlines at the value level. The exhaustive switch pattern connects to <em>Discriminated Unions</em> from earlier guides. The <code>isolatedModules</code> constraint also affects <em>Import Attributes</em> (Concept 3 above).</div>
+</div>
+
+<!-- Concept 5: Type-Safe Environment Variables -->
+<div class="concept-card" id="type_safe_env">
+  <div class="concept-header">
+    <span class="concept-title">5. Type-Safe Environment Variables</span>
+    <span class="ttag">Runtime Safety</span>
+  </div>
+
+  <div class="why-matters"><code>process.env.DB_URL</code> is <code>string | undefined</code> &mdash; easy to forget the undefined check. Type-safe env validation catches missing variables at startup, not in production at 3am when a database connection string is missing.</div>
+
+  <div class="explanation">
+    <p>Environment variables are the primary configuration mechanism for deployed applications, but TypeScript&rsquo;s built-in typing for them is essentially <code>Record&lt;string, string | undefined&gt;</code>. Every access returns <code>string | undefined</code>, making it easy to forget the null check and crash at runtime.</p>
+    <p>The solution is to validate all required env vars at application startup using a schema validation library like Zod. If any variable is missing or has the wrong format, the app fails immediately with a clear error &mdash; not minutes later in an unrelated code path.</p>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 1 of 3 &mdash; Zod schema for env vars</div>
+<pre><code>import { z } from "zod";
+
+// Define the schema for your env vars
+const envSchema = z.object({
+  NODE_ENV: z.enum(["development", "production", "test"]),
+  PORT: z.coerce.number().int().min(1).max(65535).default(3000),
+  DATABASE_URL: z.string().url(),
+  REDIS_URL: z.string().url().optional(),
+  API_KEY: z.string().min(1, "API_KEY cannot be empty"),
+  LOG_LEVEL: z.enum(["debug", "info", "warn", "error"]).default("info"),
+});
+
+// Validate at startup &mdash; fail fast if anything is wrong
+function validateEnv() {
+  const result = envSchema.safeParse(process.env);
+
+  if (!result.success) {
+    console.error("Invalid environment variables:");
+    console.error(result.error.flatten().fieldErrors);
+    process.exit(1);
+  }
+
+  return result.data;
+}
+
+// Export the validated, fully-typed env object
+export const env = validateEnv();
+
+// Now every access is fully typed &mdash; no undefined checks needed
+// env.PORT         &mdash; number (not string!)
+// env.DATABASE_URL &mdash; string (guaranteed to be a valid URL)
+// env.REDIS_URL    &mdash; string | undefined (marked optional)
+// env.NODE_ENV     &mdash; "development" | "production" | "test"</code></pre>
+<div class="type-result">env: { NODE_ENV: "development" | "production" | "test"; PORT: number; DATABASE_URL: string; REDIS_URL?: string; API_KEY: string; LOG_LEVEL: "debug" | "info" | "warn" | "error" }</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 2 of 3 &mdash; createEnv() with compile-time + runtime checks</div>
+<pre><code>import { z, ZodType } from "zod";
+
+// Generic env creator &mdash; reusable across projects
+function createEnv&lt;T extends Record&lt;string, ZodType&gt;&gt;(
+  schema: T,
+  source: Record&lt;string, string | undefined&gt; = process.env
+): z.infer&lt;z.ZodObject&lt;T&gt;&gt; {
+  const zodSchema = z.object(schema);
+  const result = zodSchema.safeParse(source);
+
+  if (!result.success) {
+    const errors = result.error.flatten().fieldErrors;
+    const missing = Object.entries(errors)
+      .map(([key, msgs]) =&gt; `  ${key}: ${msgs?.join(", ")}`)
+      .join("\n");
+
+    throw new Error(`Environment validation failed:\n${missing}`);
+  }
+
+  // Freeze to prevent accidental mutation
+  return Object.freeze(result.data);
+}
+
+// Usage: define your env once at the entry point
+export const env = createEnv({
+  DATABASE_URL: z.string().url(),
+  PORT: z.coerce.number().default(3000),
+  JWT_SECRET: z.string().min(32, "JWT_SECRET must be at least 32 chars"),
+  ALLOWED_ORIGINS: z.string().transform((s) =&gt; s.split(",")),
+});
+
+// env.ALLOWED_ORIGINS is string[] &mdash; parsed from comma-separated input
+// env.PORT is number &mdash; coerced from string
+// env.JWT_SECRET is string &mdash; guaranteed &gt;= 32 chars</code></pre>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 3 of 3 &mdash; t3-env pattern (server vs client separation)</div>
+<pre><code>import { z } from "zod";
+
+// Separate server-only and client-safe env vars
+// This prevents accidentally leaking secrets to the browser bundle
+
+interface EnvConfig&lt;
+  TServer extends Record&lt;string, z.ZodType&gt;,
+  TClient extends Record&lt;string, z.ZodType&gt;,
+&gt; {
+  server: TServer;
+  client: TClient;
+  runtimeEnv: Record&lt;string, string | undefined&gt;;
+}
+
+function createT3Env&lt;
+  TServer extends Record&lt;string, z.ZodType&gt;,
+  TClient extends Record&lt;string, z.ZodType&gt;,
+&gt;(config: EnvConfig&lt;TServer, TClient&gt;) {
+  const serverSchema = z.object(config.server);
+  const clientSchema = z.object(config.client);
+
+  // Client keys must start with NEXT_PUBLIC_ (convention)
+  for (const key of Object.keys(config.client)) {
+    if (!key.startsWith("NEXT_PUBLIC_")) {
+      throw new Error(`Client env var "${key}" must start with NEXT_PUBLIC_`);
+    }
+  }
+
+  const merged = { ...config.server, ...config.client };
+  const fullSchema = z.object(merged);
+  const parsed = fullSchema.parse(config.runtimeEnv);
+
+  return parsed as z.infer&lt;typeof serverSchema&gt; &amp; z.infer&lt;typeof clientSchema&gt;;
+}
+
+// Usage in a Next.js project
+export const env = createT3Env({
+  server: {
+    DATABASE_URL: z.string().url(),
+    JWT_SECRET: z.string().min(32),
+    STRIPE_SECRET_KEY: z.string().startsWith("sk_"),
+  },
+  client: {
+    NEXT_PUBLIC_APP_URL: z.string().url(),
+    NEXT_PUBLIC_STRIPE_KEY: z.string().startsWith("pk_"),
+  },
+  runtimeEnv: process.env,
+});
+
+// Server code: env.DATABASE_URL, env.STRIPE_SECRET_KEY
+// Client code: env.NEXT_PUBLIC_APP_URL, env.NEXT_PUBLIC_STRIPE_KEY
+// Accessing server vars in client bundle &rarr; undefined (bundler strips them)</code></pre>
+  </div>
+
+  <div class="callout-warning">
+    <strong>Common Mistakes:</strong>
+    <div class="mistake">&#10060; Using non-null assertion: <code>process.env.PORT!</code>. This silences the compiler but gives you a false sense of safety. If <code>PORT</code> is actually missing, you get a silent <code>undefined</code> that crashes later.</div>
+    <div class="correct">&#9989; Validate with Zod at app startup. If <code>PORT</code> is missing, the app fails immediately with a clear error message listing exactly which variables are missing or invalid.</div>
+    <div class="mistake">&#10060; Augmenting <code>ProcessEnv</code> in a global <code>.d.ts</code>: <code>declare namespace NodeJS { interface ProcessEnv { PORT: string } }</code>. This lies to the compiler &mdash; the variable might still be missing at runtime.</div>
+    <div class="correct">&#9989; Use runtime validation (Zod) to guarantee the values actually exist, not just type declarations that assume they do.</div>
+  </div>
+
+  <div class="key-rules">
+    <strong>Key Rules:</strong>
+    <ul>
+      <li>Validate all env vars at startup. Fail fast with a clear error listing every missing or invalid variable.</li>
+      <li><code>z.coerce.number()</code> converts the string to a number &mdash; critical since <code>process.env</code> values are always strings.</li>
+      <li>Use <code>.transform()</code> for complex parsing (comma-separated lists, JSON strings, boolean flags).</li>
+      <li>Freeze the validated env object to prevent accidental mutation during the application lifecycle.</li>
+      <li>Separate server and client env vars in frontend frameworks to prevent secret leakage.</li>
+    </ul>
+  </div>
+
+  <div class="exercises">
+    <strong>Practice Exercises:</strong>
+    <div class="exercise"><span class="exercise-num">1</span>Create a Zod env schema for a project with <code>DATABASE_URL</code>, <code>REDIS_URL</code>, <code>PORT</code>, <code>NODE_ENV</code>, and <code>CORS_ORIGINS</code> (comma-separated). Validate at startup and export a typed, frozen env object.</div>
+    <div class="exercise"><span class="exercise-num">2</span>Build the generic <code>createEnv()</code> function shown above. Test it by passing a mock <code>source</code> object instead of <code>process.env</code>. Verify that missing required vars throw, optional vars default correctly, and coerced types (number from string) work.</div>
+    <div class="exercise"><span class="exercise-num">3</span>Implement the t3-env pattern for a Next.js-like setup. Enforce that client vars start with <code>NEXT_PUBLIC_</code>. Write a test that attempts to define a server-only key without the prefix in the client schema and verify it throws.</div>
+  </div>
+
+  <div class="connections"><strong>Connections:</strong> Env validation pairs with <em>Type-Safe CLI Tools</em> (Concept 1) &mdash; both validate external string input at the program boundary. The Zod usage here connects to <em>Zod &amp; Runtime Validation</em> from earlier guides. The t3-env pattern demonstrates <em>Generic Constraints</em> and <em>Mapped Types</em> working together for practical safety.</div>
+</div>
+
+</div><!-- end topic-section 2 -->
+
+<!-- Footer -->
+<footer class="guide-footer">
+  <h2>All Guides</h2>
+  <ul>
+    <li><a href="typescript-guides/typescript-guide-2026-07-09.html">2026-07-09</a> (Day 36)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-07-08.html">2026-07-08</a> (Day 35)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-07-07.html">2026-07-07</a> (Day 34)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-07-06.html">2026-07-06</a> (Day 33)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-07-05.html">2026-07-05</a> (Day 32)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-07-04.html">2026-07-04</a> (Day 31)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-07-03.html">2026-07-03</a> (Day 30)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-07-02.html">2026-07-02</a> (Day 29)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-07-01.html">2026-07-01</a> (Day 28)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-30.html">2026-06-30</a> (Day 27)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-29.html">2026-06-29</a> (Day 26)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-28.html">2026-06-28</a> (Day 25)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-27.html">2026-06-27</a> (Day 24)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-26.html">2026-06-26</a> (Day 23)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-25.html">2026-06-25</a> (Day 22)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-24.html">2026-06-24</a> (Day 21)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-23.html">2026-06-23</a> (Day 20)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-22.html">2026-06-22</a> (Day 19)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-21.html">2026-06-21</a> (Day 18)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-19.html">2026-06-19</a> (Day 17)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-18.html">2026-06-18</a> (Day 16)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-17.html">2026-06-17</a> (Day 15)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-15.html">2026-06-15</a> (Day 14)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-13.html">2026-06-13</a> (Day 13)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-12.html">2026-06-12</a> (Day 12)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-11.html">2026-06-11</a> (Day 11)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-10.html">2026-06-10</a> (Day 10)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-09.html">2026-06-09</a> (Day 9)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-08.html">2026-06-08</a> (Day 8)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-07.html">2026-06-07</a> (Day 7)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-05.html">2026-06-05</a> (Day 6)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-04.html">2026-06-04</a> (Day 5)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-03.html">2026-06-03</a> (Day 4)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-02.html">2026-06-02</a> (Day 3)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-01.html">2026-06-01</a> (Day 2)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-05-31.html">2026-05-31</a> (Day 1)</li>
+  </ul>
+</footer>
+
+</div><!-- end content -->
+</div><!-- end main -->
+
+<script>
+// Theme toggle
+(function() {
+  var toggle = document.getElementById('themeToggle');
+  var html = document.documentElement;
+  var STORAGE_KEY = 'lc-tsguide-theme';
+
+  function setTheme(theme) {
+    html.setAttribute('data-theme', theme);
+    toggle.textContent = theme === 'dark' ? '\u{1F319}' : '\u{2600}\u{FE0F}';
+    try { localStorage.setItem(STORAGE_KEY, theme); } catch(e) {}
+  }
+
+  try {
+    var saved = localStorage.getItem(STORAGE_KEY);
+    if (saved) setTheme(saved);
+  } catch(e) {}
+
+  toggle.addEventListener('click', function() {
+    var current = html.getAttribute('data-theme') || 'dark';
+    setTheme(current === 'dark' ? 'light' : 'dark');
+  });
+})();
+
+// Sidebar active link tracking
+(function() {
+  var links = document.querySelectorAll('.sidebar-nav a');
+  var sections = [];
+  links.forEach(function(link) {
+    var id = link.getAttribute('href').replace('#', '');
+    var el = document.getElementById(id);
+    if (el) sections.push({ link: link, el: el });
+  });
+
+  function updateActive() {
+    var current = null;
+    var scrollY = window.scrollY + 120;
+    for (var i = sections.length - 1; i >= 0; i--) {
+      if (sections[i].el.offsetTop <= scrollY) {
+        current = sections[i];
+        break;
+      }
+    }
+    links.forEach(function(l) { l.classList.remove('active'); });
+    if (current) current.link.classList.add('active');
+  }
+
+  window.addEventListener('scroll', updateActive);
+  updateActive();
+})();
+</script>
+
+</body>
+</html>

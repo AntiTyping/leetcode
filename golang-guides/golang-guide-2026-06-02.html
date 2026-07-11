@@ -1,0 +1,2581 @@
+<Output!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Go Study Guide &mdash; Day 1 (2026-06-02)</title>
+<style>
+/* ===== CSS Variables ===== */
+:root {
+  --bg: #0d1117;
+  --surface1: #161b22;
+  --surface2: #1c2333;
+  --border: #30363d;
+  --text: #e6edf3;
+  --muted: #8b949e;
+  --accent: #58a6ff;
+  --accent-dim: #1f6feb33;
+  --green: #3fb950;
+  --green-dim: #23863633;
+  --yellow: #d29922;
+  --yellow-dim: #d2992233;
+  --red: #f85149;
+  --red-dim: #f8514933;
+  --purple: #bc8cff;
+  --purple-dim: #bc8cff22;
+  --orange: #f0883e;
+  --orange-dim: #f0883e22;
+  --code-bg: #0d1117;
+  --sidebar-w: 300px;
+  --font-mono: 'SF Mono', 'Cascadia Code', 'Fira Code', Consolas, monospace;
+  --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+  --radius: 8px;
+  --shadow: 0 1px 3px rgba(0,0,0,0.4);
+}
+
+[data-theme="light"] {
+  --bg: #ffffff;
+  --surface1: #f6f8fa;
+  --surface2: #f0f3f6;
+  --border: #d0d7de;
+  --text: #1f2328;
+  --muted: #656d76;
+  --accent: #0969da;
+  --accent-dim: #0969da1a;
+  --green: #1a7f37;
+  --green-dim: #1a7f3718;
+  --yellow: #9a6700;
+  --yellow-dim: #9a670018;
+  --red: #cf222e;
+  --red-dim: #cf222e18;
+  --purple: #8250df;
+  --purple-dim: #8250df18;
+  --orange: #bc4c00;
+  --orange-dim: #bc4c0018;
+  --code-bg: #f6f8fa;
+  --shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+/* ===== Reset & Base ===== */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: var(--font-sans);
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.7;
+  font-size: 16px;
+  transition: background 0.2s, color 0.2s;
+}
+
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+/* ===== Theme Toggle ===== */
+#theme-toggle {
+  position: fixed;
+  top: 16px;
+  right: 20px;
+  z-index: 1000;
+  background: var(--surface1);
+  border: 1px solid var(--border);
+  color: var(--text);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+  box-shadow: var(--shadow);
+}
+#theme-toggle:hover { background: var(--surface2); border-color: var(--accent); }
+
+/* ===== Sidebar ===== */
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: var(--sidebar-w);
+  height: 100vh;
+  background: var(--surface1);
+  border-right: 1px solid var(--border);
+  overflow-y: auto;
+  padding: 20px 0;
+  z-index: 100;
+  transition: transform 0.3s;
+}
+
+.sidebar-header {
+  padding: 0 20px 16px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 12px;
+}
+
+.sidebar-header h2 {
+  font-size: 16px;
+  color: var(--text);
+  font-weight: 700;
+}
+
+.sidebar-header .subtitle {
+  font-size: 12px;
+  color: var(--muted);
+  margin-top: 2px;
+}
+
+.sidebar-section {
+  margin-bottom: 8px;
+}
+
+.sidebar-section-title {
+  padding: 6px 20px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+}
+
+.sidebar-link {
+  display: block;
+  padding: 5px 20px 5px 28px;
+  font-size: 13px;
+  color: var(--muted);
+  text-decoration: none;
+  border-left: 2px solid transparent;
+  transition: all 0.15s;
+  line-height: 1.4;
+}
+
+.sidebar-link:hover {
+  color: var(--text);
+  background: var(--accent-dim);
+  border-left-color: var(--accent);
+  text-decoration: none;
+}
+
+.sidebar-link.active {
+  color: var(--accent);
+  border-left-color: var(--accent);
+  background: var(--accent-dim);
+}
+
+/* ===== Mobile sidebar toggle ===== */
+#sidebar-toggle {
+  display: none;
+  position: fixed;
+  top: 16px;
+  left: 16px;
+  z-index: 200;
+  background: var(--surface1);
+  border: 1px solid var(--border);
+  color: var(--text);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 20px;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--shadow);
+}
+
+/* ===== Main Content ===== */
+.main {
+  margin-left: var(--sidebar-w);
+  padding: 40px 48px 80px;
+  max-width: calc(860px + var(--sidebar-w) + 96px);
+}
+
+.page-title {
+  font-size: 32px;
+  font-weight: 800;
+  margin-bottom: 4px;
+  color: var(--text);
+}
+
+.page-subtitle {
+  font-size: 15px;
+  color: var(--muted);
+  margin-bottom: 36px;
+}
+
+/* ===== Sections ===== */
+.section {
+  margin-bottom: 48px;
+}
+
+.section-label {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  padding: 3px 10px;
+  border-radius: 4px;
+  margin-bottom: 12px;
+}
+
+.section-label.review { background: var(--yellow-dim); color: var(--yellow); }
+.section-label.new { background: var(--green-dim); color: var(--green); }
+
+.section-title {
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 24px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--border);
+}
+
+/* ===== How To Use ===== */
+.how-to-use {
+  background: var(--surface1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px 24px;
+  margin-bottom: 36px;
+}
+
+.how-to-use h3 {
+  font-size: 16px;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.how-to-use ul {
+  padding-left: 22px;
+  margin: 0;
+}
+
+.how-to-use li {
+  font-size: 14px;
+  color: var(--muted);
+  margin-bottom: 4px;
+}
+
+/* ===== Concept Cards ===== */
+.concept {
+  background: var(--surface1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 28px;
+  margin-bottom: 28px;
+  box-shadow: var(--shadow);
+}
+
+.concept-header {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  margin-bottom: 6px;
+  flex-wrap: wrap;
+}
+
+.concept h3 {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.concept-meta {
+  font-size: 12px;
+  color: var(--muted);
+  background: var(--surface2);
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
+.concept h4 {
+  font-size: 15px;
+  font-weight: 600;
+  margin: 20px 0 8px;
+  color: var(--text);
+}
+
+.concept p, .concept li {
+  color: var(--text);
+  line-height: 1.7;
+}
+
+.concept ul, .concept ol {
+  padding-left: 22px;
+  margin: 8px 0;
+}
+
+.concept li {
+  margin-bottom: 4px;
+}
+
+/* ===== Code Blocks ===== */
+pre {
+  background: var(--code-bg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 16px 18px;
+  overflow-x: auto;
+  margin: 10px 0 14px;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--text);
+  position: relative;
+}
+
+code {
+  font-family: var(--font-mono);
+  font-size: 0.9em;
+}
+
+:not(pre) > code {
+  background: var(--surface2);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.88em;
+}
+
+/* ===== Output Blocks ===== */
+.output {
+  background: var(--green-dim);
+  border: 1px solid var(--green);
+  border-radius: 6px;
+  padding: 12px 16px;
+  margin: 6px 0 14px;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--text);
+  white-space: pre-wrap;
+}
+
+.output-label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--green);
+  margin-bottom: 4px;
+}
+
+/* ===== Good/Bad Examples ===== */
+.do-dont {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin: 10px 0;
+}
+
+.do-box, .dont-box {
+  border-radius: 6px;
+  padding: 14px;
+  border: 1px solid;
+}
+
+.do-box {
+  background: var(--green-dim);
+  border-color: var(--green);
+}
+
+.dont-box {
+  background: var(--red-dim);
+  border-color: var(--red);
+}
+
+.do-box .label, .dont-box .label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 6px;
+}
+
+.do-box .label { color: var(--green); }
+.dont-box .label { color: var(--red); }
+
+.do-box pre, .dont-box pre {
+  margin: 0;
+  border: none;
+  background: transparent;
+  padding: 0;
+  font-size: 12.5px;
+}
+
+/* ===== Key Rules ===== */
+.rules-list {
+  list-style: none;
+  padding: 0;
+  margin: 8px 0;
+}
+
+.rules-list li {
+  padding: 6px 0 6px 24px;
+  position: relative;
+}
+
+.rules-list li::before {
+  content: "\2192";
+  position: absolute;
+  left: 2px;
+  color: var(--accent);
+  font-weight: 700;
+}
+
+/* ===== Exercises ===== */
+.exercise {
+  background: var(--purple-dim);
+  border: 1px solid var(--purple);
+  border-radius: 6px;
+  padding: 14px 18px;
+  margin: 8px 0;
+}
+
+.exercise .exercise-label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--purple);
+  margin-bottom: 4px;
+}
+
+/* ===== Pitfall ===== */
+.pitfall {
+  background: var(--red-dim);
+  border-left: 3px solid var(--red);
+  border-radius: 0 6px 6px 0;
+  padding: 10px 14px;
+  margin: 10px 0;
+  font-size: 14px;
+}
+
+.pitfall strong {
+  color: var(--red);
+}
+
+/* ===== Connection ===== */
+.connection {
+  background: var(--accent-dim);
+  border-left: 3px solid var(--accent);
+  border-radius: 0 6px 6px 0;
+  padding: 10px 14px;
+  margin: 10px 0;
+  font-size: 14px;
+  color: var(--muted);
+}
+
+/* ===== Footer ===== */
+.footer {
+  margin-top: 60px;
+  padding: 24px 0;
+  border-top: 1px solid var(--border);
+}
+
+.footer h4 {
+  font-size: 14px;
+  color: var(--muted);
+  margin-bottom: 10px;
+}
+
+.footer ul {
+  list-style: none;
+  padding: 0;
+}
+
+.footer li {
+  margin-bottom: 4px;
+  font-size: 14px;
+}
+
+.footer li a { color: var(--accent); }
+.footer .current { color: var(--green); font-weight: 600; }
+
+/* ===== Responsive ===== */
+@media (max-width: 900px) {
+  .sidebar {
+    transform: translateX(-100%);
+  }
+  .sidebar.open {
+    transform: translateX(0);
+    box-shadow: 4px 0 20px rgba(0,0,0,0.5);
+  }
+  #sidebar-toggle {
+    display: flex;
+  }
+  .main {
+    margin-left: 0;
+    padding: 60px 20px 60px;
+    max-width: 100%;
+  }
+  .do-dont {
+    grid-template-columns: 1fr;
+  }
+  #theme-toggle {
+    right: 14px;
+    top: 16px;
+  }
+}
+</style>
+</head>
+<body>
+
+<!-- Theme Toggle -->
+<button id="theme-toggle" aria-label="Toggle theme" title="Toggle light/dark theme">&#9789;</button>
+
+<!-- Mobile Sidebar Toggle -->
+<button id="sidebar-toggle" aria-label="Toggle sidebar">&#9776;</button>
+
+<!-- Sidebar -->
+<nav class="sidebar" id="sidebar">
+  <div class="sidebar-header">
+    <h2>Go Guide</h2>
+    <div class="subtitle">Day 1 &mdash; 2026-06-02</div>
+  </div>
+
+  <div class="sidebar-section">
+    <div class="sidebar-section-title">Go Foundations (7 concepts)</div>
+    <a href="#slices-deep-dive" class="sidebar-link">Slices Deep Dive</a>
+    <a href="#maps" class="sidebar-link">Maps</a>
+    <a href="#strings-runes" class="sidebar-link">Strings &amp; Runes</a>
+    <a href="#structs-methods" class="sidebar-link">Structs &amp; Methods</a>
+    <a href="#pointers" class="sidebar-link">Pointers</a>
+    <a href="#error-handling" class="sidebar-link">Error Handling</a>
+    <a href="#interfaces" class="sidebar-link">Interfaces</a>
+  </div>
+</nav>
+
+<!-- Main Content -->
+<div class="main">
+
+<h1 class="page-title">Go Daily Guide</h1>
+<p class="page-subtitle">Day 1 &mdash; Tuesday, June 2, 2026 &bull; 7 new concepts</p>
+
+<!-- How to Use -->
+<div class="how-to-use">
+  <h3>How to Use This Guide</h3>
+  <ul>
+    <li>Read each concept card carefully, working through the progressive examples</li>
+    <li>Type out the code yourself &mdash; do not copy-paste</li>
+    <li>Pay special attention to the common mistakes sections (they highlight real Go gotchas)</li>
+    <li>Complete the exercises at the bottom of each concept without looking at solutions</li>
+    <li>Use <code>go run main.go</code> to test your code locally, or use the <a href="https://go.dev/play/" target="_blank">Go Playground</a></li>
+    <li>Future guides will include spaced-repetition reviews of these concepts</li>
+  </ul>
+</div>
+
+<!-- ============================================================ -->
+<!-- NEW CONCEPTS: GO FOUNDATIONS -->
+<!-- ============================================================ -->
+<div class="section">
+  <span class="section-label new">New</span>
+  <h2 class="section-title">Go Foundations &mdash; 7 Concepts</h2>
+
+  <!-- ========== CONCEPT 1: Slices Deep Dive ========== -->
+  <div class="concept" id="slices-deep-dive">
+    <div class="concept-header">
+      <h3>Slices Deep Dive</h3>
+      <span class="concept-meta">Go Foundations &bull; New</span>
+    </div>
+
+    <p>Slices are Go's workhorse collection type. Unlike arrays (which have a fixed size baked into their type), slices are dynamic, flexible views into underlying arrays. Understanding the relationship between a slice's <strong>length</strong>, <strong>capacity</strong>, and its <strong>backing array</strong> is essential to writing correct Go.</p>
+
+    <h4>Creating Slices</h4>
+    <p>There are several ways to create a slice, each with different implications:</p>
+<pre>package main
+
+import "fmt"
+
+func main() {
+    // 1. Slice literal
+    s1 := []int{1, 2, 3}
+    fmt.Println("Literal:", s1, "len:", len(s1), "cap:", cap(s1))
+
+    // 2. make(type, length, capacity)
+    s2 := make([]int, 3, 10) // length 3, capacity 10
+    fmt.Println("Make:", s2, "len:", len(s2), "cap:", cap(s2))
+
+    // 3. make(type, length) — capacity defaults to length
+    s3 := make([]int, 5)
+    fmt.Println("Make (no cap):", s3, "len:", len(s3), "cap:", cap(s3))
+
+    // 4. nil slice — no allocation, but perfectly valid
+    var s4 []int
+    fmt.Println("Nil slice:", s4, "len:", len(s4), "cap:", cap(s4))
+    fmt.Println("s4 == nil?", s4 == nil) // true
+
+    // 5. Empty slice — allocated but empty
+    s5 := []int{}
+    fmt.Println("Empty slice:", s5, "len:", len(s5), "cap:", cap(s5))
+    fmt.Println("s5 == nil?", s5 == nil) // false!
+}</pre>
+    <div class="output">
+      <div class="output-label">Output</div>
+Literal: [1 2 3] len: 3 cap: 3
+Make: [0 0 0] len: 3 cap: 10
+Make (no cap): [0 0 0 0 0] len: 5 cap: 5
+Nil slice: [] len: 0 cap: 0
+s4 == nil? true
+Empty slice: [] len: 0 cap: 0
+s5 == nil? false
+    </div>
+
+    <div class="pitfall">
+      <strong>nil slice vs empty slice:</strong> Both <code>var s []int</code> and <code>s := []int{}</code> have length 0, but <code>var s []int</code> is nil while <code>[]int{}</code> is not. For most operations (append, len, range) they behave identically. The difference matters when encoding to JSON: a nil slice encodes as <code>null</code>, while an empty slice encodes as <code>[]</code>.
+    </div>
+
+    <h4>Length vs Capacity &amp; How Append Grows</h4>
+    <p>A slice has three components: a <strong>pointer</strong> to the backing array, a <strong>length</strong> (number of accessible elements), and a <strong>capacity</strong> (total space available before a new array is needed).</p>
+<pre>package main
+
+import "fmt"
+
+func main() {
+    s := make([]int, 0, 4)
+    fmt.Printf("Start: len=%d cap=%d %v\n", len(s), cap(s), s)
+
+    for i := 1; i <= 10; i++ {
+        s = append(s, i)
+        fmt.Printf("After append(%d): len=%d cap=%d\n", i, len(s), cap(s))
+    }
+}</pre>
+    <div class="output">
+      <div class="output-label">Output</div>
+Start: len=0 cap=4 []
+After append(1): len=1 cap=4
+After append(2): len=2 cap=4
+After append(3): len=3 cap=4
+After append(4): len=4 cap=4
+After append(5): len=5 cap=8
+After append(6): len=6 cap=8
+After append(7): len=7 cap=8
+After append(8): len=8 cap=8
+After append(9): len=9 cap=16
+After append(10): len=10 cap=16
+    </div>
+    <p>When append exceeds capacity, Go allocates a new, larger backing array and copies elements over. For small slices, capacity roughly doubles. For larger slices (>256 elements in Go 1.21+), it grows by ~25%.</p>
+
+    <h4>Slice Expressions &amp; the Three-Index Slice</h4>
+<pre>package main
+
+import "fmt"
+
+func main() {
+    a := []int{10, 20, 30, 40, 50}
+
+    // Standard slice: s[low:high]
+    b := a[1:4]
+    fmt.Println("b:", b, "len:", len(b), "cap:", cap(b))
+    // b shares memory with a! cap extends to end of a's backing array.
+
+    // Three-index slice: s[low:high:max] — limits capacity
+    c := a[1:4:4]
+    fmt.Println("c:", c, "len:", len(c), "cap:", cap(c))
+    // c also shares memory, but cap is limited to 3 (4-1).
+    // Any append to c will allocate a NEW backing array.
+
+    // This is how you make a "safe" sub-slice
+    c = append(c, 99)
+    fmt.Println("After append to c:")
+    fmt.Println("  a:", a) // a is NOT modified
+    fmt.Println("  c:", c) // c has its own array
+
+    // Without three-index, append would modify a!
+    b = append(b, 99)
+    fmt.Println("After append to b:")
+    fmt.Println("  a:", a) // a[4] is now 99!
+    fmt.Println("  b:", b)
+}</pre>
+    <div class="output">
+      <div class="output-label">Output</div>
+b: [20 30 40] len: 3 cap: 4
+c: [20 30 40] len: 3 cap: 3
+After append to c:
+  a: [10 20 30 40 50]
+  c: [20 30 40 99]
+After append to b:
+  a: [10 20 30 40 99]
+  b: [20 30 40 99]
+    </div>
+
+    <div class="pitfall">
+      <strong>Shared backing array:</strong> When you slice a slice, the new slice shares the same underlying array. Modifications to one are visible in the other. Use the three-index form <code>s[low:high:max]</code> to limit capacity and force a new allocation on append.
+    </div>
+
+    <h4>append() Must Be Reassigned</h4>
+    <p><code>append</code> may or may not return the same slice. If the backing array has capacity, it modifies in place and returns the original header. If not, it allocates a new array and returns a <em>different</em> header. You must always reassign:</p>
+    <div class="do-dont">
+      <div class="do-box">
+        <div class="label">Do</div>
+<pre>s = append(s, val)</pre>
+      </div>
+      <div class="dont-box">
+        <div class="label">Don't</div>
+<pre>append(s, val) // return value discarded!</pre>
+      </div>
+    </div>
+
+    <h4>copy() for Independent Copies</h4>
+<pre>package main
+
+import "fmt"
+
+func main() {
+    src := []int{1, 2, 3, 4, 5}
+
+    // copy(dst, src) — copies min(len(dst), len(src)) elements
+    dst := make([]int, len(src))
+    n := copy(dst, src)
+    fmt.Println("Copied", n, "elements:", dst)
+
+    // Modify dst — src is unaffected
+    dst[0] = 999
+    fmt.Println("src:", src)
+    fmt.Println("dst:", dst)
+
+    // copy into a smaller slice — only copies what fits
+    small := make([]int, 2)
+    copy(small, src)
+    fmt.Println("small:", small)
+}</pre>
+    <div class="output">
+      <div class="output-label">Output</div>
+Copied 5 elements: [1 2 3 4 5]
+src: [1 2 3 4 5]
+dst: [999 2 3 4 5]
+small: [1 2]
+    </div>
+
+    <h4>Slices as Function Parameters</h4>
+<pre>package main
+
+import "fmt"
+
+func double(s []int) {
+    for i := range s {
+        s[i] *= 2
+    }
+}
+
+func tryAppend(s []int) {
+    s = append(s, 999) // This append is NOT visible to caller
+    fmt.Println("Inside tryAppend:", s)
+}
+
+func main() {
+    nums := []int{1, 2, 3}
+
+    double(nums)
+    fmt.Println("After double:", nums) // [2 4 6] — modifications visible!
+
+    tryAppend(nums)
+    fmt.Println("After tryAppend:", nums) // [2 4 6] — append NOT visible!
+}</pre>
+    <div class="output">
+      <div class="output-label">Output</div>
+After double: [2 4 6]
+Inside tryAppend: [2 4 6 999]
+After tryAppend: [2 4 6]
+    </div>
+    <p>The slice header (pointer, length, capacity) is passed by value. Element modifications go through the shared pointer and are visible. But <code>append</code> may change the header (new pointer, new length), and those changes are local to the function.</p>
+
+    <h4>Real-World: Stack Implementation</h4>
+<pre>package main
+
+import "fmt"
+
+type Stack struct {
+    items []int
+}
+
+func (st *Stack) Push(val int) {
+    st.items = append(st.items, val)
+}
+
+func (st *Stack) Pop() (int, bool) {
+    if len(st.items) == 0 {
+        return 0, false
+    }
+    top := st.items[len(st.items)-1]
+    st.items = st.items[:len(st.items)-1]
+    return top, true
+}
+
+func (st *Stack) Peek() (int, bool) {
+    if len(st.items) == 0 {
+        return 0, false
+    }
+    return st.items[len(st.items)-1], true
+}
+
+func (st *Stack) Size() int {
+    return len(st.items)
+}
+
+func main() {
+    s := &Stack{}
+    s.Push(10)
+    s.Push(20)
+    s.Push(30)
+    fmt.Println("Size:", s.Size())
+
+    if val, ok := s.Pop(); ok {
+        fmt.Println("Popped:", val)
+    }
+    if val, ok := s.Peek(); ok {
+        fmt.Println("Peek:", val)
+    }
+    fmt.Println("Size:", s.Size())
+}</pre>
+    <div class="output">
+      <div class="output-label">Output</div>
+Size: 3
+Popped: 30
+Peek: 20
+Size: 2
+    </div>
+
+    <h4>Common Mistakes</h4>
+    <div class="do-dont">
+      <div class="do-box">
+        <div class="label">Do: Reassign append</div>
+<pre>s = append(s, 42)</pre>
+      </div>
+      <div class="dont-box">
+        <div class="label">Don't: Discard append return</div>
+<pre>append(s, 42) // compiles but does nothing!</pre>
+      </div>
+    </div>
+    <div class="do-dont">
+      <div class="do-box">
+        <div class="label">Do: Use copy or three-index slice</div>
+<pre>b := make([]int, len(a))
+copy(b, a) // independent copy</pre>
+      </div>
+      <div class="dont-box">
+        <div class="label">Don't: Assume slices are independent</div>
+<pre>b := a[1:3]
+b[0] = 99 // also changes a[1]!</pre>
+      </div>
+    </div>
+
+    <h4>Key Rules</h4>
+    <ul class="rules-list">
+      <li>Always reassign the result of <code>append</code>: <code>s = append(s, ...)</code></li>
+      <li>Use <code>copy()</code> or the three-index slice <code>s[lo:hi:hi]</code> when you need an independent slice</li>
+      <li>Prefer <code>var s []int</code> (nil slice) over <code>s := []int{}</code> unless you specifically need a non-nil empty slice (e.g., JSON encoding)</li>
+      <li>Pre-allocate with <code>make([]T, 0, expectedLen)</code> when you know the approximate size to avoid repeated allocations</li>
+      <li>Remember: <code>len()</code> is how many elements, <code>cap()</code> is how many it can hold before growing</li>
+    </ul>
+
+    <div class="connection">
+      <strong>Connection:</strong> Slices are closely related to <em>Pointers</em> (the slice header contains a pointer to the backing array) and <em>Maps</em> (maps of slices are a common pattern for grouping). You will see slices used everywhere in Go &mdash; function parameters, return values, and as the backbone of algorithms.
+    </div>
+
+    <div class="exercise">
+      <div class="exercise-label">Exercise 1</div>
+      <p>Implement a stack using a slice that supports <code>Push</code>, <code>Pop</code>, <code>Peek</code>, and <code>IsEmpty</code>. Make it generic-friendly by using <code>int</code> first, then refactor to use <code>any</code> with type assertions.</p>
+    </div>
+    <div class="exercise">
+      <div class="exercise-label">Exercise 2</div>
+      <p>Write a function <code>RemoveDuplicates(s []int) []int</code> that takes a sorted slice of integers and returns a new slice with duplicates removed. Do it in-place (reusing the original slice's memory) without allocating a new backing array.</p>
+    </div>
+    <div class="exercise">
+      <div class="exercise-label">Exercise 3</div>
+      <p>Write a function <code>Rotate(s []int, k int) []int</code> that rotates a slice to the right by <code>k</code> positions. For example, <code>Rotate([]int{1,2,3,4,5}, 2)</code> should return <code>[4,5,1,2,3]</code>. Handle cases where <code>k > len(s)</code>.</p>
+    </div>
+  </div>
+
+  <!-- ========== CONCEPT 2: Maps ========== -->
+  <div class="concept" id="maps">
+    <div class="concept-header">
+      <h3>Maps</h3>
+      <span class="concept-meta">Go Foundations &bull; New</span>
+    </div>
+
+    <p>Maps are Go's built-in hash table. They provide O(1) average-case lookups, inserts, and deletes. Maps are reference types &mdash; passing a map to a function gives that function full access to the same data.</p>
+
+    <h4>Creating Maps</h4>
+<pre>package main
+
+import "fmt"
+
+func main() {
+    // 1. Map literal
+    m1 := map[string]int{
+        "alice": 90,
+        "bob":   85,
+        "carol": 92,
+    }
+    fmt.Println("Literal:", m1)
+
+    // 2. make()
+    m2 := make(map[string]int)
+    m2["dave"] = 88
+    fmt.Println("Make:", m2)
+
+    // 3. nil map — reads work, writes PANIC
+    var m3 map[string]int
+    fmt.Println("nil map read:", m3["anything"]) // returns zero value, no panic
+    fmt.Println("m3 == nil?", m3 == nil)
+    // m3["key"] = 1 // PANIC: assignment to entry in nil map
+}</pre>
+    <div class="output">
+      <div class="output-label">Output</div>
+Literal: map[alice:90 bob:85 carol:92]
+Make: map[dave:88]
+nil map read: 0
+m3 == nil? true
+    </div>
+
+    <div class="pitfall">
+      <strong>nil map trap:</strong> A nil map allows reads (returning the zero value) but <strong>panics on write</strong>. Always initialize maps with <code>make()</code> or a literal before writing. This is one of the most common Go panics in production code.
+    </div>
+
+    <h4>Lookup with Comma-Ok Pattern</h4>
+    <p>Reading a missing key returns the zero value. To distinguish "key exists with zero value" from "key missing," use the comma-ok idiom:</p>
+<pre>package main
+
+import "fmt"
+
+func main() {
+    scores := map[string]int{"alice": 0, "bob": 95}
+
+    // Bad: can't tell if alice has score 0 or doesn't exist
+    fmt.Println("alice:", scores["alice"])   // 0
+    fmt.Println("missing:", scores["carol"]) // 0 — same!
+
+    // Good: comma-ok pattern
+    if val, ok := scores["alice"]; ok {
+        fmt.Println("alice exists, score:", val)
+    }
+    if _, ok := scores["carol"]; !ok {
+        fmt.Println("carol does NOT exist")
+    }
+}</pre>
+    <div class="output">
+      <div class="output-label">Output</div>
+alice: 0
+missing: 0
+alice exists, score: 0
+carol does NOT exist
+    </div>
+
+    <h4>Iteration Order Is Random</h4>
+<pre>package main
+
+import "fmt"
+
+func main() {
+    m := map[string]int{"a": 1, "b": 2, "c": 3, "d": 4}
+
+    // Each run may print in a different order!
+    for k, v := range m {
+        fmt.Printf("%s=%d ", k, v)
+    }
+    fmt.Println()
+
+    // If you need sorted output, sort the keys first
+    // (We'll skip the import for brevity, but use sort.Strings)
+}</pre>
+
+    <div class="pitfall">
+      <strong>Random iteration:</strong> Go deliberately randomizes map iteration order to prevent code from accidentally depending on it. If you need deterministic order, extract keys into a slice and sort them.
+    </div>
+
+    <h4>Delete &amp; Maps as Function Parameters</h4>
+<pre>package main
+
+import "fmt"
+
+func addEntry(m map[string]int, key string, val int) {
+    m[key] = val // Modifies the caller's map — maps are reference types
+}
+
+func main() {
+    m := map[string]int{"a": 1, "b": 2, "c": 3}
+    fmt.Println("Before delete:", m)
+
+    delete(m, "b")        // Remove key "b"
+    delete(m, "missing")  // No-op, no panic
+    fmt.Println("After delete:", m)
+
+    addEntry(m, "d", 4)
+    fmt.Println("After addEntry:", m)
+}</pre>
+    <div class="output">
+      <div class="output-label">Output</div>
+Before delete: map[a:1 b:2 c:3]
+After delete: map[a:1 c:3]
+After addEntry: map[a:1 c:3 d:4]
+    </div>
+
+    <h4>Map of Slices &mdash; Grouping Pattern</h4>
+<pre>package main
+
+import "fmt"
+
+func groupByLength(words []string) map[int][]string {
+    groups := make(map[int][]string)
+    for _, w := range words {
+        groups[len(w)] = append(groups[len(w)], w)
+    }
+    return groups
+}
+
+func main() {
+    words := []string{"go", "is", "fun", "maps", "are", "great", "hi"}
+    groups := groupByLength(words)
+    for length, ws := range groups {
+        fmt.Printf("Length %d: %v\n", length, ws)
+    }
+}</pre>
+    <div class="output">
+      <div class="output-label">Output (order may vary)</div>
+Length 2: [go is hi]
+Length 3: [fun are]
+Length 4: [maps]
+Length 5: [great]
+    </div>
+
+    <h4>Set Implementation with Maps</h4>
+<pre>package main
+
+import "fmt"
+
+func main() {
+    // Option 1: map[T]bool — slightly more readable
+    setBool := map[string]bool{}
+    setBool["apple"] = true
+    setBool["banana"] = true
+    if setBool["apple"] {
+        fmt.Println("apple is in setBool")
+    }
+
+    // Option 2: map[T]struct{} — zero memory for values
+    setEmpty := map[string]struct{}{}
+    setEmpty["apple"] = struct{}{}
+    setEmpty["banana"] = struct{}{}
+    if _, ok := setEmpty["apple"]; ok {
+        fmt.Println("apple is in setEmpty")
+    }
+
+    // struct{} takes 0 bytes; bool takes 1 byte per entry
+    // For large sets, struct{} saves memory
+    fmt.Printf("bool map: %v\n", setBool)
+}</pre>
+    <div class="output">
+      <div class="output-label">Output</div>
+apple is in setBool
+apple is in setEmpty
+bool map: map[apple:true banana:true]
+    </div>
+
+    <h4>Concurrent Access Warning</h4>
+    <div class="pitfall">
+      <strong>Concurrent map read/write is a fatal error:</strong> Unlike a panic (which can be recovered), concurrent map access causes a <code>fatal error: concurrent map read and map write</code> that <strong>kills the entire program</strong>. Protect maps with <code>sync.RWMutex</code> or use <code>sync.Map</code> for concurrent access. This will be covered in depth when we study goroutines and concurrency.
+    </div>
+
+    <h4>Common Mistakes</h4>
+    <div class="do-dont">
+      <div class="do-box">
+        <div class="label">Do: Initialize before writing</div>
+<pre>m := make(map[string]int)
+m["key"] = 1</pre>
+      </div>
+      <div class="dont-box">
+        <div class="label">Don't: Write to nil map</div>
+<pre>var m map[string]int
+m["key"] = 1 // PANIC!</pre>
+      </div>
+    </div>
+    <div class="do-dont">
+      <div class="do-box">
+        <div class="label">Do: Use comma-ok for existence check</div>
+<pre>if val, ok := m[key]; ok {
+    // key exists
+}</pre>
+      </div>
+      <div class="dont-box">
+        <div class="label">Don't: Check zero value for existence</div>
+<pre>if m[key] != 0 {
+    // fails for keys with value 0
+}</pre>
+      </div>
+    </div>
+
+    <h4>Key Rules</h4>
+    <ul class="rules-list">
+      <li>Always initialize maps before writing: <code>make(map[K]V)</code> or a map literal</li>
+      <li>Use the comma-ok pattern to distinguish "missing" from "zero value"</li>
+      <li>Never rely on map iteration order &mdash; it is random by design</li>
+      <li>Maps are reference types: passing to a function shares the data</li>
+      <li>For concurrent access, use <code>sync.RWMutex</code> or <code>sync.Map</code></li>
+      <li>Use <code>map[T]struct{}</code> for memory-efficient sets</li>
+    </ul>
+
+    <div class="connection">
+      <strong>Connection:</strong> Maps pair naturally with <em>Slices</em> for grouping patterns (<code>map[K][]V</code>). The comma-ok pattern you learned here is the same pattern used in <em>type assertions</em> for Interfaces and <em>channel receives</em> in concurrency.
+    </div>
+
+    <div class="exercise">
+      <div class="exercise-label">Exercise 1</div>
+      <p>Write a function <code>WordFrequency(text string) map[string]int</code> that counts how many times each word appears in a string. Use <code>strings.Fields()</code> to split on whitespace and <code>strings.ToLower()</code> to normalize.</p>
+    </div>
+    <div class="exercise">
+      <div class="exercise-label">Exercise 2</div>
+      <p>Write a function <code>GroupAnagrams(words []string) [][]string</code> that groups words that are anagrams of each other. Hint: sort each word's characters to create a canonical key.</p>
+    </div>
+    <div class="exercise">
+      <div class="exercise-label">Exercise 3</div>
+      <p>Implement a simple cache with <code>map[string]string</code> that supports <code>Get(key) (string, bool)</code>, <code>Set(key, value)</code>, and <code>Delete(key)</code>. Add a <code>Size()</code> method that returns the number of entries.</p>
+    </div>
+  </div>
+
+  <!-- ========== CONCEPT 3: Strings & Runes ========== -->
+  <div class="concept" id="strings-runes">
+    <div class="concept-header">
+      <h3>Strings &amp; Runes</h3>
+      <span class="concept-meta">Go Foundations &bull; New</span>
+    </div>
+
+    <p>Go strings are <strong>immutable sequences of bytes</strong>, encoded as UTF-8. This is a fundamental design choice that has deep implications: a single character (like a Chinese character or an emoji) may span multiple bytes. Go provides the <code>rune</code> type (an alias for <code>int32</code>) to represent individual Unicode code points.</p>
+
+    <h4>Bytes vs Runes</h4>
+<pre>package main
+
+import (
+    "fmt"
+    "unicode/utf8"
+)
+
+func main() {
+    s := "Hello, World!"
+    fmt.Println("len(s):", len(s))                          // 14 bytes
+    fmt.Println("rune count:", utf8.RuneCountInString(s))   // 14 runes
+
+    // Now with multi-byte characters
+    s2 := "Go is fun!"
+    fmt.Println("\nlen(s2):", len(s2))                        // 17 bytes (emoji is 4 bytes)
+    fmt.Println("rune count:", utf8.RuneCountInString(s2))   // 14 runes
+
+    // Indexing gives BYTES, not characters
+    fmt.Printf("\ns[0] = %d (byte: %c)\n", s[0], s[0])
+
+    // Ranging gives RUNES
+    fmt.Println("\nRanging over runes:")
+    for i, r := range "café" { // "cafe" + combining accent = "café"
+        fmt.Printf("  index=%d rune=%c (U+%04X)\n", i, r, r)
+    }
+}</pre>
+    <div class="output">
+      <div class="output-label">Output</div>
+len(s): 13
+rune count: 13
+len(s2): 14
+rune count: 11
+s[0] = 72 (byte: H)
+Ranging over runes:
+  index=0 rune=c (U+0063)
+  index=1 rune=a (U+0061)
+  index=2 rune=f (U+0066)
+  index=3 rune=e (U+0065)
+  index=4 rune=&#x301; (U+0301)
+    </div>
+
+    <div class="pitfall">
+      <strong>len() counts bytes, not characters:</strong> <code>len("hello")</code> is 5 because each ASCII character is 1 byte. But <code>len("Go")</code> could be more than the number of visible characters because multi-byte UTF-8 characters are counted as their byte length. Use <code>utf8.RuneCountInString()</code> for character count.
+    </div>
+
+    <h4>[]byte vs []rune Conversions</h4>
+<pre>package main
+
+import "fmt"
+
+func main() {
+    s := "Hello"
+
+    // Convert to byte slice — for byte-level processing
+    bytes := []byte(s)
+    fmt.Println("bytes:", bytes)
+
+    // Convert to rune slice — for character-level processing
+    runes := []rune(s)
+    fmt.Println("runes:", runes)
+
+    // Reverse a string (Unicode-safe)
+    original := "Hello"
+    r := []rune(original)
+    for i, j := 0, len(r)-1; i < j; i, j = i+1, j-1 {
+        r[i], r[j] = r[j], r[i]
+    }
+    fmt.Println("reversed:", string(r))
+}</pre>
+    <div class="output">
+      <div class="output-label">Output</div>
+bytes: [72 101 108 108 111]
+runes: [72 101 108 108 111]
+reversed: olleH
+    </div>
+
+    <h4>The strings Package</h4>
+<pre>package main
+
+import (
+    "fmt"
+    "strings"
+)
+
+func main() {
+    s := "  Hello, Go World!  "
+
+    fmt.Println(strings.TrimSpace(s))              // "Hello, Go World!"
+    fmt.Println(strings.Contains(s, "Go"))          // true
+    fmt.Println(strings.HasPrefix(s, "  Hello"))    // true
+    fmt.Println(strings.HasSuffix(s, "!  "))        // true
+    fmt.Println(strings.ToUpper("hello"))           // "HELLO"
+    fmt.Println(strings.ToLower("HELLO"))           // "hello"
+    fmt.Println(strings.Replace("aabaa", "a", "x", 2)) // "xxbaa" (replace first 2)
+    fmt.Println(strings.ReplaceAll("aabaa", "a", "x")) // "xxbxx"
+    fmt.Println(strings.Index("hello", "ll"))       // 2
+    fmt.Println(strings.Repeat("Go! ", 3))          // "Go! Go! Go! "
+
+    // Split and Join
+    parts := strings.Split("a,b,c,d", ",")
+    fmt.Println("Split:", parts)
+    fmt.Println("Join:", strings.Join(parts, " | "))
+}</pre>
+    <div class="output">
+      <div class="output-label">Output</div>
+Hello, Go World!
+true
+true
+true
+HELLO
+hello
+xxbaa
+xxbxx
+2
+Go! Go! Go!
+Split: [a b c d]
+Join: a | b | c | d
+    </div>
+
+    <h4>strings.Builder for Efficient Concatenation</h4>
+<pre>package main
+
+import (
+    "fmt"
+    "strings"
+)
+
+func main() {
+    // BAD: += creates a new string each time — O(n^2) for n concatenations
+    result := ""
+    for i := 0; i < 5; i++ {
+        result += fmt.Sprintf("item%d ", i)
+    }
+    fmt.Println("+=:", result)
+
+    // GOOD: strings.Builder is O(n) total
+    var b strings.Builder
+    for i := 0; i < 5; i++ {
+        fmt.Fprintf(&b, "item%d ", i)
+    }
+    fmt.Println("Builder:", b.String())
+}</pre>
+    <div class="output">
+      <div class="output-label">Output</div>
++=: item0 item1 item2 item3 item4
+Builder: item0 item1 item2 item3 item4
+    </div>
+
+    <h4>strconv: Number/String Conversions</h4>
+<pre>package main
+
+import (
+    "fmt"
+    "strconv"
+)
+
+func main() {
+    // Int to string
+    s := strconv.Itoa(42)
+    fmt.Println("Itoa:", s, fmt.Sprintf("(type: %T)", s))
+
+    // String to int
+    n, err := strconv.Atoi("123")
+    if err != nil {
+        fmt.Println("Error:", err)
+    } else {
+        fmt.Println("Atoi:", n, fmt.Sprintf("(type: %T)", n))
+    }
+
+    // Atoi with bad input
+    _, err = strconv.Atoi("not_a_number")
+    fmt.Println("Atoi error:", err)
+
+    // FormatFloat / ParseFloat
+    f := strconv.FormatFloat(3.14159, 'f', 2, 64)
+    fmt.Println("FormatFloat:", f)
+}</pre>
+    <div class="output">
+      <div class="output-label">Output</div>
+Itoa: 42 (type: string)
+Atoi: 123 (type: int)
+Atoi error: strconv.Atoi: parsing "not_a_number": invalid syntax
+FormatFloat: 3.14
+    </div>
+
+    <h4>Common Mistakes</h4>
+    <div class="do-dont">
+      <div class="do-box">
+        <div class="label">Do: Use runes for character ops</div>
+<pre>r := []rune(s)
+for i, j := 0, len(r)-1; i &lt; j; i, j = i+1, j-1 {
+    r[i], r[j] = r[j], r[i]
+}
+reversed := string(r)</pre>
+      </div>
+      <div class="dont-box">
+        <div class="label">Don't: Index bytes as characters</div>
+<pre>// s[i] gives a BYTE, not a character
+for i := 0; i &lt; len(s); i++ {
+    fmt.Println(s[i]) // byte values!
+}</pre>
+      </div>
+    </div>
+    <div class="do-dont">
+      <div class="do-box">
+        <div class="label">Do: Use strings.Builder for loops</div>
+<pre>var b strings.Builder
+for _, s := range items {
+    b.WriteString(s)
+}
+result := b.String()</pre>
+      </div>
+      <div class="dont-box">
+        <div class="label">Don't: Concatenate with += in loops</div>
+<pre>result := ""
+for _, s := range items {
+    result += s // O(n^2) allocations!
+}</pre>
+      </div>
+    </div>
+
+    <h4>Key Rules</h4>
+    <ul class="rules-list">
+      <li><code>len(s)</code> returns byte count; use <code>utf8.RuneCountInString(s)</code> for character count</li>
+      <li>Convert to <code>[]rune</code> for character-level operations (reversing, indexing by character)</li>
+      <li>Use <code>strings.Builder</code> for building strings in loops &mdash; never <code>+=</code></li>
+      <li>Ranging over a string with <code>for i, r := range s</code> iterates runes, not bytes</li>
+      <li>Use <code>strconv.Atoi</code>/<code>strconv.Itoa</code> for number/string conversions</li>
+    </ul>
+
+    <div class="connection">
+      <strong>Connection:</strong> Understanding byte vs rune is essential for <em>Slices</em> (since strings are essentially <code>[]byte</code>). The <code>io.Reader</code> interface you will learn in <em>Interfaces</em> reads bytes, so knowing how UTF-8 encoding works helps you process text streams correctly.
+    </div>
+
+    <div class="exercise">
+      <div class="exercise-label">Exercise 1</div>
+      <p>Write a function <code>ReverseString(s string) string</code> that correctly reverses a Unicode string. Test it with ASCII, accented characters, and multi-byte characters.</p>
+    </div>
+    <div class="exercise">
+      <div class="exercise-label">Exercise 2</div>
+      <p>Write a function <code>IsPalindrome(s string) bool</code> that checks if a string is a palindrome, ignoring case and non-letter characters. It must handle Unicode correctly.</p>
+    </div>
+    <div class="exercise">
+      <div class="exercise-label">Exercise 3</div>
+      <p>Implement a simple Caesar cipher: <code>CaesarEncrypt(s string, shift int) string</code> that shifts each letter by <code>shift</code> positions (wrapping around). Only shift letters; leave digits and punctuation unchanged.</p>
+    </div>
+  </div>
+
+  <!-- ========== CONCEPT 4: Structs & Methods ========== -->
+  <div class="concept" id="structs-methods">
+    <div class="concept-header">
+      <h3>Structs &amp; Methods</h3>
+      <span class="concept-meta">Go Foundations &bull; New</span>
+    </div>
+
+    <p>Structs are Go's primary way to define custom types with named fields. Combined with methods, they give you the ability to build clean abstractions. Go does not have classes &mdash; instead, it uses structs with methods and composition via embedding.</p>
+
+    <h4>Defining and Creating Structs</h4>
+<pre>package main
+
+import "fmt"
+
+type Point struct {
+    X float64
+    Y float64
+}
+
+type Person struct {
+    Name string
+    Age  int
+    Email string `json:"email,omitempty"` // struct tag for JSON
+}
+
+func main() {
+    // Named field initialization (preferred)
+    p1 := Point{X: 3.0, Y: 4.0}
+    fmt.Println("p1:", p1)
+
+    // Positional initialization (fragile — avoid!)
+    p2 := Point{1.0, 2.0}
+    fmt.Println("p2:", p2)
+
+    // Zero value — all fields get zero values
+    var p3 Point
+    fmt.Println("p3 (zero):", p3) // {0 0}
+
+    // Pointer to struct
+    p4 := &Point{X: 5, Y: 6}
+    fmt.Println("p4:", *p4)
+    fmt.Println("p4.X:", p4.X) // Go auto-dereferences!
+
+    // new() returns a pointer to zero-valued struct
+    p5 := new(Point)
+    fmt.Println("p5:", *p5) // {0 0}
+}</pre>
+    <div class="output">
+      <div class="output-label">Output</div>
+p1: {3 4}
+p2: {1 2}
+p3 (zero): {0 0}
+p4: {5 6}
+p4.X: 5
+p5: {0 0}
+    </div>
+
+    <h4>Value Receivers vs Pointer Receivers</h4>
+<pre>package main
+
+import (
+    "fmt"
+    "math"
+)
+
+type Circle struct {
+    Radius float64
+}
+
+// Value receiver — gets a COPY of the struct
+func (c Circle) Area() float64 {
+    return math.Pi * c.Radius * c.Radius
+}
+
+// Pointer receiver — can MODIFY the original struct
+func (c *Circle) Scale(factor float64) {
+    c.Radius *= factor
+}
+
+// Value receiver — cannot modify (changes are lost)
+func (c Circle) ScaleBroken(factor float64) {
+    c.Radius *= factor // modifies the copy, not the original!
+}
+
+func main() {
+    c := Circle{Radius: 5}
+    fmt.Printf("Area: %.2f\n", c.Area())
+
+    c.ScaleBroken(2)
+    fmt.Println("After ScaleBroken(2):", c.Radius) // Still 5!
+
+    c.Scale(2)
+    fmt.Println("After Scale(2):", c.Radius) // Now 10
+    fmt.Printf("New Area: %.2f\n", c.Area())
+}</pre>
+    <div class="output">
+      <div class="output-label">Output</div>
+Area: 78.54
+After ScaleBroken(2): 5
+After Scale(2): 10
+New Area: 314.16
+    </div>
+
+    <div class="pitfall">
+      <strong>Value receiver trap:</strong> A value receiver method works on a <em>copy</em> of the struct. Any modifications inside the method are lost when the method returns. If your method needs to modify the struct, you <strong>must</strong> use a pointer receiver.
+    </div>
+
+    <h4>Method Set Consistency</h4>
+    <p>The Go convention is: if any method on a type needs a pointer receiver, <strong>all methods</strong> should use pointer receivers. This keeps the method set consistent and avoids subtle bugs with interface satisfaction.</p>
+    <div class="do-dont">
+      <div class="do-box">
+        <div class="label">Do: Consistent receivers</div>
+<pre>func (c *Circle) Area() float64 { ... }
+func (c *Circle) Scale(f float64) { ... }
+func (c *Circle) String() string { ... }</pre>
+      </div>
+      <div class="dont-box">
+        <div class="label">Don't: Mixed receivers</div>
+<pre>func (c Circle) Area() float64 { ... }
+func (c *Circle) Scale(f float64) { ... }
+// Confusing method sets!</pre>
+      </div>
+    </div>
+
+    <h4>Struct Embedding (Composition)</h4>
+<pre>package main
+
+import "fmt"
+
+type Logger struct {
+    Prefix string
+}
+
+func (l Logger) Log(msg string) {
+    fmt.Printf("[%s] %s\n", l.Prefix, msg)
+}
+
+type Server struct {
+    Logger  // Embedded — promotes Logger's methods
+    Host string
+    Port int
+}
+
+func main() {
+    s := Server{
+        Logger: Logger{Prefix: "SERVER"},
+        Host:   "localhost",
+        Port:   8080,
+    }
+
+    // Log() is promoted from Logger — can call directly
+    s.Log("Starting up")
+    s.Log(fmt.Sprintf("Listening on %s:%d", s.Host, s.Port))
+
+    // Can also access the embedded type explicitly
+    s.Logger.Log("Explicit access")
+}</pre>
+    <div class="output">
+      <div class="output-label">Output</div>
+[SERVER] Starting up
+[SERVER] Listening on localhost:8080
+[SERVER] Explicit access
+    </div>
+    <p>Embedding is <strong>composition, not inheritance</strong>. The outer type <em>has a</em> Logger, not <em>is a</em> Logger. The embedded type's methods are promoted to the outer type for convenience, but there is no "super" or "parent" concept.</p>
+
+    <h4>Struct Tags</h4>
+<pre>package main
+
+import (
+    "encoding/json"
+    "fmt"
+)
+
+type User struct {
+    Name     string `json:"name"`
+    Email    string `json:"email,omitempty"`
+    Password string `json:"-"` // never serialize
+    Age      int    `json:"age,omitempty"`
+}
+
+func main() {
+    u := User{Name: "Alice", Email: "alice@example.com", Password: "secret", Age: 0}
+
+    data, _ := json.MarshalIndent(u, "", "  ")
+    fmt.Println(string(data))
+    // Note: Password excluded (-), Age excluded (omitempty + zero value)
+}</pre>
+    <div class="output">
+      <div class="output-label">Output</div>
+{
+  "name": "Alice",
+  "email": "alice@example.com"
+}
+    </div>
+
+    <h4>Key Rules</h4>
+    <ul class="rules-list">
+      <li>Use named fields in struct literals: <code>Point{X: 1, Y: 2}</code> not <code>Point{1, 2}</code></li>
+      <li>Use pointer receivers when: method modifies state, struct is large, or for consistency when any method needs a pointer</li>
+      <li>Use value receivers when: method is read-only and struct is small (a few fields)</li>
+      <li>Keep receivers consistent: if one method uses pointer receiver, all should</li>
+      <li>Embedding is composition: use it to share behavior, not to model "is-a" relationships</li>
+      <li>Struct tags control serialization &mdash; use <code>json:"-"</code> to exclude sensitive fields</li>
+    </ul>
+
+    <div class="connection">
+      <strong>Connection:</strong> Structs and methods are the foundation for implementing <em>Interfaces</em>. The pointer vs value receiver distinction is directly tied to <em>Pointers</em>. Struct embedding provides a form of polymorphism that pairs with Interface composition.
+    </div>
+
+    <div class="exercise">
+      <div class="exercise-label">Exercise 1</div>
+      <p>Create a <code>Rectangle</code> struct with <code>Width</code> and <code>Height</code> fields. Add methods <code>Area() float64</code>, <code>Perimeter() float64</code>, and <code>Scale(factor float64)</code>. Decide which need pointer receivers and why.</p>
+    </div>
+    <div class="exercise">
+      <div class="exercise-label">Exercise 2</div>
+      <p>Create a <code>Logger</code> struct and embed it into a <code>Server</code> struct. The Server should be able to call <code>Log()</code> directly through promotion. Add a <code>Start()</code> method to Server that logs a startup message.</p>
+    </div>
+    <div class="exercise">
+      <div class="exercise-label">Exercise 3</div>
+      <p>Implement a singly linked list using a <code>Node</code> struct with <code>Value int</code> and <code>Next *Node</code>. Add methods: <code>Append(val int)</code>, <code>Print()</code>, and <code>Len() int</code>. Use pointer receivers for all methods.</p>
+    </div>
+  </div>
+
+  <!-- ========== CONCEPT 5: Pointers ========== -->
+  <div class="concept" id="pointers">
+    <div class="concept-header">
+      <h3>Pointers</h3>
+      <span class="concept-meta">Go Foundations &bull; New</span>
+    </div>
+
+    <p>Pointers hold the memory address of a value. Go's pointers are simpler than C/C++ pointers &mdash; there is no pointer arithmetic. Pointers let you share data efficiently, modify values in-place, and signal optional values with <code>nil</code>.</p>
+
+    <h4>Pointer Basics</h4>
+<pre>package main
+
+import "fmt"
+
+func main() {
+    x := 42
+    p := &x          // p is a *int, pointing to x
+    fmt.Println("x:", x)
+    fmt.Println("p:", p)     // memory address
+    fmt.Println("*p:", *p)   // dereference: value at address
+
+    *p = 100                 // modify x through the pointer
+    fmt.Println("x after *p = 100:", x)
+
+    // new() allocates and returns a pointer
+    q := new(int)            // *int, points to 0 (zero value)
+    fmt.Println("*q:", *q)
+    *q = 7
+    fmt.Println("*q after assignment:", *q)
+}</pre>
+    <div class="output">
+      <div class="output-label">Output</div>
+x: 42
+p: 0xc0000b6010
+*p: 42
+x after *p = 100: 100
+*q: 0
+*q after assignment: 7
+    </div>
+
+    <h4>Pointers for Modifying Values</h4>
+<pre>package main
+
+import "fmt"
+
+// Without pointer — changes are lost
+func incrementBroken(n int) {
+    n++
+}
+
+// With pointer — changes the original
+func increment(n *int) {
+    *n++
+}
+
+// Classic swap function
+func swap(a, b *int) {
+    *a, *b = *b, *a
+}
+
+func main() {
+    x := 10
+    incrementBroken(x)
+    fmt.Println("After incrementBroken:", x) // Still 10
+
+    increment(&x)
+    fmt.Println("After increment:", x) // 11
+
+    a, b := 3, 7
+    swap(&a, &b)
+    fmt.Println("After swap:", a, b) // 7 3
+}</pre>
+    <div class="output">
+      <div class="output-label">Output</div>
+After incrementBroken: 10
+After increment: 11
+After swap: 7 3
+    </div>
+
+    <h4>Pointer to Struct</h4>
+<pre>package main
+
+import "fmt"
+
+type Config struct {
+    Debug   bool
+    Verbose bool
+    MaxConn int
+}
+
+// Returns a pointer — common "constructor" pattern
+func NewConfig() *Config {
+    return &Config{
+        Debug:   false,
+        Verbose: false,
+        MaxConn: 100,
+    }
+}
+
+func enableDebug(c *Config) {
+    c.Debug = true   // Go auto-dereferences: c.Debug == (*c).Debug
+    c.Verbose = true
+}
+
+func main() {
+    cfg := NewConfig()
+    fmt.Println("Before:", *cfg)
+
+    enableDebug(cfg)
+    fmt.Println("After:", *cfg)
+}</pre>
+    <div class="output">
+      <div class="output-label">Output</div>
+Before: {false false 100}
+After: {true true 100}
+    </div>
+
+    <h4>When to Use (and Not Use) Pointers</h4>
+    <p><strong>Use pointers when:</strong></p>
+    <ul>
+      <li>You need to modify the original value (mutation)</li>
+      <li>The struct is large and copying would be expensive</li>
+      <li>You want to express "optional" / "nullable" with nil</li>
+      <li>You want to share a value between goroutines (with proper synchronization)</li>
+    </ul>
+    <p><strong>Do NOT use pointers for:</strong></p>
+    <ul>
+      <li>Small structs (a few fields) &mdash; copying is cheap and avoids aliasing bugs</li>
+      <li>Maps, slices, channels &mdash; they already contain internal pointers</li>
+      <li>Strings and interfaces &mdash; they are small headers, cheap to copy</li>
+    </ul>
+
+    <h4>nil Pointer Safety</h4>
+<pre>package main
+
+import "fmt"
+
+type Node struct {
+    Value int
+    Next  *Node
+}
+
+func (n *Node) String() string {
+    if n == nil {
+        return "&lt;nil&gt;"
+    }
+    return fmt.Sprintf("Node(%d)", n.Value)
+}
+
+func main() {
+    var n *Node // nil pointer
+    fmt.Println(n.String()) // Safe: method checks for nil
+
+    // fmt.Println(n.Value) // PANIC: nil pointer dereference!
+}</pre>
+    <div class="output">
+      <div class="output-label">Output</div>
+&lt;nil&gt;
+    </div>
+
+    <div class="pitfall">
+      <strong>nil pointer dereference:</strong> Accessing a field or calling a method on a nil pointer panics at runtime. Always check for nil before dereferencing, or design your methods to handle nil receivers gracefully.
+    </div>
+
+    <h4>Pointer to Loop Variable Gotcha</h4>
+<pre>package main
+
+import "fmt"
+
+func main() {
+    // GOTCHA: In Go &lt; 1.22, this captures the same variable
+    // In Go >= 1.22, loop variables are per-iteration (fixed!)
+    nums := []int{1, 2, 3}
+    ptrs := make([]*int, len(nums))
+
+    // Safe approach (works in all Go versions)
+    for i, v := range nums {
+        v := v // shadow with a new variable
+        ptrs[i] = &v
+    }
+
+    for _, p := range ptrs {
+        fmt.Println(*p)
+    }
+}</pre>
+    <div class="output">
+      <div class="output-label">Output</div>
+1
+2
+3
+    </div>
+    <p>Go 1.22+ fixed this by making loop variables per-iteration. But the shadowing idiom (<code>v := v</code>) is still good practice for clarity and backwards compatibility.</p>
+
+    <h4>Common Mistakes</h4>
+    <div class="do-dont">
+      <div class="do-box">
+        <div class="label">Do: Check for nil before dereferencing</div>
+<pre>if p != nil {
+    fmt.Println(*p)
+}</pre>
+      </div>
+      <div class="dont-box">
+        <div class="label">Don't: Blindly dereference</div>
+<pre>fmt.Println(*p) // panic if p is nil!</pre>
+      </div>
+    </div>
+    <div class="do-dont">
+      <div class="do-box">
+        <div class="label">Do: Use value types for small data</div>
+<pre>type Point struct { X, Y int }
+func dist(a, b Point) float64 { ... }</pre>
+      </div>
+      <div class="dont-box">
+        <div class="label">Don't: Pointer for everything</div>
+<pre>// Unnecessary — Point is tiny
+func dist(a, b *Point) float64 { ... }</pre>
+      </div>
+    </div>
+
+    <h4>Key Rules</h4>
+    <ul class="rules-list">
+      <li><code>&amp;</code> takes the address of a variable; <code>*</code> dereferences a pointer</li>
+      <li>Go has no pointer arithmetic &mdash; pointers are safe by design</li>
+      <li>Use pointers for mutation and large structs; use values for small, immutable data</li>
+      <li>Maps, slices, and channels already contain pointers &mdash; no need to use <code>*map</code> or <code>*[]T</code></li>
+      <li>Always check for nil before dereferencing</li>
+      <li>Return <code>*T</code> from constructors is idiomatic: <code>func NewFoo() *Foo</code></li>
+    </ul>
+
+    <div class="connection">
+      <strong>Connection:</strong> Pointers underpin <em>Structs &amp; Methods</em> (pointer receivers), <em>Slices</em> (slice header contains a pointer), and are essential for building data structures like linked lists and trees. When we cover <em>Interfaces</em>, the pointer vs value distinction determines which methods are in a type's method set.
+    </div>
+
+    <div class="exercise">
+      <div class="exercise-label">Exercise 1</div>
+      <p>Implement a <code>swap(a, b *int)</code> function and verify it works by printing values before and after the swap.</p>
+    </div>
+    <div class="exercise">
+      <div class="exercise-label">Exercise 2</div>
+      <p>Implement a singly linked list with <code>Insert(val int)</code> and <code>Delete(val int) bool</code> operations. Both should use pointer manipulation. Add a <code>Print()</code> method that traverses the list.</p>
+    </div>
+    <div class="exercise">
+      <div class="exercise-label">Exercise 3</div>
+      <p>Build a binary tree struct with <code>Value int</code>, <code>Left *Tree</code>, <code>Right *Tree</code>. Implement <code>Insert(val int)</code> (BST insert) and <code>InOrder() []int</code> (in-order traversal using pointer-based recursion).</p>
+    </div>
+  </div>
+
+  <!-- ========== CONCEPT 6: Error Handling ========== -->
+  <div class="concept" id="error-handling">
+    <div class="concept-header">
+      <h3>Error Handling</h3>
+      <span class="concept-meta">Go Foundations &bull; New</span>
+    </div>
+
+    <p>Go does not have exceptions. Instead, functions that can fail return an <code>error</code> value as their last return. This explicit error handling is a core design philosophy &mdash; errors are values, not control flow. You check them, wrap them with context, and pass them up the call stack.</p>
+
+    <h4>The error Interface</h4>
+<pre>package main
+
+import (
+    "errors"
+    "fmt"
+)
+
+func main() {
+    // The error interface is simple:
+    // type error interface { Error() string }
+
+    // Creating errors
+    err1 := errors.New("something went wrong")
+    fmt.Println("err1:", err1)
+
+    err2 := fmt.Errorf("failed to process item %d: %s", 42, "bad format")
+    fmt.Println("err2:", err2)
+}</pre>
+    <div class="output">
+      <div class="output-label">Output</div>
+err1: something went wrong
+err2: failed to process item 42: bad format
+    </div>
+
+    <h4>Basic Error Handling Pattern</h4>
+<pre>package main
+
+import (
+    "fmt"
+    "strconv"
+)
+
+func parseAge(s string) (int, error) {
+    age, err := strconv.Atoi(s)
+    if err != nil {
+        return 0, fmt.Errorf("parseAge: invalid input %q: %w", s, err)
+    }
+    if age < 0 || age > 150 {
+        return 0, fmt.Errorf("parseAge: age %d out of range [0, 150]", age)
+    }
+    return age, nil
+}
+
+func main() {
+    // Happy path
+    age, err := parseAge("25")
+    if err != nil {
+        fmt.Println("Error:", err)
+        return
+    }
+    fmt.Println("Age:", age)
+
+    // Error path
+    age, err = parseAge("abc")
+    if err != nil {
+        fmt.Println("Error:", err)
+    }
+
+    // Out of range
+    age, err = parseAge("200")
+    if err != nil {
+        fmt.Println("Error:", err)
+    }
+}</pre>
+    <div class="output">
+      <div class="output-label">Output</div>
+Age: 25
+Error: parseAge: invalid input "abc": strconv.Atoi: parsing "abc": invalid syntax
+Error: parseAge: age 200 out of range [0, 150]
+    </div>
+
+    <h4>Error Wrapping with %w</h4>
+    <p>The <code>%w</code> verb in <code>fmt.Errorf</code> wraps an error, preserving the error chain. This lets callers inspect the original error using <code>errors.Is</code> and <code>errors.As</code>.</p>
+<pre>package main
+
+import (
+    "errors"
+    "fmt"
+)
+
+var ErrNotFound = errors.New("not found")
+
+func findUser(id int) (string, error) {
+    if id != 1 {
+        return "", fmt.Errorf("findUser(%d): %w", id, ErrNotFound)
+    }
+    return "Alice", nil
+}
+
+func getProfile(id int) (string, error) {
+    name, err := findUser(id)
+    if err != nil {
+        return "", fmt.Errorf("getProfile: %w", err)
+    }
+    return fmt.Sprintf("Profile: %s", name), nil
+}
+
+func main() {
+    // Success
+    profile, err := getProfile(1)
+    if err != nil {
+        fmt.Println("Error:", err)
+    } else {
+        fmt.Println(profile)
+    }
+
+    // Error — check the chain with errors.Is
+    _, err = getProfile(99)
+    fmt.Println("Error:", err)
+    fmt.Println("Is ErrNotFound?", errors.Is(err, ErrNotFound))
+}</pre>
+    <div class="output">
+      <div class="output-label">Output</div>
+Profile: Alice
+Error: getProfile: findUser(99): not found
+Is ErrNotFound? true
+    </div>
+
+    <div class="pitfall">
+      <strong>%w vs %v:</strong> Using <code>%v</code> instead of <code>%w</code> converts the error to a string, <em>breaking the error chain</em>. After wrapping with <code>%v</code>, <code>errors.Is</code> will return <code>false</code>. Always use <code>%w</code> when you want callers to be able to inspect the original error.
+    </div>
+
+    <h4>Custom Error Types</h4>
+<pre>package main
+
+import (
+    "errors"
+    "fmt"
+)
+
+type ValidationError struct {
+    Field   string
+    Message string
+}
+
+func (e *ValidationError) Error() string {
+    return fmt.Sprintf("validation failed on %q: %s", e.Field, e.Message)
+}
+
+func validateEmail(email string) error {
+    if len(email) == 0 {
+        return &ValidationError{Field: "email", Message: "cannot be empty"}
+    }
+    return nil
+}
+
+func main() {
+    err := validateEmail("")
+    fmt.Println("Error:", err)
+
+    // Use errors.As to extract the custom type through the chain
+    var ve *ValidationError
+    if errors.As(err, &ve) {
+        fmt.Println("Field:", ve.Field)
+        fmt.Println("Message:", ve.Message)
+    }
+}</pre>
+    <div class="output">
+      <div class="output-label">Output</div>
+Error: validation failed on "email": cannot be empty
+Field: email
+Message: cannot be empty
+    </div>
+
+    <h4>Sentinel Errors &amp; errors.Is vs ==</h4>
+    <div class="do-dont">
+      <div class="do-box">
+        <div class="label">Do: Use errors.Is (chain-aware)</div>
+<pre>if errors.Is(err, ErrNotFound) {
+    // handles wrapped errors too
+}</pre>
+      </div>
+      <div class="dont-box">
+        <div class="label">Don't: Use == (breaks on wrapping)</div>
+<pre>if err == ErrNotFound {
+    // fails if error was wrapped!
+}</pre>
+      </div>
+    </div>
+
+    <h4>Error Handling Best Practices</h4>
+    <div class="do-dont">
+      <div class="do-box">
+        <div class="label">Do: Handle every error</div>
+<pre>val, err := doSomething()
+if err != nil {
+    return fmt.Errorf("context: %w", err)
+}
+// use val</pre>
+      </div>
+      <div class="dont-box">
+        <div class="label">Don't: Ignore errors</div>
+<pre>val, _ := doSomething()
+// if doSomething failed, val is zero
+// and you have no idea why</pre>
+      </div>
+    </div>
+
+    <h4>Key Rules</h4>
+    <ul class="rules-list">
+      <li>Check errors immediately: <code>if err != nil { return ..., err }</code></li>
+      <li>Wrap errors with context: <code>fmt.Errorf("doing X: %w", err)</code></li>
+      <li>Use <code>%w</code> (not <code>%v</code>) to preserve the error chain</li>
+      <li>Use <code>errors.Is(err, target)</code> to check for sentinel errors through the chain</li>
+      <li>Use <code>errors.As(err, &target)</code> to extract custom error types through the chain</li>
+      <li>Define sentinel errors as package-level variables: <code>var ErrNotFound = errors.New("not found")</code></li>
+      <li>Never ignore returned errors in production code</li>
+    </ul>
+
+    <div class="connection">
+      <strong>Connection:</strong> The <code>error</code> type is itself an <em>Interface</em>. Custom error types implement this interface. Error wrapping chains are a practical application of Go's interface and type assertion mechanisms. You will see error handling in every Go program you write.
+    </div>
+
+    <div class="exercise">
+      <div class="exercise-label">Exercise 1</div>
+      <p>Create a <code>ValidationError</code> struct with <code>Field</code>, <code>Value</code>, and <code>Message</code> fields. Implement the <code>error</code> interface. Write a <code>ValidateAge(age int) error</code> function that returns a <code>*ValidationError</code> if age is invalid.</p>
+    </div>
+    <div class="exercise">
+      <div class="exercise-label">Exercise 2</div>
+      <p>Write three functions that call each other (A calls B, B calls C). Each wraps the error with context using <code>%w</code>. In <code>main</code>, use <code>errors.Is</code> and <code>errors.As</code> to inspect the wrapped error chain.</p>
+    </div>
+    <div class="exercise">
+      <div class="exercise-label">Exercise 3</div>
+      <p>Implement a <code>Retry(fn func() error, maxAttempts int) error</code> function. It should call <code>fn</code> up to <code>maxAttempts</code> times, returning nil on success. If all attempts fail, return the last error. Bonus: add a check that stops retrying for specific error types (e.g., <code>*ValidationError</code>).</p>
+    </div>
+  </div>
+
+  <!-- ========== CONCEPT 7: Interfaces ========== -->
+  <div class="concept" id="interfaces">
+    <div class="concept-header">
+      <h3>Interfaces</h3>
+      <span class="concept-meta">Go Foundations &bull; New</span>
+    </div>
+
+    <p>Interfaces are Go's mechanism for polymorphism. Unlike Java or C#, Go interfaces are satisfied <strong>implicitly</strong> &mdash; if a type has all the methods an interface requires, it automatically implements that interface. No <code>implements</code> keyword needed. This makes Go interfaces incredibly flexible and enables loose coupling.</p>
+
+    <h4>Implicit Interface Satisfaction</h4>
+<pre>package main
+
+import (
+    "fmt"
+    "math"
+)
+
+type Shape interface {
+    Area() float64
+    Perimeter() float64
+}
+
+type Circle struct {
+    Radius float64
+}
+
+func (c Circle) Area() float64 {
+    return math.Pi * c.Radius * c.Radius
+}
+
+func (c Circle) Perimeter() float64 {
+    return 2 * math.Pi * c.Radius
+}
+
+type Rectangle struct {
+    Width, Height float64
+}
+
+func (r Rectangle) Area() float64 {
+    return r.Width * r.Height
+}
+
+func (r Rectangle) Perimeter() float64 {
+    return 2 * (r.Width + r.Height)
+}
+
+// Works with ANY Shape — polymorphism!
+func printShapeInfo(s Shape) {
+    fmt.Printf("Area: %.2f, Perimeter: %.2f\n", s.Area(), s.Perimeter())
+}
+
+func main() {
+    c := Circle{Radius: 5}
+    r := Rectangle{Width: 3, Height: 4}
+
+    printShapeInfo(c)
+    printShapeInfo(r)
+
+    // Slice of interfaces
+    shapes := []Shape{c, r, Circle{Radius: 1}}
+    for _, s := range shapes {
+        printShapeInfo(s)
+    }
+}</pre>
+    <div class="output">
+      <div class="output-label">Output</div>
+Area: 78.54, Perimeter: 31.42
+Area: 12.00, Perimeter: 14.00
+Area: 78.54, Perimeter: 31.42
+Area: 12.00, Perimeter: 14.00
+Area: 3.14, Perimeter: 6.28
+    </div>
+
+    <h4>The Empty Interface &amp; any</h4>
+<pre>package main
+
+import "fmt"
+
+// interface{} (or "any" since Go 1.18) accepts ANY value
+func describe(i interface{}) {
+    fmt.Printf("Value: %v, Type: %T\n", i, i)
+}
+
+func main() {
+    describe(42)
+    describe("hello")
+    describe(true)
+    describe([]int{1, 2, 3})
+    describe(nil)
+}</pre>
+    <div class="output">
+      <div class="output-label">Output</div>
+Value: 42, Type: int
+Value: hello, Type: string
+Value: true, Type: bool
+Value: [1 2 3], Type: []int
+Value: &lt;nil&gt;, Type: &lt;nil&gt;
+    </div>
+
+    <h4>Type Assertions &amp; Type Switches</h4>
+<pre>package main
+
+import "fmt"
+
+func process(i interface{}) {
+    // Type assertion with comma-ok (safe)
+    if s, ok := i.(string); ok {
+        fmt.Println("It's a string:", s)
+        return
+    }
+
+    // Type switch — the idiomatic way
+    switch v := i.(type) {
+    case int:
+        fmt.Println("It's an int:", v*2)
+    case float64:
+        fmt.Println("It's a float64:", v)
+    case string:
+        fmt.Println("It's a string:", v)
+    case nil:
+        fmt.Println("It's nil")
+    default:
+        fmt.Printf("Unknown type: %T\n", v)
+    }
+}
+
+func main() {
+    process("hello")
+    process(42)
+    process(3.14)
+    process(nil)
+    process([]int{1})
+}</pre>
+    <div class="output">
+      <div class="output-label">Output</div>
+It's a string: hello
+It's an int: 84
+It's a float64: 3.14
+It's nil
+Unknown type: []int
+    </div>
+
+    <h4>The Stringer Interface</h4>
+<pre>package main
+
+import "fmt"
+
+// fmt.Stringer interface:
+// type Stringer interface { String() string }
+
+type Color struct {
+    R, G, B uint8
+}
+
+func (c Color) String() string {
+    return fmt.Sprintf("#%02x%02x%02x", c.R, c.G, c.B)
+}
+
+func main() {
+    red := Color{255, 0, 0}
+    blue := Color{0, 0, 255}
+
+    // fmt.Println automatically calls String() if available
+    fmt.Println("Red:", red)
+    fmt.Println("Blue:", blue)
+    fmt.Printf("Custom color: %s\n", Color{128, 64, 200})
+}</pre>
+    <div class="output">
+      <div class="output-label">Output</div>
+Red: #ff0000
+Blue: #0000ff
+Custom color: #8040c8
+    </div>
+
+    <h4>Interface Composition</h4>
+<pre>package main
+
+import (
+    "fmt"
+    "io"
+    "strings"
+)
+
+// Small, focused interfaces
+type Reader interface {
+    Read(p []byte) (n int, err error)
+}
+
+type Writer interface {
+    Write(p []byte) (n int, err error)
+}
+
+// Composed interface (this is how io.ReadWriter is defined)
+type ReadWriter interface {
+    Reader
+    Writer
+}
+
+func main() {
+    // strings.NewReader implements io.Reader
+    r := strings.NewReader("Hello, Go interfaces!")
+    buf := make([]byte, 5)
+
+    for {
+        n, err := r.Read(buf)
+        if n > 0 {
+            fmt.Print(string(buf[:n]))
+        }
+        if err == io.EOF {
+            break
+        }
+    }
+    fmt.Println()
+}</pre>
+    <div class="output">
+      <div class="output-label">Output</div>
+Hello, Go interfaces!
+    </div>
+
+    <h4>The nil Interface Pitfall</h4>
+    <p>This is one of Go's most subtle traps. An interface value is nil only if <em>both</em> its type and value are nil:</p>
+<pre>package main
+
+import "fmt"
+
+type MyError struct {
+    Code int
+}
+
+func (e *MyError) Error() string {
+    return fmt.Sprintf("error code %d", e.Code)
+}
+
+func doSomething(fail bool) error {
+    var err *MyError // nil *MyError
+
+    if fail {
+        err = &MyError{Code: 500}
+    }
+
+    return err // TRAP: returns non-nil interface even when err is nil!
+}
+
+func main() {
+    err := doSomething(false)
+    if err != nil {
+        fmt.Println("Error is NOT nil:", err) // This prints!
+        // The interface holds type=*MyError, value=nil
+        // Since the type is set, the interface is non-nil
+    }
+
+    // The correct pattern:
+    fmt.Println("\n--- Correct pattern ---")
+    err2 := doSomethingCorrect(false)
+    if err2 != nil {
+        fmt.Println("Error:", err2)
+    } else {
+        fmt.Println("No error (correct!)")
+    }
+}
+
+func doSomethingCorrect(fail bool) error {
+    if fail {
+        return &MyError{Code: 500}
+    }
+    return nil // Return nil directly, not a typed nil pointer
+}</pre>
+    <div class="output">
+      <div class="output-label">Output</div>
+Error is NOT nil: error code 0
+
+--- Correct pattern ---
+No error (correct!)
+    </div>
+
+    <div class="pitfall">
+      <strong>nil interface vs interface holding nil:</strong> An interface has two components: a type and a value. <code>var err error = (*MyError)(nil)</code> is a non-nil interface (type is set to <code>*MyError</code>, value is nil). Only <code>var err error = nil</code> is a truly nil interface. <strong>Always return <code>nil</code> directly</strong> from error-returning functions instead of a typed nil pointer.
+    </div>
+
+    <h4>Accept Interfaces, Return Structs</h4>
+    <p>A Go proverb: functions should accept interfaces (for flexibility) and return concrete types (for clarity). This makes your APIs composable without over-abstracting.</p>
+    <div class="do-dont">
+      <div class="do-box">
+        <div class="label">Do: Accept interface</div>
+<pre>func Process(r io.Reader) error {
+    // works with files, network, strings...
+}</pre>
+      </div>
+      <div class="dont-box">
+        <div class="label">Don't: Accept concrete type</div>
+<pre>func Process(f *os.File) error {
+    // only works with files!
+}</pre>
+      </div>
+    </div>
+
+    <h4>Common Mistakes</h4>
+    <div class="do-dont">
+      <div class="do-box">
+        <div class="label">Do: Keep interfaces small</div>
+<pre>type Sizer interface {
+    Size() int64
+}
+// 1-2 methods is ideal</pre>
+      </div>
+      <div class="dont-box">
+        <div class="label">Don't: Giant interfaces</div>
+<pre>type DoEverything interface {
+    Read() ...
+    Write() ...
+    Close() ...
+    Flush() ...
+    // 10 more methods...
+}</pre>
+      </div>
+    </div>
+    <div class="do-dont">
+      <div class="do-box">
+        <div class="label">Do: Return nil for no error</div>
+<pre>func f() error {
+    return nil // truly nil interface
+}</pre>
+      </div>
+      <div class="dont-box">
+        <div class="label">Don't: Return typed nil pointer</div>
+<pre>func f() error {
+    var err *MyError
+    return err // non-nil interface!
+}</pre>
+      </div>
+    </div>
+
+    <h4>Key Rules</h4>
+    <ul class="rules-list">
+      <li>Interfaces are satisfied implicitly &mdash; no <code>implements</code> keyword</li>
+      <li>Keep interfaces small: 1-3 methods is ideal (the Go standard library averages 1-2)</li>
+      <li>Accept interfaces, return concrete types</li>
+      <li>Use type assertions with the comma-ok pattern for safety</li>
+      <li>Use type switches for handling multiple possible types</li>
+      <li>Beware the nil interface pitfall: always return <code>nil</code> directly for error returns</li>
+      <li>Compose interfaces by embedding smaller ones</li>
+    </ul>
+
+    <div class="connection">
+      <strong>Connection:</strong> Interfaces tie together everything in this guide. <em>Error Handling</em> is built on the <code>error</code> interface. <em>Structs &amp; Methods</em> provide the implementations. <em>Pointers</em> determine the method set (value vs pointer receiver affects which interfaces a type satisfies). The <code>io.Reader</code> and <code>io.Writer</code> interfaces you learned here are used throughout Go's standard library for <em>Strings</em> processing, file I/O, and network programming.
+    </div>
+
+    <div class="exercise">
+      <div class="exercise-label">Exercise 1</div>
+      <p>Define a <code>Shape</code> interface with <code>Area() float64</code> and <code>Perimeter() float64</code>. Implement it for <code>Circle</code> and <code>Rectangle</code>. Write a function <code>LargestArea(shapes []Shape) Shape</code> that returns the shape with the largest area.</p>
+    </div>
+    <div class="exercise">
+      <div class="exercise-label">Exercise 2</div>
+      <p>Implement a custom <code>io.Reader</code> that generates Fibonacci numbers. Each call to <code>Read(p []byte)</code> should write the next Fibonacci number (as a string with newline) into the buffer. Use it with <code>io.ReadAll()</code> or a loop to read the first 10 numbers.</p>
+    </div>
+    <div class="exercise">
+      <div class="exercise-label">Exercise 3</div>
+      <p>Implement a simple middleware chain using interfaces. Define a <code>Handler</code> interface with <code>Handle(request string) string</code>. Create a <code>LoggingMiddleware</code> and a <code>AuthMiddleware</code> that each wrap a <code>Handler</code>, add behavior, and delegate to the wrapped handler.</p>
+    </div>
+  </div>
+
+</div><!-- end section -->
+
+<!-- ============================================================ -->
+<!-- FOOTER -->
+<!-- ============================================================ -->
+<footer class="footer">
+  <h4>All Guides</h4>
+  <ul>
+    <li><a href="golang-guides/golang-guide-2026-07-09.html">2026-07-09</a> (Day 34)</li>
+    <li><a href="golang-guides/golang-guide-2026-07-08.html">2026-07-08</a> (Day 33)</li>
+    <li><a href="golang-guides/golang-guide-2026-07-07.html">2026-07-07</a> (Day 32)</li>
+    <li><a href="golang-guides/golang-guide-2026-07-06.html">2026-07-06</a> (Day 31)</li>
+    <li><a href="golang-guides/golang-guide-2026-07-05.html">2026-07-05</a> (Day 30)</li>
+    <li><a href="golang-guides/golang-guide-2026-07-04.html">2026-07-04</a> (Day 29)</li>
+    <li><a href="golang-guides/golang-guide-2026-07-03.html">2026-07-03</a> (Day 28)</li>
+    <li><a href="golang-guides/golang-guide-2026-07-02.html">2026-07-02</a> (Day 27)</li>
+    <li><a href="golang-guides/golang-guide-2026-07-01.html">2026-07-01</a> (Day 26)</li>
+    <li><a href="golang-guides/golang-guide-2026-06-30.html">2026-06-30</a> (Day 25)</li>
+    <li><a href="golang-guides/golang-guide-2026-06-29.html">2026-06-29</a> (Day 24)</li>
+    <li><a href="golang-guides/golang-guide-2026-06-28.html">2026-06-28</a> (Day 23)</li>
+    <li><a href="golang-guides/golang-guide-2026-06-27.html">2026-06-27</a> (Day 22)</li>
+    <li><a href="golang-guides/golang-guide-2026-06-26.html">2026-06-26</a> (Day 21)</li>
+    <li><a href="golang-guides/golang-guide-2026-06-25.html">2026-06-25</a> (Day 20)</li>
+    <li><a href="golang-guides/golang-guide-2026-06-24.html">2026-06-24</a> (Day 19)</li>
+    <li><a href="golang-guides/golang-guide-2026-06-23.html">2026-06-23</a> (Day 18)</li>
+    <li><a href="golang-guides/golang-guide-2026-06-22.html">2026-06-22</a> (Day 17)</li>
+    <li><a href="golang-guides/golang-guide-2026-06-19.html">2026-06-19</a> (Day 15)</li>
+    <li><a href="golang-guides/golang-guide-2026-06-18.html">2026-06-18</a> (Day 14)</li>
+    <li><a href="golang-guides/golang-guide-2026-06-17.html">2026-06-17</a> (Day 13)</li>
+    <li><a href="golang-guides/golang-guide-2026-06-15.html">2026-06-15</a> (Day 12)</li>
+    <li><a href="golang-guides/golang-guide-2026-06-13.html">2026-06-13</a> (Day 11)</li>
+    <li><a href="golang-guides/golang-guide-2026-06-12.html">2026-06-12</a> (Day 10)</li>
+    <li><a href="golang-guides/golang-guide-2026-06-11.html">2026-06-11</a> (Day 9)</li>
+    <li><a href="golang-guides/golang-guide-2026-06-10.html">2026-06-10</a> (Day 8)</li>
+    <li><a href="golang-guides/golang-guide-2026-06-09.html">2026-06-09</a> (Day 7)</li>
+    <li><a href="golang-guides/golang-guide-2026-06-08.html">2026-06-08</a> (Day 6)</li>
+    <li><a href="golang-guides/golang-guide-2026-06-07.html">2026-06-07</a> (Day 5)</li>
+    <li><a href="golang-guides/golang-guide-2026-06-05.html">2026-06-05</a> (Day 4)</li>
+    <li><a href="golang-guides/golang-guide-2026-06-04.html">2026-06-04</a> (Day 3)</li>
+    <li><a href="golang-guides/golang-guide-2026-06-03.html">2026-06-03</a> (Day 2)</li>
+    <li><a href="golang-guides/golang-guide-2026-06-02.html">2026-06-02</a> (Day 1)</li>
+  </ul>
+</footer>
+
+</div><!-- end main -->
+
+<script>
+// ===== Theme Toggle =====
+(function() {
+  const KEY = 'lc-goguide-theme';
+  const toggle = document.getElementById('theme-toggle');
+  const html = document.documentElement;
+
+  function setTheme(theme) {
+    html.setAttribute('data-theme', theme);
+    localStorage.setItem(KEY, theme);
+    toggle.textContent = theme === 'dark' ? '☽' : '☀';
+  }
+
+  const saved = localStorage.getItem(KEY) || 'dark';
+  setTheme(saved);
+
+  toggle.addEventListener('click', function() {
+    setTheme(html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
+  });
+})();
+
+// ===== Mobile Sidebar Toggle =====
+(function() {
+  const btn = document.getElementById('sidebar-toggle');
+  const sidebar = document.getElementById('sidebar');
+
+  btn.addEventListener('click', function() {
+    sidebar.classList.toggle('open');
+  });
+
+  // Close sidebar when clicking a link (mobile)
+  sidebar.querySelectorAll('.sidebar-link').forEach(function(link) {
+    link.addEventListener('click', function() {
+      if (window.innerWidth <= 900) {
+        sidebar.classList.remove('open');
+      }
+    });
+  });
+})();
+
+// ===== Active Sidebar Link on Scroll =====
+(function() {
+  const links = document.querySelectorAll('.sidebar-link');
+  const sections = [];
+
+  links.forEach(function(link) {
+    var id = link.getAttribute('href').replace('#', '');
+    var el = document.getElementById(id);
+    if (el) sections.push({ id: id, el: el, link: link });
+  });
+
+  function onScroll() {
+    var scrollTop = window.scrollY + 120;
+    var current = null;
+
+    for (var i = sections.length - 1; i >= 0; i--) {
+      if (sections[i].el.offsetTop <= scrollTop) {
+        current = sections[i];
+        break;
+      }
+    }
+
+    links.forEach(function(l) { l.classList.remove('active'); });
+    if  current.link.classList.add('active');
+  }
+
+  window.addEventListener('scroll', onScroll);
+  onScroll();
+})();
+</script>
+
+</body>
+</html>

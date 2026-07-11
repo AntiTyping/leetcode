@@ -1,0 +1,1618 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Go Study Guide &mdash; Day 32 (2026-07-07)</title>
+<style>
+/* ===== CSS Variables ===== */
+:root {
+  --bg: #0d1117;
+  --surface1: #161b22;
+  --surface2: #1c2129;
+  --border: #30363d;
+  --text: #e6edf3;
+  --muted: #8b949e;
+  --accent: #58a6ff;
+  --accent-dim: #1f6feb33;
+  --green: #3fb950;
+  --green-dim: #23863633;
+  --yellow: #d29922;
+  --yellow-dim: #d2992233;
+  --red: #f85149;
+  --red-dim: #f8514933;
+  --purple: #bc8cff;
+  --purple-dim: #bc8cff22;
+  --orange: #f0883e;
+  --orange-dim: #f0883e22;
+  --code-bg: #0d1117;
+  --sidebar-w: 300px;
+  --font-mono: 'SF Mono', 'Cascadia Code', 'Fira Code', Consolas, monospace;
+  --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+  --radius: 8px;
+  --shadow: 0 1px 3px rgba(0,0,0,0.4);
+}
+
+[data-theme="light"] {
+  --bg: #ffffff;
+  --surface1: #f6f8fa;
+  --surface2: #f0f3f6;
+  --border: #d0d7de;
+  --text: #1f2328;
+  --muted: #656d76;
+  --accent: #0969da;
+  --accent-dim: #0969da1a;
+  --green: #1a7f37;
+  --green-dim: #1a7f3718;
+  --yellow: #9a6700;
+  --yellow-dim: #9a670018;
+  --red: #cf222e;
+  --red-dim: #cf222e18;
+  --purple: #8250df;
+  --purple-dim: #8250df18;
+  --orange: #bc4c00;
+  --orange-dim: #bc4c0018;
+  --code-bg: #f6f8fa;
+  --shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+/* ===== Reset & Base ===== */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: var(--font-sans);
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.7;
+  font-size: 16px;
+  transition: background 0.2s, color 0.2s;
+}
+
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+/* ===== Theme Toggle ===== */
+#theme-toggle {
+  position: fixed;
+  top: 16px;
+  right: 20px;
+  z-index: 1000;
+  background: var(--surface1);
+  border: 1px solid var(--border);
+  color: var(--text);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+  box-shadow: var(--shadow);
+}
+#theme-toggle:hover { background: var(--surface2); border-color: var(--accent); }
+
+/* ===== Sidebar ===== */
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: var(--sidebar-w);
+  height: 100vh;
+  background: var(--surface1);
+  border-right: 1px solid var(--border);
+  overflow-y: auto;
+  padding: 20px 0;
+  z-index: 100;
+  transition: transform 0.3s;
+}
+
+.sidebar-header {
+  padding: 0 20px 16px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 12px;
+}
+
+.sidebar-header h2 {
+  font-size: 16px;
+  color: var(--text);
+  font-weight: 700;
+}
+
+.sidebar-header .subtitle {
+  font-size: 12px;
+  color: var(--muted);
+  margin-top: 2px;
+}
+
+.sidebar-section {
+  margin-bottom: 8px;
+}
+
+.sidebar-section-title {
+  padding: 6px 20px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+}
+
+.sidebar-link {
+  display: block;
+  padding: 5px 20px 5px 28px;
+  font-size: 13px;
+  color: var(--muted);
+  text-decoration: none;
+  border-left: 2px solid transparent;
+  transition: all 0.15s;
+  line-height: 1.4;
+}
+
+.sidebar-link:hover {
+  color: var(--text);
+  background: var(--accent-dim);
+  border-left-color: var(--accent);
+  text-decoration: none;
+}
+
+.sidebar-link.active {
+  color: var(--accent);
+  border-left-color: var(--accent);
+  background: var(--accent-dim);
+}
+
+/* ===== Mobile sidebar toggle ===== */
+#sidebar-toggle {
+  display: none;
+  position: fixed;
+  top: 16px;
+  left: 16px;
+  z-index: 200;
+  background: var(--surface1);
+  border: 1px solid var(--border);
+  color: var(--text);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 20px;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--shadow);
+}
+
+/* ===== Main Content ===== */
+.main {
+  margin-left: var(--sidebar-w);
+  padding: 40px 48px 80px;
+  max-width: calc(860px + var(--sidebar-w) + 96px);
+}
+
+.page-title {
+  font-size: 32px;
+  font-weight: 800;
+  margin-bottom: 4px;
+  color: var(--text);
+}
+
+.page-subtitle {
+  font-size: 15px;
+  color: var(--muted);
+  margin-bottom: 36px;
+}
+
+/* ===== Sections ===== */
+.section {
+  margin-bottom: 48px;
+}
+
+.section-label {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  padding: 3px 10px;
+  border-radius: 4px;
+  margin-bottom: 12px;
+}
+
+.section-label.review { background: var(--yellow-dim); color: var(--yellow); }
+.section-label.new { background: var(--green-dim); color: var(--green); }
+
+.section-title {
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 24px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--border);
+}
+
+/* ===== How To Use ===== */
+.how-to-use {
+  background: var(--surface1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px 24px;
+  margin-bottom: 36px;
+}
+
+.how-to-use h3 {
+  font-size: 16px;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.how-to-use ul {
+  padding-left: 22px;
+  margin: 0;
+}
+
+.how-to-use li {
+  font-size: 14px;
+  color: var(--muted);
+  margin-bottom: 4px;
+}
+
+/* ===== Concept Cards ===== */
+.concept {
+  background: var(--surface1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 28px;
+  margin-bottom: 28px;
+  box-shadow: var(--shadow);
+}
+
+.concept-header {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  margin-bottom: 6px;
+  flex-wrap: wrap;
+}
+
+.concept h3 {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.concept-meta {
+  font-size: 12px;
+  color: var(--muted);
+  background: var(--surface2);
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
+.concept h4 {
+  font-size: 15px;
+  font-weight: 600;
+  margin: 20px 0 8px;
+  color: var(--text);
+}
+
+.concept p, .concept li {
+  color: var(--text);
+  line-height: 1.7;
+}
+
+.concept ul, .concept ol {
+  padding-left: 22px;
+  margin: 8px 0;
+}
+
+.concept li {
+  margin-bottom: 4px;
+}
+
+.concept .why-matters {
+  font-style: italic;
+  color: var(--muted);
+  margin: 6px 0 16px;
+  font-size: 15px;
+}
+
+/* ===== Code Blocks ===== */
+pre {
+  background: var(--code-bg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 16px 18px;
+  overflow-x: auto;
+  margin: 10px 0 14px;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--text);
+  position: relative;
+}
+
+pre::after {
+  content: 'Go';
+  position: absolute;
+  top: 6px;
+  right: 10px;
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  opacity: 0.6;
+}
+
+code {
+  font-family: var(--font-mono);
+  font-size: 0.9em;
+}
+
+:not(pre) > code {
+  background: var(--surface2);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.88em;
+}
+
+/* ===== Output Blocks ===== */
+.output {
+  background: var(--green-dim);
+  border: 1px solid var(--green);
+  border-radius: 6px;
+  padding: 12px 16px;
+  margin: 6px 0 14px;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--text);
+  white-space: pre-wrap;
+}
+
+.output::after { content: none; }
+
+.output-label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--green);
+  margin-bottom: 4px;
+}
+
+/* ===== Good/Bad Examples ===== */
+.do-dont {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin: 10px 0;
+}
+
+.do-box, .dont-box {
+  border-radius: 6px;
+  padding: 14px;
+  border: 1px solid;
+}
+
+.do-box {
+  background: var(--green-dim);
+  border-color: var(--green);
+}
+
+.dont-box {
+  background: var(--red-dim);
+  border-color: var(--red);
+}
+
+.do-box .label, .dont-box .label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 6px;
+}
+
+.do-box .label { color: var(--green); }
+.dont-box .label { color: var(--red); }
+
+.do-box pre, .dont-box pre {
+  margin: 0;
+  border: none;
+  background: transparent;
+  padding: 0;
+  font-size: 12.5px;
+}
+
+.do-box pre::after, .dont-box pre::after { content: none; }
+
+/* ===== Key Rules ===== */
+.rules-list {
+  list-style: none;
+  padding: 0;
+  margin: 8px 0;
+}
+
+.rules-list li {
+  padding: 6px 0 6px 24px;
+  position: relative;
+}
+
+.rules-list li::before {
+  content: "\2192";
+  position: absolute;
+  left: 2px;
+  color: var(--accent);
+  font-weight: 700;
+}
+
+/* ===== Exercises ===== */
+.exercise {
+  background: var(--purple-dim);
+  border: 1px solid var(--purple);
+  border-radius: 6px;
+  padding: 14px 18px;
+  margin: 8px 0;
+}
+
+.exercise .exercise-label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--purple);
+  margin-bottom: 4px;
+}
+
+/* ===== Pitfall ===== */
+.pitfall {
+  background: var(--red-dim);
+  border-left: 3px solid var(--red);
+  border-radius: 0 6px 6px 0;
+  padding: 10px 14px;
+  margin: 10px 0;
+  font-size: 14px;
+}
+
+.pitfall strong {
+  color: var(--red);
+}
+
+/* ===== Connection ===== */
+.connection {
+  background: var(--accent-dim);
+  border-left: 3px solid var(--accent);
+  border-radius: 0 6px 6px 0;
+  padding: 10px 14px;
+  margin: 10px 0;
+  font-size: 14px;
+  color: var(--muted);
+}
+
+/* ===== Review Cards ===== */
+.review-card {
+  background: var(--surface1);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--purple);
+  border-radius: var(--radius);
+  padding: 20px 24px;
+  margin-bottom: 16px;
+  box-shadow: var(--shadow);
+}
+
+.review-card .review-header {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  margin-bottom: 6px;
+  flex-wrap: wrap;
+}
+
+.review-card h3 {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.review-card .review-meta {
+  font-size: 12px;
+  color: var(--muted);
+  background: var(--surface2);
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
+.review-card h4 {
+  font-size: 14px;
+  font-weight: 600;
+  margin: 14px 0 6px;
+  color: var(--text);
+}
+
+.review-card p, .review-card li {
+  color: var(--text);
+  line-height: 1.6;
+  font-size: 14px;
+}
+
+.review-card pre {
+  font-size: 12.5px;
+  padding: 12px 14px;
+  margin: 6px 0 10px;
+}
+
+.review-card .pitfall {
+  font-size: 13px;
+  padding: 8px 12px;
+}
+
+/* ===== Topic Badge ===== */
+.topic-badge {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 2px 8px;
+  border-radius: 4px;
+  background: var(--accent-dim);
+  color: var(--accent);
+  margin-left: 4px;
+}
+
+/* ===== Footer ===== */
+.footer {
+  margin-top: 60px;
+  padding: 24px 0;
+  border-top: 1px solid var(--border);
+}
+
+.footer h4 {
+  font-size: 14px;
+  color: var(--muted);
+  margin-bottom: 10px;
+}
+
+.footer ul {
+  list-style: none;
+  padding: 0;
+}
+
+.footer li {
+  margin-bottom: 4px;
+  font-size: 14px;
+}
+
+.footer li a { color: var(--accent); }
+.footer .current { color: var(--green); font-weight: 600; }
+
+/* ===== Bash code blocks ===== */
+pre.bash::after {
+  content: 'Bash';
+}
+
+/* ===== Responsive ===== */
+@media (max-width: 900px) {
+  .sidebar {
+    transform: translateX(-100%);
+  }
+  .sidebar.open {
+    transform: translateX(0);
+    box-shadow: 4px 0 20px rgba(0,0,0,0.5);
+  }
+  #sidebar-toggle {
+    display: flex;
+  }
+  .main {
+    margin-left: 0;
+    padding: 60px 20px 60px;
+    max-width: 100%;
+  }
+  .do-dont {
+    grid-template-columns: 1fr;
+  }
+  #theme-toggle {
+    right: 14px;
+    top: 16px;
+  }
+}
+</style>
+</head>
+<body>
+
+<!-- Theme Toggle -->
+<button id="theme-toggle" aria-label="Toggle theme" title="Toggle light/dark theme">&#9789;</button>
+
+<!-- Mobile Sidebar Toggle -->
+<button id="sidebar-toggle" aria-label="Toggle sidebar">&#9776;</button>
+
+<!-- Sidebar -->
+<nav class="sidebar" id="sidebar">
+  <div class="sidebar-header">
+    <h2>Go Guide</h2>
+    <div class="subtitle">Day 32 &mdash; 2026-07-07</div>
+  </div>
+
+  <div class="sidebar-section">
+    <div class="sidebar-section-title">Review (6 concepts)</div>
+    <a href="#init_functions" class="sidebar-link">Init Functions</a>
+    <a href="#variadic_functions" class="sidebar-link">Variadic Functions</a>
+    <a href="#mocking_interfaces" class="sidebar-link">Mocking: Interfaces</a>
+    <a href="#go_vet_staticcheck" class="sidebar-link">go vet &amp; staticcheck</a>
+    <a href="#builder_pattern" class="sidebar-link">Builder Pattern</a>
+    <a href="#repository_pattern" class="sidebar-link">Repository Pattern</a>
+  </div>
+
+  <div class="sidebar-section">
+    <div class="sidebar-section-title">Logging &amp; Runtime (2)</div>
+    <a href="#log_package" class="sidebar-link">log: The Standard Logger</a>
+    <a href="#runtime_package" class="sidebar-link">runtime: Introspection</a>
+  </div>
+
+  <div class="sidebar-section">
+    <div class="sidebar-section-title">Web &amp; Data Formats (3)</div>
+    <a href="#mime_package" class="sidebar-link">mime: Media Types</a>
+    <a href="#net_mail" class="sidebar-link">net/mail: Addresses</a>
+    <a href="#image_package" class="sidebar-link">image: Raster Images</a>
+  </div>
+</nav>
+
+<!-- Main Content -->
+<div class="main">
+
+<h1 class="page-title">Go Daily Guide &mdash; 2026-07-07 (Day 32)</h1>
+<p class="page-subtitle">Day 32 &mdash; Tuesday, July 7, 2026 &bull; 11 concepts (6 review + 5 new)</p>
+
+<!-- How to Use -->
+<div class="how-to-use">
+  <h3>How to Use This Guide</h3>
+  <ul>
+    <li>Start with the <strong>Review</strong> section &mdash; try to recall each concept before reading the refresher</li>
+    <li>Complete the challenge exercise for each review card without looking back at previous days</li>
+    <li>Then work through the <strong>New Concepts</strong> section, typing out every code example yourself</li>
+    <li>Pay special attention to the common mistakes sections (they highlight real Go gotchas)</li>
+    <li>Complete the exercises at the bottom of each concept without looking at solutions</li>
+    <li>Use <code>go run main.go</code> to test your code locally, or use the <a href="https://go.dev/play/" target="_blank">Go Playground</a></li>
+  </ul>
+</div>
+
+<!-- ============================================================ -->
+<!-- REVIEW SECTION -->
+<!-- ============================================================ -->
+<div class="section">
+  <span class="section-label review">Review</span>
+  <h2 class="section-title">Spaced Repetition Review &mdash; 6 Concepts</h2>
+
+  <!-- Review 1: Init Functions -->
+  <div class="review-card" id="init_functions">
+    <div class="review-header">
+      <h3>Init Functions</h3>
+      <span class="review-meta">Functions &amp; Control Flow &bull; 15 days since review &bull; rep 3</span>
+    </div>
+
+    <h4>Quick Reminder</h4>
+    <p><code>init()</code> runs automatically <em>after</em> all package-level variables are initialized and <em>before</em> <code>main</code>. A file may declare several <code>init()</code> functions; within a package they run in the order the compiler sees files (alphabetical by filename), and each file's in declaration order. Imported packages are fully initialized first, depth-first. Its main legitimate uses are <em>registration</em> (blank imports like SQL drivers or image decoders), validating package-level state, and precomputing lookup tables.</p>
+
+    <h4>Key Pattern</h4>
+<pre>var registry = map[string]Handler{}
+
+func init() {              // runs once, before main()
+    registry["png"] = pngHandler
+}
+
+// A blank import triggers ANOTHER package's init() for its side effect:
+import _ "image/png"       // registers the PNG decoder with image.Decode
+import _ "github.com/lib/pq" // registers the "postgres" sql driver</pre>
+
+    <div class="exercise">
+      <div class="exercise-label">Challenge Exercise</div>
+      <p>Build a codec registry where several files each register a codec in their own <code>init()</code>, and prove the ordering rules (package-level vars first, then <code>init()</code>s, files alphabetical) with strategic prints. Explain why <code>import _ "github.com/lib/pq"</code> is the idiom for wiring a <code>database/sql</code> driver, and why doing slow, failing, or ordering-dependent work (network calls, reading config) inside <code>init()</code> is a design smell that hurts testability.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>#1 Pitfall:</strong> Relying on cross-file <code>init()</code> ordering, or doing I/O that can fail inside <code>init()</code> &mdash; it runs before <code>main</code>, cannot return an error (only <code>panic</code>), and silently makes the package import-order sensitive and awkward to test. Keep <code>init()</code> trivial and side-effect-registration only.
+    </div>
+  </div>
+
+  <!-- Review 2: Variadic Functions -->
+  <div class="review-card" id="variadic_functions">
+    <div class="review-header">
+      <h3>Variadic Functions</h3>
+      <span class="review-meta">Functions &amp; Control Flow &bull; 15 days since review &bull; rep 3</span>
+    </div>
+
+    <h4>Quick Reminder</h4>
+    <p>A trailing <code>...T</code> parameter collects zero or more arguments into a <code>[]T</code> (a <code>nil</code> slice when none are passed). You can spread an existing slice into the call with <code>f(s...)</code> &mdash; but that passes the <em>same</em> backing array, not a copy, so appends within capacity are visible to the caller. <code>append</code> itself is variadic. The <code>...T</code> parameter must be last.</p>
+
+    <h4>Key Pattern</h4>
+<pre>func sum(nums ...int) int {
+    total := 0
+    for _, n := range nums {
+        total += n
+    }
+    return total
+}
+
+sum(1, 2, 3)          // 6  -> nums is []int{1,2,3}
+sum()                 // 0  -> nums is nil
+xs := []int{4, 5, 6}
+sum(xs...)            // 15 -> spread; shares xs's backing array</pre>
+
+    <div class="exercise">
+      <div class="exercise-label">Challenge Exercise</div>
+      <p>Write a <code>logf(level, format string, args ...any)</code> that forwards to <code>fmt.Sprintf(format, args...)</code>, and a <code>maxOf(first int, rest ...int) int</code> that makes "at least one argument" a compile-time guarantee. Then demonstrate the aliasing gotcha: pass <code>s...</code> to a function that <code>append</code>s to it and show the caller's slice mutate when spare capacity exists &mdash; then defend with <code>slices.Clone</code> or a fresh <code>append(([]T)(nil), s...)</code>.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>#1 Pitfall:</strong> Assuming <code>f(s...)</code> copies the slice &mdash; it doesn't. A variadic callee that appends within the existing capacity mutates the caller's backing array. Also you cannot place any parameter after <code>...T</code>, and passing both spread <em>and</em> extra args (<code>f(s..., x)</code>) is a compile error.
+    </div>
+  </div>
+
+  <!-- Review 3: Mocking Interfaces -->
+  <div class="review-card" id="mocking_interfaces">
+    <div class="review-header">
+      <h3>Mocking: Interfaces for Testability</h3>
+      <span class="review-meta">Testing &amp; Tooling &bull; 6 days since review &bull; rep 2</span>
+    </div>
+
+    <h4>Quick Reminder</h4>
+    <p>Make code testable by depending on a <em>small</em> interface (defined at the consumer) rather than a concrete type; in tests, substitute a hand-written fake, stub, or generated mock. Go idiom strongly favors tiny interfaces plus simple fakes over heavyweight mocking frameworks.</p>
+
+    <h4>Key Pattern</h4>
+<pre>type Store interface {
+    Get(id string) (User, error)
+}
+
+// A fake implementation for tests -- no database required.
+type fakeStore struct{ users map[string]User }
+
+func (f fakeStore) Get(id string) (User, error) {
+    u, ok := f.users[id]
+    if !ok {
+        return User{}, ErrNotFound
+    }
+    return u, nil
+}
+// Inject fakeStore in tests, the real *sql.DB-backed store in prod.</pre>
+
+    <div class="exercise">
+      <div class="exercise-label">Challenge Exercise</div>
+      <p>Design a service that accepts a <code>Store</code> and a <code>Clock</code> interface. Write table-driven tests using a fake store and a fixed clock, covering both the success and the <code>ErrNotFound</code> paths with zero real I/O. Add a <code>//go:generate</code> directive for a generated mock and explain the cases where a generated mock (call-count and argument assertions, call ordering) earns its keep over a plain fake.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>#1 Pitfall:</strong> Defining the interface at the implementation instead of the consumer, or making it huge &mdash; you end up mocking a 12-method interface when the caller only needs one method. Accept interfaces, return concrete types, and keep interfaces to one or two methods.
+    </div>
+  </div>
+
+  <!-- Review 4: go vet & staticcheck -->
+  <div class="review-card" id="go_vet_staticcheck">
+    <div class="review-header">
+      <h3>go vet &amp; staticcheck</h3>
+      <span class="review-meta">Testing &amp; Tooling &bull; 6 days since review &bull; rep 2</span>
+    </div>
+
+    <h4>Quick Reminder</h4>
+    <p><code>go vet</code> flags code that compiles but is suspect: wrong <code>Printf</code> verbs, malformed struct tags, copying a lock by value, unreachable code. <code>staticcheck</code> (and <code>golangci-lint</code>, which bundles many linters) goes further &mdash; dead code, inefficient idioms, and bug-prone patterns. None of these are caught by the compiler, so wire them into CI.</p>
+
+    <h4>Key Pattern</h4>
+<pre class="bash">go vet ./...          # ships with the toolchain
+staticcheck ./...     # go install honnef.co/go/tools/cmd/staticcheck@latest
+golangci-lint run     # aggregates vet + staticcheck + more</pre>
+<pre>fmt.Printf("%d\n", "hello") // compiles fine; go vet: wrong verb %d for string
+var mu sync.Mutex
+useLock(mu)                 // go vet: call copies lock value sync.Mutex</pre>
+
+    <div class="exercise">
+      <div class="exercise-label">Challenge Exercise</div>
+      <p>Plant three defects &mdash; a <code>Printf</code> verb mismatch, a <code>sync.Mutex</code> copied by value, and a shadowed <code>err</code> that swallows an error &mdash; and record which tool flags each. Add a <code>.golangci.yml</code> that enables a curated linter set, and a CI step that fails the build on any finding. Explain why <code>go vet</code> runs automatically as part of <code>go test</code> but <code>staticcheck</code> does not.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>#1 Pitfall:</strong> Assuming the compiler catches these &mdash; it doesn't. <code>%d</code> with a string, a copied lock, or an inner-scope <code>err</code> that shadows the outer one all compile cleanly. If vet/staticcheck aren't in CI, the entire class of bug silently regresses over time.
+    </div>
+  </div>
+
+  <!-- Review 5: Builder Pattern -->
+  <div class="review-card" id="builder_pattern">
+    <div class="review-header">
+      <h3>Builder Pattern</h3>
+      <span class="review-meta">Advanced Patterns &bull; 6 days since review &bull; rep 2</span>
+    </div>
+
+    <h4>Quick Reminder</h4>
+    <p>A builder accumulates configuration through methods that each return the builder (pointer receiver!), then a final <code>Build()</code> produces the finished value. It gives fluent, readable construction for objects with many optional fields &mdash; in Go it competes with the functional-options pattern.</p>
+
+    <h4>Key Pattern</h4>
+<pre>type QueryBuilder struct {
+    table string
+    conds []string
+}
+
+func (b *QueryBuilder) From(t string) *QueryBuilder { b.table = t; return b }
+func (b *QueryBuilder) Where(c string) *QueryBuilder { b.conds = append(b.conds, c); return b }
+
+func (b *QueryBuilder) Build() (string, error) {
+    if b.table == "" {
+        return "", errors.New("missing FROM")
+    }
+    q := "SELECT * FROM " + b.table
+    if len(b.conds) > 0 {
+        q += " WHERE " + strings.Join(b.conds, " AND ")
+    }
+    return q, nil
+}
+
+// new(QueryBuilder).From("users").Where("age > 18").Build()</pre>
+
+    <div class="exercise">
+      <div class="exercise-label">Challenge Exercise</div>
+      <p>Build a SQL query builder &mdash; <code>Select(cols...).From(t).Where(c).OrderBy(c).Limit(n).Build()</code> returning the query string plus arguments &mdash; using pointer-receiver chaining. Make <code>Build()</code> <em>validate</em> (missing <code>FROM</code> returns an error) rather than panicking. Then contrast it with the functional-options pattern and state when each reads more naturally in Go.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>#1 Pitfall:</strong> Chaining on <em>value</em> receivers &mdash; each call mutates a copy that is then discarded, so only the last set field survives. Use pointer receivers. Also, letting <code>Build()</code> silently emit an invalid object instead of validating and returning an error.
+    </div>
+  </div>
+
+  <!-- Review 6: Repository Pattern -->
+  <div class="review-card" id="repository_pattern">
+    <div class="review-header">
+      <h3>Repository Pattern</h3>
+      <span class="review-meta">Advanced Patterns &bull; 6 days since review &bull; rep 2</span>
+    </div>
+
+    <h4>Quick Reminder</h4>
+    <p>Hide data access behind an interface so business logic depends on <code>FindByID</code>/<code>Save</code>, not on SQL or a specific database. This lets you swap a Postgres implementation for an in-memory fake in tests and keeps persistence concerns out of the domain.</p>
+
+    <h4>Key Pattern</h4>
+<pre>type UserRepo interface {
+    FindByID(ctx context.Context, id string) (User, error)
+    Save(ctx context.Context, u User) error
+}
+
+type pgUserRepo struct{ db *sql.DB } // production implementation
+type memUserRepo struct{ m map[string]User } // test implementation
+
+func (r *memUserRepo) FindByID(_ context.Context, id string) (User, error) {
+    u, ok := r.m[id]
+    if !ok {
+        return User{}, fmt.Errorf("user %s: %w", id, ErrNotFound)
+    }
+    return u, nil
+}</pre>
+
+    <div class="exercise">
+      <div class="exercise-label">Challenge Exercise</div>
+      <p>Define a <code>UserRepo</code> interface, implement a <code>database/sql</code>-backed version and an in-memory version, and test the service against the in-memory one. Thread <code>context.Context</code> through every method and wrap a sentinel <code>ErrNotFound</code> with <code>%w</code>. Then discuss the central trade-off: the abstraction vs. leaking query flexibility, and decide where transactions should live (the "seam" problem).</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>#1 Pitfall:</strong> Letting database types leak through the interface &mdash; returning <code>*sql.Rows</code> or raw driver errors defeats the whole abstraction. Return domain types and sentinel errors, and always thread <code>context.Context</code> for cancellation and timeouts.
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- NEW CONCEPTS SECTION -->
+<!-- ============================================================ -->
+<div class="section">
+  <span class="section-label new">New</span>
+  <h2 class="section-title">New Concepts &mdash; 5 in 2 Sections</h2>
+
+  <h3 style="font-size:18px;margin:8px 0 18px;color:var(--muted);">Section 1 &mdash; Logging &amp; Runtime Introspection</h3>
+
+  <!-- New 1: log package -->
+  <div class="concept" id="log_package">
+    <div class="concept-header">
+      <h3>log: The Standard Library Logger</h3>
+      <span class="topic-badge">Logging</span>
+    </div>
+    <p class="why-matters">Why it matters: before <code>log/slog</code> there was <code>log</code>, and it is still the right tool for CLIs, small services, and quick diagnostics. It writes timestamped lines to stderr, offers <code>Fatal</code>/<code>Panic</code> helpers, and lets you build custom loggers with prefixes and flags &mdash; all in the standard library with zero dependencies.</p>
+
+    <h4>The package-level logger</h4>
+    <p><code>log.Print</code>/<code>Printf</code>/<code>Println</code> write to the default logger, which targets <code>os.Stderr</code> with the <code>LstdFlags</code> (date + time) prefix.</p>
+<pre>package main
+
+import "log"
+
+func main() {
+    log.Println("server starting")     // date + time + message, to stderr
+    log.Printf("listening on :%d", 8080)
+}</pre>
+    <div class="output-label">Output (to stderr; timestamp is the wall clock)</div>
+    <div class="output">2026/07/07 10:00:00 server starting
+2026/07/07 10:00:00 listening on :8080</div>
+
+    <h4>A custom logger with prefix and flags</h4>
+    <p><code>log.New(out, prefix, flags)</code> builds an independent <code>*log.Logger</code>. Combine flag bits with <code>|</code>; <code>Lshortfile</code> appends the caller's file and line.</p>
+<pre>package main
+
+import (
+    "log"
+    "os"
+)
+
+func main() {
+    logger := log.New(os.Stdout, "[api] ", log.Ldate|log.Ltime|log.Lshortfile)
+    logger.Println("request handled")
+}</pre>
+    <div class="output-label">Output</div>
+    <div class="output">[api] 2026/07/07 10:00:00 main.go:10: request handled</div>
+
+    <h4>Deterministic output for tests (flags = 0)</h4>
+    <p>Point a logger at any <code>io.Writer</code> and set flags to <code>0</code> to drop the timestamp &mdash; the output becomes stable and easy to assert on.</p>
+<pre>package main
+
+import (
+    "bytes"
+    "fmt"
+    "log"
+)
+
+func main() {
+    var buf bytes.Buffer
+    logger := log.New(&amp;buf, "TEST: ", 0) // no timestamp
+    logger.Print("hello")
+    fmt.Printf("%q\n", buf.String())
+}</pre>
+    <div class="output-label">Output</div>
+    <div class="output">"TEST: hello\n"</div>
+
+    <h4>Common Mistakes</h4>
+    <div class="do-dont">
+      <div class="dont-box">
+        <div class="label">Wrong</div>
+<pre>// In library / request-handler code:
+func load(path string) Config {
+    b, err := os.ReadFile(path)
+    if err != nil {
+        log.Fatalf("read: %v", err) // calls os.Exit(1)!
+    }
+    // deferred cleanups NEVER run; caller can't recover
+    return parse(b)
+}</pre>
+      </div>
+      <div class="do-box">
+        <div class="label">Right</div>
+<pre>func load(path string) (Config, error) {
+    b, err := os.ReadFile(path)
+    if err != nil {
+        return Config{}, fmt.Errorf("read %s: %w", path, err)
+    }
+    return parse(b), nil
+}
+// Reserve log.Fatal for main()/startup, never libraries.</pre>
+      </div>
+    </div>
+
+    <h4>Key Rules</h4>
+    <ul class="rules-list">
+      <li><code>log.Fatal*</code> calls <code>os.Exit(1)</code> (deferred functions do <em>not</em> run) and <code>log.Panic*</code> calls <code>panic</code> &mdash; keep both out of libraries; return errors instead.</li>
+      <li>The default logger writes to <code>os.Stderr</code>; redirect with <code>log.SetOutput</code> or build isolated loggers with <code>log.New</code>.</li>
+      <li>Compose flags with <code>|</code> (<code>log.Ldate|log.Ltime|log.Lshortfile</code>); set flags to <code>0</code> for deterministic, timestamp-free test output.</li>
+      <li><code>*log.Logger</code> is safe for concurrent use &mdash; each <code>Print</code> is written with a single locked <code>Write</code>, so lines never interleave.</li>
+    </ul>
+
+    <div class="exercise">
+      <div class="exercise-label">Practice Exercise</div>
+      <p>Build a tiny leveled logger on top of <code>log.New</code>: <code>Info</code>, <code>Warn</code>, and <code>Error</code> each write with a distinct prefix to a shared <code>io.Writer</code>. Capture output into a <code>bytes.Buffer</code> in a test (flags <code>0</code>) and assert exact strings. Then show that <code>log.Fatal</code> inside a deferred-cleanup function skips the cleanup, and rewrite the code path to return an error. Finally, explain when you would graduate from <code>log</code> to <code>log/slog</code>.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>Pitfall:</strong> Calling <code>log.Fatal</code>/<code>log.Fatalf</code> anywhere but top-level startup &mdash; it terminates the process via <code>os.Exit</code>, bypassing every <code>defer</code> and giving callers no chance to handle the failure. It also makes the function impossible to unit-test. Libraries should return errors; only <code>main</code> gets to exit.</p>
+    </div>
+
+    <div class="connection">
+      <strong>Connections:</strong> The direct predecessor to <code>log/slog</code> (structured logging, today's broader theme); writes through the <code>io.Writer</code> interface; pairs with <code>runtime.Caller</code> (next concept) for custom source annotations and with <code>bytes.Buffer</code> for testable output.
+    </div>
+  </div>
+
+  <!-- New 2: runtime package -->
+  <div class="concept" id="runtime_package">
+    <div class="concept-header">
+      <h3>runtime: Introspecting the Running Program</h3>
+      <span class="topic-badge">Runtime</span>
+    </div>
+    <p class="why-matters">Why it matters: sometimes you need to ask the runtime about itself &mdash; how many CPUs and goroutines exist, how much heap is live, where a call came from. The <code>runtime</code> package powers diagnostics, custom logging, health metrics, and careful tuning. Used sparingly it's invaluable; reached for reflexively it's usually a code smell.</p>
+
+    <h4>Environment and goroutine counts</h4>
+    <p><code>NumCPU</code>, <code>GOMAXPROCS(0)</code> (0 queries without changing), <code>NumGoroutine</code>, and <code>Version</code> report the execution environment.</p>
+<pre>package main
+
+import (
+    "fmt"
+    "runtime"
+)
+
+func main() {
+    fmt.Println("CPUs:", runtime.NumCPU())
+    fmt.Println("GOMAXPROCS:", runtime.GOMAXPROCS(0)) // 0 = read, don't set
+    fmt.Println("goroutines:", runtime.NumGoroutine())
+    fmt.Println("version:", runtime.Version())
+}</pre>
+    <div class="output-label">Output (representative &mdash; varies by machine)</div>
+    <div class="output">CPUs: 8
+GOMAXPROCS: 8
+goroutines: 1
+version: go1.24.0</div>
+
+    <h4>Memory statistics</h4>
+    <p><code>ReadMemStats</code> fills a <code>MemStats</code> with live-heap and GC counters. <code>runtime.GC()</code> forces a collection &mdash; for diagnostics and tests only, never as a production optimization.</p>
+<pre>package main
+
+import (
+    "fmt"
+    "runtime"
+)
+
+func main() {
+    var m runtime.MemStats
+    runtime.ReadMemStats(&amp;m)
+    fmt.Printf("HeapAlloc = %d KB\n", m.HeapAlloc/1024)
+    fmt.Printf("NumGC = %d\n", m.NumGC)
+
+    runtime.GC() // force a GC cycle (diagnostics only)
+    runtime.ReadMemStats(&amp;m)
+    fmt.Printf("NumGC after = %d\n", m.NumGC)
+}</pre>
+    <div class="output-label">Output (representative)</div>
+    <div class="output">HeapAlloc = 110 KB
+NumGC = 0
+NumGC after = 1</div>
+
+    <h4>Where am I? runtime.Caller</h4>
+    <p><code>runtime.Caller(skip)</code> returns the program counter, file, and line of a frame up the stack &mdash; the building block for source-annotated log helpers.</p>
+<pre>package main
+
+import (
+    "fmt"
+    "path/filepath"
+    "runtime"
+)
+
+func where() string {
+    _, file, line, ok := runtime.Caller(1) // 1 = the caller of where()
+    if !ok {
+        return "unknown"
+    }
+    return fmt.Sprintf("%s:%d", filepath.Base(file), line)
+}
+
+func main() {
+    fmt.Println("called from", where())
+}</pre>
+    <div class="output-label">Output</div>
+    <div class="output">called from main.go:17</div>
+
+    <h4>Common Mistakes</h4>
+    <div class="do-dont">
+      <div class="dont-box">
+        <div class="label">Wrong</div>
+<pre>// Finalizers are NOT guaranteed to run -- and may run late.
+f, _ := os.Open(name)
+runtime.SetFinalizer(f, func(f *os.File) {
+    f.Close() // may never fire; file descriptors leak
+})</pre>
+      </div>
+      <div class="do-box">
+        <div class="label">Right</div>
+<pre>// Deterministic cleanup via defer.
+f, err := os.Open(name)
+if err != nil {
+    return err
+}
+defer f.Close()</pre>
+      </div>
+    </div>
+
+    <h4>Key Rules</h4>
+    <ul class="rules-list">
+      <li><code>GOMAXPROCS(0)</code> reads the current value without changing it; pass a positive number only when you have measured a reason to.</li>
+      <li>Use <code>ReadMemStats</code> for diagnostics, but prefer <code>runtime/metrics</code> for stable, structured production metrics.</li>
+      <li>Never rely on <code>runtime.SetFinalizer</code> for cleanup &mdash; finalizers may run late or not at all. Use <code>defer Close()</code> for deterministic release.</li>
+      <li>Don't call <code>runtime.GC()</code> in hot paths as an optimization &mdash; it stalls the program; let the collector schedule itself.</li>
+    </ul>
+
+    <div class="exercise">
+      <div class="exercise-label">Practice Exercise</div>
+      <p>Write a <code>memSnapshot()</code> that prints <code>HeapAlloc</code>, <code>NumGC</code>, and <code>NumGoroutine</code>, then allocate a large slice, drop the reference, call <code>runtime.GC()</code>, and observe the numbers move. Build a <code>caller()</code> helper using <code>runtime.Caller</code> that annotates each log line with <code>file:line</code>, and compare it to the <code>Lshortfile</code> flag from the <code>log</code> concept. Finally, demonstrate empirically that a <code>SetFinalizer</code> is not a reliable substitute for <code>defer Close()</code>.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>Pitfall:</strong> Treating finalizers as destructors &mdash; they run (if ever) at the GC's discretion, long after the object became unreachable, so resources like file descriptors and sockets leak under load. And <code>runtime.NumGoroutine</code>/<code>GC</code> are diagnostics, not control knobs: shaping program behavior around them usually hides a real design problem.
+    </div>
+
+    <div class="connection">
+      <strong>Connections:</strong> Neighbours <code>runtime/debug</code> and <code>runtime/metrics</code>; <code>runtime.Caller</code> underlies the <code>Lshortfile</code> behavior of the <code>log</code> package (previous concept); <code>MemStats</code> and <code>GOMAXPROCS</code> tie into the escape-analysis, <code>sync.Pool</code>, and profiling (<code>pprof</code>) material from earlier days.
+    </div>
+  </div>
+
+  <h3 style="font-size:18px;margin:28px 0 18px;color:var(--muted);">Section 2 &mdash; Web &amp; Data Formats</h3>
+
+  <!-- New 3: mime package -->
+  <div class="concept" id="mime_package">
+    <div class="concept-header">
+      <h3>mime: Media Types &amp; Content-Type Headers</h3>
+      <span class="topic-badge">Web</span>
+    </div>
+    <p class="why-matters">Why it matters: every HTTP response needs a correct <code>Content-Type</code>, and every upload arrives with one you must parse. The <code>mime</code> package maps file extensions to MIME types and parses/formats media-type headers (with their <code>charset</code>, <code>boundary</code>, and other parameters) correctly &mdash; string-splitting a <code>Content-Type</code> by hand gets quoting and whitespace wrong.</p>
+
+    <h4>Extensions and types</h4>
+    <p><code>TypeByExtension</code> looks up the type for a dotted extension; <code>ExtensionsByType</code> goes the other way.</p>
+<pre>package main
+
+import (
+    "fmt"
+    "mime"
+)
+
+func main() {
+    fmt.Println(mime.TypeByExtension(".html")) // text/html; charset=utf-8
+    fmt.Println(mime.TypeByExtension(".json")) // application/json
+    exts, _ := mime.ExtensionsByType("image/png")
+    fmt.Println(exts)                          // [.png]
+}</pre>
+    <div class="output-label">Output</div>
+    <div class="output">text/html; charset=utf-8
+application/json
+[.png]</div>
+
+    <h4>Parsing a Content-Type with parameters</h4>
+    <p><code>ParseMediaType</code> splits the base type from its parameters and lowercases/normalizes them &mdash; the correct way to read a <code>charset</code> or multipart <code>boundary</code>.</p>
+<pre>package main
+
+import (
+    "fmt"
+    "mime"
+)
+
+func main() {
+    mt, params, err := mime.ParseMediaType("text/html; charset=utf-8")
+    fmt.Println(mt, params, err)
+
+    _, p2, _ := mime.ParseMediaType(`multipart/form-data; boundary="xYz"`)
+    fmt.Println("boundary:", p2["boundary"])
+}</pre>
+    <div class="output-label">Output</div>
+    <div class="output">text/html map[charset:utf-8] &lt;nil&gt;
+boundary: xYz</div>
+
+    <h4>Formatting and registering types</h4>
+    <p><code>FormatMediaType</code> builds a well-formed header (quoting when needed); <code>AddExtensionType</code> teaches the lookup table a new mapping.</p>
+<pre>package main
+
+import (
+    "fmt"
+    "mime"
+)
+
+func main() {
+    ct := mime.FormatMediaType("text/plain", map[string]string{"charset": "utf-8"})
+    fmt.Println(ct) // text/plain; charset=utf-8
+
+    _ = mime.AddExtensionType(".md", "text/markdown; charset=utf-8")
+    fmt.Println(mime.TypeByExtension(".md"))
+}</pre>
+    <div class="output-label">Output</div>
+    <div class="output">text/plain; charset=utf-8
+text/markdown; charset=utf-8</div>
+
+    <h4>Common Mistakes</h4>
+    <div class="do-dont">
+      <div class="dont-box">
+        <div class="label">Wrong</div>
+<pre>// Hand-splitting a Content-Type header:
+parts := strings.Split(header, ";")
+mt := parts[0] // ignores params, mishandles quotes,
+               // and keeps stray whitespace/casing</pre>
+      </div>
+      <div class="do-box">
+        <div class="label">Right</div>
+<pre>mt, params, err := mime.ParseMediaType(header)
+if err != nil {
+    return err
+}
+// mt normalized; params["charset"], params["boundary"], ...</pre>
+      </div>
+    </div>
+
+    <h4>Key Rules</h4>
+    <ul class="rules-list">
+      <li><code>TypeByExtension</code> needs the leading dot (<code>".png"</code>, not <code>"png"</code>) and returns <code>""</code> for unknown extensions.</li>
+      <li>Parse incoming <code>Content-Type</code> headers with <code>ParseMediaType</code> &mdash; never split on <code>";"</code> yourself; it handles quoting, casing, and whitespace.</li>
+      <li>Build outgoing headers with <code>FormatMediaType</code> so parameters are correctly quoted and ordered.</li>
+      <li>The extension table is seeded from the OS plus built-ins; extend it deterministically with <code>AddExtensionType</code> rather than trusting the host.</li>
+    </ul>
+
+    <div class="exercise">
+      <div class="exercise-label">Practice Exercise</div>
+      <p>Write a <code>contentTypeFor(filename string) string</code> that returns the MIME type via <code>TypeByExtension</code>, defaulting to <code>application/octet-stream</code> for unknowns. Then write <code>charsetOf(header string) string</code> that uses <code>ParseMediaType</code> to extract the <code>charset</code> parameter (defaulting to <code>utf-8</code>), and prove it handles a quoted, oddly-spaced header that a naive split would mangle. Finally, register a custom extension and round-trip a header through <code>FormatMediaType</code> then <code>ParseMediaType</code>.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>Pitfall:</strong> Parsing <code>Content-Type</code> by splitting on <code>";"</code> and <code>"="</code> &mdash; it breaks on quoted parameter values (a <code>boundary</code> may contain <code>;</code>), inconsistent casing, and optional whitespace. Also assuming <code>TypeByExtension</code> is populated identically everywhere: it partly depends on the host's MIME database, so register the mappings you rely on.
+    </div>
+
+    <div class="connection">
+      <strong>Connections:</strong> The base package beneath <code>mime/multipart</code> (file uploads) and the <code>Content-Type</code> handling in <code>net/http</code>; complements <code>net/url</code> and <code>http.FileServer</code>; the boundary parameter it parses is exactly what multipart form handling consumes.
+    </div>
+  </div>
+
+  <!-- New 4: net/mail -->
+  <div class="concept" id="net_mail">
+    <div class="concept-header">
+      <h3>net/mail: Parsing Addresses &amp; Messages</h3>
+      <span class="topic-badge">Email</span>
+    </div>
+    <p class="why-matters">Why it matters: validating and normalizing email addresses with a regex is a well-known trap &mdash; the real grammar (RFC 5322) is far more subtle than <code>\S+@\S+</code>. <code>net/mail</code> parses addresses and message headers correctly, so you can validate input, extract display names, and read raw messages without reinventing the spec.</p>
+
+    <h4>Parsing a single address</h4>
+    <p><code>ParseAddress</code> accepts a display-name form and returns the name plus the bare address, erroring on genuinely invalid input.</p>
+<pre>package main
+
+import (
+    "fmt"
+    "net/mail"
+)
+
+func main() {
+    a, err := mail.ParseAddress("Alice Example &lt;alice@example.com&gt;")
+    if err != nil {
+        panic(err)
+    }
+    fmt.Printf("name=%q addr=%q\n", a.Name, a.Address)
+}</pre>
+    <div class="output-label">Output</div>
+    <div class="output">name="Alice Example" addr="alice@example.com"</div>
+
+    <h4>Lists and canonical formatting</h4>
+    <p><code>ParseAddressList</code> handles comma-separated headers; <code>Address.String()</code> renders a canonical, correctly-quoted form.</p>
+<pre>package main
+
+import (
+    "fmt"
+    "net/mail"
+)
+
+func main() {
+    list, _ := mail.ParseAddressList("a@x.com, Bob &lt;b@y.com&gt;")
+    for _, a := range list {
+        fmt.Println(a.String())
+    }
+}</pre>
+    <div class="output-label">Output</div>
+    <div class="output">&lt;a@x.com&gt;
+"Bob" &lt;b@y.com&gt;</div>
+
+    <h4>Reading a whole message</h4>
+    <p><code>ReadMessage</code> parses the header block and leaves the body as an <code>io.Reader</code>. <code>Header.AddressList</code> parses an address-bearing header for you.</p>
+<pre>package main
+
+import (
+    "fmt"
+    "io"
+    "net/mail"
+    "strings"
+)
+
+func main() {
+    raw := "From: Alice &lt;alice@example.com&gt;\r\n" +
+        "To: bob@example.com\r\n" +
+        "Subject: Hi\r\n" +
+        "\r\n" +
+        "Hello Bob!\r\n"
+
+    msg, err := mail.ReadMessage(strings.NewReader(raw))
+    if err != nil {
+        panic(err)
+    }
+    fmt.Println("Subject:", msg.Header.Get("Subject"))
+    from, _ := msg.Header.AddressList("From")
+    fmt.Println("From addr:", from[0].Address)
+    body, _ := io.ReadAll(msg.Body)
+    fmt.Printf("Body: %q\n", string(body))
+}</pre>
+    <div class="output-label">Output</div>
+    <div class="output">Subject: Hi
+From addr: alice@example.com
+Body: "Hello Bob!\r\n"</div>
+
+    <h4>Common Mistakes</h4>
+    <div class="do-dont">
+      <div class="dont-box">
+        <div class="label">Wrong</div>
+<pre>// Regex "validation" -- rejects valid addresses,
+// accepts invalid ones, and misses display names.
+ok, _ := regexp.MatchString(`^\S+@\S+$`, s)
+if !ok {
+    return errInvalid
+}</pre>
+      </div>
+      <div class="do-box">
+        <div class="label">Right</div>
+<pre>// RFC 5322-aware parsing.
+addr, err := mail.ParseAddress(s)
+if err != nil {
+    return fmt.Errorf("invalid address: %w", err)
+}
+_ = addr.Address // normalized address</pre>
+      </div>
+    </div>
+
+    <h4>Key Rules</h4>
+    <ul class="rules-list">
+      <li>Validate and normalize addresses with <code>ParseAddress</code>/<code>ParseAddressList</code>, not regexes &mdash; the grammar is genuinely complex.</li>
+      <li><code>Address.String()</code> produces a canonical, correctly-quoted rendering &mdash; use it when re-emitting headers.</li>
+      <li><code>ReadMessage</code> parses only the header block; the body stays a streaming <code>io.Reader</code> (decode MIME parts with <code>mime/multipart</code> if needed).</li>
+      <li><code>net/mail</code> parses; it does <em>not</em> send mail (that's <code>net/smtp</code>) or verify that an address is deliverable.</li>
+    </ul>
+
+    <div class="exercise">
+      <div class="exercise-label">Practice Exercise</div>
+      <p>Write <code>normalizeEmail(s string) (string, error)</code> that parses with <code>ParseAddress</code> and returns the lower-cased bare <code>Address</code>, rejecting invalid input. Then parse a <code>To</code> header containing three recipients (one with a quoted display name) via <code>ParseAddressList</code> and print each canonical form. Finally, feed a small raw message into <code>ReadMessage</code>, extract <code>Subject</code>, <code>Date</code> (via <code>Header.Date()</code>), and the <code>From</code> address, and explain why a regex is the wrong validation tool.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>Pitfall:</strong> Rolling your own email validation with a regex &mdash; you will both reject valid RFC 5322 addresses (quoted local parts, display names, comments) and admit malformed ones. Delegate to <code>mail.ParseAddress</code>. Also remember parsing an address says nothing about deliverability &mdash; that requires DNS/SMTP checks well beyond this package.
+    </div>
+
+    <div class="connection">
+      <strong>Connections:</strong> Sits alongside <code>net/smtp</code> (sending) and <code>mime</code>/<code>mime/multipart</code> (decoding message bodies and attachments); <code>ReadMessage</code> returns a body as an <code>io.Reader</code>, tying into <code>io</code>/<code>bufio</code>; header values thread into <code>time</code> parsing via <code>Header.Date()</code>.
+    </div>
+  </div>
+
+  <!-- New 5: image package -->
+  <div class="concept" id="image_package">
+    <div class="concept-header">
+      <h3>image: Generating &amp; Encoding Raster Images</h3>
+      <span class="topic-badge">Images</span>
+    </div>
+    <p class="why-matters">Why it matters: pure-Go image generation covers a surprising amount of real work &mdash; thumbnails, charts, badges, QR-style grids, deterministic test fixtures &mdash; with no external libraries. The <code>image</code> package models pixels and colors; <code>image/png</code>, <code>image/jpeg</code>, and <code>image/gif</code> encode and decode. A key gotcha is that a format is only usable once its package is imported for its <code>init()</code> registration.</p>
+
+    <h4>Draw pixels and encode a PNG</h4>
+    <p><code>image.NewRGBA</code> allocates a mutable image over a rectangle; <code>Set</code> writes one pixel; <code>png.Encode</code> streams it to any <code>io.Writer</code>.</p>
+<pre>package main
+
+import (
+    "bytes"
+    "fmt"
+    "image"
+    "image/color"
+    "image/png"
+)
+
+func main() {
+    img := image.NewRGBA(image.Rect(0, 0, 100, 50))
+    for x := 0; x &lt; 100; x++ {
+        img.Set(x, 25, color.RGBA{R: 255, A: 255}) // a red horizontal line
+    }
+    var buf bytes.Buffer
+    png.Encode(&amp;buf, img)
+    fmt.Println("encoded PNG:", buf.Len() &gt; 0)
+    fmt.Println("bounds:", img.Bounds())
+}</pre>
+    <div class="output-label">Output</div>
+    <div class="output">encoded PNG: true
+bounds: (0,0)-(100,50)</div>
+
+    <h4>Fill a region with draw.Draw</h4>
+    <p>The <code>image/draw</code> package composites: an <code>image.Uniform</code> is an infinite solid color, and <code>draw.Src</code> copies it into the destination rectangle.</p>
+<pre>package main
+
+import (
+    "fmt"
+    "image"
+    "image/color"
+    "image/draw"
+)
+
+func main() {
+    img := image.NewRGBA(image.Rect(0, 0, 4, 4))
+    blue := color.RGBA{0, 0, 255, 255}
+    draw.Draw(img, img.Bounds(), &amp;image.Uniform{C: blue}, image.Point{}, draw.Src)
+    fmt.Println(img.At(2, 2).(color.RGBA))
+}</pre>
+    <div class="output-label">Output</div>
+    <div class="output">{0 0 255 255}</div>
+
+    <h4>Read dimensions cheaply with DecodeConfig</h4>
+    <p><code>image.DecodeConfig</code> reads only the header to report width, height, and format &mdash; no full decode. It needs the format package imported for its side-effect registration.</p>
+<pre>package main
+
+import (
+    "bytes"
+    "fmt"
+    "image"
+    "image/png"
+)
+
+func main() {
+    var buf bytes.Buffer
+    png.Encode(&amp;buf, image.NewRGBA(image.Rect(0, 0, 320, 240)))
+
+    cfg, format, err := image.DecodeConfig(bytes.NewReader(buf.Bytes()))
+    fmt.Println(cfg.Width, cfg.Height, format, err)
+}</pre>
+    <div class="output-label">Output</div>
+    <div class="output">320 240 png &lt;nil&gt;</div>
+
+    <h4>Common Mistakes</h4>
+    <div class="do-dont">
+      <div class="dont-box">
+        <div class="label">Wrong</div>
+<pre>import "image" // no decoder registered
+
+func size(r io.Reader) {
+    _, format, err := image.Decode(r)
+    // err: "image: unknown format" -- PNG init() never ran
+    fmt.Println(format, err)
+}</pre>
+      </div>
+      <div class="do-box">
+        <div class="label">Right</div>
+<pre>import (
+    "image"
+    _ "image/png"  // blank import: init() registers the decoder
+    _ "image/jpeg"
+)
+
+_, format, err := image.Decode(r) // now recognizes png/jpeg</pre>
+      </div>
+    </div>
+
+    <h4>Key Rules</h4>
+    <ul class="rules-list">
+      <li>Import a format package (often as a blank import <code>_ "image/png"</code>) so its <code>init()</code> registers the decoder before you call <code>image.Decode</code>/<code>DecodeConfig</code>.</li>
+      <li>An image's coordinate space is its <code>Bounds()</code> rectangle &mdash; it need not start at <code>(0,0)</code>, and <code>Set</code> outside the bounds is a silent no-op.</li>
+      <li><code>color.RGBA</code> is <em>alpha-premultiplied</em>; a fully transparent-looking color with <code>A: 0</code> stores no visible channel &mdash; set <code>A: 255</code> for opaque colors.</li>
+      <li>Use <code>DecodeConfig</code> to get dimensions cheaply (header only) instead of a full <code>Decode</code> when you just need the size.</li>
+    </ul>
+
+    <div class="exercise">
+      <div class="exercise-label">Practice Exercise</div>
+      <p>Generate a 256&times;256 PNG containing a diagonal gradient (compute each pixel's <code>color.RGBA</code> from its coordinates) and write it to a file with <code>os.Create</code> + <code>png.Encode</code>. Then write <code>imageSize(path string) (int, int, error)</code> using <code>image.DecodeConfig</code> with the correct blank imports. Finally, deliberately drop the <code>_ "image/png"</code> import and show the exact "unknown format" error &mdash; connecting this to today's <code>init()</code> review &mdash; then restore it.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>Pitfall:</strong> Forgetting the blank import of the format package &mdash; <code>image.Decode</code> then fails with "unknown format" even though the file is a valid PNG, because the decoder self-registers in its <code>init()</code> and nothing pulled that package in. The mirror gotcha is <code>color.RGBA{255,0,0,0}</code>: with <code>A: 0</code> it renders as transparent, not red.
+    </div>
+
+    <div class="connection">
+      <strong>Connections:</strong> Decoder registration is a live example of today's <code>init()</code> review and the blank-import idiom; encoding streams through <code>io.Writer</code> (the <code>io</code> and <code>bufio</code> days); it pairs with <code>net/http</code> for serving generated images and with <code>bytes.Buffer</code> for in-memory rendering and tests.
+    </div>
+  </div>
+
+</div><!-- end New Concepts section -->
+
+
+<!-- ============================================================ -->
+<!-- FOOTER -->
+<!-- ============================================================ -->
+<footer class="footer">
+  <h4>All Go Guides</h4>
+  <ul>
+    <li><a href="golang-guides/golang-guide-2026-07-09.html">Day 34 &mdash; 2026-07-09</a></li>
+    <li><a href="golang-guides/golang-guide-2026-07-08.html">Day 33 &mdash; 2026-07-08</a></li>
+    <li class="current">Day 32 &mdash; 2026-07-07 (current)</li>
+    <li><a href="golang-guides/golang-guide-2026-07-06.html">Day 31 &mdash; 2026-07-06</a></li>
+    <li><a href="golang-guides/golang-guide-2026-07-05.html">Day 30 &mdash; 2026-07-05</a></li>
+    <li><a href="golang-guides/golang-guide-2026-07-04.html">Day 29 &mdash; 2026-07-04</a></li>
+    <li><a href="golang-guides/golang-guide-2026-07-03.html">Day 28 &mdash; 2026-07-03</a></li>
+    <li><a href="golang-guides/golang-guide-2026-07-02.html">Day 27 &mdash; 2026-07-02</a></li>
+    <li><a href="golang-guides/golang-guide-2026-07-01.html">Day 26 &mdash; 2026-07-01</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-30.html">Day 25 &mdash; 2026-06-30</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-29.html">Day 24 &mdash; 2026-06-29</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-28.html">Day 23 &mdash; 2026-06-28</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-27.html">Day 22 &mdash; 2026-06-27</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-26.html">Day 21 &mdash; 2026-06-26</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-25.html">Day 20 &mdash; 2026-06-25</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-24.html">Day 19 &mdash; 2026-06-24</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-23.html">Day 18 &mdash; 2026-06-23</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-22.html">Day 17 &mdash; 2026-06-22</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-21.html">Day 16 &mdash; 2026-06-21</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-19.html">Day 15 &mdash; 2026-06-19</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-18.html">Day 14 &mdash; 2026-06-18</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-17.html">Day 13 &mdash; 2026-06-17</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-15.html">Day 12 &mdash; 2026-06-15</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-13.html">Day 11 &mdash; 2026-06-13</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-12.html">Day 10 &mdash; 2026-06-12</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-11.html">Day 9 &mdash; 2026-06-11</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-10.html">Day 8 &mdash; 2026-06-10</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-09.html">Day 7 &mdash; 2026-06-09</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-08.html">Day 6 &mdash; 2026-06-08</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-07.html">Day 5 &mdash; 2026-06-07</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-05.html">Day 4 &mdash; 2026-06-05</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-04.html">Day 3 &mdash; 2026-06-04</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-03.html">Day 2 &mdash; 2026-06-03</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-02.html">Day 1 &mdash; 2026-06-02</a></li>
+  </ul>
+
+  <h4 style="margin-top: 20px;">All Guides</h4>
+  <ul>
+    <li><a href="guide.html">LeetCode Study Guide</a></li>
+    <li><a href="lang-guide.html">Multi-Language Guide</a></li>
+    <li><a href="python-guide.html">Python Guide</a></li>
+    <li><a href="typescript-guide.html">TypeScript Guide</a></li>
+    <li><a href="javascript-guide.html">JavaScript Guide</a></li>
+    <li><a href="golang-guide.html">Go Guide (current)</a></li>
+    <li><a href="report.html">Performance Report</a></li>
+  </ul>
+</footer>
+
+</div><!-- end main -->
+
+<script>
+// ===== Theme Toggle =====
+(function() {
+  var KEY = 'lc-goguide-theme';
+  var toggle = document.getElementById('theme-toggle');
+  var html = document.documentElement;
+
+  function setTheme(theme) {
+    html.setAttribute('data-theme', theme);
+    localStorage.setItem(KEY, theme);
+    toggle.textContent = theme === 'dark' ? '☽' : '☀';
+  }
+
+  var saved = localStorage.getItem(KEY) || 'dark';
+  setTheme(saved);
+
+  toggle.addEventListener('click', function() {
+    setTheme(html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
+  });
+})();
+
+// ===== Mobile Sidebar Toggle =====
+(function() {
+  var btn = document.getElementById('sidebar-toggle');
+  var sidebar = document.getElementById('sidebar');
+
+  btn.addEventListener('click', function() {
+    sidebar.classList.toggle('open');
+  });
+
+  // Close sidebar when clicking a link (mobile)
+  sidebar.querySelectorAll('.sidebar-link').forEach(function(link) {
+    link.addEventListener('click', function() {
+      if (window.innerWidth <= 900) {
+        sidebar.classList.remove('open');
+      }
+    });
+  });
+})();
+
+// ===== Active Sidebar Link on Scroll =====
+(function() {
+  var links = document.querySelectorAll('.sidebar-link');
+  var sections = [];
+
+  links.forEach(function(link) {
+    var id = link.getAttribute('href').replace('#', '');
+    var el = document.getElementById(id);
+    if (el) sections.push({ id: id, el: el, link: link });
+  });
+
+  function onScroll() {
+    var scrollTop = window.scrollY + 120;
+    var current = null;
+
+    for (var i = sections.length - 1; i >= 0; i--) {
+      if (sections[i].el.offsetTop <= scrollTop) {
+        current = sections[i];
+        break;
+      }
+    }
+
+    links.forEach(function(l) { l.classList.remove('active'); });
+    if (current) current.link.classList.add('active');
+  }
+
+  window.addEventListener('scroll', onScroll);
+  onScroll();
+})();
+</script>
+</body>
+</html>

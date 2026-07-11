@@ -1,0 +1,1972 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Python Study Guide &mdash; Day 13 (2026-06-10)</title>
+<style>
+/* ===== CSS Variables ===== */
+:root {
+  --bg: #0d1117;
+  --surface1: #161b22;
+  --surface2: #1c2333;
+  --border: #30363d;
+  --text: #e6edf3;
+  --muted: #8b949e;
+  --accent: #58a6ff;
+  --accent-dim: #1f6feb33;
+  --green: #3fb950;
+  --green-dim: #23863633;
+  --yellow: #d29922;
+  --yellow-dim: #d2992233;
+  --red: #f85149;
+  --red-dim: #f8514933;
+  --purple: #bc8cff;
+  --purple-dim: #bc8cff22;
+  --orange: #f0883e;
+  --orange-dim: #f0883e22;
+  --code-bg: #0d1117;
+  --sidebar-w: 300px;
+  --font-mono: 'SF Mono', 'Cascadia Code', 'Fira Code', Consolas, monospace;
+  --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+  --radius: 8px;
+  --shadow: 0 1px 3px rgba(0,0,0,0.4);
+}
+
+[data-theme="light"] {
+  --bg: #ffffff;
+  --surface1: #f6f8fa;
+  --surface2: #f0f3f6;
+  --border: #d0d7de;
+  --text: #1f2328;
+  --muted: #656d76;
+  --accent: #0969da;
+  --accent-dim: #0969da1a;
+  --green: #1a7f37;
+  --green-dim: #1a7f3718;
+  --yellow: #9a6700;
+  --yellow-dim: #9a670018;
+  --red: #cf222e;
+  --red-dim: #cf222e18;
+  --purple: #8250df;
+  --purple-dim: #8250df18;
+  --orange: #bc4c00;
+  --orange-dim: #bc4c0018;
+  --code-bg: #f6f8fa;
+  --shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+/* ===== Reset & Base ===== */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: var(--font-sans);
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.7;
+  font-size: 15px;
+  transition: background 0.2s, color 0.2s;
+}
+
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+/* ===== Theme Toggle ===== */
+#theme-toggle {
+  position: fixed;
+  top: 16px;
+  right: 20px;
+  z-index: 1000;
+  background: var(--surface1);
+  border: 1px solid var(--border);
+  color: var(--text);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+  box-shadow: var(--shadow);
+}
+#theme-toggle:hover { background: var(--surface2); border-color: var(--accent); }
+
+/* ===== Sidebar ===== */
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: var(--sidebar-w);
+  height: 100vh;
+  background: var(--surface1);
+  border-right: 1px solid var(--border);
+  overflow-y: auto;
+  padding: 20px 0;
+  z-index: 100;
+  transition: transform 0.3s;
+}
+
+.sidebar-header {
+  padding: 0 20px 16px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 12px;
+}
+
+.sidebar-header h2 {
+  font-size: 16px;
+  color: var(--text);
+  font-weight: 700;
+}
+
+.sidebar-header .subtitle {
+  font-size: 12px;
+  color: var(--muted);
+  margin-top: 2px;
+}
+
+.sidebar-section {
+  margin-bottom: 8px;
+}
+
+.sidebar-section-title {
+  padding: 6px 20px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+}
+
+.sidebar-link {
+  display: block;
+  padding: 5px 20px 5px 28px;
+  font-size: 13px;
+  color: var(--muted);
+  text-decoration: none;
+  border-left: 2px solid transparent;
+  transition: all 0.15s;
+  line-height: 1.4;
+}
+
+.sidebar-link:hover {
+  color: var(--text);
+  background: var(--accent-dim);
+  border-left-color: var(--accent);
+  text-decoration: none;
+}
+
+.sidebar-link.active {
+  color: var(--accent);
+  border-left-color: var(--accent);
+  background: var(--accent-dim);
+}
+
+/* ===== Mobile sidebar toggle ===== */
+#sidebar-toggle {
+  display: none;
+  position: fixed;
+  top: 16px;
+  left: 16px;
+  z-index: 200;
+  background: var(--surface1);
+  border: 1px solid var(--border);
+  color: var(--text);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 20px;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--shadow);
+}
+
+/* ===== Main Content ===== */
+.main {
+  margin-left: var(--sidebar-w);
+  padding: 40px 48px 80px;
+  max-width: calc(860px + var(--sidebar-w) + 96px);
+}
+
+.page-title {
+  font-size: 32px;
+  font-weight: 800;
+  margin-bottom: 4px;
+  color: var(--text);
+}
+
+.page-subtitle {
+  font-size: 15px;
+  color: var(--muted);
+  margin-bottom: 36px;
+}
+
+/* ===== How to Use ===== */
+.how-to {
+  background: var(--surface1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px 24px;
+  margin-bottom: 36px;
+}
+
+.how-to h3 {
+  font-size: 15px;
+  font-weight: 700;
+  margin-bottom: 8px;
+  color: var(--muted);
+}
+
+.how-to ul {
+  padding-left: 22px;
+  margin: 0;
+}
+
+.how-to li {
+  font-size: 14px;
+  color: var(--muted);
+  margin-bottom: 3px;
+}
+
+/* ===== Sections ===== */
+.section {
+  margin-bottom: 48px;
+}
+
+.section-label {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  padding: 3px 10px;
+  border-radius: 4px;
+  margin-bottom: 12px;
+}
+
+.section-label.review { background: var(--yellow-dim); color: var(--yellow); }
+.section-label.new { background: var(--green-dim); color: var(--green); }
+
+.section-title {
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 24px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--border);
+}
+
+/* ===== Concept Cards ===== */
+.concept {
+  background: var(--surface1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 28px;
+  margin-bottom: 28px;
+  box-shadow: var(--shadow);
+}
+
+.concept-header {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  margin-bottom: 6px;
+  flex-wrap: wrap;
+}
+
+.concept h3 {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.concept-meta {
+  font-size: 12px;
+  color: var(--muted);
+  background: var(--surface2);
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
+.concept h4 {
+  font-size: 15px;
+  font-weight: 600;
+  margin: 20px 0 8px;
+  color: var(--text);
+}
+
+.concept p, .concept li {
+  color: var(--text);
+  line-height: 1.7;
+}
+
+.concept ul, .concept ol {
+  padding-left: 22px;
+  margin: 8px 0;
+}
+
+.concept li {
+  margin-bottom: 4px;
+}
+
+/* ===== Code Blocks ===== */
+pre {
+  background: var(--code-bg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 16px 18px;
+  overflow-x: auto;
+  margin: 10px 0 14px;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--text);
+  position: relative;
+}
+
+code {
+  font-family: var(--font-mono);
+  font-size: 0.9em;
+}
+
+:not(pre) > code {
+  background: var(--surface2);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.88em;
+}
+
+/* ===== Good/Bad Examples ===== */
+.do-dont {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin: 10px 0;
+}
+
+.do-box, .dont-box {
+  border-radius: 6px;
+  padding: 14px;
+  border: 1px solid;
+}
+
+.do-box {
+  background: var(--green-dim);
+  border-color: var(--green);
+}
+
+.dont-box {
+  background: var(--red-dim);
+  border-color: var(--red);
+}
+
+.do-box .label, .dont-box .label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 6px;
+}
+
+.do-box .label { color: var(--green); }
+.dont-box .label { color: var(--red); }
+
+.do-box pre, .dont-box pre {
+  margin: 0;
+  border: none;
+  background: transparent;
+  padding: 0;
+  font-size: 12.5px;
+}
+
+/* ===== Key Rules ===== */
+.rules-list {
+  list-style: none;
+  padding: 0;
+  margin: 8px 0;
+}
+
+.rules-list li {
+  padding: 6px 0 6px 24px;
+  position: relative;
+}
+
+.rules-list li::before {
+  content: "\2192";
+  position: absolute;
+  left: 2px;
+  color: var(--accent);
+  font-weight: 700;
+}
+
+/* ===== Exercises ===== */
+.exercise {
+  background: var(--purple-dim);
+  border: 1px solid var(--purple);
+  border-radius: 6px;
+  padding: 14px 18px;
+  margin: 8px 0;
+}
+
+.exercise .exercise-label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--purple);
+  margin-bottom: 4px;
+}
+
+/* ===== Challenge (Review) ===== */
+.challenge {
+  background: var(--orange-dim);
+  border: 1px solid var(--orange);
+  border-radius: 6px;
+  padding: 14px 18px;
+  margin: 10px 0;
+}
+
+.challenge .challenge-label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--orange);
+  margin-bottom: 4px;
+}
+
+/* ===== Pitfall ===== */
+.pitfall {
+  background: var(--red-dim);
+  border-left: 3px solid var(--red);
+  border-radius: 0 6px 6px 0;
+  padding: 10px 14px;
+  margin: 10px 0;
+  font-size: 14px;
+}
+
+.pitfall strong {
+  color: var(--red);
+}
+
+/* ===== Connection ===== */
+.connection {
+  background: var(--accent-dim);
+  border-left: 3px solid var(--accent);
+  border-radius: 0 6px 6px 0;
+  padding: 10px 14px;
+  margin: 10px 0;
+  font-size: 14px;
+  color: var(--muted);
+}
+
+/* ===== Footer ===== */
+.footer {
+  margin-top: 60px;
+  padding: 24px 0;
+  border-top: 1px solid var(--border);
+}
+
+.footer h4 {
+  font-size: 14px;
+  color: var(--muted);
+  margin-bottom: 10px;
+}
+
+.footer ul {
+  list-style: none;
+  padding: 0;
+}
+
+.footer li {
+  margin-bottom: 4px;
+  font-size: 14px;
+}
+
+.footer li a { color: var(--accent); }
+.footer .current { color: var(--green); font-weight: 600; }
+
+/* ===== Responsive ===== */
+@media (max-width: 900px) {
+  .sidebar {
+    transform: translateX(-100%);
+  }
+  .sidebar.open {
+    transform: translateX(0);
+    box-shadow: 4px 0 20px rgba(0,0,0,0.5);
+  }
+  #sidebar-toggle {
+    display: flex;
+  }
+  .main {
+    margin-left: 0;
+    padding: 60px 20px 60px;
+    max-width: 100%;
+  }
+  .do-dont {
+    grid-template-columns: 1fr;
+  }
+  #theme-toggle {
+    right: 14px;
+    top: 16px;
+  }
+}
+</style>
+</head>
+<body>
+
+<!-- Theme Toggle -->
+<button id="theme-toggle" aria-label="Toggle theme" title="Toggle light/dark theme">&#9789;</button>
+
+<!-- Mobile Sidebar Toggle -->
+<button id="sidebar-toggle" aria-label="Toggle sidebar">&#9776;</button>
+
+<!-- Sidebar -->
+<nav class="sidebar" id="sidebar">
+  <div class="sidebar-header">
+    <h2>Python Guide</h2>
+    <div class="subtitle">Day 13 &mdash; 2026-06-10</div>
+  </div>
+
+  <div class="sidebar-section">
+    <div class="sidebar-section-title">Review (6 concepts)</div>
+    <a href="#review-argparse-cli" class="sidebar-link">argparse for CLI Tools</a>
+    <a href="#review-async-await" class="sidebar-link">async/await Basics</a>
+    <a href="#review-concurrency-overview" class="sidebar-link">threading vs multiprocessing vs asyncio</a>
+    <a href="#review-concurrent-futures" class="sidebar-link">concurrent.futures</a>
+    <a href="#review-profiling" class="sidebar-link">Profiling with timeit &amp; cProfile</a>
+    <a href="#review-class-static" class="sidebar-link">Class Methods &amp; Static Methods</a>
+  </div>
+
+  <div class="sidebar-section">
+    <div class="sidebar-section-title">New Concepts (5 topics)</div>
+    <a href="#subprocess-module" class="sidebar-link">subprocess Module</a>
+    <a href="#typing-paramspec" class="sidebar-link">Typing: ParamSpec &amp; TypeVarTuple</a>
+    <a href="#collections-abc" class="sidebar-link">collections.abc &amp; Custom Collections</a>
+    <a href="#dataclasses-advanced" class="sidebar-link">dataclasses Advanced</a>
+    <a href="#textwrap-shutil-tempfile" class="sidebar-link">textwrap, shutil &amp; tempfile</a>
+  </div>
+</nav>
+
+<!-- Main Content -->
+<div class="main">
+
+<h1 class="page-title">Python Daily Guide</h1>
+<p class="page-subtitle">Day 13 &mdash; Wednesday, June 10, 2026 &bull; 6 reviews, 5 new concepts</p>
+
+<!-- How to Use -->
+<div class="how-to">
+  <h3>How to Use This Guide</h3>
+  <ul>
+    <li><strong>Review cards</strong> &mdash; skim the reminder, write the key pattern from memory, then try the challenge.</li>
+    <li><strong>New concepts</strong> &mdash; read the explanation, run every code example in a REPL, then do the exercises.</li>
+    <li><strong>Don't peek at solutions</strong> &mdash; struggle for at least 10 minutes before looking things up.</li>
+    <li><strong>Connections</strong> &mdash; pay attention to how concepts link together across days.</li>
+  </ul>
+</div>
+
+
+<!-- ============================================================ -->
+<!-- REVIEW SECTION -->
+<!-- ============================================================ -->
+<div class="section">
+  <span class="section-label review">Review</span>
+  <h2 class="section-title">Review &mdash; 6 Concepts</h2>
+
+  <!-- Review 1: argparse for CLI Tools -->
+  <div class="concept" id="review-argparse-cli">
+    <div class="concept-header">
+      <h3>argparse for CLI Tools</h3>
+      <span class="concept-meta">Error Handling &amp; I/O &bull; 5 days overdue &bull; rep 0</span>
+    </div>
+
+    <h4>Quick Reminder</h4>
+    <p><code>ArgumentParser</code> handles CLI arg parsing. <code>add_argument</code> defines positional and optional args with <code>type=</code>, <code>choices=</code>, <code>default=</code>, and <code>help=</code>. Subparsers (<code>add_subparsers</code>) enable git-style subcommands. Use <code>action='store_true'</code> for boolean flags.</p>
+
+    <h4>Key Pattern &mdash; Subcommands with add_subparsers</h4>
+<pre>import argparse
+
+parser = argparse.ArgumentParser(description="Task manager")
+subparsers = parser.add_subparsers(dest="command", required=True)
+
+# "add" subcommand
+add_parser = subparsers.add_parser("add", help="Add a task")
+add_parser.add_argument("title", help="Task title")
+add_parser.add_argument("--priority", type=int, choices=[1,2,3], default=2)
+
+# "list" subcommand
+list_parser = subparsers.add_parser("list", help="List tasks")
+list_parser.add_argument("--all", action="store_true", help="Include done")
+
+# Parse
+args = parser.parse_args(["add", "Buy groceries", "--priority", "1"])
+print(args)
+# Namespace(command='add', title='Buy groceries', priority=1)</pre>
+
+    <div class="challenge">
+      <div class="challenge-label">Challenge</div>
+      <p>Build a CLI tool with two subcommands: <code>add</code> (takes a title and optional <code>--priority</code>) and <code>list</code> (takes an optional <code>--all</code> flag). Print the parsed arguments for each subcommand.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>#1 Pitfall:</strong> <code>type=bool</code> doesn't work as expected &mdash; <code>bool("False")</code> is <code>True</code> because any non-empty string is truthy. Use <code>action='store_true'</code> for boolean flags instead.
+    </div>
+  </div>
+
+  <!-- Review 2: async/await Basics -->
+  <div class="concept" id="review-async-await">
+    <div class="concept-header">
+      <h3>async/await Basics</h3>
+      <span class="concept-meta">Concurrency &bull; 5 days overdue &bull; rep 0</span>
+    </div>
+
+    <h4>Quick Reminder</h4>
+    <p><code>async def</code> defines a coroutine. <code>await</code> suspends until the awaitable completes. <code>asyncio.gather(*coros)</code> runs coroutines concurrently. <code>asyncio.run(main())</code> starts the event loop. Always <code>await</code> coroutine calls &mdash; forgetting produces a bare coroutine object that never executes.</p>
+
+    <h4>Key Pattern &mdash; Concurrent Fetching with Timeout</h4>
+<pre>import asyncio
+
+async def fetch(url: str, delay: float) -> str:
+    print(f"  Fetching {url}...")
+    await asyncio.sleep(delay)  # simulate network I/O
+    return f"Data from {url}"
+
+async def main():
+    urls = [("api/users", 0.5), ("api/posts", 0.3), ("api/comments", 0.7)]
+    tasks = [fetch(url, d) for url, d in urls]
+
+    # Run all concurrently with a 1-second timeout
+    results = await asyncio.wait_for(
+        asyncio.gather(*tasks),
+        timeout=1.0
+    )
+    for r in results:
+        print(f"  Got: {r}")
+
+asyncio.run(main())</pre>
+
+    <div class="challenge">
+      <div class="challenge-label">Challenge</div>
+      <p>Write an async program that fetches 3 URLs concurrently (simulated with <code>asyncio.sleep</code>) and applies a 1-second timeout to the entire batch using <code>asyncio.wait_for</code>.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>#1 Pitfall:</strong> Forgetting to <code>await</code> an async call gives you a coroutine object instead of the result. The coroutine never runs, and Python may warn: <code>RuntimeWarning: coroutine was never awaited</code>.
+    </div>
+  </div>
+
+  <!-- Review 3: threading vs multiprocessing vs asyncio -->
+  <div class="concept" id="review-concurrency-overview">
+    <div class="concept-header">
+      <h3>threading vs multiprocessing vs asyncio</h3>
+      <span class="concept-meta">Concurrency &bull; 5 days overdue &bull; rep 0</span>
+    </div>
+
+    <h4>Quick Reminder</h4>
+    <p><strong>threading</strong> &mdash; shared memory, limited by GIL for CPU work, good for I/O-bound tasks. <strong>multiprocessing</strong> &mdash; separate processes, bypasses GIL, good for CPU-bound work, but data must be pickled. <strong>asyncio</strong> &mdash; single-threaded event loop, best for high-concurrency I/O (thousands of connections).</p>
+
+    <h4>Key Pattern &mdash; Decision Matrix</h4>
+<pre># I/O-bound, few tasks     -> threading
+# I/O-bound, many tasks    -> asyncio
+# CPU-bound                 -> multiprocessing
+
+import threading
+import multiprocessing
+import asyncio
+import time
+
+# Threading: I/O-bound
+def io_task(name):
+    time.sleep(0.5)
+    return f"{name} done"
+
+threads = [threading.Thread(target=io_task, args=(f"t{i}",)) for i in range(4)]
+for t in threads: t.start()
+for t in threads: t.join()
+# All 4 finish in ~0.5s total (concurrent I/O)
+
+# Multiprocessing: CPU-bound
+def cpu_task(n):
+    return sum(i*i for i in range(n))
+
+with multiprocessing.Pool(4) as pool:
+    results = pool.map(cpu_task, [10**6]*4)
+# Uses all 4 CPU cores</pre>
+
+    <div class="challenge">
+      <div class="challenge-label">Challenge</div>
+      <p>Benchmark an I/O-bound task (sleeping 0.5s) run 4 times using: (1) sequential, (2) threading, (3) asyncio. Compare total wall-clock time for each approach.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>#1 Pitfall:</strong> Using threading for CPU-bound work. The GIL prevents true parallelism for CPU tasks in threads &mdash; 4 threads computing squares will take roughly the same time as sequential. Use <code>multiprocessing</code> for CPU-bound work.
+    </div>
+  </div>
+
+  <!-- Review 4: concurrent.futures -->
+  <div class="concept" id="review-concurrent-futures">
+    <div class="concept-header">
+      <h3>concurrent.futures</h3>
+      <span class="concept-meta">Concurrency &bull; 5 days overdue &bull; rep 0</span>
+    </div>
+
+    <h4>Quick Reminder</h4>
+    <p><code>ThreadPoolExecutor</code> for I/O-bound, <code>ProcessPoolExecutor</code> for CPU-bound. <code>executor.submit(fn, *args)</code> returns a <code>Future</code>. <code>executor.map(fn, iterable)</code> returns results in order. <code>as_completed(futures)</code> yields futures as they finish (not in order).</p>
+
+    <h4>Key Pattern &mdash; submit + as_completed</h4>
+<pre>from concurrent.futures import ProcessPoolExecutor, as_completed
+
+def process_file(path: str) -> dict:
+    # Simulate CPU-heavy file processing
+    import hashlib
+    data = path.encode() * 10000
+    return {"file": path, "hash": hashlib.sha256(data).hexdigest()[:12]}
+
+files = ["data_01.csv", "data_02.csv", "data_03.csv", "data_04.csv"]
+
+with ProcessPoolExecutor(max_workers=4) as exe:
+    futures = {exe.submit(process_file, f): f for f in files}
+    for future in as_completed(futures):
+        result = future.result()
+        print(f"  {result['file']} -> {result['hash']}")</pre>
+
+    <div class="challenge">
+      <div class="challenge-label">Challenge</div>
+      <p>Process a list of 6 files in parallel using <code>ProcessPoolExecutor</code>. Use <code>submit</code> + <code>as_completed</code> to print results as they arrive. Handle exceptions from individual tasks with <code>future.exception()</code>.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>#1 Pitfall:</strong> Passing unpicklable objects (lambdas, open file handles, database connections) to <code>ProcessPoolExecutor</code>. Data crosses process boundaries via pickle &mdash; if it can't be pickled, you get <code>PicklingError</code>. Use <code>ThreadPoolExecutor</code> for unpicklable data.
+    </div>
+  </div>
+
+  <!-- Review 5: Profiling with timeit & cProfile -->
+  <div class="concept" id="review-profiling">
+    <div class="concept-header">
+      <h3>Profiling with timeit &amp; cProfile</h3>
+      <span class="concept-meta">Concurrency &bull; 5 days overdue &bull; rep 0</span>
+    </div>
+
+    <h4>Quick Reminder</h4>
+    <p><code>timeit.timeit(stmt, number=N)</code> for micro-benchmarks. <code>cProfile.run(stmt)</code> for function-level profiling &mdash; shows <code>ncalls</code>, <code>tottime</code>, <code>cumtime</code>. <code>line_profiler</code> (third-party) for line-by-line analysis. Always profile before optimizing &mdash; measure, don't guess.</p>
+
+    <h4>Key Pattern &mdash; Compare and Profile</h4>
+<pre>import timeit
+import cProfile
+
+# Micro-benchmark: list comp vs map
+setup = "data = list(range(10000))"
+
+t1 = timeit.timeit("[x**2 for x in data]", setup=setup, number=1000)
+t2 = timeit.timeit("list(map(lambda x: x**2, data))", setup=setup, number=1000)
+print(f"List comp: {t1:.3f}s")
+print(f"map+lambda: {t2:.3f}s")
+
+# cProfile a sorting function
+def sort_demo():
+    import random
+    data = [random.randint(0, 10000) for _ in range(50000)]
+    return sorted(data)
+
+cProfile.run("sort_demo()")
+# Shows call count, time per function</pre>
+
+    <div class="challenge">
+      <div class="challenge-label">Challenge</div>
+      <p>Profile a sorting function using <code>cProfile</code> and identify the most time-consuming function call. Then use <code>timeit</code> to compare <code>sorted(data)</code> vs <code>data.sort()</code> for a list of 100,000 random integers.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>#1 Pitfall:</strong> Micro-benchmarking in the REPL vs a script gives different results. The REPL has overhead from input processing and display. Always use <code>timeit.timeit()</code> with a proper <code>number</code> parameter for reliable measurements.
+    </div>
+  </div>
+
+  <!-- Review 6: Class Methods & Static Methods -->
+  <div class="concept" id="review-class-static">
+    <div class="concept-header">
+      <h3>Class Methods &amp; Static Methods</h3>
+      <span class="concept-meta">OOP &bull; 5 days overdue &bull; rep 1</span>
+    </div>
+
+    <h4>Quick Reminder</h4>
+    <p><code>@classmethod</code> receives <code>cls</code> as first arg &mdash; use for factory methods and alternative constructors. <code>@staticmethod</code> receives no implicit arg &mdash; use for utility functions that belong to the class namespace. Always use <code>cls()</code> inside classmethods, never <code>ClassName()</code>, so subclasses work correctly.</p>
+
+    <h4>Key Pattern &mdash; Factory Method with cls</h4>
+<pre>class Date:
+    def __init__(self, year: int, month: int, day: int):
+        self.year = year
+        self.month = month
+        self.day = day
+
+    @classmethod
+    def from_string(cls, s: str) -> "Date":
+        y, m, d = map(int, s.split("-"))
+        return cls(y, m, d)  # uses cls, not Date
+
+    @staticmethod
+    def is_leap_year(year: int) -> bool:
+        return year % 4 == 0 and (year % 100 != 0 or year % 400 == 0)
+
+    def __repr__(self):
+        return f"Date({self.year}, {self.month}, {self.day})"
+
+d = Date.from_string("2026-06-10")
+print(d)                         # Date(2026, 6, 10)
+print(Date.is_leap_year(2024))   # True</pre>
+
+    <div class="challenge">
+      <div class="challenge-label">Challenge</div>
+      <p>Create a <code>Date</code> class with a <code>from_string("YYYY-MM-DD")</code> classmethod factory. Add a subclass <code>USDate</code> that formats as <code>MM/DD/YYYY</code>. Verify that <code>USDate.from_string("2026-06-10")</code> returns a <code>USDate</code> instance (not a plain <code>Date</code>).</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>#1 Pitfall:</strong> Using <code>Date()</code> instead of <code>cls()</code> inside a classmethod. If <code>USDate</code> inherits <code>from_string</code> and it calls <code>Date()</code>, the result is a <code>Date</code> instead of a <code>USDate</code> &mdash; breaking inheritance.
+    </div>
+  </div>
+
+</div><!-- end review section -->
+
+
+<!-- ============================================================ -->
+<!-- NEW CONCEPTS SECTION -->
+<!-- ============================================================ -->
+<div class="section">
+  <span class="section-label new">New</span>
+  <h2 class="section-title">New Concepts &mdash; 5 Topics</h2>
+
+  <!-- New 1: subprocess Module -->
+  <div class="concept" id="subprocess-module">
+    <div class="concept-header">
+      <h3>subprocess Module</h3>
+      <span class="concept-meta">System Integration &bull; New</span>
+    </div>
+
+    <h4>Why It Matters</h4>
+    <p>Python often needs to call external programs &mdash; build tools, system commands, data pipelines. <code>subprocess</code> is the modern replacement for <code>os.system()</code> and the old <code>commands</code> module. It gives you fine-grained control over stdin/stdout/stderr, timeouts, and error handling.</p>
+
+    <h4>Progressive Explanation</h4>
+
+    <p><strong>Basic subprocess.run() &mdash; capture output:</strong></p>
+<pre>import subprocess
+
+# Run a command and capture output
+result = subprocess.run(
+    ["echo", "Hello from subprocess"],
+    capture_output=True,
+    text=True          # decode bytes to str
+)
+
+print(result.stdout)       # Hello from subprocess\n
+print(result.returncode)   # 0 (success)</pre>
+
+    <p><strong>check=True &mdash; raise on non-zero exit:</strong></p>
+<pre>import subprocess
+
+# check=True raises CalledProcessError on failure
+try:
+    result = subprocess.run(
+        ["ls", "/nonexistent"],
+        capture_output=True,
+        text=True,
+        check=True
+    )
+except subprocess.CalledProcessError as e:
+    print(f"Command failed with code {e.returncode}")
+    print(f"stderr: {e.stderr.strip()}")</pre>
+
+    <p><strong>Timeout &mdash; kill long-running processes:</strong></p>
+<pre>import subprocess
+
+try:
+    result = subprocess.run(
+        ["sleep", "10"],
+        timeout=2      # kill after 2 seconds
+    )
+except subprocess.TimeoutExpired:
+    print("Process timed out after 2 seconds")</pre>
+
+    <p><strong>Piping between processes (replacing shell pipes):</strong></p>
+<pre>import subprocess
+
+# Equivalent of: echo "hello world" | tr ' ' '\n' | sort
+p1 = subprocess.Popen(
+    ["echo", "cherry banana apple"],
+    stdout=subprocess.PIPE
+)
+p2 = subprocess.Popen(
+    ["tr", " ", "\n"],
+    stdin=p1.stdout,
+    stdout=subprocess.PIPE
+)
+p1.stdout.close()  # Allow p1 to receive SIGPIPE if p2 exits
+
+p3 = subprocess.Popen(
+    ["sort"],
+    stdin=p2.stdout,
+    stdout=subprocess.PIPE,
+    text=True
+)
+p2.stdout.close()
+
+output, _ = p3.communicate()
+print(output)
+# apple
+# banana
+# cherry</pre>
+
+    <p><strong>Sending input to stdin:</strong></p>
+<pre>import subprocess
+
+# Pass data to stdin
+result = subprocess.run(
+    ["python3", "-c", "import sys; print(sys.stdin.read().upper())"],
+    input="hello from stdin",
+    capture_output=True,
+    text=True
+)
+print(result.stdout)  # HELLO FROM STDIN</pre>
+
+    <h4>Common Mistakes</h4>
+    <div class="do-dont">
+      <div class="dont-box">
+        <div class="label">Don't</div>
+<pre># DANGER: shell=True with user input
+user_input = "; rm -rf /"
+subprocess.run(
+    f"echo {user_input}",
+    shell=True  # shell injection!
+)</pre>
+      </div>
+      <div class="do-box">
+        <div class="label">Do</div>
+<pre># Safe: pass args as a list
+user_input = "; rm -rf /"
+subprocess.run(
+    ["echo", user_input],  # treated as literal
+    capture_output=True,
+    text=True
+)</pre>
+      </div>
+    </div>
+
+    <div class="do-dont">
+      <div class="dont-box">
+        <div class="label">Don't</div>
+<pre># Forgetting to handle errors
+result = subprocess.run(["gcc", "bad.c"])
+# result.returncode might be non-zero
+# but you never checked!</pre>
+      </div>
+      <div class="do-box">
+        <div class="label">Do</div>
+<pre># Always check or use check=True
+result = subprocess.run(
+    ["gcc", "bad.c"],
+    capture_output=True,
+    text=True,
+    check=True  # raises on failure
+)</pre>
+      </div>
+    </div>
+
+    <h4>Key Rules</h4>
+    <ul class="rules-list">
+      <li>Use <code>subprocess.run()</code> for simple commands. Use <code>Popen</code> only when you need streaming or pipe chains.</li>
+      <li>Always pass commands as a list of strings, not a single string (avoids <code>shell=True</code>).</li>
+      <li>Never use <code>shell=True</code> with untrusted input &mdash; it enables shell injection attacks.</li>
+      <li>Use <code>check=True</code> to automatically raise on non-zero exit codes.</li>
+      <li>Use <code>timeout=</code> to prevent hanging on unresponsive processes.</li>
+      <li>Use <code>text=True</code> (or <code>encoding="utf-8"</code>) to get strings instead of bytes.</li>
+    </ul>
+
+    <h4>Exercises</h4>
+    <div class="exercise">
+      <div class="exercise-label">Exercise 1</div>
+      <p>Write a function <code>run_cmd(args, timeout=10)</code> that runs a command, captures stdout/stderr, raises on failure, and returns a dict with <code>{"stdout": ..., "stderr": ..., "code": ...}</code>. Handle both <code>CalledProcessError</code> and <code>TimeoutExpired</code>.</p>
+    </div>
+    <div class="exercise">
+      <div class="exercise-label">Exercise 2</div>
+      <p>Write a Python script that uses <code>subprocess</code> to run <code>git log --oneline -5</code>, parse the output into a list of <code>(hash, message)</code> tuples, and print them formatted. Handle the case where <code>git</code> is not installed.</p>
+    </div>
+
+    <div class="connection">
+      <strong>Connections:</strong> Builds on argparse (reviewed today) &mdash; CLI tools often call subprocesses. Pairs with <code>shutil</code> and <code>tempfile</code> (later this guide) for file manipulation scripts. Relates to concurrency concepts (reviewed today) since subprocesses run in separate OS processes.
+    </div>
+  </div>
+
+  <!-- New 2: Typing: ParamSpec & TypeVarTuple -->
+  <div class="concept" id="typing-paramspec">
+    <div class="concept-header">
+      <h3>Typing: ParamSpec &amp; TypeVarTuple</h3>
+      <span class="concept-meta">Type System &bull; New</span>
+    </div>
+
+    <h4>Why It Matters</h4>
+    <p>Decorators that wrap functions often lose their type signatures. <code>ParamSpec</code> preserves the decorated function's parameter types, while <code>TypeVarTuple</code> enables variadic generics &mdash; generic classes/functions that accept an arbitrary number of type parameters.</p>
+
+    <h4>Progressive Explanation</h4>
+
+    <p><strong>The problem &mdash; decorators lose type info:</strong></p>
+<pre>from functools import wraps
+from typing import Any, Callable
+
+# Without ParamSpec, the wrapper's signature is lost
+def log_calls(func: Callable[..., Any]) -> Callable[..., Any]:
+    @wraps(func)
+    def wrapper(*args: Any, **kwargs: Any) -> Any:
+        print(f"Calling {func.__name__}")
+        return func(*args, **kwargs)
+    return wrapper
+
+@log_calls
+def greet(name: str, excited: bool = False) -> str:
+    return f"Hello, {name}{'!' if excited else '.'}"
+
+# Type checker sees wrapper(*args, **kwargs) -> Any
+# Lost: name is str, excited is bool, returns str</pre>
+
+    <p><strong>ParamSpec preserves signatures:</strong></p>
+<pre>from functools import wraps
+from typing import Callable, ParamSpec, TypeVar
+
+P = ParamSpec("P")       # captures *args and **kwargs types
+R = TypeVar("R")          # captures return type
+
+def log_calls(func: Callable[P, R]) -> Callable[P, R]:
+    @wraps(func)
+    def wrapper(*args: P.args, **kwargs: P.kwargs) -> R:
+        print(f"Calling {func.__name__}")
+        return func(*args, **kwargs)
+    return wrapper
+
+@log_calls
+def greet(name: str, excited: bool = False) -> str:
+    return f"Hello, {name}{'!' if excited else '.'}"
+
+# Type checker now knows:
+# greet(name: str, excited: bool = False) -> str
+result = greet("Alice", excited=True)
+print(result)  # Hello, Alice!</pre>
+
+    <p><strong>Concatenate &mdash; adding parameters to a signature:</strong></p>
+<pre>from typing import Callable, Concatenate, ParamSpec, TypeVar
+
+P = ParamSpec("P")
+R = TypeVar("R")
+
+def with_logging(
+    func: Callable[Concatenate[str, P], R]
+) -> Callable[Concatenate[str, P], R]:
+    """Decorator for functions whose first arg is a log prefix."""
+    @wraps(func)
+    def wrapper(prefix: str, *args: P.args, **kwargs: P.kwargs) -> R:
+        print(f"[{prefix}] Calling {func.__name__}")
+        return func(prefix, *args, **kwargs)
+    return wrapper
+
+@with_logging
+def process(prefix: str, data: list[int]) -> int:
+    return sum(data)
+
+# Type checker knows: process(prefix: str, data: list[int]) -> int
+result = process("INFO", [1, 2, 3])
+print(result)  # 6</pre>
+
+    <p><strong>TypeVarTuple for variadic generics (Python 3.11+):</strong></p>
+<pre>from typing import TypeVarTuple, Unpack
+
+Ts = TypeVarTuple("Ts")
+
+# A generic tuple that preserves element types
+class TypedRow:
+    """Demonstrates the concept of variadic generics."""
+
+    @staticmethod
+    def make_pair(a: int, b: str) -> tuple[int, str]:
+        return (a, b)
+
+    @staticmethod
+    def make_triple(a: int, b: str, c: float) -> tuple[int, str, float]:
+        return (a, b, c)
+
+# TypeVarTuple lets you generalize over the number of type params:
+# def process(*args: Unpack[Ts]) -> tuple[Unpack[Ts]]: ...
+# This preserves the exact types and count of arguments
+
+pair = TypedRow.make_pair(1, "hello")
+triple = TypedRow.make_triple(1, "hello", 3.14)
+print(pair)    # (1, 'hello')
+print(triple)  # (1, 'hello', 3.14)</pre>
+
+    <p><strong>Real-world: typed retry decorator:</strong></p>
+<pre>import time
+from functools import wraps
+from typing import Callable, ParamSpec, TypeVar
+
+P = ParamSpec("P")
+R = TypeVar("R")
+
+def retry(max_attempts: int = 3, delay: float = 0.1):
+    """Retry decorator that preserves the wrapped function's type signature."""
+    def decorator(func: Callable[P, R]) -> Callable[P, R]:
+        @wraps(func)
+        def wrapper(*args: P.args, **kwargs: P.kwargs) -> R:
+            last_error: Exception | None = None
+            for attempt in range(1, max_attempts + 1):
+                try:
+                    return func(*args, **kwargs)
+                except Exception as e:
+                    last_error = e
+                    print(f"  Attempt {attempt} failed: {e}")
+                    if attempt &lt; max_attempts:
+                        time.sleep(delay)
+            raise last_error  # type: ignore[misc]
+        return wrapper
+    return decorator
+
+@retry(max_attempts=3, delay=0.05)
+def fetch_data(url: str, timeout: int = 30) -> dict:
+    # Type checker knows: fetch_data(url: str, timeout: int = 30) -> dict
+    if url == "bad":
+        raise ConnectionError("Connection refused")
+    return {"url": url, "status": 200}
+
+# Correct usage -- type checker validates args
+result = fetch_data("https://api.example.com", timeout=10)
+print(result)  # {'url': 'https://api.example.com', 'status': 200}</pre>
+
+    <h4>Common Mistakes</h4>
+    <div class="do-dont">
+      <div class="dont-box">
+        <div class="label">Don't</div>
+<pre>from typing import Any, Callable
+
+# Loses all parameter type information
+def deco(fn: Callable[..., Any]):
+    def wrapper(*a, **kw):
+        return fn(*a, **kw)
+    return wrapper</pre>
+      </div>
+      <div class="do-box">
+        <div class="label">Do</div>
+<pre>from typing import Callable, ParamSpec, TypeVar
+
+P = ParamSpec("P")
+R = TypeVar("R")
+
+def deco(fn: Callable[P, R]) -> Callable[P, R]:
+    def wrapper(*a: P.args, **kw: P.kwargs) -> R:
+        return fn(*a, **kw)
+    return wrapper</pre>
+      </div>
+    </div>
+
+    <h4>Key Rules</h4>
+    <ul class="rules-list">
+      <li>Use <code>ParamSpec</code> whenever you write a decorator that wraps a function &mdash; it preserves the exact parameter signature.</li>
+      <li><code>P.args</code> and <code>P.kwargs</code> must always be used together (not <code>P.args</code> alone).</li>
+      <li>Use <code>Concatenate[ExtraArg, P]</code> when your decorator adds parameters to the wrapped function.</li>
+      <li><code>TypeVarTuple</code> is for advanced library code (ORMs, tensor libraries) &mdash; most application code won't need it.</li>
+      <li>Requires Python 3.10+ for <code>ParamSpec</code>, 3.11+ for <code>TypeVarTuple</code>. Use <code>typing_extensions</code> for older versions.</li>
+    </ul>
+
+    <h4>Exercises</h4>
+    <div class="exercise">
+      <div class="exercise-label">Exercise 1</div>
+      <p>Write a <code>@timed</code> decorator using <code>ParamSpec</code> that prints how long a function took and preserves its type signature. Test it on a function with specific parameter types.</p>
+    </div>
+    <div class="exercise">
+      <div class="exercise-label">Exercise 2</div>
+      <p>Write a <code>@validate_positive</code> decorator using <code>ParamSpec</code> that checks all positional numeric arguments are positive before calling the wrapped function. Raise <code>ValueError</code> if any are negative.</p>
+    </div>
+
+    <div class="connection">
+      <strong>Connections:</strong> Builds on decorators from Day 6 and type hints from Day 10. <code>ParamSpec</code> solves the main pain point of decorator typing. Relates to <code>functools.wraps</code> (reviewed in Day 5) which preserves runtime metadata while <code>ParamSpec</code> preserves static type metadata.
+    </div>
+  </div>
+
+  <!-- New 3: collections.abc & Custom Collections -->
+  <div class="concept" id="collections-abc">
+    <div class="concept-header">
+      <h3>collections.abc &amp; Custom Collections</h3>
+      <span class="concept-meta">Data Structures &bull; New</span>
+    </div>
+
+    <h4>Why It Matters</h4>
+    <p><code>collections.abc</code> provides abstract base classes that define the interface for container types. Implementing them guarantees your custom collections work with <code>for</code> loops, <code>in</code> checks, <code>len()</code>, and other Python protocols. They also serve as type-check targets via <code>isinstance()</code>.</p>
+
+    <h4>Progressive Explanation</h4>
+
+    <p><strong>Why use ABCs &mdash; guaranteed interface:</strong></p>
+<pre>from collections.abc import Sequence, Mapping, MutableSet
+
+# ABCs tell you what methods are required
+print(Sequence.__abstractmethods__)
+# frozenset({'__getitem__', '__len__'})
+
+print(Mapping.__abstractmethods__)
+# frozenset({'__getitem__', '__len__', '__iter__'})
+
+print(MutableSet.__abstractmethods__)
+# frozenset({'__contains__', '__iter__', '__len__', 'add', 'discard'})</pre>
+
+    <p><strong>Custom Sequence &mdash; sorted list:</strong></p>
+<pre>from collections.abc import Sequence
+import bisect
+
+class SortedList(Sequence):
+    """A list that maintains sorted order."""
+
+    def __init__(self, iterable=()):
+        self._data = sorted(iterable)
+
+    def __getitem__(self, index):
+        return self._data[index]
+
+    def __len__(self):
+        return len(self._data)
+
+    def add(self, value):
+        bisect.insort(self._data, value)
+
+    def __repr__(self):
+        return f"SortedList({self._data})"
+
+sl = SortedList([3, 1, 4, 1, 5])
+print(sl)           # SortedList([1, 1, 3, 4, 5])
+print(len(sl))      # 5
+print(sl[2])        # 3
+print(4 in sl)      # True  (free from Sequence!)
+sl.add(2)
+print(sl)           # SortedList([1, 1, 2, 3, 4, 5])
+
+# Iteration works automatically
+for item in sl:
+    print(item, end=" ")
+# 1 1 2 3 4 5</pre>
+
+    <p><strong>Custom Mapping &mdash; case-insensitive dict:</strong></p>
+<pre>from collections.abc import MutableMapping
+
+class CaseInsensitiveDict(MutableMapping):
+    """Dict with case-insensitive keys."""
+
+    def __init__(self, *args, **kwargs):
+        self._store = {}    # lowercase key -> (original_key, value)
+        self.update(dict(*args, **kwargs))
+
+    def __getitem__(self, key):
+        return self._store[key.lower()][1]
+
+    def __setitem__(self, key, value):
+        self._store[key.lower()] = (key, value)
+
+    def __delitem__(self, key):
+        del self._store[key.lower()]
+
+    def __iter__(self):
+        return (original for original, _ in self._store.values())
+
+    def __len__(self):
+        return len(self._store)
+
+    def __repr__(self):
+        items = ", ".join(f"{k!r}: {v!r}" for k, v in self.items())
+        return f"CaseInsensitiveDict({{{items}}})"
+
+d = CaseInsensitiveDict({"Content-Type": "application/json"})
+print(d["content-type"])   # application/json
+print(d["CONTENT-TYPE"])   # application/json
+d["Accept"] = "text/html"
+print(len(d))              # 2
+print(list(d.keys()))      # ['Content-Type', 'Accept']</pre>
+
+    <p><strong>Custom MutableSet &mdash; bounded set:</strong></p>
+<pre>from collections.abc import MutableSet
+
+class BoundedSet(MutableSet):
+    """A set with a maximum size. Oldest items are evicted."""
+
+    def __init__(self, maxsize: int, iterable=()):
+        self._maxsize = maxsize
+        self._data: list = []
+        for item in iterable:
+            self.add(item)
+
+    def __contains__(self, item):
+        return item in self._data
+
+    def __iter__(self):
+        return iter(self._data)
+
+    def __len__(self):
+        return len(self._data)
+
+    def add(self, item):
+        if item not in self._data:
+            if len(self._data) >= self._maxsize:
+                self._data.pop(0)  # evict oldest
+            self._data.append(item)
+
+    def discard(self, item):
+        try:
+            self._data.remove(item)
+        except ValueError:
+            pass
+
+    def __repr__(self):
+        return f"BoundedSet(max={self._maxsize}, items={self._data})"
+
+bs = BoundedSet(3, [1, 2, 3])
+print(bs)          # BoundedSet(max=3, items=[1, 2, 3])
+bs.add(4)          # evicts 1
+print(bs)          # BoundedSet(max=3, items=[2, 3, 4])
+print(3 in bs)     # True
+print(1 in bs)     # False</pre>
+
+    <p><strong>isinstance checks with ABCs:</strong></p>
+<pre>from collections.abc import Sequence, Mapping, Iterable
+
+# Built-in types satisfy ABCs
+print(isinstance([1, 2], Sequence))     # True
+print(isinstance((1, 2), Sequence))     # True
+print(isinstance("abc", Sequence))      # True
+print(isinstance({1, 2}, Sequence))     # False (sets aren't sequences)
+
+print(isinstance({"a": 1}, Mapping))    # True
+print(isinstance(range(10), Iterable))  # True
+
+# Better than checking for specific types:
+def process(data):
+    if isinstance(data, Mapping):
+        return list(data.values())
+    elif isinstance(data, Sequence):
+        return list(data)
+    else:
+        raise TypeError(f"Unsupported: {type(data)}")</pre>
+
+    <h4>Common Mistakes</h4>
+    <div class="do-dont">
+      <div class="dont-box">
+        <div class="label">Don't</div>
+<pre>from collections.abc import Sequence
+
+class MyList(Sequence):
+    def __getitem__(self, i):
+        return self._data[i]
+    # Missing __len__!
+# TypeError: Can't instantiate abstract class
+# MyList with abstract method __len__</pre>
+      </div>
+      <div class="do-box">
+        <div class="label">Do</div>
+<pre>from collections.abc import Sequence
+
+class MyList(Sequence):
+    def __init__(self):
+        self._data = []
+    def __getitem__(self, i):
+        return self._data[i]
+    def __len__(self):           # required!
+        return len(self._data)</pre>
+      </div>
+    </div>
+
+    <h4>Key Rules</h4>
+    <ul class="rules-list">
+      <li>Check <code>ClassName.__abstractmethods__</code> to see which methods you must implement.</li>
+      <li>Implementing <code>Sequence</code> requires only <code>__getitem__</code> and <code>__len__</code> &mdash; you get <code>__contains__</code>, <code>__iter__</code>, <code>__reversed__</code>, <code>index</code>, and <code>count</code> for free.</li>
+      <li>Implementing <code>MutableMapping</code> requires <code>__getitem__</code>, <code>__setitem__</code>, <code>__delitem__</code>, <code>__iter__</code>, <code>__len__</code> &mdash; gives you <code>keys</code>, <code>values</code>, <code>items</code>, <code>get</code>, <code>update</code>, <code>pop</code>, etc.</li>
+      <li>Use <code>isinstance(obj, Mapping)</code> instead of <code>isinstance(obj, dict)</code> for more flexible type checking.</li>
+      <li>ABCs cannot be instantiated directly &mdash; they serve as interfaces/contracts.</li>
+    </ul>
+
+    <h4>Exercises</h4>
+    <div class="exercise">
+      <div class="exercise-label">Exercise 1</div>
+      <p>Implement a <code>RingBuffer(Sequence)</code> with a fixed size that overwrites the oldest element when full. Implement <code>__getitem__</code>, <code>__len__</code>, and an <code>append</code> method. Verify that iteration and <code>in</code> checks work automatically.</p>
+    </div>
+    <div class="exercise">
+      <div class="exercise-label">Exercise 2</div>
+      <p>Implement a <code>DefaultDict(MutableMapping)</code> that takes a factory function and returns a default value for missing keys (like <code>collections.defaultdict</code> but from scratch using the ABC). Verify <code>.keys()</code>, <code>.values()</code>, <code>.items()</code> work for free.</p>
+    </div>
+
+    <div class="connection">
+      <strong>Connections:</strong> Extends OOP knowledge from Days 5-6 (inheritance, ABCs, protocols). Connects to dunder methods (<code>__getitem__</code>, <code>__len__</code>) from Day 7. The <code>CaseInsensitiveDict</code> pattern is used in HTTP libraries (like <code>requests</code>). <code>SortedList</code> uses <code>bisect</code> from the standard library.
+    </div>
+  </div>
+
+  <!-- New 4: dataclasses Advanced -->
+  <div class="concept" id="dataclasses-advanced">
+    <div class="concept-header">
+      <h3>dataclasses Advanced</h3>
+      <span class="concept-meta">Data Modeling &bull; New</span>
+    </div>
+
+    <h4>Why It Matters</h4>
+    <p>Basic <code>@dataclass</code> covers simple cases, but real code needs mutable defaults, post-init validation, frozen (immutable) instances, memory optimization with slots, and inheritance patterns. These features make dataclasses a viable replacement for hand-written classes in most scenarios.</p>
+
+    <h4>Progressive Explanation</h4>
+
+    <p><strong>field() with default_factory &mdash; mutable defaults:</strong></p>
+<pre>from dataclasses import dataclass, field
+
+@dataclass
+class Config:
+    name: str
+    tags: list[str] = field(default_factory=list)
+    metadata: dict[str, str] = field(default_factory=dict)
+
+c1 = Config("prod")
+c2 = Config("dev")
+c1.tags.append("deployed")
+
+print(c1.tags)  # ['deployed']
+print(c2.tags)  # []  -- separate list, not shared!</pre>
+
+    <p><strong>__post_init__ for validation and computed fields:</strong></p>
+<pre>from dataclasses import dataclass, field
+
+@dataclass
+class Rectangle:
+    width: float
+    height: float
+    area: float = field(init=False)  # computed, not in __init__
+
+    def __post_init__(self):
+        if self.width &lt;= 0 or self.height &lt;= 0:
+            raise ValueError("Dimensions must be positive")
+        self.area = self.width * self.height
+
+r = Rectangle(4, 5)
+print(r)        # Rectangle(width=4, height=5, area=20)
+print(r.area)   # 20
+
+try:
+    Rectangle(-1, 5)
+except ValueError as e:
+    print(e)    # Dimensions must be positive</pre>
+
+    <p><strong>frozen=True &mdash; immutable dataclasses:</strong></p>
+<pre>from dataclasses import dataclass
+
+@dataclass(frozen=True)
+class Point:
+    x: float
+    y: float
+
+p = Point(3.0, 4.0)
+print(p)         # Point(x=3.0, y=4.0)
+
+try:
+    p.x = 10    # Can't modify frozen dataclass
+except AttributeError as e:
+    print(e)     # cannot assign to field 'x'
+
+# Frozen dataclasses are hashable (can be dict keys / set members)
+points = {Point(0, 0), Point(1, 1), Point(0, 0)}
+print(len(points))  # 2 (duplicate removed)</pre>
+
+    <p><strong>slots=True (Python 3.10+) &mdash; memory optimization:</strong></p>
+<pre>from dataclasses import dataclass
+import sys
+
+@dataclass
+class RegularPoint:
+    x: float
+    y: float
+
+@dataclass(slots=True)
+class SlottedPoint:
+    x: float
+    y: float
+
+r = RegularPoint(1.0, 2.0)
+s = SlottedPoint(1.0, 2.0)
+
+print(sys.getsizeof(r) + sys.getsizeof(r.__dict__))  # ~200 bytes
+print(sys.getsizeof(s))                                # ~56 bytes
+print(hasattr(s, '__dict__'))                           # False</pre>
+
+    <p><strong>KW_ONLY (Python 3.10+) &mdash; keyword-only fields:</strong></p>
+<pre>from dataclasses import dataclass, KW_ONLY
+
+@dataclass
+class Request:
+    url: str
+    method: str = "GET"
+    _: KW_ONLY             # everything after this is keyword-only
+    timeout: int = 30
+    verify_ssl: bool = True
+    headers: dict = field(default_factory=dict)
+
+# Must use keyword args for timeout, verify_ssl, headers
+req = Request("/api/users", "POST", timeout=10, verify_ssl=False)
+print(req)
+# Request(url='/api/users', method='POST', timeout=10,
+#         verify_ssl=False, headers={})</pre>
+
+    <p><strong>Dataclass inheritance:</strong></p>
+<pre>from dataclasses import dataclass, field
+
+@dataclass
+class Base:
+    id: int
+    name: str
+
+@dataclass
+class Employee(Base):
+    department: str = "Engineering"
+    salary: float = 0.0
+
+e = Employee(id=1, name="Alice", department="Research", salary=95000)
+print(e)
+# Employee(id=1, name='Alice', department='Research', salary=95000.0)
+
+# Fields are ordered: parent fields first, then child fields</pre>
+
+    <p><strong>asdict and astuple for serialization:</strong></p>
+<pre>from dataclasses import dataclass, asdict, astuple
+import json
+
+@dataclass
+class User:
+    name: str
+    email: str
+    age: int
+
+u = User("Alice", "alice@test.com", 30)
+
+# Convert to dict (deep copy, recursive)
+d = asdict(u)
+print(d)      # {'name': 'Alice', 'email': 'alice@test.com', 'age': 30}
+print(json.dumps(d))  # easy JSON serialization
+
+# Convert to tuple
+t = astuple(u)
+print(t)      # ('Alice', 'alice@test.com', 30)</pre>
+
+    <h4>Common Mistakes</h4>
+    <div class="do-dont">
+      <div class="dont-box">
+        <div class="label">Don't</div>
+<pre>@dataclass
+class Bad:
+    name: str
+    tags: list = []  # shared mutable default!
+# ValueError: mutable default for field tags
+# is not allowed: use default_factory</pre>
+      </div>
+      <div class="do-box">
+        <div class="label">Do</div>
+<pre>@dataclass
+class Good:
+    name: str
+    tags: list = field(default_factory=list)</pre>
+      </div>
+    </div>
+
+    <div class="do-dont">
+      <div class="dont-box">
+        <div class="label">Don't</div>
+<pre>@dataclass
+class Parent:
+    name: str
+    value: int = 0
+
+@dataclass
+class Child(Parent):
+    extra: str  # non-default after default!
+# TypeError: non-default argument 'extra'
+# follows default argument</pre>
+      </div>
+      <div class="do-box">
+        <div class="label">Do</div>
+<pre>@dataclass
+class Parent:
+    name: str
+    value: int = 0
+
+@dataclass
+class Child(Parent):
+    extra: str = ""  # must have default too</pre>
+      </div>
+    </div>
+
+    <h4>Key Rules</h4>
+    <ul class="rules-list">
+      <li>Always use <code>field(default_factory=list)</code> for mutable defaults &mdash; never <code>= []</code> or <code>= {}</code>.</li>
+      <li>Use <code>__post_init__</code> for validation and computed fields (mark computed fields with <code>init=False</code>).</li>
+      <li>Use <code>frozen=True</code> when instances should be immutable (enables hashing for free).</li>
+      <li>Use <code>slots=True</code> for memory-critical classes with many instances.</li>
+      <li>In inheritance, fields with defaults must come after fields without defaults across the entire hierarchy.</li>
+      <li><code>asdict()</code> performs a deep copy &mdash; it can be slow for large nested dataclasses.</li>
+    </ul>
+
+    <h4>Exercises</h4>
+    <div class="exercise">
+      <div class="exercise-label">Exercise 1</div>
+      <p>Create a frozen <code>Point3D</code> dataclass with x, y, z coordinates. Add a computed <code>magnitude</code> field via <code>__post_init__</code> (use <code>object.__setattr__</code> since the class is frozen). Verify it can be used as a dict key.</p>
+    </div>
+    <div class="exercise">
+      <div class="exercise-label">Exercise 2</div>
+      <p>Create an <code>APIConfig</code> dataclass with <code>base_url</code> (required), <code>timeout</code> (keyword-only, default 30), <code>headers</code> (keyword-only, default empty dict via factory), and <code>retry_count</code> (keyword-only, default 3). Validate in <code>__post_init__</code> that timeout is positive and retry_count is 0-10.</p>
+    </div>
+
+    <div class="connection">
+      <strong>Connections:</strong> Extends basic dataclasses from Day 4. <code>slots=True</code> connects to <code>__slots__</code> (Day 5). <code>frozen=True</code> connects to <code>__hash__</code> (Day 11). <code>asdict()</code> pairs with JSON serialization (Day 12). Inheritance rules connect to MRO (Day 5).
+    </div>
+  </div>
+
+  <!-- New 5: textwrap, shutil & tempfile -->
+  <div class="concept" id="textwrap-shutil-tempfile">
+    <div class="concept-header">
+      <h3>textwrap, shutil &amp; tempfile</h3>
+      <span class="concept-meta">Standard Library Utilities &bull; New</span>
+    </div>
+
+    <h4>Why It Matters</h4>
+    <p>Three standard library modules that solve common scripting needs: <code>textwrap</code> for formatting text output, <code>shutil</code> for high-level file/directory operations, and <code>tempfile</code> for safe temporary file handling. Together they cover most file manipulation and text formatting tasks without external dependencies.</p>
+
+    <h4>Progressive Explanation</h4>
+
+    <p><strong>textwrap &mdash; clean text formatting:</strong></p>
+<pre>import textwrap
+
+# dedent: remove common leading whitespace
+code = """
+    def hello():
+        print("world")
+"""
+print(textwrap.dedent(code))
+# def hello():
+#     print("world")
+
+# fill: wrap text to a given width
+long_text = "Python is a versatile programming language that supports multiple paradigms including object-oriented, functional, and procedural programming."
+print(textwrap.fill(long_text, width=50))
+# Python is a versatile programming language
+# that supports multiple paradigms including
+# object-oriented, functional, and procedural
+# programming.
+
+# wrap: returns a list of lines
+lines = textwrap.wrap(long_text, width=40)
+for i, line in enumerate(lines):
+    print(f"  {i}: {line}")
+
+# indent: add a prefix to each line
+text = "Line one\nLine two\nLine three"
+print(textwrap.indent(text, ">>> "))
+# >>> Line one
+# >>> Line two
+# >>> Line three
+
+# shorten: truncate with placeholder
+short = textwrap.shorten(long_text, width=50, placeholder="...")
+print(short)
+# Python is a versatile programming language...</pre>
+
+    <p><strong>shutil &mdash; file and directory operations:</strong></p>
+<pre>import shutil
+import os
+
+# Copy a single file
+# shutil.copy("src.txt", "dst.txt")        # copies file + permissions
+# shutil.copy2("src.txt", "dst.txt")       # copies file + all metadata
+
+# Copy entire directory tree
+# shutil.copytree("src_dir", "dst_dir")
+# shutil.copytree("src", "dst", ignore=shutil.ignore_patterns("*.pyc", "__pycache__"))
+
+# Remove entire directory tree
+# shutil.rmtree("old_dir")                 # DANGER: no undo!
+
+# Move files or directories
+# shutil.move("old_path", "new_path")
+
+# Disk usage
+usage = shutil.disk_usage("/")
+print(f"Total: {usage.total / (1024**3):.1f} GB")
+print(f"Used:  {usage.used / (1024**3):.1f} GB")
+print(f"Free:  {usage.free / (1024**3):.1f} GB")
+
+# Find executables on PATH
+python_path = shutil.which("python3")
+print(f"python3 is at: {python_path}")
+
+# Create archive
+# shutil.make_archive("backup", "zip", "my_project")
+# Creates backup.zip from my_project directory</pre>
+
+    <p><strong>tempfile &mdash; safe temporary files and directories:</strong></p>
+<pre>import tempfile
+import os
+
+# NamedTemporaryFile -- auto-deleted when closed
+with tempfile.NamedTemporaryFile(mode="w", suffix=".txt", delete=True) as f:
+    f.write("temporary data\n")
+    f.flush()
+    print(f"Temp file: {f.name}")
+    print(f"Exists: {os.path.exists(f.name)}")  # True
+# File is automatically deleted after the with block
+
+# TemporaryDirectory -- auto-deleted when done
+with tempfile.TemporaryDirectory(prefix="myapp_") as tmpdir:
+    print(f"Temp dir: {tmpdir}")
+
+    # Create files inside the temp directory
+    filepath = os.path.join(tmpdir, "data.txt")
+    with open(filepath, "w") as f:
+        f.write("temporary content")
+
+    print(f"File exists: {os.path.exists(filepath)}")  # True
+# Entire directory tree is deleted after the with block
+
+# mkdtemp -- manual cleanup required
+tmpdir = tempfile.mkdtemp()
+print(f"Manual temp dir: {tmpdir}")
+# ... use it ...
+import shutil
+shutil.rmtree(tmpdir)  # must clean up yourself
+
+# gettempdir -- find the system temp directory
+print(f"System temp dir: {tempfile.gettempdir()}")</pre>
+
+    <p><strong>Combining all three &mdash; practical script:</strong></p>
+<pre>import textwrap
+import shutil
+import tempfile
+from pathlib import Path
+
+def generate_report(data: dict, output_path: str):
+    """Generate a report in a temp dir, then move to final location."""
+
+    with tempfile.TemporaryDirectory() as tmpdir:
+        tmp_file = Path(tmpdir) / "report.txt"
+
+        # Build formatted content
+        header = textwrap.dedent(f"""\
+            ===========================
+            Report: {data['title']}
+            Generated: {data['date']}
+            ===========================
+        """)
+
+        body = textwrap.fill(data["summary"], width=60)
+        body = textwrap.indent(body, "  ")
+
+        tmp_file.write_text(header + "\n" + body + "\n")
+
+        # Atomically move to final location
+        shutil.move(str(tmp_file), output_path)
+
+    print(f"Report written to {output_path}")
+
+# Example usage
+generate_report(
+    {"title": "Q2 Analysis", "date": "2026-06-10",
+     "summary": "Revenue increased by 15% quarter over quarter driven by strong performance in the enterprise segment and expanding international markets."},
+    "/tmp/q2_report.txt"
+)</pre>
+
+    <h4>Common Mistakes</h4>
+    <div class="do-dont">
+      <div class="dont-box">
+        <div class="label">Don't</div>
+<pre># Manual temp file -- easy to forget cleanup
+f = open("/tmp/myapp_data.txt", "w")
+f.write("data")
+f.close()
+# Leaked file if exception occurs before close
+# Name collision with other processes</pre>
+      </div>
+      <div class="do-box">
+        <div class="label">Do</div>
+<pre>import tempfile
+
+# Auto-cleanup, unique name, safe
+with tempfile.NamedTemporaryFile(
+    mode="w", suffix=".txt"
+) as f:
+    f.write("data")
+    f.flush()
+    # process f.name
+# Automatically deleted</pre>
+      </div>
+    </div>
+
+    <div class="do-dont">
+      <div class="dont-box">
+        <div class="label">Don't</div>
+<pre>import shutil
+
+# rmtree with no safeguard
+path = user_input  # could be "/"!
+shutil.rmtree(path)  # DANGEROUS</pre>
+      </div>
+      <div class="do-box">
+        <div class="label">Do</div>
+<pre>import shutil
+from pathlib import Path
+
+path = Path(user_input).resolve()
+# Validate before deleting
+assert str(path).startswith("/tmp/"), "unsafe"
+if path.exists() and path.is_dir():
+    shutil.rmtree(path)</pre>
+      </div>
+    </div>
+
+    <h4>Key Rules</h4>
+    <ul class="rules-list">
+      <li>Use <code>textwrap.dedent()</code> to clean up indented multi-line strings in source code.</li>
+      <li>Use <code>textwrap.fill()</code> for terminal-width text wrapping and <code>shorten()</code> for truncation.</li>
+      <li>Prefer <code>shutil.copy2()</code> over <code>shutil.copy()</code> to preserve file metadata (timestamps).</li>
+      <li>Always use <code>tempfile</code> instead of hardcoding paths in <code>/tmp</code> &mdash; it handles unique naming and cross-platform compatibility.</li>
+      <li>Use context managers (<code>with</code>) for temp files/dirs to guarantee cleanup even on exceptions.</li>
+      <li><code>shutil.rmtree()</code> is irreversible &mdash; validate paths before calling it.</li>
+    </ul>
+
+    <h4>Exercises</h4>
+    <div class="exercise">
+      <div class="exercise-label">Exercise 1</div>
+      <p>Write a function that takes a long string and a line width, wraps it, numbers each line, and indents it with a <code>"| "</code> prefix. Use <code>textwrap.wrap()</code> and <code>textwrap.indent()</code>.</p>
+    </div>
+    <div class="exercise">
+      <div class="exercise-label">Exercise 2</div>
+      <p>Write a <code>safe_copy(src, dst)</code> function that copies <code>src</code> to a temp file in the same directory as <code>dst</code>, then atomically renames it to <code>dst</code>. This prevents corrupted files if the copy is interrupted. Use <code>tempfile.NamedTemporaryFile</code> and <code>shutil.copy2</code>.</p>
+    </div>
+
+    <div class="connection">
+      <strong>Connections:</strong> <code>shutil</code> and <code>tempfile</code> pair with pathlib (Day 12) for file system work. <code>tempfile</code> connects to context managers (Day 8). <code>textwrap.dedent</code> is essential for clean multi-line f-strings (Day 1). <code>subprocess</code> (earlier this guide) often uses temp files for intermediate data.
+    </div>
+  </div>
+
+</div><!-- end new concepts section -->
+
+
+<!-- ============================================================ -->
+<!-- FOOTER -->
+<!-- ============================================================ -->
+<div class="footer">
+  <h4>All Python Study Guides</h4>
+    <ul>
+    <li><a href="python-guides/python-guide-2026-07-09.html">2026-07-09</a> (Day 39)</li>
+    <li><a href="python-guides/python-guide-2026-07-08.html">2026-07-08</a> (Day 38)</li>
+    <li><a href="python-guides/python-guide-2026-07-07.html">2026-07-07</a> (Day 37)</li>
+    <li><a href="python-guides/python-guide-2026-07-06.html">2026-07-06</a> (Day 36)</li>
+    <li><a href="python-guides/python-guide-2026-07-05.html">2026-07-05</a> (Day 35)</li>
+    <li><a href="python-guides/python-guide-2026-07-04.html">2026-07-04</a> (Day 34)</li>
+    <li><a href="python-guides/python-guide-2026-07-03.html">2026-07-03</a> (Day 33)</li>
+    <li><a href="python-guides/python-guide-2026-07-02.html">2026-07-02</a> (Day 32)</li>
+    <li><a href="python-guides/python-guide-2026-07-01.html">2026-07-01</a> (Day 31)</li>
+    <li><a href="python-guides/python-guide-2026-06-30.html">2026-06-30</a> (Day 30)</li>
+    <li><a href="python-guides/python-guide-2026-06-29.html">2026-06-29</a> (Day 29)</li>
+    <li><a href="python-guides/python-guide-2026-06-28.html">2026-06-28</a> (Day 28)</li>
+    <li><a href="python-guides/python-guide-2026-06-27.html">2026-06-27</a> (Day 27)</li>
+    <li><a href="python-guides/python-guide-2026-06-26.html">2026-06-26</a> (Day 26)</li>
+    <li><a href="python-guides/python-guide-2026-06-25.html">2026-06-25</a> (Day 25)</li>
+    <li><a href="python-guides/python-guide-2026-06-24.html">2026-06-24</a> (Day 24)</li>
+    <li><a href="python-guides/python-guide-2026-06-23.html">2026-06-23</a> (Day 23)</li>
+    <li><a href="python-guides/python-guide-2026-06-22.html">2026-06-22</a> (Day 22)</li>
+    <li><a href="python-guides/python-guide-2026-06-21.html">2026-06-21</a> (Day 21)</li>
+    <li><a href="python-guides/python-guide-2026-06-19.html">2026-06-19</a> (Day 20)</li>
+    <li><a href="python-guides/python-guide-2026-06-18.html">2026-06-18</a> (Day 19)</li>
+    <li><a href="python-guides/python-guide-2026-06-17.html">2026-06-17</a> (Day 18)</li>
+    <li><a href="python-guides/python-guide-2026-06-15.html">2026-06-15</a> (Day 17)</li>
+    <li><a href="python-guides/python-guide-2026-06-13.html">2026-06-13</a> (Day 16)</li>
+    <li><a href="python-guides/python-guide-2026-06-12.html">2026-06-12</a> (Day 15)</li>
+    <li><a href="python-guides/python-guide-2026-06-11.html">2026-06-11</a> (Day 14)</li>
+    <li class="current"><a href="python-guides/python-guide-2026-06-10.html">2026-06-10</a> </li>
+    <li><a href="python-guides/python-guide-2026-06-09.html">2026-06-09</a> (Day 12)</li>
+    <li><a href="python-guides/python-guide-2026-06-08.html">2026-06-08</a> (Day 11)</li>
+    <li><a href="python-guides/python-guide-2026-06-07.html">2026-06-07</a> (Day 10)</li>
+    <li><a href="python-guides/python-guide-2026-06-05.html">2026-06-05</a> (Day 9)</li>
+    <li><a href="python-guides/python-guide-2026-06-04.html">2026-06-04</a> (Day 8)</li>
+    <li><a href="python-guides/python-guide-2026-06-03.html">2026-06-03</a> (Day 7)</li>
+    <li><a href="python-guides/python-guide-2026-06-02.html">2026-06-02</a> (Day 6)</li>
+    <li><a href="python-guides/python-guide-2026-06-01.html">2026-06-01</a> (Day 5)</li>
+    <li><a href="python-guides/python-guide-2026-05-31.html">2026-05-31</a> (Day 4)</li>
+    <li><a href="python-guides/python-guide-2026-05-30.html">2026-05-30</a> (Day 3)</li>
+    <li><a href="python-guides/python-guide-2026-05-29.html">2026-05-29</a> (Day 2)</li>
+    <li><a href="python-guides/python-guide-2026-05-28.html">2026-05-28</a> (Day 1)</li>
+  </ul>
+</div>
+
+</div><!-- end main -->
+
+<script>
+(function() {
+  // ===== Theme Toggle =====
+  var THEME_KEY = 'lc-pyguide-theme';
+  var toggle = document.getElementById('theme-toggle');
+  var html = document.documentElement;
+
+  function setTheme(theme) {
+    html.setAttribute('data-theme', theme);
+    localStorage.setItem(THEME_KEY, theme);
+    toggle.textContent = theme === 'dark' ? '☽' : '☀';
+    toggle.title = theme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme';
+  }
+
+  var saved = localStorage.getItem(THEME_KEY) || 'dark';
+  setTheme(saved);
+
+  toggle.addEventListener('click', function() {
+    var current = html.getAttribute('data-theme');
+    setTheme;
+  });
+
+  // ===== Mobile Sidebar Toggle =====
+  var sidebarToggle = document.getElementById('sidebar-toggle');
+  var sidebar = document.getElementById('sidebar');
+
+  sidebarToggle.addEventListener('click', function() {
+    sidebar.classList.toggle('open');
+  });
+
+  // Close sidebar when clicking a link on mobile
+  sidebar.querySelectorAll('.sidebar-link').forEach(function(link) {
+    link.addEventListener('click', function() {
+      if (window.innerWidth <= 900) {
+        sidebar.classList.remove('open');
+      }
+    });
+  });
+
+  // ===== Active Sidebar Link on Scroll =====
+  var links = document.querySelectorAll('.sidebar-link');
+  var sections = [];
+
+  links.forEach(function(link) {
+    var id = link.getAttribute('href').slice(1);
+    var el = document.getElementById(id);
+    if (el) sections.push({ id: id, el: el, link: link });
+  });
+
+  function updateActive() {
+    var current = null;
+    var scrollY = window.scrollY + 100;
+
+    for (var i = sections.length - 1; i >= 0; i--) {
+      if (sections[i].el.offsetTop <= scrollY) {
+        current = sections[i];
+        break;
+      }
+    }
+
+    links.forEach(function(l) { l.classList.remove('active'); });
+    if  current.link.classList.add('active');
+  }
+
+  window.addEventListener('scroll', updateActive, { passive: true });
+  updateActive();
+})();
+</script>
+
+</body>
+</html>

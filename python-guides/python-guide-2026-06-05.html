@@ -1,0 +1,2583 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Python Study Guide &mdash; Day 9 (2026-06-05)</title>
+<style>
+/* ===== CSS Variables ===== */
+:root {
+  --bg: #0d1117;
+  --surface1: #161b22;
+  --surface2: #1c2333;
+  --border: #30363d;
+  --text: #e6edf3;
+  --muted: #8b949e;
+  --accent: #58a6ff;
+  --accent-dim: #1f6feb33;
+  --green: #3fb950;
+  --green-dim: #23863633;
+  --yellow: #d29922;
+  --yellow-dim: #d2992233;
+  --red: #f85149;
+  --red-dim: #f8514933;
+  --purple: #bc8cff;
+  --purple-dim: #bc8cff22;
+  --orange: #f0883e;
+  --orange-dim: #f0883e22;
+  --code-bg: #0d1117;
+  --sidebar-w: 300px;
+  --font-mono: 'SF Mono', 'Cascadia Code', 'Fira Code', Consolas, monospace;
+  --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+  --radius: 8px;
+  --shadow: 0 1px 3px rgba(0,0,0,0.4);
+}
+
+[data-theme="light"] {
+  --bg: #ffffff;
+  --surface1: #f6f8fa;
+  --surface2: #f0f3f6;
+  --border: #d0d7de;
+  --text: #1f2328;
+  --muted: #656d76;
+  --accent: #0969da;
+  --accent-dim: #0969da1a;
+  --green: #1a7f37;
+  --green-dim: #1a7f3718;
+  --yellow: #9a6700;
+  --yellow-dim: #9a670018;
+  --red: #cf222e;
+  --red-dim: #cf222e18;
+  --purple: #8250df;
+  --purple-dim: #8250df18;
+  --orange: #bc4c00;
+  --orange-dim: #bc4c0018;
+  --code-bg: #f6f8fa;
+  --shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+/* ===== Reset & Base ===== */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: var(--font-sans);
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.7;
+  font-size: 15px;
+  transition: background 0.2s, color 0.2s;
+}
+
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+/* ===== Theme Toggle ===== */
+#theme-toggle {
+  position: fixed;
+  top: 16px;
+  right: 20px;
+  z-index: 1000;
+  background: var(--surface1);
+  border: 1px solid var(--border);
+  color: var(--text);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+  box-shadow: var(--shadow);
+}
+#theme-toggle:hover { background: var(--surface2); border-color: var(--accent); }
+
+/* ===== Sidebar ===== */
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: var(--sidebar-w);
+  height: 100vh;
+  background: var(--surface1);
+  border-right: 1px solid var(--border);
+  overflow-y: auto;
+  padding: 20px 0;
+  z-index: 100;
+  transition: transform 0.3s;
+}
+
+.sidebar-header {
+  padding: 0 20px 16px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 12px;
+}
+
+.sidebar-header h2 {
+  font-size: 16px;
+  color: var(--text);
+  font-weight: 700;
+}
+
+.sidebar-header .subtitle {
+  font-size: 12px;
+  color: var(--muted);
+  margin-top: 2px;
+}
+
+.sidebar-section {
+  margin-bottom: 8px;
+}
+
+.sidebar-section-title {
+  padding: 6px 20px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+}
+
+.sidebar-link {
+  display: block;
+  padding: 5px 20px 5px 28px;
+  font-size: 13px;
+  color: var(--muted);
+  text-decoration: none;
+  border-left: 2px solid transparent;
+  transition: all 0.15s;
+  line-height: 1.4;
+}
+
+.sidebar-link:hover {
+  color: var(--text);
+  background: var(--accent-dim);
+  border-left-color: var(--accent);
+  text-decoration: none;
+}
+
+.sidebar-link.active {
+  color: var(--accent);
+  border-left-color: var(--accent);
+  background: var(--accent-dim);
+}
+
+/* ===== Mobile sidebar toggle ===== */
+#sidebar-toggle {
+  display: none;
+  position: fixed;
+  top: 16px;
+  left: 16px;
+  z-index: 200;
+  background: var(--surface1);
+  border: 1px solid var(--border);
+  color: var(--text);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 20px;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--shadow);
+}
+
+/* ===== Main Content ===== */
+.main {
+  margin-left: var(--sidebar-w);
+  padding: 40px 48px 80px;
+  max-width: calc(860px + var(--sidebar-w) + 96px);
+}
+
+.page-title {
+  font-size: 32px;
+  font-weight: 800;
+  margin-bottom: 4px;
+  color: var(--text);
+}
+
+.page-subtitle {
+  font-size: 15px;
+  color: var(--muted);
+  margin-bottom: 36px;
+}
+
+/* ===== How-to Box ===== */
+.how-to {
+  background: var(--surface1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px 24px;
+  margin-bottom: 36px;
+}
+
+.how-to h3 {
+  font-size: 15px;
+  font-weight: 700;
+  margin-bottom: 8px;
+  color: var(--accent);
+}
+
+.how-to ul {
+  padding-left: 20px;
+  margin: 0;
+}
+
+.how-to li {
+  font-size: 14px;
+  color: var(--muted);
+  margin-bottom: 3px;
+}
+
+/* ===== Sections ===== */
+.section {
+  margin-bottom: 48px;
+}
+
+.section-label {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  padding: 3px 10px;
+  border-radius: 4px;
+  margin-bottom: 12px;
+}
+
+.section-label.review { background: var(--yellow-dim); color: var(--yellow); }
+.section-label.new { background: var(--green-dim); color: var(--green); }
+
+.section-title {
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 24px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--border);
+}
+
+/* ===== Concept Cards ===== */
+.concept {
+  background: var(--surface1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 28px;
+  margin-bottom: 28px;
+  box-shadow: var(--shadow);
+}
+
+.concept-header {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  margin-bottom: 6px;
+  flex-wrap: wrap;
+}
+
+.concept h3 {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.concept-meta {
+  font-size: 12px;
+  color: var(--muted);
+  background: var(--surface2);
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
+.concept h4 {
+  font-size: 15px;
+  font-weight: 600;
+  margin: 20px 0 8px;
+  color: var(--text);
+}
+
+.concept p, .concept li {
+  color: var(--text);
+  line-height: 1.7;
+}
+
+.concept ul, .concept ol {
+  padding-left: 22px;
+  margin: 8px 0;
+}
+
+.concept li {
+  margin-bottom: 4px;
+}
+
+/* ===== Code Blocks ===== */
+pre {
+  background: var(--code-bg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 16px 18px;
+  overflow-x: auto;
+  margin: 10px 0 14px;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--text);
+  position: relative;
+}
+
+code {
+  font-family: var(--font-mono);
+  font-size: 0.9em;
+}
+
+:not(pre) > code {
+  background: var(--surface2);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.88em;
+}
+
+/* ===== Good/Bad Examples ===== */
+.do-dont {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin: 10px 0;
+}
+
+.do-box, .dont-box {
+  border-radius: 6px;
+  padding: 14px;
+  border: 1px solid;
+}
+
+.do-box {
+  background: var(--green-dim);
+  border-color: var(--green);
+}
+
+.dont-box {
+  background: var(--red-dim);
+  border-color: var(--red);
+}
+
+.do-box .label, .dont-box .label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 6px;
+}
+
+.do-box .label { color: var(--green); }
+.dont-box .label { color: var(--red); }
+
+.do-box pre, .dont-box pre {
+  margin: 0;
+  border: none;
+  background: transparent;
+  padding: 0;
+  font-size: 12.5px;
+}
+
+/* ===== Key Rules ===== */
+.rules-list {
+  list-style: none;
+  padding: 0;
+  margin: 8px 0;
+}
+
+.rules-list li {
+  padding: 6px 0 6px 24px;
+  position: relative;
+}
+
+.rules-list li::before {
+  content: "\2192";
+  position: absolute;
+  left: 2px;
+  color: var(--accent);
+  font-weight: 700;
+}
+
+/* ===== Exercises ===== */
+.exercise {
+  background: var(--purple-dim);
+  border: 1px solid var(--purple);
+  border-radius: 6px;
+  padding: 14px 18px;
+  margin: 8px 0;
+}
+
+.exercise .exercise-label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--purple);
+  margin-bottom: 4px;
+}
+
+/* ===== Challenge (Review) ===== */
+.challenge {
+  background: var(--orange-dim);
+  border: 1px solid var(--orange);
+  border-radius: 6px;
+  padding: 14px 18px;
+  margin: 10px 0;
+}
+
+.challenge .challenge-label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--orange);
+  margin-bottom: 4px;
+}
+
+/* ===== Pitfall ===== */
+.pitfall {
+  background: var(--red-dim);
+  border-left: 3px solid var(--red);
+  border-radius: 0 6px 6px 0;
+  padding: 10px 14px;
+  margin: 10px 0;
+  font-size: 14px;
+}
+
+.pitfall strong {
+  color: var(--red);
+}
+
+/* ===== Connection ===== */
+.connection {
+  background: var(--accent-dim);
+  border-left: 3px solid var(--accent);
+  border-radius: 0 6px 6px 0;
+  padding: 10px 14px;
+  margin: 10px 0;
+  font-size: 14px;
+  color: var(--muted);
+}
+
+/* ===== Output Block ===== */
+.output {
+  background: var(--green-dim);
+  border: 1px solid var(--green);
+  border-radius: 6px;
+  padding: 12px 16px;
+  margin: 8px 0 14px;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--text);
+  white-space: pre-wrap;
+}
+
+.output .output-label {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--green);
+  margin-bottom: 4px;
+}
+
+/* ===== Footer ===== */
+.footer {
+  margin-top: 60px;
+  padding: 24px 0;
+  border-top: 1px solid var(--border);
+}
+
+.footer h4 {
+  font-size: 14px;
+  color: var(--muted);
+  margin-bottom: 10px;
+}
+
+.footer ul {
+  list-style: none;
+  padding: 0;
+}
+
+.footer li {
+  margin-bottom: 4px;
+  font-size: 14px;
+}
+
+.footer li a { color: var(--accent); }
+.footer .current { color: var(--green); font-weight: 600; }
+
+/* ===== Responsive ===== */
+@media (max-width: 900px) {
+  .sidebar {
+    transform: translateX(-100%);
+  }
+  .sidebar.open {
+    transform: translateX(0);
+    box-shadow: 4px 0 20px rgba(0,0,0,0.5);
+  }
+  #sidebar-toggle {
+    display: flex;
+  }
+  .main {
+    margin-left: 0;
+    padding: 60px 20px 60px;
+    max-width: 100%;
+  }
+  .do-dont {
+    grid-template-columns: 1fr;
+  }
+  #theme-toggle {
+    right: 14px;
+    top: 16px;
+  }
+}
+</style>
+</head>
+<body>
+
+<!-- Theme Toggle -->
+<button id="theme-toggle" aria-label="Toggle theme" title="Toggle light/dark theme">&#9789;</button>
+
+<!-- Mobile Sidebar Toggle -->
+<button id="sidebar-toggle" aria-label="Toggle sidebar">&#9776;</button>
+
+<!-- Sidebar -->
+<nav class="sidebar" id="sidebar">
+  <div class="sidebar-header">
+    <h2>Python Guide</h2>
+    <div class="subtitle">Day 9 &mdash; 2026-06-05</div>
+  </div>
+
+  <div class="sidebar-section">
+    <div class="sidebar-section-title">Review (6 concepts)</div>
+    <a href="#review-super-deep-dive" class="sidebar-link">super() Deep Dive</a>
+    <a href="#review-abc-protocol" class="sidebar-link">Abstract Base Classes &amp; Protocol</a>
+    <a href="#review-dunder-container" class="sidebar-link">Dunder &mdash; __getitem__, __len__, __contains__</a>
+    <a href="#review-dunder-iter-call" class="sidebar-link">Dunder &mdash; __iter__, __next__, __call__</a>
+    <a href="#review-descriptors" class="sidebar-link">Descriptors</a>
+    <a href="#review-exception-hierarchy" class="sidebar-link">Exception Hierarchy &amp; Custom Exceptions</a>
+  </div>
+
+  <div class="sidebar-section">
+    <div class="sidebar-section-title">New (5 concepts)</div>
+    <a href="#memory-optimization" class="sidebar-link">Memory Optimization</a>
+    <a href="#struct-binary" class="sidebar-link">struct &amp; Binary Data</a>
+    <a href="#pytest-basics" class="sidebar-link">pytest Fundamentals</a>
+    <a href="#mocking-basics" class="sidebar-link">Mocking with unittest.mock</a>
+    <a href="#typing-advanced" class="sidebar-link">Advanced typing</a>
+  </div>
+</nav>
+
+<!-- Main Content -->
+<div class="main">
+
+<h1 class="page-title">Python Daily Guide</h1>
+<p class="page-subtitle">Day 9 &mdash; Thursday, June 5, 2026 &bull; 6 reviews, 5 new concepts</p>
+
+<!-- How to Use -->
+<div class="how-to">
+  <h3>How to Use This Guide</h3>
+  <ul>
+    <li><strong>Review cards</strong> &mdash; skim the reminder, write the key pattern from memory, then try the challenge.</li>
+    <li><strong>New concepts</strong> &mdash; read the explanation, run every code example in a REPL, then do the exercises.</li>
+    <li><strong>Don't peek at solutions</strong> &mdash; struggle for at least 10 minutes before looking things up.</li>
+    <li><strong>Connections</strong> &mdash; pay attention to how concepts link together across days.</li>
+  </ul>
+</div>
+
+
+<!-- ============================================================ -->
+<!-- REVIEW SECTION -->
+<!-- ============================================================ -->
+<div class="section">
+  <span class="section-label review">Review</span>
+  <h2 class="section-title">Review &mdash; 6 Concepts</h2>
+
+  <!-- Review 1: super() Deep Dive -->
+  <div class="concept" id="review-super-deep-dive">
+    <div class="concept-header">
+      <h3>super() Deep Dive</h3>
+      <span class="concept-meta">OOP &bull; 4 days since last review</span>
+    </div>
+
+    <h4>Quick Reminder</h4>
+    <p><code>super()</code> returns a proxy that delegates method calls to the next class in the MRO. In diamond inheritance, <code>super().__init__()</code> in every class ensures each <code>__init__</code> is called exactly once. Use <code>**kwargs</code> forwarding for cooperative multiple inheritance so each class takes what it needs and passes the rest along.</p>
+
+    <h4>Key Pattern</h4>
+<pre>class Base:
+    def __init__(self, **kwargs):
+        print(f"Base.__init__({kwargs})")
+
+class Left(Base):
+    def __init__(self, left_val, **kwargs):
+        self.left_val = left_val
+        print(f"Left.__init__(left_val={left_val})")
+        super().__init__(**kwargs)
+
+class Right(Base):
+    def __init__(self, right_val, **kwargs):
+        self.right_val = right_val
+        print(f"Right.__init__(right_val={right_val})")
+        super().__init__(**kwargs)
+
+class Diamond(Left, Right):
+    def __init__(self):
+        super().__init__(left_val=10, right_val=20)
+
+d = Diamond()
+# Left.__init__(left_val=10)
+# Right.__init__(right_val=20)
+# Base.__init__({})
+print(Diamond.mro())
+# [Diamond, Left, Right, Base, object]</pre>
+
+    <div class="challenge">
+      <div class="challenge-label">Challenge</div>
+      <p>Create a cooperative hierarchy: <code>Serializable</code> (adds <code>.to_dict()</code>), <code>Validatable</code> (adds <code>.validate()</code>), and <code>Model(Serializable, Validatable)</code>. Each <code>__init__</code> should accept <code>**kwargs</code> and forward via <code>super()</code>. Verify that constructing a <code>Model</code> triggers all three <code>__init__</code>s exactly once.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>#1 Pitfall:</strong> Forgetting <code>**kwargs</code> forwarding in cooperative <code>__init__</code>. If <code>Left.__init__</code> doesn't accept and forward <code>**kwargs</code>, <code>Right.__init__</code> never receives <code>right_val</code> and you get a <code>TypeError</code>.
+    </div>
+  </div>
+
+  <!-- Review 2: Abstract Base Classes & Protocol -->
+  <div class="concept" id="review-abc-protocol">
+    <div class="concept-header">
+      <h3>Abstract Base Classes &amp; Protocol</h3>
+      <span class="concept-meta">OOP &bull; 3 days since last review</span>
+    </div>
+
+    <h4>Quick Reminder</h4>
+    <p><code>ABC</code> + <code>@abstractmethod</code> enforces that subclasses implement specific methods (nominal subtyping). <code>Protocol</code> from <code>typing</code> defines structural subtyping &mdash; any class that has the right methods is compatible, no inheritance required. Use ABCs when you control the hierarchy; use Protocols when you want duck-typing with static type checking.</p>
+
+    <h4>Key Pattern</h4>
+<pre>from abc import ABC, abstractmethod
+from typing import Protocol
+
+# ABC -- nominal subtyping (must inherit)
+class Shape(ABC):
+    @abstractmethod
+    def area(self) -&gt; float: ...
+
+class Circle(Shape):
+    def __init__(self, r: float):
+        self.r = r
+    def area(self) -&gt; float:
+        return 3.14159 * self.r ** 2
+
+# Protocol -- structural subtyping (just implement the method)
+class Drawable(Protocol):
+    def draw(self) -&gt; str: ...
+
+class Widget:          # no inheritance needed!
+    def draw(self) -&gt; str:
+        return "Widget drawn"
+
+def render(d: Drawable) -&gt; None:
+    print(d.draw())
+
+render(Widget())  # Widget drawn -- type-safe, no inheritance</pre>
+
+    <div class="challenge">
+      <div class="challenge-label">Challenge</div>
+      <p>Define a <code>Comparable</code> Protocol requiring <code>__lt__</code> and <code>__eq__</code>. Write a generic <code>min_value(items: list[Comparable]) -&gt; Comparable</code> function. Test it with both a custom class and plain integers (both satisfy the Protocol without inheriting from it).</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>#1 Pitfall:</strong> Trying to instantiate an ABC directly. <code>Shape()</code> raises <code>TypeError</code>. ABCs exist only to be subclassed. If you forget an abstract method in a subclass, you get the same error at instantiation time, not at class definition time.
+    </div>
+  </div>
+
+  <!-- Review 3: Dunder Methods — __getitem__, __len__, __contains__ -->
+  <div class="concept" id="review-dunder-container">
+    <div class="concept-header">
+      <h3>Dunder Methods &mdash; __getitem__, __len__, __contains__</h3>
+      <span class="concept-meta">OOP &bull; 3 days since last review</span>
+    </div>
+
+    <h4>Quick Reminder</h4>
+    <p><code>__getitem__</code> enables <code>obj[key]</code> (indexing and slicing). <code>__len__</code> enables <code>len(obj)</code>. <code>__contains__</code> enables <code>x in obj</code>. If you define <code>__getitem__</code> without <code>__contains__</code>, Python falls back to iterating through indices. Together they make your class behave like a built-in collection.</p>
+
+    <h4>Key Pattern</h4>
+<pre>class Playlist:
+    def __init__(self, songs: list[str]):
+        self._songs = songs
+
+    def __getitem__(self, index):
+        return self._songs[index]
+
+    def __len__(self) -&gt; int:
+        return len(self._songs)
+
+    def __contains__(self, song: str) -&gt; bool:
+        return song.lower() in (s.lower() for s in self._songs)
+
+p = Playlist(["Imagine", "Yesterday", "Bohemian Rhapsody"])
+print(p[0])            # Imagine
+print(p[-1])           # Bohemian Rhapsody
+print(p[0:2])          # ['Imagine', 'Yesterday']
+print(len(p))          # 3
+print("imagine" in p)  # True (case-insensitive)</pre>
+
+    <div class="challenge">
+      <div class="challenge-label">Challenge</div>
+      <p>Build a <code>Matrix</code> class that supports <code>m[row, col]</code> indexing via <code>__getitem__</code> (using tuple unpacking), <code>len(m)</code> returning total elements, and <code>value in m</code> checking all cells. Support slicing for entire rows: <code>m[1]</code> returns row 1 as a list.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>#1 Pitfall:</strong> Forgetting that <code>__getitem__</code> with slices receives a <code>slice</code> object, not integers. You must handle <code>isinstance(index, slice)</code> if you want slicing to work properly alongside integer indexing.
+    </div>
+  </div>
+
+  <!-- Review 4: Dunder Methods — __iter__, __next__, __call__ -->
+  <div class="concept" id="review-dunder-iter-call">
+    <div class="concept-header">
+      <h3>Dunder Methods &mdash; __iter__, __next__, __call__</h3>
+      <span class="concept-meta">OOP &bull; 3 days since last review</span>
+    </div>
+
+    <h4>Quick Reminder</h4>
+    <p><code>__iter__</code> returns an iterator (often <code>self</code>). <code>__next__</code> returns the next value or raises <code>StopIteration</code>. Together they make your class work in <code>for</code> loops. <code>__call__</code> makes instances callable like functions &mdash; <code>obj()</code> invokes <code>obj.__call__()</code>. Use <code>__call__</code> for stateful functions, strategies, or replacing closures.</p>
+
+    <h4>Key Pattern</h4>
+<pre>class Countdown:
+    def __init__(self, start: int):
+        self.current = start
+
+    def __iter__(self):
+        return self
+
+    def __next__(self) -&gt; int:
+        if self.current &lt; 0:
+            raise StopIteration
+        val = self.current
+        self.current -= 1
+        return val
+
+class Multiplier:
+    def __init__(self, factor: int):
+        self.factor = factor
+
+    def __call__(self, x: int) -&gt; int:
+        return x * self.factor
+
+for n in Countdown(3):
+    print(n, end=" ")  # 3 2 1 0
+
+double = Multiplier(2)
+print(double(5))   # 10
+print(double(12))  # 24</pre>
+
+    <div class="challenge">
+      <div class="challenge-label">Challenge</div>
+      <p>Create a <code>MovingAverage</code> class that is both callable and iterable. Calling <code>avg(value)</code> adds a value and returns the current average. Iterating yields all recorded averages. Support a <code>window</code> parameter for sliding-window mode.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>#1 Pitfall:</strong> Making <code>__iter__</code> return <code>self</code> for a class that should be iterable multiple times. If <code>__iter__</code> returns <code>self</code>, the iterator is consumed after one <code>for</code> loop. Return a fresh iterator object instead, or use <code>yield</code> in <code>__iter__</code>.
+    </div>
+  </div>
+
+  <!-- Review 5: Descriptors -->
+  <div class="concept" id="review-descriptors">
+    <div class="concept-header">
+      <h3>Descriptors</h3>
+      <span class="concept-meta">OOP &bull; 3 days since last review</span>
+    </div>
+
+    <h4>Quick Reminder</h4>
+    <p>Descriptors implement <code>__get__</code>, <code>__set__</code>, and/or <code>__delete__</code>. They are defined as class attributes and intercept access on instances. Data descriptors (with <code>__set__</code>) take priority over instance <code>__dict__</code>. Non-data descriptors (only <code>__get__</code>) don't. Properties, classmethods, and staticmethods are all implemented as descriptors.</p>
+
+    <h4>Key Pattern</h4>
+<pre>class Validated:
+    def __init__(self, min_val=None, max_val=None):
+        self.min_val = min_val
+        self.max_val = max_val
+
+    def __set_name__(self, owner, name):
+        self.attr_name = f"_{name}"
+
+    def __get__(self, obj, objtype=None):
+        if obj is None:
+            return self
+        return getattr(obj, self.attr_name, None)
+
+    def __set__(self, obj, value):
+        if self.min_val is not None and value &lt; self.min_val:
+            raise ValueError(f"Must be &gt;= {self.min_val}")
+        if self.max_val is not None and value &gt; self.max_val:
+            raise ValueError(f"Must be &lt;= {self.max_val}")
+        setattr(obj, self.attr_name, value)
+
+class Product:
+    price = Validated(min_val=0)
+    quantity = Validated(min_val=0, max_val=1000)
+
+    def __init__(self, price, quantity):
+        self.price = price
+        self.quantity = quantity
+
+p = Product(9.99, 5)
+print(p.price, p.quantity)  # 9.99 5</pre>
+
+    <div class="challenge">
+      <div class="challenge-label">Challenge</div>
+      <p>Write a <code>TypeChecked</code> descriptor that enforces a specific type on assignment. Usage: <code>name = TypeChecked(str)</code>, <code>age = TypeChecked(int)</code>. Attempting <code>self.age = "hello"</code> should raise <code>TypeError</code>. Combine it with <code>Validated</code> for type + range checking.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>#1 Pitfall:</strong> Storing descriptor state on the descriptor itself instead of on the instance. If you write <code>self.value = value</code> in <code>__set__</code>, all instances share the same value. Use <code>setattr(obj, self.attr_name, value)</code> or <code>obj.__dict__[self.attr_name] = value</code>.
+    </div>
+  </div>
+
+  <!-- Review 6: Exception Hierarchy & Custom Exceptions -->
+  <div class="concept" id="review-exception-hierarchy">
+    <div class="concept-header">
+      <h3>Exception Hierarchy &amp; Custom Exceptions</h3>
+      <span class="concept-meta">Error Handling &bull; 3 days since last review</span>
+    </div>
+
+    <h4>Quick Reminder</h4>
+    <p>All exceptions inherit from <code>BaseException</code>. Application exceptions inherit from <code>Exception</code>. <code>except Exception</code> catches most errors but not <code>KeyboardInterrupt</code>/<code>SystemExit</code>. Custom exceptions should inherit from <code>Exception</code> (or a domain-specific base). Use exception groups (<code>ExceptionGroup</code>, Python 3.11+) for multiple simultaneous errors.</p>
+
+    <h4>Key Pattern</h4>
+<pre>class AppError(Exception):
+    """Base for all application errors."""
+
+class ValidationError(AppError):
+    def __init__(self, field: str, message: str):
+        self.field = field
+        self.message = message
+        super().__init__(f"{field}: {message}")
+
+class NotFoundError(AppError):
+    def __init__(self, resource: str, id: int):
+        self.resource = resource
+        self.id = id
+        super().__init__(f"{resource} #{id} not found")
+
+try:
+    raise ValidationError("email", "invalid format")
+except ValidationError as e:
+    print(f"Validation: {e.field} - {e.message}")
+except AppError as e:
+    print(f"App error: {e}")
+# Validation: email - invalid format</pre>
+
+    <div class="challenge">
+      <div class="challenge-label">Challenge</div>
+      <p>Design an exception hierarchy for a banking app: <code>BankError</code> base, <code>InsufficientFundsError(amount, balance)</code>, <code>AccountLockedError(reason)</code>, <code>TransferError(from_acct, to_acct, cause)</code> that chains the underlying cause with <code>raise ... from</code>. Write a function that demonstrates catching and re-raising with context.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>#1 Pitfall:</strong> Catching <code>Exception</code> too broadly. A bare <code>except Exception:</code> swallows errors you did not expect (like <code>TypeError</code> from a coding bug). Catch the most specific exception type possible, and let unexpected errors propagate.
+    </div>
+  </div>
+
+</div><!-- end review section -->
+
+
+<!-- ============================================================ -->
+<!-- NEW CONCEPTS SECTION -->
+<!-- ============================================================ -->
+<div class="section">
+  <span class="section-label new">New</span>
+  <h2 class="section-title">Concurrency &amp; Performance / Testing &amp; Packaging</h2>
+
+  <!-- Concept 1: Memory Optimization -->
+  <div class="concept" id="memory-optimization">
+    <div class="concept-header">
+      <h3>Memory Optimization</h3>
+      <span class="concept-meta">Concurrency &amp; Performance &bull; New</span>
+    </div>
+
+    <h4>Why It Matters</h4>
+    <p>Python objects carry significant overhead &mdash; a single <code>int</code> uses 28 bytes, a small dict over 200 bytes. When you create millions of objects, memory can balloon quickly. Understanding <code>__slots__</code>, generators, <code>array</code>, and <code>memoryview</code> lets you cut memory usage by 50-90%. Profiling with <code>tracemalloc</code> and <code>sys.getsizeof</code> tells you <em>where</em> memory is going.</p>
+
+    <h4>Progressive Explanation</h4>
+
+    <p><strong>sys.getsizeof vs pympler.asizeof &mdash; shallow vs deep:</strong></p>
+<pre>import sys
+
+# sys.getsizeof gives SHALLOW size (just the object, not what it references)
+data = {"name": "Alice", "scores": [90, 85, 92, 88]}
+
+print(f"dict (shallow): {sys.getsizeof(data)} bytes")
+print(f"str 'Alice':    {sys.getsizeof('Alice')} bytes")
+print(f"list [90,...]:  {sys.getsizeof(data['scores'])} bytes")
+
+# The shallow size of the dict doesn't include the strings and list inside!
+# For deep size, use pympler (pip install pympler):
+# from pympler import asizeof
+# print(f"dict (deep): {asizeof.asizeof(data)} bytes")
+
+# Manual deep size approximation:
+def deep_getsizeof(obj, seen=None):
+    """Recursively calculate deep size of an object."""
+    if seen is None:
+        seen = set()
+    obj_id = id(obj)
+    if obj_id in seen:
+        return 0
+    seen.add(obj_id)
+    size = sys.getsizeof(obj)
+    if isinstance(obj, dict):
+        size += sum(deep_getsizeof(k, seen) + deep_getsizeof(v, seen)
+                    for k, v in obj.items())
+    elif isinstance(obj, (list, tuple, set, frozenset)):
+        size += sum(deep_getsizeof(i, seen) for i in obj)
+    return size
+
+print(f"dict (deep):    {deep_getsizeof(data)} bytes")</pre>
+    <div class="output">
+      <div class="output-label">Output (example, 64-bit Python)</div>
+dict (shallow): 184 bytes
+str 'Alice':    54 bytes
+list [90,...]:  120 bytes
+dict (deep):    530 bytes</div>
+
+    <p><strong>__slots__ combined with other techniques:</strong></p>
+<pre>import sys
+
+class RegularPoint:
+    def __init__(self, x, y, z):
+        self.x = x
+        self.y = y
+        self.z = z
+
+class SlotPoint:
+    __slots__ = ("x", "y", "z")
+    def __init__(self, x, y, z):
+        self.x = x
+        self.y = y
+        self.z = z
+
+rp = RegularPoint(1.0, 2.0, 3.0)
+sp = SlotPoint(1.0, 2.0, 3.0)
+
+print(f"Regular: {sys.getsizeof(rp)} + dict {sys.getsizeof(rp.__dict__)} bytes")
+print(f"Slots:   {sys.getsizeof(sp)} bytes (no __dict__)")
+
+# At scale: 1 million points
+import tracemalloc
+tracemalloc.start()
+
+points_regular = [RegularPoint(i, i+1, i+2) for i in range(100_000)]
+snapshot1 = tracemalloc.take_snapshot()
+regular_mem = sum(stat.size for stat in snapshot1.statistics("filename"))
+
+tracemalloc.stop()
+tracemalloc.start()
+
+points_slots = [SlotPoint(i, i+1, i+2) for i in range(100_000)]
+snapshot2 = tracemalloc.take_snapshot()
+slots_mem = sum(stat.size for stat in snapshot2.statistics("filename"))
+
+tracemalloc.stop()
+print(f"\n100k Regular: ~{regular_mem / 1024 / 1024:.1f} MB")
+print(f"100k Slots:   ~{slots_mem / 1024 / 1024:.1f} MB")</pre>
+    <div class="output">
+      <div class="output-label">Output (example)</div>
+Regular: 48 + dict 104 bytes
+Slots:   56 bytes (no __dict__)
+
+100k Regular: ~20.8 MB
+100k Slots:   ~8.4 MB</div>
+
+    <p><strong>Generators vs lists for large datasets:</strong></p>
+<pre>import sys
+import tracemalloc
+
+# List approach -- all in memory at once
+def squares_list(n):
+    return [i * i for i in range(n)]
+
+# Generator approach -- lazy, one at a time
+def squares_gen(n):
+    return (i * i for i in range(n))
+
+N = 1_000_000
+
+# Memory comparison
+lst = squares_list(N)
+gen = squares_gen(N)
+
+print(f"List:      {sys.getsizeof(lst):>12,} bytes")
+print(f"Generator: {sys.getsizeof(gen):>12,} bytes")
+
+# Both produce the same results
+print(f"Sum (list): {sum(lst)}")
+print(f"Sum (gen):  {sum(squares_gen(N))}")  # re-create since consumed
+
+# Real-world: processing a large CSV line by line
+def process_large_file(path):
+    """Generator -- never loads full file into memory."""
+    with open(path) as f:
+        for line in f:    # file object is already a generator!
+            yield line.strip().split(",")
+
+# vs loading everything at once (bad for large files):
+# lines = open(path).readlines()  # entire file in RAM!</pre>
+    <div class="output">
+      <div class="output-label">Output</div>
+List:        8,448,728 bytes
+Generator:         200 bytes
+Sum (list): 333332833333500000
+Sum (gen):  333332833333500000</div>
+
+    <p><strong>array module for typed numeric arrays:</strong></p>
+<pre>import sys
+from array import array
+
+# Python list of ints: each int is a full Python object (~28 bytes)
+py_list = list(range(100_000))
+print(f"Python list: {sys.getsizeof(py_list):>10,} bytes")
+
+# array.array: stores raw C-type values (4 or 8 bytes each)
+# Type codes: 'i' = signed int, 'f' = float, 'd' = double, 'B' = unsigned byte
+int_array = array('i', range(100_000))  # 4 bytes per int
+print(f"array('i'):  {sys.getsizeof(int_array):>10,} bytes")
+
+# For bytes/binary data
+byte_array = array('B', [0] * 100_000)  # 1 byte per element
+print(f"array('B'):  {sys.getsizeof(byte_array):>10,} bytes")
+
+# array supports standard list operations
+int_array.append(100_000)
+int_array.extend([100_001, 100_002])
+print(f"Length after append: {len(int_array)}")
+print(f"Sum: {sum(int_array)}")
+
+# Type enforcement: can only store declared type
+try:
+    int_array.append(3.14)  # float into int array!
+except TypeError as e:
+    print(f"TypeError: {e}")</pre>
+    <div class="output">
+      <div class="output-label">Output</div>
+Python list:    800,056 bytes
+array('i'):     400,064 bytes
+array('B'):     100,064 bytes
+Length after append: 100003
+Sum: 5000150003
+TypeError: 'float' object cannot be interpreted as an integer</div>
+
+    <p><strong>memoryview for zero-copy slicing:</strong></p>
+<pre># memoryview provides a "window" into a buffer without copying data
+data = bytearray(b"Hello, World! This is a large buffer of data.")
+
+# Normal slicing COPIES the data
+slice_copy = data[7:12]
+print(f"Copy:       {bytes(slice_copy)} (id: {id(slice_copy)})")
+
+# memoryview slicing does NOT copy
+mv = memoryview(data)
+slice_view = mv[7:12]
+print(f"View:       {bytes(slice_view)} (id: {id(slice_view)})")
+
+# Modifying through the view modifies the original!
+slice_view[0:5] = b"Earth"
+print(f"Original:   {data.decode()}")
+
+# Memory savings with large data
+import sys
+big_data = bytearray(1_000_000)
+big_copy = big_data[100:200]       # copies 100 bytes
+big_view = memoryview(big_data)[100:200]  # zero copy
+
+print(f"\nbytearray slice: {sys.getsizeof(big_copy)} bytes")
+print(f"memoryview:      {sys.getsizeof(big_view)} bytes")
+
+mv.release()  # always release when done</pre>
+    <div class="output">
+      <div class="output-label">Output</div>
+Copy:       b'World' (id: 140234567890)
+View:       b'World' (id: 140234567456)
+Original:   Hello, Earth! This is a large buffer of data.
+
+bytearray slice: 157 bytes
+memoryview:      184 bytes</div>
+
+    <p><strong>tracemalloc for memory profiling:</strong></p>
+<pre>import tracemalloc
+
+tracemalloc.start()
+
+# Allocate some memory
+data = [{"id": i, "name": f"user_{i}", "scores": list(range(10))}
+        for i in range(10_000)]
+
+snapshot = tracemalloc.take_snapshot()
+
+# Top 5 memory-consuming lines
+print("Top 5 memory allocations:")
+for stat in snapshot.statistics("lineno")[:5]:
+    print(f"  {stat}")
+
+# Current and peak memory
+current, peak = tracemalloc.get_traced_memory()
+print(f"\nCurrent memory: {current / 1024 / 1024:.2f} MB")
+print(f"Peak memory:    {peak / 1024 / 1024:.2f} MB")
+
+tracemalloc.stop()</pre>
+    <div class="output">
+      <div class="output-label">Output (example)</div>
+Top 5 memory allocations:
+  &lt;stdin&gt;:5: size=7168 KiB, count=100002, average=73 B
+  &lt;stdin&gt;:5: size=1563 KiB, count=10000, average=160 B
+  &lt;stdin&gt;:5: size=781 KiB, count=10000, average=80 B
+  ...
+
+Current memory: 9.34 MB
+Peak memory:    9.34 MB</div>
+
+    <h4>Common Mistakes</h4>
+    <div class="do-dont">
+      <div class="dont-box">
+        <div class="label">Don't</div>
+<pre># Loading everything into a list when you only
+# need to iterate once
+results = [transform(x) for x in huge_dataset]
+for r in results:
+    process(r)
+# huge_dataset AND results both in memory!</pre>
+      </div>
+      <div class="do-box">
+        <div class="label">Do</div>
+<pre># Use a generator -- process one at a time
+results = (transform(x) for x in huge_dataset)
+for r in results:
+    process(r)
+# Only one item in memory at a time</pre>
+      </div>
+    </div>
+
+    <div class="do-dont">
+      <div class="dont-box">
+        <div class="label">Don't</div>
+<pre># Using sys.getsizeof on a container and
+# thinking that's the total memory
+d = {"a": [1,2,3], "b": [4,5,6]}
+print(sys.getsizeof(d))  # ~232 bytes
+# WRONG! Doesn't include the lists inside!</pre>
+      </div>
+      <div class="do-box">
+        <div class="label">Do</div>
+<pre># Use deep size calculation or tracemalloc
+# for accurate memory measurement
+tracemalloc.start()
+d = {"a": [1,2,3], "b": [4,5,6]}
+current, _ = tracemalloc.get_traced_memory()
+# Or use pympler.asizeof.asizeof(d)</pre>
+      </div>
+    </div>
+
+    <h4>Key Rules</h4>
+    <ul class="rules-list">
+      <li><code>sys.getsizeof()</code> measures shallow size only. For deep (recursive) size, use <code>pympler.asizeof</code> or <code>tracemalloc</code>.</li>
+      <li>Use generators instead of lists when you only need to iterate once &mdash; <code>O(1)</code> vs <code>O(n)</code> memory.</li>
+      <li><code>__slots__</code> saves ~40-50% memory per instance by eliminating the per-object <code>__dict__</code>.</li>
+      <li><code>array.array</code> stores typed values compactly (like C arrays). Use for large numeric datasets where NumPy is overkill.</li>
+      <li><code>memoryview</code> provides zero-copy slicing of buffers &mdash; critical for high-throughput binary data processing.</li>
+    </ul>
+
+    <h4>Exercises</h4>
+    <div class="exercise">
+      <div class="exercise-label">Exercise 1</div>
+      <p>Create three versions of a <code>Pixel</code> class (with <code>r</code>, <code>g</code>, <code>b</code>, <code>a</code> attributes): regular class, <code>__slots__</code> class, and <code>namedtuple</code>. Allocate 1 million of each and compare memory usage with <code>tracemalloc</code>. Which is most memory-efficient?</p>
+    </div>
+    <div class="exercise">
+      <div class="exercise-label">Exercise 2</div>
+      <p>Write a function that reads a multi-gigabyte file of numbers (one per line) and computes the mean without loading the entire file into memory. Use a generator and compare memory usage against <code>readlines()</code> using <code>tracemalloc</code>.</p>
+    </div>
+    <div class="exercise">
+      <div class="exercise-label">Exercise 3</div>
+      <p>Implement a <code>RingBuffer</code> using <code>array.array</code> that stores fixed-size numeric data. It should support <code>append()</code> (overwrites oldest when full), <code>__getitem__</code>, and <code>__len__</code>. Compare its memory footprint to a <code>deque(maxlen=N)</code> of Python ints.</p>
+    </div>
+
+    <div class="connection">
+      <strong>Connections:</strong> <code>__slots__</code> was introduced in Day 5 &mdash; now we measure its impact with <code>tracemalloc</code>. Generators (Day 1) are the primary tool for memory-efficient iteration. <code>memoryview</code> connects to the upcoming <code>struct</code> concept for zero-copy binary processing.
+    </div>
+  </div>
+
+  <!-- Concept 2: struct & Binary Data -->
+  <div class="concept" id="struct-binary">
+    <div class="concept-header">
+      <h3>struct &amp; Binary Data</h3>
+      <span class="concept-meta">Concurrency &amp; Performance &bull; New</span>
+    </div>
+
+    <h4>Why It Matters</h4>
+    <p>Binary data is everywhere: network protocols, file formats (PNG, ZIP, ELF), hardware communication, and database storage. The <code>struct</code> module lets you pack Python values into compact binary representations and unpack binary data into Python values. Understanding endianness and format strings is essential for interoperability with C code, network protocols, and binary files.</p>
+
+    <h4>Progressive Explanation</h4>
+
+    <p><strong>struct.pack and struct.unpack basics:</strong></p>
+<pre>import struct
+
+# Pack Python values into bytes
+# Format: '&gt;' = big-endian, 'I' = unsigned int, 'f' = float
+packed = struct.pack('&gt;If', 42, 3.14)
+print(f"Packed: {packed}")
+print(f"Length: {len(packed)} bytes")  # 4 (int) + 4 (float) = 8
+
+# Unpack bytes back into Python values
+values = struct.unpack('&gt;If', packed)
+print(f"Unpacked: {values}")
+print(f"Int: {values[0]}, Float: {values[1]:.2f}")
+
+# Common format characters:
+# 'b'=int8, 'B'=uint8, 'h'=int16, 'H'=uint16
+# 'i'=int32, 'I'=uint32, 'q'=int64, 'Q'=uint64
+# 'f'=float32, 'd'=float64, 's'=bytes, '?'=bool
+
+# Pack a network packet header
+header = struct.pack('!BBH', 1, 0, 1024)  # version, type, length
+print(f"Header: {header.hex()}")
+ver, typ, length = struct.unpack('!BBH', header)
+print(f"Version={ver}, Type={typ}, Length={length}")</pre>
+    <div class="output">
+      <div class="output-label">Output</div>
+Packed: b'\x00\x00\x00*@H\xf5\xc3'
+Length: 8 bytes
+Unpacked: (42, 3.140000104904175)
+Int: 42, Float: 3.14
+Header: 01000400
+Version=1, Type=0, Length=1024</div>
+
+    <p><strong>Endianness explained:</strong></p>
+<pre>import struct
+
+value = 0x01020304  # 16909060 in decimal
+
+# Little-endian (&lt;): least significant byte first
+le = struct.pack('&lt;I', value)
+print(f"Little-endian: {le.hex(' ')}")  # 04 03 02 01
+
+# Big-endian (&gt;): most significant byte first
+be = struct.pack('&gt;I', value)
+print(f"Big-endian:    {be.hex(' ')}")  # 01 02 03 04
+
+# Network byte order (!) = big-endian (standard for protocols)
+net = struct.pack('!I', value)
+print(f"Network:       {net.hex(' ')}")  # 01 02 03 04
+
+# Native (@) = whatever your CPU uses (usually little-endian on x86)
+native = struct.pack('@I', value)
+print(f"Native:        {native.hex(' ')}")
+
+# Why it matters: reading a file from a big-endian system on a
+# little-endian machine gives wrong values if endianness is wrong!
+wrong = struct.unpack('&lt;I', be)[0]
+right = struct.unpack('&gt;I', be)[0]
+print(f"\nWrong endian: {wrong:#010x} ({wrong})")
+print(f"Right endian: {right:#010x} ({right})")</pre>
+    <div class="output">
+      <div class="output-label">Output</div>
+Little-endian: 04 03 02 01
+Big-endian:    01 02 03 04
+Network:       01 02 03 04
+Native:        04 03 02 01
+
+Wrong endian: 0x04030201 (67305985)
+Right endian: 0x01020304 (16909060)</div>
+
+    <p><strong>struct.Struct for repeated packing/unpacking:</strong></p>
+<pre>import struct
+
+# Pre-compile the format for repeated use (faster)
+header_fmt = struct.Struct('!BHI')  # type(1), id(2), size(4)
+
+print(f"Header size: {header_fmt.size} bytes")
+
+# Pack several headers
+headers = [
+    header_fmt.pack(1, 100, 4096),
+    header_fmt.pack(2, 101, 8192),
+    header_fmt.pack(3, 102, 256),
+]
+
+# Unpack them
+for i, h in enumerate(headers):
+    typ, msg_id, size = header_fmt.unpack(h)
+    print(f"  Header {i}: type={typ}, id={msg_id}, size={size}")
+
+# pack_into / unpack_from for buffer manipulation
+buffer = bytearray(header_fmt.size * 3)
+for i, (typ, mid, sz) in enumerate([(1,100,4096), (2,101,8192), (3,102,256)]):
+    header_fmt.pack_into(buffer, i * header_fmt.size, typ, mid, sz)
+
+print(f"\nBuffer: {buffer.hex()}")
+# Read back the second header
+typ, mid, sz = header_fmt.unpack_from(buffer, header_fmt.size)
+print(f"Second header: type={typ}, id={mid}, size={sz}")</pre>
+    <div class="output">
+      <div class="output-label">Output</div>
+Header size: 7 bytes
+  Header 0: type=1, id=100, size=4096
+  Header 1: type=2, id=101, size=8192
+  Header 2: type=3, id=102, size=256
+
+Buffer: 010064000010000200650000200003006600000100
+Second header: type=2, id=101, size=8192</div>
+
+    <p><strong>Reading binary file formats:</strong></p>
+<pre>import struct
+import io
+
+# Simulate a simple binary file format:
+# Magic number (4 bytes) + version (2 bytes) + record count (4 bytes)
+# followed by records: name_len(1 byte) + name(N bytes) + score(float)
+
+def write_binary(stream, records):
+    # Write header
+    stream.write(struct.pack('&gt;4sHI', b'MYDB', 1, len(records)))
+
+    # Write records
+    for name, score in records:
+        name_bytes = name.encode('utf-8')
+        stream.write(struct.pack('&gt;B', len(name_bytes)))
+        stream.write(name_bytes)
+        stream.write(struct.pack('&gt;f', score))
+
+def read_binary(stream):
+    # Read header
+    magic, version, count = struct.unpack('&gt;4sHI', stream.read(10))
+    print(f"Magic: {magic}, Version: {version}, Records: {count}")
+
+    # Read records
+    records = []
+    for _ in range(count):
+        name_len = struct.unpack('&gt;B', stream.read(1))[0]
+        name = stream.read(name_len).decode('utf-8')
+        score = struct.unpack('&gt;f', stream.read(4))[0]
+        records.append((name, score))
+    return records
+
+# Write and read back
+buf = io.BytesIO()
+write_binary(buf, [("Alice", 95.5), ("Bob", 87.3), ("Charlie", 92.1)])
+
+buf.seek(0)
+records = read_binary(buf)
+for name, score in records:
+    print(f"  {name}: {score:.1f}")</pre>
+    <div class="output">
+      <div class="output-label">Output</div>
+Magic: b'MYDB', Version: 1, Records: 3
+  Alice: 95.5
+  Bob: 87.3
+  Charlie: 92.1</div>
+
+    <p><strong>memoryview with struct for zero-copy access:</strong></p>
+<pre>import struct
+
+# Large binary buffer (simulating a network packet stream)
+# Each "packet": type(1B) + length(2B) + data(variable)
+raw = bytearray()
+raw += struct.pack('!BH', 1, 5) + b"Hello"
+raw += struct.pack('!BH', 2, 3) + b"Bye"
+raw += struct.pack('!BH', 1, 6) + b"World!"
+
+# Parse without copying using memoryview
+mv = memoryview(raw)
+offset = 0
+packets = []
+
+while offset &lt; len(mv):
+    ptype, plen = struct.unpack_from('!BH', mv, offset)
+    offset += 3
+    data = bytes(mv[offset:offset + plen])
+    offset += plen
+    packets.append((ptype, data.decode()))
+
+for ptype, data in packets:
+    print(f"  Type {ptype}: '{data}'")</pre>
+    <div class="output">
+      <div class="output-label">Output</div>
+  Type 1: 'Hello'
+  Type 2: 'Bye'
+  Type 1: 'World!'</div>
+
+    <h4>Common Mistakes</h4>
+    <div class="do-dont">
+      <div class="dont-box">
+        <div class="label">Don't</div>
+<pre># Forgetting endianness -- reading big-endian
+# data as little-endian gives wrong values
+data = struct.pack('&gt;H', 256)  # 0x0100
+wrong = struct.unpack('&lt;H', data)[0]
+# wrong = 1, not 256!</pre>
+      </div>
+      <div class="do-box">
+        <div class="label">Do</div>
+<pre># Always specify endianness explicitly
+data = struct.pack('&gt;H', 256)
+correct = struct.unpack('&gt;H', data)[0]
+# correct = 256
+# Use '!' for network protocols</pre>
+      </div>
+    </div>
+
+    <div class="do-dont">
+      <div class="dont-box">
+        <div class="label">Don't</div>
+<pre># Packing strings directly as 's' without length
+struct.pack('s', "hello")
+# TypeError: a bytes-like object is required</pre>
+      </div>
+      <div class="do-box">
+        <div class="label">Do</div>
+<pre># Encode to bytes first; specify length in format
+struct.pack('5s', b"hello")
+# Or use length prefix:
+name = b"hello"
+struct.pack(f'&gt;H{len(name)}s', len(name), name)</pre>
+      </div>
+    </div>
+
+    <h4>Key Rules</h4>
+    <ul class="rules-list">
+      <li>Always specify endianness (<code>&lt;</code>, <code>&gt;</code>, <code>!</code>, <code>@</code>). The default native mode (<code>@</code>) adds padding and varies by platform.</li>
+      <li>Use <code>!</code> (network/big-endian) for anything that crosses machines (network protocols, file formats).</li>
+      <li>Pre-compile formats with <code>struct.Struct(fmt)</code> when packing/unpacking in loops &mdash; it's measurably faster.</li>
+      <li>Use <code>struct.calcsize(fmt)</code> to check the byte size of a format before reading.</li>
+      <li>Combine <code>memoryview</code> with <code>unpack_from</code> for efficient parsing of large binary buffers without copying.</li>
+    </ul>
+
+    <h4>Exercises</h4>
+    <div class="exercise">
+      <div class="exercise-label">Exercise 1</div>
+      <p>Write a BMP image header parser. A BMP file starts with <code>'BM'</code> (2 bytes), then file size (4 bytes LE), reserved (4 bytes), pixel offset (4 bytes), header size (4 bytes), width (4 bytes), height (4 bytes). Parse these fields from a real BMP file or a constructed byte string.</p>
+    </div>
+    <div class="exercise">
+      <div class="exercise-label">Exercise 2</div>
+      <p>Implement a simple binary message protocol: each message has a type (1 byte), timestamp (8 bytes, double), and payload length + payload. Write <code>encode(msg_type, timestamp, payload)</code> and <code>decode(data)</code> functions. Support a stream of multiple messages.</p>
+    </div>
+
+    <div class="connection">
+      <strong>Connections:</strong> <code>memoryview</code> connects to the Memory Optimization concept above &mdash; zero-copy slicing saves both memory and CPU. Binary format parsing uses <code>pathlib</code> (Day 7) for file reading. The <code>struct.Struct</code> pre-compilation pattern mirrors <code>re.compile()</code> from Day 7.
+    </div>
+  </div>
+
+  <!-- Concept 3: pytest Fundamentals -->
+  <div class="concept" id="pytest-basics">
+    <div class="concept-header">
+      <h3>pytest Fundamentals</h3>
+      <span class="concept-meta">Testing &amp; Packaging &bull; New</span>
+    </div>
+
+    <h4>Why It Matters</h4>
+    <p>Tests are how you prove your code works and protect against regressions. <code>pytest</code> is the de facto standard for Python testing &mdash; it's simpler than <code>unittest</code>, requires less boilerplate, and has a rich plugin ecosystem. Professional Python projects have hundreds or thousands of tests. Learning <code>pytest</code> patterns makes you a better developer immediately.</p>
+
+    <h4>Progressive Explanation</h4>
+
+    <p><strong>Basic test functions with assert:</strong></p>
+<pre># test_math.py -- pytest discovers files named test_*.py
+# and functions named test_*
+
+def add(a: int, b: int) -&gt; int:
+    return a + b
+
+def test_add_positive():
+    assert add(2, 3) == 5
+
+def test_add_negative():
+    assert add(-1, -1) == -2
+
+def test_add_zero():
+    assert add(0, 0) == 0
+
+# Run with: pytest test_math.py -v
+# pytest rewrites assert statements to give detailed failure messages:
+#
+# def test_example():
+#     assert add(2, 2) == 5
+# >   AssertionError: assert 4 == 5
+# >     where 4 = add(2, 2)
+
+# No classes needed! Just plain functions with assert.
+print("Tests defined (run with: pytest -v)")
+print(f"add(2,3) = {add(2,3)}")
+print(f"add(-1,-1) = {add(-1,-1)}")</pre>
+    <div class="output">
+      <div class="output-label">Output</div>
+Tests defined (run with: pytest -v)
+add(2,3) = 5
+add(-1,-1) = -2</div>
+
+    <p><strong>@pytest.fixture for setup and teardown:</strong></p>
+<pre>import pytest
+
+# Fixtures provide reusable test data and resources
+
+@pytest.fixture
+def sample_users():
+    """Fresh list of users for each test."""
+    return [
+        {"name": "Alice", "age": 30},
+        {"name": "Bob", "age": 25},
+        {"name": "Charlie", "age": 35},
+    ]
+
+@pytest.fixture
+def empty_db():
+    """Simulate database setup and teardown."""
+    db = {}  # setup
+    yield db  # provide to test
+    db.clear()  # teardown (runs after test)
+
+def test_user_count(sample_users):
+    assert len(sample_users) == 3
+
+def test_db_insert(empty_db):
+    empty_db["alice"] = {"name": "Alice"}
+    assert "alice" in empty_db
+    assert len(empty_db) == 1
+
+# Fixture scopes:
+# @pytest.fixture(scope="function")  -- fresh per test (default)
+# @pytest.fixture(scope="module")    -- once per module
+# @pytest.fixture(scope="session")   -- once per entire test run
+
+# Simulating the fixture behavior
+users = [
+    {"name": "Alice", "age": 30},
+    {"name": "Bob", "age": 25},
+    {"name": "Charlie", "age": 35},
+]
+print(f"User count: {len(users)}")
+db = {}
+db["alice"] = {"name": "Alice"}
+print(f"DB has alice: {'alice' in db}")</pre>
+    <div class="output">
+      <div class="output-label">Output</div>
+User count: 3
+DB has alice: True</div>
+
+    <p><strong>@pytest.mark.parametrize for table-driven tests:</strong></p>
+<pre>import pytest
+
+def is_palindrome(s: str) -&gt; bool:
+    cleaned = s.lower().replace(" ", "")
+    return cleaned == cleaned[::-1]
+
+# Run the SAME test with DIFFERENT inputs
+@pytest.mark.parametrize("input_str,expected", [
+    ("racecar", True),
+    ("hello", False),
+    ("A man a plan a canal Panama", True),
+    ("", True),
+    ("a", True),
+    ("ab", False),
+])
+def test_is_palindrome(input_str, expected):
+    assert is_palindrome(input_str) == expected
+
+# This generates 6 separate tests!
+# PASSED test_is_palindrome[racecar-True]
+# PASSED test_is_palindrome[hello-False]
+# PASSED test_is_palindrome[A man a plan a canal Panama-True]
+# ...
+
+# Multiple parametrize decorators create cartesian product:
+@pytest.mark.parametrize("x", [1, 2])
+@pytest.mark.parametrize("y", [10, 20])
+def test_multiply(x, y):
+    assert x * y == x * y  # 4 tests: (1,10), (1,20), (2,10), (2,20)
+
+# Demonstrate the function
+for s in ["racecar", "hello", "A man a plan a canal Panama"]:
+    print(f"is_palindrome('{s}'): {is_palindrome(s)}")</pre>
+    <div class="output">
+      <div class="output-label">Output</div>
+is_palindrome('racecar'): True
+is_palindrome('hello'): False
+is_palindrome('A man a plan a canal Panama'): True</div>
+
+    <p><strong>pytest.raises for testing exceptions:</strong></p>
+<pre>import pytest
+
+def divide(a: float, b: float) -&gt; float:
+    if b == 0:
+        raise ValueError("Cannot divide by zero")
+    return a / b
+
+def parse_age(value: str) -&gt; int:
+    age = int(value)
+    if age &lt; 0 or age &gt; 150:
+        raise ValueError(f"Invalid age: {age}")
+    return age
+
+# Testing that exceptions are raised
+def test_divide_by_zero():
+    with pytest.raises(ValueError, match="Cannot divide by zero"):
+        divide(10, 0)
+
+def test_parse_age_negative():
+    with pytest.raises(ValueError, match="Invalid age"):
+        parse_age("-5")
+
+def test_parse_age_non_numeric():
+    with pytest.raises(ValueError):  # int() raises ValueError
+        parse_age("abc")
+
+# pytest.raises as context manager gives access to the exception
+def test_divide_error_details():
+    with pytest.raises(ValueError) as exc_info:
+        divide(10, 0)
+    assert "zero" in str(exc_info.value)
+
+# Demonstrate
+try:
+    divide(10, 0)
+except ValueError as e:
+    print(f"Caught: {e}")
+
+try:
+    parse_age("-5")
+except ValueError as e:
+    print(f"Caught: {e}")</pre>
+    <div class="output">
+      <div class="output-label">Output</div>
+Caught: Cannot divide by zero
+Caught: Invalid age: -5</div>
+
+    <p><strong>conftest.py and running pytest:</strong></p>
+<pre># conftest.py -- shared fixtures, auto-discovered by pytest
+# Place in your test directory; ALL test files in that dir can use its fixtures.
+#
+# project/
+# +-- conftest.py          &lt;-- shared fixtures
+# +-- test_users.py
+# +-- test_orders.py
+# +-- tests/
+#     +-- conftest.py      &lt;-- fixtures only for this subdir
+#     +-- test_api.py
+
+# Example conftest.py content:
+"""
+import pytest
+
+@pytest.fixture(scope="session")
+def database():
+    db = connect_to_test_db()
+    yield db
+    db.close()
+
+@pytest.fixture
+def auth_token():
+    return "test-token-12345"
+"""
+
+# Running pytest:
+# pytest                     -- run all tests
+# pytest -v                  -- verbose output
+# pytest -k "palindrome"     -- only tests matching pattern
+# pytest --tb=short          -- shorter tracebacks
+# pytest -x                  -- stop on first failure
+# pytest --lf                -- re-run only last failed tests
+# pytest -n 4                -- parallel (needs pytest-xdist)
+
+print("pytest commands:")
+print("  pytest -v                   # verbose")
+print("  pytest -k 'pattern'         # filter by name")
+print("  pytest --tb=short           # short tracebacks")
+print("  pytest -x                   # stop on first failure")
+print("  pytest --lf                 # last failed only")</pre>
+    <div class="output">
+      <div class="output-label">Output</div>
+pytest commands:
+  pytest -v                   # verbose
+  pytest -k 'pattern'         # filter by name
+  pytest --tb=short           # short tracebacks
+  pytest -x                   # stop on first failure
+  pytest --lf                 # last failed only</div>
+
+    <h4>Common Mistakes</h4>
+    <div class="do-dont">
+      <div class="dont-box">
+        <div class="label">Don't</div>
+<pre># Using unittest-style verbose assertions
+import unittest
+class TestMath(unittest.TestCase):
+    def test_add(self):
+        self.assertEqual(add(2, 3), 5)
+        self.assertIsNotNone(result)
+        self.assertTrue(len(items) &gt; 0)
+# Lots of boilerplate, less readable</pre>
+      </div>
+      <div class="do-box">
+        <div class="label">Do</div>
+<pre># pytest style: plain assert + great error messages
+def test_add():
+    assert add(2, 3) == 5
+    assert result is not None
+    assert len(items) &gt; 0
+# Clean, readable, better failure output</pre>
+      </div>
+    </div>
+
+    <div class="do-dont">
+      <div class="dont-box">
+        <div class="label">Don't</div>
+<pre># Sharing state between tests
+results = []  # module-level mutable state
+
+def test_first():
+    results.append(1)  # modifies shared state
+
+def test_second():
+    assert len(results) == 1  # depends on test_first!</pre>
+      </div>
+      <div class="do-box">
+        <div class="label">Do</div>
+<pre># Each test gets fresh data via fixtures
+@pytest.fixture
+def results():
+    return []
+
+def test_first(results):
+    results.append(1)
+    assert len(results) == 1
+
+def test_second(results):  # fresh list!
+    assert len(results) == 0</pre>
+      </div>
+    </div>
+
+    <h4>Key Rules</h4>
+    <ul class="rules-list">
+      <li>Name test files <code>test_*.py</code> and functions <code>test_*</code>. pytest discovers them automatically.</li>
+      <li>Use <code>@pytest.fixture</code> for setup/teardown. Use <code>yield</code> in fixtures to separate setup (before yield) from teardown (after yield).</li>
+      <li>Use <code>@pytest.mark.parametrize</code> to test many inputs without duplicating test code.</li>
+      <li>Use <code>pytest.raises(ExcType, match="pattern")</code> to assert that specific exceptions are raised with expected messages.</li>
+      <li>Put shared fixtures in <code>conftest.py</code> &mdash; they are automatically available to all tests in the same directory.</li>
+    </ul>
+
+    <h4>Exercises</h4>
+    <div class="exercise">
+      <div class="exercise-label">Exercise 1</div>
+      <p>Write a <code>Stack</code> class with <code>push</code>, <code>pop</code>, <code>peek</code>, and <code>is_empty</code>. Then write a complete pytest test suite: test empty stack, push/pop, peek without removing, pop from empty raises <code>IndexError</code>. Use a fixture for the stack.</p>
+    </div>
+    <div class="exercise">
+      <div class="exercise-label">Exercise 2</div>
+      <p>Use <code>@pytest.mark.parametrize</code> to test an <code>email_validator(email) -&gt; bool</code> function with at least 10 test cases covering valid emails, missing <code>@</code>, missing domain, empty string, and special characters.</p>
+    </div>
+    <div class="exercise">
+      <div class="exercise-label">Exercise 3</div>
+      <p>Create a <code>conftest.py</code> with a <code>tmp_data_dir</code> fixture that creates a temporary directory with sample files (using <code>tmp_path</code> built-in fixture), then write tests that read and process those files. Use <code>scope="function"</code> to ensure isolation.</p>
+    </div>
+
+    <div class="connection">
+      <strong>Connections:</strong> <code>pytest.raises</code> validates exception hierarchies from Day 6. Fixtures use the <code>yield</code> pattern from generators (Day 1) for setup/teardown. Parametrize replaces manual loops, similar to how comprehensions replace explicit iteration (Day 1). Testing is how you validate every pattern from Days 1-8.
+    </div>
+  </div>
+
+  <!-- Concept 4: Mocking with unittest.mock -->
+  <div class="concept" id="mocking-basics">
+    <div class="concept-header">
+      <h3>Mocking with unittest.mock</h3>
+      <span class="concept-meta">Testing &amp; Packaging &bull; New</span>
+    </div>
+
+    <h4>Why It Matters</h4>
+    <p>Real code depends on external services, databases, filesystems, and time. You can't call a payment API in every test run, and tests shouldn't depend on network availability. <code>unittest.mock</code> lets you replace real objects with controlled fakes, so you can test your logic in isolation. It's the standard library's mocking framework and integrates seamlessly with pytest.</p>
+
+    <h4>Progressive Explanation</h4>
+
+    <p><strong>MagicMock basics:</strong></p>
+<pre>from unittest.mock import MagicMock
+
+# MagicMock creates an object that accepts any attribute/method call
+mock = MagicMock()
+
+# Call it like any function
+mock(1, 2, key="value")
+
+# Check how it was called
+print(f"Called: {mock.called}")
+print(f"Call count: {mock.call_count}")
+print(f"Last call: {mock.call_args}")
+mock.assert_called_once_with(1, 2, key="value")
+
+# Configure return values
+mock.return_value = 42
+print(f"Return: {mock()}")
+
+# Configure method return values
+mock.get_user.return_value = {"name": "Alice", "age": 30}
+user = mock.get_user(1)
+print(f"User: {user}")
+
+# side_effect for raising exceptions or returning sequences
+mock.validate.side_effect = ValueError("Invalid input")
+try:
+    mock.validate("bad")
+except ValueError as e:
+    print(f"Exception: {e}")
+
+# side_effect with a list returns values in sequence
+mock.fetch.side_effect = [10, 20, 30]
+print(f"Fetches: {mock.fetch()}, {mock.fetch()}, {mock.fetch()}")</pre>
+    <div class="output">
+      <div class="output-label">Output</div>
+Called: True
+Call count: 1
+Last call: call(1, 2, key='value')
+Return: 42
+User: {'name': 'Alice', 'age': 30}
+Exception: Invalid input
+Fetches: 10, 20, 30</div>
+
+    <p><strong>patch decorator and context manager:</strong></p>
+<pre>from unittest.mock import patch, MagicMock
+import json
+
+# Imagine this module exists:
+# weather.py
+# import requests
+# def get_temperature(city):
+#     response = requests.get(f"https://api.weather.com/{city}")
+#     return response.json()["temperature"]
+
+# We can patch 'requests.get' to avoid real HTTP calls
+
+# Simulating the pattern:
+class FakeResponse:
+    def json(self):
+        return {"temperature": 72, "city": "NYC"}
+
+# Using patch as a decorator
+# @patch("weather.requests.get")
+# def test_get_temperature(mock_get):
+#     mock_get.return_value = FakeResponse()
+#     temp = get_temperature("NYC")
+#     assert temp == 72
+#     mock_get.assert_called_once_with("https://api.weather.com/NYC")
+
+# Using patch as a context manager
+# with patch("weather.requests.get") as mock_get:
+#     mock_get.return_value = FakeResponse()
+#     temp = get_temperature("NYC")
+#     assert temp == 72
+
+# Patching builtins (like open):
+mock_data = '{"name": "Alice", "score": 95}'
+
+with patch("builtins.open", MagicMock()) as mock_open:
+    mock_open.return_value.__enter__ = MagicMock(
+        return_value=MagicMock(read=MagicMock(return_value=mock_data))
+    )
+    # In real code, json.load(open("file.json")) would be mocked
+
+# Simpler approach with mock_open helper:
+from unittest.mock import mock_open
+
+m = mock_open(read_data='{"users": ["Alice", "Bob"]}')
+with patch("builtins.open", m):
+    with open("config.json") as f:
+        data = json.load(f)
+    print(f"Users: {data['users']}")
+
+m.assert_called_once_with("config.json")</pre>
+    <div class="output">
+      <div class="output-label">Output</div>
+Users: ['Alice', 'Bob']</div>
+
+    <p><strong>patch.object for patching specific attributes:</strong></p>
+<pre>from unittest.mock import patch, MagicMock
+import datetime
+
+class UserService:
+    def get_user(self, user_id: int) -&gt; dict:
+        # In reality, this would query a database
+        raise NotImplementedError("DB not available in tests")
+
+    def get_active_users(self) -&gt; list[dict]:
+        # Would query DB
+        raise NotImplementedError("DB not available in tests")
+
+service = UserService()
+
+# patch.object replaces a specific method on a specific object
+with patch.object(service, "get_user") as mock_get:
+    mock_get.return_value = {"id": 1, "name": "Alice"}
+    user = service.get_user(1)
+    print(f"User: {user}")
+    mock_get.assert_called_once_with(1)
+
+# Patching datetime for deterministic tests
+class EventLogger:
+    def log(self, message: str) -&gt; dict:
+        return {
+            "timestamp": datetime.datetime.now().isoformat(),
+            "message": message,
+        }
+
+logger = EventLogger()
+
+# Freeze time for deterministic tests
+fixed_time = datetime.datetime(2026, 6, 5, 12, 0, 0)
+with patch("datetime.datetime") as mock_dt:
+    mock_dt.now.return_value = fixed_time
+    entry = logger.log("test event")
+    print(f"Log entry: {entry}")</pre>
+    <div class="output">
+      <div class="output-label">Output</div>
+User: {'id': 1, 'name': 'Alice'}
+Log entry: {'timestamp': '2026-06-05T12:00:00', 'message': 'test event'}</div>
+
+    <p><strong>assert_called patterns and call_args_list:</strong></p>
+<pre>from unittest.mock import MagicMock, call
+
+mock = MagicMock()
+
+# Make several calls
+mock.process("item1")
+mock.process("item2")
+mock.process("item3")
+mock.finalize()
+
+# Assertion methods
+mock.process.assert_called()              # called at least once
+mock.process.assert_called_with("item3")  # last call was this
+mock.finalize.assert_called_once()        # called exactly once
+
+# Inspect all calls
+print(f"All process calls: {mock.process.call_args_list}")
+print(f"Process call count: {mock.process.call_count}")
+
+# Assert specific call sequence
+mock.process.assert_has_calls([
+    call("item1"),
+    call("item2"),
+    call("item3"),
+])
+
+# Reset for reuse
+mock.reset_mock()
+print(f"After reset: {mock.process.call_count}")
+
+# any_order parameter
+mock.log("a")
+mock.log("c")
+mock.log("b")
+mock.log.assert_has_calls([call("a"), call("b"), call("c")], any_order=True)</pre>
+    <div class="output">
+      <div class="output-label">Output</div>
+All process calls: [call('item1'), call('item2'), call('item3')]
+Process call count: 3
+After reset: 0</div>
+
+    <p><strong>When to mock (and when NOT to):</strong></p>
+<pre># MOCK THESE (external dependencies):
+# - HTTP requests (requests, httpx, aiohttp)
+# - Database queries (SQLAlchemy sessions, cursor.execute)
+# - File system operations (open, pathlib read/write)
+# - Time (datetime.now, time.time)
+# - Environment variables (os.environ)
+# - Third-party API clients
+
+# DON'T MOCK THESE (test the real behavior):
+# - Your own data classes and value objects
+# - Pure functions with no side effects
+# - Standard library data structures (list, dict, set)
+# - Simple utility functions
+
+# Anti-pattern: mocking everything
+# BAD -- you're testing the mock, not the code!
+def test_bad_over_mocking():
+    mock_list = MagicMock()
+    mock_list.__len__ = MagicMock(return_value=3)
+    assert len(mock_list) == 3  # proves nothing!
+
+# GOOD -- only mock the external dependency
+def calculate_total(items: list[dict]) -&gt; float:
+    return sum(item["price"] * item["quantity"] for item in items)
+
+def test_calculate_total():
+    # Use REAL data, no mocking needed for pure functions
+    items = [
+        {"price": 10.0, "quantity": 2},
+        {"price": 5.0, "quantity": 3},
+    ]
+    assert calculate_total(items) == 35.0
+
+# Demonstrate the real test
+items = [{"price": 10.0, "quantity": 2}, {"price": 5.0, "quantity": 3}]
+print(f"Total: {calculate_total(items)}")
+print("Rule: mock boundaries, test behavior")</pre>
+    <div class="output">
+      <div class="output-label">Output</div>
+Total: 35.0
+Rule: mock boundaries, test behavior</div>
+
+    <h4>Common Mistakes</h4>
+    <div class="do-dont">
+      <div class="dont-box">
+        <div class="label">Don't</div>
+<pre># Patching the wrong location
+# If user_service.py does: from db import get_user
+# You must patch where it's USED, not where it's defined
+with patch("db.get_user"):  # WRONG!
+    ...</pre>
+      </div>
+      <div class="do-box">
+        <div class="label">Do</div>
+<pre># Patch where the name is looked up
+with patch("user_service.get_user"):  # RIGHT!
+    ...
+# Rule: patch where it's imported, not where it lives</pre>
+      </div>
+    </div>
+
+    <div class="do-dont">
+      <div class="dont-box">
+        <div class="label">Don't</div>
+<pre># Forgetting to assert the mock was called
+with patch("requests.get") as mock_get:
+    mock_get.return_value.json.return_value = {}
+    result = do_something()
+    assert result == expected
+    # Never checked that requests.get was called!</pre>
+      </div>
+      <div class="do-box">
+        <div class="label">Do</div>
+<pre>with patch("requests.get") as mock_get:
+    mock_get.return_value.json.return_value = {}
+    result = do_something()
+    assert result == expected
+    mock_get.assert_called_once()  # verify interaction</pre>
+      </div>
+    </div>
+
+    <h4>Key Rules</h4>
+    <ul class="rules-list">
+      <li>Patch where a name is <em>looked up</em> (imported), not where it's <em>defined</em>. If <code>my_module</code> imports <code>requests</code>, patch <code>"my_module.requests"</code>.</li>
+      <li>Use <code>return_value</code> to control what a mock returns. Use <code>side_effect</code> for exceptions, sequences, or custom logic.</li>
+      <li>Always verify mock interactions with <code>assert_called_once_with</code>, <code>assert_has_calls</code>, etc.</li>
+      <li>Mock external boundaries (APIs, databases, filesystem), not internal logic. Over-mocking makes tests brittle and meaningless.</li>
+      <li>Use <code>mock_open</code> for file I/O mocking &mdash; it handles <code>__enter__</code>/<code>__exit__</code> automatically.</li>
+    </ul>
+
+    <h4>Exercises</h4>
+    <div class="exercise">
+      <div class="exercise-label">Exercise 1</div>
+      <p>Write a <code>WeatherClient</code> class that fetches temperature from an API (simulated). Write tests that mock the HTTP call, test both success and failure (timeout, 404, invalid JSON). Verify the correct URL was called.</p>
+    </div>
+    <div class="exercise">
+      <div class="exercise-label">Exercise 2</div>
+      <p>Create a <code>ReportGenerator</code> that reads a CSV file, processes data, and writes a JSON report. Test it by mocking <code>open</code> with <code>mock_open</code> for both reading and writing. Assert the correct output was written.</p>
+    </div>
+    <div class="exercise">
+      <div class="exercise-label">Exercise 3</div>
+      <p>Build a <code>CacheService</code> that checks a cache before hitting a database. Mock the database to test: cache hit (no DB call), cache miss (DB called, result cached), and DB failure (exception propagated). Use <code>call_count</code> to verify caching works.</p>
+    </div>
+
+    <div class="connection">
+      <strong>Connections:</strong> <code>patch</code> as a context manager uses <code>with</code> (Day 7). <code>MagicMock</code> implements dunder methods (<code>__call__</code>, <code>__getattr__</code>) from Day 6. <code>side_effect</code> with a list mirrors generator behavior (Day 1). Mocking complements pytest fixtures (previous concept) &mdash; fixtures provide data, mocks replace dependencies.
+    </div>
+  </div>
+
+  <!-- Concept 5: Advanced typing -->
+  <div class="concept" id="typing-advanced">
+    <div class="concept-header">
+      <h3>Advanced typing</h3>
+      <span class="concept-meta">Testing &amp; Packaging &bull; New</span>
+    </div>
+
+    <h4>Why It Matters</h4>
+    <p>Basic type hints cover most cases, but real-world code needs generic classes, typed decorators, function overloads, and type narrowing. These advanced features let type checkers (mypy, pyright) understand complex patterns: decorators that preserve signatures, containers that work with any type, and functions with different return types based on input. This turns Python's type system from "nice annotations" into a powerful correctness tool.</p>
+
+    <h4>Progressive Explanation</h4>
+
+    <p><strong>TypeVar for generic functions:</strong></p>
+<pre>from typing import TypeVar, Sequence
+
+# TypeVar creates a placeholder type
+T = TypeVar("T")
+
+def first(items: Sequence[T]) -&gt; T:
+    """Returns the first item. Type checker knows return type matches input."""
+    return items[0]
+
+# Type checker infers:
+name = first(["Alice", "Bob"])    # name: str
+num = first([1, 2, 3])            # num: int
+print(f"First name: {name}")
+print(f"First num: {num}")
+
+# Bound TypeVar -- restricts to subclasses
+from typing import SupportsFloat
+
+N = TypeVar("N", bound=SupportsFloat)
+
+def double(x: N) -&gt; N:
+    """Works with any numeric type."""
+    return type(x)(float(x) * 2)  # type: ignore
+
+print(f"double(5) = {double(5)}")
+print(f"double(3.14) = {double(3.14)}")
+
+# Constrained TypeVar -- only specific types allowed
+StrOrBytes = TypeVar("StrOrBytes", str, bytes)
+
+def concat(a: StrOrBytes, b: StrOrBytes) -&gt; StrOrBytes:
+    return a + b
+
+print(f"concat: {concat('hello', ' world')}")
+print(f"concat: {concat(b'hello', b' world')}")
+# concat("hello", b"world")  # type error! Can't mix</pre>
+    <div class="output">
+      <div class="output-label">Output</div>
+First name: Alice
+First num: 1
+double(5) = 10
+double(3.14) = 6.28
+concat: hello world
+concat: b'hello world'</div>
+
+    <p><strong>Generic[T] for generic classes:</strong></p>
+<pre>from typing import TypeVar, Generic, Iterator
+
+T = TypeVar("T")
+
+class Stack(Generic[T]):
+    """A type-safe stack."""
+
+    def __init__(self) -&gt; None:
+        self._items: list[T] = []
+
+    def push(self, item: T) -&gt; None:
+        self._items.append(item)
+
+    def pop(self) -&gt; T:
+        if not self._items:
+            raise IndexError("pop from empty stack")
+        return self._items.pop()
+
+    def peek(self) -&gt; T:
+        if not self._items:
+            raise IndexError("peek at empty stack")
+        return self._items[-1]
+
+    def __len__(self) -&gt; int:
+        return len(self._items)
+
+    def __iter__(self) -&gt; Iterator[T]:
+        return reversed(self._items)
+
+# Usage with specific types
+int_stack: Stack[int] = Stack()
+int_stack.push(1)
+int_stack.push(2)
+int_stack.push(3)
+# int_stack.push("hello")  # type error caught by mypy!
+
+str_stack: Stack[str] = Stack()
+str_stack.push("hello")
+str_stack.push("world")
+
+print(f"Int stack top: {int_stack.peek()}")
+print(f"Str stack top: {str_stack.peek()}")
+print(f"Int stack items: {list(int_stack)}")
+
+# Multiple type parameters
+K = TypeVar("K")
+V = TypeVar("V")
+
+class Pair(Generic[K, V]):
+    def __init__(self, key: K, value: V) -&gt; None:
+        self.key = key
+        self.value = value
+
+    def __repr__(self) -&gt; str:
+        return f"Pair({self.key!r}, {self.value!r})"
+
+p = Pair("name", 42)
+print(p)  # Pair('name', 42)</pre>
+    <div class="output">
+      <div class="output-label">Output</div>
+Int stack top: 3
+Str stack top: world
+Int stack items: [3, 2, 1]
+Pair('name', 42)</div>
+
+    <p><strong>ParamSpec for preserving decorator signatures:</strong></p>
+<pre>from typing import TypeVar, ParamSpec, Callable
+import functools
+import time
+
+P = ParamSpec("P")
+R = TypeVar("R")
+
+def timer(func: Callable[P, R]) -&gt; Callable[P, R]:
+    """Decorator that preserves the original function's type signature."""
+    @functools.wraps(func)
+    def wrapper(*args: P.args, **kwargs: P.kwargs) -&gt; R:
+        start = time.perf_counter()
+        result = func(*args, **kwargs)
+        elapsed = time.perf_counter() - start
+        print(f"  {func.__name__} took {elapsed:.4f}s")
+        return result
+    return wrapper
+
+@timer
+def greet(name: str, excited: bool = False) -&gt; str:
+    """Greet someone."""
+    msg = f"Hello, {name}!"
+    return msg.upper() if excited else msg
+
+# Type checker knows: greet(name: str, excited: bool = False) -&gt; str
+result = greet("Alice", excited=True)
+print(result)
+
+# Without ParamSpec, the decorator would lose the signature:
+# def bad_timer(func):
+#     @functools.wraps(func)
+#     def wrapper(*args, **kwargs):  # type checker sees (*Any, **Any) -&gt; Any
+#         ...
+#     return wrapper</pre>
+    <div class="output">
+      <div class="output-label">Output</div>
+  greet took 0.0000s
+HELLO, ALICE!</div>
+
+    <p><strong>@overload for typed function overloads:</strong></p>
+<pre>from typing import overload, Literal
+
+# @overload tells the type checker about different signatures
+# Only the implementation (without @overload) actually runs
+
+@overload
+def process(data: str) -&gt; list[str]: ...
+@overload
+def process(data: bytes) -&gt; list[int]: ...
+@overload
+def process(data: list[int]) -&gt; int: ...
+
+def process(data):
+    """Actual implementation handles all cases."""
+    if isinstance(data, str):
+        return data.split()
+    elif isinstance(data, bytes):
+        return list(data)
+    elif isinstance(data, list):
+        return sum(data)
+
+# Type checker knows the exact return type for each input type:
+words = process("hello world")       # list[str]
+byte_vals = process(b"ABC")          # list[int]
+total = process([1, 2, 3])           # int
+
+print(f"str -&gt; {words}")
+print(f"bytes -&gt; {byte_vals}")
+print(f"list -&gt; {total}")
+
+# @overload with Literal for flag-dependent return types
+@overload
+def fetch(url: str, *, raw: Literal[True]) -&gt; bytes: ...
+@overload
+def fetch(url: str, *, raw: Literal[False] = ...) -&gt; str: ...
+
+def fetch(url, *, raw=False):
+    data = f"Response from {url}"
+    return data.encode() if raw else data
+
+text = fetch("https://example.com")          # str
+binary = fetch("https://example.com", raw=True)  # bytes
+print(f"Text type: {type(text).__name__}")
+print(f"Binary type: {type(binary).__name__}")</pre>
+    <div class="output">
+      <div class="output-label">Output</div>
+str -&gt; ['hello', 'world']
+bytes -&gt; [65, 66, 67]
+list -&gt; 6
+Text type: str
+Binary type: bytes</div>
+
+    <p><strong>TypeGuard for type narrowing:</strong></p>
+<pre>from typing import TypeGuard, Any
+
+def is_string_list(val: list[Any]) -&gt; TypeGuard[list[str]]:
+    """Type guard: if True, type checker narrows val to list[str]."""
+    return all(isinstance(item, str) for item in val)
+
+def is_int_or_none(val: Any) -&gt; TypeGuard[int | None]:
+    return val is None or isinstance(val, int)
+
+# Usage
+data: list[Any] = ["hello", "world", "python"]
+
+if is_string_list(data):
+    # Type checker now knows data is list[str]
+    print(f"Joined: {', '.join(data)}")  # .join needs list[str]
+else:
+    print("Not all strings")
+
+# Without TypeGuard, you'd need explicit casts or ignores:
+# data_str: list[str] = cast(list[str], data)  # unsafe cast!
+
+# Practical example: validating API responses
+def is_valid_user(data: dict[str, Any]) -&gt; TypeGuard[dict[str, str | int]]:
+    required = {"name", "age", "email"}
+    return (
+        required.issubset(data.keys())
+        and isinstance(data.get("name"), str)
+        and isinstance(data.get("age"), int)
+        and isinstance(data.get("email"), str)
+    )
+
+response: dict[str, Any] = {"name": "Alice", "age": 30, "email": "a@b.com"}
+if is_valid_user(response):
+    print(f"Valid user: {response['name']}, age {response['age']}")</pre>
+    <div class="output">
+      <div class="output-label">Output</div>
+Joined: hello, world, python
+Valid user: Alice, age 30</div>
+
+    <p><strong>Concatenate for adding parameters:</strong></p>
+<pre>from typing import TypeVar, ParamSpec, Callable, Concatenate
+import functools
+
+P = ParamSpec("P")
+R = TypeVar("R")
+
+def with_logging(
+    func: Callable[Concatenate[str, P], R]
+) -&gt; Callable[Concatenate[str, P], R]:
+    """Decorator for functions whose first arg is a log prefix."""
+    @functools.wraps(func)
+    def wrapper(prefix: str, *args: P.args, **kwargs: P.kwargs) -&gt; R:
+        print(f"[{prefix}] Calling {func.__name__}")
+        result = func(prefix, *args, **kwargs)
+        print(f"[{prefix}] Done")
+        return result
+    return wrapper
+
+@with_logging
+def save_data(log_prefix: str, data: dict, path: str) -&gt; bool:
+    print(f"  Saving {data} to {path}")
+    return True
+
+# Type checker knows: save_data(log_prefix: str, data: dict, path: str) -&gt; bool
+result = save_data("DB", {"name": "Alice"}, "/tmp/data.json")
+print(f"Saved: {result}")
+
+# Concatenate adds/requires specific parameters at the front
+# while preserving the rest of the signature via ParamSpec</pre>
+    <div class="output">
+      <div class="output-label">Output</div>
+[DB] Calling save_data
+  Saving {'name': 'Alice'} to /tmp/data.json
+[DB] Done
+Saved: True</div>
+
+    <h4>Common Mistakes</h4>
+    <div class="do-dont">
+      <div class="dont-box">
+        <div class="label">Don't</div>
+<pre>from typing import Any, Callable
+
+# Losing type information in decorators
+def decorator(func: Callable[..., Any]):
+    def wrapper(*args, **kwargs):
+        return func(*args, **kwargs)
+    return wrapper
+# wrapper has type (*args, **kwargs) -&gt; Any</pre>
+      </div>
+      <div class="do-box">
+        <div class="label">Do</div>
+<pre>from typing import ParamSpec, TypeVar, Callable
+
+P = ParamSpec("P")
+R = TypeVar("R")
+def decorator(func: Callable[P, R]) -&gt; Callable[P, R]:
+    def wrapper(*args: P.args, **kwargs: P.kwargs) -&gt; R:
+        return func(*args, **kwargs)
+    return wrapper
+# Signature fully preserved!</pre>
+      </div>
+    </div>
+
+    <div class="do-dont">
+      <div class="dont-box">
+        <div class="label">Don't</div>
+<pre># Using isinstance checks without TypeGuard
+def process(items: list[Any]) -&gt; str:
+    if all(isinstance(i, str) for i in items):
+        return ", ".join(items)  # type error: list[Any]
+    return ""</pre>
+      </div>
+      <div class="do-box">
+        <div class="label">Do</div>
+<pre>def is_str_list(v: list[Any]) -&gt; TypeGuard[list[str]]:
+    return all(isinstance(i, str) for i in v)
+
+def process(items: list[Any]) -&gt; str:
+    if is_str_list(items):
+        return ", ".join(items)  # OK: list[str]
+    return ""</pre>
+      </div>
+    </div>
+
+    <h4>Key Rules</h4>
+    <ul class="rules-list">
+      <li>Use <code>TypeVar</code> for generic functions. Use <code>bound=</code> to restrict to subclasses; use constraints for a fixed set of types.</li>
+      <li>Inherit from <code>Generic[T]</code> to create generic classes that work like <code>list[int]</code> or <code>dict[str, Any]</code>.</li>
+      <li>Use <code>ParamSpec</code> in decorators to preserve the decorated function's complete type signature.</li>
+      <li><code>@overload</code> defines multiple signatures for the type checker; only the final implementation (without <code>@overload</code>) actually executes.</li>
+      <li><code>TypeGuard</code> narrows types inside <code>if</code> blocks &mdash; use it to replace unsafe <code>cast()</code> calls with runtime checks.</li>
+    </ul>
+
+    <h4>Exercises</h4>
+    <div class="exercise">
+      <div class="exercise-label">Exercise 1</div>
+      <p>Create a generic <code>Registry[T]</code> class that maps string keys to values of type <code>T</code>. Add <code>register(key, value)</code>, <code>get(key) -&gt; T | None</code>, and <code>all() -&gt; list[T]</code>. Instantiate <code>Registry[int]</code> and <code>Registry[Callable]</code>. Verify that mypy catches type mismatches.</p>
+    </div>
+    <div class="exercise">
+      <div class="exercise-label">Exercise 2</div>
+      <p>Write a <code>@retry(max_attempts=3, delay=1.0)</code> decorator using <code>ParamSpec</code> that preserves the decorated function's type signature. The decorator should catch exceptions, wait, and retry. Test with mypy to verify signature preservation.</p>
+    </div>
+    <div class="exercise">
+      <div class="exercise-label">Exercise 3</div>
+      <p>Implement <code>@overload</code> for a <code>serialize(data)</code> function: <code>str</code> input returns <code>bytes</code>, <code>dict</code> input returns <code>str</code> (JSON), <code>list[int]</code> input returns <code>bytes</code> (packed with struct). Write TypeGuard functions to validate the inputs.</p>
+    </div>
+
+    <div class="connection">
+      <strong>Connections:</strong> <code>Generic[T]</code> builds on class definitions (Day 5) and <code>Protocol</code> (Day 6). <code>ParamSpec</code> solves the decorator typing problem from Day 2. <code>@overload</code> documents the behavior tested by <code>@pytest.mark.parametrize</code> (previous concept). <code>TypeGuard</code> replaces manual <code>isinstance</code> checks with type-checker-friendly narrowing.
+    </div>
+  </div>
+
+</div><!-- end new concepts section -->
+
+
+<!-- ============================================================ -->
+<!-- FOOTER -->
+<!-- ============================================================ -->
+<div class="footer">
+  <h4>All Python Study Guides</h4>
+    <ul>
+    <li><a href="python-guides/python-guide-2026-07-09.html">2026-07-09</a> (Day 39)</li>
+    <li><a href="python-guides/python-guide-2026-07-08.html">2026-07-08</a> (Day 38)</li>
+    <li><a href="python-guides/python-guide-2026-07-07.html">2026-07-07</a> (Day 37)</li>
+    <li><a href="python-guides/python-guide-2026-07-06.html">2026-07-06</a> (Day 36)</li>
+    <li><a href="python-guides/python-guide-2026-07-05.html">2026-07-05</a> (Day 35)</li>
+    <li><a href="python-guides/python-guide-2026-07-04.html">2026-07-04</a> (Day 34)</li>
+    <li><a href="python-guides/python-guide-2026-07-03.html">2026-07-03</a> (Day 33)</li>
+    <li><a href="python-guides/python-guide-2026-07-02.html">2026-07-02</a> (Day 32)</li>
+    <li><a href="python-guides/python-guide-2026-07-01.html">2026-07-01</a> (Day 31)</li>
+    <li><a href="python-guides/python-guide-2026-06-30.html">2026-06-30</a> (Day 30)</li>
+    <li><a href="python-guides/python-guide-2026-06-29.html">2026-06-29</a> (Day 29)</li>
+    <li><a href="python-guides/python-guide-2026-06-28.html">2026-06-28</a> (Day 28)</li>
+    <li><a href="python-guides/python-guide-2026-06-27.html">2026-06-27</a> (Day 27)</li>
+    <li><a href="python-guides/python-guide-2026-06-26.html">2026-06-26</a> (Day 26)</li>
+    <li><a href="python-guides/python-guide-2026-06-25.html">2026-06-25</a> (Day 25)</li>
+    <li><a href="python-guides/python-guide-2026-06-24.html">2026-06-24</a> (Day 24)</li>
+    <li><a href="python-guides/python-guide-2026-06-23.html">2026-06-23</a> (Day 23)</li>
+    <li><a href="python-guides/python-guide-2026-06-22.html">2026-06-22</a> (Day 22)</li>
+    <li><a href="python-guides/python-guide-2026-06-21.html">2026-06-21</a> (Day 21)</li>
+    <li><a href="python-guides/python-guide-2026-06-19.html">2026-06-19</a> (Day 20)</li>
+    <li><a href="python-guides/python-guide-2026-06-18.html">2026-06-18</a> (Day 19)</li>
+    <li><a href="python-guides/python-guide-2026-06-17.html">2026-06-17</a> (Day 18)</li>
+    <li><a href="python-guides/python-guide-2026-06-15.html">2026-06-15</a> (Day 17)</li>
+    <li><a href="python-guides/python-guide-2026-06-13.html">2026-06-13</a> (Day 16)</li>
+    <li><a href="python-guides/python-guide-2026-06-12.html">2026-06-12</a> (Day 15)</li>
+    <li><a href="python-guides/python-guide-2026-06-11.html">2026-06-11</a> (Day 14)</li>
+    <li><a href="python-guides/python-guide-2026-06-10.html">2026-06-10</a> (Day 13)</li>
+    <li><a href="python-guides/python-guide-2026-06-09.html">2026-06-09</a> (Day 12)</li>
+    <li><a href="python-guides/python-guide-2026-06-08.html">2026-06-08</a> (Day 11)</li>
+    <li><a href="python-guides/python-guide-2026-06-07.html">2026-06-07</a> (Day 10)</li>
+    <li class="current"><a href="python-guides/python-guide-2026-06-05.html">2026-06-05</a> </li>
+    <li><a href="python-guides/python-guide-2026-06-04.html">2026-06-04</a> (Day 8)</li>
+    <li><a href="python-guides/python-guide-2026-06-03.html">2026-06-03</a> (Day 7)</li>
+    <li><a href="python-guides/python-guide-2026-06-02.html">2026-06-02</a> (Day 6)</li>
+    <li><a href="python-guides/python-guide-2026-06-01.html">2026-06-01</a> (Day 5)</li>
+    <li><a href="python-guides/python-guide-2026-05-31.html">2026-05-31</a> (Day 4)</li>
+    <li><a href="python-guides/python-guide-2026-05-30.html">2026-05-30</a> (Day 3)</li>
+    <li><a href="python-guides/python-guide-2026-05-29.html">2026-05-29</a> (Day 2)</li>
+    <li><a href="python-guides/python-guide-2026-05-28.html">2026-05-28</a> (Day 1)</li>
+  </ul>
+</div>
+
+</div><!-- end main -->
+
+<script>
+(function() {
+  // ===== Theme Toggle =====
+  const THEME_KEY = 'lc-pyguide-theme';
+  const toggle = document.getElementById('theme-toggle');
+  const html = document.documentElement;
+
+  function setTheme(theme) {
+    html.setAttribute('data-theme', theme);
+    localStorage.setItem(THEME_KEY, theme);
+    toggle.textContent = theme === 'dark' ? '☽' : '☀';
+    toggle.title = theme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme';
+  }
+
+  const saved = localStorage.getItem(THEME_KEY) || 'dark';
+  setTheme(saved);
+
+  toggle.addEventListener('click', function() {
+    const current = html.getAttribute('data-theme');
+    setTheme;
+  });
+
+  // ===== Mobile Sidebar Toggle =====
+  const sidebarToggle = document.getElementById('sidebar-toggle');
+  const sidebar = document.getElementById('sidebar');
+
+  sidebarToggle.addEventListener('click', function() {
+    sidebar.classList.toggle('open');
+  });
+
+  // Close sidebar when clicking a link on mobile
+  sidebar.querySelectorAll('.sidebar-link').forEach(function(link) {
+    link.addEventListener('click', function() {
+      if (window.innerWidth <= 900) {
+        sidebar.classList.remove('open');
+      }
+    });
+  });
+
+  // ===== Active Sidebar Link on Scroll =====
+  const links = document.querySelectorAll('.sidebar-link');
+  const sections = [];
+
+  links.forEach(function(link) {
+    var id = link.getAttribute('href').slice(1);
+    var el = document.getElementById(id);
+    if (el) sections.push({ id: id, el: el, link: link });
+  });
+
+  function updateActive() {
+    var current = null;
+    var scrollY = window.scrollY + 100;
+
+    for (var i = sections.length - 1; i >= 0; i--) {
+      if (sections[i].el.offsetTop <= scrollY) {
+        current = sections[i];
+        break;
+      }
+    }
+
+    links.forEach(function(l) { l.classList.remove('active'); });
+    if  current.link.classList.add('active');
+  }
+
+  window.addEventListener('scroll', updateActive, { passive: true });
+  updateActive();
+})();
+</script>
+
+</body>
+</html>

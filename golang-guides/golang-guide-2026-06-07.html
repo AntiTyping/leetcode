@@ -1,0 +1,2712 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Go Study Guide &mdash; Day 5 (2026-06-07)</title>
+<style>
+/* ===== CSS Variables ===== */
+:root {
+  --bg: #0d1117;
+  --surface1: #161b22;
+  --surface2: #1c2333;
+  --border: #30363d;
+  --text: #e6edf3;
+  --muted: #8b949e;
+  --accent: #58a6ff;
+  --accent-dim: #1f6feb33;
+  --green: #3fb950;
+  --green-dim: #23863633;
+  --yellow: #d29922;
+  --yellow-dim: #d2992233;
+  --red: #f85149;
+  --red-dim: #f8514933;
+  --purple: #bc8cff;
+  --purple-dim: #bc8cff22;
+  --orange: #f0883e;
+  --orange-dim: #f0883e22;
+  --code-bg: #0d1117;
+  --sidebar-w: 300px;
+  --font-mono: 'SF Mono', 'Cascadia Code', 'Fira Code', Consolas, monospace;
+  --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+  --radius: 8px;
+  --shadow: 0 1px 3px rgba(0,0,0,0.4);
+}
+
+[data-theme="light"] {
+  --bg: #ffffff;
+  --surface1: #f6f8fa;
+  --surface2: #f0f3f6;
+  --border: #d0d7de;
+  --text: #1f2328;
+  --muted: #656d76;
+  --accent: #0969da;
+  --accent-dim: #0969da1a;
+  --green: #1a7f37;
+  --green-dim: #1a7f3718;
+  --yellow: #9a6700;
+  --yellow-dim: #9a670018;
+  --red: #cf222e;
+  --red-dim: #cf222e18;
+  --purple: #8250df;
+  --purple-dim: #8250df18;
+  --orange: #bc4c00;
+  --orange-dim: #bc4c0018;
+  --code-bg: #f6f8fa;
+  --shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+/* ===== Reset & Base ===== */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: var(--font-sans);
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.7;
+  font-size: 16px;
+  transition: background 0.2s, color 0.2s;
+}
+
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+/* ===== Theme Toggle ===== */
+#theme-toggle {
+  position: fixed;
+  top: 16px;
+  right: 20px;
+  z-index: 1000;
+  background: var(--surface1);
+  border: 1px solid var(--border);
+  color: var(--text);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+  box-shadow: var(--shadow);
+}
+#theme-toggle:hover { background: var(--surface2); border-color: var(--accent); }
+
+/* ===== Sidebar ===== */
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: var(--sidebar-w);
+  height: 100vh;
+  background: var(--surface1);
+  border-right: 1px solid var(--border);
+  overflow-y: auto;
+  padding: 20px 0;
+  z-index: 100;
+  transition: transform 0.3s;
+}
+
+.sidebar-header {
+  padding: 0 20px 16px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 12px;
+}
+
+.sidebar-header h2 {
+  font-size: 16px;
+  color: var(--text);
+  font-weight: 700;
+}
+
+.sidebar-header .subtitle {
+  font-size: 12px;
+  color: var(--muted);
+  margin-top: 2px;
+}
+
+.sidebar-section {
+  margin-bottom: 8px;
+}
+
+.sidebar-section-title {
+  padding: 6px 20px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+}
+
+.sidebar-link {
+  display: block;
+  padding: 5px 20px 5px 28px;
+  font-size: 13px;
+  color: var(--muted);
+  text-decoration: none;
+  border-left: 2px solid transparent;
+  transition: all 0.15s;
+  line-height: 1.4;
+}
+
+.sidebar-link:hover {
+  color: var(--text);
+  background: var(--accent-dim);
+  border-left-color: var(--accent);
+  text-decoration: none;
+}
+
+.sidebar-link.active {
+  color: var(--accent);
+  border-left-color: var(--accent);
+  background: var(--accent-dim);
+}
+
+/* ===== Mobile sidebar toggle ===== */
+#sidebar-toggle {
+  display: none;
+  position: fixed;
+  top: 16px;
+  left: 16px;
+  z-index: 200;
+  background: var(--surface1);
+  border: 1px solid var(--border);
+  color: var(--text);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 20px;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--shadow);
+}
+
+/* ===== Main Content ===== */
+.main {
+  margin-left: var(--sidebar-w);
+  padding: 40px 48px 80px;
+  max-width: calc(860px + var(--sidebar-w) + 96px);
+}
+
+.page-title {
+  font-size: 32px;
+  font-weight: 800;
+  margin-bottom: 4px;
+  color: var(--text);
+}
+
+.page-subtitle {
+  font-size: 15px;
+  color: var(--muted);
+  margin-bottom: 36px;
+}
+
+/* ===== Sections ===== */
+.section {
+  margin-bottom: 48px;
+}
+
+.section-label {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  padding: 3px 10px;
+  border-radius: 4px;
+  margin-bottom: 12px;
+}
+
+.section-label.review { background: var(--yellow-dim); color: var(--yellow); }
+.section-label.new { background: var(--green-dim); color: var(--green); }
+
+.section-title {
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 24px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--border);
+}
+
+/* ===== How To Use ===== */
+.how-to-use {
+  background: var(--surface1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px 24px;
+  margin-bottom: 36px;
+}
+
+.how-to-use h3 {
+  font-size: 16px;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.how-to-use ul {
+  padding-left: 22px;
+  margin: 0;
+}
+
+.how-to-use li {
+  font-size: 14px;
+  color: var(--muted);
+  margin-bottom: 4px;
+}
+
+/* ===== Concept Cards ===== */
+.concept {
+  background: var(--surface1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 28px;
+  margin-bottom: 28px;
+  box-shadow: var(--shadow);
+}
+
+.concept-header {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  margin-bottom: 6px;
+  flex-wrap: wrap;
+}
+
+.concept h3 {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.concept-meta {
+  font-size: 12px;
+  color: var(--muted);
+  background: var(--surface2);
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
+.concept h4 {
+  font-size: 15px;
+  font-weight: 600;
+  margin: 20px 0 8px;
+  color: var(--text);
+}
+
+.concept p, .concept li {
+  color: var(--text);
+  line-height: 1.7;
+}
+
+.concept ul, .concept ol {
+  padding-left: 22px;
+  margin: 8px 0;
+}
+
+.concept li {
+  margin-bottom: 4px;
+}
+
+/* ===== Code Blocks ===== */
+pre {
+  background: var(--code-bg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 16px 18px;
+  overflow-x: auto;
+  margin: 10px 0 14px;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--text);
+  position: relative;
+}
+
+pre::after {
+  content: 'Go';
+  position: absolute;
+  top: 6px;
+  right: 10px;
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  opacity: 0.6;
+}
+
+code {
+  font-family: var(--font-mono);
+  font-size: 0.9em;
+}
+
+:not(pre) > code {
+  background: var(--surface2);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.88em;
+}
+
+/* ===== Output Blocks ===== */
+.output {
+  background: var(--green-dim);
+  border: 1px solid var(--green);
+  border-radius: 6px;
+  padding: 12px 16px;
+  margin: 6px 0 14px;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--text);
+  white-space: pre-wrap;
+}
+
+.output::after { content: none; }
+
+.output-label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--green);
+  margin-bottom: 4px;
+}
+
+/* ===== Good/Bad Examples ===== */
+.do-dont {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin: 10px 0;
+}
+
+.do-box, .dont-box {
+  border-radius: 6px;
+  padding: 14px;
+  border: 1px solid;
+}
+
+.do-box {
+  background: var(--green-dim);
+  border-color: var(--green);
+}
+
+.dont-box {
+  background: var(--red-dim);
+  border-color: var(--red);
+}
+
+.do-box .label, .dont-box .label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 6px;
+}
+
+.do-box .label { color: var(--green); }
+.dont-box .label { color: var(--red); }
+
+.do-box pre, .dont-box pre {
+  margin: 0;
+  border: none;
+  background: transparent;
+  padding: 0;
+  font-size: 12.5px;
+}
+
+.do-box pre::after, .dont-box pre::after { content: none; }
+
+/* ===== Key Rules ===== */
+.rules-list {
+  list-style: none;
+  padding: 0;
+  margin: 8px 0;
+}
+
+.rules-list li {
+  padding: 6px 0 6px 24px;
+  position: relative;
+}
+
+.rules-list li::before {
+  content: "\2192";
+  position: absolute;
+  left: 2px;
+  color: var(--accent);
+  font-weight: 700;
+}
+
+/* ===== Exercises ===== */
+.exercise {
+  background: var(--purple-dim);
+  border: 1px solid var(--purple);
+  border-radius: 6px;
+  padding: 14px 18px;
+  margin: 8px 0;
+}
+
+.exercise .exercise-label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--purple);
+  margin-bottom: 4px;
+}
+
+/* ===== Pitfall ===== */
+.pitfall {
+  background: var(--red-dim);
+  border-left: 3px solid var(--red);
+  border-radius: 0 6px 6px 0;
+  padding: 10px 14px;
+  margin: 10px 0;
+  font-size: 14px;
+}
+
+.pitfall strong {
+  color: var(--red);
+}
+
+/* ===== Connection ===== */
+.connection {
+  background: var(--accent-dim);
+  border-left: 3px solid var(--accent);
+  border-radius: 0 6px 6px 0;
+  padding: 10px 14px;
+  margin: 10px 0;
+  font-size: 14px;
+  color: var(--muted);
+}
+
+/* ===== Review Cards ===== */
+.review-card {
+  background: var(--surface1);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--yellow);
+  border-radius: var(--radius);
+  padding: 20px 24px;
+  margin-bottom: 16px;
+  box-shadow: var(--shadow);
+}
+
+.review-card .review-header {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  margin-bottom: 6px;
+  flex-wrap: wrap;
+}
+
+.review-card h3 {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.review-card .review-meta {
+  font-size: 12px;
+  color: var(--muted);
+  background: var(--surface2);
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
+.review-card h4 {
+  font-size: 14px;
+  font-weight: 600;
+  margin: 14px 0 6px;
+  color: var(--text);
+}
+
+.review-card p, .review-card li {
+  color: var(--text);
+  line-height: 1.6;
+  font-size: 14px;
+}
+
+.review-card pre {
+  font-size: 12.5px;
+  padding: 12px 14px;
+  margin: 6px 0 10px;
+}
+
+.review-card .pitfall {
+  font-size: 13px;
+  padding: 8px 12px;
+}
+
+/* ===== Footer ===== */
+.footer {
+  margin-top: 60px;
+  padding: 24px 0;
+  border-top: 1px solid var(--border);
+}
+
+.footer h4 {
+  font-size: 14px;
+  color: var(--muted);
+  margin-bottom: 10px;
+}
+
+.footer ul {
+  list-style: none;
+  padding: 0;
+}
+
+.footer li {
+  margin-bottom: 4px;
+  font-size: 14px;
+}
+
+.footer li a { color: var(--accent); }
+.footer .current { color: var(--green); font-weight: 600; }
+
+/* ===== Responsive ===== */
+@media (max-width: 900px) {
+  .sidebar {
+    transform: translateX(-100%);
+  }
+  .sidebar.open {
+    transform: translateX(0);
+    box-shadow: 4px 0 20px rgba(0,0,0,0.5);
+  }
+  #sidebar-toggle {
+    display: flex;
+  }
+  .main {
+    margin-left: 0;
+    padding: 60px 20px 60px;
+    max-width: 100%;
+  }
+  .do-dont {
+    grid-template-columns: 1fr;
+  }
+  #theme-toggle {
+    right: 14px;
+    top: 16px;
+  }
+}
+</style>
+</head>
+<body>
+
+<!-- Theme Toggle -->
+<button id="theme-toggle" aria-label="Toggle theme" title="Toggle light/dark theme">&#9789;</button>
+
+<!-- Mobile Sidebar Toggle -->
+<button id="sidebar-toggle" aria-label="Toggle sidebar">&#9776;</button>
+
+<!-- Sidebar -->
+<nav class="sidebar" id="sidebar">
+  <div class="sidebar-header">
+    <h2>Go Guide</h2>
+    <div class="subtitle">Day 5 &mdash; 2026-06-07</div>
+  </div>
+
+  <div class="sidebar-section">
+    <div class="sidebar-section-title">Review (6 concepts)</div>
+    <a href="#review-multiple-return-values" class="sidebar-link">Multiple Return Values</a>
+    <a href="#review-interfaces" class="sidebar-link">Interfaces</a>
+    <a href="#review-custom-constraints" class="sidebar-link">Custom Constraints</a>
+    <a href="#review-goroutines" class="sidebar-link">Goroutines</a>
+    <a href="#review-channels" class="sidebar-link">Channels</a>
+    <a href="#review-select-statement" class="sidebar-link">Select Statement</a>
+  </div>
+
+  <div class="sidebar-section">
+    <div class="sidebar-section-title">New: Std Lib &amp; Testing (6)</div>
+    <a href="#net-http" class="sidebar-link">net/http</a>
+    <a href="#sort-package" class="sidebar-link">sort Package</a>
+    <a href="#time-package" class="sidebar-link">time Package</a>
+    <a href="#testing-package" class="sidebar-link">testing Package</a>
+    <a href="#benchmarks" class="sidebar-link">Benchmarks</a>
+    <a href="#test-fixtures" class="sidebar-link">Test Fixtures</a>
+  </div>
+</nav>
+
+<!-- Main Content -->
+<div class="main">
+
+<h1 class="page-title">Go Daily Guide</h1>
+<p class="page-subtitle">Day 5 &mdash; Saturday, June 7, 2026 &bull; 6 review + 6 new concepts</p>
+
+<!-- How to Use -->
+<div class="how-to-use">
+  <h3>How to Use This Guide</h3>
+  <ul>
+    <li>Start with the <strong>Review</strong> section &mdash; try to recall each concept before reading the refresher</li>
+    <li>Complete the challenge exercise for each review card without looking back at previous days</li>
+    <li>Then work through the <strong>New Concepts</strong> section, typing out every code example yourself</li>
+    <li>Pay special attention to the common mistakes sections (they highlight real Go gotchas)</li>
+    <li>Complete the exercises at the bottom of each concept without looking at solutions</li>
+    <li>Use <code>go run main.go</code> to test your code locally, or use the <a href="https://go.dev/play/" target="_blank">Go Playground</a></li>
+  </ul>
+</div>
+
+<!-- ============================================================ -->
+<!-- REVIEW SECTION -->
+<!-- ============================================================ -->
+<div class="section">
+  <span class="section-label review">Review</span>
+  <h2 class="section-title">Spaced Repetition Review &mdash; 6 Concepts</h2>
+
+  <!-- Review 1: Multiple Return Values -->
+  <div class="review-card" id="review-multiple-return-values">
+    <div class="review-header">
+      <h3>Multiple Return Values</h3>
+      <span class="review-meta">Functions &amp; Control Flow &bull; 4 days ago &bull; rep 0</span>
+    </div>
+
+    <h4>Quick Reminder</h4>
+    <p>Go functions can return multiple values &mdash; most commonly <code>(result, error)</code>. Named return values allow bare <code>return</code> statements. The comma-ok idiom is used for maps (<code>val, ok := m[key]</code>) and type assertions (<code>val, ok := i.(Type)</code>).</p>
+
+    <h4>Key Pattern</h4>
+<pre>func divide(a, b float64) (float64, error) {
+    if b == 0 {
+        return 0, fmt.Errorf("division by zero")
+    }
+    return a / b, nil
+}</pre>
+
+    <div class="exercise">
+      <div class="exercise-label">Challenge Exercise</div>
+      <p>Write a function <code>parseConfig(path string) (Config, error)</code> that reads a JSON file and returns a parsed struct or an error with context wrapping. Use <code>fmt.Errorf</code> with <code>%w</code> to wrap errors from <code>os.Open</code> and <code>json.NewDecoder</code>.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>#1 Pitfall:</strong> Ignoring errors with <code>_</code> &mdash; always handle or explicitly discard with a comment explaining why it is safe to ignore.
+    </div>
+  </div>
+
+  <!-- Review 2: Interfaces -->
+  <div class="review-card" id="review-interfaces">
+    <div class="review-header">
+      <h3>Interfaces</h3>
+      <span class="review-meta">Go Foundations &bull; 3 days ago &bull; rep 1</span>
+    </div>
+
+    <h4>Quick Reminder</h4>
+    <p>Go interfaces are satisfied implicitly &mdash; no <code>implements</code> keyword. The empty interface <code>any</code> (alias for <code>interface{}</code>) accepts all types. Type assertions use <code>val, ok := i.(ConcreteType)</code>. Interfaces should be small (1-2 methods) and defined where they are consumed, not where they are implemented.</p>
+
+    <h4>Key Pattern</h4>
+<pre>type Writer interface {
+    Write(p []byte) (n int, err error)
+}
+// Any type with a Write method satisfies Writer automatically</pre>
+
+    <div class="exercise">
+      <div class="exercise-label">Challenge Exercise</div>
+      <p>Define a <code>Shape</code> interface with <code>Area() float64</code> and <code>Perimeter() float64</code>, implement it for <code>Circle</code> and <code>Rectangle</code>, then write a function that accepts <code>[]Shape</code> and prints a summary table of each shape's area and perimeter.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>#1 Pitfall:</strong> Pointer receivers don't satisfy interfaces for value types &mdash; if a method is defined on <code>*T</code>, then only <code>*T</code> implements the interface, not <code>T</code>.
+    </div>
+  </div>
+
+  <!-- Review 3: Custom Constraints -->
+  <div class="review-card" id="review-custom-constraints">
+    <div class="review-header">
+      <h3>Custom Constraints</h3>
+      <span class="review-meta">Functions &amp; Control Flow &bull; 3 days ago &bull; rep 0</span>
+    </div>
+
+    <h4>Quick Reminder</h4>
+    <p>Interface constraints limit what type parameters can be. The <code>~int</code> syntax means "any type whose underlying type is int". Type sets define the union of allowed types using <code>|</code>. Combine method requirements with type sets for precise constraints.</p>
+
+    <h4>Key Pattern</h4>
+<pre>type Number interface {
+    ~int | ~float64
+}
+
+func Sum[T Number](vals []T) T {
+    var s T
+    for _, v := range vals {
+        s += v
+    }
+    return s
+}</pre>
+
+    <div class="exercise">
+      <div class="exercise-label">Challenge Exercise</div>
+      <p>Create a <code>Stringable</code> constraint that requires both a <code>String() string</code> method AND underlying type <code>~string | ~int</code>, then write a generic <code>Format</code> function that calls <code>String()</code> on each element and joins them with commas.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>#1 Pitfall:</strong> Forgetting <code>~</code> for underlying types &mdash; a bare <code>int</code> constraint will not match <code>type MyInt int</code>. Always use <code>~int</code> when you want to accept named types.
+    </div>
+  </div>
+
+  <!-- Review 4: Goroutines -->
+  <div class="review-card" id="review-goroutines">
+    <div class="review-header">
+      <h3>Goroutines</h3>
+      <span class="review-meta">Concurrency &bull; 3 days ago &bull; rep 0</span>
+    </div>
+
+    <h4>Quick Reminder</h4>
+    <p><code>go func()</code> launches a goroutine. They are lightweight (~2KB initial stack). Use <code>sync.WaitGroup</code> to wait for completion. Goroutine leaks happen when goroutines block forever on a channel or lock that is never released.</p>
+
+    <h4>Key Pattern</h4>
+<pre>var wg sync.WaitGroup
+for i := 0; i &lt; 5; i++ {
+    wg.Add(1)
+    go func(id int) {
+        defer wg.Done()
+        fmt.Println(id)
+    }(i)
+}
+wg.Wait()</pre>
+
+    <div class="exercise">
+      <div class="exercise-label">Challenge Exercise</div>
+      <p>Launch 10 goroutines that each compute the sum of a slice partition (divide a 100-element slice into 10 chunks). Use a <code>sync.WaitGroup</code> and a results slice to collect partial sums, then compute the total.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>#1 Pitfall:</strong> Loop variable capture &mdash; in pre-Go 1.22 code, you must pass <code>i</code> as a parameter or shadow it with <code>i := i</code> inside the loop. Go 1.22+ fixes this with per-iteration loop variables.
+    </div>
+  </div>
+
+  <!-- Review 5: Channels -->
+  <div class="review-card" id="review-channels">
+    <div class="review-header">
+      <h3>Channels</h3>
+      <span class="review-meta">Concurrency &bull; 3 days ago &bull; rep 0</span>
+    </div>
+
+    <h4>Quick Reminder</h4>
+    <p>Channels are typed conduits: <code>ch := make(chan int)</code>. Unbuffered channels block until both sender and receiver are ready. Buffered channels <code>make(chan int, 10)</code> block only when full. Close with <code>close(ch)</code> and range over with <code>for v := range ch</code>.</p>
+
+    <h4>Key Pattern</h4>
+<pre>ch := make(chan int, 5)
+go func() {
+    for i := 0; i &lt; 5; i++ {
+        ch &lt;- i
+    }
+    close(ch)
+}()
+for v := range ch {
+    fmt.Println(v)
+}</pre>
+
+    <div class="exercise">
+      <div class="exercise-label">Challenge Exercise</div>
+      <p>Implement a producer-consumer pattern where 3 producers each send 10 ints to a shared channel and 1 consumer goroutine sums them all. Use a <code>sync.WaitGroup</code> to know when all producers are done, then close the channel.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>#1 Pitfall:</strong> Sending on a closed channel panics. Only the sender should close the channel. Never close from the receiver side.
+    </div>
+  </div>
+
+  <!-- Review 6: Select Statement -->
+  <div class="review-card" id="review-select-statement">
+    <div class="review-header">
+      <h3>Select Statement</h3>
+      <span class="review-meta">Concurrency &bull; 3 days ago &bull; rep 0</span>
+    </div>
+
+    <h4>Quick Reminder</h4>
+    <p><code>select</code> multiplexes channel operations. If multiple cases are ready, one is chosen at random. A <code>default</code> case makes it non-blocking. Use <code>time.After</code> for timeouts.</p>
+
+    <h4>Key Pattern</h4>
+<pre>select {
+case v := &lt;-ch1:
+    fmt.Println("from ch1:", v)
+case v := &lt;-ch2:
+    fmt.Println("from ch2:", v)
+case &lt;-time.After(5 * time.Second):
+    fmt.Println("timeout")
+}</pre>
+
+    <div class="exercise">
+      <div class="exercise-label">Challenge Exercise</div>
+      <p>Write a function that reads from two channels and returns whichever responds first, with a configurable timeout. The function signature should be <code>func Race[T any](ch1, ch2 &lt;-chan T, timeout time.Duration) (T, string, error)</code> returning the value, which channel won, or a timeout error.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>#1 Pitfall:</strong> <code>time.After</code> in a loop creates a new timer each iteration (memory leak). Use <code>time.NewTimer</code> and <code>Reset()</code> instead for repeated timeouts.
+    </div>
+  </div>
+
+</div><!-- end review section -->
+
+<!-- ============================================================ -->
+<!-- NEW CONCEPTS -->
+<!-- ============================================================ -->
+<div class="section">
+  <span class="section-label new">New</span>
+  <h2 class="section-title">Standard Library &amp; Testing &mdash; 6 Concepts</h2>
+
+  <!-- ========== CONCEPT 1: net/http ========== -->
+  <div class="concept" id="net-http">
+    <div class="concept-header">
+      <h3>net/http: Handlers, ServeMux, Middleware, Client</h3>
+      <span class="concept-meta">Standard Library Mastery &bull; New</span>
+    </div>
+
+    <p>Go is a top choice for HTTP services. The stdlib <code>net/http</code> package is production-grade &mdash; many projects use it without external frameworks. Understanding <code>http.Handler</code>, <code>http.ServeMux</code>, middleware patterns, and the HTTP client is essential for any Go backend developer.</p>
+
+    <h4>Why It Matters</h4>
+    <p>The <code>http.Handler</code> interface has a single method: <code>ServeHTTP(w ResponseWriter, r *Request)</code>. The <code>http.HandlerFunc</code> adapter turns any <code>func(w, r)</code> into a Handler. Go 1.22+ added enhanced pattern matching to <code>http.NewServeMux()</code>. Middleware wraps handlers for cross-cutting concerns. The HTTP client must always have timeouts set.</p>
+
+    <h4>Example 1: Simplest HTTP Server</h4>
+<pre>package main
+
+import (
+    "fmt"
+    "net/http"
+)
+
+func main() {
+    http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+        fmt.Fprintf(w, "Hello, Go HTTP!")
+    })
+
+    http.HandleFunc("/health", func(w http.ResponseWriter, r *http.Request) {
+        w.Header().Set("Content-Type", "application/json")
+        fmt.Fprintf(w, `{"status":"ok"}`)
+    })
+
+    fmt.Println("Server starting on :8080")
+    http.ListenAndServe(":8080", nil)
+}</pre>
+    <div class="output">
+      <div class="output-label">Output (when visiting localhost:8080)</div>
+Hello, Go HTTP!
+    </div>
+
+    <h4>Example 2: Custom ServeMux with Multiple Routes</h4>
+<pre>package main
+
+import (
+    "fmt"
+    "net/http"
+)
+
+func main() {
+    mux := http.NewServeMux()
+
+    mux.HandleFunc("GET /api/users", func(w http.ResponseWriter, r *http.Request) {
+        w.Header().Set("Content-Type", "application/json")
+        fmt.Fprintf(w, `[{"name":"Alice"},{"name":"Bob"}]`)
+    })
+
+    mux.HandleFunc("GET /api/users/{id}", func(w http.ResponseWriter, r *http.Request) {
+        id := r.PathValue("id")
+        w.Header().Set("Content-Type", "application/json")
+        fmt.Fprintf(w, `{"id":%q,"name":"User"}`, id)
+    })
+
+    mux.HandleFunc("POST /api/users", func(w http.ResponseWriter, r *http.Request) {
+        w.WriteHeader(http.StatusCreated)
+        fmt.Fprintf(w, `{"created":true}`)
+    })
+
+    fmt.Println("Server starting on :8080")
+    http.ListenAndServe(":8080", mux)
+}</pre>
+    <div class="output">
+      <div class="output-label">Output (GET /api/users/42)</div>
+{"id":"42","name":"User"}
+    </div>
+
+    <h4>Example 3: Logging Middleware</h4>
+<pre>package main
+
+import (
+    "fmt"
+    "log"
+    "net/http"
+    "time"
+)
+
+// Middleware wraps an http.Handler and returns a new one
+func LoggingMiddleware(next http.Handler) http.Handler {
+    return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+        start := time.Now()
+        next.ServeHTTP(w, r)
+        log.Printf("%s %s %s", r.Method, r.URL.Path, time.Since(start))
+    })
+}
+
+func main() {
+    mux := http.NewServeMux()
+    mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+        fmt.Fprintf(w, "Hello with logging!")
+    })
+
+    // Wrap the mux with middleware
+    handler := LoggingMiddleware(mux)
+    fmt.Println("Server starting on :8080")
+    http.ListenAndServe(":8080", handler)
+}</pre>
+    <div class="output">
+      <div class="output-label">Output (server log)</div>
+2026/06/07 10:30:00 GET / 42.125&micro;s
+    </div>
+
+    <h4>Example 4: JSON API Handler with Request Decoding</h4>
+<pre>package main
+
+import (
+    "encoding/json"
+    "fmt"
+    "net/http"
+    "time"
+)
+
+type StatusResponse struct {
+    Status string `json:"status"`
+    Time   string `json:"time"`
+}
+
+type CreateUserRequest struct {
+    Name  string `json:"name"`
+    Email string `json:"email"`
+}
+
+func main() {
+    mux := http.NewServeMux()
+
+    mux.HandleFunc("GET /status", func(w http.ResponseWriter, r *http.Request) {
+        resp := StatusResponse{
+            Status: "ok",
+            Time:   time.Now().Format(time.RFC3339),
+        }
+        w.Header().Set("Content-Type", "application/json")
+        json.NewEncoder(w).Encode(resp)
+    })
+
+    mux.HandleFunc("POST /users", func(w http.ResponseWriter, r *http.Request) {
+        var req CreateUserRequest
+        if err := json.NewDecoder(r.Body).Decode(&amp;req); err != nil {
+            http.Error(w, `{"error":"invalid JSON"}`, http.StatusBadRequest)
+            return
+        }
+        w.Header().Set("Content-Type", "application/json")
+        w.WriteHeader(http.StatusCreated)
+        json.NewEncoder(w).Encode(map[string]string{
+            "message": fmt.Sprintf("Created user: %s", req.Name),
+        })
+    })
+
+    fmt.Println("Server starting on :8080")
+    http.ListenAndServe(":8080", mux)
+}</pre>
+    <div class="output">
+      <div class="output-label">Output (GET /status)</div>
+{"status":"ok","time":"2026-06-07T10:30:00Z"}
+    </div>
+
+    <h4>Example 5: HTTP Client with Timeout</h4>
+<pre>package main
+
+import (
+    "fmt"
+    "io"
+    "net/http"
+    "time"
+)
+
+func main() {
+    // ALWAYS set a timeout on the client
+    client := &amp;http.Client{
+        Timeout: 10 * time.Second,
+    }
+
+    resp, err := client.Get("https://httpbin.org/get")
+    if err != nil {
+        fmt.Println("Error:", err)
+        return
+    }
+    defer resp.Body.Close() // ALWAYS close the body
+
+    body, err := io.ReadAll(resp.Body)
+    if err != nil {
+        fmt.Println("Read error:", err)
+        return
+    }
+
+    fmt.Printf("Status: %d\n", resp.StatusCode)
+    fmt.Printf("Body length: %d bytes\n", len(body))
+}</pre>
+    <div class="output">
+      <div class="output-label">Output</div>
+Status: 200
+Body length: 364 bytes
+    </div>
+
+    <h4>Common Mistakes</h4>
+    <div class="do-dont">
+      <div class="do-box">
+        <div class="label">Do: Set timeouts on client and server</div>
+<pre>client := &amp;http.Client{Timeout: 10 * time.Second}
+server := &amp;http.Server{
+    Addr:         ":8080",
+    ReadTimeout:  5 * time.Second,
+    WriteTimeout: 10 * time.Second,
+}</pre>
+      </div>
+      <div class="dont-box">
+        <div class="label">Don't: Use default client (no timeout!)</div>
+<pre>// Default client has NO timeout
+resp, err := http.Get("https://example.com")
+// Can hang forever if the server never responds</pre>
+      </div>
+    </div>
+    <div class="do-dont">
+      <div class="do-box">
+        <div class="label">Do: Always close response body</div>
+<pre>resp, err := client.Get(url)
+if err != nil { return err }
+defer resp.Body.Close()
+// ... use resp.Body</pre>
+      </div>
+      <div class="dont-box">
+        <div class="label">Don't: Forget to close the body</div>
+<pre>resp, _ := client.Get(url)
+body, _ := io.ReadAll(resp.Body)
+// Leaked connection! No Close() called</pre>
+      </div>
+    </div>
+
+    <h4>Key Rules</h4>
+    <ul class="rules-list">
+      <li>Always set timeouts on both HTTP clients and servers &mdash; the default client has no timeout</li>
+      <li>Always <code>defer resp.Body.Close()</code> after checking the error from the request</li>
+      <li>Use middleware for cross-cutting concerns: logging, auth, CORS, rate limiting</li>
+      <li>Go 1.22+ ServeMux supports method-based routing: <code>"GET /api/users/{id}"</code></li>
+      <li>Use <code>json.NewEncoder(w).Encode()</code> for JSON responses &mdash; it writes directly to the ResponseWriter</li>
+    </ul>
+
+    <div class="connection">
+      <strong>Connection:</strong> Handlers use the <em>Interfaces</em> pattern (implicit satisfaction of <code>http.Handler</code>). JSON request/response handling ties to <em>encoding/json</em>. Middleware is a direct application of <em>First-class Functions</em>. Timeouts connect to the <em>time Package</em> and <em>Context</em> for cancellation.
+    </div>
+
+    <div class="exercise">
+      <div class="exercise-label">Exercise 1</div>
+      <p>Write an HTTP handler that returns JSON <code>{"status": "ok", "time": "..."}</code> where time is the current time in RFC 3339 format. Register it on <code>/health</code> and start the server.</p>
+    </div>
+    <div class="exercise">
+      <div class="exercise-label">Exercise 2</div>
+      <p>Write a logging middleware that logs the HTTP method, path, and request duration. Chain it with a simple handler and verify the log output.</p>
+    </div>
+    <div class="exercise">
+      <div class="exercise-label">Exercise 3</div>
+      <p>Write an HTTP client function that fetches a URL with a 5-second timeout, checks the status code, reads the body, and returns <code>(string, error)</code>. Handle all error cases: timeout, non-200 status, and read errors.</p>
+    </div>
+  </div>
+
+  <!-- ========== CONCEPT 2: sort Package ========== -->
+  <div class="concept" id="sort-package">
+    <div class="concept-header">
+      <h3>sort Package: Slice, SliceStable, Search, sort.Interface</h3>
+      <span class="concept-meta">Standard Library Mastery &bull; New</span>
+    </div>
+
+    <p>Sorting is fundamental. Go's <code>sort</code> package offers both simple slice sorting and the <code>sort.Interface</code> for full control over custom types. Go 1.21+ added the <code>slices</code> package with generic, simpler alternatives.</p>
+
+    <h4>Why It Matters</h4>
+    <p>Every real application sorts data: leaderboards, search results, logs by timestamp, users by name. Understanding <code>sort.Slice</code> for quick sorts, <code>sort.Interface</code> for named sortable types, and <code>sort.Search</code> for binary search gives you the full toolkit.</p>
+
+    <h4>Example 1: Sort Basic Slices</h4>
+<pre>package main
+
+import (
+    "fmt"
+    "sort"
+)
+
+func main() {
+    nums := []int{5, 2, 8, 1, 9, 3}
+    sort.Ints(nums)
+    fmt.Println("Sorted ints:", nums)
+
+    words := []string{"banana", "apple", "cherry", "date"}
+    sort.Strings(words)
+    fmt.Println("Sorted strings:", words)
+
+    // Check if sorted
+    fmt.Println("Is sorted?", sort.IntsAreSorted(nums))
+}</pre>
+    <div class="output">
+      <div class="output-label">Output</div>
+Sorted ints: [1 2 3 5 8 9]
+Sorted strings: [apple banana cherry date]
+Is sorted? true
+    </div>
+
+    <h4>Example 2: Sort Structs by Field</h4>
+<pre>package main
+
+import (
+    "fmt"
+    "sort"
+)
+
+type Person struct {
+    Name string
+    Age  int
+}
+
+func main() {
+    people := []Person{
+        {"Charlie", 30},
+        {"Alice", 25},
+        {"Bob", 35},
+        {"Diana", 28},
+    }
+
+    // Sort by age ascending
+    sort.Slice(people, func(i, j int) bool {
+        return people[i].Age &lt; people[j].Age
+    })
+    fmt.Println("By age:", people)
+
+    // Sort by name alphabetically
+    sort.Slice(people, func(i, j int) bool {
+        return people[i].Name &lt; people[j].Name
+    })
+    fmt.Println("By name:", people)
+}</pre>
+    <div class="output">
+      <div class="output-label">Output</div>
+By age: [{Alice 25} {Diana 28} {Charlie 30} {Bob 35}]
+By name: [{Alice 25} {Bob 35} {Charlie 30} {Diana 28}]
+    </div>
+
+    <h4>Example 3: Multi-key Sort and Stable Sort</h4>
+<pre>package main
+
+import (
+    "fmt"
+    "sort"
+)
+
+type Employee struct {
+    Dept string
+    Name string
+    Age  int
+}
+
+func main() {
+    employees := []Employee{
+        {"Eng", "Charlie", 30},
+        {"Eng", "Alice", 25},
+        {"Sales", "Bob", 35},
+        {"Eng", "Alice", 22},
+        {"Sales", "Diana", 28},
+    }
+
+    // Multi-key sort: by department, then name, then age
+    sort.SliceStable(employees, func(i, j int) bool {
+        if employees[i].Dept != employees[j].Dept {
+            return employees[i].Dept &lt; employees[j].Dept
+        }
+        if employees[i].Name != employees[j].Name {
+            return employees[i].Name &lt; employees[j].Name
+        }
+        return employees[i].Age &lt; employees[j].Age
+    })
+
+    for _, e := range employees {
+        fmt.Printf("  %-6s %-8s %d\n", e.Dept, e.Name, e.Age)
+    }
+}</pre>
+    <div class="output">
+      <div class="output-label">Output</div>
+  Eng    Alice    22
+  Eng    Alice    25
+  Eng    Charlie  30
+  Sales  Bob      35
+  Sales  Diana    28
+    </div>
+
+    <h4>Example 4: Binary Search with sort.Search</h4>
+<pre>package main
+
+import (
+    "fmt"
+    "sort"
+)
+
+func main() {
+    data := []int{10, 20, 30, 40, 50, 60, 70, 80}
+
+    // Find the insertion point for 45
+    target := 45
+    idx := sort.Search(len(data), func(i int) bool {
+        return data[i] &gt;= target
+    })
+    fmt.Printf("Insert %d at index %d\n", target, idx)
+    fmt.Printf("Neighbors: ...%d, [%d here], %d...\n", data[idx-1], target, data[idx])
+
+    // Find an existing element
+    target = 30
+    idx = sort.Search(len(data), func(i int) bool {
+        return data[i] &gt;= target
+    })
+    if idx &lt; len(data) &amp;&amp; data[idx] == target {
+        fmt.Printf("Found %d at index %d\n", target, idx)
+    }
+}</pre>
+    <div class="output">
+      <div class="output-label">Output</div>
+Insert 45 at index 4
+Neighbors: ...40, [45 here], 50...
+Found 30 at index 2
+    </div>
+
+    <h4>Example 5: slices.SortFunc (Go 1.21+)</h4>
+<pre>package main
+
+import (
+    "cmp"
+    "fmt"
+    "slices"
+)
+
+type Student struct {
+    Name string
+    GPA  float64
+}
+
+func main() {
+    students := []Student{
+        {"Alice", 3.8},
+        {"Bob", 3.5},
+        {"Charlie", 3.9},
+        {"Diana", 3.5},
+    }
+
+    // Sort by GPA descending, then name ascending for ties
+    slices.SortFunc(students, func(a, b Student) int {
+        if c := cmp.Compare(b.GPA, a.GPA); c != 0 {
+            return c // descending GPA
+        }
+        return cmp.Compare(a.Name, b.Name) // ascending name
+    })
+
+    for _, s := range students {
+        fmt.Printf("  %-8s %.1f\n", s.Name, s.GPA)
+    }
+}</pre>
+    <div class="output">
+      <div class="output-label">Output</div>
+  Charlie  3.9
+  Alice    3.8
+  Bob      3.5
+  Diana    3.5
+    </div>
+
+    <h4>Common Mistakes</h4>
+    <div class="do-dont">
+      <div class="do-box">
+        <div class="label">Do: Use strict less-than in comparators</div>
+<pre>sort.Slice(s, func(i, j int) bool {
+    return s[i] &lt; s[j] // strict &lt;, never &lt;=
+})</pre>
+      </div>
+      <div class="dont-box">
+        <div class="label">Don't: Use less-than-or-equal</div>
+<pre>sort.Slice(s, func(i, j int) bool {
+    return s[i] &lt;= s[j] // WRONG: not strict weak
+    // Can cause infinite loops or panics
+})</pre>
+      </div>
+    </div>
+
+    <h4>Key Rules</h4>
+    <ul class="rules-list">
+      <li>Use <code>slices.Sort</code>/<code>slices.SortFunc</code> for new code (Go 1.21+) &mdash; they are generic and simpler</li>
+      <li>Use <code>sort.Slice</code> for older Go versions or when you need index-based access</li>
+      <li>Implement <code>sort.Interface</code> only when you need a named sortable type (rare)</li>
+      <li><code>sort.Search</code> requires the slice to be sorted first &mdash; it performs binary search</li>
+      <li>The <code>Less</code> function must be a strict weak ordering: never use <code>&lt;=</code>, always <code>&lt;</code></li>
+    </ul>
+
+    <div class="connection">
+      <strong>Connection:</strong> Sorting comparators are <em>First-class Functions</em> passed as arguments. <code>sort.Interface</code> uses the <em>Interfaces</em> pattern (three methods: <code>Len</code>, <code>Less</code>, <code>Swap</code>). <code>slices.SortFunc</code> leverages <em>Type Parameters (Generics)</em> from Go 1.18+. The <code>cmp</code> package ties to <em>Custom Constraints</em> with <code>cmp.Ordered</code>.
+    </div>
+
+    <div class="exercise">
+      <div class="exercise-label">Exercise 1</div>
+      <p>Sort a slice of <code>Student{Name string, GPA float64}</code> by GPA descending. Print the sorted results with rank numbers.</p>
+    </div>
+    <div class="exercise">
+      <div class="exercise-label">Exercise 2</div>
+      <p>Implement <code>sort.Interface</code> for a <code>ByLength</code> type (a <code>[]string</code>) that sorts strings by length ascending, breaking ties alphabetically. Verify it works with <code>sort.Sort(ByLength(words))</code>.</p>
+    </div>
+    <div class="exercise">
+      <div class="exercise-label">Exercise 3</div>
+      <p>Use <code>sort.Search</code> to find the insertion point for a value in a sorted slice of 1000 random ints. Verify the result is correct by checking that the element before the index is less than the target and the element at the index is greater or equal.</p>
+    </div>
+  </div>
+
+  <!-- ========== CONCEPT 3: time Package ========== -->
+  <div class="concept" id="time-package">
+    <div class="concept-header">
+      <h3>time Package: Duration, Timer, Ticker, Formatting</h3>
+      <span class="concept-meta">Standard Library Mastery &bull; New</span>
+    </div>
+
+    <p>Time handling in Go is unique. Formatting uses a reference time (<code>Mon Jan 2 15:04:05 MST 2006</code>) instead of format strings like <code>%Y-%m-%d</code>. The digits in the reference time are specifically chosen: month=1, day=2, hour=15 (3pm), minute=04, second=05, year=2006, timezone=MST.</p>
+
+    <h4>Why It Matters</h4>
+    <p>Every application deals with time: timestamps, durations, scheduling, timeouts, rate limiting. Go's <code>time</code> package covers all of these. The reference-time formatting system is initially confusing but becomes natural once you memorize the magic numbers: <strong>01/02 03:04:05PM '06 -0700</strong>.</p>
+
+    <h4>Example 1: Measure Elapsed Time</h4>
+<pre>package main
+
+import (
+    "fmt"
+    "time"
+)
+
+func main() {
+    start := time.Now()
+
+    // Simulate some work
+    total := 0
+    for i := 0; i &lt; 10_000_000; i++ {
+        total += i
+    }
+
+    elapsed := time.Since(start)
+    fmt.Printf("Computed sum: %d\n", total)
+    fmt.Printf("Elapsed: %v\n", elapsed)
+    fmt.Printf("Milliseconds: %.2f\n", elapsed.Seconds()*1000)
+}</pre>
+    <div class="output">
+      <div class="output-label">Output</div>
+Computed sum: 49999995000000
+Elapsed: 4.208ms
+Milliseconds: 4.21
+    </div>
+
+    <h4>Example 2: Formatting and Parsing</h4>
+<pre>package main
+
+import (
+    "fmt"
+    "time"
+)
+
+func main() {
+    now := time.Date(2026, 6, 7, 14, 30, 0, 0, time.UTC)
+
+    // Format with reference time: Mon Jan 2 15:04:05 MST 2006
+    fmt.Println("RFC 3339:", now.Format(time.RFC3339))
+    fmt.Println("Custom:  ", now.Format("2006-01-02 15:04:05"))
+    fmt.Println("Pretty:  ", now.Format("January 2, 2006"))
+    fmt.Println("12-hour: ", now.Format("3:04 PM"))
+
+    // Parse a date string
+    t, err := time.Parse("2006-01-02", "2026-06-07")
+    if err != nil {
+        fmt.Println("Parse error:", err)
+        return
+    }
+    fmt.Println("Parsed:  ", t)
+}</pre>
+    <div class="output">
+      <div class="output-label">Output</div>
+RFC 3339: 2026-06-07T14:30:00Z
+Custom:   2026-06-07 14:30:00
+Pretty:   June 7, 2026
+12-hour:  2:30 PM
+Parsed:   2026-06-07 00:00:00 +0000 UTC
+    </div>
+
+    <h4>Example 3: Duration Arithmetic</h4>
+<pre>package main
+
+import (
+    "fmt"
+    "time"
+)
+
+func main() {
+    // Duration constants
+    d := 2*time.Hour + 30*time.Minute + 15*time.Second
+    fmt.Println("Duration:", d)
+    fmt.Printf("Hours: %.1f\n", d.Hours())
+    fmt.Printf("Minutes: %.1f\n", d.Minutes())
+    fmt.Printf("Seconds: %.0f\n", d.Seconds())
+
+    // Time arithmetic
+    now := time.Date(2026, 6, 7, 10, 0, 0, 0, time.UTC)
+    later := now.Add(d)
+    fmt.Println("Now:  ", now.Format("15:04:05"))
+    fmt.Println("Later:", later.Format("15:04:05"))
+
+    // Duration between two times
+    deadline := time.Date(2026, 6, 10, 0, 0, 0, 0, time.UTC)
+    remaining := time.Until(deadline) - time.Since(now)
+    fmt.Printf("Remaining: ~%d hours\n", int(remaining.Hours()))
+}</pre>
+    <div class="output">
+      <div class="output-label">Output</div>
+Duration: 2h30m15s
+Hours: 2.5
+Minutes: 150.2
+Seconds: 9015
+Now:   10:00:00
+Later: 12:30:15
+Remaining: ~62 hours
+    </div>
+
+    <h4>Example 4: Ticker for Periodic Work</h4>
+<pre>package main
+
+import (
+    "fmt"
+    "time"
+)
+
+func main() {
+    ticker := time.NewTicker(500 * time.Millisecond)
+    defer ticker.Stop() // ALWAYS stop the ticker
+
+    done := make(chan bool)
+    go func() {
+        time.Sleep(2200 * time.Millisecond)
+        done &lt;- true
+    }()
+
+    count := 0
+    for {
+        select {
+        case t := &lt;-ticker.C:
+            count++
+            fmt.Printf("Tick %d at %s\n", count, t.Format("15:04:05.000"))
+        case &lt;-done:
+            fmt.Printf("Done after %d ticks\n", count)
+            return
+        }
+    }
+}</pre>
+    <div class="output">
+      <div class="output-label">Output</div>
+Tick 1 at 10:00:00.500
+Tick 2 at 10:00:01.000
+Tick 3 at 10:00:01.500
+Tick 4 at 10:00:02.000
+Done after 4 ticks
+    </div>
+
+    <h4>Example 5: Timer with Reset (Exponential Backoff)</h4>
+<pre>package main
+
+import (
+    "fmt"
+    "time"
+)
+
+func main() {
+    backoff := 100 * time.Millisecond
+    maxBackoff := 2 * time.Second
+    timer := time.NewTimer(backoff)
+    defer timer.Stop()
+
+    for attempt := 1; attempt &lt;= 5; attempt++ {
+        &lt;-timer.C
+        fmt.Printf("Attempt %d after %v backoff\n", attempt, backoff)
+
+        // Double the backoff, capped at max
+        backoff *= 2
+        if backoff &gt; maxBackoff {
+            backoff = maxBackoff
+        }
+        timer.Reset(backoff)
+    }
+    fmt.Println("All attempts complete")
+}</pre>
+    <div class="output">
+      <div class="output-label">Output</div>
+Attempt 1 after 100ms backoff
+Attempt 2 after 200ms backoff
+Attempt 3 after 400ms backoff
+Attempt 4 after 800ms backoff
+Attempt 5 after 1.6s backoff
+All attempts complete
+    </div>
+
+    <h4>Common Mistakes</h4>
+    <div class="do-dont">
+      <div class="do-box">
+        <div class="label">Do: Use the reference time exactly</div>
+<pre>// Mon Jan 2 15:04:05 MST 2006
+t.Format("2006-01-02")  // correct
+t.Format("01/02/2006")  // correct
+t.Format("15:04:05")    // correct (24h)</pre>
+      </div>
+      <div class="dont-box">
+        <div class="label">Don't: Use wrong reference digits</div>
+<pre>t.Format("2025-01-02")  // WRONG year
+t.Format("2006-02-01")  // WRONG: month/day swapped
+t.Format("14:04:05")    // WRONG hour digit</pre>
+      </div>
+    </div>
+    <div class="do-dont">
+      <div class="do-box">
+        <div class="label">Do: Stop Tickers and Timers</div>
+<pre>ticker := time.NewTicker(time.Second)
+defer ticker.Stop() // prevents goroutine leak</pre>
+      </div>
+      <div class="dont-box">
+        <div class="label">Don't: time.After in loops</div>
+<pre>for {
+    select {
+    case &lt;-time.After(time.Second):
+        // New timer EVERY iteration = memory leak
+    }
+}</pre>
+      </div>
+    </div>
+
+    <h4>Key Rules</h4>
+    <ul class="rules-list">
+      <li>Always use the reference time <code>Mon Jan 2 15:04:05 MST 2006</code> for formatting &mdash; memorize it as 01/02 03:04:05 '06</li>
+      <li>Always <code>defer ticker.Stop()</code> &mdash; an unstopped ticker leaks a goroutine</li>
+      <li>Prefer <code>time.NewTimer</code> + <code>Reset</code> over <code>time.After</code> in loops to avoid timer leaks</li>
+      <li>Use <code>time.Since(start)</code> and <code>time.Until(deadline)</code> for readable duration calculations</li>
+      <li>Never store <code>time.Duration</code> as an integer &mdash; it is already a <code>int64</code> of nanoseconds</li>
+    </ul>
+
+    <div class="connection">
+      <strong>Connection:</strong> Tickers and timers use <em>Channels</em> (<code>ticker.C</code>). Timeout patterns combine <code>time.After</code> with the <em>Select Statement</em>. HTTP server/client timeouts (<em>net/http</em>) are <code>time.Duration</code> values. <em>Context</em> deadlines wrap <code>time.Time</code>. Benchmarks (<em>Benchmarks</em>) use <code>time.Duration</code> for measurement.
+    </div>
+
+    <div class="exercise">
+      <div class="exercise-label">Exercise 1</div>
+      <p>Write a function that returns today's date formatted as "June 7, 2026". Use <code>time.Now()</code> and the reference-time format string. Verify the output matches expected format for any date.</p>
+    </div>
+    <div class="exercise">
+      <div class="exercise-label">Exercise 2</div>
+      <p>Parse "2026-06-07T10:30:00Z" using <code>time.Parse</code> and compute the <code>time.Duration</code> between that time and now. Print it in a human-readable way (hours, minutes).</p>
+    </div>
+    <div class="exercise">
+      <div class="exercise-label">Exercise 3</div>
+      <p>Write a Ticker-based poller that calls a function every 5 seconds and stops after 30 seconds. Use <code>time.NewTicker</code>, <code>time.After</code> for the deadline, and a <code>select</code> loop. Count and print how many times the function was called.</p>
+    </div>
+  </div>
+
+  <!-- ========== CONCEPT 4: testing Package ========== -->
+  <div class="concept" id="testing-package">
+    <div class="concept-header">
+      <h3>testing Package: Table-Driven Tests, Subtests</h3>
+      <span class="concept-meta">Testing &amp; Tooling &bull; New</span>
+    </div>
+
+    <p>Go has a built-in testing framework &mdash; no external libraries needed. The <code>go test</code> command discovers and runs test functions automatically. Table-driven tests are THE idiomatic Go testing pattern, used extensively in the standard library itself.</p>
+
+    <h4>Why It Matters</h4>
+    <p>Tests are first-class citizens in Go. The test file lives alongside the code (<code>foo_test.go</code>), uses the same package, and requires only <code>import "testing"</code>. Table-driven tests make it trivial to add new cases. Subtests with <code>t.Run</code> let you run individual cases and see clear failure messages.</p>
+
+    <h4>Example 1: Simple Test</h4>
+<pre>// math.go
+package mathutil
+
+func Add(a, b int) int {
+    return a + b
+}
+
+func Abs(n int) int {
+    if n &lt; 0 {
+        return -n
+    }
+    return n
+}
+
+// math_test.go
+package mathutil
+
+import "testing"
+
+func TestAdd(t *testing.T) {
+    got := Add(2, 3)
+    want := 5
+    if got != want {
+        t.Errorf("Add(2, 3) = %d, want %d", got, want)
+    }
+}
+
+func TestAbs(t *testing.T) {
+    if Abs(-5) != 5 {
+        t.Errorf("Abs(-5) = %d, want 5", Abs(-5))
+    }
+    if Abs(5) != 5 {
+        t.Errorf("Abs(5) = %d, want 5", Abs(5))
+    }
+    if Abs(0) != 0 {
+        t.Errorf("Abs(0) = %d, want 0", Abs(0))
+    }
+}</pre>
+    <div class="output">
+      <div class="output-label">Output (go test -v)</div>
+=== RUN   TestAdd
+--- PASS: TestAdd (0.00s)
+=== RUN   TestAbs
+--- PASS: TestAbs (0.00s)
+PASS
+ok      mathutil  0.003s
+    </div>
+
+    <h4>Example 2: Table-Driven Tests</h4>
+<pre>// fibonacci.go
+package mathutil
+
+func Fibonacci(n int) int {
+    if n &lt;= 0 {
+        return 0
+    }
+    if n == 1 {
+        return 1
+    }
+    a, b := 0, 1
+    for i := 2; i &lt;= n; i++ {
+        a, b = b, a+b
+    }
+    return b
+}
+
+// fibonacci_test.go
+package mathutil
+
+import "testing"
+
+func TestFibonacci(t *testing.T) {
+    tests := []struct {
+        name string
+        n    int
+        want int
+    }{
+        {"zero", 0, 0},
+        {"one", 1, 1},
+        {"two", 2, 1},
+        {"three", 3, 2},
+        {"five", 5, 5},
+        {"ten", 10, 55},
+        {"negative", -1, 0},
+    }
+
+    for _, tt := range tests {
+        t.Run(tt.name, func(t *testing.T) {
+            got := Fibonacci(tt.n)
+            if got != tt.want {
+                t.Errorf("Fibonacci(%d) = %d, want %d", tt.n, got, tt.want)
+            }
+        })
+    }
+}</pre>
+    <div class="output">
+      <div class="output-label">Output (go test -v -run TestFibonacci)</div>
+=== RUN   TestFibonacci
+=== RUN   TestFibonacci/zero
+=== RUN   TestFibonacci/one
+=== RUN   TestFibonacci/two
+=== RUN   TestFibonacci/three
+=== RUN   TestFibonacci/five
+=== RUN   TestFibonacci/ten
+=== RUN   TestFibonacci/negative
+--- PASS: TestFibonacci (0.00s)
+    --- PASS: TestFibonacci/zero (0.00s)
+    --- PASS: TestFibonacci/one (0.00s)
+    --- PASS: TestFibonacci/two (0.00s)
+    --- PASS: TestFibonacci/three (0.00s)
+    --- PASS: TestFibonacci/five (0.00s)
+    --- PASS: TestFibonacci/ten (0.00s)
+    --- PASS: TestFibonacci/negative (0.00s)
+PASS
+    </div>
+
+    <h4>Example 3: Parallel Subtests</h4>
+<pre>// string_test.go
+package stringutil
+
+import (
+    "strings"
+    "testing"
+)
+
+func Reverse(s string) string {
+    runes := []rune(s)
+    for i, j := 0, len(runes)-1; i &lt; j; i, j = i+1, j-1 {
+        runes[i], runes[j] = runes[j], runes[i]
+    }
+    return string(runes)
+}
+
+func TestReverse(t *testing.T) {
+    tests := []struct {
+        name  string
+        input string
+        want  string
+    }{
+        {"empty", "", ""},
+        {"single", "a", "a"},
+        {"word", "hello", "olleh"},
+        {"palindrome", "racecar", "racecar"},
+        {"unicode", "Hello, 世界", "界世 ,olleH"},
+    }
+
+    for _, tt := range tests {
+        t.Run(tt.name, func(t *testing.T) {
+            t.Parallel() // run this subtest in parallel
+            got := Reverse(tt.input)
+            if got != tt.want {
+                t.Errorf("Reverse(%q) = %q, want %q", tt.input, got, tt.want)
+            }
+        })
+    }
+
+    // Also test the roundtrip property
+    t.Run("roundtrip", func(t *testing.T) {
+        t.Parallel()
+        input := "Go is great"
+        if Reverse(Reverse(input)) != input {
+            t.Error("double reverse should return original")
+        }
+    })
+
+    _ = strings.Contains // just to show the import is used
+}</pre>
+    <div class="output">
+      <div class="output-label">Output (go test -v -run TestReverse)</div>
+=== RUN   TestReverse
+=== RUN   TestReverse/empty
+=== RUN   TestReverse/single
+=== RUN   TestReverse/word
+=== RUN   TestReverse/palindrome
+=== RUN   TestReverse/unicode
+=== RUN   TestReverse/roundtrip
+--- PASS: TestReverse (0.00s)
+    --- PASS: TestReverse/empty (0.00s)
+    --- PASS: TestReverse/single (0.00s)
+    --- PASS: TestReverse/word (0.00s)
+    --- PASS: TestReverse/palindrome (0.00s)
+    --- PASS: TestReverse/unicode (0.00s)
+    --- PASS: TestReverse/roundtrip (0.00s)
+PASS
+    </div>
+
+    <h4>Example 4: Helper Functions with t.Helper()</h4>
+<pre>// helpers_test.go
+package mathutil
+
+import "testing"
+
+// assertEq is a generic test helper
+func assertEq[T comparable](t *testing.T, got, want T) {
+    t.Helper() // marks this as a helper &mdash; errors point to the caller
+    if got != want {
+        t.Errorf("got %v, want %v", got, want)
+    }
+}
+
+func TestAddWithHelper(t *testing.T) {
+    assertEq(t, Add(1, 2), 3)
+    assertEq(t, Add(-1, 1), 0)
+    assertEq(t, Add(0, 0), 0)
+}
+
+func TestAbsWithHelper(t *testing.T) {
+    assertEq(t, Abs(-10), 10)
+    assertEq(t, Abs(10), 10)
+    assertEq(t, Abs(0), 0)
+}</pre>
+    <div class="output">
+      <div class="output-label">Output (go test -v -run TestAddWithHelper)</div>
+=== RUN   TestAddWithHelper
+--- PASS: TestAddWithHelper (0.00s)
+=== RUN   TestAbsWithHelper
+--- PASS: TestAbsWithHelper (0.00s)
+PASS
+    </div>
+
+    <h4>Example 5: t.Cleanup for Resource Management</h4>
+<pre>// cleanup_test.go
+package dbutil
+
+import (
+    "fmt"
+    "testing"
+)
+
+// mockDB simulates a database connection
+type mockDB struct {
+    name   string
+    closed bool
+}
+
+func newMockDB(name string) *mockDB {
+    fmt.Printf("  Opening DB: %s\n", name)
+    return &amp;mockDB{name: name}
+}
+
+func (db *mockDB) Close() {
+    fmt.Printf("  Closing DB: %s\n", db.name)
+    db.closed = true
+}
+
+func (db *mockDB) Query(q string) string {
+    return fmt.Sprintf("[%s] result for: %s", db.name, q)
+}
+
+func TestWithCleanup(t *testing.T) {
+    db := newMockDB("test-db")
+    t.Cleanup(func() {
+        db.Close() // runs after test, even on failure
+    })
+
+    result := db.Query("SELECT 1")
+    if result == "" {
+        t.Error("expected non-empty result")
+    }
+    fmt.Printf("  Got: %s\n", result)
+}</pre>
+    <div class="output">
+      <div class="output-label">Output (go test -v -run TestWithCleanup)</div>
+=== RUN   TestWithCleanup
+  Opening DB: test-db
+  Got: [test-db] result for: SELECT 1
+  Closing DB: test-db
+--- PASS: TestWithCleanup (0.00s)
+PASS
+    </div>
+
+    <h4>Common Mistakes</h4>
+    <div class="do-dont">
+      <div class="do-box">
+        <div class="label">Do: Use t.Helper() in test helpers</div>
+<pre>func assertEqual(t *testing.T, got, want int) {
+    t.Helper() // error line points to caller
+    if got != want {
+        t.Errorf("got %d, want %d", got, want)
+    }
+}</pre>
+      </div>
+      <div class="dont-box">
+        <div class="label">Don't: Forget t.Helper()</div>
+<pre>func assertEqual(t *testing.T, got, want int) {
+    // Without t.Helper(), errors point HERE
+    // instead of the actual test line
+    if got != want {
+        t.Errorf("got %d, want %d", got, want)
+    }
+}</pre>
+      </div>
+    </div>
+    <div class="do-dont">
+      <div class="do-box">
+        <div class="label">Do: Use t.Error in goroutines</div>
+<pre>t.Run("concurrent", func(t *testing.T) {
+    go func() {
+        // t.Error is safe from goroutines
+        if result != expected {
+            t.Error("mismatch")
+        }
+    }()
+})</pre>
+      </div>
+      <div class="dont-box">
+        <div class="label">Don't: Use t.Fatal in goroutines</div>
+<pre>go func() {
+    // t.Fatal calls runtime.Goexit()
+    // Only safe in the test goroutine!
+    if err != nil {
+        t.Fatal(err) // PANIC or wrong goroutine exit
+    }
+}()</pre>
+      </div>
+    </div>
+
+    <h4>Key Rules</h4>
+    <ul class="rules-list">
+      <li>Use table-driven tests as the default pattern for any function with multiple input/output combinations</li>
+      <li>Use <code>t.Run("name", ...)</code> for every test case &mdash; it gives named subtests and allows <code>-run</code> filtering</li>
+      <li>Use <code>t.Helper()</code> in ALL helper functions so error lines point to the calling test</li>
+      <li>Use <code>t.Parallel()</code> when tests are independent &mdash; it speeds up test suites significantly</li>
+      <li>Use <code>t.Error</code> (not <code>t.Fatal</code>) in goroutines &mdash; <code>t.Fatal</code> calls <code>runtime.Goexit</code> and is only safe in the test goroutine</li>
+    </ul>
+
+    <div class="connection">
+      <strong>Connection:</strong> Test helpers use <em>Generics</em> for <code>assertEq[T comparable]</code>. <code>t.Cleanup</code> is conceptually similar to <em>Defer, Panic, Recover</em> (LIFO execution). Table-driven tests iterate with <code>range</code> over a slice of <em>Structs</em>. Parallel subtests connect to <em>Goroutines</em> &mdash; each subtest runs in its own goroutine.
+    </div>
+
+    <div class="exercise">
+      <div class="exercise-label">Exercise 1</div>
+      <p>Write a table-driven test for a <code>Fibonacci(n int) int</code> function with at least 7 cases including edge cases (0, 1, negative). Use <code>t.Run</code> for each case.</p>
+    </div>
+    <div class="exercise">
+      <div class="exercise-label">Exercise 2</div>
+      <p>Create a test helper <code>assertSliceEqual[T comparable](t *testing.T, got, want []T)</code> with proper <code>t.Helper()</code> that compares two slices element by element and reports which index differs.</p>
+    </div>
+    <div class="exercise">
+      <div class="exercise-label">Exercise 3</div>
+      <p>Write parallel subtests for an HTTP handler. Use <code>httptest.NewRecorder()</code> and <code>httptest.NewRequest()</code> to test different routes and methods. Each subtest should run with <code>t.Parallel()</code>.</p>
+    </div>
+  </div>
+
+  <!-- ========== CONCEPT 5: Benchmarks ========== -->
+  <div class="concept" id="benchmarks">
+    <div class="concept-header">
+      <h3>Benchmarks: b.N, b.ResetTimer, b.ReportAllocs</h3>
+      <span class="concept-meta">Testing &amp; Tooling &bull; New</span>
+    </div>
+
+    <p>Go's built-in benchmarking lets you measure performance precisely. <code>go test -bench=.</code> runs benchmarks automatically. The framework controls iteration count (<code>b.N</code>) to get statistically stable results.</p>
+
+    <h4>Why It Matters</h4>
+    <p>Performance claims without benchmarks are opinions. Go makes benchmarking trivially easy &mdash; same file, same tool, same workflow as tests. Use benchmarks to compare algorithms, detect regressions, and measure memory allocations.</p>
+
+    <h4>Example 1: Basic Benchmark</h4>
+<pre>// concat_test.go
+package stringutil
+
+import (
+    "strings"
+    "testing"
+)
+
+func ConcatPlus(strs []string) string {
+    result := ""
+    for _, s := range strs {
+        result += s
+    }
+    return result
+}
+
+func ConcatBuilder(strs []string) string {
+    var b strings.Builder
+    for _, s := range strs {
+        b.WriteString(s)
+    }
+    return b.String()
+}
+
+func BenchmarkConcatPlus(b *testing.B) {
+    strs := []string{"hello", " ", "world", " ", "from", " ", "go"}
+    for i := 0; i &lt; b.N; i++ {
+        ConcatPlus(strs)
+    }
+}
+
+func BenchmarkConcatBuilder(b *testing.B) {
+    strs := []string{"hello", " ", "world", " ", "from", " ", "go"}
+    for i := 0; i &lt; b.N; i++ {
+        ConcatBuilder(strs)
+    }
+}</pre>
+    <div class="output">
+      <div class="output-label">Output (go test -bench=. -benchmem)</div>
+BenchmarkConcatPlus-8      3842107    312.4 ns/op    120 B/op    6 allocs/op
+BenchmarkConcatBuilder-8  10503862    114.2 ns/op     64 B/op    2 allocs/op
+    </div>
+
+    <h4>Example 2: ResetTimer After Expensive Setup</h4>
+<pre>// search_test.go
+package searchutil
+
+import (
+    "math/rand"
+    "sort"
+    "testing"
+)
+
+func BenchmarkBinarySearch(b *testing.B) {
+    // Expensive setup: create and sort a large slice
+    data := make([]int, 100_000)
+    for i := range data {
+        data[i] = rand.Intn(1_000_000)
+    }
+    sort.Ints(data)
+    target := data[50_000] // guaranteed to exist
+
+    b.ResetTimer() // exclude setup from measurement
+
+    for i := 0; i &lt; b.N; i++ {
+        sort.SearchInts(data, target)
+    }
+}
+
+func BenchmarkLinearSearch(b *testing.B) {
+    data := make([]int, 100_000)
+    for i := range data {
+        data[i] = rand.Intn(1_000_000)
+    }
+    target := data[50_000]
+
+    b.ResetTimer()
+
+    for i := 0; i &lt; b.N; i++ {
+        for _, v := range data {
+            if v == target {
+                break
+            }
+        }
+    }
+}</pre>
+    <div class="output">
+      <div class="output-label">Output (go test -bench=Search -benchmem)</div>
+BenchmarkBinarySearch-8   48391062     24.76 ns/op    0 B/op    0 allocs/op
+BenchmarkLinearSearch-8      13263   90412.00 ns/op    0 B/op    0 allocs/op
+    </div>
+
+    <h4>Example 3: ReportAllocs for Memory Analysis</h4>
+<pre>// alloc_test.go
+package allocutil
+
+import "testing"
+
+func SliceAppend(n int) []int {
+    var s []int
+    for i := 0; i &lt; n; i++ {
+        s = append(s, i)
+    }
+    return s
+}
+
+func SlicePrealloc(n int) []int {
+    s := make([]int, 0, n) // pre-allocate capacity
+    for i := 0; i &lt; n; i++ {
+        s = append(s, i)
+    }
+    return s
+}
+
+func BenchmarkSliceAppend(b *testing.B) {
+    b.ReportAllocs()
+    for i := 0; i &lt; b.N; i++ {
+        SliceAppend(1000)
+    }
+}
+
+func BenchmarkSlicePrealloc(b *testing.B) {
+    b.ReportAllocs()
+    for i := 0; i &lt; b.N; i++ {
+        SlicePrealloc(1000)
+    }
+}</pre>
+    <div class="output">
+      <div class="output-label">Output (go test -bench=Slice)</div>
+BenchmarkSliceAppend-8      148836    7823 ns/op    25208 B/op    12 allocs/op
+BenchmarkSlicePrealloc-8    540812    2214 ns/op     8192 B/op     1 allocs/op
+    </div>
+
+    <h4>Example 4: Sub-benchmarks Comparing Input Sizes</h4>
+<pre>// subbench_test.go
+package benchutil
+
+import (
+    "fmt"
+    "sort"
+    "testing"
+)
+
+func BenchmarkSort(b *testing.B) {
+    sizes := []int{100, 1000, 10000}
+
+    for _, size := range sizes {
+        b.Run(fmt.Sprintf("size=%d", size), func(b *testing.B) {
+            // Create the source data once
+            src := make([]int, size)
+            for i := range src {
+                src[i] = size - i // reverse-sorted (worst case)
+            }
+
+            b.ResetTimer()
+            for i := 0; i &lt; b.N; i++ {
+                // Copy so each iteration sorts unsorted data
+                data := make([]int, size)
+                copy(data, src)
+                sort.Ints(data)
+            }
+        })
+    }
+}</pre>
+    <div class="output">
+      <div class="output-label">Output (go test -bench=BenchmarkSort)</div>
+BenchmarkSort/size=100-8       362438      3284 ns/op
+BenchmarkSort/size=1000-8       26704     44893 ns/op
+BenchmarkSort/size=10000-8       2006    598172 ns/op
+    </div>
+
+    <h4>Example 5: Preventing Compiler Optimization</h4>
+<pre>// compiler_test.go
+package benchutil
+
+import "testing"
+
+// Package-level var prevents compiler from optimizing away the result
+var result int
+
+func BenchmarkFibCorrect(b *testing.B) {
+    var r int
+    for i := 0; i &lt; b.N; i++ {
+        r = fib(20)
+    }
+    result = r // store to package-level var
+}
+
+func fib(n int) int {
+    if n &lt;= 1 {
+        return n
+    }
+    return fib(n-1) + fib(n-2)
+}</pre>
+    <div class="output">
+      <div class="output-label">Output (go test -bench=Fib)</div>
+BenchmarkFibCorrect-8     217688      5512 ns/op
+    </div>
+
+    <h4>Key Rules</h4>
+    <ul class="rules-list">
+      <li>Always use <code>b.N</code> for the loop count &mdash; the framework determines the right number of iterations</li>
+      <li>Use <code>b.ResetTimer()</code> after expensive setup to exclude it from the measurement</li>
+      <li>Store results to a package-level variable to prevent the compiler from optimizing away dead code</li>
+      <li>Run with <code>-count=5</code> or more for statistical significance &mdash; use <code>benchstat</code> to compare runs</li>
+      <li>Use <code>b.ReportAllocs()</code> or <code>-benchmem</code> flag to always include allocation data</li>
+    </ul>
+
+    <div class="connection">
+      <strong>Connection:</strong> Benchmarks live in <code>_test.go</code> files alongside <em>testing Package</em> tests. <code>b.ResetTimer</code> relates to <em>time Package</em> measurement. Sub-benchmarks mirror subtests from <code>t.Run</code>. Memory benchmarks connect to understanding <em>Slices Deep Dive</em> (capacity/growth). Preallocation benchmarks demonstrate why <code>make([]T, 0, n)</code> matters.
+    </div>
+
+    <div class="exercise">
+      <div class="exercise-label">Exercise 1</div>
+      <p>Benchmark <code>sort.Slice</code> vs <code>slices.Sort</code> for 1000 random ints. Run with <code>-benchmem</code> and compare allocation counts.</p>
+    </div>
+    <div class="exercise">
+      <div class="exercise-label">Exercise 2</div>
+      <p>Benchmark map lookup vs switch statement for 10 string cases. Which is faster? Write both implementations and compare with <code>-count=5</code>.</p>
+    </div>
+    <div class="exercise">
+      <div class="exercise-label">Exercise 3</div>
+      <p>Write sub-benchmarks comparing <code>append</code> with and without pre-allocation for sizes 100, 1000, and 10000. Report allocations for each. How does the allocation count scale?</p>
+    </div>
+  </div>
+
+  <!-- ========== CONCEPT 6: Test Fixtures ========== -->
+  <div class="concept" id="test-fixtures">
+    <div class="concept-header">
+      <h3>Test Fixtures: TestMain, t.TempDir, t.Cleanup</h3>
+      <span class="concept-meta">Testing &amp; Tooling &bull; New</span>
+    </div>
+
+    <p>Complex tests need setup and teardown. Go provides <code>TestMain</code> for package-level setup, <code>t.TempDir()</code> for auto-cleaned temporary directories, <code>t.Cleanup()</code> for test-scoped resource management, and <code>t.Setenv()</code> for safe environment variable testing.</p>
+
+    <h4>Why It Matters</h4>
+    <p>Real-world tests need databases, temp files, mock servers, and environment variables. Go's built-in fixtures make setup and teardown reliable and automatic &mdash; no need for external frameworks. <code>t.TempDir</code> and <code>t.Cleanup</code> guarantee resources are freed even when tests fail.</p>
+
+    <h4>Example 1: TestMain for Package-level Setup/Teardown</h4>
+<pre>// main_test.go
+package myapp
+
+import (
+    "fmt"
+    "net/http"
+    "net/http/httptest"
+    "os"
+    "testing"
+)
+
+var testServer *httptest.Server
+
+func TestMain(m *testing.M) {
+    // Package-level setup: start a mock server
+    fmt.Println("Setting up test server...")
+    testServer = httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+        fmt.Fprintf(w, `{"status":"mock"}`)
+    }))
+
+    // Run all tests in this package
+    code := m.Run()
+
+    // Package-level teardown
+    fmt.Println("Tearing down test server...")
+    testServer.Close()
+
+    os.Exit(code) // MUST call os.Exit with the test result
+}
+
+func TestServerReachable(t *testing.T) {
+    resp, err := http.Get(testServer.URL)
+    if err != nil {
+        t.Fatalf("server not reachable: %v", err)
+    }
+    defer resp.Body.Close()
+    if resp.StatusCode != 200 {
+        t.Errorf("got status %d, want 200", resp.StatusCode)
+    }
+    fmt.Printf("Test server at: %s\n", testServer.URL)
+}</pre>
+    <div class="output">
+      <div class="output-label">Output (go test -v -run TestServer)</div>
+Setting up test server...
+=== RUN   TestServerReachable
+Test server at: http://127.0.0.1:54321
+--- PASS: TestServerReachable (0.00s)
+PASS
+Tearing down test server...
+    </div>
+
+    <h4>Example 2: t.TempDir for Auto-Cleaned Temp Files</h4>
+<pre>// fileutil.go
+package fileutil
+
+import "os"
+
+func WriteFile(path, content string) error {
+    return os.WriteFile(path, []byte(content), 0644)
+}
+
+func ReadFile(path string) (string, error) {
+    data, err := os.ReadFile(path)
+    return string(data), err
+}
+
+// fileutil_test.go
+package fileutil
+
+import (
+    "path/filepath"
+    "testing"
+)
+
+func TestWriteAndRead(t *testing.T) {
+    // t.TempDir() creates a temp dir that is automatically
+    // cleaned up when the test finishes (even on failure)
+    dir := t.TempDir()
+
+    path := filepath.Join(dir, "test.txt")
+    content := "hello, temp file"
+
+    if err := WriteFile(path, content); err != nil {
+        t.Fatalf("WriteFile failed: %v", err)
+    }
+
+    got, err := ReadFile(path)
+    if err != nil {
+        t.Fatalf("ReadFile failed: %v", err)
+    }
+
+    if got != content {
+        t.Errorf("got %q, want %q", got, content)
+    }
+    // No cleanup needed &mdash; dir is auto-removed!
+}
+
+func TestMultipleFiles(t *testing.T) {
+    dir := t.TempDir() // each test gets its own temp dir
+
+    files := map[string]string{
+        "a.txt": "alpha",
+        "b.txt": "beta",
+        "c.txt": "gamma",
+    }
+
+    for name, content := range files {
+        path := filepath.Join(dir, name)
+        if err := WriteFile(path, content); err != nil {
+            t.Fatalf("WriteFile(%s) failed: %v", name, err)
+        }
+    }
+
+    for name, want := range files {
+        path := filepath.Join(dir, name)
+        got, err := ReadFile(path)
+        if err != nil {
+            t.Fatalf("ReadFile(%s) failed: %v", name, err)
+        }
+        if got != want {
+            t.Errorf("file %s: got %q, want %q", name, got, want)
+        }
+    }
+}</pre>
+    <div class="output">
+      <div class="output-label">Output (go test -v -run TestWriteAndRead)</div>
+=== RUN   TestWriteAndRead
+--- PASS: TestWriteAndRead (0.00s)
+=== RUN   TestMultipleFiles
+--- PASS: TestMultipleFiles (0.00s)
+PASS
+    </div>
+
+    <h4>Example 3: t.Cleanup for LIFO Resource Teardown</h4>
+<pre>// resource_test.go
+package resource
+
+import (
+    "fmt"
+    "testing"
+)
+
+type Resource struct {
+    name   string
+    closed bool
+}
+
+func OpenResource(name string) *Resource {
+    fmt.Printf("  OPEN: %s\n", name)
+    return &amp;Resource{name: name}
+}
+
+func (r *Resource) Close() {
+    fmt.Printf("  CLOSE: %s\n", r.name)
+    r.closed = true
+}
+
+func TestCleanupOrder(t *testing.T) {
+    r1 := OpenResource("database")
+    t.Cleanup(func() { r1.Close() }) // registered first, runs LAST
+
+    r2 := OpenResource("cache")
+    t.Cleanup(func() { r2.Close() }) // registered second, runs FIRST
+
+    r3 := OpenResource("queue")
+    t.Cleanup(func() { r3.Close() }) // registered third, runs in middle
+
+    fmt.Println("  Running test logic...")
+
+    if r1.closed || r2.closed || r3.closed {
+        t.Error("resources should not be closed during test")
+    }
+    // Cleanups run after this in LIFO order: queue, cache, database
+}</pre>
+    <div class="output">
+      <div class="output-label">Output (go test -v -run TestCleanupOrder)</div>
+=== RUN   TestCleanupOrder
+  OPEN: database
+  OPEN: cache
+  OPEN: queue
+  Running test logic...
+  CLOSE: queue
+  CLOSE: cache
+  CLOSE: database
+--- PASS: TestCleanupOrder (0.00s)
+PASS
+    </div>
+
+    <h4>Example 4: t.Setenv for Environment Variable Testing</h4>
+<pre>// config.go
+package config
+
+import "os"
+
+func GetDatabaseURL() string {
+    url := os.Getenv("DATABASE_URL")
+    if url == "" {
+        return "localhost:5432"
+    }
+    return url
+}
+
+func IsDebug() bool {
+    return os.Getenv("DEBUG") == "true"
+}
+
+// config_test.go
+package config
+
+import "testing"
+
+func TestGetDatabaseURL(t *testing.T) {
+    t.Run("default", func(t *testing.T) {
+        // t.Setenv auto-restores the original value after test
+        t.Setenv("DATABASE_URL", "")
+        got := GetDatabaseURL()
+        if got != "localhost:5432" {
+            t.Errorf("got %q, want localhost:5432", got)
+        }
+    })
+
+    t.Run("custom", func(t *testing.T) {
+        t.Setenv("DATABASE_URL", "prod-db:5432")
+        got := GetDatabaseURL()
+        if got != "prod-db:5432" {
+            t.Errorf("got %q, want prod-db:5432", got)
+        }
+    })
+}
+
+func TestIsDebug(t *testing.T) {
+    tests := []struct {
+        name  string
+        value string
+        want  bool
+    }{
+        {"enabled", "true", true},
+        {"disabled", "false", false},
+        {"empty", "", false},
+        {"other", "yes", false},
+    }
+
+    for _, tt := range tests {
+        t.Run(tt.name, func(t *testing.T) {
+            t.Setenv("DEBUG", tt.value)
+            if got := IsDebug(); got != tt.want {
+                t.Errorf("IsDebug() = %v, want %v", got, tt.want)
+            }
+        })
+    }
+}</pre>
+    <div class="output">
+      <div class="output-label">Output (go test -v -run TestIsDebug)</div>
+=== RUN   TestIsDebug
+=== RUN   TestIsDebug/enabled
+=== RUN   TestIsDebug/disabled
+=== RUN   TestIsDebug/empty
+=== RUN   TestIsDebug/other
+--- PASS: TestIsDebug (0.00s)
+    --- PASS: TestIsDebug/enabled (0.00s)
+    --- PASS: TestIsDebug/disabled (0.00s)
+    --- PASS: TestIsDebug/empty (0.00s)
+    --- PASS: TestIsDebug/other (0.00s)
+PASS
+    </div>
+
+    <h4>Example 5: Golden File Testing</h4>
+<pre>// golden_test.go
+package renderer
+
+import (
+    "flag"
+    "fmt"
+    "os"
+    "path/filepath"
+    "testing"
+)
+
+var update = flag.Bool("update", false, "update golden files")
+
+func Render(name string, items []string) string {
+    result := fmt.Sprintf("=== %s ===\n", name)
+    for i, item := range items {
+        result += fmt.Sprintf("%d. %s\n", i+1, item)
+    }
+    result += "=== end ===\n"
+    return result
+}
+
+func TestRenderGolden(t *testing.T) {
+    got := Render("Shopping List", []string{"Milk", "Bread", "Eggs"})
+
+    golden := filepath.Join("testdata", "shopping.golden")
+
+    if *update {
+        // Run with: go test -run TestRenderGolden -update
+        os.MkdirAll("testdata", 0755)
+        os.WriteFile(golden, []byte(got), 0644)
+        t.Log("Updated golden file")
+        return
+    }
+
+    want, err := os.ReadFile(golden)
+    if err != nil {
+        t.Fatalf("Failed to read golden file (run with -update to create): %v", err)
+    }
+
+    if got != string(want) {
+        t.Errorf("output mismatch:\ngot:\n%s\nwant:\n%s", got, string(want))
+    }
+}</pre>
+    <div class="output">
+      <div class="output-label">Output (go test -v -run TestRenderGolden -update)</div>
+=== RUN   TestRenderGolden
+    golden_test.go:35: Updated golden file
+--- PASS: TestRenderGolden (0.00s)
+PASS
+    </div>
+
+    <h4>Common Mistakes</h4>
+    <div class="do-dont">
+      <div class="do-box">
+        <div class="label">Do: Call os.Exit in TestMain</div>
+<pre>func TestMain(m *testing.M) {
+    // setup...
+    code := m.Run()
+    // teardown...
+    os.Exit(code) // REQUIRED
+}</pre>
+      </div>
+      <div class="dont-box">
+        <div class="label">Don't: Forget os.Exit</div>
+<pre>func TestMain(m *testing.M) {
+    // setup...
+    m.Run()
+    // Tests silently PASS even if they fail!
+    // Without os.Exit, the exit code is lost
+}</pre>
+      </div>
+    </div>
+    <div class="do-dont">
+      <div class="do-box">
+        <div class="label">Do: Use t.TempDir()</div>
+<pre>dir := t.TempDir() // auto-cleaned
+path := filepath.Join(dir, "test.txt")</pre>
+      </div>
+      <div class="dont-box">
+        <div class="label">Don't: Create temp files manually</div>
+<pre>dir, _ := os.MkdirTemp("", "test")
+// Forgot defer os.RemoveAll(dir)
+// Leaves garbage in /tmp!</pre>
+      </div>
+    </div>
+
+    <h4>Key Rules</h4>
+    <ul class="rules-list">
+      <li>Use <code>TestMain</code> only for expensive package-level setup (databases, servers) &mdash; not for per-test setup</li>
+      <li>Always call <code>os.Exit(m.Run())</code> in <code>TestMain</code> &mdash; without it, failures are silently ignored</li>
+      <li>Use <code>t.TempDir()</code> over manual temp files &mdash; it auto-cleans even on test failure</li>
+      <li>Use <code>t.Cleanup()</code> over <code>defer</code> for test-scoped resources &mdash; it is more explicit and composable</li>
+      <li>Store test data in a <code>testdata/</code> directory &mdash; <code>go tool</code> ignores it during builds</li>
+      <li>Cleanup functions run in LIFO order, just like <code>defer</code></li>
+    </ul>
+
+    <div class="connection">
+      <strong>Connection:</strong> <code>TestMain</code> often starts mock servers using <em>net/http</em>'s <code>httptest</code>. <code>t.TempDir</code> works with <em>os &amp; filepath</em> for file-based tests. <code>t.Cleanup</code> mirrors the LIFO semantics of <em>Defer, Panic, Recover</em>. Golden file testing uses <em>encoding/json</em> or <em>io Package</em> for structured output comparison.
+    </div>
+
+    <div class="exercise">
+      <div class="exercise-label">Exercise 1</div>
+      <p>Write a <code>TestMain</code> that sets up a mock HTTP server and tears it down. Use <code>httptest.NewServer</code> and have two test functions that make requests to it.</p>
+    </div>
+    <div class="exercise">
+      <div class="exercise-label">Exercise 2</div>
+      <p>Write a test that creates files in <code>t.TempDir()</code> and verifies a file-processing function (e.g., one that counts lines across multiple files). Ensure no temp files remain after the test.</p>
+    </div>
+    <div class="exercise">
+      <div class="exercise-label">Exercise 3</div>
+      <p>Implement golden file testing for a template renderer. The renderer should take a name and a map of key-value pairs and produce formatted output. Support the <code>-update</code> flag to regenerate golden files.</p>
+    </div>
+  </div>
+
+</div><!-- end section -->
+
+<!-- ============================================================ -->
+<!-- FOOTER -->
+<!-- ============================================================ -->
+<footer class="footer">
+  <h4>All Guides</h4>
+  <ul>
+    <li><a href="golang-guides/golang-guide-2026-07-09.html">2026-07-09</a> (Day 34)</li>
+    <li><a href="golang-guides/golang-guide-2026-07-08.html">2026-07-08</a> (Day 33)</li>
+    <li><a href="golang-guides/golang-guide-2026-07-07.html">2026-07-07</a> (Day 32)</li>
+    <li><a href="golang-guides/golang-guide-2026-07-06.html">2026-07-06</a> (Day 31)</li>
+    <li><a href="golang-guides/golang-guide-2026-07-05.html">2026-07-05</a> (Day 30)</li>
+    <li><a href="golang-guides/golang-guide-2026-07-04.html">2026-07-04</a> (Day 29)</li>
+    <li><a href="golang-guides/golang-guide-2026-07-03.html">2026-07-03</a> (Day 28)</li>
+    <li><a href="golang-guides/golang-guide-2026-07-02.html">2026-07-02</a> (Day 27)</li>
+    <li><a href="golang-guides/golang-guide-2026-07-01.html">2026-07-01</a> (Day 26)</li>
+    <li><a href="golang-guides/golang-guide-2026-06-30.html">2026-06-30</a> (Day 25)</li>
+    <li><a href="golang-guides/golang-guide-2026-06-29.html">2026-06-29</a> (Day 24)</li>
+    <li><a href="golang-guides/golang-guide-2026-06-28.html">2026-06-28</a> (Day 23)</li>
+    <li><a href="golang-guides/golang-guide-2026-06-27.html">2026-06-27</a> (Day 22)</li>
+    <li><a href="golang-guides/golang-guide-2026-06-26.html">2026-06-26</a> (Day 21)</li>
+    <li><a href="golang-guides/golang-guide-2026-06-25.html">2026-06-25</a> (Day 20)</li>
+    <li><a href="golang-guides/golang-guide-2026-06-24.html">2026-06-24</a> (Day 19)</li>
+    <li><a href="golang-guides/golang-guide-2026-06-23.html">2026-06-23</a> (Day 18)</li>
+    <li><a href="golang-guides/golang-guide-2026-06-22.html">2026-06-22</a> (Day 17)</li>
+    <li><a href="golang-guides/golang-guide-2026-06-19.html">2026-06-19</a> (Day 15)</li>
+    <li><a href="golang-guides/golang-guide-2026-06-18.html">2026-06-18</a> (Day 14)</li>
+    <li><a href="golang-guides/golang-guide-2026-06-17.html">2026-06-17</a> (Day 13)</li>
+    <li><a href="golang-guides/golang-guide-2026-06-15.html">2026-06-15</a> (Day 12)</li>
+    <li><a href="golang-guides/golang-guide-2026-06-13.html">2026-06-13</a> (Day 11)</li>
+    <li><a href="golang-guides/golang-guide-2026-06-12.html">2026-06-12</a> (Day 10)</li>
+    <li><a href="golang-guides/golang-guide-2026-06-11.html">2026-06-11</a> (Day 9)</li>
+    <li><a href="golang-guides/golang-guide-2026-06-10.html">2026-06-10</a> (Day 8)</li>
+    <li><a href="golang-guides/golang-guide-2026-06-09.html">2026-06-09</a> (Day 7)</li>
+    <li><a href="golang-guides/golang-guide-2026-06-08.html">2026-06-08</a> (Day 6)</li>
+    <li><a href="golang-guides/golang-guide-2026-06-07.html">2026-06-07</a> (Day 5)</li>
+    <li><a href="golang-guides/golang-guide-2026-06-05.html">2026-06-05</a> (Day 4)</li>
+    <li><a href="golang-guides/golang-guide-2026-06-04.html">2026-06-04</a> (Day 3)</li>
+    <li><a href="golang-guides/golang-guide-2026-06-03.html">2026-06-03</a> (Day 2)</li>
+    <li><a href="golang-guides/golang-guide-2026-06-02.html">2026-06-02</a> (Day 1)</li>
+  </ul>
+</footer>
+
+</div><!-- end main -->
+
+<script>
+// ===== Theme Toggle =====
+(function() {
+  const KEY = 'lc-goguide-theme';
+  const toggle = document.getElementById('theme-toggle');
+  const html = document.documentElement;
+
+  function setTheme(theme) {
+    html.setAttribute('data-theme', theme);
+    localStorage.setItem(KEY, theme);
+    toggle.textContent = theme === 'dark' ? '☽' : '☀';
+  }
+
+  const saved = localStorage.getItem(KEY) || 'dark';
+  setTheme(saved);
+
+  toggle.addEventListener('click', function() {
+    setTheme(html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
+  });
+})();
+
+// ===== Mobile Sidebar Toggle =====
+(function() {
+  const btn = document.getElementById('sidebar-toggle');
+  const sidebar = document.getElementById('sidebar');
+
+  btn.addEventListener('click', function() {
+    sidebar.classList.toggle('open');
+  });
+
+  // Close sidebar when clicking a link (mobile)
+  sidebar.querySelectorAll('.sidebar-link').forEach(function(link) {
+    link.addEventListener('click', function() {
+      if (window.innerWidth <= 900) {
+        sidebar.classList.remove('open');
+      }
+    });
+  });
+})();
+
+// ===== Active Sidebar Link on Scroll =====
+(function() {
+  const links = document.querySelectorAll('.sidebar-link');
+  const sections = [];
+
+  links.forEach(function(link) {
+    var id = link.getAttribute('href').replace('#', '');
+    var el = document.getElementById(id);
+    if (el) sections.push({ id: id, el: el, link: link });
+  });
+
+  function onScroll() {
+    var scrollTop = window.scrollY + 120;
+    var current = null;
+
+    for (var i = sections.length - 1; i >= 0; i--) {
+      if (sections[i].el.offsetTop <= scrollTop) {
+        current = sections[i];
+        break;
+      }
+    }
+
+    links.forEach(function(l) { l.classList.remove('active'); });
+    if  current.link.classList.add('active');
+  }
+
+  window.addEventListener('scroll', onScroll);
+  onScroll();
+})();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,1923 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Go Study Guide &mdash; Day 15 (2026-06-19)</title>
+<style>
+/* ===== CSS Variables ===== */
+:root {
+  --bg: #0d1117;
+  --surface1: #161b22;
+  --surface2: #1c2333;
+  --border: #30363d;
+  --text: #e6edf3;
+  --muted: #8b949e;
+  --accent: #58a6ff;
+  --accent-dim: #1f6feb33;
+  --green: #3fb950;
+  --green-dim: #23863633;
+  --yellow: #d29922;
+  --yellow-dim: #d2992233;
+  --red: #f85149;
+  --red-dim: #f8514933;
+  --purple: #bc8cff;
+  --purple-dim: #bc8cff22;
+  --orange: #f0883e;
+  --orange-dim: #f0883e22;
+  --code-bg: #0d1117;
+  --sidebar-w: 300px;
+  --font-mono: 'SF Mono', 'Cascadia Code', 'Fira Code', Consolas, monospace;
+  --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+  --radius: 8px;
+  --shadow: 0 1px 3px rgba(0,0,0,0.4);
+}
+
+[data-theme="light"] {
+  --bg: #ffffff;
+  --surface1: #f6f8fa;
+  --surface2: #f0f3f6;
+  --border: #d0d7de;
+  --text: #1f2328;
+  --muted: #656d76;
+  --accent: #0969da;
+  --accent-dim: #0969da1a;
+  --green: #1a7f37;
+  --green-dim: #1a7f3718;
+  --yellow: #9a6700;
+  --yellow-dim: #9a670018;
+  --red: #cf222e;
+  --red-dim: #cf222e18;
+  --purple: #8250df;
+  --purple-dim: #8250df18;
+  --orange: #bc4c00;
+  --orange-dim: #bc4c0018;
+  --code-bg: #f6f8fa;
+  --shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+/* ===== Reset & Base ===== */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: var(--font-sans);
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.7;
+  font-size: 16px;
+  transition: background 0.2s, color 0.2s;
+}
+
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+/* ===== Theme Toggle ===== */
+#theme-toggle {
+  position: fixed;
+  top: 16px;
+  right: 20px;
+  z-index: 1000;
+  background: var(--surface1);
+  border: 1px solid var(--border);
+  color: var(--text);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+  box-shadow: var(--shadow);
+}
+#theme-toggle:hover { background: var(--surface2); border-color: var(--accent); }
+
+/* ===== Sidebar ===== */
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: var(--sidebar-w);
+  height: 100vh;
+  background: var(--surface1);
+  border-right: 1px solid var(--border);
+  overflow-y: auto;
+  padding: 20px 0;
+  z-index: 100;
+  transition: transform 0.3s;
+}
+
+.sidebar-header {
+  padding: 0 20px 16px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 12px;
+}
+
+.sidebar-header h2 {
+  font-size: 16px;
+  color: var(--text);
+  font-weight: 700;
+}
+
+.sidebar-header .subtitle {
+  font-size: 12px;
+  color: var(--muted);
+  margin-top: 2px;
+}
+
+.sidebar-section {
+  margin-bottom: 8px;
+}
+
+.sidebar-section-title {
+  padding: 6px 20px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+}
+
+.sidebar-link {
+  display: block;
+  padding: 5px 20px 5px 28px;
+  font-size: 13px;
+  color: var(--muted);
+  text-decoration: none;
+  border-left: 2px solid transparent;
+  transition: all 0.15s;
+  line-height: 1.4;
+}
+
+.sidebar-link:hover {
+  color: var(--text);
+  background: var(--accent-dim);
+  border-left-color: var(--accent);
+  text-decoration: none;
+}
+
+.sidebar-link.active {
+  color: var(--accent);
+  border-left-color: var(--accent);
+  background: var(--accent-dim);
+}
+
+/* ===== Mobile sidebar toggle ===== */
+#sidebar-toggle {
+  display: none;
+  position: fixed;
+  top: 16px;
+  left: 16px;
+  z-index: 200;
+  background: var(--surface1);
+  border: 1px solid var(--border);
+  color: var(--text);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 20px;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--shadow);
+}
+
+/* ===== Main Content ===== */
+.main {
+  margin-left: var(--sidebar-w);
+  padding: 40px 48px 80px;
+  max-width: calc(860px + var(--sidebar-w) + 96px);
+}
+
+.page-title {
+  font-size: 32px;
+  font-weight: 800;
+  margin-bottom: 4px;
+  color: var(--text);
+}
+
+.page-subtitle {
+  font-size: 15px;
+  color: var(--muted);
+  margin-bottom: 36px;
+}
+
+/* ===== Sections ===== */
+.section {
+  margin-bottom: 48px;
+}
+
+.section-label {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  padding: 3px 10px;
+  border-radius: 4px;
+  margin-bottom: 12px;
+}
+
+.section-label.review { background: var(--yellow-dim); color: var(--yellow); }
+.section-label.new { background: var(--green-dim); color: var(--green); }
+
+.section-title {
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 24px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--border);
+}
+
+/* ===== How To Use ===== */
+.how-to-use {
+  background: var(--surface1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px 24px;
+  margin-bottom: 36px;
+}
+
+.how-to-use h3 {
+  font-size: 16px;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.how-to-use ul {
+  padding-left: 22px;
+  margin: 0;
+}
+
+.how-to-use li {
+  font-size: 14px;
+  color: var(--muted);
+  margin-bottom: 4px;
+}
+
+/* ===== Concept Cards ===== */
+.concept {
+  background: var(--surface1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 28px;
+  margin-bottom: 28px;
+  box-shadow: var(--shadow);
+}
+
+.concept-header {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  margin-bottom: 6px;
+  flex-wrap: wrap;
+}
+
+.concept h3 {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.concept-meta {
+  font-size: 12px;
+  color: var(--muted);
+  background: var(--surface2);
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
+.concept h4 {
+  font-size: 15px;
+  font-weight: 600;
+  margin: 20px 0 8px;
+  color: var(--text);
+}
+
+.concept p, .concept li {
+  color: var(--text);
+  line-height: 1.7;
+}
+
+.concept ul, .concept ol {
+  padding-left: 22px;
+  margin: 8px 0;
+}
+
+.concept li {
+  margin-bottom: 4px;
+}
+
+/* ===== Code Blocks ===== */
+pre {
+  background: var(--code-bg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 16px 18px;
+  overflow-x: auto;
+  margin: 10px 0 14px;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--text);
+  position: relative;
+}
+
+pre::after {
+  content: 'Go';
+  position: absolute;
+  top: 6px;
+  right: 10px;
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  opacity: 0.6;
+}
+
+code {
+  font-family: var(--font-mono);
+  font-size: 0.9em;
+}
+
+:not(pre) > code {
+  background: var(--surface2);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.88em;
+}
+
+/* ===== Output Blocks ===== */
+.output {
+  background: var(--green-dim);
+  border: 1px solid var(--green);
+  border-radius: 6px;
+  padding: 12px 16px;
+  margin: 6px 0 14px;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--text);
+  white-space: pre-wrap;
+}
+
+.output::after { content: none; }
+
+.output-label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--green);
+  margin-bottom: 4px;
+}
+
+/* ===== Good/Bad Examples ===== */
+.do-dont {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin: 10px 0;
+}
+
+.do-box, .dont-box {
+  border-radius: 6px;
+  padding: 14px;
+  border: 1px solid;
+}
+
+.do-box {
+  background: var(--green-dim);
+  border-color: var(--green);
+}
+
+.dont-box {
+  background: var(--red-dim);
+  border-color: var(--red);
+}
+
+.do-box .label, .dont-box .label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 6px;
+}
+
+.do-box .label { color: var(--green); }
+.dont-box .label { color: var(--red); }
+
+.do-box pre, .dont-box pre {
+  margin: 0;
+  border: none;
+  background: transparent;
+  padding: 0;
+  font-size: 12.5px;
+}
+
+.do-box pre::after, .dont-box pre::after { content: none; }
+
+/* ===== Key Rules ===== */
+.rules-list {
+  list-style: none;
+  padding: 0;
+  margin: 8px 0;
+}
+
+.rules-list li {
+  padding: 6px 0 6px 24px;
+  position: relative;
+}
+
+.rules-list li::before {
+  content: "\2192";
+  position: absolute;
+  left: 2px;
+  color: var(--accent);
+  font-weight: 700;
+}
+
+/* ===== Exercises ===== */
+.exercise {
+  background: var(--purple-dim);
+  border: 1px solid var(--purple);
+  border-radius: 6px;
+  padding: 14px 18px;
+  margin: 8px 0;
+}
+
+.exercise .exercise-label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--purple);
+  margin-bottom: 4px;
+}
+
+/* ===== Pitfall ===== */
+.pitfall {
+  background: var(--red-dim);
+  border-left: 3px solid var(--red);
+  border-radius: 0 6px 6px 0;
+  padding: 10px 14px;
+  margin: 10px 0;
+  font-size: 14px;
+}
+
+.pitfall strong {
+  color: var(--red);
+}
+
+/* ===== Connection ===== */
+.connection {
+  background: var(--accent-dim);
+  border-left: 3px solid var(--accent);
+  border-radius: 0 6px 6px 0;
+  padding: 10px 14px;
+  margin: 10px 0;
+  font-size: 14px;
+  color: var(--muted);
+}
+
+/* ===== Review Cards ===== */
+.review-card {
+  background: var(--surface1);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--purple);
+  border-radius: var(--radius);
+  padding: 20px 24px;
+  margin-bottom: 16px;
+  box-shadow: var(--shadow);
+}
+
+.review-card .review-header {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  margin-bottom: 6px;
+  flex-wrap: wrap;
+}
+
+.review-card h3 {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.review-card .review-meta {
+  font-size: 12px;
+  color: var(--muted);
+  background: var(--surface2);
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
+.review-card h4 {
+  font-size: 14px;
+  font-weight: 600;
+  margin: 14px 0 6px;
+  color: var(--text);
+}
+
+.review-card p, .review-card li {
+  color: var(--text);
+  line-height: 1.6;
+  font-size: 14px;
+}
+
+.review-card pre {
+  font-size: 12.5px;
+  padding: 12px 14px;
+  margin: 6px 0 10px;
+}
+
+.review-card .pitfall {
+  font-size: 13px;
+  padding: 8px 12px;
+}
+
+/* ===== Topic Badge ===== */
+.topic-badge {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 2px 8px;
+  border-radius: 4px;
+  background: var(--accent-dim);
+  color: var(--accent);
+  margin-left: 4px;
+}
+
+/* ===== Footer ===== */
+.footer {
+  margin-top: 60px;
+  padding: 24px 0;
+  border-top: 1px solid var(--border);
+}
+
+.footer h4 {
+  font-size: 14px;
+  color: var(--muted);
+  margin-bottom: 10px;
+}
+
+.footer ul {
+  list-style: none;
+  padding: 0;
+}
+
+.footer li {
+  margin-bottom: 4px;
+  font-size: 14px;
+}
+
+.footer li a { color: var(--accent); }
+.footer .current { color: var(--green); font-weight: 600; }
+
+/* ===== Bash code blocks ===== */
+pre.bash::after {
+  content: 'Bash';
+}
+
+/* ===== JSON code blocks ===== */
+pre.json-code::after {
+  content: 'JSON';
+}
+
+/* ===== Responsive ===== */
+@media (max-width: 900px) {
+  .sidebar {
+    transform: translateX(-100%);
+  }
+  .sidebar.open {
+    transform: translateX(0);
+    box-shadow: 4px 0 20px rgba(0,0,0,0.5);
+  }
+  #sidebar-toggle {
+    display: flex;
+  }
+  .main {
+    margin-left: 0;
+    padding: 60px 20px 60px;
+    max-width: 100%;
+  }
+  .do-dont {
+    grid-template-columns: 1fr;
+  }
+  #theme-toggle {
+    right: 14px;
+    top: 16px;
+  }
+}
+</style>
+</head>
+<body>
+
+<!-- Theme Toggle -->
+<button id="theme-toggle" aria-label="Toggle theme" title="Toggle light/dark theme">&#9789;</button>
+
+<!-- Mobile Sidebar Toggle -->
+<button id="sidebar-toggle" aria-label="Toggle sidebar">&#9776;</button>
+
+<!-- Sidebar -->
+<nav class="sidebar" id="sidebar">
+  <div class="sidebar-header">
+    <h2>Go Guide</h2>
+    <div class="subtitle">Day 15 &mdash; 2026-06-19</div>
+  </div>
+
+  <div class="sidebar-section">
+    <div class="sidebar-section-title">Review (6 concepts)</div>
+    <a href="#review-repository" class="sidebar-link">Repository Pattern</a>
+    <a href="#review-unsafe" class="sidebar-link">unsafe Package</a>
+    <a href="#review-time" class="sidebar-link">time Package</a>
+    <a href="#review-testing" class="sidebar-link">testing Package</a>
+    <a href="#review-benchmarks" class="sidebar-link">Benchmarks</a>
+    <a href="#review-bufio" class="sidebar-link">bufio: Buffered I/O</a>
+  </div>
+
+  <div class="sidebar-section">
+    <div class="sidebar-section-title">Modern Go Stdlib (2)</div>
+    <a href="#maps-slices" class="sidebar-link">maps &amp; slices Packages</a>
+    <a href="#slog-advanced" class="sidebar-link">Advanced slog</a>
+  </div>
+
+  <div class="sidebar-section">
+    <div class="sidebar-section-title">Production Testing &amp; Arch (3)</div>
+    <a href="#integration-testing" class="sidebar-link">Integration Testing</a>
+    <a href="#wire-di" class="sidebar-link">DI with Wire</a>
+    <a href="#chi-router" class="sidebar-link">chi Router &amp; Middleware</a>
+  </div>
+</nav>
+
+<!-- Main Content -->
+<div class="main">
+
+<h1 class="page-title">Go Daily Guide</h1>
+<p class="page-subtitle">Day 15 &mdash; Friday, June 19, 2026 &bull; 11 concepts (6 review + 5 new)</p>
+
+<!-- How to Use -->
+<div class="how-to-use">
+  <h3>How to Use This Guide</h3>
+  <ul>
+    <li>Start with the <strong>Review</strong> section &mdash; try to recall each concept before reading the refresher</li>
+    <li>Complete the challenge exercise for each review card without looking back at previous days</li>
+    <li>Then work through the <strong>New Concepts</strong> section, typing out every code example yourself</li>
+    <li>Pay special attention to the common mistakes sections (they highlight real Go gotchas)</li>
+    <li>Complete the exercises at the bottom of each concept without looking at solutions</li>
+    <li>Use <code>go run main.go</code> to test your code locally, or use the <a href="https://go.dev/play/" target="_blank">Go Playground</a></li>
+  </ul>
+</div>
+
+<!-- ============================================================ -->
+<!-- REVIEW SECTION -->
+<!-- ============================================================ -->
+<div class="section">
+  <span class="section-label review">Review</span>
+  <h2 class="section-title">Spaced Repetition Review &mdash; 6 Concepts</h2>
+
+  <!-- Review 1: Repository Pattern -->
+  <div class="review-card" id="review-repository">
+    <div class="review-header">
+      <h3>Repository Pattern</h3>
+      <span class="review-meta">Advanced Patterns &bull; 9 days since review</span>
+    </div>
+
+    <h4>Quick Reminder</h4>
+    <p>Define a data-access interface (e.g. <code>UserRepository</code>), implement it with concrete storage, and inject it via the constructor. The business logic depends only on the interface, so tests can swap in a mock implementation without touching a real database.</p>
+
+    <h4>Key Pattern</h4>
+<pre>type UserRepository interface {
+    FindByID(ctx context.Context, id string) (*User, error)
+    Save(ctx context.Context, u *User) error
+}
+
+type pgUserRepo struct { db *sql.DB }
+
+func (r *pgUserRepo) FindByID(ctx context.Context, id string) (*User, error) {
+    var u User
+    row := r.db.QueryRowContext(ctx, "SELECT id, name FROM users WHERE id=$1", id)
+    if err := row.Scan(&amp;u.ID, &amp;u.Name); err != nil {
+        return nil, err
+    }
+    return &amp;u, nil
+}</pre>
+
+    <div class="exercise">
+      <div class="exercise-label">Challenge Exercise</div>
+      <p>Implement a <code>CachingRepository</code> that wraps any <code>UserRepository</code>, checks an in-memory cache first on <code>FindByID</code>, and falls back to the wrapped repo on a miss (populating the cache). <code>Save</code> should write through and invalidate the cache entry.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>Pitfall:</strong> Leaking implementation details through the interface &mdash; keep it minimal (CRUD methods only) and never expose <code>*sql.DB</code>, transaction handles, or SQL strings. If a caller needs the DB, the abstraction has failed.
+    </div>
+  </div>
+
+  <!-- Review 2: unsafe Package -->
+  <div class="review-card" id="review-unsafe">
+    <div class="review-header">
+      <h3>unsafe Package</h3>
+      <span class="review-meta">Advanced Patterns &bull; 9 days since review</span>
+    </div>
+
+    <h4>Quick Reminder</h4>
+    <p><code>unsafe.Pointer</code> bypasses type safety for raw memory access. <code>unsafe.Sizeof</code>, <code>unsafe.Offsetof</code>, and <code>unsafe.Alignof</code> introspect struct layout (including padding). Almost never needed in application code &mdash; reach for it only at FFI boundaries or for very specific zero-copy tricks.</p>
+
+    <h4>Key Pattern</h4>
+<pre>import "unsafe"
+
+type S struct {
+    a int32
+    b int64
+}
+
+fmt.Println(unsafe.Sizeof(S{}))     // 16 (4 bytes a + 4 padding + 8 b)
+fmt.Println(unsafe.Offsetof(S{}.b)) // 8
+fmt.Println(unsafe.Alignof(S{}))    // 8</pre>
+
+    <div class="exercise">
+      <div class="exercise-label">Challenge Exercise</div>
+      <p>Use <code>unsafe.Pointer</code> (or <code>unsafe.String</code> / <code>unsafe.Slice</code> from Go 1.20+) to convert a <code>[]byte</code> to a <code>string</code> without allocating a copy. Then explain in a comment why mutating the original slice afterwards is undefined behavior.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>Pitfall:</strong> Breaking garbage-collector invariants &mdash; never store a <code>uintptr</code> in a variable and later convert it back to <code>unsafe.Pointer</code>. The GC can move or free the object between statements; conversions must happen in a single expression.
+    </div>
+  </div>
+
+  <!-- Review 3: time Package -->
+  <div class="review-card" id="review-time">
+    <div class="review-header">
+      <h3>time Package</h3>
+      <span class="review-meta">Standard Library Mastery &bull; 8 days since review</span>
+    </div>
+
+    <h4>Quick Reminder</h4>
+    <p><code>time.Now()</code>, <code>time.Since()</code>, and the <code>time.Duration</code> type cover most timing needs. Parse and format using the <em>reference time</em> <code>Mon Jan 2 15:04:05 MST 2006</code>. Use <code>time.NewTicker</code> for periodic work and <code>time.After</code> for timeouts.</p>
+
+    <h4>Key Pattern</h4>
+<pre>t, _ := time.Parse("2006-01-02", "2026-06-19")
+fmt.Println(t.Format("January 2, 2006")) // June 19, 2026
+
+ticker := time.NewTicker(5 * time.Second)
+defer ticker.Stop()
+for range ticker.C {
+    doPeriodicWork()
+}</pre>
+
+    <div class="exercise">
+      <div class="exercise-label">Challenge Exercise</div>
+      <p>Build a rate limiter using <code>time.Ticker</code> that allows N operations per second. Block callers until a tick is available, and expose a <code>Stop()</code> that releases the ticker. Bonus: support bursts by buffering up to N ready tokens.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>Pitfall:</strong> Not calling <code>ticker.Stop()</code> &mdash; a leaked ticker keeps an internal goroutine/timer alive and never gets garbage collected, slowly accumulating in long-running services.
+    </div>
+  </div>
+
+  <!-- Review 4: testing Package -->
+  <div class="review-card" id="review-testing">
+    <div class="review-header">
+      <h3>testing Package</h3>
+      <span class="review-meta">Testing &amp; Tooling &bull; 8 days since review</span>
+    </div>
+
+    <h4>Quick Reminder</h4>
+    <p>Table-driven tests use <code>[]struct{name string; ...}</code> plus <code>t.Run(tt.name, ...)</code> for named subtests. <code>t.Parallel()</code> runs subtests concurrently. <code>t.Helper()</code> marks helper functions so failures point at the caller, not the helper.</p>
+
+    <h4>Key Pattern</h4>
+<pre>tests := []struct {
+    name  string
+    input int
+    want  int
+}{
+    {"positive", 5, 25},
+    {"zero", 0, 0},
+}
+for _, tt := range tests {
+    t.Run(tt.name, func(t *testing.T) {
+        if got := Square(tt.input); got != tt.want {
+            t.Errorf("Square(%d) = %d, want %d", tt.input, got, tt.want)
+        }
+    })
+}</pre>
+
+    <div class="exercise">
+      <div class="exercise-label">Challenge Exercise</div>
+      <p>Write a table-driven test with <code>t.Parallel()</code> for a concurrency-safe function, ensuring each subtest is independent. Add a shared <code>assertEqual</code> helper using <code>t.Helper()</code> and verify the failure message points at the subtest line.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>Pitfall:</strong> Go &lt; 1.22 loop-variable capture in parallel tests &mdash; calling <code>t.Parallel()</code> defers the subtest body, so all closures see the final <code>tt</code>. Add <code>tt := tt</code> before <code>t.Parallel()</code> (unnecessary on Go 1.22+).
+    </div>
+  </div>
+
+  <!-- Review 5: Benchmarks -->
+  <div class="review-card" id="review-benchmarks">
+    <div class="review-header">
+      <h3>Benchmarks</h3>
+      <span class="review-meta">Testing &amp; Tooling &bull; 8 days since review</span>
+    </div>
+
+    <h4>Quick Reminder</h4>
+    <p><code>func BenchmarkXxx(b *testing.B)</code> runs the body <code>b.N</code> times, with <code>b.N</code> chosen automatically. <code>b.ResetTimer()</code> excludes setup from the measurement; <code>b.ReportAllocs()</code> adds per-op allocation columns.</p>
+
+    <h4>Key Pattern</h4>
+<pre>func BenchmarkConcat(b *testing.B) {
+    b.ReportAllocs()
+    for i := 0; i &lt; b.N; i++ {
+        _ = strings.Join(data, ",")
+    }
+}</pre>
+
+    <div class="exercise">
+      <div class="exercise-label">Challenge Exercise</div>
+      <p>Write sub-benchmarks (via <code>b.Run</code>) comparing <code>fmt.Sprintf</code>, <code>strings.Builder</code>, and the <code>+</code> operator for building a string from 100 parts. Report allocations and rank the three by <code>ns/op</code> and <code>allocs/op</code>.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>Pitfall:</strong> Including setup time in the measurement &mdash; always call <code>b.ResetTimer()</code> after any expensive setup, or the one-time cost is averaged into every reported <code>ns/op</code>.
+    </div>
+  </div>
+
+  <!-- Review 6: bufio -->
+  <div class="review-card" id="review-bufio">
+    <div class="review-header">
+      <h3>bufio: Buffered I/O</h3>
+      <span class="review-meta">I/O &amp; Networking &bull; 8 days since review</span>
+    </div>
+
+    <h4>Quick Reminder</h4>
+    <p><code>bufio.NewScanner(r)</code> reads line-by-line. <code>bufio.NewReader(r)</code> wraps any <code>io.Reader</code> with buffering. A custom <code>SplitFunc</code> handles non-line delimiters. <code>bufio.NewWriter(w)</code> buffers writes &mdash; remember to <code>Flush</code>.</p>
+
+    <h4>Key Pattern</h4>
+<pre>scanner := bufio.NewScanner(file)
+for scanner.Scan() {
+    line := scanner.Text()
+    // process line
+}
+if err := scanner.Err(); err != nil {
+    log.Fatal(err)
+}</pre>
+
+    <div class="exercise">
+      <div class="exercise-label">Challenge Exercise</div>
+      <p>Implement a custom <code>bufio.SplitFunc</code> that splits input on <code>\0</code> (null bytes) instead of newlines, correctly handling the final token at EOF and requesting more data when no delimiter is found yet.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>Pitfall:</strong> The default scanner buffer is 64KB &mdash; for lines longer than that, <code>Scan()</code> stops and <code>scanner.Err()</code> returns <code>bufio.ErrTooLong</code>. Call <code>scanner.Buffer(buf, maxSize)</code> to raise the limit before scanning.
+    </div>
+  </div>
+
+</div><!-- end Review section -->
+
+
+<!-- ============================================================ -->
+<!-- NEW CONCEPTS: MODERN GO STANDARD LIBRARY -->
+<!-- ============================================================ -->
+<div class="section">
+  <span class="section-label new">New &mdash; Group 1</span>
+  <h2 class="section-title">Modern Go Standard Library &mdash; 2 Concepts</h2>
+
+  <!-- Concept 1: maps & slices -->
+  <div class="concept" id="maps-slices">
+    <div class="concept-header">
+      <h3>maps &amp; slices Packages (Go 1.21+)</h3>
+      <span class="concept-meta">Modern Go Standard Library</span>
+    </div>
+
+    <h4>Why It Matters</h4>
+    <p>Go 1.21 added the <code>slices</code> and <code>maps</code> packages: generic utility functions that eliminate years of hand-rolled boilerplate. Sorting, searching, comparing, cloning, and transforming slices and maps are now type-safe one-liners &mdash; no more <code>interface{}</code> and no more copy-pasted helper loops.</p>
+
+    <h4>What to Cover</h4>
+    <ul>
+      <li><code>slices.Sort</code>, <code>slices.SortFunc</code> &mdash; generic sort replacing <code>sort.Slice</code></li>
+      <li><code>slices.BinarySearch</code>, <code>slices.BinarySearchFunc</code> &mdash; typed binary search</li>
+      <li><code>slices.Contains</code>, <code>slices.Index</code> &mdash; membership and lookup</li>
+      <li><code>slices.Compact</code>, <code>slices.CompactFunc</code> &mdash; remove <em>consecutive</em> duplicates</li>
+      <li><code>maps.Keys</code>, <code>maps.Values</code>, <code>maps.Clone</code>, <code>maps.Equal</code></li>
+      <li><code>slices.Grow</code>, <code>slices.Clip</code> &mdash; capacity management</li>
+    </ul>
+
+    <h4>Example 1 &mdash; Basic: Sort a Slice of Structs by Field</h4>
+<pre>package main
+
+import (
+    "cmp"
+    "fmt"
+    "slices"
+)
+
+type User struct {
+    Name string
+    Age  int
+}
+
+func main() {
+    users := []User{
+        {"Charlie", 30},
+        {"Alice", 25},
+        {"Bob", 30},
+    }
+    // SortFunc takes a comparator returning -1, 0, or +1.
+    slices.SortFunc(users, func(a, b User) int {
+        return cmp.Compare(a.Name, b.Name)
+    })
+    for _, u := range users {
+        fmt.Printf("%s (%d)\n", u.Name, u.Age)
+    }
+}</pre>
+    <div class="output-label">Output</div>
+    <div class="output">Alice (25)
+Bob (30)
+Charlie (30)</div>
+    <p><code>cmp.Compare</code> (from the new <code>cmp</code> package) returns <code>-1/0/+1</code> for any ordered type, exactly the contract <code>SortFunc</code> expects &mdash; no more <code>i, j int</code> index juggling.</p>
+
+    <h4>Example 2 &mdash; Intermediate: Binary Search on a Sorted Slice</h4>
+<pre>package main
+
+import (
+    "fmt"
+    "slices"
+)
+
+func main() {
+    nums := []int{2, 4, 6, 8, 10}
+
+    idx, found := slices.BinarySearch(nums, 6)
+    fmt.Println(idx, found) // 2 true
+
+    // For a missing value, idx is the insertion point.
+    idx, found = slices.BinarySearch(nums, 7)
+    fmt.Println(idx, found) // 3 false
+
+    // Membership without caring about position:
+    fmt.Println(slices.Contains(nums, 8)) // true
+    fmt.Println(slices.Index(nums, 10))   // 4
+}</pre>
+    <div class="output-label">Output</div>
+    <div class="output">2 true
+3 false
+true
+4</div>
+    <p><code>BinarySearch</code> returns both the index <em>and</em> a <code>found</code> bool, so you never have to re-check <code>nums[idx] == target</code> the way the old <code>sort.Search</code> required.</p>
+
+    <h4>Example 3 &mdash; Advanced: Deterministic Map Iteration</h4>
+<pre>package main
+
+import (
+    "fmt"
+    "maps"
+    "slices"
+)
+
+func main() {
+    scores := map[string]int{
+        "charlie": 92,
+        "alice":   88,
+        "bob":     75,
+    }
+    // maps.Keys returns an iterator (Go 1.23); collect into a slice.
+    keys := slices.Collect(maps.Keys(scores))
+    slices.Sort(keys)
+
+    for _, k := range keys {
+        fmt.Printf("%s: %d\n", k, scores[k])
+    }
+}</pre>
+    <div class="output-label">Output</div>
+    <div class="output">alice: 88
+bob: 75
+charlie: 92</div>
+    <p>Map iteration order is deliberately randomized in Go. The idiom <code>slices.Sort(slices.Collect(maps.Keys(m)))</code> gives you stable, reproducible output &mdash; essential for golden-file tests and deterministic logs.</p>
+
+    <h4>Example 4 &mdash; Real-World: Deduplicate by Field with CompactFunc</h4>
+<pre>package main
+
+import (
+    "cmp"
+    "fmt"
+    "slices"
+)
+
+type Event struct {
+    UserID string
+    Action string
+}
+
+func main() {
+    events := []Event{
+        {"u1", "login"},
+        {"u1", "click"},
+        {"u2", "login"},
+        {"u2", "login"},
+    }
+    // Compact only removes CONSECUTIVE dups, so sort by the key first.
+    slices.SortFunc(events, func(a, b Event) int {
+        return cmp.Compare(a.UserID, b.UserID)
+    })
+    unique := slices.CompactFunc(events, func(a, b Event) bool {
+        return a.UserID == b.UserID
+    })
+    for _, e := range unique {
+        fmt.Printf("%s %s\n", e.UserID, e.Action)
+    }
+}</pre>
+    <div class="output-label">Output</div>
+    <div class="output">u1 login
+u2 login</div>
+    <p>One row per <code>UserID</code>. Because <code>CompactFunc</code> only collapses adjacent equal elements, sorting by the dedup key first is mandatory &mdash; otherwise duplicates that aren't neighbors survive.</p>
+
+    <h4>Common Mistakes</h4>
+    <div class="do-dont">
+      <div class="dont-box">
+        <div class="label">Don't</div>
+<pre>// Reaching for the old reflection-
+// based sort.Slice for generic data.
+sort.Slice(users, func(i, j int) bool {
+    return users[i].Name &lt; users[j].Name
+})
+
+// Expecting Compact to remove ALL dups:
+u := slices.Compact([]int{1, 2, 1})
+// u == [1 2 1] -- the trailing 1
+// was never adjacent to the first.</pre>
+      </div>
+      <div class="do-box">
+        <div class="label">Do</div>
+<pre>// Type-safe SortFunc + cmp.Compare.
+slices.SortFunc(users, func(a, b User) int {
+    return cmp.Compare(a.Name, b.Name)
+})
+
+// Sort first, THEN compact for a
+// full deduplication.
+nums := []int{1, 2, 1}
+slices.Sort(nums)
+nums = slices.Compact(nums) // [1 2]</pre>
+      </div>
+    </div>
+    <ul>
+      <li>Using <code>sort.Slice</code> (reflection-based) when <code>slices.SortFunc</code> is available &mdash; the generic version is faster and type-checked.</li>
+      <li>Assuming <code>slices.Compact</code> removes all duplicates &mdash; it only removes <em>consecutive</em> ones; sort first for global dedup.</li>
+      <li>Mutating a slice while a <code>maps.Keys</code>/<code>slices.Values</code> iterator is still being consumed &mdash; collect to a slice first if you need to modify.</li>
+    </ul>
+
+    <h4>Key Rules</h4>
+    <ul class="rules-list">
+      <li>Prefer <code>slices.SortFunc</code> + <code>cmp.Compare</code> over <code>sort.Slice</code> for new code.</li>
+      <li><code>BinarySearch</code> returns <code>(index, found)</code> &mdash; use the bool, don't re-check by hand.</li>
+      <li>Sort before <code>Compact</code> when you want a fully deduplicated slice.</li>
+      <li>Use <code>slices.Clone</code> / <code>maps.Clone</code> for shallow copies instead of manual loops.</li>
+    </ul>
+
+    <div class="exercise">
+      <div class="exercise-label">Exercise 1</div>
+      <p>Sort a <code>[]Person</code> by <code>Age</code> ascending, breaking ties by <code>Name</code> ascending, using a single <code>slices.SortFunc</code> call (hint: <code>cmp.Or</code>).</p>
+    </div>
+    <div class="exercise">
+      <div class="exercise-label">Exercise 2</div>
+      <p>Write a function <code>SortedKeys[K cmp.Ordered, V any](m map[K]V) []K</code> that returns the map's keys deduplicated (they already are) and sorted, using only the <code>maps</code> and <code>slices</code> packages.</p>
+    </div>
+    <div class="exercise">
+      <div class="exercise-label">Exercise 3</div>
+      <p>Implement a type-safe filter using <code>slices.DeleteFunc</code>: given <code>[]int</code>, remove every element that fails a predicate, in place, and return the trimmed slice.</p>
+    </div>
+
+    <div class="connection">
+      <strong>Connections:</strong> These packages build directly on <strong>generics</strong> (type parameters and the <code>cmp.Ordered</code> constraint) and supersede the older <strong>sort package</strong> reviewed earlier. <code>maps.Keys</code>/<code>slices.Values</code> return <strong>range-over-func iterators</strong> (Go 1.23), tying into modern iterator patterns.
+    </div>
+  </div>
+
+  <!-- Concept 2: Advanced slog -->
+  <div class="concept" id="slog-advanced">
+    <div class="concept-header">
+      <h3>Advanced slog: Custom Handlers &amp; Contextual Logging</h3>
+      <span class="concept-meta">Modern Go Standard Library</span>
+    </div>
+
+    <h4>Why It Matters</h4>
+    <p>Beyond basic <code>slog.Info()</code>, production systems need custom handlers for JSON or logfmt output, per-package log levels, request-scoped context (trace IDs, user IDs), and redaction of sensitive fields. Mastering the <code>slog.Handler</code> interface is what turns logging from noise into observability.</p>
+
+    <h4>What to Cover</h4>
+    <ul>
+      <li>The <code>slog.Handler</code> interface: <code>Handle</code>, <code>WithAttrs</code>, <code>WithGroup</code>, <code>Enabled</code></li>
+      <li>Writing a custom handler (e.g. add hostname/pid to every record)</li>
+      <li><code>slog.NewLogLogger</code> for bridging to the legacy <code>log.Logger</code></li>
+      <li>Context-aware logging: pulling trace/request IDs from a <code>context.Context</code></li>
+      <li><code>HandlerOptions.ReplaceAttr</code> for redacting sensitive fields and <code>Level</code> for filtering</li>
+    </ul>
+
+    <h4>Example 1 &mdash; Basic: A Custom Handler that Adds Hostname and PID</h4>
+<pre>package main
+
+import (
+    "context"
+    "log/slog"
+    "os"
+)
+
+// hostHandler wraps another handler and injects host/pid on every record.
+type hostHandler struct {
+    slog.Handler
+    host string
+    pid  int
+}
+
+func (h *hostHandler) Handle(ctx context.Context, r slog.Record) error {
+    r.AddAttrs(slog.String("host", h.host), slog.Int("pid", h.pid))
+    return h.Handler.Handle(ctx, r)
+}
+
+func main() {
+    host, _ := os.Hostname()
+    base := slog.NewJSONHandler(os.Stdout, nil)
+    logger := slog.New(&amp;hostHandler{Handler: base, host: host, pid: os.Getpid()})
+
+    logger.Info("server started", "port", 8080)
+}</pre>
+    <div class="output-label">Output (one JSON line)</div>
+    <div class="output">{"time":"2026-06-19T10:00:00Z","level":"INFO","msg":"server started","port":8080,"host":"web-1","pid":4242}</div>
+    <p>Embedding <code>slog.Handler</code> gives you <code>Enabled</code>, <code>WithAttrs</code>, and <code>WithGroup</code> for free &mdash; you only override <code>Handle</code> to inject the extra attributes before delegating.</p>
+
+    <h4>Example 2 &mdash; Intermediate: Context-Aware Request ID Logging</h4>
+<pre>type ctxKey struct{}
+
+func WithRequestID(ctx context.Context, id string) context.Context {
+    return context.WithValue(ctx, ctxKey{}, id)
+}
+
+// ctxHandler copies a request_id from the context onto the record.
+type ctxHandler struct{ slog.Handler }
+
+func (h ctxHandler) Handle(ctx context.Context, r slog.Record) error {
+    if id, ok := ctx.Value(ctxKey{}).(string); ok {
+        r.AddAttrs(slog.String("request_id", id))
+    }
+    return h.Handler.Handle(ctx, r)
+}
+
+func middleware(logger *slog.Logger, next http.Handler) http.Handler {
+    return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+        rid := r.Header.Get("X-Request-ID")
+        ctx := WithRequestID(r.Context(), rid)
+        // Use the context-aware variants: InfoContext, ErrorContext...
+        logger.InfoContext(ctx, "request received", "path", r.URL.Path)
+        next.ServeHTTP(w, r.WithContext(ctx))
+    })
+}</pre>
+    <p>Because the handler reads from <code>ctx</code>, every <code>*Context</code> log call inside the request automatically carries the <code>request_id</code> &mdash; no need to thread it through every function signature.</p>
+
+    <h4>Example 3 &mdash; Advanced: Redacting Sensitive Fields with ReplaceAttr</h4>
+<pre>package main
+
+import (
+    "log/slog"
+    "os"
+    "strings"
+)
+
+func redact(groups []string, a slog.Attr) slog.Attr {
+    key := strings.ToLower(a.Key)
+    for _, secret := range []string{"password", "token", "secret"} {
+        if strings.Contains(key, secret) {
+            return slog.String(a.Key, "[REDACTED]")
+        }
+    }
+    return a
+}
+
+func main() {
+    h := slog.NewJSONHandler(os.Stdout, &amp;slog.HandlerOptions{
+        ReplaceAttr: redact,
+    })
+    slog.New(h).Info("login attempt",
+        "user", "ada",
+        "password", "hunter2",
+        "api_token", "sk-abc123")
+}</pre>
+    <div class="output-label">Output</div>
+    <div class="output">{"time":"...","level":"INFO","msg":"login attempt","user":"ada","password":"[REDACTED]","api_token":"[REDACTED]"}</div>
+    <p><code>ReplaceAttr</code> runs for every attribute before it's written. Matching on key substrings catches <code>password</code>, <code>api_token</code>, and friends in one place &mdash; far safer than relying on every call site to remember.</p>
+
+    <h4>Example 4 &mdash; Real-World: Derived Loggers and Level Filtering</h4>
+<pre>package main
+
+import (
+    "log/slog"
+    "os"
+)
+
+func main() {
+    // Only WARN and above for this handler.
+    h := slog.NewTextHandler(os.Stdout, &amp;slog.HandlerOptions{
+        Level: slog.LevelWarn,
+    })
+    base := slog.New(h)
+
+    // Derive a logger with fixed attrs instead of re-creating per request.
+    reqLogger := base.With("request_id", "r-99", "user", "ada")
+
+    reqLogger.Info("this is dropped")           // below WARN -&gt; filtered out
+    reqLogger.Warn("disk almost full", "pct", 92)
+}</pre>
+    <div class="output-label">Output</div>
+    <div class="output">level=WARN msg="disk almost full" request_id=r-99 user=ada pct=92</div>
+    <p><code>logger.With(...)</code> returns a <em>derived</em> logger that carries the attrs cheaply &mdash; it calls <code>WithAttrs</code> on the handler once, not on every log line. The <code>Info</code> call is dropped because the handler's level is <code>Warn</code>.</p>
+
+    <h4>Common Mistakes</h4>
+    <div class="do-dont">
+      <div class="dont-box">
+        <div class="label">Don't</div>
+<pre>// New logger per request: allocates
+// and re-parses attrs every time.
+func handle(r *http.Request) {
+    log := slog.New(handler)
+    log = log.With("request_id", rid)
+    log.Info("...")
+}
+
+// Logging secrets in plain fields.
+log.Info("auth", "password", pw)</pre>
+      </div>
+      <div class="do-box">
+        <div class="label">Do</div>
+<pre>// Derive once with With().
+reqLog := baseLogger.With(
+    "request_id", rid,
+)
+reqLog.Info("...")
+
+// Redact centrally via ReplaceAttr
+// so no call site can leak secrets.
+opts := &amp;slog.HandlerOptions{
+    ReplaceAttr: redact,
+}</pre>
+      </div>
+    </div>
+    <ul>
+      <li>Creating a brand-new <code>slog.Logger</code> per request instead of deriving with <code>Logger.With(...)</code>.</li>
+      <li>Logging sensitive data (passwords, tokens) in structured fields &mdash; redact centrally with <code>ReplaceAttr</code>.</li>
+      <li>Forgetting <code>WithGroup</code> semantics &mdash; <code>ReplaceAttr</code>'s <code>groups</code> argument tells you the nesting path; ignoring it can mis-redact nested keys.</li>
+    </ul>
+
+    <h4>Key Rules</h4>
+    <ul class="rules-list">
+      <li>Embed <code>slog.Handler</code> in a custom handler so you only override <code>Handle</code>.</li>
+      <li>Use the <code>*Context</code> log methods so handlers can read request-scoped values.</li>
+      <li>Redact secrets once, centrally, via <code>ReplaceAttr</code> &mdash; never per call site.</li>
+      <li>Derive per-request loggers with <code>With()</code> rather than constructing new ones.</li>
+    </ul>
+
+    <div class="exercise">
+      <div class="exercise-label">Exercise 1</div>
+      <p>Write a custom <code>slog.Handler</code> that outputs logs in logfmt format (<code>key=value</code> pairs on one line), correctly quoting values that contain spaces.</p>
+    </div>
+    <div class="exercise">
+      <div class="exercise-label">Exercise 2</div>
+      <p>Create HTTP middleware that extracts an <code>X-Request-ID</code> header (generating one if absent), stores it in the context, and ensures every log line within that request includes it.</p>
+    </div>
+    <div class="exercise">
+      <div class="exercise-label">Exercise 3</div>
+      <p>Implement a <code>ReplaceAttr</code> function that masks any attribute whose key contains "secret" or "password" (case-insensitive), and write a test asserting the masked output.</p>
+    </div>
+
+    <div class="connection">
+      <strong>Connections:</strong> Advanced slog combines <strong>interfaces</strong> (the <code>Handler</code> contract), <strong>struct embedding</strong> (wrapping a base handler), <strong>context</strong> (request-scoped IDs), and <strong>net/http middleware</strong>. It extends the structured-logging basics and pairs with <strong>OpenTelemetry tracing</strong> for full request observability.
+    </div>
+  </div>
+
+</div><!-- end Modern Go Standard Library section -->
+
+
+<!-- ============================================================ -->
+<!-- NEW CONCEPTS: PRODUCTION TESTING & ARCHITECTURE -->
+<!-- ============================================================ -->
+<div class="section">
+  <span class="section-label new">New &mdash; Group 2</span>
+  <h2 class="section-title">Production Testing &amp; Architecture &mdash; 3 Concepts</h2>
+
+  <!-- Concept 3: Integration Testing -->
+  <div class="concept" id="integration-testing">
+    <div class="concept-header">
+      <h3>Integration Testing Patterns</h3>
+      <span class="concept-meta">Production Testing &amp; Architecture</span>
+    </div>
+
+    <h4>Why It Matters</h4>
+    <p>Unit tests with mocks can't catch real database bugs, SQL typos, migration mistakes, or API contract mismatches. Integration tests verify that components actually work together against a real (or realistic) dependency &mdash; the confidence you need before shipping a data-access layer.</p>
+
+    <h4>What to Cover</h4>
+    <ul>
+      <li><code>TestMain</code> for shared setup/teardown (start DB, seed data, cleanup)</li>
+      <li>Test database setup: in-memory SQLite or a dockerized PostgreSQL</li>
+      <li><code>t.Cleanup</code> for per-test resource management</li>
+      <li>Build tags <code>//go:build integration</code> to separate slow tests from the unit fast path</li>
+      <li><code>testcontainers-go</code> for Docker-based test dependencies</li>
+    </ul>
+
+    <h4>Example 1 &mdash; Basic: TestMain Starting an In-Memory SQLite</h4>
+<pre>// file: repo_test.go
+package storage
+
+import (
+    "database/sql"
+    "os"
+    "testing"
+
+    _ "modernc.org/sqlite" // pure-Go driver, no cgo
+)
+
+var testDB *sql.DB
+
+func TestMain(m *testing.M) {
+    db, err := sql.Open("sqlite", ":memory:")
+    if err != nil {
+        panic(err)
+    }
+    if _, err := db.Exec(`CREATE TABLE users (id TEXT PRIMARY KEY, name TEXT)`); err != nil {
+        panic(err)
+    }
+    testDB = db
+
+    code := m.Run() // run all tests in this package
+
+    db.Close()
+    os.Exit(code)
+}</pre>
+    <p><code>TestMain</code> runs once for the whole package. Set up shared state, call <code>m.Run()</code>, then tear down and pass its exit code to <code>os.Exit</code> &mdash; deferred functions don't run after <code>os.Exit</code>, so close explicitly.</p>
+
+    <h4>Example 2 &mdash; Intermediate: A Save &rarr; FindByID Round-Trip</h4>
+<pre>func TestUserRepo_RoundTrip(t *testing.T) {
+    repo := &amp;sqlUserRepo{db: testDB}
+
+    want := &amp;User{ID: "u1", Name: "Ada"}
+    if err := repo.Save(t.Context(), want); err != nil {
+        t.Fatalf("Save: %v", err)
+    }
+
+    got, err := repo.FindByID(t.Context(), "u1")
+    if err != nil {
+        t.Fatalf("FindByID: %v", err)
+    }
+    if got.Name != want.Name {
+        t.Errorf("got %q, want %q", got.Name, want.Name)
+    }
+
+    // Clean up this test's row so other tests stay isolated.
+    t.Cleanup(func() {
+        testDB.Exec("DELETE FROM users WHERE id = ?", "u1")
+    })
+}</pre>
+    <p>This exercises the real driver, real SQL, and real scanning &mdash; the exact path a mock would have hidden. <code>t.Cleanup</code> guarantees the row is removed even if an assertion fails.</p>
+
+    <h4>Example 3 &mdash; Advanced: Isolated DB Per Test via a Helper</h4>
+<pre>// newTestDB returns a fresh in-memory DB and registers its cleanup.
+func newTestDB(t *testing.T) *sql.DB {
+    t.Helper()
+    db, err := sql.Open("sqlite", ":memory:")
+    if err != nil {
+        t.Fatalf("open: %v", err)
+    }
+    if _, err := db.Exec(schema); err != nil {
+        t.Fatalf("migrate: %v", err)
+    }
+    t.Cleanup(func() { db.Close() })
+    return db
+}
+
+func TestSomething(t *testing.T) {
+    db := newTestDB(t) // each test gets its own isolated database
+    repo := &amp;sqlUserRepo{db: db}
+    // ... no cross-test interference, safe to t.Parallel()
+    _ = repo
+}</pre>
+    <p>Giving each test its own database (or a transaction that rolls back) removes shared-state coupling entirely &mdash; tests can run in parallel and in any order without flakiness.</p>
+
+    <h4>Example 4 &mdash; Real-World: Build Tag to Separate Integration Tests</h4>
+<pre>//go:build integration
+
+// file: postgres_integration_test.go
+package storage
+
+import "testing"
+
+func TestAgainstRealPostgres(t *testing.T) {
+    // Spins up a dockerized Postgres (e.g. via testcontainers-go),
+    // runs migrations, and exercises the repo against it.
+    // ...
+}</pre>
+    <div class="output-label">Makefile / CLI</div>
+    <div class="output"># fast path (unit tests only) -- the default
+go test ./...
+
+# include integration tests
+go test -tags=integration ./...</div>
+    <p>The <code>//go:build integration</code> tag (it must be the first line, followed by a blank line) excludes the file from normal <code>go test</code>. CI runs the fast unit path on every push and the tagged integration suite on a slower lane.</p>
+
+    <h4>Common Mistakes</h4>
+    <div class="do-dont">
+      <div class="dont-box">
+        <div class="label">Don't</div>
+<pre>// All tests share one mutable DB
+// and depend on execution order.
+func TestA(t *testing.T) {
+    db.Exec("INSERT ...") // leaks
+}
+func TestB(t *testing.T) {
+    // assumes TestA's row exists -- flaky!
+}</pre>
+      </div>
+      <div class="do-box">
+        <div class="label">Do</div>
+<pre>// Each test isolates its own data
+// and cleans up after itself.
+func TestA(t *testing.T) {
+    db := newTestDB(t)
+    // ... t.Cleanup closes db
+}
+func TestB(t *testing.T) {
+    db := newTestDB(t) // independent
+}</pre>
+      </div>
+    </div>
+    <ul>
+      <li>Running integration tests against a shared or production database &mdash; each test should get an isolated DB or a transaction that rolls back.</li>
+      <li>Not cleaning up resources &mdash; leaked connections, temp files, and dangling rows cause flaky neighbors. Use <code>t.Cleanup(func(){ db.Close() })</code>.</li>
+      <li>Forgetting the blank line after a <code>//go:build</code> tag &mdash; without it the line is treated as an ordinary comment and the tag is ignored.</li>
+    </ul>
+
+    <h4>Key Rules</h4>
+    <ul class="rules-list">
+      <li>Use <code>TestMain</code> for package-wide setup; <code>t.Cleanup</code> for per-test teardown.</li>
+      <li>Isolate each test's data &mdash; fresh DB or rolled-back transaction.</li>
+      <li>Gate slow integration tests behind a <code>//go:build integration</code> tag.</li>
+      <li>Prefer a pure-Go driver (e.g. <code>modernc.org/sqlite</code>) so tests need no cgo or external services.</li>
+    </ul>
+
+    <div class="exercise">
+      <div class="exercise-label">Exercise 1</div>
+      <p>Write a <code>TestMain</code> that initializes an in-memory database, applies a schema, runs the package's tests, and tears down cleanly &mdash; passing <code>m.Run()</code>'s code to <code>os.Exit</code>.</p>
+    </div>
+    <div class="exercise">
+      <div class="exercise-label">Exercise 2</div>
+      <p>Create an integration test for a <code>UserRepository</code> that performs a <code>Save</code> &rarr; <code>FindByID</code> round-trip and asserts the fields match. Use <code>t.Cleanup</code> to remove the inserted row.</p>
+    </div>
+    <div class="exercise">
+      <div class="exercise-label">Exercise 3</div>
+      <p>Add <code>//go:build integration</code> to a test file and write a Makefile target <code>test-integration</code> that runs only the tagged tests with <code>-tags=integration</code>.</p>
+    </div>
+
+    <div class="connection">
+      <strong>Connections:</strong> Integration testing builds on the <strong>testing package</strong> (reviewed today), the <strong>database/sql</strong> API, and the <strong>repository pattern</strong> (also reviewed today) &mdash; you test the concrete repo that the interface abstracts. Build tags here reuse the same mechanism as <strong>cross-compilation</strong> conditional compilation.
+    </div>
+  </div>
+
+  <!-- Concept 4: Wire DI -->
+  <div class="concept" id="wire-di">
+    <div class="concept-header">
+      <h3>Dependency Injection with Wire</h3>
+      <span class="concept-meta">Production Testing &amp; Architecture</span>
+    </div>
+
+    <h4>Why It Matters</h4>
+    <p>As an application grows, manually wiring dependencies (<code>NewServer(NewService(NewRepo(db)))</code>) becomes error-prone and tedious. Google's <strong>Wire</strong> generates this code at compile time &mdash; no runtime reflection, fully type-safe, and the generated file is plain readable Go you can inspect.</p>
+
+    <h4>What to Cover</h4>
+    <ul>
+      <li>The problem: deep manual constructor chains become unwieldy</li>
+      <li>Wire concepts: <em>providers</em>, <em>injectors</em>, <em>provider sets</em></li>
+      <li>Provider functions: <code>func NewRepo(db *sql.DB) *Repo</code></li>
+      <li>Injector functions with <code>wire.Build</code> (generates <code>wire_gen.go</code>)</li>
+      <li>Interface bindings with <code>wire.Bind</code>; grouping with <code>wire.NewSet</code></li>
+    </ul>
+
+    <h4>Example 1 &mdash; Basic: Providers &rarr; Injector &rarr; Generated Code</h4>
+<pre>// providers.go -- ordinary constructors, no Wire magic.
+func NewDB(cfg Config) (*sql.DB, error) {
+    return sql.Open("postgres", cfg.DSN)
+}
+func NewRepo(db *sql.DB) *Repo        { return &amp;Repo{db: db} }
+func NewService(r *Repo) *Service     { return &amp;Service{repo: r} }
+func NewServer(s *Service) *Server    { return &amp;Server{svc: s} }</pre>
+<pre>//go:build wireinject
+
+// wire.go -- this file is the BLUEPRINT; Wire reads it to generate code.
+package main
+
+import "github.com/google/wire"
+
+func InitServer(cfg Config) (*Server, error) {
+    wire.Build(NewDB, NewRepo, NewService, NewServer)
+    return nil, nil // body is ignored; Wire generates the real one
+}</pre>
+    <p>Running <code>wire</code> in the package reads the <code>wire.Build</code> call, topologically sorts the providers by their parameter/return types, and emits a real <code>InitServer</code> in <code>wire_gen.go</code>.</p>
+
+    <h4>Example 2 &mdash; Intermediate: The Generated Output</h4>
+<pre>// wire_gen.go -- GENERATED. Plain, readable, debuggable Go.
+//go:build !wireinject
+
+func InitServer(cfg Config) (*Server, error) {
+    db, err := NewDB(cfg)
+    if err != nil {
+        return nil, err
+    }
+    repo := NewRepo(db)
+    service := NewService(repo)
+    server := NewServer(service)
+    return server, nil
+}</pre>
+    <p>This is exactly what you'd have written by hand &mdash; Wire just keeps it correct as the graph grows. The complementary <code>//go:build</code> tags ensure the blueprint and the generated file are never compiled together.</p>
+
+    <h4>Example 3 &mdash; Advanced: Interface Binding for Testability</h4>
+<pre>// Service depends on the interface, not *Repo.
+type UserStore interface {
+    FindByID(id string) (*User, error)
+}
+
+func NewService(s UserStore) *Service { return &amp;Service{store: s} }
+
+var RepoSet = wire.NewSet(
+    NewRepo,
+    // Tell Wire: when a UserStore is needed, provide *Repo.
+    wire.Bind(new(UserStore), new(*Repo)),
+)
+
+func InitServer(cfg Config) (*Server, error) {
+    wire.Build(NewDB, RepoSet, NewService, NewServer)
+    return nil, nil
+}</pre>
+    <p><code>wire.Bind</code> maps an interface to a concrete implementation. In a test, swap <code>RepoSet</code> for a set that binds <code>UserStore</code> to a mock &mdash; the rest of the graph is untouched.</p>
+
+    <h4>Example 4 &mdash; Real-World: Provider Sets and Cleanup Functions</h4>
+<pre>// NewDB returns a cleanup func; Wire threads it through automatically.
+func NewDB(cfg Config) (*sql.DB, func(), error) {
+    db, err := sql.Open("postgres", cfg.DSN)
+    if err != nil {
+        return nil, nil, err
+    }
+    return db, func() { db.Close() }, nil
+}
+
+var InfraSet = wire.NewSet(NewDB, NewRepo)
+var AppSet   = wire.NewSet(NewService, NewServer)
+
+func InitServer(cfg Config) (*Server, func(), error) {
+    wire.Build(InfraSet, AppSet)
+    return nil, nil, nil
+}
+
+// Caller:
+// srv, cleanup, err := InitServer(cfg)
+// defer cleanup() // closes the DB on shutdown</pre>
+    <p>When a provider returns <code>(T, func(), error)</code>, Wire collects the cleanup functions and returns a single aggregate <code>cleanup</code> that runs them in reverse order &mdash; perfect for graceful shutdown.</p>
+
+    <h4>Common Mistakes</h4>
+    <div class="do-dont">
+      <div class="dont-box">
+        <div class="label">Don't</div>
+<pre>// Add a provider but forget to
+// re-run wire -- wire_gen.go is
+// now stale and won't compile or
+// will inject the wrong graph.
+func InitServer(cfg Config) (*Server, error) {
+    wire.Build(NewDB, NewRepo, NewCache,
+        NewService, NewServer) // NewCache added...
+    return nil, nil
+}
+// ...but `wire` never re-run.</pre>
+      </div>
+      <div class="do-box">
+        <div class="label">Do</div>
+<pre>// Add a //go:generate directive and
+// regenerate after any change.
+//go:generate wire
+
+// Then:
+//   go generate ./...
+// keeps wire_gen.go in sync.</pre>
+      </div>
+    </div>
+    <ul>
+      <li>Forgetting to re-run <code>wire</code> after adding or changing a provider &mdash; add <code>//go:generate wire</code> and run <code>go generate ./...</code>.</li>
+      <li>Introducing a circular dependency &mdash; Wire errors at generation time, but the message can be cryptic; break cycles with an interface.</li>
+      <li>Providing the same type twice in one injector &mdash; Wire can't decide which to use and fails; give distinct types or use named providers.</li>
+    </ul>
+
+    <h4>Key Rules</h4>
+    <ul class="rules-list">
+      <li>Providers are plain constructors; injectors are blueprints behind a <code>wireinject</code> build tag.</li>
+      <li>Group related providers with <code>wire.NewSet</code> and bind interfaces with <code>wire.Bind</code>.</li>
+      <li>Return <code>(T, func(), error)</code> from providers that own resources so Wire threads cleanup.</li>
+      <li>Always <code>go generate</code> after changing the dependency graph &mdash; never hand-edit <code>wire_gen.go</code>.</li>
+    </ul>
+
+    <div class="exercise">
+      <div class="exercise-label">Exercise 1</div>
+      <p>Define providers for <code>Config</code>, <code>*sql.DB</code>, <code>*UserRepo</code>, <code>*UserService</code>, and <code>*Server</code>, then write a Wire injector <code>InitApp</code> that builds a <code>*Server</code>. Generate and inspect <code>wire_gen.go</code>.</p>
+    </div>
+    <div class="exercise">
+      <div class="exercise-label">Exercise 2</div>
+      <p>Add an interface binding (<code>wire.Bind</code>) so a test can swap <code>*UserRepo</code> for a mock that satisfies the same interface. Write a second injector that uses the mock provider set.</p>
+    </div>
+    <div class="exercise">
+      <div class="exercise-label">Exercise 3</div>
+      <p>Make the DB provider return a cleanup function and have Wire thread it through, so the caller can <code>defer cleanup()</code> for graceful shutdown.</p>
+    </div>
+
+    <div class="connection">
+      <strong>Connections:</strong> Wire formalizes the <strong>constructor injection</strong> behind the <strong>repository pattern</strong> and <strong>plugin architecture</strong>. <code>wire.Bind</code> relies on <strong>interfaces</strong>, and the generation step uses the same <strong>code-generation</strong> / <code>go:generate</code> tooling seen earlier. Cleanup threading complements <strong>graceful shutdown</strong>.
+    </div>
+  </div>
+
+  <!-- Concept 5: chi Router -->
+  <div class="concept" id="chi-router">
+    <div class="concept-header">
+      <h3>Advanced HTTP Patterns: chi Router &amp; Middleware</h3>
+      <span class="concept-meta">Production Testing &amp; Architecture</span>
+    </div>
+
+    <h4>Why It Matters</h4>
+    <p>While <code>net/http</code> is powerful, <strong>chi</strong> adds lightweight routing with URL parameters, middleware groups, and sub-routers &mdash; all built on the standard <code>http.Handler</code> interface. It's the most popular choice for RESTful APIs in Go and adds zero non-stdlib dependencies of its own.</p>
+
+    <h4>What to Cover</h4>
+    <ul>
+      <li>Route patterns: <code>r.Get("/users/{id}", h)</code> with <code>chi.URLParam(r, "id")</code></li>
+      <li>Middleware: <code>r.Use(middleware.Logger)</code>, <code>r.Use(middleware.Recoverer)</code></li>
+      <li>Route groups: <code>r.Route("/api/v1", func(r chi.Router) { ... })</code></li>
+      <li>Sub-routers: <code>r.Mount("/admin", adminRouter)</code></li>
+      <li>Custom middleware and passing values through <code>context</code></li>
+    </ul>
+
+    <h4>Example 1 &mdash; Basic: Parameterized Routes</h4>
+<pre>package main
+
+import (
+    "fmt"
+    "net/http"
+
+    "github.com/go-chi/chi/v5"
+)
+
+func main() {
+    r := chi.NewRouter()
+    r.Get("/users/{id}", func(w http.ResponseWriter, req *http.Request) {
+        id := chi.URLParam(req, "id")
+        fmt.Fprintf(w, "user %s", id)
+    })
+    http.ListenAndServe(":8080", r)
+}</pre>
+    <div class="output-label">curl localhost:8080/users/42</div>
+    <div class="output">user 42</div>
+    <p><code>chi.URLParam</code> pulls a named path segment. Because <code>chi.Router</code> satisfies <code>http.Handler</code>, you pass it straight to <code>http.ListenAndServe</code> &mdash; no adapter needed.</p>
+
+    <h4>Example 2 &mdash; Intermediate: Middleware Stack</h4>
+<pre>r := chi.NewRouter()
+r.Use(middleware.RequestID)
+r.Use(middleware.Logger)    // logs method, path, status, duration
+r.Use(middleware.Recoverer) // recovers panics -&gt; 500 instead of crash
+
+r.Get("/health", func(w http.ResponseWriter, req *http.Request) {
+    w.Write([]byte("ok"))
+})</pre>
+    <p>Middleware registered with <code>r.Use</code> wraps every route below it, in registration order. <code>Recoverer</code> turns a panicking handler into a clean <code>500</code> rather than taking down the server.</p>
+
+    <h4>Example 3 &mdash; Advanced: RESTful Resource with a Sub-Router</h4>
+<pre>func todoRouter() chi.Router {
+    r := chi.NewRouter()
+    r.Get("/", listTodos)            // GET    /todos
+    r.Post("/", createTodo)          // POST   /todos
+    r.Route("/{id}", func(r chi.Router) {
+        r.Get("/", getTodo)          // GET    /todos/{id}
+        r.Delete("/", deleteTodo)    // DELETE /todos/{id}
+    })
+    return r
+}
+
+func main() {
+    root := chi.NewRouter()
+    root.Use(middleware.Logger)
+    root.Mount("/todos", todoRouter()) // mount the sub-router
+    http.ListenAndServe(":8080", root)
+}</pre>
+    <p><code>Mount</code> grafts a self-contained sub-router under a prefix. The <code>/todos</code> resource owns its own routes and can be tested in isolation &mdash; a clean way to organize a growing API.</p>
+
+    <h4>Example 4 &mdash; Real-World: Scoped Auth Middleware via Group</h4>
+<pre>// Custom middleware: reject requests without an Authorization header.
+func auth(next http.Handler) http.Handler {
+    return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+        if r.Header.Get("Authorization") == "" {
+            http.Error(w, "unauthorized", http.StatusUnauthorized)
+            return
+        }
+        next.ServeHTTP(w, r)
+    })
+}
+
+func main() {
+    r := chi.NewRouter()
+
+    // Public routes.
+    r.Get("/", home)
+    r.Post("/login", login)
+
+    // Protected routes: auth applies ONLY inside this group.
+    r.Group(func(r chi.Router) {
+        r.Use(auth)
+        r.Get("/profile", profile)
+        r.Post("/orders", createOrder)
+    })
+
+    http.ListenAndServe(":8080", r)
+}</pre>
+    <p><code>r.Group</code> creates an inline scope with its own middleware stack but the <em>same</em> URL space &mdash; perfect when some routes are public and others require auth, without splitting into separate routers.</p>
+
+    <h4>Common Mistakes</h4>
+    <div class="do-dont">
+      <div class="dont-box">
+        <div class="label">Don't</div>
+<pre>// Mixing net/http patterns with chi
+// and reading params from the URL by
+// hand.
+r.Get("/users/{id}", func(w, req) {
+    id := strings.TrimPrefix(
+        req.URL.Path, "/users/")
+})
+
+// Applying auth globally even though
+// /login must be public.
+r.Use(auth) // locks everyone out!</pre>
+      </div>
+      <div class="do-box">
+        <div class="label">Do</div>
+<pre>// Use chi's param accessor.
+r.Get("/users/{id}", func(w, req) {
+    id := chi.URLParam(req, "id")
+})
+
+// Scope auth to the protected group.
+r.Group(func(r chi.Router) {
+    r.Use(auth)
+    r.Get("/profile", profile)
+})</pre>
+      </div>
+    </div>
+    <ul>
+      <li>Parsing path parameters by hand instead of using <code>chi.URLParam</code> &mdash; fragile and breaks on nested routes.</li>
+      <li>Applying auth middleware globally with <code>r.Use</code> when some routes (login, health) must stay public &mdash; scope it with <code>r.Group</code> or a sub-router instead.</li>
+      <li>Registering routes <em>after</em> mounting/serving &mdash; chi builds its routing tree as you declare; register all routes before <code>ListenAndServe</code>.</li>
+    </ul>
+
+    <h4>Key Rules</h4>
+    <ul class="rules-list">
+      <li>Use <code>r.Get/Post/...</code> and <code>chi.URLParam</code> &mdash; never hand-parse the URL path.</li>
+      <li>Global concerns (RequestID, Logger, Recoverer) go in <code>r.Use</code> at the top.</li>
+      <li>Scope auth and other selective middleware with <code>r.Group</code> or <code>r.Route</code>.</li>
+      <li>Compose large APIs from sub-routers with <code>r.Mount</code> for isolation and testability.</li>
+    </ul>
+
+    <div class="exercise">
+      <div class="exercise-label">Exercise 1</div>
+      <p>Build a REST API for a <code>Todo</code> resource: <code>GET /todos</code> (list), <code>POST /todos</code> (create), <code>GET /todos/{id}</code> (one), <code>DELETE /todos/{id}</code>. Back it with an in-memory map guarded by a mutex.</p>
+    </div>
+    <div class="exercise">
+      <div class="exercise-label">Exercise 2</div>
+      <p>Add middleware that checks for an <code>Authorization</code> header and rejects unauthenticated requests with <code>401</code>, applied only to the write routes (<code>POST</code>, <code>DELETE</code>) via a group.</p>
+    </div>
+    <div class="exercise">
+      <div class="exercise-label">Exercise 3</div>
+      <p>Create a sub-router for <code>/admin</code> mounted under the root that requires admin auth and exposes its own set of routes. Write a custom timing middleware that logs each request's duration.</p>
+    </div>
+
+    <div class="connection">
+      <strong>Connections:</strong> chi is built entirely on the <strong>net/http</strong> <code>Handler</code> interface and the <strong>middleware chains</strong> pattern reviewed earlier. Path params and groups pass data via <strong>context</strong>, and its handlers are tested with <strong>httptest</strong>. The auth/recovery middleware mirrors the <strong>health-check</strong> and <strong>graceful-degradation</strong> concerns from Day 14.
+    </div>
+  </div>
+
+</div><!-- end Production Testing & Architecture section -->
+
+
+<!-- ============================================================ -->
+<!-- FOOTER -->
+<!-- ============================================================ -->
+<footer class="footer">
+  <h4>All Go Guides</h4>
+  <ul>
+    <li><a href="golang-guides/golang-guide-2026-07-09.html">Day 34 &mdash; 2026-07-09</a></li>
+    <li><a href="golang-guides/golang-guide-2026-07-08.html">Day 33 &mdash; 2026-07-08</a></li>
+    <li><a href="golang-guides/golang-guide-2026-07-07.html">Day 32 &mdash; 2026-07-07</a></li>
+    <li><a href="golang-guides/golang-guide-2026-07-06.html">Day 31 &mdash; 2026-07-06</a></li>
+    <li><a href="golang-guides/golang-guide-2026-07-05.html">Day 30 &mdash; 2026-07-05</a></li>
+    <li><a href="golang-guides/golang-guide-2026-07-04.html">Day 29 &mdash; 2026-07-04</a></li>
+    <li><a href="golang-guides/golang-guide-2026-07-03.html">Day 28 &mdash; 2026-07-03</a></li>
+    <li><a href="golang-guides/golang-guide-2026-07-02.html">Day 27 &mdash; 2026-07-02</a></li>
+    <li><a href="golang-guides/golang-guide-2026-07-01.html">Day 26 &mdash; 2026-07-01</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-30.html">Day 25 &mdash; 2026-06-30</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-29.html">Day 24 &mdash; 2026-06-29</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-28.html">Day 23 &mdash; 2026-06-28</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-19.html">Day 15 &mdash; 2026-06-19</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-27.html">2026-06-27</a> (Day 22)</li>
+    <li><a href="golang-guides/golang-guide-2026-06-26.html">2026-06-26</a> (Day 21)</li>
+    <li><a href="golang-guides/golang-guide-2026-06-25.html">2026-06-25</a> (Day 20)</li>
+    <li><a href="golang-guides/golang-guide-2026-06-24.html">2026-06-24</a> (Day 19)</li>
+    <li><a href="golang-guides/golang-guide-2026-06-23.html">2026-06-23</a> (Day 18)</li>
+    <li><a href="golang-guides/golang-guide-2026-06-22.html">2026-06-22</a> (Day 17)</li>
+    <li><a href="golang-guides/golang-guide-2026-06-18.html">Day 14 &mdash; 2026-06-18</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-17.html">Day 13 &mdash; 2026-06-17</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-15.html">Day 12 &mdash; 2026-06-15</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-13.html">Day 11 &mdash; 2026-06-13</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-12.html">Day 10 &mdash; 2026-06-12</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-11.html">Day 9 &mdash; 2026-06-11</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-10.html">Day 8 &mdash; 2026-06-10</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-09.html">Day 7 &mdash; 2026-06-09</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-08.html">Day 6 &mdash; 2026-06-08</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-07.html">Day 5 &mdash; 2026-06-07</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-05.html">Day 4 &mdash; 2026-06-05</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-04.html">Day 3 &mdash; 2026-06-04</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-03.html">Day 2 &mdash; 2026-06-03</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-02.html">Day 1 &mdash; 2026-06-02</a></li>
+  </ul>
+</footer>
+
+</div><!-- end main -->
+
+<script>
+// ===== Theme Toggle =====
+(function() {
+  var KEY = 'lc-goguide-theme';
+  var toggle = document.getElementById('theme-toggle');
+  var html = document.documentElement;
+
+  function setTheme(theme) {
+    html.setAttribute('data-theme', theme);
+    localStorage.setItem(KEY, theme);
+    toggle.textContent = theme === 'dark' ? '☽' : '☀';
+  }
+
+  var saved = localStorage.getItem(KEY) || 'dark';
+  setTheme(saved);
+
+  toggle.addEventListener('click', function() {
+    setTheme(html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
+  });
+})();
+
+// ===== Mobile Sidebar Toggle =====
+(function() {
+  var btn = document.getElementById('sidebar-toggle');
+  var sidebar = document.getElementById('sidebar');
+
+  btn.addEventListener('click', function() {
+    sidebar.classList.toggle('open');
+  });
+
+  // Close sidebar when clicking a link (mobile)
+  sidebar.querySelectorAll('.sidebar-link').forEach(function(link) {
+    link.addEventListener('click', function() {
+      if (window.innerWidth <= 900) {
+        sidebar.classList.remove('open');
+      }
+    });
+  });
+})();
+
+// ===== Active Sidebar Link on Scroll =====
+(function() {
+  var links = document.querySelectorAll('.sidebar-link');
+  var sections = [];
+
+  links.forEach(function(link) {
+    var id = link.getAttribute('href').replace('#', '');
+    var el = document.getElementById(id);
+    if (el) sections.push({ id: id, el: el, link: link });
+  });
+
+  function onScroll() {
+    var scrollTop = window.scrollY + 120;
+    var current = null;
+
+    for (var i = sections.length - 1; i >= 0; i--) {
+      if (sections[i].el.offsetTop <= scrollTop) {
+        current = sections[i];
+        break;
+      }
+    }
+
+    links.forEach(function(l) { l.classList.remove('active'); });
+    if  current.link.classList.add('active');
+  }
+
+  window.addEventListener('scroll', onScroll);
+  onScroll();
+})();
+</script>
+</body>
+</html>

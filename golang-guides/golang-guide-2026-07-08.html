@@ -1,0 +1,1625 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Go Study Guide &mdash; Day 33 (2026-07-08)</title>
+<style>
+/* ===== CSS Variables ===== */
+:root {
+  --bg: #0d1117;
+  --surface1: #161b22;
+  --surface2: #1c2129;
+  --border: #30363d;
+  --text: #e6edf3;
+  --muted: #8b949e;
+  --accent: #58a6ff;
+  --accent-dim: #1f6feb33;
+  --green: #3fb950;
+  --green-dim: #23863633;
+  --yellow: #d29922;
+  --yellow-dim: #d2992233;
+  --red: #f85149;
+  --red-dim: #f8514933;
+  --purple: #bc8cff;
+  --purple-dim: #bc8cff22;
+  --orange: #f0883e;
+  --orange-dim: #f0883e22;
+  --code-bg: #0d1117;
+  --sidebar-w: 300px;
+  --font-mono: 'SF Mono', 'Cascadia Code', 'Fira Code', Consolas, monospace;
+  --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+  --radius: 8px;
+  --shadow: 0 1px 3px rgba(0,0,0,0.4);
+}
+
+[data-theme="light"] {
+  --bg: #ffffff;
+  --surface1: #f6f8fa;
+  --surface2: #f0f3f6;
+  --border: #d0d7de;
+  --text: #1f2328;
+  --muted: #656d76;
+  --accent: #0969da;
+  --accent-dim: #0969da1a;
+  --green: #1a7f37;
+  --green-dim: #1a7f3718;
+  --yellow: #9a6700;
+  --yellow-dim: #9a670018;
+  --red: #cf222e;
+  --red-dim: #cf222e18;
+  --purple: #8250df;
+  --purple-dim: #8250df18;
+  --orange: #bc4c00;
+  --orange-dim: #bc4c0018;
+  --code-bg: #f6f8fa;
+  --shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+/* ===== Reset & Base ===== */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: var(--font-sans);
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.7;
+  font-size: 16px;
+  transition: background 0.2s, color 0.2s;
+}
+
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+/* ===== Theme Toggle ===== */
+#theme-toggle {
+  position: fixed;
+  top: 16px;
+  right: 20px;
+  z-index: 1000;
+  background: var(--surface1);
+  border: 1px solid var(--border);
+  color: var(--text);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+  box-shadow: var(--shadow);
+}
+#theme-toggle:hover { background: var(--surface2); border-color: var(--accent); }
+
+/* ===== Sidebar ===== */
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: var(--sidebar-w);
+  height: 100vh;
+  background: var(--surface1);
+  border-right: 1px solid var(--border);
+  overflow-y: auto;
+  padding: 20px 0;
+  z-index: 100;
+  transition: transform 0.3s;
+}
+
+.sidebar-header {
+  padding: 0 20px 16px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 12px;
+}
+
+.sidebar-header h2 {
+  font-size: 16px;
+  color: var(--text);
+  font-weight: 700;
+}
+
+.sidebar-header .subtitle {
+  font-size: 12px;
+  color: var(--muted);
+  margin-top: 2px;
+}
+
+.sidebar-section {
+  margin-bottom: 8px;
+}
+
+.sidebar-section-title {
+  padding: 6px 20px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+}
+
+.sidebar-link {
+  display: block;
+  padding: 5px 20px 5px 28px;
+  font-size: 13px;
+  color: var(--muted);
+  text-decoration: none;
+  border-left: 2px solid transparent;
+  transition: all 0.15s;
+  line-height: 1.4;
+}
+
+.sidebar-link:hover {
+  color: var(--text);
+  background: var(--accent-dim);
+  border-left-color: var(--accent);
+  text-decoration: none;
+}
+
+.sidebar-link.active {
+  color: var(--accent);
+  border-left-color: var(--accent);
+  background: var(--accent-dim);
+}
+
+/* ===== Mobile sidebar toggle ===== */
+#sidebar-toggle {
+  display: none;
+  position: fixed;
+  top: 16px;
+  left: 16px;
+  z-index: 200;
+  background: var(--surface1);
+  border: 1px solid var(--border);
+  color: var(--text);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 20px;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--shadow);
+}
+
+/* ===== Main Content ===== */
+.main {
+  margin-left: var(--sidebar-w);
+  padding: 40px 48px 80px;
+  max-width: calc(860px + var(--sidebar-w) + 96px);
+}
+
+.page-title {
+  font-size: 32px;
+  font-weight: 800;
+  margin-bottom: 4px;
+  color: var(--text);
+}
+
+.page-subtitle {
+  font-size: 15px;
+  color: var(--muted);
+  margin-bottom: 36px;
+}
+
+/* ===== Sections ===== */
+.section {
+  margin-bottom: 48px;
+}
+
+.section-label {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  padding: 3px 10px;
+  border-radius: 4px;
+  margin-bottom: 12px;
+}
+
+.section-label.review { background: var(--yellow-dim); color: var(--yellow); }
+.section-label.new { background: var(--green-dim); color: var(--green); }
+
+.section-title {
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 24px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--border);
+}
+
+/* ===== How To Use ===== */
+.how-to-use {
+  background: var(--surface1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px 24px;
+  margin-bottom: 36px;
+}
+
+.how-to-use h3 {
+  font-size: 16px;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.how-to-use ul {
+  padding-left: 22px;
+  margin: 0;
+}
+
+.how-to-use li {
+  font-size: 14px;
+  color: var(--muted);
+  margin-bottom: 4px;
+}
+
+/* ===== Concept Cards ===== */
+.concept {
+  background: var(--surface1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 28px;
+  margin-bottom: 28px;
+  box-shadow: var(--shadow);
+}
+
+.concept-header {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  margin-bottom: 6px;
+  flex-wrap: wrap;
+}
+
+.concept h3 {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.concept-meta {
+  font-size: 12px;
+  color: var(--muted);
+  background: var(--surface2);
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
+.concept h4 {
+  font-size: 15px;
+  font-weight: 600;
+  margin: 20px 0 8px;
+  color: var(--text);
+}
+
+.concept p, .concept li {
+  color: var(--text);
+  line-height: 1.7;
+}
+
+.concept ul, .concept ol {
+  padding-left: 22px;
+  margin: 8px 0;
+}
+
+.concept li {
+  margin-bottom: 4px;
+}
+
+.concept .why-matters {
+  font-style: italic;
+  color: var(--muted);
+  margin: 6px 0 16px;
+  font-size: 15px;
+}
+
+/* ===== Code Blocks ===== */
+pre {
+  background: var(--code-bg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 16px 18px;
+  overflow-x: auto;
+  margin: 10px 0 14px;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--text);
+  position: relative;
+}
+
+pre::after {
+  content: 'Go';
+  position: absolute;
+  top: 6px;
+  right: 10px;
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  opacity: 0.6;
+}
+
+code {
+  font-family: var(--font-mono);
+  font-size: 0.9em;
+}
+
+:not(pre) > code {
+  background: var(--surface2);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.88em;
+}
+
+/* ===== Output Blocks ===== */
+.output {
+  background: var(--green-dim);
+  border: 1px solid var(--green);
+  border-radius: 6px;
+  padding: 12px 16px;
+  margin: 6px 0 14px;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--text);
+  white-space: pre-wrap;
+}
+
+.output::after { content: none; }
+
+.output-label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--green);
+  margin-bottom: 4px;
+}
+
+/* ===== Good/Bad Examples ===== */
+.do-dont {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin: 10px 0;
+}
+
+.do-box, .dont-box {
+  border-radius: 6px;
+  padding: 14px;
+  border: 1px solid;
+}
+
+.do-box {
+  background: var(--green-dim);
+  border-color: var(--green);
+}
+
+.dont-box {
+  background: var(--red-dim);
+  border-color: var(--red);
+}
+
+.do-box .label, .dont-box .label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 6px;
+}
+
+.do-box .label { color: var(--green); }
+.dont-box .label { color: var(--red); }
+
+.do-box pre, .dont-box pre {
+  margin: 0;
+  border: none;
+  background: transparent;
+  padding: 0;
+  font-size: 12.5px;
+}
+
+.do-box pre::after, .dont-box pre::after { content: none; }
+
+/* ===== Key Rules ===== */
+.rules-list {
+  list-style: none;
+  padding: 0;
+  margin: 8px 0;
+}
+
+.rules-list li {
+  padding: 6px 0 6px 24px;
+  position: relative;
+}
+
+.rules-list li::before {
+  content: "\2192";
+  position: absolute;
+  left: 2px;
+  color: var(--accent);
+  font-weight: 700;
+}
+
+/* ===== Exercises ===== */
+.exercise {
+  background: var(--purple-dim);
+  border: 1px solid var(--purple);
+  border-radius: 6px;
+  padding: 14px 18px;
+  margin: 8px 0;
+}
+
+.exercise .exercise-label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--purple);
+  margin-bottom: 4px;
+}
+
+/* ===== Pitfall ===== */
+.pitfall {
+  background: var(--red-dim);
+  border-left: 3px solid var(--red);
+  border-radius: 0 6px 6px 0;
+  padding: 10px 14px;
+  margin: 10px 0;
+  font-size: 14px;
+}
+
+.pitfall strong {
+  color: var(--red);
+}
+
+/* ===== Connection ===== */
+.connection {
+  background: var(--accent-dim);
+  border-left: 3px solid var(--accent);
+  border-radius: 0 6px 6px 0;
+  padding: 10px 14px;
+  margin: 10px 0;
+  font-size: 14px;
+  color: var(--muted);
+}
+
+/* ===== Review Cards ===== */
+.review-card {
+  background: var(--surface1);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--purple);
+  border-radius: var(--radius);
+  padding: 20px 24px;
+  margin-bottom: 16px;
+  box-shadow: var(--shadow);
+}
+
+.review-card .review-header {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  margin-bottom: 6px;
+  flex-wrap: wrap;
+}
+
+.review-card h3 {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.review-card .review-meta {
+  font-size: 12px;
+  color: var(--muted);
+  background: var(--surface2);
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
+.review-card h4 {
+  font-size: 14px;
+  font-weight: 600;
+  margin: 14px 0 6px;
+  color: var(--text);
+}
+
+.review-card p, .review-card li {
+  color: var(--text);
+  line-height: 1.6;
+  font-size: 14px;
+}
+
+.review-card pre {
+  font-size: 12.5px;
+  padding: 12px 14px;
+  margin: 6px 0 10px;
+}
+
+.review-card .pitfall {
+  font-size: 13px;
+  padding: 8px 12px;
+}
+
+/* ===== Topic Badge ===== */
+.topic-badge {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 2px 8px;
+  border-radius: 4px;
+  background: var(--accent-dim);
+  color: var(--accent);
+  margin-left: 4px;
+}
+
+/* ===== Footer ===== */
+.footer {
+  margin-top: 60px;
+  padding: 24px 0;
+  border-top: 1px solid var(--border);
+}
+
+.footer h4 {
+  font-size: 14px;
+  color: var(--muted);
+  margin-bottom: 10px;
+}
+
+.footer ul {
+  list-style: none;
+  padding: 0;
+}
+
+.footer li {
+  margin-bottom: 4px;
+  font-size: 14px;
+}
+
+.footer li a { color: var(--accent); }
+.footer .current { color: var(--green); font-weight: 600; }
+
+/* ===== Bash code blocks ===== */
+pre.bash::after {
+  content: 'Bash';
+}
+
+/* ===== Responsive ===== */
+@media (max-width: 900px) {
+  .sidebar {
+    transform: translateX(-100%);
+  }
+  .sidebar.open {
+    transform: translateX(0);
+    box-shadow: 4px 0 20px rgba(0,0,0,0.5);
+  }
+  #sidebar-toggle {
+    display: flex;
+  }
+  .main {
+    margin-left: 0;
+    padding: 60px 20px 60px;
+    max-width: 100%;
+  }
+  .do-dont {
+    grid-template-columns: 1fr;
+  }
+  #theme-toggle {
+    right: 14px;
+    top: 16px;
+  }
+}
+</style>
+</head>
+<body>
+
+<!-- Theme Toggle -->
+<button id="theme-toggle" aria-label="Toggle theme" title="Toggle light/dark theme">&#9789;</button>
+
+<!-- Mobile Sidebar Toggle -->
+<button id="sidebar-toggle" aria-label="Toggle sidebar">&#9776;</button>
+
+<!-- Sidebar -->
+<nav class="sidebar" id="sidebar">
+  <div class="sidebar-header">
+    <h2>Go Guide</h2>
+    <div class="subtitle">Day 33 &mdash; 2026-07-08</div>
+  </div>
+
+  <div class="sidebar-section">
+    <div class="sidebar-section-title">Review (6 concepts)</div>
+    <a href="#generics_basics" class="sidebar-link">Type Parameters (Generics)</a>
+    <a href="#goroutines" class="sidebar-link">Goroutines</a>
+    <a href="#channels" class="sidebar-link">Channels</a>
+    <a href="#select_statement" class="sidebar-link">Select Statement</a>
+    <a href="#context_package" class="sidebar-link">Context</a>
+    <a href="#concurrency_patterns" class="sidebar-link">Concurrency Patterns</a>
+  </div>
+
+  <div class="sidebar-section">
+    <div class="sidebar-section-title">Web &amp; HTTP (3)</div>
+    <a href="#http_cookies" class="sidebar-link">net/http Cookies</a>
+    <a href="#net_http_httptrace" class="sidebar-link">net/http/httptrace</a>
+    <a href="#net_textproto" class="sidebar-link">net/textproto</a>
+  </div>
+
+  <div class="sidebar-section">
+    <div class="sidebar-section-title">Diagnostics &amp; System (2)</div>
+    <a href="#runtime_trace" class="sidebar-link">runtime/trace</a>
+    <a href="#os_user" class="sidebar-link">os/user</a>
+  </div>
+</nav>
+
+<!-- Main Content -->
+<div class="main">
+
+<h1 class="page-title">Go Daily Guide &mdash; 2026-07-08 (Day 33)</h1>
+<p class="page-subtitle">Day 33 &mdash; Wednesday, July 8, 2026 &bull; 11 concepts (6 review + 5 new)</p>
+
+<!-- How to Use -->
+<div class="how-to-use">
+  <h3>How to Use This Guide</h3>
+  <ul>
+    <li>Start with the <strong>Review</strong> section &mdash; try to recall each concept before reading the refresher</li>
+    <li>Complete the challenge exercise for each review card without looking back at previous days</li>
+    <li>Then work through the <strong>New Concepts</strong> section, typing out every code example yourself</li>
+    <li>Pay special attention to the common mistakes sections (they highlight real Go gotchas)</li>
+    <li>Complete the exercises at the bottom of each concept without looking at solutions</li>
+    <li>Use <code>go run main.go</code> to test your code locally, or use the <a href="https://go.dev/play/" target="_blank">Go Playground</a></li>
+  </ul>
+</div>
+
+<!-- ============================================================ -->
+<!-- REVIEW SECTION -->
+<!-- ============================================================ -->
+<div class="section">
+  <span class="section-label review">Review</span>
+  <h2 class="section-title">Spaced Repetition Review &mdash; 6 Concepts</h2>
+
+  <!-- Review 1: Generics -->
+  <div class="review-card" id="generics_basics">
+    <div class="review-header">
+      <h3>Type Parameters (Generics)</h3>
+      <span class="review-meta">Functions &amp; Control Flow &bull; 15 days since review &bull; rep 3</span>
+    </div>
+
+    <h4>Quick Reminder</h4>
+    <p>Type parameters let a function or type abstract over types with full compile-time safety and <em>no</em> runtime boxing. Declare them in square brackets with a constraint: <code>[T any]</code>, <code>[T comparable]</code>, or a custom interface constraint. Arguments are usually <em>inferred</em> from the call, but inference works from parameters, not from the return type. To use an operator like <code>+</code> or <code>&lt;</code> inside the body, the constraint must permit it (e.g. <code>constraints.Ordered</code> or a union with <code>~</code> for named types).</p>
+
+    <h4>Key Pattern</h4>
+<pre>func Map[T, U any](s []T, f func(T) U) []U {
+    r := make([]U, len(s))
+    for i, v := range s {
+        r[i] = f(v)
+    }
+    return r
+}
+
+type Number interface{ ~int | ~float64 } // ~ admits named types (type Cents int)
+
+func Sum[T Number](xs []T) T {
+    var total T
+    for _, x := range xs {
+        total += x // legal: the constraint permits +
+    }
+    return total
+}</pre>
+
+    <div class="exercise">
+      <div class="exercise-label">Challenge Exercise</div>
+      <p>Implement generic <code>Filter</code>, <code>Map</code>, and <code>Reduce</code> over slices, plus a <code>Keys[K comparable, V any](m map[K]V) []K</code>. Write a <code>Min[T constraints.Ordered]</code> and explain why it won't compile without the ordered constraint. Then demonstrate the inference limit: a call where Go cannot infer <code>U</code> from arguments alone and must be instantiated explicitly as <code>Map[int, string](...)</code>.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>#1 Pitfall:</strong> Reaching for generics where <code>any</code>+type switch or a plain interface reads better &mdash; and forgetting that <em>methods</em> cannot declare their own type parameters (only the type can). Also, you cannot use <code>+</code>, <code>&lt;</code>, or range-over an operator on a bare <code>[T any]</code>; widen the constraint to a union or <code>constraints.Ordered</code> first.
+    </div>
+  </div>
+
+  <!-- Review 2: Goroutines -->
+  <div class="review-card" id="goroutines">
+    <div class="review-header">
+      <h3>Goroutines</h3>
+      <span class="review-meta">Concurrency &bull; 15 days since review &bull; rep 3</span>
+    </div>
+
+    <h4>Quick Reminder</h4>
+    <p><code>go f()</code> launches a lightweight, runtime-scheduled goroutine over an OS thread pool (starting stack of a few KB, grown on demand). They are cheap but <em>not free</em>: nothing waits for them automatically, and when <code>main</code> returns the process exits, killing every remaining goroutine. You must synchronize explicitly (a <code>sync.WaitGroup</code>, a channel, <code>errgroup</code>). Since Go 1.22 the loop variable is per-iteration, so the classic capture bug is gone.</p>
+
+    <h4>Key Pattern</h4>
+<pre>var wg sync.WaitGroup
+for _, u := range urls {
+    wg.Add(1)
+    go func() {
+        defer wg.Done()
+        fetch(u) // Go 1.22+: u is a fresh variable each iteration
+    }()
+}
+wg.Wait() // block until every goroutine calls Done</pre>
+
+    <div class="exercise">
+      <div class="exercise-label">Challenge Exercise</div>
+      <p>Launch N goroutines that each process one item and coordinate completion with a <code>sync.WaitGroup</code>. Then deliberately create a <em>goroutine leak</em>: a goroutine blocked forever on <code>&lt;-ch</code> for a channel nobody closes; detect it with <code>runtime.NumGoroutine()</code> and fix it by closing the channel or wiring a <code>context</code>. Finally, show why calling <code>wg.Add</code> <em>inside</em> the goroutine races with <code>wg.Wait</code>.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>#1 Pitfall:</strong> Fire-and-forget without any synchronization &mdash; <code>main</code> returns and the goroutines never run to completion. The mirror bug is the <em>goroutine leak</em>: a goroutine parked on a send/receive that will never happen accumulates until you run out of memory. Always define how each goroutine terminates.
+    </div>
+  </div>
+
+  <!-- Review 3: Channels -->
+  <div class="review-card" id="channels">
+    <div class="review-header">
+      <h3>Channels</h3>
+      <span class="review-meta">Concurrency &bull; 15 days since review &bull; rep 3</span>
+    </div>
+
+    <h4>Quick Reminder</h4>
+    <p>Channels are typed conduits. <em>Unbuffered</em> channels are a synchronous rendezvous (send blocks until a receiver is ready); a <em>buffered</em> channel decouples sender and receiver up to its capacity. <code>close(ch)</code> signals "no more values": receiving from a closed, drained channel yields the zero value with <code>ok == false</code>, and <code>range</code> ends. Sending on a closed channel <em>panics</em>, and closing twice panics. A <code>nil</code> channel blocks forever.</p>
+
+    <h4>Key Pattern</h4>
+<pre>ch := make(chan int) // unbuffered
+go func() {
+    for i := 0; i < 3; i++ {
+        ch <- i
+    }
+    close(ch) // the SENDER closes, exactly once
+}()
+
+for v := range ch { // loop ends when ch is closed and drained
+    fmt.Println(v)
+}
+
+v, ok := <-ch // ok == false, v == 0 on a closed+drained channel
+fmt.Println(v, ok)</pre>
+
+    <div class="exercise">
+      <div class="exercise-label">Challenge Exercise</div>
+      <p>Build a three-stage pipeline (<code>generate &rarr; square &rarr; print</code>) where each stage returns a <code>&lt;-chan int</code> and closes its output when done. Then trigger a deadlock by sending on an unbuffered channel with no receiver and read the <code>fatal error: all goroutines are asleep</code> message. Finally, use the comma-ok receive to distinguish a real zero value from a closed channel.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>#1 Pitfall:</strong> Closing a channel from the <em>receiver</em> side or closing it twice &mdash; both panic. The rule is "only the sender closes, and only once." Equally common: forgetting to close, so a <code>range</code> over the channel hangs forever, or leaving a sender blocked on a full/unreceived channel (a leak).
+    </div>
+  </div>
+
+  <!-- Review 4: Select -->
+  <div class="review-card" id="select_statement">
+    <div class="review-header">
+      <h3>Select Statement</h3>
+      <span class="review-meta">Concurrency &bull; 15 days since review &bull; rep 3</span>
+    </div>
+
+    <h4>Quick Reminder</h4>
+    <p><code>select</code> waits on multiple channel operations and proceeds with one that is ready; if several are ready it picks <em>uniformly at random</em>. A <code>default</code> case makes the select non-blocking. It is the backbone of timeouts (<code>time.After</code>), cancellation (<code>&lt;-ctx.Done()</code>), and multiplexing. A <code>case</code> on a <code>nil</code> channel is never selected &mdash; a handy way to dynamically disable a branch. An empty <code>select{}</code> blocks forever.</p>
+
+    <h4>Key Pattern</h4>
+<pre>select {
+case v := <-work:
+    handle(v)
+case <-ctx.Done():
+    return ctx.Err() // cancelled or deadline exceeded
+case <-time.After(500 * time.Millisecond):
+    return errTimeout
+default:
+    // runs immediately if nothing else is ready (non-blocking)
+}</pre>
+
+    <div class="exercise">
+      <div class="exercise-label">Challenge Exercise</div>
+      <p>Write a worker that ranges over a jobs channel but also exits promptly on <code>&lt;-ctx.Done()</code>, and add a per-job timeout. Demonstrate the random selection by looping over a select with two always-ready channels and tallying the picks. Then set one channel variable to <code>nil</code> mid-loop and show its case goes dormant &mdash; the idiom for turning a branch off.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>#1 Pitfall:</strong> <code>case &lt;-time.After(d)</code> inside a hot loop allocates and leaks a fresh timer every iteration &mdash; use a single <code>time.NewTimer</code>/<code>Ticker</code> and reset it. And a <code>default</code> case inside a tight <code>for</code> turns a blocking wait into a CPU-burning busy loop.
+    </div>
+  </div>
+
+  <!-- Review 5: Context -->
+  <div class="review-card" id="context_package">
+    <div class="review-header">
+      <h3>Context</h3>
+      <span class="review-meta">Concurrency &bull; 15 days since review &bull; rep 3</span>
+    </div>
+
+    <h4>Quick Reminder</h4>
+    <p><code>context.Context</code> carries cancellation, deadlines, and request-scoped values across API boundaries. <code>WithCancel</code>/<code>WithTimeout</code>/<code>WithDeadline</code> return a derived context <em>and</em> a <code>cancel</code> function you must always call (defer it) to release resources. <code>ctx.Done()</code> returns a channel that closes on cancellation; <code>ctx.Err()</code> reports <code>Canceled</code> or <code>DeadlineExceeded</code>. Pass it as the first parameter, never store it in a struct, and reserve <code>WithValue</code> for genuinely request-scoped data with a private key type.</p>
+
+    <h4>Key Pattern</h4>
+<pre>ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
+defer cancel() // always, even on the happy path
+
+req, _ := http.NewRequestWithContext(ctx, http.MethodGet, url, nil)
+resp, err := http.DefaultClient.Do(req) // aborts if ctx times out
+if err != nil {
+    return err // context.DeadlineExceeded on timeout
+}
+defer resp.Body.Close()</pre>
+
+    <div class="exercise">
+      <div class="exercise-label">Challenge Exercise</div>
+      <p>Thread a <code>ctx</code> through a three-function call chain and cancel the whole tree when any one leg fails (hint: <code>errgroup.WithContext</code>). Add a private <code>type ctxKey struct{}</code> and stash a request ID with <code>WithValue</code>, retrieving it deep in the stack. Prove that omitting <code>defer cancel()</code> leaks the timer goroutine by watching <code>runtime.NumGoroutine()</code>.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>#1 Pitfall:</strong> Forgetting to call <code>cancel()</code> &mdash; the derived context (and its timer goroutine) leaks until the parent is cancelled. Also: passing a <code>nil</code> context (use <code>context.TODO()</code>), storing a context in a struct field, and abusing <code>WithValue</code> as a bag for optional function parameters.
+    </div>
+  </div>
+
+  <!-- Review 6: Concurrency Patterns -->
+  <div class="review-card" id="concurrency_patterns">
+    <div class="review-header">
+      <h3>Concurrency Patterns</h3>
+      <span class="review-meta">Concurrency &bull; 15 days since review &bull; rep 3</span>
+    </div>
+
+    <h4>Quick Reminder</h4>
+    <p>The core idioms compose from goroutines + channels + context: <em>generators</em> (a function returning <code>&lt;-chan T</code>), <em>pipelines</em> (stages linked by channels), <em>fan-out/fan-in</em> (many workers feeding one collector), and <em>worker pools</em> (a fixed set of goroutines draining a jobs channel). For each channel you must answer two questions: <strong>who closes it</strong>, and <strong>how does every goroutine exit</strong> (usually a closed input channel or <code>ctx.Done()</code>).</p>
+
+    <h4>Key Pattern</h4>
+<pre>jobs := make(chan int)
+results := make(chan int)
+
+var wg sync.WaitGroup
+for i := 0; i < 4; i++ { // fixed pool of 4 workers
+    wg.Add(1)
+    go func() {
+        defer wg.Done()
+        for j := range jobs { // exits when jobs is closed
+            results <- j * j
+        }
+    }()
+}
+
+go func() { for _, n := range input { jobs <- n }; close(jobs) }()
+go func() { wg.Wait(); close(results) }() // close results AFTER workers finish
+
+for r := range results {
+    collect(r)
+}</pre>
+
+    <div class="exercise">
+      <div class="exercise-label">Challenge Exercise</div>
+      <p>Build a bounded worker pool that propagates the first error and cancels the rest via <code>errgroup.WithContext</code>. Add a cancellable pipeline where each stage selects on <code>&lt;-ctx.Done()</code> so a downstream abort unblocks upstream sends. Verify with <code>runtime.NumGoroutine()</code> that no goroutine leaks after completion or early cancellation.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>#1 Pitfall:</strong> Closing the <code>results</code> channel before all workers are done &mdash; a worker's subsequent send panics. The correct shape is a separate goroutine doing <code>wg.Wait(); close(results)</code>. Related: unbounded goroutine creation (one per request with no ceiling) and stages that block forever because no one wired a cancellation/done signal.
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- NEW CONCEPTS SECTION -->
+<!-- ============================================================ -->
+<div class="section">
+  <span class="section-label new">New</span>
+  <h2 class="section-title">New Concepts &mdash; 5 in 2 Sections</h2>
+
+  <h3 style="font-size:18px;margin:8px 0 18px;color:var(--muted);">Section 1 &mdash; Web &amp; HTTP Standard Library</h3>
+
+  <!-- New 1: http cookies -->
+  <div class="concept" id="http_cookies">
+    <div class="concept-header">
+      <h3>net/http Cookies: SetCookie, Reading &amp; cookiejar</h3>
+      <span class="topic-badge">Web</span>
+    </div>
+    <p class="why-matters">Why it matters: cookies carry sessions, auth tokens, CSRF secrets, and preferences. <code>net/http</code> models one as an <code>http.Cookie</code> struct, writes <code>Set-Cookie</code> with <code>http.SetCookie</code>, reads request cookies with <code>r.Cookie</code>, and &mdash; via a <code>http.CookieJar</code> &mdash; stores and replays them automatically on the client. Assembling the header string by hand mishandles attributes, ordering, and value encoding.</p>
+
+    <h4>Writing a cookie on the response</h4>
+    <p><code>http.SetCookie</code> serializes the struct (with its security attributes) into a well-formed <code>Set-Cookie</code> header.</p>
+<pre>package main
+
+import (
+    "fmt"
+    "net/http"
+    "net/http/httptest"
+)
+
+func handler(w http.ResponseWriter, r *http.Request) {
+    http.SetCookie(w, &http.Cookie{
+        Name:     "session",
+        Value:    "abc123",
+        Path:     "/",
+        MaxAge:   3600,
+        HttpOnly: true,
+        Secure:   true,
+        SameSite: http.SameSiteLaxMode,
+    })
+    fmt.Fprintln(w, "ok")
+}
+
+func main() {
+    rec := httptest.NewRecorder()
+    handler(rec, httptest.NewRequest(http.MethodGet, "/", nil))
+    fmt.Println(rec.Result().Header.Get("Set-Cookie"))
+}</pre>
+    <div class="output-label">Output</div>
+    <div class="output">session=abc123; Path=/; Max-Age=3600; HttpOnly; Secure; SameSite=Lax</div>
+
+    <h4>Reading cookies from a request</h4>
+    <p><code>r.Cookie(name)</code> returns a single cookie (or <code>http.ErrNoCookie</code>); <code>r.Cookies()</code> returns all of them.</p>
+<pre>package main
+
+import (
+    "fmt"
+    "net/http"
+    "net/http/httptest"
+)
+
+func main() {
+    r := httptest.NewRequest(http.MethodGet, "/", nil)
+    r.AddCookie(&http.Cookie{Name: "session", Value: "abc123"})
+
+    c, err := r.Cookie("session")
+    if err != nil {
+        panic(err)
+    }
+    fmt.Println(c.Name, "=", c.Value)
+    fmt.Println("count:", len(r.Cookies()))
+}</pre>
+    <div class="output-label">Output</div>
+    <div class="output">session = abc123
+count: 1</div>
+
+    <h4>Automatic client cookies with a jar</h4>
+    <p>Give an <code>http.Client</code> a <code>cookiejar.Jar</code> and it stores <code>Set-Cookie</code> responses and replays them on later requests to the same site &mdash; no manual bookkeeping.</p>
+<pre>package main
+
+import (
+    "fmt"
+    "io"
+    "net/http"
+    "net/http/cookiejar"
+    "net/http/httptest"
+)
+
+func main() {
+    srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+        if _, err := r.Cookie("session"); err != nil {
+            http.SetCookie(w, &http.Cookie{Name: "session", Value: "xyz"})
+            fmt.Fprint(w, "set")
+            return
+        }
+        fmt.Fprint(w, "seen")
+    }))
+    defer srv.Close()
+
+    jar, _ := cookiejar.New(nil)
+    client := &http.Client{Jar: jar}
+
+    do := func() string {
+        resp, _ := client.Get(srv.URL)
+        b, _ := io.ReadAll(resp.Body)
+        resp.Body.Close()
+        return string(b)
+    }
+    fmt.Println(do()) // first call: server sets the cookie
+    fmt.Println(do()) // second call: jar replayed it
+}</pre>
+    <div class="output-label">Output</div>
+    <div class="output">set
+seen</div>
+
+    <h4>Common Mistakes</h4>
+    <div class="do-dont">
+      <div class="dont-box">
+        <div class="label">Wrong</div>
+<pre>// Hand-writing the header: no attributes,
+// no sanitizing, no security flags.
+w.Header().Set("Set-Cookie", "session="+val)
+// A val with ';' or ',' silently breaks the header.</pre>
+      </div>
+      <div class="do-box">
+        <div class="label">Right</div>
+<pre>http.SetCookie(w, &http.Cookie{
+    Name:     "session",
+    Value:    val, // sanitized by SetCookie
+    HttpOnly: true,
+    Secure:   true,
+    SameSite: http.SameSiteLaxMode,
+})</pre>
+      </div>
+    </div>
+
+    <h4>Key Rules</h4>
+    <ul class="rules-list">
+      <li><code>MaxAge &gt; 0</code> sets an expiry in seconds; <code>MaxAge &lt; 0</code> deletes the cookie now; <code>MaxAge == 0</code> omits <code>Max-Age</code> (a session cookie).</li>
+      <li><code>SetCookie</code> sanitizes but does <em>not</em> URL-encode the value &mdash; encode anything with spaces, <code>;</code>, or <code>,</code> yourself (<code>base64</code> or <code>url.QueryEscape</code>).</li>
+      <li>Set <code>HttpOnly</code> (hide from JS), <code>Secure</code> (HTTPS only), and <code>SameSite</code> (CSRF defense) on every session cookie.</li>
+      <li>An <code>http.Client</code> with a <code>Jar</code> sends and stores cookies automatically per URL; without a jar you manage the <code>Cookie</code> header yourself.</li>
+    </ul>
+
+    <div class="exercise">
+      <div class="exercise-label">Practice Exercise</div>
+      <p>Write a login handler that issues an <code>HttpOnly</code>, <code>Secure</code>, <code>SameSite=Lax</code> session cookie and a logout handler that expires it with <code>MaxAge: -1</code>. Test both with <code>httptest.NewRecorder</code>, asserting the exact <code>Set-Cookie</code> header. Then build a two-request client flow with a <code>cookiejar.Jar</code> and confirm the second request is recognized as authenticated. Finally, store a value containing a space and show it must be encoded to survive.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>Pitfall:</strong> Hand-building <code>Set-Cookie</code>/<code>Cookie</code> headers &mdash; you lose attribute formatting, value sanitizing, and the security flags, and a value containing <code>;</code> or a comma corrupts the header. Also easy to forget: without a <code>Secure</code> flag a session cookie leaks over plain HTTP, and without a <code>Jar</code> the <code>http.Client</code> throws away every <code>Set-Cookie</code> the server sends.
+    </div>
+
+    <div class="connection">
+      <strong>Connections:</strong> Builds directly on <code>net/http</code> handlers and <code>Client</code>; tested with <code>httptest</code>; values are encoded with <code>encoding/base64</code> or <code>net/url</code>; and cookie handling is the substrate for session/auth middleware chains and CSRF defenses.
+    </div>
+  </div>
+
+  <!-- New 2: httptrace -->
+  <div class="concept" id="net_http_httptrace">
+    <div class="concept-header">
+      <h3>net/http/httptrace: Observing Client Requests</h3>
+      <span class="topic-badge">Diagnostics</span>
+    </div>
+    <p class="why-matters">Why it matters: when an outbound HTTP request is slow, you need to know <em>where</em> the time went &mdash; DNS lookup, TCP connect, TLS handshake, or waiting for the first response byte. <code>httptrace</code> hooks callbacks into the client request lifecycle, giving per-phase visibility (and per-phase timings) without a proxy or packet capture.</p>
+
+    <h4>Attaching a trace via the request context</h4>
+    <p>Build a <code>ClientTrace</code> with the hooks you care about and attach it to the request's context with <code>WithClientTrace</code>.</p>
+<pre>package main
+
+import (
+    "fmt"
+    "net/http"
+    "net/http/httptest"
+    "net/http/httptrace"
+)
+
+func main() {
+    srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+        fmt.Fprint(w, "hello")
+    }))
+    defer srv.Close()
+
+    trace := &httptrace.ClientTrace{
+        ConnectStart:         func(network, addr string) { fmt.Println("dialing", network) },
+        GotConn:              func(i httptrace.GotConnInfo) { fmt.Println("reused:", i.Reused) },
+        GotFirstResponseByte: func() { fmt.Println("first byte") },
+    }
+
+    req, _ := http.NewRequest(http.MethodGet, srv.URL, nil)
+    ctx := httptrace.WithClientTrace(req.Context(), trace)
+    resp, err := http.DefaultClient.Do(req.WithContext(ctx))
+    if err != nil {
+        panic(err)
+    }
+    resp.Body.Close()
+}</pre>
+    <div class="output-label">Output (representative)</div>
+    <div class="output">dialing tcp
+reused: false
+first byte</div>
+
+    <h4>Measuring time-to-first-byte</h4>
+    <p>Record timestamps inside the hooks to compute per-phase durations &mdash; here, TTFB from connection acquisition to the first response byte.</p>
+<pre>var start time.Time
+var ttfb time.Duration
+
+trace := &httptrace.ClientTrace{
+    GetConn:              func(string) { start = time.Now() },
+    GotFirstResponseByte: func() { ttfb = time.Since(start) },
+}
+
+req, _ := http.NewRequest(http.MethodGet, url, nil)
+req = req.WithContext(httptrace.WithClientTrace(req.Context(), trace))
+
+resp, _ := http.DefaultClient.Do(req)
+resp.Body.Close()
+fmt.Printf("TTFB = %v\n", ttfb)</pre>
+    <div class="output-label">Output (representative)</div>
+    <div class="output">TTFB = 214&micro;s</div>
+
+    <h4>Detecting connection reuse</h4>
+    <p><code>GotConnInfo.Reused</code> tells you whether a keep-alive connection was recycled &mdash; a reused connection skips the DNS/Connect/TLS hooks entirely.</p>
+<pre>trace := &httptrace.ClientTrace{
+    GotConn: func(i httptrace.GotConnInfo) {
+        fmt.Printf("reused=%v idle=%v\n", i.Reused, i.WasIdle)
+    },
+}
+// First request: reused=false. A second request on the same
+// client (keep-alive) reports reused=true and fires no dial hooks.</pre>
+
+    <h4>Common Mistakes</h4>
+    <div class="do-dont">
+      <div class="dont-box">
+        <div class="label">Wrong</div>
+<pre>// Building a trace but never attaching it:
+trace := &httptrace.ClientTrace{ /* hooks */ }
+resp, _ := http.DefaultClient.Do(req) // trace unused -> no hooks fire</pre>
+      </div>
+      <div class="do-box">
+        <div class="label">Right</div>
+<pre>ctx := httptrace.WithClientTrace(req.Context(), trace)
+resp, _ := http.DefaultClient.Do(req.WithContext(ctx)) // now hooks fire</pre>
+      </div>
+    </div>
+
+    <h4>Key Rules</h4>
+    <ul class="rules-list">
+      <li><code>httptrace</code> is <em>client-side only</em> &mdash; hooks fire during <code>http.Client</code>/<code>Transport</code> round-trips, never for server handlers.</li>
+      <li>Attach with <code>req.WithContext(httptrace.WithClientTrace(ctx, trace))</code>; a trace value that isn't in the request context does nothing.</li>
+      <li>Only relevant hooks fire: no <code>DNSStart</code> for an IP literal, no TLS hooks for plain HTTP, and none of the dial hooks on a reused keep-alive connection.</li>
+      <li>Hooks may run on internal goroutines &mdash; synchronize (or keep to simple timestamp writes) if they touch shared state.</li>
+    </ul>
+
+    <div class="exercise">
+      <div class="exercise-label">Practice Exercise</div>
+      <p>Write a <code>timeGet(url string)</code> that records <code>DNSStart</code>/<code>DNSDone</code>, <code>ConnectStart</code>/<code>ConnectDone</code>, <code>TLSHandshakeStart</code>/<code>TLSHandshakeDone</code>, and <code>GotFirstResponseByte</code>, then prints a per-phase latency breakdown against a real HTTPS URL. Make a second request on the same client and show the dial phases vanish because the connection was reused. Explain why the trace must live in the request's context, not a package variable.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>Pitfall:</strong> Hooks run on the transport's internal goroutines, so writing to shared maps/slices from several hooks without synchronization is a data race. And "missing" callbacks are usually normal &mdash; a reused keep-alive connection, an IP-literal host, or a plain-HTTP request each legitimately skip whole groups of hooks.
+    </div>
+
+    <div class="connection">
+      <strong>Connections:</strong> Extends <code>net/http</code> <code>Client</code>/<code>Transport</code>; context-driven like today's <code>context</code> review; complements <code>httptest</code> for a server under test and the <code>runtime/trace</code> / <code>pprof</code> tools for whole-program latency analysis.
+    </div>
+  </div>
+
+  <!-- New 3: net/textproto -->
+  <div class="concept" id="net_textproto">
+    <div class="concept-header">
+      <h3>net/textproto: Header-Style Text Protocols</h3>
+      <span class="topic-badge">Protocols</span>
+    </div>
+    <p class="why-matters">Why it matters: HTTP, SMTP, NNTP, and mail all share a line-oriented shape &mdash; CRLF-terminated <code>Key: value</code> header blocks with canonicalized keys, plus numeric response codes. <code>net/textproto</code> is the shared engine beneath <code>net/http</code> and <code>net/mail</code> that reads exactly this. Reach for it directly when you implement or parse such a protocol.</p>
+
+    <h4>Canonicalizing header keys</h4>
+    <p><code>CanonicalMIMEHeaderKey</code> normalizes casing the way HTTP/MIME expect (<code>Content-Type</code>, <code>X-Request-Id</code>), which is how case-insensitive lookups work.</p>
+<pre>package main
+
+import (
+    "fmt"
+    "net/textproto"
+)
+
+func main() {
+    fmt.Println(textproto.CanonicalMIMEHeaderKey("content-TYPE"))
+    fmt.Println(textproto.CanonicalMIMEHeaderKey("x-request-id"))
+}</pre>
+    <div class="output-label">Output</div>
+    <div class="output">Content-Type
+X-Request-Id</div>
+
+    <h4>Reading a MIME header block</h4>
+    <p><code>Reader.ReadMIMEHeader</code> consumes lines up to the blank separator and returns a <code>MIMEHeader</code> (<code>map[string][]string</code>) with canonical keys; the reader is then positioned at the body.</p>
+<pre>package main
+
+import (
+    "bufio"
+    "fmt"
+    "net/textproto"
+    "strings"
+)
+
+func main() {
+    raw := "Content-Type: text/plain\r\n" +
+        "X-Count: 3\r\n" +
+        "\r\n"
+    r := textproto.NewReader(bufio.NewReader(strings.NewReader(raw)))
+    hdr, err := r.ReadMIMEHeader()
+    if err != nil {
+        panic(err)
+    }
+    fmt.Println(hdr.Get("content-type")) // case-insensitive lookup
+    fmt.Println(hdr.Get("X-Count"))
+}</pre>
+    <div class="output-label">Output</div>
+    <div class="output">text/plain
+3</div>
+
+    <h4>Parsing a numeric response line</h4>
+    <p><code>ReadResponse</code> parses the <code>code message</code> form (and multi-line continuations) used by SMTP, FTP, and NNTP; the argument is the expected code class.</p>
+<pre>package main
+
+import (
+    "bufio"
+    "fmt"
+    "net/textproto"
+    "strings"
+)
+
+func main() {
+    r := textproto.NewReader(bufio.NewReader(strings.NewReader("220 smtp ready\r\n")))
+    code, msg, err := r.ReadResponse(2) // expect a 2xx code
+    fmt.Println(code, msg, err)
+}</pre>
+    <div class="output-label">Output</div>
+    <div class="output">220 smtp ready &lt;nil&gt;</div>
+
+    <h4>Common Mistakes</h4>
+    <div class="do-dont">
+      <div class="dont-box">
+        <div class="label">Wrong</div>
+<pre>// Rolling your own header parse into a plain map:
+m := map[string]string{}
+for _, line := range strings.Split(block, "\n") {
+    k, v, _ := strings.Cut(line, ":")
+    m[k] = v // loses casing rules, multi-values, folded lines
+}</pre>
+      </div>
+      <div class="do-box">
+        <div class="label">Right</div>
+<pre>hdr, err := textproto.NewReader(br).ReadMIMEHeader()
+if err != nil {
+    return err
+}
+// hdr: map[string][]string, canonical keys, case-insensitive Get</pre>
+      </div>
+    </div>
+
+    <h4>Key Rules</h4>
+    <ul class="rules-list">
+      <li>Keys are canonicalized (<code>Content-Type</code>), so <code>hdr.Get("content-type")</code> is case-insensitive; a raw map keyed on original casing would miss.</li>
+      <li><code>ReadMIMEHeader</code> reads up to the blank line and leaves the reader at the body &mdash; ideal for header-then-payload protocols.</li>
+      <li><code>ReadResponse(expectCode)</code> parses <code>code message</code> plus multi-line continuations &mdash; the basis of SMTP/FTP/NNTP clients.</li>
+      <li>Protocol lines are CRLF-terminated (<code>\r\n</code>); wrap your input in a <code>bufio.Reader</code> as <code>textproto.NewReader</code> requires.</li>
+    </ul>
+
+    <div class="exercise">
+      <div class="exercise-label">Practice Exercise</div>
+      <p>Parse a raw HTTP-style request line plus header block: use <code>ReadLine</code> for the request line and <code>ReadMIMEHeader</code> for the headers, then read the body. Show that <code>Get("HOST")</code> and <code>Get("host")</code> both resolve. Then simulate an SMTP greeting/reply exchange with <code>ReadResponse</code>, handling a multi-line <code>250-</code> continuation. Explain why <code>net/http</code> and <code>net/mail</code> build on this package instead of re-implementing header parsing.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>Pitfall:</strong> Forgetting that keys are stored canonically &mdash; iterating the underlying <code>MIMEHeader</code> map and matching against <code>"content-type"</code> fails because the key is <code>"Content-Type"</code>; always go through <code>Get</code>. And these protocols require <code>\r\n</code> line endings: a lone <code>\n</code> or a missing terminating blank line makes <code>ReadMIMEHeader</code> hang or error.
+    </div>
+
+    <div class="connection">
+      <strong>Connections:</strong> The engine under <code>net/mail</code> (yesterday's concept) and <code>net/http</code> header parsing; pairs with <code>bufio</code> for buffered reading and <code>mime</code> for media-type parsing; <code>ReadResponse</code> is what an SMTP/FTP client loop is built on.
+    </div>
+  </div>
+
+  <h3 style="font-size:18px;margin:28px 0 18px;color:var(--muted);">Section 2 &mdash; Diagnostics &amp; System Standard Library</h3>
+
+  <!-- New 4: runtime/trace -->
+  <div class="concept" id="runtime_trace">
+    <div class="concept-header">
+      <h3>runtime/trace: The Execution Tracer</h3>
+      <span class="topic-badge">Diagnostics</span>
+    </div>
+    <p class="why-matters">Why it matters: a CPU profile tells you <em>where</em> cycles are spent; the execution tracer tells you <em>what every goroutine did over time</em> &mdash; scheduling, blocking, syscalls, network waits, and GC pauses &mdash; with microsecond timestamps. It's the right tool for latency, lock contention, and "why isn't this parallel" questions that a flat profile can't answer, and you can annotate it with your own tasks and regions.</p>
+
+    <h4>Capturing a trace to a file</h4>
+    <p><code>trace.Start(w)</code> begins recording to any <code>io.Writer</code>; <code>trace.Stop()</code> flushes it. Always pair them with <code>defer</code>.</p>
+<pre>package main
+
+import (
+    "os"
+    "runtime/trace"
+)
+
+func main() {
+    f, err := os.Create("trace.out")
+    if err != nil {
+        panic(err)
+    }
+    defer f.Close()
+
+    if err := trace.Start(f); err != nil {
+        panic(err)
+    }
+    defer trace.Stop() // flushes; a truncated file won't open
+
+    work()
+}
+
+func work() {
+    sum := 0
+    for i := 0; i < 1_000_000; i++ {
+        sum += i
+    }
+    _ = sum
+}</pre>
+    <div class="output-label">Analyze with</div>
+<pre class="bash">go tool trace trace.out   # opens the interactive timeline in a browser</pre>
+
+    <h4>Annotating with tasks, regions, and logs</h4>
+    <p><code>NewTask</code> scopes a logical operation, <code>WithRegion</code> labels a span of work, and <code>Log</code> emits a point event &mdash; all appear on the timeline.</p>
+<pre>package main
+
+import (
+    "context"
+    "os"
+    "runtime/trace"
+)
+
+func main() {
+    f, _ := os.Create("trace.out")
+    defer f.Close()
+    trace.Start(f)
+    defer trace.Stop()
+
+    ctx, task := trace.NewTask(context.Background(), "request")
+    defer task.End()
+
+    trace.WithRegion(ctx, "parse", func() {
+        // ... parsing work shows up as a labeled region
+    })
+    trace.Log(ctx, "stage", "parsed")
+}</pre>
+
+    <h4>Capturing a trace from a benchmark</h4>
+    <p><code>go test</code> can emit a trace of a benchmark run &mdash; often the easiest way to get a representative window.</p>
+<pre class="bash">go test -bench=. -trace=trace.out ./...
+go tool trace trace.out</pre>
+
+    <h4>Common Mistakes</h4>
+    <div class="do-dont">
+      <div class="dont-box">
+        <div class="label">Wrong</div>
+<pre>trace.Start(f)
+// ... long-running server, never stopped ...
+os.Exit(0) // defers skipped: trace.Stop never runs -> unreadable file</pre>
+      </div>
+      <div class="do-box">
+        <div class="label">Right</div>
+<pre>trace.Start(f)
+defer trace.Stop() // flushes on return
+
+// Capture a bounded window, then let the program continue.</pre>
+      </div>
+    </div>
+
+    <h4>Key Rules</h4>
+    <ul class="rules-list">
+      <li>Always pair <code>trace.Start(w)</code> with <code>trace.Stop()</code> (defer it); <code>Stop</code> flushes, and a truncated trace won't open in <code>go tool trace</code>.</li>
+      <li>Analyze with <code>go tool trace file</code> &mdash; an interactive timeline of goroutines, GC, syscalls, and network blocking.</li>
+      <li>Annotate your own spans with <code>trace.NewTask</code>, <code>trace.WithRegion</code>, and <code>trace.Log</code> for meaningful labels.</li>
+      <li>Use the tracer for scheduling/latency/blocking questions and <code>pprof</code> for "where is CPU/allocation spent" &mdash; they're complementary, not interchangeable.</li>
+    </ul>
+
+    <div class="exercise">
+      <div class="exercise-label">Practice Exercise</div>
+      <p>Instrument a program that spins up a worker pool over a channel, wrap each job in a <code>trace.WithRegion</code>, and open the result in <code>go tool trace</code> to spot where goroutines block. Then capture a trace of a contended <code>sync.Mutex</code> workload and identify the serialization in the timeline. Finally, show that replacing <code>defer trace.Stop()</code> with an early <code>os.Exit</code> produces an unreadable trace, and explain why the tracer is unsuitable as an always-on profiler.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>Pitfall:</strong> Leaving the tracer running unbounded &mdash; it carries real overhead and writes large files, so it's a targeted, bounded-window tool, not an always-on profiler. And because <code>trace.Stop</code> does the flush, any path that skips deferred calls (<code>os.Exit</code>, <code>log.Fatal</code>, a panic without recovery in the wrong place) leaves a truncated, unopenable trace.
+    </div>
+
+    <div class="connection">
+      <strong>Connections:</strong> Sibling to <code>pprof</code> (profiling) and <code>runtime/metrics</code> from earlier days; its tasks and regions are <code>context</code>-scoped, echoing today's <code>context</code> review and OpenTelemetry spans; ideal for diagnosing the goroutine/channel patterns reviewed above.
+    </div>
+  </div>
+
+  <!-- New 5: os/user -->
+  <div class="concept" id="os_user">
+    <div class="concept-header">
+      <h3>os/user: Users, Groups &amp; Home Directories</h3>
+      <span class="topic-badge">System</span>
+    </div>
+    <p class="why-matters">Why it matters: CLIs and services routinely need the current user, their home directory (for <code>~/.config</code> paths), or to resolve a UID to a name for logging and ownership. <code>os/user</code> does this portably across macOS, Linux, and Windows &mdash; no shelling out to <code>id</code> and no hand-parsing <code>/etc/passwd</code>.</p>
+
+    <h4>The current user</h4>
+    <p><code>user.Current()</code> returns a <code>*user.User</code> with the process's identity and home directory.</p>
+<pre>package main
+
+import (
+    "fmt"
+    "os/user"
+)
+
+func main() {
+    u, err := user.Current()
+    if err != nil {
+        panic(err)
+    }
+    fmt.Println("username:", u.Username)
+    fmt.Println("uid:", u.Uid)
+    fmt.Println("home:", u.HomeDir)
+}</pre>
+    <div class="output-label">Output (representative &mdash; varies by machine)</div>
+    <div class="output">username: andy
+uid: 501
+home: /Users/andy</div>
+
+    <h4>Looking up by name or id &mdash; and handling misses</h4>
+    <p><code>Lookup</code>/<code>LookupId</code> resolve other users; a miss returns a typed <code>UnknownUserError</code> you can match with <code>errors.As</code>.</p>
+<pre>package main
+
+import (
+    "errors"
+    "fmt"
+    "os/user"
+)
+
+func main() {
+    _, err := user.Lookup("nonesuch")
+    var unknown user.UnknownUserError
+    if errors.As(err, &unknown) {
+        fmt.Println("no such user")
+    }
+}</pre>
+    <div class="output-label">Output</div>
+    <div class="output">no such user</div>
+
+    <h4>Group membership</h4>
+    <p><code>GroupIds</code> lists a user's group IDs; <code>LookupGroupId</code> resolves each to a name.</p>
+<pre>u, _ := user.Current()
+gids, err := u.GroupIds()
+if err != nil {
+    // may fail in a static (CGO_ENABLED=0) build
+}
+for _, gid := range gids {
+    if g, err := user.LookupGroupId(gid); err == nil {
+        fmt.Println(g.Name)
+    }
+}</pre>
+
+    <h4>Common Mistakes</h4>
+    <div class="do-dont">
+      <div class="dont-box">
+        <div class="label">Wrong</div>
+<pre>// Assumes a Linux layout and integer UID:
+home := "/home/" + username
+uid, _ := strconv.Atoi(u.Uid) // Uid is a STRING id</pre>
+      </div>
+      <div class="do-box">
+        <div class="label">Right</div>
+<pre>u, _ := user.Current()
+home := u.HomeDir // /Users/... on macOS, a profile path on Windows
+// Or, if you only need the home dir:
+home, _ = os.UserHomeDir()</pre>
+      </div>
+    </div>
+
+    <h4>Key Rules</h4>
+    <ul class="rules-list">
+      <li><code>Current()</code> gives the process's user; <code>Lookup</code>/<code>LookupId</code> resolve others; misses return <code>UnknownUserError</code>/<code>UnknownUserIdError</code> (match with <code>errors.As</code>).</li>
+      <li><code>Uid</code> and <code>Gid</code> are <em>strings</em>, not ints &mdash; they must portably represent Windows SIDs as well as POSIX numeric IDs.</li>
+      <li>For just a directory, prefer <code>os.UserHomeDir()</code> or <code>os.UserConfigDir()</code> &mdash; simpler and dependency-free.</li>
+      <li>Some lookups (<code>GroupIds</code>, name resolution) may rely on cgo; a pure-Go <code>CGO_ENABLED=0</code> build falls back to <code>/etc/passwd</code> parsing and can behave differently in minimal containers.</li>
+    </ul>
+
+    <div class="exercise">
+      <div class="exercise-label">Practice Exercise</div>
+      <p>Write <code>configDir(app string) (string, error)</code> that builds <code>&lt;home&gt;/.config/&lt;app&gt;</code> using <code>user.Current().HomeDir</code> and <code>filepath.Join</code>, then rewrite it with <code>os.UserConfigDir</code> and compare. Handle a lookup of a nonexistent user with <code>errors.As</code> against <code>user.UnknownUserError</code>. Finally, print the current user's group names, and note what happens when you cross-compile with <code>CGO_ENABLED=0</code>.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>Pitfall:</strong> Treating <code>Uid</code> as an integer or hardcoding <code>/home/&lt;name&gt;</code> &mdash; on macOS home is under <code>/Users</code>, and on Windows the "Uid" is a SID with a profile-path home. And <code>GroupIds</code>/name lookups can fail or return incomplete data in static (<code>CGO_ENABLED=0</code>) builds, which is exactly the configuration many minimal container images use.
+    </div>
+
+    <div class="connection">
+      <strong>Connections:</strong> Pairs with <code>os.UserHomeDir</code>/<code>UserConfigDir</code> and <code>path/filepath</code> (the <code>os &amp; filepath</code> day) for building config paths; feeds the configuration/env-var material from Production Go; and its cgo/static-build caveat ties into cross-compilation and build tags.
+    </div>
+  </div>
+
+</div><!-- end New Concepts section -->
+
+
+<!-- ============================================================ -->
+<!-- FOOTER -->
+<!-- ============================================================ -->
+<footer class="footer">
+  <h4>All Go Guides</h4>
+  <ul>
+    <li><a href="golang-guides/golang-guide-2026-07-09.html">Day 34 &mdash; 2026-07-09</a></li>
+    <li class="current">Day 33 &mdash; 2026-07-08 (current)</li>
+    <li><a href="golang-guides/golang-guide-2026-07-07.html">Day 32 &mdash; 2026-07-07</a></li>
+    <li><a href="golang-guides/golang-guide-2026-07-06.html">Day 31 &mdash; 2026-07-06</a></li>
+    <li><a href="golang-guides/golang-guide-2026-07-05.html">Day 30 &mdash; 2026-07-05</a></li>
+    <li><a href="golang-guides/golang-guide-2026-07-04.html">Day 29 &mdash; 2026-07-04</a></li>
+    <li><a href="golang-guides/golang-guide-2026-07-03.html">Day 28 &mdash; 2026-07-03</a></li>
+    <li><a href="golang-guides/golang-guide-2026-07-02.html">Day 27 &mdash; 2026-07-02</a></li>
+    <li><a href="golang-guides/golang-guide-2026-07-01.html">Day 26 &mdash; 2026-07-01</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-30.html">Day 25 &mdash; 2026-06-30</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-29.html">Day 24 &mdash; 2026-06-29</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-28.html">Day 23 &mdash; 2026-06-28</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-27.html">Day 22 &mdash; 2026-06-27</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-26.html">Day 21 &mdash; 2026-06-26</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-25.html">Day 20 &mdash; 2026-06-25</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-24.html">Day 19 &mdash; 2026-06-24</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-23.html">Day 18 &mdash; 2026-06-23</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-22.html">Day 17 &mdash; 2026-06-22</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-21.html">Day 16 &mdash; 2026-06-21</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-19.html">Day 15 &mdash; 2026-06-19</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-18.html">Day 14 &mdash; 2026-06-18</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-17.html">Day 13 &mdash; 2026-06-17</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-15.html">Day 12 &mdash; 2026-06-15</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-13.html">Day 11 &mdash; 2026-06-13</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-12.html">Day 10 &mdash; 2026-06-12</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-11.html">Day 9 &mdash; 2026-06-11</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-10.html">Day 8 &mdash; 2026-06-10</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-09.html">Day 7 &mdash; 2026-06-09</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-08.html">Day 6 &mdash; 2026-06-08</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-07.html">Day 5 &mdash; 2026-06-07</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-05.html">Day 4 &mdash; 2026-06-05</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-04.html">Day 3 &mdash; 2026-06-04</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-03.html">Day 2 &mdash; 2026-06-03</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-02.html">Day 1 &mdash; 2026-06-02</a></li>
+  </ul>
+
+  <h4 style="margin-top: 20px;">All Guides</h4>
+  <ul>
+    <li><a href="guide.html">LeetCode Study Guide</a></li>
+    <li><a href="lang-guide.html">Multi-Language Guide</a></li>
+    <li><a href="python-guide.html">Python Guide</a></li>
+    <li><a href="typescript-guide.html">TypeScript Guide</a></li>
+    <li><a href="javascript-guide.html">JavaScript Guide</a></li>
+    <li><a href="golang-guide.html">Go Guide (current)</a></li>
+    <li><a href="report.html">Performance Report</a></li>
+  </ul>
+</footer>
+
+</div><!-- end main -->
+
+<script>
+// ===== Theme Toggle =====
+(function() {
+  var KEY = 'lc-goguide-theme';
+  var toggle = document.getElementById('theme-toggle');
+  var html = document.documentElement;
+
+  function setTheme(theme) {
+    html.setAttribute('data-theme', theme);
+    localStorage.setItem(KEY, theme);
+    toggle.textContent = theme === 'dark' ? '☽' : '☀';
+  }
+
+  var saved = localStorage.getItem(KEY) || 'dark';
+  setTheme(saved);
+
+  toggle.addEventListener('click', function() {
+    setTheme(html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
+  });
+})();
+
+// ===== Mobile Sidebar Toggle =====
+(function() {
+  var btn = document.getElementById('sidebar-toggle');
+  var sidebar = document.getElementById('sidebar');
+
+  btn.addEventListener('click', function() {
+    sidebar.classList.toggle('open');
+  });
+
+  // Close sidebar when clicking a link (mobile)
+  sidebar.querySelectorAll('.sidebar-link').forEach(function(link) {
+    link.addEventListener('click', function() {
+      if (window.innerWidth <= 900) {
+        sidebar.classList.remove('open');
+      }
+    });
+  });
+})();
+
+// ===== Active Sidebar Link on Scroll =====
+(function() {
+  var links = document.querySelectorAll('.sidebar-link');
+  var sections = [];
+
+  links.forEach(function(link) {
+    var id = link.getAttribute('href').replace('#', '');
+    var el = document.getElementById(id);
+    if (el) sections.push({ id: id, el: el, link: link });
+  });
+
+  function onScroll() {
+    var scrollTop = window.scrollY + 120;
+    var current = null;
+
+    for (var i = sections.length - 1; i >= 0; i--) {
+      if (sections[i].el.offsetTop <= scrollTop) {
+        current = sections[i];
+        break;
+      }
+    }
+
+    links.forEach(function(l) { l.classList.remove('active'); });
+    if (current) current.link.classList.add('active');
+  }
+
+  window.addEventListener('scroll', onScroll);
+  onScroll();
+})();
+</script>
+</body>
+</html>

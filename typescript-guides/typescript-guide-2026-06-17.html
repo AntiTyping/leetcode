@@ -1,0 +1,2681 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TypeScript Daily Guide — 2026-06-17 (Day 15)</title>
+<style>
+:root {
+  --bg: #0d1117;
+  --surface: #161b22;
+  --surface2: #1c2129;
+  --border: #30363d;
+  --text: #e6edf3;
+  --text-muted: #8b949e;
+  --accent: #58a6ff;
+  --accent-bg: rgba(56,139,253,0.15);
+  --green: #3fb950;
+  --green-bg: rgba(63,185,80,0.08);
+  --red: #f85149;
+  --red-bg: rgba(248,81,73,0.08);
+  --yellow: #d29922;
+  --yellow-bg: rgba(210,153,34,0.1);
+  --orange: #db6d28;
+  --purple: #bc8cff;
+  --purple-bg: rgba(188,140,255,0.08);
+  --purple-border: rgba(188,140,255,0.2);
+  --link: #58a6ff;
+  --code-bg: #1c2129;
+  --output-bg: #0e1c0e;
+  --output-border: #1a3a1a;
+  --sidebar-bg: #161b22;
+  --sidebar-active: rgba(56,139,253,0.15);
+  --exercise-border: #30363d;
+}
+[data-theme="light"] {
+  --bg: #ffffff;
+  --surface: #f6f8fa;
+  --surface2: #eef1f5;
+  --border: #d0d7de;
+  --text: #1f2328;
+  --text-muted: #656d76;
+  --accent: #0969da;
+  --accent-bg: rgba(9,105,218,0.1);
+  --green: #1a7f37;
+  --green-bg: rgba(26,127,55,0.06);
+  --red: #cf222e;
+  --red-bg: rgba(207,34,46,0.06);
+  --yellow: #9a6700;
+  --yellow-bg: rgba(154,103,0,0.06);
+  --orange: #bc4c00;
+  --purple: #8250df;
+  --purple-bg: rgba(130,80,223,0.06);
+  --purple-border: rgba(130,80,223,0.15);
+  --link: #0969da;
+  --code-bg: #eef1f5;
+  --output-bg: #f0faf0;
+  --output-border: #c6e6c6;
+  --sidebar-bg: #f6f8fa;
+  --sidebar-active: rgba(9,105,218,0.1);
+  --exercise-border: #d0d7de;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;font-size:16px;line-height:1.7;color:var(--text);background:var(--bg);display:flex;min-height:100vh}
+a{color:var(--link);text-decoration:none}
+a:hover{text-decoration:underline}
+
+/* Sidebar */
+.sidebar{position:fixed;top:0;left:0;width:300px;height:100vh;background:var(--sidebar-bg);border-right:1px solid var(--border);overflow-y:auto;padding:20px 0;z-index:100}
+.sidebar-header{padding:16px 20px;border-bottom:1px solid var(--border);margin-bottom:12px}
+.sidebar-header h2{font-size:15px;font-weight:600;color:var(--text)}
+.sidebar-header .date{font-size:13px;color:var(--text-muted);margin-top:2px}
+.sidebar-section{padding:8px 20px 4px;font-size:12px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px}
+.sidebar-section.review-label{color:var(--purple)}
+.sidebar-nav{list-style:none;padding:0}
+.sidebar-nav li a{display:block;padding:6px 20px 6px 28px;font-size:14px;color:var(--text-muted);transition:all 0.15s}
+.sidebar-nav li a:hover,.sidebar-nav li a.active{color:var(--accent);background:var(--sidebar-active);text-decoration:none}
+.sidebar-nav li a .nav-id{font-size:11px;color:var(--text-muted);opacity:0.6;margin-left:6px}
+
+/* Main */
+.main{margin-left:300px;flex:1;padding:40px;max-width:1160px}
+.content{max-width:860px;margin:0 auto}
+
+/* Theme Toggle */
+.theme-toggle{position:fixed;top:16px;right:20px;z-index:200;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:8px 12px;cursor:pointer;color:var(--text);font-size:18px;line-height:1;transition:all 0.15s}
+.theme-toggle:hover{border-color:var(--accent)}
+
+/* Header */
+.guide-header{text-align:center;padding:32px 0 40px;border-bottom:1px solid var(--border);margin-bottom:40px}
+.guide-header h1{font-size:28px;font-weight:700;margin-bottom:8px}
+.guide-header .meta{font-size:15px;color:var(--text-muted)}
+.guide-header .meta span{margin:0 8px}
+.badge{display:inline-block;padding:2px 10px;border-radius:12px;font-size:13px;font-weight:500}
+.badge-blue{background:var(--accent-bg);color:var(--accent)}
+.badge-purple{background:var(--purple-bg);color:var(--purple)}
+
+/* How To Use */
+.how-to-use{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:24px 28px;margin-bottom:40px}
+.how-to-use h2{font-size:18px;margin-bottom:12px}
+.how-to-use ol{padding-left:24px}
+.how-to-use li{margin-bottom:6px;color:var(--text-muted)}
+
+/* Review Section */
+.review-section{margin-bottom:48px}
+.review-section-header{font-size:22px;font-weight:700;padding-bottom:12px;border-bottom:2px solid var(--purple);margin-bottom:28px;display:flex;align-items:center;gap:12px;color:var(--purple)}
+
+/* Review Card */
+.review-card{background:var(--purple-bg);border:1px solid var(--purple-border);border-left:4px solid var(--purple);border-radius:10px;padding:28px;margin-bottom:24px}
+.review-card .review-header{display:flex;align-items:center;gap:12px;margin-bottom:12px;flex-wrap:wrap}
+.review-card .review-title{font-size:18px;font-weight:700;color:var(--purple)}
+.review-card .review-meta{font-size:13px;color:var(--text-muted)}
+.review-card .review-reminder{color:var(--text-muted);font-style:italic;margin-bottom:16px;padding-left:14px;border-left:3px solid var(--purple)}
+.review-card .review-pattern{margin-bottom:16px}
+.review-card .review-pattern strong{display:block;margin-bottom:8px;font-size:14px;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px}
+.review-card .review-challenge{margin-bottom:12px}
+.review-card .review-challenge strong{display:block;margin-bottom:8px;font-size:14px;color:var(--yellow);text-transform:uppercase;letter-spacing:0.5px}
+.review-card .review-challenge p{line-height:1.6}
+.review-card .review-pitfall{background:var(--red-bg);border:1px solid rgba(248,81,73,0.15);border-radius:6px;padding:12px 16px;font-size:14px;line-height:1.6}
+.review-card .review-pitfall strong{color:var(--red);margin-right:4px}
+.review-card code{background:var(--code-bg);padding:2px 6px;border-radius:4px;font-family:'SF Mono','Fira Code','Consolas',monospace;font-size:13px}
+
+/* Topic Section */
+.topic-section{margin-bottom:48px}
+.topic-section-header{font-size:22px;font-weight:700;padding-bottom:12px;border-bottom:2px solid var(--accent);margin-bottom:28px;display:flex;align-items:center;gap:12px}
+.topic-section-header .section-num{background:var(--accent);color:#fff;width:32px;height:32px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:15px;font-weight:700;flex-shrink:0}
+
+/* Concept Card */
+.concept-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:28px;margin-bottom:32px}
+.concept-header{display:flex;align-items:center;gap:12px;margin-bottom:16px;flex-wrap:wrap}
+.concept-title{font-size:20px;font-weight:700}
+.ttag{display:inline-block;padding:2px 10px;border-radius:12px;font-size:12px;font-weight:500;background:var(--accent-bg);color:var(--accent)}
+
+.why-matters{color:var(--text-muted);font-style:italic;margin-bottom:20px;padding-left:14px;border-left:3px solid var(--accent)}
+.explanation{margin-bottom:20px;line-height:1.8}
+.explanation p{margin-bottom:12px}
+.explanation ul,.explanation ol{padding-left:24px;margin-bottom:12px}
+.explanation li{margin-bottom:4px}
+.explanation code{background:var(--code-bg);padding:2px 6px;border-radius:4px;font-family:'SF Mono','Fira Code','Consolas',monospace;font-size:14px}
+
+/* Code Examples */
+.code-example{margin-bottom:20px;border:1px solid var(--border);border-radius:8px;overflow:hidden}
+.lang-badge{background:var(--surface2);color:var(--text-muted);font-size:12px;font-weight:600;padding:6px 14px;border-bottom:1px solid var(--border);font-family:'SF Mono','Fira Code','Consolas',monospace}
+pre{margin:0;padding:16px;overflow-x:auto;background:var(--code-bg);font-family:'SF Mono','Fira Code','Consolas',monospace;font-size:13.5px;line-height:1.6;white-space:pre-wrap}
+pre code{background:none;padding:0;font-size:inherit}
+.output{background:var(--output-bg);border-top:1px solid var(--output-border);padding:12px 16px;font-family:'SF Mono','Fira Code','Consolas',monospace;font-size:13px;color:var(--green);white-space:pre-wrap}
+.output::before{content:"Output:";display:block;font-size:11px;font-weight:600;color:var(--text-muted);margin-bottom:4px;text-transform:uppercase;letter-spacing:0.5px}
+.type-result{background:var(--output-bg);border-top:1px solid var(--output-border);padding:12px 16px;font-family:'SF Mono','Fira Code','Consolas',monospace;font-size:13px;color:var(--green);white-space:pre-wrap}
+.type-result::before{content:"Type Result:";display:block;font-size:11px;font-weight:600;color:var(--text-muted);margin-bottom:4px;text-transform:uppercase;letter-spacing:0.5px}
+.type-error{background:var(--red-bg);border-top:1px solid rgba(248,81,73,0.2);padding:12px 16px;font-family:'SF Mono','Fira Code','Consolas',monospace;font-size:13px;color:var(--red);white-space:pre-wrap}
+.type-error::before{content:"Type Error:";display:block;font-size:11px;font-weight:600;color:var(--red);margin-bottom:4px;text-transform:uppercase;letter-spacing:0.5px}
+
+/* Callouts */
+.callout-warning{background:var(--yellow-bg);border:1px solid rgba(210,153,34,0.2);border-radius:8px;padding:20px;margin-bottom:20px}
+.callout-warning strong{color:var(--yellow);display:block;margin-bottom:12px;font-size:16px}
+.mistake,.correct{padding:10px 14px;border-radius:6px;margin-bottom:10px;font-size:14px;line-height:1.6}
+.mistake{background:var(--red-bg);border-left:3px solid var(--red)}
+.mistake code,.correct code{background:var(--code-bg);padding:2px 6px;border-radius:4px;font-family:'SF Mono','Fira Code','Consolas',monospace;font-size:13px}
+.correct{background:var(--green-bg);border-left:3px solid var(--green)}
+
+/* Key Rules */
+.key-rules{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:20px;margin-bottom:20px}
+.key-rules strong{display:block;margin-bottom:10px;font-size:16px}
+.key-rules ul{padding-left:20px}
+.key-rules li{margin-bottom:6px}
+.key-rules code{background:var(--code-bg);padding:2px 6px;border-radius:4px;font-family:'SF Mono','Fira Code','Consolas',monospace;font-size:13px}
+
+/* Exercises */
+.exercises{border:2px dashed var(--exercise-border);border-radius:8px;padding:20px;margin-bottom:20px;margin-left:12px}
+.exercises strong{display:block;margin-bottom:14px;font-size:16px;color:var(--purple)}
+.exercise{margin-bottom:14px;padding-left:38px;position:relative;line-height:1.6}
+.exercise:last-child{margin-bottom:0}
+.exercise-num{position:absolute;left:0;top:2px;background:var(--purple);color:#fff;width:24px;height:24px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:12px;font-weight:700}
+.exercise code{background:var(--code-bg);padding:2px 6px;border-radius:4px;font-family:'SF Mono','Fira Code','Consolas',monospace;font-size:13px}
+
+/* Connections */
+.connections{background:var(--accent-bg);border:1px solid rgba(56,139,253,0.2);border-radius:8px;padding:16px 20px;font-size:14px;color:var(--text-muted)}
+.connections strong{color:var(--accent);margin-right:6px}
+
+/* Footer */
+.guide-footer{border-top:1px solid var(--border);padding-top:32px;margin-top:48px}
+.guide-footer h2{font-size:18px;margin-bottom:16px}
+.guide-footer ul{list-style:none;padding:0}
+.guide-footer li{padding:6px 0}
+.guide-footer li a{font-weight:500}
+
+/* Responsive */
+@media(max-width:900px){
+  .sidebar{display:none}
+  .main{margin-left:0}
+  .theme-toggle{top:12px;right:12px}
+}
+</style>
+</head>
+<body>
+
+<!-- Theme Toggle -->
+<button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">&#x1F319;</button>
+
+<!-- Sidebar -->
+<nav class="sidebar">
+  <div class="sidebar-header">
+    <h2>TypeScript Daily Guide</h2>
+    <div class="date">2026-06-17 &mdash; Day 15</div>
+  </div>
+
+  <div class="sidebar-section review-label">Review (6 concepts)</div>
+  <ul class="sidebar-nav">
+    <li><a href="#review_discriminated_unions">Discriminated Unions in Practice <span class="nav-id">R1</span></a></li>
+    <li><a href="#review_error_handling">Error Handling Patterns <span class="nav-id">R2</span></a></li>
+    <li><a href="#review_immutability">Immutability Patterns <span class="nav-id">R3</span></a></li>
+    <li><a href="#review_infer_mastery">infer Mastery <span class="nav-id">R4</span></a></li>
+    <li><a href="#review_database_typing">Database Typing: Prisma &amp; Drizzle <span class="nav-id">R5</span></a></li>
+    <li><a href="#review_state_management">State Management Typing <span class="nav-id">R6</span></a></li>
+  </ul>
+
+  <div class="sidebar-section">Type-Safe Patterns II</div>
+  <ul class="sidebar-nav">
+    <li><a href="#phantom_type_builder">Type-Safe Builder with Phantom Types <span class="nav-id">#1</span></a></li>
+    <li><a href="#type_safe_state_machines">Type-Safe State Machines <span class="nav-id">#2</span></a></li>
+    <li><a href="#variance_annotations">Variance Annotations (in/out) <span class="nav-id">#3</span></a></li>
+  </ul>
+
+  <div class="sidebar-section">Testing &amp; Quality</div>
+  <ul class="sidebar-nav">
+    <li><a href="#type_testing_expect">Type Testing with expect-type <span class="nav-id">#4</span></a></li>
+    <li><a href="#assertion_narrowing_patterns">Assertion Functions &amp; Type Narrowing <span class="nav-id">#5</span></a></li>
+  </ul>
+</nav>
+
+<!-- Main Content -->
+<div class="main">
+<div class="content">
+
+<!-- Header -->
+<header class="guide-header">
+  <h1>TypeScript Daily Guide &mdash; Day 15</h1>
+  <div class="meta">
+    <span>2026-06-17</span>
+    <span>&middot;</span>
+    <span>Day 15 of 15</span>
+    <span>&middot;</span>
+    <span class="badge badge-purple">6 reviews</span>
+    <span class="badge badge-blue">5 new concepts</span>
+  </div>
+</header>
+
+<!-- How to Use -->
+<div class="how-to-use">
+  <h2>How to Use This Guide</h2>
+  <ol>
+    <li><strong>Review first</strong> &mdash; scan each purple review card; if the concept feels solid, move on; if fuzzy, re-read the code pattern</li>
+    <li><strong>Attempt the challenge exercise</strong> on any review card that felt shaky &mdash; this is your best reinforcement signal</li>
+    <li><strong>Work through new concepts</strong> top to bottom &mdash; each builds on the previous</li>
+    <li><strong>Type every code example</strong> yourself in a .ts or .tsx file &mdash; hover over types in your editor to build intuition</li>
+    <li><strong>Do at least 2 exercises per concept</strong> before moving to the next one</li>
+  </ol>
+</div>
+
+<!-- ============================================================ -->
+<!-- REVIEW SECTION                                                -->
+<!-- ============================================================ -->
+<div class="review-section">
+<div class="review-section-header">Review &mdash; 6 Concepts</div>
+
+<!-- R1: Discriminated Unions in Practice -->
+<div class="review-card" id="review_discriminated_unions">
+  <div class="review-header">
+    <span class="review-title">R1. Discriminated Unions in Practice</span>
+    <span class="badge badge-purple">Advanced Type System</span>
+    <span class="review-meta">rep 1 &middot; 7 days overdue</span>
+  </div>
+  <div class="review-reminder">Use a shared literal <code>type</code> field to narrow unions. The compiler automatically narrows the full union to the specific variant inside each <code>case</code> or <code>if</code> branch.</div>
+
+  <div class="review-pattern">
+    <strong>Key Pattern</strong>
+    <div class="code-example">
+<pre><code>// State machine with discriminated union
+type AsyncState&lt;T&gt; =
+  | { type: "idle" }
+  | { type: "loading" }
+  | { type: "success"; data: T }
+  | { type: "error"; error: Error };
+
+function renderState&lt;T&gt;(state: AsyncState&lt;T&gt;): string {
+  switch (state.type) {
+    case "idle":    return "Ready";
+    case "loading": return "Loading...";
+    case "success": return `Got: ${state.data}`;   // data narrowed
+    case "error":   return `Err: ${state.error.message}`; // error narrowed
+  }
+}</code></pre>
+<div class="type-result">case "success": state is { type: "success"; data: T }
+case "error":   state is { type: "error"; error: Error }</div>
+    </div>
+  </div>
+
+  <div class="review-challenge">
+    <strong>Challenge Exercise</strong>
+    <p>Model a payment processing pipeline with 5 states: <code>pending</code>, <code>authorized</code> (has <code>authCode: string</code>), <code>captured</code> (has <code>amount: number</code> and <code>captureId: string</code>), <code>refunded</code> (has <code>refundId: string</code> and <code>refundedAt: Date</code>), and <code>failed</code> (has <code>reason: string</code>). Write a <code>describePayment</code> function with an exhaustive switch.</p>
+  </div>
+
+  <div class="review-pitfall">
+    <strong>#1 Pitfall:</strong> Forgetting to handle all cases without an exhaustive <code>never</code> check &mdash; the compiler won't warn you about missing branches unless you assign to <code>never</code> in the default.
+  </div>
+
+  <div class="review-pattern" style="margin-top:16px">
+    <strong>WRONG vs RIGHT</strong>
+    <div class="code-example">
+<pre><code>// WRONG: optional fields instead of discriminated union
+type BadState = {
+  loading?: boolean;
+  data?: string;
+  error?: Error;
+};
+// Nothing prevents { loading: true, error: new Error() } — contradictory!
+
+// RIGHT: discriminated union
+type GoodState =
+  | { type: "loading" }
+  | { type: "success"; data: string }
+  | { type: "error"; error: Error };
+// Each variant is self-consistent — impossible to have both data and error</code></pre>
+    </div>
+  </div>
+</div>
+
+<!-- R2: Error Handling Patterns -->
+<div class="review-card" id="review_error_handling">
+  <div class="review-header">
+    <span class="review-title">R2. Error Handling Patterns</span>
+    <span class="badge badge-purple">Functional Patterns</span>
+    <span class="review-meta">rep 1 &middot; 7 days overdue</span>
+  </div>
+  <div class="review-reminder"><code>Result&lt;T,E&gt;</code> type: tagged errors with discriminated unions. Replaces thrown exceptions with composable, type-safe error channels.</div>
+
+  <div class="review-pattern">
+    <strong>Key Pattern</strong>
+    <div class="code-example">
+<pre><code>type Result&lt;T, E&gt; =
+  | { ok: true; value: T }
+  | { ok: false; error: E };
+
+function parseJSON(input: string): Result&lt;unknown, SyntaxError&gt; {
+  try {
+    return { ok: true, value: JSON.parse(input) };
+  } catch (e) {
+    return { ok: false, error: e as SyntaxError };
+  }
+}
+
+const result = parseJSON('{"name":"Alice"}');
+if (result.ok) {
+  console.log(result.value); // unknown (safe to validate next)
+} else {
+  console.log(result.error.message); // SyntaxError
+}</code></pre>
+<div class="type-result">result.ok === true  => result.value: unknown
+result.ok === false => result.error: SyntaxError</div>
+    </div>
+  </div>
+
+  <div class="review-challenge">
+    <strong>Challenge Exercise</strong>
+    <p>Implement a <code>pipe</code> function that takes an initial <code>Result&lt;T, E&gt;</code> and an array of transform functions, each returning a <code>Result</code>. The pipe should short-circuit on the first error and propagate it, accumulating error types in the union.</p>
+  </div>
+
+  <div class="review-pitfall">
+    <strong>#1 Pitfall:</strong> Using <code>throw</code> inside library code that is supposed to return <code>Result</code> types &mdash; callers expect to check <code>.ok</code>, not catch exceptions.
+  </div>
+
+  <div class="review-pattern" style="margin-top:16px">
+    <strong>WRONG vs RIGHT</strong>
+    <div class="code-example">
+<pre><code>// WRONG: mixing throw with Result return type
+function parseConfig(json: string): Result&lt;Config, ParseError&gt; {
+  const data = JSON.parse(json); // THROWS on invalid JSON!
+  // Caller expects to check result.ok, but this throws instead
+  return { ok: true, value: data as Config };
+}
+
+// RIGHT: catch and wrap in Result
+function parseConfig(json: string): Result&lt;Config, ParseError&gt; {
+  try {
+    const data = JSON.parse(json);
+    return { ok: true, value: data as Config };
+  } catch (e) {
+    return { ok: false, error: { type: "parse", message: (e as Error).message } };
+  }
+}</code></pre>
+    </div>
+  </div>
+</div>
+
+<!-- R3: Immutability Patterns -->
+<div class="review-card" id="review_immutability">
+  <div class="review-header">
+    <span class="review-title">R3. Immutability Patterns</span>
+    <span class="badge badge-purple">Type Safety</span>
+    <span class="review-meta">rep 1 &middot; 7 days overdue</span>
+  </div>
+  <div class="review-reminder"><code>Readonly&lt;T&gt;</code>, <code>ReadonlyArray&lt;T&gt;</code>, <code>as const</code>, and <code>Object.freeze</code> typing. Use <code>as const satisfies Config</code> for validated immutable literals.</div>
+
+  <div class="review-pattern">
+    <strong>Key Pattern</strong>
+    <div class="code-example">
+<pre><code>// as const satisfies — validate AND keep literal types
+interface Config {
+  host: string;
+  port: number;
+  features: readonly string[];
+}
+
+const config = {
+  host: "localhost",
+  port: 3000,
+  features: ["auth", "logging"] as const,
+} as const satisfies Config;
+
+// config.host is "localhost" (literal), not string
+// config.port is 3000 (literal), not number
+// config.features is readonly ["auth", "logging"]</code></pre>
+<div class="type-result">config.host: "localhost"
+config.port: 3000
+config.features: readonly ["auth", "logging"]</div>
+    </div>
+  </div>
+
+  <div class="review-challenge">
+    <strong>Challenge Exercise</strong>
+    <p>Write a <code>DeepReadonly&lt;T&gt;</code> utility type that recursively makes all properties, nested objects, and arrays read-only. Test it on a type with 3 levels of nesting.</p>
+  </div>
+
+  <div class="review-pitfall">
+    <strong>#1 Pitfall:</strong> <code>Readonly&lt;T&gt;</code> is shallow, not deep &mdash; nested objects are still mutable unless you recurse with a custom <code>DeepReadonly&lt;T&gt;</code>.
+  </div>
+
+  <div class="review-pattern" style="margin-top:16px">
+    <strong>WRONG vs RIGHT</strong>
+    <div class="code-example">
+<pre><code>// WRONG: assuming Readonly prevents nested mutation
+const config: Readonly&lt;{ db: { host: string } }&gt; = { db: { host: "localhost" } };
+// config.db = { host: "other" }; // Error: cannot assign to 'db'
+config.db.host = "hacked";        // NO error! Readonly is shallow!
+
+// RIGHT: use as const for deep immutability
+const config2 = {
+  db: { host: "localhost", port: 5432 },
+} as const;
+// config2.db.host = "hacked"; // Error: cannot assign to 'host' (readonly)</code></pre>
+    </div>
+  </div>
+</div>
+
+<!-- R4: infer Mastery -->
+<div class="review-card" id="review_infer_mastery">
+  <div class="review-header">
+    <span class="review-title">R4. infer Mastery</span>
+    <span class="badge badge-purple">Advanced Type System</span>
+    <span class="review-meta">rep 1 &middot; 7 days overdue</span>
+  </div>
+  <div class="review-reminder">Extract types from complex structures in conditional types. <code>infer</code> introduces a type variable that TypeScript fills in when the pattern matches.</div>
+
+  <div class="review-pattern">
+    <strong>Key Pattern</strong>
+    <div class="code-example">
+<pre><code>// Extract return type from any function
+type ReturnOf&lt;T&gt; = T extends (...args: any[]) =&gt; infer R ? R : never;
+
+type A = ReturnOf&lt;() =&gt; string&gt;;          // string
+type B = ReturnOf&lt;(x: number) =&gt; boolean&gt;; // boolean
+
+// Extract the resolved type of a Promise
+type Awaited&lt;T&gt; = T extends Promise&lt;infer U&gt; ? Awaited&lt;U&gt; : T;
+
+type C = Awaited&lt;Promise&lt;string&gt;&gt;;                // string
+type D = Awaited&lt;Promise&lt;Promise&lt;number&gt;&gt;&gt;;       // number</code></pre>
+<div class="type-result">A = string
+B = boolean
+C = string
+D = number</div>
+    </div>
+  </div>
+
+  <div class="review-challenge">
+    <strong>Challenge Exercise</strong>
+    <p>Write <code>DeepAwaited&lt;T&gt;</code> that extracts the resolved type of arbitrarily nested Promises: <code>DeepAwaited&lt;Promise&lt;Promise&lt;Promise&lt;number&gt;&gt;&gt;&gt;</code> should resolve to <code>number</code>. Then write <code>UnpackArray&lt;T&gt;</code> that extracts the element type from nested arrays: <code>UnpackArray&lt;number[][][]&gt;</code> should be <code>number</code>.</p>
+  </div>
+
+  <div class="review-pitfall">
+    <strong>#1 Pitfall:</strong> <code>infer</code> position matters &mdash; it can only appear in the true branch of a conditional type, and its scope is limited to that branch.
+  </div>
+
+  <div class="review-pattern" style="margin-top:16px">
+    <strong>WRONG vs RIGHT</strong>
+    <div class="code-example">
+<pre><code>// WRONG: trying to use infer in the false branch
+type Bad&lt;T&gt; = T extends string ? true : T extends infer U ? U : never;
+// This "works" but infer U just captures T — pointless
+
+// WRONG: using infer outside a conditional type
+// type Extract&lt;T&gt; = infer U; // Syntax error!
+
+// RIGHT: infer in the extends clause, use in the true branch
+type GetPromiseValue&lt;T&gt; = T extends Promise&lt;infer V&gt; ? V : T;
+type A = GetPromiseValue&lt;Promise&lt;number&gt;&gt;; // number
+type B = GetPromiseValue&lt;string&gt;;           // string (fallback)</code></pre>
+    </div>
+  </div>
+</div>
+
+<!-- R5: Database Typing: Prisma & Drizzle -->
+<div class="review-card" id="review_database_typing">
+  <div class="review-header">
+    <span class="review-title">R5. Database Typing: Prisma &amp; Drizzle</span>
+    <span class="badge badge-purple">Node.js &amp; APIs</span>
+    <span class="review-meta">rep 0 &middot; 7 days overdue</span>
+  </div>
+  <div class="review-reminder">Schema-first DB typing with generated types and type-safe queries. Prisma generates types from your <code>schema.prisma</code>; Drizzle uses TypeScript-native schema definitions.</div>
+
+  <div class="review-pattern">
+    <strong>Key Pattern</strong>
+    <div class="code-example">
+<pre><code>// Prisma: type-safe query with include
+const user = await prisma.user.findUnique({
+  where: { id },
+  include: { posts: true },
+});
+// user is: User &amp; { posts: Post[] } | null
+
+// Drizzle: type-safe schema + query
+import { pgTable, serial, text, integer } from "drizzle-orm/pg-core";
+
+const users = pgTable("users", {
+  id: serial("id").primaryKey(),
+  name: text("name").notNull(),
+  age: integer("age"),
+});
+
+const result = await db.select().from(users).where(eq(users.id, 1));
+// result is: { id: number; name: string; age: number | null }[]</code></pre>
+<div class="type-result">Prisma user: (User &amp; { posts: Post[] }) | null
+Drizzle result: { id: number; name: string; age: number | null }[]</div>
+    </div>
+  </div>
+
+  <div class="review-challenge">
+    <strong>Challenge Exercise</strong>
+    <p>Design a typed query builder API that supports <code>.select("name", "age").from("users").where({ age: { gt: 18 } })</code> with full type inference &mdash; the result type should only include the selected columns.</p>
+  </div>
+
+  <div class="review-pitfall">
+    <strong>#1 Pitfall:</strong> Runtime vs compile-time &mdash; generated types can drift from the actual database schema if you forget to re-run <code>prisma generate</code> after a migration.
+  </div>
+</div>
+
+<!-- R6: State Management Typing -->
+<div class="review-card" id="review_state_management">
+  <div class="review-header">
+    <span class="review-title">R6. State Management Typing</span>
+    <span class="badge badge-purple">React + TypeScript</span>
+    <span class="review-meta">rep 0 &middot; 7 days overdue</span>
+  </div>
+  <div class="review-reminder">Redux Toolkit's <code>createSlice</code> auto-infers action types; Zustand's <code>create&lt;T&gt;()</code> patterns. Let inference do the work &mdash; over-annotating loses type safety.</div>
+
+  <div class="review-pattern">
+    <strong>Key Pattern</strong>
+    <div class="code-example">
+<pre><code>// Zustand with TypeScript
+import { create } from "zustand";
+
+interface CounterState {
+  count: number;
+  increment: () =&gt; void;
+  decrement: () =&gt; void;
+  reset: () =&gt; void;
+}
+
+const useStore = create&lt;CounterState&gt;()((set) =&gt; ({
+  count: 0,
+  increment: () =&gt; set((s) =&gt; ({ count: s.count + 1 })),
+  decrement: () =&gt; set((s) =&gt; ({ count: s.count - 1 })),
+  reset: () =&gt; set({ count: 0 }),
+}));
+
+// Usage in component
+const count = useStore((s) =&gt; s.count);       // number
+const increment = useStore((s) =&gt; s.increment); // () =&gt; void</code></pre>
+<div class="type-result">count: number
+increment: () =&gt; void</div>
+    </div>
+  </div>
+
+  <div class="review-challenge">
+    <strong>Challenge Exercise</strong>
+    <p>Type a Zustand middleware that logs every state transition: it should accept a store creator and return a new store creator that logs the previous and next state on each <code>set</code> call, with full type preservation.</p>
+  </div>
+
+  <div class="review-pitfall">
+    <strong>#1 Pitfall:</strong> Losing type inference by over-annotating &mdash; e.g., explicitly typing <code>set</code>'s parameter when Zustand already infers it, causing the state shape to widen to the annotation.
+  </div>
+</div>
+
+</div><!-- end review-section -->
+
+<!-- ============================================================ -->
+<!-- SECTION 1: Type-Safe Patterns II                              -->
+<!-- ============================================================ -->
+<div class="topic-section">
+<div class="topic-section-header"><span class="section-num">1</span> Type-Safe Patterns II</div>
+
+<!-- Concept 1: Type-Safe Builder with Phantom Types -->
+<div class="concept-card" id="phantom_type_builder">
+  <div class="concept-header">
+    <span class="concept-title">Type-Safe Builder with Phantom Types</span>
+    <span class="ttag">Advanced Patterns</span>
+  </div>
+
+  <div class="why-matters">Phantom types encode compile-time constraints that have no runtime representation. They let you enforce rules like "this builder requires fields A and B to be set before you can call build()" &mdash; all checked at compile time, zero overhead at runtime.</div>
+
+  <div class="explanation">
+    <p><strong>Example 1 &mdash; Simple phantom types for units:</strong></p>
+    <p>A phantom type parameter appears in the type signature but not in the runtime value. This prevents mixing incompatible units:</p>
+  </div>
+  <div class="code-example">
+    <div class="lang-badge">TypeScript</div>
+<pre><code>// The Brand type parameter is "phantom" — it exists only at the type level
+type Meters = { readonly _brand: "meters" };
+type Feet = { readonly _brand: "feet" };
+
+type Distance&lt;Unit&gt; = number &amp; { readonly __unit: Unit };
+
+function meters(n: number): Distance&lt;Meters&gt; {
+  return n as Distance&lt;Meters&gt;;
+}
+
+function feet(n: number): Distance&lt;Feet&gt; {
+  return n as Distance&lt;Feet&gt;;
+}
+
+function addMeters(a: Distance&lt;Meters&gt;, b: Distance&lt;Meters&gt;): Distance&lt;Meters&gt; {
+  return (a + b) as Distance&lt;Meters&gt;;
+}
+
+const d1 = meters(100);
+const d2 = meters(200);
+const d3 = feet(50);
+
+const total = addMeters(d1, d2);  // OK: both are Meters
+// const bad = addMeters(d1, d3); // ERROR: Feet is not assignable to Meters</code></pre>
+<div class="type-result">d1: Distance&lt;Meters&gt;
+d2: Distance&lt;Meters&gt;
+d3: Distance&lt;Feet&gt;
+total: Distance&lt;Meters&gt;</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &mdash; WRONG</div>
+<pre><code>// WRONG: plain numbers allow unit mixing
+function addDistances(a: number, b: number): number {
+  return a + b; // No protection — could be meters + feet!
+}
+
+const mixed = addDistances(100, 50); // Compiles fine, but semantically wrong</code></pre>
+<div class="type-error">No compile-time error, but this is a logic bug — you're adding meters to feet.</div>
+  </div>
+
+  <div class="explanation">
+    <p><strong>Example 2 &mdash; Builder that tracks which required fields are set:</strong></p>
+    <p>We use phantom type parameters to track builder state. The <code>build()</code> method is only available when all required fields have been set:</p>
+  </div>
+  <div class="code-example">
+    <div class="lang-badge">TypeScript</div>
+<pre><code>// Phantom markers — these types are never instantiated at runtime
+type Unset = { readonly _state: "unset" };
+type Set = { readonly _state: "set" };
+
+// The builder carries phantom type parameters for each required field
+interface RequestBuilder&lt;
+  HasUrl extends Set | Unset = Unset,
+  HasMethod extends Set | Unset = Unset
+&gt; {
+  url: string;
+  method: string;
+  headers: Record&lt;string, string&gt;;
+  body?: unknown;
+}
+
+function createRequestBuilder(): RequestBuilder&lt;Unset, Unset&gt; {
+  return { url: "", method: "", headers: {} };
+}
+
+function setUrl&lt;M extends Set | Unset&gt;(
+  builder: RequestBuilder&lt;Unset, M&gt;,
+  url: string
+): RequestBuilder&lt;Set, M&gt; {
+  return { ...builder, url };
+}
+
+function setMethod&lt;U extends Set | Unset&gt;(
+  builder: RequestBuilder&lt;U, Unset&gt;,
+  method: string
+): RequestBuilder&lt;U, Set&gt; {
+  return { ...builder, method };
+}
+
+function addHeader&lt;U extends Set | Unset, M extends Set | Unset&gt;(
+  builder: RequestBuilder&lt;U, M&gt;,
+  key: string,
+  value: string
+): RequestBuilder&lt;U, M&gt; {
+  return { ...builder, headers: { ...builder.headers, [key]: value } };
+}
+
+// build() requires BOTH phantoms to be Set
+function build(builder: RequestBuilder&lt;Set, Set&gt;): Request {
+  return new Request(builder.url, {
+    method: builder.method,
+    headers: builder.headers,
+  });
+}
+
+// Usage — step by step, type-checked at each stage
+const b1 = createRequestBuilder();                    // RequestBuilder&lt;Unset, Unset&gt;
+const b2 = setUrl(b1, "https://api.example.com");    // RequestBuilder&lt;Set, Unset&gt;
+const b3 = setMethod(b2, "POST");                    // RequestBuilder&lt;Set, Set&gt;
+const b4 = addHeader(b3, "Content-Type", "json");    // RequestBuilder&lt;Set, Set&gt;
+const req = build(b4);                               // OK: both fields set
+
+// const bad = build(b2);
+// ERROR: RequestBuilder&lt;Set, Unset&gt; is not assignable to RequestBuilder&lt;Set, Set&gt;</code></pre>
+<div class="type-result">b1: RequestBuilder&lt;Unset, Unset&gt;
+b2: RequestBuilder&lt;Set, Unset&gt;
+b3: RequestBuilder&lt;Set, Set&gt;
+b4: RequestBuilder&lt;Set, Set&gt;
+req: Request</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &mdash; WRONG</div>
+<pre><code>// WRONG: trying to build before setting all required fields
+const incomplete = createRequestBuilder();
+const withUrl = setUrl(incomplete, "https://example.com");
+// build(withUrl);
+// ^^^^^^^^^^^^^^
+// Argument of type 'RequestBuilder&lt;Set, Unset&gt;' is not assignable
+// to parameter of type 'RequestBuilder&lt;Set, Set&gt;'.
+// Types of property '_state' are incompatible.</code></pre>
+<div class="type-error">Argument of type 'RequestBuilder&lt;Set, Unset&gt;' is not assignable to parameter of type 'RequestBuilder&lt;Set, Set&gt;'.</div>
+  </div>
+
+  <div class="explanation">
+    <p><strong>Example 3 &mdash; Real-world: Form builder that won't compile until all required fields are configured:</strong></p>
+  </div>
+  <div class="code-example">
+    <div class="lang-badge">TypeScript</div>
+<pre><code>// Track which fields have been configured with a mapped phantom type
+type FieldStatus = "configured" | "pending";
+
+interface FormBuilder&lt;
+  Fields extends Record&lt;string, FieldStatus&gt;
+&gt; {
+  _fields: Fields;
+  _config: Record&lt;string, FormFieldConfig&gt;;
+}
+
+interface FormFieldConfig {
+  label: string;
+  type: "text" | "email" | "number" | "select";
+  required: boolean;
+  validation?: (value: unknown) =&gt; boolean;
+}
+
+// Start with all fields pending
+type PendingForm&lt;Keys extends string&gt; = {
+  [K in Keys]: "pending";
+};
+
+function createForm&lt;Keys extends string&gt;(
+  ...fields: Keys[]
+): FormBuilder&lt;PendingForm&lt;Keys&gt;&gt; {
+  const pending = Object.fromEntries(
+    fields.map(f =&gt; [f, "pending"])
+  ) as PendingForm&lt;Keys&gt;;
+  return { _fields: pending, _config: {} };
+}
+
+// Configure a field — flips its status from "pending" to "configured"
+function configureField&lt;
+  Fields extends Record&lt;string, FieldStatus&gt;,
+  K extends keyof Fields &amp; string
+&gt;(
+  form: FormBuilder&lt;Fields&gt;,
+  field: K,
+  config: FormFieldConfig
+): FormBuilder&lt;Omit&lt;Fields, K&gt; &amp; Record&lt;K, "configured"&gt;&gt; {
+  return {
+    _fields: { ...form._fields, [field]: "configured" } as any,
+    _config: { ...form._config, [field]: config },
+  };
+}
+
+// Type that checks ALL fields are "configured"
+type AllConfigured&lt;T extends Record&lt;string, FieldStatus&gt;&gt; =
+  T[keyof T] extends "configured" ? true : false;
+
+// submit() only works when every field is configured
+function submit&lt;Fields extends Record&lt;string, FieldStatus&gt;&gt;(
+  form: AllConfigured&lt;Fields&gt; extends true ? FormBuilder&lt;Fields&gt; : never
+): void {
+  console.log("Submitting form:", form._config);
+}
+
+// Usage
+const form1 = createForm("name", "email", "age");
+// form1: FormBuilder&lt;{ name: "pending"; email: "pending"; age: "pending" }&gt;
+
+const form2 = configureField(form1, "name", { label: "Name", type: "text", required: true });
+const form3 = configureField(form2, "email", { label: "Email", type: "email", required: true });
+const form4 = configureField(form3, "age", { label: "Age", type: "number", required: false });
+
+submit(form4); // OK: all three fields configured
+// submit(form2); // ERROR: not all fields configured — "email" and "age" still pending</code></pre>
+<div class="type-result">form1: FormBuilder&lt;{ name: "pending"; email: "pending"; age: "pending" }&gt;
+form4: FormBuilder&lt;{ name: "configured"; email: "configured"; age: "configured" }&gt;</div>
+  </div>
+
+  <div class="explanation">
+    <p><strong>Example 4 &mdash; Fluent builder API with method chaining:</strong></p>
+    <p>We can combine phantom types with a class-based builder for a fluent API that feels natural to use:</p>
+  </div>
+  <div class="code-example">
+    <div class="lang-badge">TypeScript</div>
+<pre><code>// Phantom markers
+type TRUE = { readonly __flag: true };
+type FALSE = { readonly __flag: false };
+
+// EmailBuilder tracks: HasTo, HasSubject, HasBody
+class EmailBuilder&lt;
+  HasTo extends TRUE | FALSE = FALSE,
+  HasSubject extends TRUE | FALSE = FALSE,
+  HasBody extends TRUE | FALSE = FALSE
+&gt; {
+  private _to = "";
+  private _subject = "";
+  private _body = "";
+  private _cc: string[] = [];
+  private _attachments: string[] = [];
+
+  to(address: string): EmailBuilder&lt;TRUE, HasSubject, HasBody&gt; {
+    this._to = address;
+    return this as unknown as EmailBuilder&lt;TRUE, HasSubject, HasBody&gt;;
+  }
+
+  subject(text: string): EmailBuilder&lt;HasTo, TRUE, HasBody&gt; {
+    this._subject = text;
+    return this as unknown as EmailBuilder&lt;HasTo, TRUE, HasBody&gt;;
+  }
+
+  body(html: string): EmailBuilder&lt;HasTo, HasSubject, TRUE&gt; {
+    this._body = html;
+    return this as unknown as EmailBuilder&lt;HasTo, HasSubject, TRUE&gt;;
+  }
+
+  // Optional fields don't change phantom types
+  cc(address: string): EmailBuilder&lt;HasTo, HasSubject, HasBody&gt; {
+    this._cc.push(address);
+    return this as unknown as EmailBuilder&lt;HasTo, HasSubject, HasBody&gt;;
+  }
+
+  attach(filename: string): EmailBuilder&lt;HasTo, HasSubject, HasBody&gt; {
+    this._attachments.push(filename);
+    return this as unknown as EmailBuilder&lt;HasTo, HasSubject, HasBody&gt;;
+  }
+
+  // send() only available when ALL three required fields are set
+  send(
+    this: EmailBuilder&lt;TRUE, TRUE, TRUE&gt;
+  ): Promise&lt;{ messageId: string }&gt; {
+    return Promise.resolve({
+      messageId: `msg-${Date.now()}`,
+    });
+  }
+}
+
+// Valid — all three required fields set
+const result = await new EmailBuilder()
+  .to("alice@example.com")
+  .subject("Meeting")
+  .body("&lt;p&gt;See you at 3pm&lt;/p&gt;")
+  .cc("bob@example.com")       // optional — fine
+  .attach("agenda.pdf")         // optional — fine
+  .send();                      // OK: HasTo, HasSubject, HasBody all TRUE
+
+console.log(result.messageId);
+
+// Invalid — missing body
+// new EmailBuilder()
+//   .to("alice@example.com")
+//   .subject("Meeting")
+//   .send();
+// ERROR: The 'this' context of type 'EmailBuilder&lt;TRUE, TRUE, FALSE&gt;'
+//        is not assignable to type 'EmailBuilder&lt;TRUE, TRUE, TRUE&gt;'</code></pre>
+<div class="type-result">After .to():     EmailBuilder&lt;TRUE, FALSE, FALSE&gt;
+After .subject(): EmailBuilder&lt;TRUE, TRUE, FALSE&gt;
+After .body():    EmailBuilder&lt;TRUE, TRUE, TRUE&gt;
+.send() is callable: YES</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &mdash; WRONG</div>
+<pre><code>// WRONG: builder with no compile-time safety
+class UnsafeEmailBuilder {
+  private _to?: string;
+  private _subject?: string;
+  private _body?: string;
+
+  to(address: string) { this._to = address; return this; }
+  subject(text: string) { this._subject = text; return this; }
+  body(html: string) { this._body = html; return this; }
+
+  send() {
+    // Runtime check — should have been caught at compile time!
+    if (!this._to || !this._subject || !this._body) {
+      throw new Error("Missing required fields");
+    }
+    return Promise.resolve({ messageId: "msg-1" });
+  }
+}
+
+// This compiles fine, but throws at runtime:
+new UnsafeEmailBuilder().to("alice@example.com").send(); // BOOM</code></pre>
+<div class="type-error">No compile-time error. Runtime: "Missing required fields"
+With phantom types, this would be a compile-time error instead.</div>
+  </div>
+
+  <div class="callout-warning">
+    <strong>Common Mistakes</strong>
+    <div class="mistake">Overcomplicating with phantom types when a simple required constructor parameter would work: <code>new Request(url, { method })</code> already requires both.</div>
+    <div class="correct">Use phantom types only when the builder pattern is genuinely needed (many optional fields, complex configuration, or step-by-step construction).</div>
+    <div class="mistake">Exposing phantom type details in the public API: <code>function build(b: RequestBuilder&lt;Set, Set, Set, Set&gt;)</code> &mdash; unreadable.</div>
+    <div class="correct">Create a type alias: <code>type CompleteRequest = RequestBuilder&lt;Set, Set, Set, Set&gt;</code> for cleaner signatures.</div>
+    <div class="mistake">Using <code>as any</code> excessively inside the builder to bypass the phantom checks.</div>
+    <div class="correct">Limit <code>as any</code> to the internal builder wiring; the public API should be fully type-safe.</div>
+  </div>
+
+  <div class="key-rules">
+    <strong>Key Rules</strong>
+    <ul>
+    <li><a href="typescript-guides/typescript-guide-2026-07-04.html">2026-07-04</a> (Day 31)</li>
+      <li>Phantom types exist only in the type system &mdash; they have zero runtime cost.</li>
+      <li>Use them to track state transitions at the type level: <code>Unset &rarr; Set</code>, <code>Open &rarr; Closed</code>, etc.</li>
+      <li>Keep the internal implementation simple; the value to users is the compile-time guarantee.</li>
+      <li>Consider branded types (<code>type UserId = string &amp; { __brand: "UserId" }</code>) as a simpler alternative for scalar values.</li>
+    </ul>
+  </div>
+
+  <div class="exercises">
+    <strong>Exercises</strong>
+    <div class="exercise"><span class="exercise-num">1</span>Create a <code>QueryBuilder</code> with phantom types for <code>HasTable</code>, <code>HasSelect</code>, and <code>HasWhere</code>. The <code>.execute()</code> method should only be callable when at least <code>HasTable</code> and <code>HasSelect</code> are <code>Set</code>. Chain: <code>query().from("users").select("name", "age").where({age: {gt: 18}}).execute()</code>.</div>
+    <div class="exercise"><span class="exercise-num">2</span>Implement a <code>ConnectionBuilder</code> for a database connection that requires <code>host</code>, <code>port</code>, and <code>database</code> to be set before <code>connect()</code> is callable, but <code>username</code> and <code>password</code> are optional. Use phantom types to enforce this at compile time.</div>
+  </div>
+
+  <div class="connections">
+    <strong>Connections:</strong> Builds on <code>branded_types</code> (phantom types are a generalization of branding). Connects to <code>discriminated_unions_practice</code> (state modeling). Related to the Builder pattern in OOP design patterns.
+  </div>
+</div>
+
+<!-- Concept 2: Type-Safe State Machines -->
+<div class="concept-card" id="type_safe_state_machines">
+  <div class="concept-header">
+    <span class="concept-title">Type-Safe State Machines</span>
+    <span class="ttag">Advanced Patterns</span>
+  </div>
+
+  <div class="why-matters">Complex workflows (order processing, authentication flows, UI wizards) have states where only certain transitions are valid. TypeScript can enforce that invalid transitions are compile-time errors, not runtime bugs.</div>
+
+  <div class="explanation">
+    <p><strong>Example 1 &mdash; Simple traffic light with typed transitions:</strong></p>
+  </div>
+  <div class="code-example">
+    <div class="lang-badge">TypeScript</div>
+<pre><code>// Define the state machine as a type-level map
+type TrafficLight = "red" | "green" | "yellow";
+
+// Valid transitions: Red -&gt; Green -&gt; Yellow -&gt; Red
+type Transitions = {
+  red: "green";
+  green: "yellow";
+  yellow: "red";
+};
+
+// Typed transition function
+function transition&lt;S extends TrafficLight&gt;: Transitions[S] {
+  const map: Record&lt;TrafficLight, TrafficLight&gt; = {
+    red: "green",
+    green: "yellow",
+    yellow: "red",
+  };
+  return map[current] as Transitions[S];
+}
+
+const s1: "red" = "red";
+const s2 = transition(s1);   // type is "green"
+const s3 = transition(s2);   // type is "yellow"
+const s4 = transition(s3);   // type is "red"
+
+console.log(s1, "->", s2, "->", s3, "->", s4);</code></pre>
+<div class="output">red -> green -> yellow -> red</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &mdash; WRONG</div>
+<pre><code>// WRONG: untyped state machine allows invalid transitions
+function badTransition: string {
+  if  return "yellow"; // Invalid! Red should go to Green
+  if  return "red";  // Invalid! Green should go to Yellow
+  return "green";
+}
+
+// No compile-time error — the bug ships to production</code></pre>
+<div class="type-error">No error at compile time, but the transitions are logically wrong. With typed transitions this would be caught immediately.</div>
+  </div>
+
+  <div class="explanation">
+    <p><strong>Example 2 &mdash; Order lifecycle with typed events per state:</strong></p>
+  </div>
+  <div class="code-example">
+    <div class="lang-badge">TypeScript</div>
+<pre><code>// Each state has specific data and allowed events
+type OrderState =
+  | { status: "draft"; items: string[] }
+  | { status: "submitted"; items: string[]; submittedAt: Date }
+  | { status: "paid"; items: string[]; submittedAt: Date; paidAt: Date; amount: number }
+  | { status: "shipped"; items: string[]; trackingId: string }
+  | { status: "delivered"; deliveredAt: Date }
+  | { status: "cancelled"; reason: string };
+
+// Events that can trigger transitions
+type OrderEvent =
+  | { type: "SUBMIT" }
+  | { type: "PAY"; amount: number }
+  | { type: "SHIP"; trackingId: string }
+  | { type: "DELIVER" }
+  | { type: "CANCEL"; reason: string };
+
+// Map of which events are valid for which state
+type ValidEvents = {
+  draft: "SUBMIT" | "CANCEL";
+  submitted: "PAY" | "CANCEL";
+  paid: "SHIP" | "CANCEL";
+  shipped: "DELIVER";
+  delivered: never;
+  cancelled: never;
+};
+
+// Type-safe dispatch — only accepts valid events for the current state
+function dispatch&lt;S extends OrderState["status"]&gt;(
+  state: Extract&lt;OrderState, { status: S }&gt;,
+  event: Extract&lt;OrderEvent, { type: ValidEvents[S] }&gt;
+): OrderState {
+  switch (state.status) {
+    case "draft":
+      if (event.type === "SUBMIT") {
+        return { status: "submitted", items: state.items, submittedAt: new Date() };
+      }
+      if (event.type === "CANCEL") {
+        return { status: "cancelled", reason: (event as Extract&lt;OrderEvent, {type:"CANCEL"}&gt;).reason };
+      }
+      break;
+    case "submitted":
+      if (event.type === "PAY") {
+        const payEvent = event as Extract&lt;OrderEvent, { type: "PAY" }&gt;;
+        return {
+          status: "paid",
+          items: state.items,
+          submittedAt: state.submittedAt,
+          paidAt: new Date(),
+          amount: payEvent.amount,
+        };
+      }
+      break;
+    case "paid":
+      if (event.type === "SHIP") {
+        const shipEvent = event as Extract&lt;OrderEvent, { type: "SHIP" }&gt;;
+        return { status: "shipped", items: state.items, trackingId: shipEvent.trackingId };
+      }
+      break;
+    case "shipped":
+      if (event.type === "DELIVER") {
+        return { status: "delivered", deliveredAt: new Date() };
+      }
+      break;
+  }
+  throw new Error(`Invalid transition: ${state.status} + ${event.type}`);
+}
+
+// Valid transitions
+const draft: Extract&lt;OrderState, { status: "draft" }&gt; = { status: "draft", items: ["widget"] };
+const submitted = dispatch(draft, { type: "SUBMIT" });
+
+// Invalid — "DELIVER" is not valid for "draft" state
+// dispatch(draft, { type: "DELIVER" });
+// ERROR: Type '"DELIVER"' is not assignable to type '"SUBMIT" | "CANCEL"'</code></pre>
+<div class="type-result">draft: { status: "draft"; items: string[] }
+dispatch(draft, { type: "SUBMIT" }): OrderState
+dispatch(draft, { type: "DELIVER" }): compile error</div>
+  </div>
+
+  <div class="explanation">
+    <p><strong>Example 3 &mdash; XState-style machine definition with fully typed transitions:</strong></p>
+  </div>
+  <div class="code-example">
+    <div class="lang-badge">TypeScript</div>
+<pre><code>// Define machine config as a type-level specification
+interface MachineConfig&lt;
+  TStates extends string,
+  TEvents extends string
+&gt; {
+  initial: TStates;
+  states: {
+    [S in TStates]: {
+      on?: Partial&lt;Record&lt;TEvents, TStates&gt;&gt;;
+    };
+  };
+}
+
+// Create a typed machine
+function createMachine&lt;
+  TStates extends string,
+  TEvents extends string
+&gt;(config: MachineConfig&lt;TStates, TEvents&gt;) {
+  type TransitionMap = typeof config.states;
+
+  return {
+    initialState: config.initial,
+
+    transition&lt;S extends TStates&gt;(
+      state: S,
+      event: TEvents
+    ): TStates {
+      const stateConfig = config.states[state];
+      const nextState = stateConfig.on?.[event];
+      if (!nextState) {
+        throw new Error(`No transition from "${state}" on "${event}"`);
+      }
+      return nextState;
+    },
+
+    canTransition(state: TStates, event: TEvents): boolean {
+      return config.states[state].on?.[event] !== undefined;
+    },
+  };
+}
+
+// Define an auth flow machine
+const authMachine = createMachine({
+  initial: "loggedOut" as const,
+  states: {
+    loggedOut: {
+      on: { LOGIN: "authenticating" },
+    },
+    authenticating: {
+      on: {
+        SUCCESS: "loggedIn",
+        FAILURE: "loggedOut",
+        MFA_REQUIRED: "awaitingMfa",
+      },
+    },
+    awaitingMfa: {
+      on: {
+        MFA_SUCCESS: "loggedIn",
+        MFA_FAILURE: "loggedOut",
+      },
+    },
+    loggedIn: {
+      on: { LOGOUT: "loggedOut" },
+    },
+  },
+});
+
+let state = authMachine.initialState;              // "loggedOut"
+state = authMachine.transition(state, "LOGIN");    // "authenticating"
+state = authMachine.transition(state, "SUCCESS");  // "loggedIn"
+state = authMachine.transition(state, "LOGOUT");   // "loggedOut"
+
+console.log("Can login from loggedOut?", authMachine.canTransition("loggedOut", "LOGIN"));       // true
+console.log("Can logout from loggedOut?", authMachine.canTransition("loggedOut", "LOGOUT"));     // false</code></pre>
+<div class="output">Can login from loggedOut? true
+Can logout from loggedOut? false</div>
+  </div>
+
+  <div class="explanation">
+    <p><strong>Example 4 &mdash; State machine with context (data per state):</strong></p>
+  </div>
+  <div class="code-example">
+    <div class="lang-badge">TypeScript</div>
+<pre><code>// Each state carries its own context type
+type AuthState =
+  | { state: "loggedOut" }
+  | { state: "authenticating"; username: string }
+  | { state: "loggedIn"; user: { id: string; name: string; token: string } }
+  | { state: "error"; message: string; retryCount: number };
+
+type AuthEvent =
+  | { type: "LOGIN"; username: string; password: string }
+  | { type: "LOGIN_SUCCESS"; user: { id: string; name: string; token: string } }
+  | { type: "LOGIN_FAILURE"; message: string }
+  | { type: "LOGOUT" }
+  | { type: "RETRY" };
+
+function authReducer(state: AuthState, event: AuthEvent): AuthState {
+  switch (state.state) {
+    case "loggedOut":
+      if (event.type === "LOGIN") {
+        return { state: "authenticating", username: event.username };
+      }
+      return state;
+
+    case "authenticating":
+      if (event.type === "LOGIN_SUCCESS") {
+        return { state: "loggedIn", user: event.user };
+      }
+      if (event.type === "LOGIN_FAILURE") {
+        return { state: "error", message: event.message, retryCount: 0 };
+      }
+      return state;
+
+    case "loggedIn":
+      if (event.type === "LOGOUT") {
+        return { state: "loggedOut" };
+      }
+      return state;
+
+    case "error":
+      if (event.type === "RETRY") {
+        return { state: "authenticating", username: "lastUser" };
+      }
+      if (event.type === "LOGIN") {
+        return { state: "authenticating", username: event.username };
+      }
+      return state;
+
+    default: {
+      const _exhaustive: never = state;
+      return _exhaustive;
+    }
+  }
+}
+
+// Walk through the flow
+let auth: AuthState = { state: "loggedOut" };
+auth = authReducer(auth, { type: "LOGIN", username: "alice", password: "secret" });
+// { state: "authenticating", username: "alice" }
+auth = authReducer(auth, { type: "LOGIN_SUCCESS", user: { id: "1", name: "Alice", token: "abc" } });
+// { state: "loggedIn", user: { id: "1", name: "Alice", token: "abc" } }</code></pre>
+<div class="type-result">After LOGIN: { state: "authenticating"; username: string }
+After LOGIN_SUCCESS: { state: "loggedIn"; user: { id: string; name: string; token: string } }</div>
+  </div>
+
+  <div class="explanation">
+    <p><strong>Example 5 &mdash; Type-safe state machine with guards and actions:</strong></p>
+    <p>Real-world state machines often need guards (conditions on transitions) and actions (side effects). Here's how to type them:</p>
+  </div>
+  <div class="code-example">
+    <div class="lang-badge">TypeScript</div>
+<pre><code>// State machine with typed guards and actions
+type WizardState =
+  | { step: "personal"; data: {} }
+  | { step: "address"; data: { name: string; email: string } }
+  | { step: "payment"; data: { name: string; email: string; address: string; city: string } }
+  | { step: "review"; data: FullFormData }
+  | { step: "submitted"; data: FullFormData; orderId: string };
+
+interface FullFormData {
+  name: string;
+  email: string;
+  address: string;
+  city: string;
+  cardNumber: string;
+  expiry: string;
+}
+
+type WizardEvent =
+  | { type: "NEXT"; formData: Record&lt;string, string&gt; }
+  | { type: "BACK" }
+  | { type: "SUBMIT" };
+
+// Guard: validates form data before allowing transition
+type Guard&lt;S extends WizardState, E extends WizardEvent&gt; =
+  (state: S, event: E) =&gt; boolean;
+
+// Typed guard for the personal info step
+const personalInfoGuard: Guard&lt;
+  Extract&lt;WizardState, { step: "personal" }&gt;,
+  Extract&lt;WizardEvent, { type: "NEXT" }&gt;
+&gt; = (_state, event) =&gt; {
+  const { formData } = event;
+  return (
+    typeof formData.name === "string" &amp;&amp; formData.name.length &gt; 0 &amp;&amp;
+    typeof formData.email === "string" &amp;&amp; formData.email.includes("@")
+  );
+};
+
+// Typed guard for the address step
+const addressGuard: Guard&lt;
+  Extract&lt;WizardState, { step: "address" }&gt;,
+  Extract&lt;WizardEvent, { type: "NEXT" }&gt;
+&gt; = (_state, event) =&gt; {
+  const { formData } = event;
+  return (
+    typeof formData.address === "string" &amp;&amp; formData.address.length &gt; 0 &amp;&amp;
+    typeof formData.city === "string" &amp;&amp; formData.city.length &gt; 0
+  );
+};
+
+function wizardReducer(state: WizardState, event: WizardEvent): WizardState {
+  switch (state.step) {
+    case "personal":
+      if (event.type === "NEXT") {
+        if (!personalInfoGuard(state, event)) return state; // Guard failed
+        return {
+          step: "address",
+          data: {
+            name: event.formData.name,
+            email: event.formData.email,
+          },
+        };
+      }
+      return state;
+
+    case "address":
+      if (event.type === "NEXT") {
+        if (!addressGuard(state, event)) return state;
+        return {
+          step: "payment",
+          data: {
+            ...state.data,
+            address: event.formData.address,
+            city: event.formData.city,
+          },
+        };
+      }
+      if (event.type === "BACK") {
+        return { step: "personal", data: {} };
+      }
+      return state;
+
+    case "payment":
+      if (event.type === "NEXT") {
+        return {
+          step: "review",
+          data: {
+            ...state.data,
+            cardNumber: event.formData.cardNumber,
+            expiry: event.formData.expiry,
+          },
+        };
+      }
+      if (event.type === "BACK") {
+        return { step: "address", data: state.data };
+      }
+      return state;
+
+    case "review":
+      if (event.type === "SUBMIT") {
+        return {
+          step: "submitted",
+          data: state.data,
+          orderId: `ORD-${Date.now()}`,
+        };
+      }
+      if (event.type === "BACK") {
+        return { step: "payment", data: state.data };
+      }
+      return state;
+
+    case "submitted":
+      return state; // Terminal state — no transitions
+
+    default: {
+      const _exhaustive: never = state;
+      return _exhaustive;
+    }
+  }
+}
+
+// Walk through the wizard
+let wizard: WizardState = { step: "personal", data: {} };
+wizard = wizardReducer(wizard, {
+  type: "NEXT",
+  formData: { name: "Alice", email: "alice@example.com" },
+});
+console.log(wizard.step); // "address"
+
+wizard = wizardReducer(wizard, {
+  type: "NEXT",
+  formData: { address: "123 Main St", city: "Springfield" },
+});
+console.log(wizard.step); // "payment"</code></pre>
+<div class="output">address
+payment</div>
+  </div>
+
+  <div class="callout-warning">
+    <strong>Common Mistakes</strong>
+    <div class="mistake">Allowing invalid transitions at runtime by using <code>string</code> for state/event types: <code>function transition(state: string, event: string)</code></div>
+    <div class="correct">Use a union of literal types for states and events: <code>type State = "idle" | "loading" | "done"</code></div>
+    <div class="mistake">Not modeling per-state data &mdash; using a single flat object with optional fields for all states</div>
+    <div class="correct">Use discriminated unions where each state variant carries only its relevant data</div>
+    <div class="mistake">Forgetting the exhaustiveness check in the reducer: new states silently fall through</div>
+    <div class="correct">Always add a <code>default: { const _: never = state; }</code> to catch unhandled states</div>
+  </div>
+
+  <div class="key-rules">
+    <strong>Key Rules</strong>
+    <ul>
+      <li>Model states as a discriminated union with per-state data &mdash; not a single object with optional fields.</li>
+      <li>Define valid transitions as a type-level map: <code>{ idle: "START" | "RESET"; loading: "SUCCESS" | "FAILURE" }</code>.</li>
+      <li>Use <code>never</code> for terminal states (no valid outgoing events) and for exhaustiveness checking.</li>
+      <li>For complex machines, consider <a href="https://stately.ai/docs/xstate">XState</a> which provides first-class TypeScript support.</li>
+    </ul>
+  </div>
+
+  <div class="exercises">
+    <strong>Exercises</strong>
+    <div class="exercise"><span class="exercise-num">1</span>Model a <code>DocumentState</code> machine with states: <code>draft</code>, <code>review</code>, <code>approved</code>, <code>published</code>, <code>archived</code>. Define valid transitions (draft can go to review or archived, review to approved or draft, approved to published, published to archived). Write a <code>transition()</code> function that only accepts valid events for the current state.</div>
+    <div class="exercise"><span class="exercise-num">2</span>Implement a <code>createTypedReducer</code> function that takes a machine config and returns a reducer function. The reducer should be fully typed: given a state and event, the return type should be the union of reachable states from that transition. Include an exhaustiveness check for unhandled state/event combinations.</div>
+  </div>
+
+  <div class="connections">
+    <strong>Connections:</strong> Directly extends <code>discriminated_unions_practice</code> (state variants are discriminated unions). Uses <code>never_exhaustiveness</code> for terminal states and unhandled cases. Relates to <code>phantom_type_builder</code> (state tracking at the type level).
+  </div>
+</div>
+
+<!-- Concept 3: Variance Annotations (in/out) -->
+<div class="concept-card" id="variance_annotations">
+  <div class="concept-header">
+    <span class="concept-title">Variance Annotations (in/out)</span>
+    <span class="ttag">Type System Deep Dive</span>
+  </div>
+
+  <div class="why-matters">TypeScript 4.7+ introduced explicit variance annotations (<code>in</code> and <code>out</code>) for type parameters. Understanding variance prevents subtle assignability bugs &mdash; especially in event systems, collections, and callback-heavy APIs.</div>
+
+  <div class="explanation">
+    <p>Variance describes how subtyping of a generic type relates to subtyping of its type parameter:</p>
+    <ul>
+      <li><strong>Covariant (<code>out T</code>)</strong>: if <code>Dog extends Animal</code>, then <code>Producer&lt;Dog&gt;</code> is assignable to <code>Producer&lt;Animal&gt;</code></li>
+      <li><strong>Contravariant (<code>in T</code>)</strong>: if <code>Dog extends Animal</code>, then <code>Consumer&lt;Animal&gt;</code> is assignable to <code>Consumer&lt;Dog&gt;</code></li>
+      <li><strong>Invariant (<code>in out T</code>)</strong>: no assignability in either direction (both producer and consumer)</li>
+    </ul>
+    <p><strong>Example 1 &mdash; Producer (covariant) vs Consumer (contravariant):</strong></p>
+  </div>
+  <div class="code-example">
+    <div class="lang-badge">TypeScript</div>
+<pre><code>// Covariant: only produces T (output position)
+interface Producer&lt;out T&gt; {
+  get(): T;
+}
+
+// Contravariant: only consumes T (input position)
+interface Consumer&lt;in T&gt; {
+  accept(value: T): void;
+}
+
+// Invariant: both produces and consumes T
+interface Collection&lt;in out T&gt; {
+  get(index: number): T;
+  add(value: T): void;
+}
+
+class Animal { name = "animal"; }
+class Dog extends Animal { breed = "unknown"; }
+class Cat extends Animal { indoor = true; }
+
+// Covariant: Dog producer CAN be used as Animal producer
+const dogProducer: Producer&lt;Dog&gt; = { get: () =&gt; new Dog() };
+const animalProducer: Producer&lt;Animal&gt; = dogProducer;  // OK: Dog extends Animal
+
+// Contravariant: Animal consumer CAN be used as Dog consumer
+const animalConsumer: Consumer&lt;Animal&gt; = { accept: (a: Animal) =&gt; console.log(a.name) };
+const dogConsumer: Consumer&lt;Dog&gt; = animalConsumer;  // OK: reversed direction
+
+// Invariant: neither direction works
+// const dogCollection: Collection&lt;Dog&gt; = animalCollection; // ERROR
+// const animalCollection: Collection&lt;Animal&gt; = dogCollection; // ERROR</code></pre>
+<div class="type-result">dogProducer assignable to Producer&lt;Animal&gt;: YES (covariant)
+animalConsumer assignable to Consumer&lt;Dog&gt;: YES (contravariant)
+Collection: neither direction compiles (invariant)</div>
+  </div>
+
+  <div class="explanation">
+    <p><strong>Example 2 &mdash; Why <code>Array&lt;Dog&gt;</code> assignable to <code>Array&lt;Animal&gt;</code> is unsound:</strong></p>
+    <p>TypeScript allows this by default (arrays are covariant), but it is technically unsound. The <code>in out</code> annotation would catch this:</p>
+  </div>
+  <div class="code-example">
+    <div class="lang-badge">TypeScript</div>
+<pre><code>class Animal { name = "animal"; }
+class Dog extends Animal { breed = "lab"; }
+class Cat extends Animal { indoor = true; }
+
+// TypeScript allows this (covariant arrays — unsound!)
+const dogs: Dog[] = [new Dog()];
+const animals: Animal[] = dogs;  // No error — TS is unsound here
+
+// The danger: we can now put a Cat into our Dog array!
+animals.push(new Cat());  // No error at compile time
+
+// But dogs[1] is actually a Cat, not a Dog
+console.log(dogs[1].breed); // Runtime: undefined — dogs[1] is a Cat!
+
+// With a properly invariant collection, this would be caught:
+interface SafeArray&lt;in out T&gt; {
+  get(index: number): T;
+  push(value: T): void;
+}
+
+// const safeDogs: SafeArray&lt;Dog&gt; = /* ... */;
+// const safeAnimals: SafeArray&lt;Animal&gt; = safeDogs;
+// ERROR: Type 'SafeArray&lt;Dog&gt;' is not assignable to type 'SafeArray&lt;Animal&gt;'.
+// Types of property 'push' are incompatible.</code></pre>
+<div class="type-error">SafeArray&lt;Dog&gt; is not assignable to SafeArray&lt;Animal&gt;.
+  Types of property 'push' are incompatible.
+  Type '(value: Animal) =&gt; void' is not assignable to type '(value: Dog) =&gt; void'.</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &mdash; WRONG</div>
+<pre><code>// WRONG: treating a mutable collection as covariant
+interface EventBus&lt;T&gt; {
+  emit(event: T): void;      // T in input position (contravariant)
+  subscribe(cb: (e: T) =&gt; void): void;  // T in output position in callback
+}
+
+// Without variance annotations, TS might allow unsafe assignments:
+const dogBus: EventBus&lt;Dog&gt; = {
+  emit: (d: Dog) =&gt; console.log(d.breed),
+  subscribe: (cb) =&gt; cb(new Dog()),
+};
+
+// If TS allowed: const animalBus: EventBus&lt;Animal&gt; = dogBus;
+// Then animalBus.emit(new Cat()) would call dogBus.emit(Cat) — type violation!</code></pre>
+<div class="type-error">With proper 'in out' annotation, EventBus&lt;Dog&gt; is NOT assignable to EventBus&lt;Animal&gt; (and vice versa).</div>
+  </div>
+
+  <div class="explanation">
+    <p><strong>Example 3 &mdash; Real-world: Event system with proper variance:</strong></p>
+  </div>
+  <div class="code-example">
+    <div class="lang-badge">TypeScript</div>
+<pre><code>// Event emitter — T is in both input and output positions, so invariant
+interface TypedEmitter&lt;in out TEvents extends Record&lt;string, unknown[]&gt;&gt; {
+  on&lt;K extends keyof TEvents&gt;(
+    event: K,
+    handler: (...args: TEvents[K]) =&gt; void
+  ): void;
+
+  emit&lt;K extends keyof TEvents&gt;(
+    event: K,
+    ...args: TEvents[K]
+  ): void;
+}
+
+// Read-only view of events — only output (covariant)
+interface EventSource&lt;out TEvents extends Record&lt;string, unknown[]&gt;&gt; {
+  on&lt;K extends keyof TEvents&gt;(
+    event: K,
+    handler: (...args: TEvents[K]) =&gt; void
+  ): void;
+}
+
+// Write-only sink — only input (contravariant)
+interface EventSink&lt;in TEvents extends Record&lt;string, unknown[]&gt;&gt; {
+  emit&lt;K extends keyof TEvents&gt;(
+    event: K,
+    ...args: TEvents[K]
+  ): void;
+}
+
+// Define event maps
+type AppEvents = {
+  userLogin: [userId: string, timestamp: number];
+  pageView: [url: string];
+  error: [error: Error, context: string];
+};
+
+type AuditEvents = AppEvents &amp; {
+  adminAction: [action: string, adminId: string];
+};
+
+// A source of AuditEvents can be used as a source of AppEvents (covariant — broader events)
+function setupLogger(source: EventSource&lt;AppEvents&gt;) {
+  source.on("userLogin", (userId, ts) =&gt; {
+    console.log(`User ${userId} logged in at ${ts}`);
+  });
+  source.on("error", (err, ctx) =&gt; {
+    console.error(`Error in ${ctx}: ${err.message}`);
+  });
+}
+
+// Usage
+function createEmitter&lt;T extends Record&lt;string, unknown[]&gt;&gt;(): TypedEmitter&lt;T&gt; {
+  const handlers = new Map&lt;string, Function[]&gt;();
+  return {
+    on(event, handler) {
+      const list = handlers.get(event as string) ?? [];
+      list.push(handler);
+      handlers.set(event as string, list);
+    },
+    emit(event, ...args) {
+      const list = handlers.get(event as string) ?? [];
+      list.forEach(fn =&gt; fn(...args));
+    },
+  };
+}
+
+const emitter = createEmitter&lt;AppEvents&gt;();
+setupLogger(emitter as EventSource&lt;AppEvents&gt;);
+emitter.emit("userLogin", "user-42", Date.now());
+emitter.emit("error", new Error("oops"), "checkout");</code></pre>
+<div class="output">User user-42 logged in at 1750204800000
+Error in checkout: oops</div>
+  </div>
+
+  <div class="explanation">
+    <p><strong>Example 4 &mdash; Variance with function types and callbacks:</strong></p>
+    <p>Function parameters are contravariant, return types are covariant. This is why callback-heavy APIs need careful variance handling:</p>
+  </div>
+  <div class="code-example">
+    <div class="lang-badge">TypeScript</div>
+<pre><code>class Animal { name = "animal"; move() { console.log("moving"); } }
+class Dog extends Animal { breed = "lab"; bark() { console.log("woof"); } }
+class GoldenRetriever extends Dog { color = "golden"; fetch() { console.log("fetching!"); } }
+
+// Function return type is covariant:
+// () =&gt; Dog  is assignable to  () =&gt; Animal  (Dog extends Animal)
+type DogFactory = () =&gt; Dog;
+type AnimalFactory = () =&gt; Animal;
+
+const makeDog: DogFactory = () =&gt; new Dog();
+const makeAnimal: AnimalFactory = makeDog; // OK: covariant return
+console.log(makeAnimal().name); // "animal" — safe, Dog has .name
+
+// Function parameter is contravariant:
+// (a: Animal) =&gt; void  is assignable to  (d: Dog) =&gt; void  (reversed!)
+type AnimalHandler = (a: Animal) =&gt; void;
+type DogHandler = (d: Dog) =&gt; void;
+
+const handleAnimal: AnimalHandler = (a: Animal) =&gt; console.log(a.name);
+const handleDog: DogHandler = handleAnimal; // OK: contravariant parameter
+handleDog(new Dog()); // Safe — Dog has .name
+
+// But NOT the other direction:
+const handleDogSpecific: DogHandler = (d: Dog) =&gt; console.log(d.breed);
+// const handleAnimalBad: AnimalHandler = handleDogSpecific;
+// ERROR: not all Animals have .breed — would crash at runtime</code></pre>
+<div class="type-result">makeDog assignable to AnimalFactory: YES (covariant return)
+handleAnimal assignable to DogHandler: YES (contravariant param)
+handleDogSpecific assignable to AnimalHandler: NO (would be unsound)</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &mdash; WRONG</div>
+<pre><code>// WRONG: misunderstanding callback variance
+interface DataProcessor&lt;T&gt; {
+  process(item: T): void;  // T in INPUT position — contravariant
+}
+
+const animalProcessor: DataProcessor&lt;Animal&gt; = {
+  process: (a) =&gt; console.log(a.name), // Only uses Animal properties
+};
+
+const dogProcessor: DataProcessor&lt;Dog&gt; = {
+  process: (d) =&gt; console.log(d.breed), // Uses Dog-specific properties
+};
+
+// Intuition says: Dog extends Animal, so DataProcessor&lt;Dog&gt; should extend DataProcessor&lt;Animal&gt;?
+// WRONG! It's the opposite:
+// DataProcessor&lt;Animal&gt; is assignable to DataProcessor&lt;Dog&gt; (contravariant)
+// because animalProcessor.process can safely handle any Dog (Dogs are Animals)
+// but dogProcessor.process cannot handle any Animal (not all Animals have .breed)
+
+// This is safe:
+const dogProcessorFromAnimal: DataProcessor&lt;Dog&gt; = animalProcessor; // OK
+
+// This would be unsafe:
+// const animalProcessorFromDog: DataProcessor&lt;Animal&gt; = dogProcessor;
+// If we called animalProcessorFromDog.process(new Cat()), it would try to access .breed on a Cat!</code></pre>
+<div class="type-error">DataProcessor&lt;Dog&gt; is NOT assignable to DataProcessor&lt;Animal&gt;.
+DataProcessor&lt;Animal&gt; IS assignable to DataProcessor&lt;Dog&gt; (contravariance).</div>
+  </div>
+
+  <div class="explanation">
+    <p><strong>Example 5 &mdash; Variance annotations as documentation and performance:</strong></p>
+    <p>Explicit variance annotations also help the compiler — it can skip structural comparison and check variance directly, which speeds up type checking for large generic types:</p>
+  </div>
+  <div class="code-example">
+    <div class="lang-badge">TypeScript</div>
+<pre><code>// Without annotations: TypeScript infers variance by analyzing every member
+// This can be slow for complex types with many members
+interface SlowBox&lt;T&gt; {
+  get(): T;
+  map&lt;U&gt;(fn: (val: T) =&gt; U): SlowBox&lt;U&gt;;
+  flatMap&lt;U&gt;(fn: (val: T) =&gt; SlowBox&lt;U&gt;): SlowBox&lt;U&gt;;
+  filter(pred: (val: T) =&gt; boolean): SlowBox&lt;T&gt;;
+  // ... 20 more methods
+  // TypeScript must analyze ALL methods to determine variance
+}
+
+// With annotation: TypeScript knows immediately that T is covariant
+// No need to analyze every method — just check that T isn't used in input positions
+interface FastBox&lt;out T&gt; {
+  get(): T;
+  map&lt;U&gt;(fn: (val: T) =&gt; U): FastBox&lt;U&gt;;
+  flatMap&lt;U&gt;(fn: (val: T) =&gt; FastBox&lt;U&gt;): FastBox&lt;U&gt;;
+  filter(pred: (val: T) =&gt; boolean): FastBox&lt;T&gt;;
+  // ... 20 more methods
+  // Compiler immediately knows: FastBox&lt;Dog&gt; extends FastBox&lt;Animal&gt;
+}
+
+// The compiler will ERROR if you violate the annotation:
+// interface BrokenBox&lt;out T&gt; {
+//   get(): T;          // OK: T in output position
+//   set(val: T): void; // ERROR: T in input position contradicts 'out'
+// }</code></pre>
+<div class="type-result">FastBox&lt;Dog&gt; assignable to FastBox&lt;Animal&gt;: YES (annotated covariant)
+Compiler detects 'set(val: T)' violates 'out T' annotation</div>
+  </div>
+
+  <div class="callout-warning">
+    <strong>Common Mistakes</strong>
+    <div class="mistake">Misunderstanding TypeScript's default: arrays are covariant, which is technically unsound but allowed for convenience.</div>
+    <div class="correct">Use <code>ReadonlyArray&lt;T&gt;</code> when you don't need mutation &mdash; read-only collections are safely covariant.</div>
+    <div class="mistake">Using <code>out T</code> on a type that also consumes <code>T</code> (e.g., has a <code>push(value: T)</code> method).</div>
+    <div class="correct">TypeScript will error if the annotation contradicts the actual usage. Use <code>in out T</code> for types that both produce and consume.</div>
+    <div class="mistake">Ignoring variance entirely — it "just works" until it doesn't, usually with callbacks or mutable collections.</div>
+    <div class="correct">Add explicit <code>in</code>/<code>out</code> annotations to library-level generic interfaces &mdash; they serve as documentation and catch errors early.</div>
+  </div>
+
+  <div class="key-rules">
+    <strong>Key Rules</strong>
+    <ul>
+      <li><code>out T</code> = covariant = "produces T" (return types, getter results). <code>Dog extends Animal</code> means <code>Producer&lt;Dog&gt; extends Producer&lt;Animal&gt;</code>.</li>
+      <li><code>in T</code> = contravariant = "consumes T" (function parameters). Direction reverses: <code>Consumer&lt;Animal&gt; extends Consumer&lt;Dog&gt;</code>.</li>
+      <li><code>in out T</code> = invariant = "both produces and consumes T". No assignability in either direction.</li>
+      <li>Variance annotations are enforced by the compiler &mdash; if you mark <code>out T</code> but use <code>T</code> in an input position, TypeScript will error.</li>
+      <li>Prefer <code>ReadonlyArray&lt;T&gt;</code> over <code>Array&lt;T&gt;</code> in function parameters to get safe covariance.</li>
+    </ul>
+  </div>
+
+  <div class="exercises">
+    <strong>Exercises</strong>
+    <div class="exercise"><span class="exercise-num">1</span>Create three interfaces: <code>Readable&lt;out T&gt;</code> with a <code>read(): T</code> method, <code>Writable&lt;in T&gt;</code> with a <code>write(value: T): void</code> method, and <code>ReadWrite&lt;in out T&gt;</code> that extends both. Verify that <code>Readable&lt;Dog&gt;</code> is assignable to <code>Readable&lt;Animal&gt;</code> but <code>ReadWrite&lt;Dog&gt;</code> is not.</div>
+    <div class="exercise"><span class="exercise-num">2</span>Build a typed <code>Observable&lt;out T&gt;</code> class with <code>subscribe(observer: (value: T) =&gt; void): Unsubscribe</code> and a companion <code>Subject&lt;in out T&gt;</code> that adds <code>next(value: T): void</code>. Show that <code>Subject&lt;Dog&gt;</code> cannot be assigned to <code>Observable&lt;Animal&gt;</code> but an <code>Observable&lt;Dog&gt;</code> can.</div>
+  </div>
+
+  <div class="connections">
+    <strong>Connections:</strong> Deepens understanding of <code>generic_constraints</code> and how TypeScript determines assignability. Connects to <code>immutability_patterns</code> (<code>Readonly</code> makes types covariant). Fundamental concept from type theory (Liskov Substitution Principle).
+  </div>
+</div>
+
+</div><!-- end topic-section 1 -->
+
+<!-- ============================================================ -->
+<!-- SECTION 2: Testing & Quality                                  -->
+<!-- ============================================================ -->
+<div class="topic-section">
+<div class="topic-section-header"><span class="section-num">2</span> Testing &amp; Quality</div>
+
+<!-- Concept 4: Type Testing with expect-type -->
+<div class="concept-card" id="type_testing_expect">
+  <div class="concept-header">
+    <span class="concept-title">Type Testing with expect-type</span>
+    <span class="ttag">Testing &amp; Quality</span>
+  </div>
+
+  <div class="why-matters">You write utility types and generic functions, but how do you know they produce the right types? Runtime tests verify behavior; type tests verify your type-level logic. The <code>expect-type</code> library lets you write assertions that are checked entirely at compile time.</div>
+
+  <div class="explanation">
+    <p><strong>Example 1 &mdash; Basic type assertions with expect-type:</strong></p>
+  </div>
+  <div class="code-example">
+    <div class="lang-badge">TypeScript</div>
+<pre><code>import { expectTypeOf } from "expect-type";
+
+// Test that a function returns the right type
+function add(a: number, b: number): number {
+  return a + b;
+}
+
+// These are compile-time checks — no runtime code is generated
+expectTypeOf(add).toBeFunction();
+expectTypeOf(add).parameters.toEqualTypeOf&lt;[number, number]&gt;();
+expectTypeOf(add).returns.toEqualTypeOf&lt;number&gt;();
+
+// Test a utility type
+type Nullable&lt;T&gt; = T | null | undefined;
+
+expectTypeOf&lt;Nullable&lt;string&gt;&gt;().toEqualTypeOf&lt;string | null | undefined&gt;();
+expectTypeOf&lt;Nullable&lt;number&gt;&gt;().not.toEqualTypeOf&lt;number&gt;(); // Nullable adds null/undefined
+
+// Test object shapes
+interface User {
+  id: number;
+  name: string;
+  email: string;
+}
+
+expectTypeOf&lt;User&gt;().toHaveProperty("id");
+expectTypeOf&lt;User&gt;().toHaveProperty("name");
+expectTypeOf&lt;User["id"]&gt;().toBeNumber();
+expectTypeOf&lt;User["name"]&gt;().toBeString();</code></pre>
+<div class="type-result">All assertions pass at compile time.
+No runtime output — these are purely type-level checks.</div>
+  </div>
+
+  <div class="explanation">
+    <p><strong>Example 2 &mdash; Testing conditional types and mapped types:</strong></p>
+  </div>
+  <div class="code-example">
+    <div class="lang-badge">TypeScript</div>
+<pre><code>import { expectTypeOf } from "expect-type";
+
+// Utility type under test
+type IsString&lt;T&gt; = T extends string ? true : false;
+
+expectTypeOf&lt;IsString&lt;string&gt;&gt;().toEqualTypeOf&lt;true&gt;();
+expectTypeOf&lt;IsString&lt;number&gt;&gt;().toEqualTypeOf&lt;false&gt;();
+expectTypeOf&lt;IsString&lt;"hello"&gt;&gt;().toEqualTypeOf&lt;true&gt;();
+
+// Test a mapped type
+type Optional&lt;T&gt; = { [K in keyof T]?: T[K] };
+
+interface Config {
+  host: string;
+  port: number;
+  debug: boolean;
+}
+
+type OptionalConfig = Optional&lt;Config&gt;;
+
+expectTypeOf&lt;OptionalConfig&gt;().toEqualTypeOf&lt;{
+  host?: string;
+  port?: number;
+  debug?: boolean;
+}&gt;();
+
+// Test that Omit works correctly
+type UserWithoutEmail = Omit&lt;User, "email"&gt;;
+
+expectTypeOf&lt;UserWithoutEmail&gt;().toEqualTypeOf&lt;{
+  id: number;
+  name: string;
+}&gt;();
+
+// Negative test — ensure the omitted key is gone
+expectTypeOf&lt;UserWithoutEmail&gt;().not.toHaveProperty("email");
+
+// Test Pick
+type UserIdName = Pick&lt;User, "id" | "name"&gt;;
+expectTypeOf&lt;UserIdName&gt;().toEqualTypeOf&lt;{ id: number; name: string }&gt;();
+
+// Test complex conditional
+type ExtractArrayItem&lt;T&gt; = T extends (infer U)[] ? U : never;
+
+expectTypeOf&lt;ExtractArrayItem&lt;string[]&gt;&gt;().toEqualTypeOf&lt;string&gt;();
+expectTypeOf&lt;ExtractArrayItem&lt;number[][]&gt;&gt;().toEqualTypeOf&lt;number[]&gt;();
+expectTypeOf&lt;ExtractArrayItem&lt;string&gt;&gt;().toEqualTypeOf&lt;never&gt;();</code></pre>
+<div class="type-result">All assertions pass at compile time.
+IsString&lt;string&gt; = true
+IsString&lt;number&gt; = false
+ExtractArrayItem&lt;string[]&gt; = string
+ExtractArrayItem&lt;string&gt; = never</div>
+  </div>
+
+  <div class="explanation">
+    <p><strong>Example 3 &mdash; CI integration for type regression testing:</strong></p>
+  </div>
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &mdash; src/utils.ts</div>
+<pre><code>// The utility types we want to test
+export type DeepPartial&lt;T&gt; = {
+  [K in keyof T]?: T[K] extends object ? DeepPartial&lt;T[K]&gt; : T[K];
+};
+
+export type RequireAtLeastOne&lt;T, Keys extends keyof T = keyof T&gt; =
+  Pick&lt;T, Exclude&lt;keyof T, Keys&gt;&gt; &amp;
+  { [K in Keys]-?: Required&lt;Pick&lt;T, K&gt;&gt; &amp; Partial&lt;Pick&lt;T, Exclude&lt;Keys, K&gt;&gt;&gt; }[Keys];
+
+export type Prettify&lt;T&gt; = {
+  [K in keyof T]: T[K];
+} &amp; {};
+
+export function createUser(name: string, email: string) {
+  return { id: Math.random().toString(36), name, email, createdAt: new Date() };
+}</code></pre>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &mdash; src/utils.test-d.ts</div>
+<pre><code>// Type test file — convention: *.test-d.ts
+// Only contains type-level assertions; no runtime tests
+import { expectTypeOf } from "expect-type";
+import type { DeepPartial, RequireAtLeastOne, Prettify } from "./utils";
+import { createUser } from "./utils";
+
+// Test DeepPartial
+interface Nested {
+  a: { b: { c: string } };
+  d: number;
+}
+
+expectTypeOf&lt;DeepPartial&lt;Nested&gt;&gt;().toEqualTypeOf&lt;{
+  a?: { b?: { c?: string } };
+  d?: number;
+}&gt;();
+
+// Test RequireAtLeastOne
+interface Options {
+  color: string;
+  size: number;
+  label: string;
+}
+
+type AtLeastColor = RequireAtLeastOne&lt;Options, "color" | "size"&gt;;
+
+// Must have at least color OR size (or both)
+expectTypeOf&lt;{ color: string; size: number; label: string }&gt;().toMatchTypeOf&lt;AtLeastColor&gt;();
+expectTypeOf&lt;{ color: string; label: string }&gt;().toMatchTypeOf&lt;AtLeastColor&gt;();
+
+// Test createUser return type
+expectTypeOf(createUser).returns.toHaveProperty("id");
+expectTypeOf(createUser).returns.toHaveProperty("createdAt");
+expectTypeOf(createUser("a", "b").id).toBeString();
+expectTypeOf(createUser("a", "b").createdAt).toEqualTypeOf&lt;Date&gt;();</code></pre>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">JSON &mdash; package.json (scripts)</div>
+<pre><code>{
+  "scripts": {
+    "test": "vitest",
+    "test:types": "tsc --noEmit",
+    "ci": "npm run test && npm run test:types"
+  },
+  "devDependencies": {
+    "expect-type": "^0.19.0",
+    "typescript": "^5.4.0",
+    "vitest": "^1.6.0"
+  }
+}</code></pre>
+  </div>
+
+  <div class="explanation">
+    <p>The <code>*.test-d.ts</code> files are checked by <code>tsc --noEmit</code> in CI. If a type assertion fails, the file won't compile, and CI fails. This catches type regressions before they reach production.</p>
+  </div>
+
+  <div class="explanation">
+    <p><strong>Example 4 &mdash; Testing generic function inference:</strong></p>
+    <p>One of the most valuable uses of type testing is verifying that generic functions infer types correctly in various usage patterns:</p>
+  </div>
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &mdash; src/result.ts</div>
+<pre><code>// A Result monad implementation we want to type-test
+export type Result&lt;T, E&gt; =
+  | { ok: true; value: T }
+  | { ok: false; error: E };
+
+export function ok&lt;T&gt;(value: T): Result&lt;T, never&gt; {
+  return { ok: true, value };
+}
+
+export function err&lt;E&gt;(error: E): Result&lt;never, E&gt; {
+  return { ok: false, error };
+}
+
+export function map&lt;T, U, E&gt;(
+  result: Result&lt;T, E&gt;,
+  fn: (value: T) =&gt; U
+): Result&lt;U, E&gt; {
+  return result.ok ? ok(fn(result.value)) : result;
+}
+
+export function flatMap&lt;T, U, E1, E2&gt;(
+  result: Result&lt;T, E1&gt;,
+  fn: (value: T) =&gt; Result&lt;U, E2&gt;
+): Result&lt;U, E1 | E2&gt; {
+  return result.ok ? fn(result.value) : result;
+}</code></pre>
+  </div>
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &mdash; src/result.test-d.ts</div>
+<pre><code>import { expectTypeOf } from "expect-type";
+import { ok, err, map, flatMap } from "./result";
+import type { Result } from "./result";
+
+// Test ok() inference
+expectTypeOf(ok(42)).toEqualTypeOf&lt;Result&lt;number, never&gt;&gt;();
+expectTypeOf(ok("hello")).toEqualTypeOf&lt;Result&lt;string, never&gt;&gt;();
+expectTypeOf(ok({ id: 1 })).toEqualTypeOf&lt;Result&lt;{ id: number }, never&gt;&gt;();
+
+// Test err() inference
+expectTypeOf(err("not_found")).toEqualTypeOf&lt;Result&lt;never, string&gt;&gt;();
+expectTypeOf(err(new Error("oops"))).toEqualTypeOf&lt;Result&lt;never, Error&gt;&gt;();
+
+// Test map() preserves error type and transforms value type
+const numResult: Result&lt;number, "parse_error"&gt; = ok(42);
+const mapped = map(numResult, (n) =&gt; n.toString());
+expectTypeOf(mapped).toEqualTypeOf&lt;Result&lt;string, "parse_error"&gt;&gt;();
+
+// Test flatMap() unions error types
+type ParseError = { type: "parse" };
+type ValidationError = { type: "validation" };
+
+const r1: Result&lt;number, ParseError&gt; = ok(42);
+const r2 = flatMap(r1, (n) =&gt;
+  n &gt; 0
+    ? ok(n.toString())
+    : err({ type: "validation" } as ValidationError)
+);
+expectTypeOf(r2).toEqualTypeOf&lt;Result&lt;string, ParseError | ValidationError&gt;&gt;();
+
+// Test narrowing inside ok/error branches
+const result: Result&lt;string, Error&gt; = ok("hello");
+if (result.ok) {
+  expectTypeOf(result.value).toBeString();
+  expectTypeOf(result).toHaveProperty("value");
+} else {
+  expectTypeOf(result.error).toEqualTypeOf&lt;Error&gt;();
+  expectTypeOf(result).toHaveProperty("error");
+}
+
+// Verify that ok() result has 'never' as error type
+const okResult = ok("test");
+expectTypeOf(okResult).toMatchTypeOf&lt;{ ok: true; value: string }&gt;();
+// The error type should be 'never', meaning this can't be an error
+type OkErrorType = Extract&lt;typeof okResult, { ok: false }&gt;;
+expectTypeOf&lt;OkErrorType&gt;().toEqualTypeOf&lt;never&gt;();</code></pre>
+<div class="type-result">All assertions pass at compile time.
+map() correctly transforms Result&lt;number, "parse_error"&gt; to Result&lt;string, "parse_error"&gt;
+flatMap() correctly unions ParseError | ValidationError in the error channel</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &mdash; WRONG</div>
+<pre><code>// WRONG: testing runtime behavior instead of type behavior
+import { describe, it, expect } from "vitest";
+
+describe("DeepPartial", () =&gt; {
+  it("should make nested fields optional", () =&gt; {
+    // This test checks RUNTIME behavior, not the type
+    const partial: DeepPartial&lt;{ a: { b: string } }&gt; = {};
+    expect(partial.a).toBeUndefined(); // Always passes — says nothing about the TYPE
+  });
+});
+
+// RIGHT: test the type itself
+import { expectTypeOf } from "expect-type";
+
+// This fails at COMPILE TIME if DeepPartial is wrong
+expectTypeOf&lt;DeepPartial&lt;{ a: { b: string } }&gt;&gt;().toEqualTypeOf&lt;{
+  a?: { b?: string };
+}&gt;();</code></pre>
+<div class="type-error">The runtime test always passes regardless of whether DeepPartial is correctly typed.
+The type test catches type-level bugs at compile time.</div>
+  </div>
+
+  <div class="callout-warning">
+    <strong>Common Mistakes</strong>
+    <div class="mistake">Testing runtime behavior and assuming it validates the types: <code>expect(result).toBeDefined()</code> says nothing about the type of <code>result</code>.</div>
+    <div class="correct">Use <code>expectTypeOf(result).toEqualTypeOf&lt;ExpectedType&gt;()</code> for type-level assertions.</div>
+    <div class="mistake">Using <code>toEqualTypeOf</code> when <code>toMatchTypeOf</code> is more appropriate (exact vs structural match).</div>
+    <div class="correct"><code>toEqualTypeOf</code> is bidirectional (exact). <code>toMatchTypeOf</code> is one-way (the type being tested extends the expected type).</div>
+    <div class="mistake">Not running type tests in CI: <code>tsc --noEmit</code> is often skipped or not wired into the test pipeline.</div>
+    <div class="correct">Add <code>"test:types": "tsc --noEmit"</code> to your scripts and run it in CI alongside unit tests.</div>
+  </div>
+
+  <div class="key-rules">
+    <strong>Key Rules</strong>
+    <ul>
+      <li>Use <code>*.test-d.ts</code> files for type-only tests; run them with <code>tsc --noEmit</code>.</li>
+      <li><code>expectTypeOf&lt;T&gt;().toEqualTypeOf&lt;U&gt;()</code> checks that T and U are mutually assignable (exact match).</li>
+      <li><code>expectTypeOf&lt;T&gt;().toMatchTypeOf&lt;U&gt;()</code> checks that T extends U (one-way).</li>
+      <li>Test utility types, generic return types, and function signatures &mdash; not just runtime behavior.</li>
+      <li>Always include type tests in your CI pipeline to prevent regressions.</li>
+    </ul>
+  </div>
+
+  <div class="exercises">
+    <strong>Exercises</strong>
+    <div class="exercise"><span class="exercise-num">1</span>Write a <code>Flatten&lt;T&gt;</code> utility type that takes a nested object type and flattens it one level: <code>Flatten&lt;{ a: { b: string; c: number } }&gt;</code> becomes <code>{ "a.b": string; "a.c": number }</code>. Then write <code>expect-type</code> assertions to verify it handles 3 different input shapes correctly.</div>
+    <div class="exercise"><span class="exercise-num">2</span>Create a <code>*.test-d.ts</code> file that tests a <code>createApi&lt;TEndpoints&gt;()</code> function. Verify that the returned object's method signatures match the endpoint definitions (e.g., <code>api.getUser</code> should accept <code>{ id: string }</code> and return <code>Promise&lt;User&gt;</code>). Use both <code>toEqualTypeOf</code> and <code>toMatchTypeOf</code>.</div>
+  </div>
+
+  <div class="connections">
+    <strong>Connections:</strong> Tests the utility types from <code>mapped_types_advanced</code>, <code>conditional_types</code>, and <code>infer_mastery</code>. Complements runtime testing (<code>vitest</code>/<code>jest</code>) with type-level testing. Pairs naturally with <code>assertion_narrowing_patterns</code> (next concept).
+  </div>
+</div>
+
+<!-- Concept 5: Assertion Functions & Type Narrowing Patterns -->
+<div class="concept-card" id="assertion_narrowing_patterns">
+  <div class="concept-header">
+    <span class="concept-title">Assertion Functions &amp; Type Narrowing Patterns</span>
+    <span class="ttag">Type Safety &amp; Testing</span>
+  </div>
+
+  <div class="why-matters">TypeScript's control flow analysis narrows types automatically in <code>if</code>/<code>switch</code> blocks, but complex validation logic often lives in helper functions. Assertion functions and type predicates let you teach TypeScript that your custom validation narrows the type.</div>
+
+  <div class="explanation">
+    <p><strong>Example 1 &mdash; Basic assertion function with <code>asserts</code>:</strong></p>
+    <p>An assertion function throws if the condition fails. After the call, TypeScript narrows the type:</p>
+  </div>
+  <div class="code-example">
+    <div class="lang-badge">TypeScript</div>
+<pre><code>// Assertion function: narrows val to NonNullable&lt;T&gt;
+function assertDefined&lt;T&gt;(
+  val: T,
+  message?: string
+): asserts val is NonNullable&lt;T&gt; {
+  if (val === null || val === undefined) {
+    throw new Error(message ?? `Expected value to be defined, got ${val}`);
+  }
+}
+
+// Usage
+function getUser(id: string): { name: string; email: string } | undefined {
+  // Simulated lookup
+  if (id === "1") return { name: "Alice", email: "alice@example.com" };
+  return undefined;
+}
+
+const user = getUser("1");
+// user: { name: string; email: string } | undefined
+
+assertDefined(user, "User not found");
+// After assertion, user is narrowed:
+// user: { name: string; email: string }
+
+console.log(user.name);  // OK — TypeScript knows user is defined
+console.log(user.email); // OK — no optional chaining needed</code></pre>
+<div class="type-result">Before assertDefined: user is { name: string; email: string } | undefined
+After assertDefined:  user is { name: string; email: string }</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &mdash; WRONG</div>
+<pre><code>// WRONG: assertion function that doesn't actually throw
+function assertDefined_BAD&lt;T&gt;(val: T): asserts val is NonNullable&lt;T&gt; {
+  if (val === null || val === undefined) {
+    console.log("Value is not defined"); // Logs but doesn't throw!
+    // TypeScript TRUSTS the 'asserts' annotation — it narrows the type
+    // even though the function doesn't actually throw
+  }
+}
+
+const maybeNull: string | null = null;
+assertDefined_BAD(maybeNull);
+// TypeScript thinks maybeNull is string, but it's actually null!
+console.log(maybeNull.toUpperCase()); // RUNTIME ERROR: Cannot read properties of null</code></pre>
+<div class="type-error">Runtime crash: Cannot read properties of null (reading 'toUpperCase')
+The assertion function lied to TypeScript — it didn't throw on null.</div>
+  </div>
+
+  <div class="explanation">
+    <p><strong>Example 2 &mdash; Assertion functions that validate complex shapes:</strong></p>
+  </div>
+  <div class="code-example">
+    <div class="lang-badge">TypeScript</div>
+<pre><code>// Complex shape validation with assertion
+interface ApiResponse {
+  status: number;
+  data: unknown;
+  error?: string;
+}
+
+interface SuccessResponse {
+  status: 200;
+  data: { users: Array&lt;{ id: string; name: string }&gt; };
+}
+
+function assertSuccessResponse(
+  response: ApiResponse
+): asserts response is SuccessResponse {
+  if (response.status !== 200) {
+    throw new Error(`Expected status 200, got ${response.status}`);
+  }
+  if (!response.data || typeof response.data !== "object") {
+    throw new Error("Response data is missing or invalid");
+  }
+  const data = response.data as Record&lt;string, unknown&gt;;
+  if (!Array.isArray(data.users)) {
+    throw new Error("Response data.users is not an array");
+  }
+}
+
+// Usage
+async function fetchUsers(): Promise&lt;ApiResponse&gt; {
+  const res = await fetch("/api/users");
+  return { status: res.status, data: await res.json() };
+}
+
+const response = await fetchUsers();
+// response: ApiResponse (data is unknown)
+
+assertSuccessResponse(response);
+// response: SuccessResponse (data is fully typed)
+
+// Now we can safely access nested data
+const firstUser = response.data.users[0];
+console.log(firstUser.name); // TypeScript knows this is string</code></pre>
+<div class="type-result">Before assertion: response.data is unknown
+After assertion:  response.data is { users: Array&lt;{ id: string; name: string }&gt; }
+firstUser: { id: string; name: string }</div>
+  </div>
+
+  <div class="explanation">
+    <p><strong>Example 3 &mdash; Combining assertion functions with discriminated unions:</strong></p>
+  </div>
+  <div class="code-example">
+    <div class="lang-badge">TypeScript</div>
+<pre><code>// State machine with assertions for transitions
+type AppState =
+  | { phase: "setup"; config: Partial&lt;AppConfig&gt; }
+  | { phase: "ready"; config: AppConfig }
+  | { phase: "running"; config: AppConfig; startedAt: Date }
+  | { phase: "error"; config: AppConfig; error: Error };
+
+interface AppConfig {
+  apiUrl: string;
+  apiKey: string;
+  timeout: number;
+}
+
+// Assert we're in a specific phase
+function assertPhase&lt;P extends AppState["phase"]&gt;(
+  state: AppState,
+  phase: P
+): asserts state is Extract&lt;AppState, { phase: P }&gt; {
+  if (state.phase !== phase) {
+    throw new Error(`Expected phase "${phase}", but app is in phase "${state.phase}"`);
+  }
+}
+
+// Assert config is complete
+function assertConfigComplete(
+  config: Partial&lt;AppConfig&gt;
+): asserts config is AppConfig {
+  const required: (keyof AppConfig)[] = ["apiUrl", "apiKey", "timeout"];
+  for (const key of required) {
+    if (config[key] === undefined) {
+      throw new Error(`Missing required config: ${key}`);
+    }
+  }
+}
+
+// Usage in application lifecycle
+function startApp(state: AppState): Extract&lt;AppState, { phase: "running" }&gt; {
+  assertPhase(state, "ready");
+  // state is now: { phase: "ready"; config: AppConfig }
+
+  console.log(`Starting with API: ${state.config.apiUrl}`);
+  return {
+    phase: "running",
+    config: state.config,
+    startedAt: new Date(),
+  };
+}
+
+// Type predicate (alternative to assertion function)
+function isReady(state: AppState): state is Extract&lt;AppState, { phase: "ready" }&gt; {
+  return state.phase === "ready";
+}
+
+// Type predicate returns boolean — doesn't throw
+function safeStart(state: AppState): AppState {
+  if (isReady(state)) {
+    // state narrowed to { phase: "ready"; config: AppConfig }
+    return { phase: "running", config: state.config, startedAt: new Date() };
+  }
+  return state; // Stay in current phase
+}</code></pre>
+<div class="type-result">assertPhase(state, "ready") narrows to: { phase: "ready"; config: AppConfig }
+isReady(state) narrows inside if-block to: { phase: "ready"; config: AppConfig }</div>
+  </div>
+
+  <div class="explanation">
+    <p><strong>Example 3b &mdash; Assertion functions in test code:</strong></p>
+    <p>Assertion functions are especially powerful in test code, where they clean up repetitive null checks and make test failures more descriptive:</p>
+  </div>
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &mdash; Test utilities</div>
+<pre><code>// Custom test assertions that narrow types
+function assertInstanceOf&lt;T&gt;(
+  value: unknown,
+  constructor: new (...args: any[]) =&gt; T,
+  message?: string
+): asserts value is T {
+  if (!(value instanceof constructor)) {
+    throw new Error(
+      message ?? `Expected instance of ${constructor.name}, got ${typeof value}`
+    );
+  }
+}
+
+function assertLength&lt;T&gt;(
+  arr: T[],
+  expected: number,
+  message?: string
+): asserts arr is T[] &amp; { length: typeof expected } {
+  if (arr.length !== expected) {
+    throw new Error(
+      message ?? `Expected array of length ${expected}, got ${arr.length}`
+    );
+  }
+}
+
+function assertMatch(
+  value: string,
+  pattern: RegExp,
+  message?: string
+): asserts value is string {
+  if (!pattern.test(value)) {
+    throw new Error(
+      message ?? `Expected "${value}" to match ${pattern}`
+    );
+  }
+}
+
+// Usage in tests
+function testUserCreation() {
+  const result = createUser({ name: "Alice", email: "alice@test.com" });
+
+  // Without assertion functions:
+  // if (!result) throw new Error("result is null");
+  // if (!(result instanceof User)) throw new Error("not a User");
+  // if (result.posts.length !== 0) throw new Error("wrong length");
+
+  // With assertion functions — cleaner and type-safe:
+  assertDefined(result, "createUser should return a user");
+  // result is now non-null
+
+  assertInstanceOf(result, User, "result should be a User instance");
+  // result is now typed as User
+
+  assertLength(result.posts, 0, "new user should have no posts");
+  // result.posts has known length
+
+  assertMatch(result.id, /^usr_[a-z0-9]+$/, "user ID should match pattern");
+  // result.id is confirmed to match the pattern
+
+  console.log(`Test passed: ${result.name} created with ID ${result.id}`);
+}
+
+// Helper for async assertions
+async function assertRejects&lt;E extends Error&gt;(
+  fn: () =&gt; Promise&lt;unknown&gt;,
+  errorType: new (...args: any[]) =&gt; E,
+  messagePattern?: RegExp
+): Promise&lt;E&gt; {
+  try {
+    await fn();
+    throw new Error("Expected function to throw, but it resolved");
+  } catch (error) {
+    assertInstanceOf(error, errorType);
+    if (messagePattern) {
+      assertMatch(error.message, messagePattern);
+    }
+    return error;
+  }
+}
+
+// Usage:
+// const error = await assertRejects(
+//   () =&gt; fetchUser("nonexistent"),
+//   NotFoundError,
+//   /user not found/i
+// );
+// error is typed as NotFoundError</code></pre>
+<div class="type-result">assertDefined narrows: T | null | undefined -&gt; T
+assertInstanceOf narrows: unknown -&gt; T (the constructor type)
+assertRejects returns: the caught error typed as E</div>
+  </div>
+
+  <div class="explanation">
+    <p><strong>Example 4 &mdash; Assertion functions vs type predicates &mdash; when to use which:</strong></p>
+  </div>
+  <div class="code-example">
+    <div class="lang-badge">TypeScript</div>
+<pre><code>// TYPE PREDICATE: returns boolean, narrows in if/else blocks
+// Use when: checking is expected, and both branches are valid code paths
+function isString(val: unknown): val is string {
+  return typeof val === "string";
+}
+
+function processValue(val: unknown) {
+  if (isString(val)) {
+    console.log(val.toUpperCase()); // val is string
+  } else {
+    console.log("Not a string");     // val is still unknown
+  }
+}
+
+// ASSERTION FUNCTION: throws on failure, narrows after the call
+// Use when: the failure case is exceptional (should crash)
+function assertString(val: unknown, label: string): asserts val is string {
+  if (typeof val !== "string") {
+    throw new TypeError(`${label} must be a string, got ${typeof val}`);
+  }
+}
+
+function processRequiredString(val: unknown) {
+  assertString(val, "input");
+  // If we reach here, val is string — no if/else needed
+  console.log(val.toUpperCase());
+}
+
+// COMBINED: validate, then assert
+interface FormData {
+  name: unknown;
+  age: unknown;
+  email: unknown;
+}
+
+interface ValidatedForm {
+  name: string;
+  age: number;
+  email: string;
+}
+
+function assertValidForm(data: FormData): asserts data is ValidatedForm {
+  assertString(data.name, "name");
+
+  if (typeof data.age !== "number" || data.age &lt; 0 || data.age &gt; 150) {
+    throw new Error(`age must be a number 0-150, got ${data.age}`);
+  }
+
+  assertString(data.email, "email");
+  if (!data.email.includes("@")) {
+    throw new Error(`email must contain @, got ${data.email}`);
+  }
+}
+
+// After assertion, the entire object is narrowed
+const rawForm: FormData = { name: "Alice", age: 30, email: "alice@example.com" };
+assertValidForm(rawForm);
+// rawForm is now ValidatedForm
+console.log(rawForm.name.toUpperCase()); // "ALICE" — fully typed
+console.log(rawForm.age.toFixed(0));     // "30" — number method</code></pre>
+<div class="output">ALICE
+30</div>
+  </div>
+
+  <div class="explanation">
+    <p><strong>Example 5 &mdash; Advanced: narrowing arrays and nested structures:</strong></p>
+  </div>
+  <div class="code-example">
+    <div class="lang-badge">TypeScript</div>
+<pre><code>// Assert that all elements of an array match a type
+function assertAllStrings(arr: unknown[]): asserts arr is string[] {
+  for (let i = 0; i &lt; arr.length; i++) {
+    if (typeof arr[i] !== "string") {
+      throw new TypeError(`Element at index ${i} is not a string: ${typeof arr[i]}`);
+    }
+  }
+}
+
+// Assert non-empty array
+function assertNonEmpty&lt;T&gt;(arr: T[]): asserts arr is [T, ...T[]] {
+  if (arr.length === 0) {
+    throw new Error("Expected non-empty array");
+  }
+}
+
+// Usage
+const items: unknown[] = ["a", "b", "c"];
+assertAllStrings(items);
+// items is now string[]
+const upper = items.map(s =&gt; s.toUpperCase()); // OK
+
+const nums: number[] = [1, 2, 3];
+assertNonEmpty(nums);
+// nums is now [number, ...number[]]
+const first: number = nums[0]; // Guaranteed to exist — no undefined
+
+// Nested: assert entire API response shape
+interface RawResponse {
+  body: unknown;
+  headers: Record&lt;string, string&gt;;
+}
+
+interface TypedBody {
+  items: Array&lt;{ id: string; title: string }&gt;;
+  total: number;
+  page: number;
+}
+
+function assertTypedBody(response: RawResponse): asserts response is RawResponse &amp; { body: TypedBody } {
+  const body = response.body as Record&lt;string, unknown&gt;;
+  if (!body || typeof body !== "object") throw new Error("body must be an object");
+  if (!Array.isArray(body.items)) throw new Error("body.items must be an array");
+  if (typeof body.total !== "number") throw new Error("body.total must be a number");
+  if (typeof body.page !== "number") throw new Error("body.page must be a number");
+}
+
+const raw: RawResponse = {
+  body: { items: [{ id: "1", title: "Hello" }], total: 1, page: 1 },
+  headers: { "content-type": "application/json" },
+};
+
+assertTypedBody(raw);
+// raw.body is now TypedBody
+console.log(raw.body.items[0].title);  // "Hello" — fully typed
+console.log(raw.body.total);           // 1 — number</code></pre>
+<div class="output">Hello
+1</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &mdash; WRONG</div>
+<pre><code>// WRONG: forgetting the 'asserts' return type — function is just a regular void function
+function assertNumber(val: unknown): void {
+  if (typeof val !== "number") {
+    throw new Error("Not a number");
+  }
+}
+
+const mystery: unknown = 42;
+assertNumber(mystery);
+// mystery is still 'unknown' — TypeScript didn't narrow it!
+// mystery.toFixed(2); // ERROR: Object is of type 'unknown'
+
+// RIGHT: include 'asserts' in the return type
+function assertNumber_FIXED(val: unknown): asserts val is number {
+  if (typeof val !== "number") {
+    throw new Error("Not a number");
+  }
+}
+
+assertNumber_FIXED(mystery);
+console.log(mystery.toFixed(2)); // OK — mystery is now number</code></pre>
+<div class="type-error">Without 'asserts' return type: mystery remains 'unknown' after the call.
+With 'asserts val is number': mystery is narrowed to 'number'.</div>
+  </div>
+
+  <div class="callout-warning">
+    <strong>Common Mistakes</strong>
+    <div class="mistake">Writing an assertion function that doesn't actually throw when the condition fails — TypeScript trusts the <code>asserts</code> annotation unconditionally.</div>
+    <div class="correct">Always throw (or call a function that throws) in the failure branch. The compiler cannot verify that your assertion is correct.</div>
+    <div class="mistake">Forgetting the <code>asserts</code> return type: <code>function check(val: unknown): void</code> — no narrowing happens.</div>
+    <div class="correct">Use <code>asserts val is T</code> for assertion functions and <code>val is T</code> (returns boolean) for type predicates.</div>
+    <div class="mistake">Using assertion functions for optional checks where both paths are valid.</div>
+    <div class="correct">Use type predicates (<code>is</code>) for conditional narrowing in if/else; use assertion functions (<code>asserts</code>) for "must be true or crash" patterns.</div>
+    <div class="mistake">Over-asserting with <code>asserts val is T</code> when a simple <code>if (typeof val === "string")</code> would work.</div>
+    <div class="correct">Inline narrowing is simpler for one-off checks. Use assertion functions when the validation logic is reusable or complex.</div>
+  </div>
+
+  <div class="key-rules">
+    <strong>Key Rules</strong>
+    <ul>
+      <li><strong>Type predicates</strong> (<code>val is T</code>): return boolean, narrow in if/else branches. Non-throwing.</li>
+      <li><strong>Assertion functions</strong> (<code>asserts val is T</code>): throw on failure, narrow after the call. The code after the assertion assumes the condition holds.</li>
+      <li>TypeScript <em>trusts</em> your assertion — if the function doesn't throw when it should, you get runtime bugs with no compile-time warning.</li>
+      <li>Assertion functions must be called as statements (not inside expressions like <code>arr.filter(assertDefined)</code>).</li>
+      <li>Combine assertion functions for complex validation: <code>assertString(x) + assertNonEmpty(x) + assertMatches(x, /regex/)</code> — each call narrows further.</li>
+    </ul>
+  </div>
+
+  <div class="exercises">
+    <strong>Exercises</strong>
+    <div class="exercise"><span class="exercise-num">1</span>Write a set of assertion functions for HTTP response validation: <code>assertOk(response)</code> narrows to <code>{ status: 200; body: unknown }</code>, <code>assertJsonBody(response)</code> narrows <code>body</code> from <code>unknown</code> to <code>Record&lt;string, unknown&gt;</code>, and <code>assertHasField(obj, key)</code> narrows the object to include the specified key. Chain them: <code>assertOk(res); assertJsonBody(res); assertHasField(res.body, "users");</code></div>
+    <div class="exercise"><span class="exercise-num">2</span>Implement a <code>validate&lt;T&gt;(schema: Schema&lt;T&gt;, data: unknown): asserts data is T</code> function that takes a simple schema definition (e.g., <code>{ name: "string", age: "number", active: "boolean" }</code>) and validates <code>data</code> at runtime, narrowing it to the matching TypeScript type. Write both the assertion function and a companion type predicate version (<code>isValid&lt;T&gt;(): data is T</code>).</div>
+  </div>
+
+  <div class="connections">
+    <strong>Connections:</strong> Extends <code>type_predicates</code> (type predicates are the boolean cousin of assertion functions). Pairs with <code>discriminated_unions_practice</code> (assert which variant you're in). Useful in <code>error_handling_patterns</code> (assert success before accessing data). Works alongside <code>type_testing_expect</code> for comprehensive type safety.
+  </div>
+</div>
+
+</div><!-- end topic-section 2 -->
+
+<!-- ============================================================ -->
+<!-- FOOTER                                                        -->
+<!-- ============================================================ -->
+<footer class="guide-footer">
+  <h2>All Guides</h2>
+  <ul>
+    <li><a href="typescript-guides/typescript-guide-2026-07-09.html">2026-07-09</a> (Day 36)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-07-08.html">2026-07-08</a> (Day 35)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-07-07.html">2026-07-07</a> (Day 34)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-07-06.html">2026-07-06</a> (Day 33)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-07-05.html">2026-07-05</a> (Day 32)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-07-04.html">2026-07-04</a> (Day 31)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-07-03.html">2026-07-03</a> (Day 30)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-07-02.html">2026-07-02</a> (Day 29)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-07-01.html">2026-07-01</a> (Day 28)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-30.html">2026-06-30</a> (Day 27)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-29.html">2026-06-29</a> (Day 26)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-28.html">2026-06-28</a> (Day 25)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-27.html">2026-06-27</a> (Day 24)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-26.html">2026-06-26</a> (Day 23)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-25.html">2026-06-25</a> (Day 22)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-24.html">2026-06-24</a> (Day 21)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-23.html">2026-06-23</a> (Day 20)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-22.html">2026-06-22</a> (Day 19)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-21.html">2026-06-21</a> (Day 18)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-19.html">2026-06-19</a> (Day 17)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-18.html">2026-06-18</a> (Day 16)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-17.html">2026-06-17</a> (Day 15)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-15.html">2026-06-15</a> (Day 14)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-13.html">2026-06-13</a> (Day 13)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-12.html">2026-06-12</a> (Day 12)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-11.html">2026-06-11</a> (Day 11)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-10.html">2026-06-10</a> (Day 10)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-09.html">2026-06-09</a> (Day 9)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-08.html">2026-06-08</a> (Day 8)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-07.html">2026-06-07</a> (Day 7)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-05.html">2026-06-05</a> (Day 6)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-04.html">2026-06-04</a> (Day 5)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-03.html">2026-06-03</a> (Day 4)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-02.html">2026-06-02</a> (Day 3)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-01.html">2026-06-01</a> (Day 2)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-05-31.html">2026-05-31</a> (Day 1)</li>
+  </ul>
+</footer>
+
+</div><!-- end content -->
+</div><!-- end main -->
+
+<script>
+// Theme toggle
+(function() {
+  var toggle = document.getElementById('themeToggle');
+  var html = document.documentElement;
+  var STORAGE_KEY = 'lc-tsguide-theme';
+
+  function setTheme(theme) {
+    html.setAttribute('data-theme', theme);
+    toggle.textContent = theme === 'dark' ? '\u{1F319}' : '\u{2600}\u{FE0F}';
+    try { localStorage.setItem(STORAGE_KEY, theme); } catch(e) {}
+  }
+
+  // Load saved theme
+  try {
+    var saved = localStorage.getItem(STORAGE_KEY);
+    if (saved) setTheme(saved);
+  } catch(e) {}
+
+  toggle.addEventListener('click', function() {
+    var current = html.getAttribute('data-theme') || 'dark';
+    setTheme;
+  });
+})();
+
+// Sidebar active link tracking
+(function() {
+  var links = document.querySelectorAll('.sidebar-nav a');
+  var sections = [];
+  links.forEach(function(link) {
+    var id = link.getAttribute('href').replace('#', '');
+    var el = document.getElementById(id);
+    if (el) sections.push({ link: link, el: el });
+  });
+
+  function updateActive() {
+    var current = null;
+    var scrollY = window.scrollY + 120;
+    for (var i = sections.length - 1; i >= 0; i--) {
+      if (sections[i].el.offsetTop <= scrollY) {
+        current = sections[i];
+        break;
+      }
+    }
+    links.forEach(function(l) { l.classList.remove('active'); });
+    if  current.link.classList.add('active');
+  }
+
+  window.addEventListener('scroll', updateActive);
+  updateActive();
+})();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,1107 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TypeScript Daily Guide — 2026-07-03 (Day 30)</title>
+<style>
+:root {
+  --bg: #0d1117;
+  --surface: #161b22;
+  --surface2: #1c2129;
+  --border: #30363d;
+  --text: #e6edf3;
+  --text-muted: #8b949e;
+  --accent: #58a6ff;
+  --accent-bg: rgba(56,139,253,0.15);
+  --green: #3fb950;
+  --green-bg: rgba(63,185,80,0.08);
+  --red: #f85149;
+  --red-bg: rgba(248,81,73,0.08);
+  --yellow: #d29922;
+  --yellow-bg: rgba(210,153,34,0.1);
+  --orange: #db6d28;
+  --purple: #bc8cff;
+  --purple-bg: rgba(188,140,255,0.08);
+  --purple-border: rgba(188,140,255,0.2);
+  --link: #58a6ff;
+  --code-bg: #1c2129;
+  --output-bg: #0e1c0e;
+  --output-border: #1a3a1a;
+  --sidebar-bg: #161b22;
+  --sidebar-active: rgba(56,139,253,0.15);
+  --exercise-border: #30363d;
+}
+[data-theme="light"] {
+  --bg: #ffffff;
+  --surface: #f6f8fa;
+  --surface2: #eef1f5;
+  --border: #d0d7de;
+  --text: #1f2328;
+  --text-muted: #656d76;
+  --accent: #0969da;
+  --accent-bg: rgba(9,105,218,0.1);
+  --green: #1a7f37;
+  --green-bg: rgba(26,127,55,0.06);
+  --red: #cf222e;
+  --red-bg: rgba(207,34,46,0.06);
+  --yellow: #9a6700;
+  --yellow-bg: rgba(154,103,0,0.06);
+  --orange: #bc4c00;
+  --purple: #8250df;
+  --purple-bg: rgba(130,80,223,0.06);
+  --purple-border: rgba(130,80,223,0.15);
+  --link: #0969da;
+  --code-bg: #eef1f5;
+  --output-bg: #f0faf0;
+  --output-border: #c6e6c6;
+  --sidebar-bg: #f6f8fa;
+  --sidebar-active: rgba(9,105,218,0.1);
+  --exercise-border: #d0d7de;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;font-size:16px;line-height:1.7;color:var(--text);background:var(--bg);display:flex;min-height:100vh}
+a{color:var(--link);text-decoration:none}
+a:hover{text-decoration:underline}
+
+/* Sidebar */
+.sidebar{position:fixed;top:0;left:0;width:300px;height:100vh;background:var(--sidebar-bg);border-right:1px solid var(--border);overflow-y:auto;padding:20px 0;z-index:100}
+.sidebar-header{padding:16px 20px;border-bottom:1px solid var(--border);margin-bottom:12px}
+.sidebar-header h2{font-size:15px;font-weight:600;color:var(--text)}
+.sidebar-header .date{font-size:13px;color:var(--text-muted);margin-top:2px}
+.sidebar-section{padding:8px 20px 4px;font-size:12px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px}
+.sidebar-section.review-label{color:var(--purple)}
+.sidebar-nav{list-style:none;padding:0}
+.sidebar-nav li a{display:block;padding:6px 20px 6px 28px;font-size:14px;color:var(--text-muted);transition:all 0.15s}
+.sidebar-nav li a:hover,.sidebar-nav li a.active{color:var(--accent);background:var(--sidebar-active);text-decoration:none}
+.sidebar-nav li a .nav-id{font-size:11px;color:var(--text-muted);opacity:0.6;margin-left:6px}
+
+/* Main */
+.main{margin-left:300px;flex:1;padding:40px;max-width:1160px}
+.content{max-width:860px;margin:0 auto}
+
+/* Theme Toggle */
+.theme-toggle{position:fixed;top:16px;right:20px;z-index:200;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:8px 12px;cursor:pointer;color:var(--text);font-size:18px;line-height:1;transition:all 0.15s}
+.theme-toggle:hover{border-color:var(--accent)}
+
+/* Header */
+.guide-header{text-align:center;padding:32px 0 40px;border-bottom:1px solid var(--border);margin-bottom:40px}
+.guide-header h1{font-size:28px;font-weight:700;margin-bottom:8px}
+.guide-header .meta{font-size:15px;color:var(--text-muted)}
+.guide-header .meta span{margin:0 8px}
+.badge{display:inline-block;padding:2px 10px;border-radius:12px;font-size:13px;font-weight:500}
+.badge-blue{background:var(--accent-bg);color:var(--accent)}
+.badge-purple{background:var(--purple-bg);color:var(--purple)}
+
+/* How To Use */
+.how-to-use{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:24px 28px;margin-bottom:40px}
+.how-to-use h2{font-size:18px;margin-bottom:12px}
+.how-to-use ol{padding-left:24px}
+.how-to-use li{margin-bottom:6px;color:var(--text-muted)}
+
+/* Review Section */
+.review-section{margin-bottom:48px}
+.review-section-header{font-size:22px;font-weight:700;padding-bottom:12px;border-bottom:2px solid var(--purple);margin-bottom:28px;display:flex;align-items:center;gap:12px;color:var(--purple)}
+
+/* Review Card */
+.review-card{background:var(--purple-bg);border:1px solid var(--purple-border);border-left:4px solid var(--purple);border-radius:10px;padding:28px;margin-bottom:24px}
+.review-card .review-header{display:flex;align-items:center;gap:12px;margin-bottom:12px;flex-wrap:wrap}
+.review-card .review-title{font-size:18px;font-weight:700;color:var(--purple)}
+.review-card .review-meta{font-size:13px;color:var(--text-muted)}
+.review-card .review-reminder{color:var(--text-muted);font-style:italic;margin-bottom:16px;padding-left:14px;border-left:3px solid var(--purple)}
+.review-card .review-pattern{margin-bottom:16px}
+.review-card .review-pattern strong{display:block;margin-bottom:8px;font-size:14px;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px}
+.review-card .review-challenge{margin-bottom:12px}
+.review-card .review-challenge strong{display:block;margin-bottom:8px;font-size:14px;color:var(--yellow);text-transform:uppercase;letter-spacing:0.5px}
+.review-card .review-challenge p{line-height:1.6}
+.review-card .review-pitfall{background:var(--red-bg);border:1px solid rgba(248,81,73,0.15);border-radius:6px;padding:12px 16px;font-size:14px;line-height:1.6}
+.review-card .review-pitfall strong{color:var(--red);margin-right:4px}
+.review-card code{background:var(--code-bg);padding:2px 6px;border-radius:4px;font-family:'SF Mono','Fira Code','Consolas',monospace;font-size:13px}
+
+/* Topic Section */
+.topic-section{margin-bottom:48px}
+.topic-section-header{font-size:22px;font-weight:700;padding-bottom:12px;border-bottom:2px solid var(--accent);margin-bottom:28px;display:flex;align-items:center;gap:12px}
+.topic-section-header .section-num{background:var(--accent);color:#fff;width:32px;height:32px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:15px;font-weight:700;flex-shrink:0}
+
+/* Concept Card */
+.concept-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:28px;margin-bottom:32px}
+.concept-header{display:flex;align-items:center;gap:12px;margin-bottom:16px;flex-wrap:wrap}
+.concept-title{font-size:20px;font-weight:700}
+.ttag{display:inline-block;padding:2px 10px;border-radius:12px;font-size:12px;font-weight:500;background:var(--accent-bg);color:var(--accent)}
+
+.why-matters{color:var(--text-muted);font-style:italic;margin-bottom:20px;padding-left:14px;border-left:3px solid var(--accent)}
+.explanation{margin-bottom:20px;line-height:1.8}
+.explanation p{margin-bottom:12px}
+.explanation ul,.explanation ol{padding-left:24px;margin-bottom:12px}
+.explanation li{margin-bottom:4px}
+.explanation code{background:var(--code-bg);padding:2px 6px;border-radius:4px;font-family:'SF Mono','Fira Code','Consolas',monospace;font-size:14px}
+.step{display:flex;gap:12px;margin-bottom:10px;align-items:flex-start}
+.step-num{background:var(--accent-bg);color:var(--accent);width:24px;height:24px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;margin-top:3px}
+
+/* Code Examples */
+.code-example{margin-bottom:20px;border:1px solid var(--border);border-radius:8px;overflow:hidden}
+.lang-badge{background:var(--surface2);color:var(--text-muted);font-size:12px;font-weight:600;padding:6px 14px;border-bottom:1px solid var(--border);font-family:'SF Mono','Fira Code','Consolas',monospace}
+pre{margin:0;padding:16px;overflow-x:auto;background:var(--code-bg);font-family:'SF Mono','Fira Code','Consolas',monospace;font-size:13.5px;line-height:1.6;white-space:pre-wrap}
+pre code{background:none;padding:0;font-size:inherit}
+.output{background:var(--output-bg);border-top:1px solid var(--output-border);padding:12px 16px;font-family:'SF Mono','Fira Code','Consolas',monospace;font-size:13px;color:var(--green);white-space:pre-wrap}
+.output::before{content:"Output:";display:block;font-size:11px;font-weight:600;color:var(--text-muted);margin-bottom:4px;text-transform:uppercase;letter-spacing:0.5px}
+.type-result{background:var(--output-bg);border-top:1px solid var(--output-border);padding:12px 16px;font-family:'SF Mono','Fira Code','Consolas',monospace;font-size:13px;color:var(--green);white-space:pre-wrap}
+.type-result::before{content:"Type Result:";display:block;font-size:11px;font-weight:600;color:var(--text-muted);margin-bottom:4px;text-transform:uppercase;letter-spacing:0.5px}
+.type-error{background:var(--red-bg);border-top:1px solid rgba(248,81,73,0.2);padding:12px 16px;font-family:'SF Mono','Fira Code','Consolas',monospace;font-size:13px;color:var(--red);white-space:pre-wrap}
+.type-error::before{content:"Type Error:";display:block;font-size:11px;font-weight:600;color:var(--red);margin-bottom:4px;text-transform:uppercase;letter-spacing:0.5px}
+
+/* Callouts */
+.callout-warning{background:var(--yellow-bg);border:1px solid rgba(210,153,34,0.2);border-radius:8px;padding:20px;margin-bottom:20px}
+.callout-warning strong{color:var(--yellow);display:block;margin-bottom:12px;font-size:16px}
+.mistake,.correct{padding:10px 14px;border-radius:6px;margin-bottom:10px;font-size:14px;line-height:1.6}
+.mistake{background:var(--red-bg);border-left:3px solid var(--red)}
+.mistake code,.correct code{background:var(--code-bg);padding:2px 6px;border-radius:4px;font-family:'SF Mono','Fira Code','Consolas',monospace;font-size:13px}
+.correct{background:var(--green-bg);border-left:3px solid var(--green)}
+
+/* Key Rules */
+.key-rules{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:20px;margin-bottom:20px}
+.key-rules strong{display:block;margin-bottom:10px;font-size:16px}
+.key-rules ul{padding-left:20px}
+.key-rules li{margin-bottom:6px}
+.key-rules code{background:var(--code-bg);padding:2px 6px;border-radius:4px;font-family:'SF Mono','Fira Code','Consolas',monospace;font-size:13px}
+
+/* Exercises */
+.exercises{border:2px dashed var(--exercise-border);border-radius:8px;padding:20px;margin-bottom:20px;margin-left:12px}
+.exercises strong{display:block;margin-bottom:14px;font-size:16px;color:var(--purple)}
+.exercise{margin-bottom:14px;padding-left:38px;position:relative;line-height:1.6}
+.exercise:last-child{margin-bottom:0}
+.exercise-num{position:absolute;left:0;top:2px;background:var(--purple);color:#fff;width:24px;height:24px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:12px;font-weight:700}
+.exercise code{background:var(--code-bg);padding:2px 6px;border-radius:4px;font-family:'SF Mono','Fira Code','Consolas',monospace;font-size:13px}
+
+/* Connections */
+.connections{background:var(--accent-bg);border:1px solid rgba(56,139,253,0.2);border-radius:8px;padding:16px 20px;font-size:14px;color:var(--text-muted)}
+.connections strong{color:var(--accent);margin-right:6px}
+
+/* Cross-links */
+.cross-links{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:20px 24px;margin-bottom:40px;text-align:center}
+.cross-links a{margin:0 10px;font-weight:500}
+
+/* Footer */
+.guide-footer{border-top:1px solid var(--border);padding-top:32px;margin-top:48px}
+.guide-footer h2{font-size:18px;margin-bottom:16px}
+.guide-footer ul{list-style:none;padding:0}
+.guide-footer li{padding:6px 0}
+.guide-footer li a{font-weight:500}
+
+/* Responsive */
+@media(max-width:900px){
+  .sidebar{display:none}
+  .main{margin-left:0}
+  .theme-toggle{top:12px;right:12px}
+}
+</style>
+</head>
+<body>
+
+<!-- Theme Toggle -->
+<button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">&#x1F319;</button>
+
+<!-- Sidebar -->
+<nav class="sidebar">
+  <div class="sidebar-header">
+    <h2>TypeScript Daily Guide</h2>
+    <div class="date">2026-07-03 &mdash; Day 30</div>
+  </div>
+
+  <div class="sidebar-section review-label">Review (6 concepts)</div>
+  <ul class="sidebar-nav">
+    <li><a href="#review_overloads">Function Overloads <span class="nav-id">R1</span></a></li>
+    <li><a href="#review_modfed">Module Federation Typing <span class="nav-id">R2</span></a></li>
+    <li><a href="#review_testtypes">Testing Types: tsd &amp; expect-type <span class="nav-id">R3</span></a></li>
+    <li><a href="#review_hooks">React Hooks Typing <span class="nav-id">R4</span></a></li>
+    <li><a href="#review_rtk">Redux Toolkit Patterns <span class="nav-id">R5</span></a></li>
+    <li><a href="#review_generic">React Generic Components <span class="nav-id">R6</span></a></li>
+  </ul>
+
+  <div class="sidebar-section">Node.js + TS: Request &amp; Response Contracts</div>
+  <ul class="sidebar-nav">
+    <li><a href="#pagination">Typed Pagination &amp; Cursors <span class="nav-id">#1</span></a></li>
+    <li><a href="#uploads">File Uploads &amp; Multipart <span class="nav-id">#2</span></a></li>
+  </ul>
+
+  <div class="sidebar-section">Node.js + TS: Delivery, Webhooks &amp; Errors</div>
+  <ul class="sidebar-nav">
+    <li><a href="#webhooks">Webhooks &amp; Signature Verify <span class="nav-id">#3</span></a></li>
+    <li><a href="#sse">Server-Sent Events (SSE) <span class="nav-id">#4</span></a></li>
+    <li><a href="#problemjson">Typed Error Responses (7807) <span class="nav-id">#5</span></a></li>
+  </ul>
+</nav>
+
+<!-- Main Content -->
+<div class="main">
+<div class="content">
+
+<!-- Header -->
+<header class="guide-header">
+  <h1>TypeScript Daily Guide &mdash; Day 30</h1>
+  <div class="meta">
+    <span>2026-07-03</span>
+    <span>&middot;</span>
+    <span>Day 30 of 30</span>
+    <span>&middot;</span>
+    <span class="badge badge-purple">6 reviews</span>
+    <span class="badge badge-blue">5 new concepts</span>
+  </div>
+</header>
+
+<!-- How to Use -->
+<div class="how-to-use">
+  <h2>How to Use This Guide</h2>
+  <ol>
+    <li><strong>Review first</strong> &mdash; scan each purple review card; if the concept feels solid, move on; if fuzzy, re-read the code pattern</li>
+    <li><strong>Attempt the challenge exercise</strong> on any review card that felt shaky &mdash; this is your best reinforcement signal</li>
+    <li><strong>Work through new concepts</strong> top to bottom &mdash; each builds on the previous</li>
+    <li><strong>Type every code example</strong> yourself and run it with <code>node</code>/<code>tsx</code> &mdash; hover over inferred types in your editor to build intuition</li>
+    <li><strong>Do at least 2 exercises per concept</strong> before moving to the next one</li>
+  </ol>
+</div>
+
+<!-- Cross-links -->
+<div class="cross-links">
+  <a href="guide.html">LeetCode Guide</a>
+  <a href="lang-guide.html">Lang Guide</a>
+  <a href="python-guide.html">Python Guide</a>
+  <a href="golang-guide.html">Go Guide</a>
+  <a href="javascript-guide.html">JS Guide</a>
+  <a href="report.html">Report</a>
+</div>
+
+<!-- ============================================================ -->
+<!-- REVIEW SECTION                                                -->
+<!-- ============================================================ -->
+<div class="review-section">
+<div class="review-section-header">Review &mdash; 6 Concepts</div>
+
+<!-- R1: Function Overloads -->
+<div class="review-card" id="review_overloads">
+  <div class="review-header">
+    <span class="review-title">R1. Function Overloads</span>
+    <span class="badge badge-purple">Functions &amp; Patterns</span>
+    <span class="review-meta">15 days since review &middot; rep 3 &rarr; 4</span>
+  </div>
+  <div class="review-reminder">Several <em>overload signatures</em> stacked above one implementation signature let a single function present distinct, precise call shapes &mdash; useful when input and output types are correlated in a way a plain union can&rsquo;t express. The implementation signature is invisible to callers; only the overloads are.</div>
+
+  <div class="review-pattern">
+    <strong>Key Pattern</strong>
+    <div class="code-example">
+<pre><code>function parse(x: string): string[];
+function parse(x: number): number;
+function parse(x: string | number): string[] | number {
+  return typeof x === "string" ? x.split(",") : x * 2;
+}
+
+const a = parse("a,b");   // string[]
+const b = parse(3);       // number</code></pre>
+<div class="type-result">each call site picks the matching overload; the impl signature isn&rsquo;t callable</div>
+    </div>
+  </div>
+
+  <div class="review-challenge">
+    <strong>Challenge Exercise</strong>
+    <p>Type a <code>createElement</code> overload set where the return depends on the tag literal (<code>"a" &rarr; HTMLAnchorElement</code>, <code>"div" &rarr; HTMLDivElement</code>) with a broad fallback signature. Then explain why the implementation signature&rsquo;s return type must be assignable to every overload yet is itself never selected by a caller.</p>
+  </div>
+
+  <div class="review-pitfall">
+    <strong>Pitfall:</strong> Order overloads most-specific first &mdash; a broad signature placed first shadows the narrower ones. And a too-loose implementation signature (e.g. <code>any</code>) silences real errors <em>inside</em> the body while callers still only see the overloads.
+  </div>
+</div>
+
+<!-- R2: Module Federation Typing -->
+<div class="review-card" id="review_modfed">
+  <div class="review-header">
+    <span class="review-title">R2. Module Federation Typing</span>
+    <span class="badge badge-purple">Advanced Patterns &amp; Performance</span>
+    <span class="review-meta">6 days since review &middot; rep 2 &rarr; 3</span>
+  </div>
+  <div class="review-reminder">Module Federation loads code from a <em>separate</em> build at runtime (<code>import("remoteApp/Widget")</code>), so the host has no static types for it. You bridge the gap with a <code>declare module "remoteApp/Widget"</code> that describes the remote&rsquo;s public contract &mdash; and version the shared types so host and remote agree.</div>
+
+  <div class="review-pattern">
+    <strong>Key Pattern</strong>
+    <div class="code-example">
+<pre><code>// remotes.d.ts in the host build
+declare module "checkout/Cart" {
+  import type { FC } from "react";
+  export interface CartProps { items: string[] }
+  const Cart: FC&lt;CartProps&gt;;
+  export default Cart;
+}
+
+// usage — now typed
+const Cart = lazy(() =&gt; import("checkout/Cart"));</code></pre>
+<div class="type-result">the declare module gives the runtime-loaded remote a static contract</div>
+    </div>
+  </div>
+
+  <div class="review-challenge">
+    <strong>Challenge Exercise</strong>
+    <p>Publish a shared <code>@org/contracts</code> package of interfaces consumed by both host and remote, then write the <code>declare module</code> for a remote that exposes <em>both</em> a default component and a named <code>useCartStore</code> hook. Explain exactly what breaks &mdash; and when &mdash; if the remote&rsquo;s real shape drifts from the declaration.</p>
+  </div>
+
+  <div class="review-pitfall">
+    <strong>Pitfall:</strong> The <code>declare module</code> is an <em>unchecked promise</em> &mdash; nothing verifies the remote actually matches it, so a version skew compiles fine and then explodes at runtime. Pin the shared contract package version across host and every remote.
+  </div>
+</div>
+
+<!-- R3: Testing Types -->
+<div class="review-card" id="review_testtypes">
+  <div class="review-header">
+    <span class="review-title">R3. Testing Types: tsd &amp; expect-type</span>
+    <span class="badge badge-purple">Advanced Patterns &amp; Performance</span>
+    <span class="review-meta">6 days since review &middot; rep 2 &rarr; 3</span>
+  </div>
+  <div class="review-reminder">Type-level tests assert your types are what you expect &mdash; that a utility returns the right shape and that an invalid call is rejected. <code>expectTypeOf(...).toEqualTypeOf&lt;...&gt;()</code> and tsd&rsquo;s <code>expectType</code>/<code>expectError</code> run at compile time, guarding your public type API against regressions.</div>
+
+  <div class="review-pattern">
+    <strong>Key Pattern</strong>
+    <div class="code-example">
+<pre><code>import { expectTypeOf } from "expect-type";
+
+expectTypeOf&lt;Awaited&lt;Promise&lt;number&gt;&gt;&gt;().toEqualTypeOf&lt;number&gt;();
+expectTypeOf&lt;Partial&lt;{ a: 1 }&gt;&gt;().toEqualTypeOf&lt;{ a?: 1 }&gt;();
+
+// @ts-expect-error — a wrong argument type is a regression test
+greet(42);</code></pre>
+<div class="type-result">assertions fail the build when a type drifts or an expected error disappears</div>
+    </div>
+  </div>
+
+  <div class="review-challenge">
+    <strong>Challenge Exercise</strong>
+    <p>Write a strict <code>Equal&lt;A, B&gt;</code> helper (the classic conditional wrapping each side in a function type) and use it to assert <code>DeepReadonly&lt;{ a: { b: 1 } }&gt;</code> equals <code>{ readonly a: { readonly b: 1 } }</code>. Explain why a plain <code>A extends B ? true : false</code> is too loose for an <em>equality</em> assertion.</p>
+  </div>
+
+  <div class="review-pitfall">
+    <strong>Pitfall:</strong> Using <code>extends</code>-based checks for equality &mdash; they&rsquo;re bidirectionally loose and pass for <code>any</code>. Use an invariant <code>Equal</code>, and remember <code>@ts-expect-error</code> <em>fails</em> the build if the error silently disappears (a vanished error is a regression too).
+  </div>
+</div>
+
+<!-- R4: React Hooks Typing -->
+<div class="review-card" id="review_hooks">
+  <div class="review-header">
+    <span class="review-title">R4. React + TypeScript: Hooks Typing</span>
+    <span class="badge badge-purple">React + TypeScript</span>
+    <span class="review-meta">6 days since review &middot; rep 2 &rarr; 3</span>
+  </div>
+  <div class="review-reminder">Most hooks infer well, but a few need help: <code>useState</code> wants an explicit param when the initial value is <code>null</code> or narrower than the eventual value; <code>useRef</code> splits into a mutable <code>MutableRefObject</code> (initial value) vs a read-only <code>RefObject</code> (<code>null</code>); <code>useReducer</code> shines with a discriminated action union.</div>
+
+  <div class="review-pattern">
+    <strong>Key Pattern</strong>
+    <div class="code-example">
+<pre><code>const [user, setUser] = useState&lt;User | null&gt;(null);  // widen past null
+const inputRef = useRef&lt;HTMLInputElement&gt;(null);      // RefObject, .current: T | null
+const countRef = useRef(0);                          // MutableRefObject&lt;number&gt;
+
+const [state, dispatch] = useReducer(reducer, initial);
+// reducer: (s: State, a: Action) =&gt; State, Action discriminated on `type`</code></pre>
+<div class="type-result">explicit params rescue the cases inference gets wrong</div>
+    </div>
+  </div>
+
+  <div class="review-challenge">
+    <strong>Challenge Exercise</strong>
+    <p>Type a <code>useToggle</code> custom hook returning a <code>[boolean, () =&gt; void]</code> tuple (use <code>as const</code> or an explicit tuple return), and a <code>useFetch&lt;T&gt;</code> returning a discriminated <code>{ status: "loading" } | { status: "error"; error: Error } | { status: "success"; data: T }</code>.</p>
+  </div>
+
+  <div class="review-pitfall">
+    <strong>Pitfall:</strong> <code>useState(null)</code> infers <code>null</code> forever &mdash; pass <code>useState&lt;User | null&gt;(null)</code>. And returning <code>[value, setValue]</code> from a custom hook <em>without</em> <code>as const</code>/an explicit tuple type widens it to <code>(boolean | (() =&gt; void))[]</code>, breaking destructuring.
+  </div>
+</div>
+
+<!-- R5: Redux Toolkit -->
+<div class="review-card" id="review_rtk">
+  <div class="review-header">
+    <span class="review-title">R5. Redux Toolkit TypeScript Patterns</span>
+    <span class="badge badge-purple">State Management &amp; Architecture</span>
+    <span class="review-meta">6 days since review &middot; rep 2 &rarr; 3</span>
+  </div>
+  <div class="review-reminder">RTK&rsquo;s types flow from the store: derive <code>RootState = ReturnType&lt;typeof store.getState&gt;</code> and <code>AppDispatch = typeof store.dispatch</code>, then build pre-typed <code>useAppSelector</code>/<code>useAppDispatch</code> hooks. <code>createSlice</code> infers action-creator payloads from reducer signatures via <code>PayloadAction&lt;T&gt;</code>.</div>
+
+  <div class="review-pattern">
+    <strong>Key Pattern</strong>
+    <div class="code-example">
+<pre><code>const slice = createSlice({
+  name: "counter",
+  initialState: { value: 0 },
+  reducers: {
+    addBy(state, action: PayloadAction&lt;number&gt;) { state.value += action.payload; },
+  },
+});
+
+export type RootState = ReturnType&lt;typeof store.getState&gt;;
+export type AppDispatch = typeof store.dispatch;
+export const useAppSelector: TypedUseSelectorHook&lt;RootState&gt; = useSelector;</code></pre>
+<div class="type-result">selector state and dispatched thunks are typed from the store shape</div>
+    </div>
+  </div>
+
+  <div class="review-challenge">
+    <strong>Challenge Exercise</strong>
+    <p>Type a <code>createAsyncThunk&lt;Returned, Arg, { state: RootState; rejectValue: ApiError }&gt;</code> and handle its three lifecycle actions in <code>extraReducers</code> with the <em>builder callback</em>, narrowing <code>action.payload</code> in the rejected case. Explain why the builder form types better than the object-map form.</p>
+  </div>
+
+  <div class="review-pitfall">
+    <strong>Pitfall:</strong> Using the plain untyped <code>useSelector</code>/<code>useDispatch</code> &mdash; every selector&rsquo;s <code>state</code> is loose and thunks lose dispatch typing. Always export and use the pre-typed hooks, and supply the thunk&rsquo;s generics so <code>rejectWithValue</code> is checked.
+  </div>
+</div>
+
+<!-- R6: React Generic Components -->
+<div class="review-card" id="review_generic">
+  <div class="review-header">
+    <span class="review-title">R6. React + TypeScript: Generic Components</span>
+    <span class="badge badge-purple">React + TypeScript</span>
+    <span class="review-meta">18 days since review &middot; rep 1 &rarr; 2</span>
+  </div>
+  <div class="review-reminder">A generic component threads a type parameter from its props into its callbacks, so a <code>&lt;List items={T[]}&gt;</code> hands <code>renderItem</code> a fully-typed <code>T</code>. Write them as generic <em>function</em> components; arrow-function generics need a trailing comma (<code>&lt;T,&gt;</code>) in <code>.tsx</code> to disambiguate from JSX.</div>
+
+  <div class="review-pattern">
+    <strong>Key Pattern</strong>
+    <div class="code-example">
+<pre><code>interface ListProps&lt;T&gt; {
+  items: T[];
+  renderItem: (item: T, index: number) =&gt; React.ReactNode;
+}
+function List&lt;T&gt;({ items, renderItem }: ListProps&lt;T&gt;) {
+  return &lt;ul&gt;{items.map((it, i) =&gt; &lt;li key={i}&gt;{renderItem(it, i)}&lt;/li&gt;)}&lt;/ul&gt;;
+}
+
+&lt;List items={users} renderItem={(u) =&gt; u.name} /&gt;   // u: User, inferred</code></pre>
+<div class="type-result">T is inferred from `items`; renderItem&rsquo;s argument is fully typed</div>
+    </div>
+  </div>
+
+  <div class="review-challenge">
+    <strong>Challenge Exercise</strong>
+    <p>Build a generic <code>Select&lt;T&gt;</code> whose <code>value</code>, <code>options: T[]</code>, <code>onChange: (v: T) =&gt; void</code>, and <code>getLabel: (v: T) =&gt; string</code> all share <code>T</code>. Make it work with <code>forwardRef</code> (the cast-the-forwardRef trick or a typed wrapper) and confirm <code>T</code> is inferred from <code>options</code> at the call site.</p>
+  </div>
+
+  <div class="review-pitfall">
+    <strong>Pitfall:</strong> In <code>.tsx</code>, a bare arrow generic <code>&lt;T&gt;(&hellip;) =&gt;</code> parses as a JSX tag &mdash; use <code>&lt;T,&gt;</code> or a <code>function</code> declaration. And annotating the component as <code>React.FC</code> erases the generic; keep it a plain generic function so <code>T</code> flows from props.
+  </div>
+</div>
+
+</div><!-- end review-section -->
+
+<!-- ============================================================ -->
+<!-- TOPIC SECTION 1: Request & Response Contracts                 -->
+<!-- ============================================================ -->
+<div class="topic-section">
+<div class="topic-section-header"><span class="section-num">1</span>Node.js + TS: Request &amp; Response Contracts</div>
+
+<!-- Concept 1: Typed Pagination -->
+<div class="concept-card" id="pagination">
+  <div class="concept-header">
+    <span class="concept-title">1. Typed Pagination &amp; Cursor Contracts</span>
+    <span class="ttag">Node.js + TypeScript</span>
+  </div>
+
+  <div class="why-matters">Every list endpoint needs pagination, and the shape of a &ldquo;page&rdquo; (the items plus how to fetch the next one) is a contract clients build against. Typing offset and cursor pagination &mdash; including an <em>opaque, encoded</em> cursor &mdash; keeps the query params, the response envelope, and the next-page logic consistent, and stops internal ordering fields from leaking.</div>
+
+  <div class="explanation">
+    <p>Two families: <strong>offset/limit</strong> (simple, but rows shift under concurrent inserts, causing skips/dupes) and <strong>cursor/keyset</strong> (stable, scales to large tables). Model the request params and a generic <code>Page&lt;T&gt;</code> envelope so metadata always has a home.</p>
+    <p>The cursor is <em>opaque</em> to clients: encode the last-seen sort key (e.g. <code>{ id, createdAt }</code>) as base64 so callers treat it as a black box &mdash; that lets you change its internals later without a breaking change. Because it comes back as untrusted input, <em>validate</em> it on decode.</p>
+    <div class="step"><span class="step-num">1</span><div>Define request params and a generic <code>Page&lt;T&gt;</code> envelope (offset or cursor flavour).</div></div>
+    <div class="step"><span class="step-num">2</span><div>Encode the sort key into an opaque cursor; decode + validate it as untrusted input.</div></div>
+    <div class="step"><span class="step-num">3</span><div>Fetch <code>limit + 1</code> rows to detect a next page without a second count query.</div></div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 1 of 4 &mdash; generic page envelopes</div>
+<pre><code>interface OffsetPage&lt;T&gt; {
+  items: T[];
+  total: number;
+  limit: number;
+  offset: number;
+}
+
+interface CursorParams { limit: number; cursor?: string }   // cursor is opaque
+interface CursorPage&lt;T&gt; {
+  items: T[];
+  nextCursor: string | null;   // null = last page
+}</code></pre>
+<div class="type-result">a Page&lt;T&gt; envelope gives pagination metadata a typed home</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 2 of 4 &mdash; an opaque, validated cursor</div>
+<pre><code>interface CursorData { id: string; createdAt: number }
+const CursorSchema = z.object({ id: z.string(), createdAt: z.number() });
+
+const encodeCursor = (c: CursorData): string =&gt;
+  Buffer.from(JSON.stringify(c)).toString("base64url");
+
+function decodeCursor(raw: string): CursorData {
+  const parsed = JSON.parse(Buffer.from(raw, "base64url").toString());
+  return CursorSchema.parse(parsed);   // validate — it's client-supplied
+}</code></pre>
+<div class="type-result">clients see an opaque string; the server round-trips a typed CursorData</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 3 of 4 &mdash; a keyset query returning a CursorPage</div>
+<pre><code>async function listPosts(p: CursorParams): Promise&lt;CursorPage&lt;Post&gt;&gt; {
+  const after = p.cursor ? decodeCursor(p.cursor) : null;
+  const rows = await db.posts.findMany({
+    take: p.limit + 1,                       // one extra to detect "more"
+    where: after ? { createdAt: { lt: after.createdAt } } : undefined,
+    orderBy: { createdAt: "desc" },
+  });
+  const items = rows.slice(0, p.limit);
+  const last = items.at(-1);
+  const nextCursor =
+    rows.length &gt; p.limit &amp;&amp; last
+      ? encodeCursor({ id: last.id, createdAt: +last.createdAt })
+      : null;
+  return { items, nextCursor };
+}</code></pre>
+<div class="type-result">limit + 1 reveals whether a next page exists; nextCursor is null at the end</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 4 of 4 &mdash; parse &amp; clamp query params at the boundary</div>
+<pre><code>const PageQuery = z.object({
+  limit:  z.coerce.number().int().min(1).max(100).default(20),
+  cursor: z.string().optional(),
+});
+
+// req.query values are strings — parse into typed, clamped CursorParams
+const params: CursorParams = PageQuery.parse(req.query);</code></pre>
+<div class="type-result">limit is coerced, bounded to 1..100, and defaulted — never unbounded</div>
+  </div>
+
+  <div class="callout-warning">
+    <strong>Common Mistakes:</strong>
+    <div class="mistake">&#10060; Returning a bare <code>T[]</code> &mdash; clients can&rsquo;t tell if there&rsquo;s a next page, and adding <code>total</code>/<code>nextCursor</code> later is a breaking change.</div>
+    <div class="correct">&#9989; Return a generic <code>Page&lt;T&gt;</code> envelope from day one so metadata has a home.</div>
+    <div class="mistake">&#10060; Exposing a raw DB <code>offset</code> or the internal sort column as the &ldquo;cursor&rdquo; &mdash; clients couple to your storage and you can&rsquo;t change ordering.</div>
+    <div class="correct">&#9989; Encode an <em>opaque</em> cursor and validate it on decode &mdash; it&rsquo;s untrusted input.</div>
+  </div>
+
+  <div class="key-rules">
+    <strong>Key Rules:</strong>
+    <ul>
+    <li><a href="typescript-guides/typescript-guide-2026-07-04.html">2026-07-04</a> (Day 31)</li>
+      <li>Wrap list results in a generic <code>Page&lt;T&gt;</code> envelope; never return a bare array.</li>
+      <li>Prefer keyset/cursor pagination for large or churny datasets; offset is fine for small, stable lists.</li>
+      <li>Keep the cursor opaque to clients but strongly typed server-side &mdash; encode, then <em>validate on decode</em>.</li>
+      <li>Fetch <code>limit + 1</code> to know whether a next page exists without a second count query.</li>
+    </ul>
+  </div>
+
+  <div class="exercises">
+    <strong>Practice Exercises:</strong>
+    <div class="exercise"><span class="exercise-num">1</span>Add a <code>hasMore: boolean</code> to <code>CursorPage&lt;T&gt;</code> and derive it from the <code>limit + 1</code> fetch without a separate query.</div>
+    <div class="exercise"><span class="exercise-num">2</span>Write a generic <code>paginate&lt;T&gt;(all: T[], params: { limit: number; offset: number }): OffsetPage&lt;T&gt;</code> for in-memory arrays, clamping <code>offset</code>/<code>limit</code>.</div>
+    <div class="exercise"><span class="exercise-num">3</span>Extend the cursor to encode sort direction (asc/desc) and confirm <code>decodeCursor</code> rejects a tampered value.</div>
+  </div>
+
+  <div class="connections"><strong>Connections:</strong> The cursor encode/decode is another <em>trust-boundary parse</em> (Zod validate-on-read, like JWT verify and Redis reads on 07-01/07-02). The generic <code>Page&lt;T&gt;</code> envelope is <em>generic interfaces</em>, and clamping <code>req.query</code> is the same boundary validation used for request bodies.</div>
+</div>
+
+<!-- Concept 2: File Uploads & Multipart -->
+<div class="concept-card" id="uploads">
+  <div class="concept-header">
+    <span class="concept-title">2. File Uploads &amp; Multipart Typing</span>
+    <span class="ttag">Node.js + TypeScript</span>
+  </div>
+
+  <div class="why-matters"><code>multipart/form-data</code> uploads sit outside JSON typing &mdash; the body is a stream of parts, and libraries like multer bolt <code>req.file</code>/<code>req.files</code> onto the request as loosely-typed extras. Typing the file shape, narrowing single/array/fields, and validating size and mime turns an untyped, security-sensitive path into a checked one.</div>
+
+  <div class="explanation">
+    <p>multer parses multipart and attaches an <code>Express.Multer.File</code> (fields: <code>originalname</code>, <code>mimetype</code>, <code>size</code>, and <code>buffer</code> or <code>path</code>). <code>@types/multer</code> augments <code>Request</code> with <code>file</code>/<code>files</code> &mdash; but you still narrow: <code>.single()</code> gives one file, <code>.array()</code> gives an array, <code>.fields()</code> gives a keyed record.</p>
+    <p>A file is <em>untrusted</em>: enforce <code>limits.fileSize</code>, validate <code>mimetype</code>, and never derive a storage path from <code>originalname</code> (path traversal / overwrite). Return a curated result to clients, not the raw multer object.</p>
+    <div class="step"><span class="step-num">1</span><div>Mount the multer middleware with <code>limits</code>; read the typed <code>req.file</code>.</div></div>
+    <div class="step"><span class="step-num">2</span><div>Narrow <code>req.files</code> (array vs keyed record) before iterating.</div></div>
+    <div class="step"><span class="step-num">3</span><div>Validate mime with a type guard; store under a server-generated id, not <code>originalname</code>.</div></div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 1 of 4 &mdash; the typed file shape &amp; a single-file handler</div>
+<pre><code>import multer from "multer";
+const upload = multer({ limits: { fileSize: 5 * 1024 * 1024 } });   // 5 MB
+
+app.post("/avatar", upload.single("avatar"), (req, res) =&gt; {
+  const file = req.file;         // Express.Multer.File | undefined
+  if (!file) return res.status(400).end();
+  file.mimetype;                 // string
+  file.buffer;                   // Buffer (memory storage)
+});</code></pre>
+<div class="type-result">@types/multer augments req.file to Express.Multer.File | undefined</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 2 of 4 &mdash; narrow the req.files union</div>
+<pre><code>// upload.array("photos")           → req.files is Express.Multer.File[]
+// upload.fields([{ name: "cv" }])  → req.files is { [field]: File[] }
+function getFiles(req: Request): Express.Multer.File[] {
+  const f = req.files;
+  if (Array.isArray(f)) return f;
+  if (f) return Object.values(f).flat();
+  return [];
+}</code></pre>
+<div class="type-result">req.files is a union — narrow array vs keyed record before use</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 3 of 4 &mdash; a mime type guard from a literal union</div>
+<pre><code>const ALLOWED = ["image/png", "image/jpeg"] as const;
+type AllowedMime = typeof ALLOWED[number];
+
+function isAllowed(
+  f: Express.Multer.File,
+): f is Express.Multer.File &amp; { mimetype: AllowedMime } {
+  return (ALLOWED as readonly string[]).includes(f.mimetype);
+}</code></pre>
+<div class="type-result">the predicate narrows mimetype to the allowed literal union</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 4 of 4 &mdash; return a curated result, not the raw file</div>
+<pre><code>interface UploadResult { id: string; url: string; bytes: number }
+
+async function store(f: Express.Multer.File): Promise&lt;UploadResult&gt; {
+  const id = crypto.randomUUID();
+  await s3.put(`uploads/${id}`, f.buffer);   // never use f.originalname as the key
+  return { id, url: `/files/${id}`, bytes: f.size };
+}</code></pre>
+<div class="type-result">clients get a stable UploadResult; originalname stays display-only metadata</div>
+  </div>
+
+  <div class="callout-warning">
+    <strong>Common Mistakes:</strong>
+    <div class="mistake">&#10060; Reading <code>req.body.avatar</code> for a file field &mdash; multipart file parts aren&rsquo;t on <code>req.body</code>; they&rsquo;re on <code>req.file</code>/<code>req.files</code>.</div>
+    <div class="correct">&#9989; Use the multer middleware and read the typed <code>req.file</code>; narrow single/array/fields explicitly.</div>
+    <div class="mistake">&#10060; Using <code>file.originalname</code> as the storage path/key &mdash; it&rsquo;s attacker-controlled (path traversal, overwrite).</div>
+    <div class="correct">&#9989; Generate your own id/key and keep <code>originalname</code> only as display metadata.</div>
+  </div>
+
+  <div class="key-rules">
+    <strong>Key Rules:</strong>
+    <ul>
+      <li>Multipart file parts live on <code>req.file</code>/<code>req.files</code> (via <code>@types/multer</code>), not <code>req.body</code>.</li>
+      <li><code>req.files</code> is a union &mdash; array for <code>.array()</code>, a keyed record for <code>.fields()</code>; narrow first.</li>
+      <li>Enforce <code>limits.fileSize</code> and validate <code>mimetype</code> &mdash; a file is untrusted input.</li>
+      <li>Never derive a filesystem/storage path from <code>originalname</code>.</li>
+    </ul>
+  </div>
+
+  <div class="exercises">
+    <strong>Practice Exercises:</strong>
+    <div class="exercise"><span class="exercise-num">1</span>Write a multer <code>fileFilter</code> that rejects non-images, typing its callback signature from <code>@types/multer</code>.</div>
+    <div class="exercise"><span class="exercise-num">2</span>Type a handler for <code>upload.fields([...])</code> that pulls exactly one required <code>cv</code> and an optional <code>cover</code>, erroring if <code>cv</code> is missing.</div>
+    <div class="exercise"><span class="exercise-num">3</span>Return a discriminated <code>{ ok: true; result: UploadResult } | { ok: false; error: string }</code> from <code>store</code> and handle both branches in the route.</div>
+  </div>
+
+  <div class="connections"><strong>Connections:</strong> <code>req.file</code>/<code>req.files</code> come from the same <em>declaration-merging</em> augmentation as <code>req.user</code> (07-02). The mime literal union + <code>is</code> guard is <em>literal types</em> + <em>type predicates</em>, and returning a curated <code>UploadResult</code> mirrors the &ldquo;don&rsquo;t leak internal shapes&rdquo; lesson from Prisma <code>select</code>.</div>
+</div>
+
+</div><!-- end topic-section 1 -->
+
+<!-- ============================================================ -->
+<!-- TOPIC SECTION 2: Delivery, Webhooks & Errors                  -->
+<!-- ============================================================ -->
+<div class="topic-section">
+<div class="topic-section-header"><span class="section-num">2</span>Node.js + TS: Delivery, Webhooks &amp; Errors</div>
+
+<!-- Concept 3: Webhooks -->
+<div class="concept-card" id="webhooks">
+  <div class="concept-header">
+    <span class="concept-title">3. Webhooks: Typed Payloads &amp; Signature Verification</span>
+    <span class="ttag">Node.js + TypeScript</span>
+  </div>
+
+  <div class="why-matters">Webhooks are inbound POSTs from third parties (Stripe, GitHub) that you must <em>verify</em> and route by event type. A discriminated union over the event <code>type</code> gives each handler a precisely-typed payload, and typing the signature-verification step keeps the security-critical &ldquo;is this really from the provider?&rdquo; check first-class.</div>
+
+  <div class="explanation">
+    <p>A webhook body is untrusted until you verify its HMAC signature against the <em>raw bytes</em> with a shared secret. After verifying, parse into a discriminated union keyed on <code>type</code>, then <code>switch</code> for exhaustive, per-event typing (<code>assertNever</code> on the default).</p>
+    <p>Crucially, the signature is computed over the exact received bytes &mdash; so mount a <em>raw</em> body parser on the webhook route; re-serializing parsed JSON changes bytes and breaks the HMAC. Respond 2xx fast and offload heavy work, because providers retry on non-2xx or timeout.</p>
+    <div class="step"><span class="step-num">1</span><div>Capture the raw request body (raw parser on the webhook route only).</div></div>
+    <div class="step"><span class="step-num">2</span><div>Verify the HMAC with a constant-time compare before trusting anything.</div></div>
+    <div class="step"><span class="step-num">3</span><div>Parse into a discriminated union and <code>switch</code> with <code>assertNever</code>.</div></div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 1 of 4 &mdash; a discriminated event union</div>
+<pre><code>type WebhookEvent =
+  | { type: "payment.succeeded";     data: { amount: number; currency: string } }
+  | { type: "payment.failed";        data: { reason: string } }
+  | { type: "subscription.canceled"; data: { userId: string } };</code></pre>
+<div class="type-result">the `type` tag discriminates each event&rsquo;s `data` shape</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 2 of 4 &mdash; verify the signature over the raw body</div>
+<pre><code>import crypto from "crypto";
+
+function verify(rawBody: Buffer, signature: string, secret: string): boolean {
+  const expected = crypto.createHmac("sha256", secret).update(rawBody).digest("hex");
+  const a = Buffer.from(expected), b = Buffer.from(signature);
+  return a.length === b.length &amp;&amp; crypto.timingSafeEqual(a, b);   // constant-time
+}</code></pre>
+<div class="type-result">HMAC over exact bytes + timingSafeEqual — no early-exit timing leak</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 3 of 4 &mdash; raw-body route, then parse into the union</div>
+<pre><code>app.post("/webhook",
+  express.raw({ type: "application/json" }),   // req.body is a Buffer here
+  (req, res) =&gt; {
+    const sig = req.header("x-signature") ?? "";
+    if (!verify(req.body, sig, SECRET)) return res.status(401).end();
+    const event: WebhookEvent = EventSchema.parse(JSON.parse(req.body.toString()));
+    handle(event);
+    res.sendStatus(200);
+  });</code></pre>
+<div class="type-result">verify raw bytes first, then schema-parse into a typed WebhookEvent</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 4 of 4 &mdash; exhaustive dispatch with assertNever</div>
+<pre><code>function handle(e: WebhookEvent) {
+  switch (e.type) {
+    case "payment.succeeded":     return credit(e.data.amount);   // data narrowed
+    case "payment.failed":        return notify(e.data.reason);
+    case "subscription.canceled": return revoke(e.data.userId);
+    default: { const _x: never = e; throw new Error(`unhandled ${_x}`); }
+  }
+}</code></pre>
+<div class="type-result">each case sees exactly its own `data`; a new event type breaks the switch</div>
+  </div>
+
+  <div class="callout-warning">
+    <strong>Common Mistakes:</strong>
+    <div class="mistake">&#10060; Verifying against the <em>parsed/re-serialized</em> JSON &mdash; re-stringifying changes bytes and the HMAC won&rsquo;t match; also using <code>===</code> on the digests.</div>
+    <div class="correct">&#9989; Verify against the exact raw bytes with <code>crypto.timingSafeEqual</code>, before parsing.</div>
+    <div class="mistake">&#10060; Typing the body as <code>any</code> and branching on <code>body.type</code> &mdash; no exhaustiveness, and a new event silently falls through.</div>
+    <div class="correct">&#9989; Parse into a discriminated union and <code>switch</code> with an <code>assertNever</code> default so new events fail loudly.</div>
+  </div>
+
+  <div class="key-rules">
+    <strong>Key Rules:</strong>
+    <ul>
+      <li>Verify the HMAC over the <em>raw</em> body (mount a raw parser) with a constant-time compare &mdash; before trusting anything.</li>
+      <li>Model events as a discriminated union on <code>type</code>; <code>switch</code> + <code>assertNever</code> gives exhaustiveness.</li>
+      <li>Return 2xx quickly and do heavy work async &mdash; providers retry on non-2xx/timeouts.</li>
+      <li>Even after the signature check, validate the payload with a schema &mdash; it&rsquo;s still external input.</li>
+    </ul>
+  </div>
+
+  <div class="exercises">
+    <strong>Practice Exercises:</strong>
+    <div class="exercise"><span class="exercise-num">1</span>Add a <code>charge.refunded</code> event and watch the <code>assertNever</code> default force you to handle it.</div>
+    <div class="exercise"><span class="exercise-num">2</span>Add replay protection: include a timestamp in the signed payload and reject events older than 5 minutes.</div>
+    <div class="exercise"><span class="exercise-num">3</span>Make <code>handle</code> return a <code>Promise&lt;void&gt;</code>, respond <code>200</code> immediately, and process on a queue (tie back to BullMQ from 07-01).</div>
+  </div>
+
+  <div class="connections"><strong>Connections:</strong> The union + <code>assertNever</code> is <em>discriminated unions in practice</em> + <em>never / exhaustiveness</em>. Signature verification is a trust boundary like JWT verify (07-02), and the post-verify schema parse is the same validate-untrusted-input rule. Offloading heavy work echoes <em>job queues</em> (07-01).</div>
+</div>
+
+<!-- Concept 4: Server-Sent Events -->
+<div class="concept-card" id="sse">
+  <div class="concept-header">
+    <span class="concept-title">4. Server-Sent Events (SSE) Typing</span>
+    <span class="ttag">Node.js + TypeScript</span>
+  </div>
+
+  <div class="why-matters">SSE is a lightweight, one-way server&rarr;client stream over plain HTTP (<code>text/event-stream</code>) &mdash; ideal for progress bars, notifications, and live feeds. Because the wire format is just formatted text, a typed <code>send(event, data)</code> wrapper over a discriminated event map keeps every message on-contract on both ends.</div>
+
+  <div class="explanation">
+    <p>The server keeps the response open and writes <code>event:</code>/<code>data:</code> lines separated by a blank line; the browser&rsquo;s <code>EventSource</code> fires the matching named events. Model a <code>ServerEvents</code> map (event name &rarr; payload) and make <code>send&lt;K extends keyof E&gt;(name, data)</code> serialize JSON &mdash; the same map documents what the client&rsquo;s <code>addEventListener</code> handlers receive.</p>
+    <p>SSE auto-reconnects and supports an <code>id:</code> line so the browser resends <code>Last-Event-ID</code> on reconnect for resumable streams. Always tear down timers/subscriptions on <code>req.on("close")</code> or you leak resources per disconnected client.</p>
+    <div class="step"><span class="step-num">1</span><div>Define a <code>ServerEvents</code> map: event name &rarr; payload type.</div></div>
+    <div class="step"><span class="step-num">2</span><div>Write a <code>send&lt;K extends keyof E&gt;</code> wrapper that frames <code>event:</code>/<code>data:</code> + blank line.</div></div>
+    <div class="step"><span class="step-num">3</span><div>Clean up on <code>req.on("close")</code>; drive client listeners off the same map.</div></div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 1 of 4 &mdash; event map + a typed emitter over the response</div>
+<pre><code>interface ServerEvents {
+  progress: { pct: number };
+  message:  { text: string };
+  done:     { ok: boolean };
+}
+
+function sseEmitter&lt;E&gt;(res: Response) {
+  res.writeHead(200, {
+    "Content-Type": "text/event-stream",
+    "Cache-Control": "no-cache",
+    Connection: "keep-alive",
+  });
+  return {
+    send&lt;K extends keyof E &amp; string&gt;(event: K, data: E[K]) {
+      res.write(`event: ${event}\n`);
+      res.write(`data: ${JSON.stringify(data)}\n\n`);
+    },
+    close() { res.end(); },
+  };
+}</code></pre>
+<div class="type-result">send only accepts a known event name and its matching payload E[K]</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 2 of 4 &mdash; a typed streaming handler</div>
+<pre><code>app.get("/jobs/:id/stream", (req, res) =&gt; {
+  const sse = sseEmitter&lt;ServerEvents&gt;(res);
+  const timer = setInterval(() =&gt; sse.send("progress", { pct: next() }), 1000);
+  // sse.send("progres", { pct: 1 });   // error: not a key of ServerEvents
+  req.on("close", () =&gt; clearInterval(timer));
+});</code></pre>
+<div class="type-result">a mistyped event name is a compile error; the interval is cleaned up on close</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 3 of 4 &mdash; the client, typed to the same map</div>
+<pre><code>const es = new EventSource("/jobs/42/stream");
+
+es.addEventListener("progress", (e) =&gt; {
+  const data = JSON.parse((e as MessageEvent).data) as ServerEvents["progress"];
+  bar.value = data.pct;   // data: { pct: number }
+});</code></pre>
+<div class="type-result">indexing ServerEvents["progress"] keeps client and server payloads in sync</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 4 of 4 &mdash; an id line for resumable streams</div>
+<pre><code>send&lt;K extends keyof E &amp; string&gt;(event: K, data: E[K], id?: string) {
+  if (id) res.write(`id: ${id}\n`);
+  res.write(`event: ${event}\n`);
+  res.write(`data: ${JSON.stringify(data)}\n\n`);
+}
+// on reconnect the browser resends the Last-Event-ID header</code></pre>
+<div class="type-result">an id: line lets the client resume from Last-Event-ID after a drop</div>
+  </div>
+
+  <div class="callout-warning">
+    <strong>Common Mistakes:</strong>
+    <div class="mistake">&#10060; Writing <code>res.write(JSON.stringify(payload))</code> with no <code>event:</code>/<code>data:</code> framing or trailing blank line &mdash; the client never fires and the message is malformed.</div>
+    <div class="correct">&#9989; Use a <code>send()</code> wrapper that emits <code>event:</code>, <code>data:</code>, and the <code>\n\n</code> terminator every time.</div>
+    <div class="mistake">&#10060; Forgetting <code>req.on("close")</code> cleanup &mdash; intervals/subscriptions leak for every disconnected client.</div>
+    <div class="correct">&#9989; Tear down timers and listeners when the connection closes.</div>
+  </div>
+
+  <div class="key-rules">
+    <strong>Key Rules:</strong>
+    <ul>
+      <li>SSE is one-way server&rarr;client over <code>text/event-stream</code>; reach for WebSockets only when you need bidirectional.</li>
+      <li>Drive both <code>send</code> and the client&rsquo;s listeners off one <code>ServerEvents</code> map so names/payloads stay in sync.</li>
+      <li>Always emit the <code>data:</code> line + blank-line terminator; add <code>id:</code> to support <code>Last-Event-ID</code> resume.</li>
+      <li>Clean up on <code>req.on("close")</code> to avoid leaking per-connection resources.</li>
+    </ul>
+  </div>
+
+  <div class="exercises">
+    <strong>Practice Exercises:</strong>
+    <div class="exercise"><span class="exercise-num">1</span>Add an <code>error: { code: string }</code> event and a client handler; confirm <code>send("eror", &hellip;)</code> won&rsquo;t compile.</div>
+    <div class="exercise"><span class="exercise-num">2</span>Write a <code>heartbeat</code> that sends a comment line (<code>:\n\n</code>) every 15s to keep proxies from closing idle connections.</div>
+    <div class="exercise"><span class="exercise-num">3</span>Type a <code>broadcast(event, data)</code> over a <code>Set&lt;Emitter&gt;</code> of connected clients, removing closed ones.</div>
+  </div>
+
+  <div class="connections"><strong>Connections:</strong> The event-map-keyed <code>send</code> is the <em>type-safe event emitter</em> pattern (07-02 review) applied to the wire, and the one-way contrast with <em>WebSocket typing</em>. JSON framing over a stream ties to <em>Node streams</em> (06-30), and per-event payloads are generic indexed access (<code>E[K]</code>).</div>
+</div>
+
+<!-- Concept 5: Typed Error Responses -->
+<div class="concept-card" id="problemjson">
+  <div class="concept-header">
+    <span class="concept-title">5. Typed Error Responses (RFC 7807 problem+json)</span>
+    <span class="ttag">Node.js + TypeScript</span>
+  </div>
+
+  <div class="why-matters">APIs need a consistent, machine-readable error shape. RFC 7807 <code>application/problem+json</code> standardizes it (<code>type</code>, <code>title</code>, <code>status</code>, <code>detail</code>, <code>instance</code>), and typing that envelope &mdash; plus a discriminated union of your domain error kinds &mdash; means every handler returns errors the same way and clients can <code>switch</code> on a stable <code>type</code>.</div>
+
+  <div class="explanation">
+    <p>Define a base <code>Problem</code> interface matching 7807, then extend it per error kind with extra fields (a validation problem carries an <code>errors[]</code> array). A discriminated union on the <code>type</code> slug lets a single, central error middleware map any thrown domain error to the right HTTP status and body &mdash; one typed place instead of ad-hoc shapes per route.</p>
+    <p>Keep <code>detail</code> client-safe: put a stable <code>title</code>/<code>type</code> on the wire and log the raw error (and any stack) server-side only. A <code>satisfies Problem</code> on the fallback keeps even the 500 branch honest.</p>
+    <div class="step"><span class="step-num">1</span><div>Define the base <code>Problem</code> (7807 fields) and extend it per error kind.</div></div>
+    <div class="step"><span class="step-num">2</span><div>Union the kinds on <code>type</code>; carry them on a typed <code>HttpError</code>.</div></div>
+    <div class="step"><span class="step-num">3</span><div>Map thrown errors &rarr; status + <code>problem+json</code> in one central middleware.</div></div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 1 of 4 &mdash; the 7807 base + a typed extension</div>
+<pre><code>interface Problem {
+  type: string;       // a URI/slug identifying the error kind
+  title: string;
+  status: number;
+  detail?: string;
+  instance?: string;  // the specific request/resource
+}
+
+interface ValidationProblem extends Problem {
+  type: "https://errors/validation";
+  errors: { field: string; message: string }[];
+}</code></pre>
+<div class="type-result">a shared base every error response conforms to</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 2 of 4 &mdash; a discriminated union of domain errors</div>
+<pre><code>type ApiProblem =
+  | ValidationProblem
+  | (Problem &amp; { type: "https://errors/not-found" })
+  | (Problem &amp; { type: "https://errors/unauthorized" });</code></pre>
+<div class="type-result">the `type` slug discriminates which extra fields are present</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 3 of 4 &mdash; an error class that carries its problem</div>
+<pre><code>class HttpError extends Error {
+  constructor(readonly problem: ApiProblem) { super(problem.title); }
+}
+
+const notFound = (detail: string): HttpError =&gt;
+  new HttpError({
+    type: "https://errors/not-found", title: "Not Found", status: 404, detail,
+  });</code></pre>
+<div class="type-result">throwing an HttpError bundles the wire body with the failure</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 4 of 4 &mdash; one central, typed error middleware</div>
+<pre><code>app.use((err: unknown, req: Request, res: Response, next: NextFunction) =&gt; {
+  if (err instanceof HttpError) {
+    return res
+      .status(err.problem.status)
+      .type("application/problem+json")
+      .json(err.problem);
+  }
+  res.status(500).type("application/problem+json").json({
+    type: "about:blank", title: "Internal Server Error", status: 500,
+  } satisfies Problem);
+});</code></pre>
+<div class="type-result">every error path emits problem+json; satisfies keeps the fallback honest</div>
+  </div>
+
+  <div class="callout-warning">
+    <strong>Common Mistakes:</strong>
+    <div class="mistake">&#10060; Returning ad-hoc <code>{ error: "..." }</code> shapes that differ per route &mdash; clients can&rsquo;t handle errors uniformly and status/body drift.</div>
+    <div class="correct">&#9989; Return a single typed <code>Problem</code>/<code>problem+json</code> envelope everywhere via one error middleware.</div>
+    <div class="mistake">&#10060; Leaking stack traces or internal messages into <code>detail</code> &mdash; it exposes internals and varies by environment.</div>
+    <div class="correct">&#9989; Put a safe, stable <code>title</code>/<code>type</code> on the wire; log the raw error server-side only.</div>
+  </div>
+
+  <div class="key-rules">
+    <strong>Key Rules:</strong>
+    <ul>
+      <li>Adopt one error envelope (RFC 7807 <code>problem+json</code>) and type it as a base <code>Problem</code> interface.</li>
+      <li>Model error kinds as a discriminated union on <code>type</code> so extra fields (e.g. validation <code>errors</code>) are checked.</li>
+      <li>Centralize the throw &rarr; status + body mapping in one typed middleware.</li>
+      <li>Keep <code>detail</code> client-safe; never serialize stack traces or internal identifiers.</li>
+    </ul>
+  </div>
+
+  <div class="exercises">
+    <strong>Practice Exercises:</strong>
+    <div class="exercise"><span class="exercise-num">1</span>Add a <code>RateLimitProblem</code> with <code>retryAfter: number</code> and set the <code>Retry-After</code> header from it in the middleware.</div>
+    <div class="exercise"><span class="exercise-num">2</span>Write a <code>fromZodError(e): ValidationProblem</code> that maps a Zod error&rsquo;s issues into the <code>errors[]</code> array.</div>
+    <div class="exercise"><span class="exercise-num">3</span>Add an <code>expectTypeOf</code> test asserting every member of <code>ApiProblem</code> is assignable to <code>Problem</code>.</div>
+  </div>
+
+  <div class="connections"><strong>Connections:</strong> The union on <code>type</code> is <em>discriminated unions</em> + <em>never/exhaustiveness</em> applied to errors, and the fallback&rsquo;s <code>satisfies Problem</code> is the <em>satisfies operator</em>. This is the response-side complement to request validation (Concept 1&rsquo;s query parsing), and the HTTP-boundary serialization of the Result/error-handling patterns from earlier weeks.</div>
+</div>
+
+</div><!-- end topic-section 2 -->
+
+<!-- Footer -->
+<footer class="guide-footer">
+  <h2>All Guides</h2>
+  <ul>
+    <li><a href="typescript-guides/typescript-guide-2026-07-09.html">2026-07-09</a> (Day 36)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-07-08.html">2026-07-08</a> (Day 35)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-07-07.html">2026-07-07</a> (Day 34)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-07-06.html">2026-07-06</a> (Day 33)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-07-05.html">2026-07-05</a> (Day 32)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-07-04.html">2026-07-04</a> (Day 31)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-07-03.html">2026-07-03</a> (Day 30)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-07-02.html">2026-07-02</a> (Day 29)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-07-01.html">2026-07-01</a> (Day 28)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-30.html">2026-06-30</a> (Day 27)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-29.html">2026-06-29</a> (Day 26)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-28.html">2026-06-28</a> (Day 25)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-27.html">2026-06-27</a> (Day 24)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-26.html">2026-06-26</a> (Day 23)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-25.html">2026-06-25</a> (Day 22)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-24.html">2026-06-24</a> (Day 21)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-23.html">2026-06-23</a> (Day 20)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-22.html">2026-06-22</a> (Day 19)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-21.html">2026-06-21</a> (Day 18)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-19.html">2026-06-19</a> (Day 17)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-18.html">2026-06-18</a> (Day 16)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-17.html">2026-06-17</a> (Day 15)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-15.html">2026-06-15</a> (Day 14)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-13.html">2026-06-13</a> (Day 13)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-12.html">2026-06-12</a> (Day 12)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-11.html">2026-06-11</a> (Day 11)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-10.html">2026-06-10</a> (Day 10)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-09.html">2026-06-09</a> (Day 9)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-08.html">2026-06-08</a> (Day 8)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-07.html">2026-06-07</a> (Day 7)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-05.html">2026-06-05</a> (Day 6)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-04.html">2026-06-04</a> (Day 5)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-03.html">2026-06-03</a> (Day 4)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-02.html">2026-06-02</a> (Day 3)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-01.html">2026-06-01</a> (Day 2)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-05-31.html">2026-05-31</a> (Day 1)</li>
+  </ul>
+</footer>
+
+</div><!-- end content -->
+</div><!-- end main -->
+
+<script>
+// Theme toggle
+(function() {
+  var toggle = document.getElementById('themeToggle');
+  var html = document.documentElement;
+  var STORAGE_KEY = 'lc-tsguide-theme';
+
+  function setTheme(theme) {
+    html.setAttribute('data-theme', theme);
+    toggle.textContent = theme === 'dark' ? '\u{1F319}' : '\u{2600}\u{FE0F}';
+    try { localStorage.setItem(STORAGE_KEY, theme); } catch(e) {}
+  }
+
+  try {
+    var saved = localStorage.getItem(STORAGE_KEY);
+    if (saved) setTheme(saved);
+  } catch(e) {}
+
+  toggle.addEventListener('click', function() {
+    var current = html.getAttribute('data-theme') || 'dark';
+    setTheme(current === 'dark' ? 'light' : 'dark');
+  });
+})();
+
+// Sidebar active link tracking
+(function() {
+  var links = document.querySelectorAll('.sidebar-nav a');
+  var sections = [];
+  links.forEach(function(link) {
+    var id = link.getAttribute('href').replace('#', '');
+    var el = document.getElementById(id);
+    if (el) sections.push({ link: link, el: el });
+  });
+
+  function updateActive() {
+    var current = null;
+    var scrollY = window.scrollY + 120;
+    for (var i = sections.length - 1; i >= 0; i--) {
+      if (sections[i].el.offsetTop <= scrollY) {
+        current = sections[i];
+        break;
+      }
+    }
+    links.forEach(function(l) { l.classList.remove('active'); });
+    if (current) current.link.classList.add('active');
+  }
+
+  window.addEventListener('scroll', updateActive);
+  updateActive();
+})();
+</script>
+
+</body>
+</html>

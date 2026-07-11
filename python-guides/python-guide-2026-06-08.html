@@ -1,0 +1,1741 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Python Study Guide &mdash; Day 11 (2026-06-08)</title>
+<style>
+/* ===== CSS Variables ===== */
+:root {
+  --bg: #0d1117;
+  --surface1: #161b22;
+  --surface2: #1c2333;
+  --border: #30363d;
+  --text: #e6edf3;
+  --muted: #8b949e;
+  --accent: #58a6ff;
+  --accent-dim: #1f6feb33;
+  --green: #3fb950;
+  --green-dim: #23863633;
+  --yellow: #d29922;
+  --yellow-dim: #d2992233;
+  --red: #f85149;
+  --red-dim: #f8514933;
+  --purple: #bc8cff;
+  --purple-dim: #bc8cff22;
+  --orange: #f0883e;
+  --orange-dim: #f0883e22;
+  --code-bg: #0d1117;
+  --sidebar-w: 300px;
+  --font-mono: 'SF Mono', 'Cascadia Code', 'Fira Code', Consolas, monospace;
+  --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+  --radius: 8px;
+  --shadow: 0 1px 3px rgba(0,0,0,0.4);
+}
+
+[data-theme="light"] {
+  --bg: #ffffff;
+  --surface1: #f6f8fa;
+  --surface2: #f0f3f6;
+  --border: #d0d7de;
+  --text: #1f2328;
+  --muted: #656d76;
+  --accent: #0969da;
+  --accent-dim: #0969da1a;
+  --green: #1a7f37;
+  --green-dim: #1a7f3718;
+  --yellow: #9a6700;
+  --yellow-dim: #9a670018;
+  --red: #cf222e;
+  --red-dim: #cf222e18;
+  --purple: #8250df;
+  --purple-dim: #8250df18;
+  --orange: #bc4c00;
+  --orange-dim: #bc4c0018;
+  --code-bg: #f6f8fa;
+  --shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+/* ===== Reset & Base ===== */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: var(--font-sans);
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.7;
+  font-size: 15px;
+  transition: background 0.2s, color 0.2s;
+}
+
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+/* ===== Theme Toggle ===== */
+#theme-toggle {
+  position: fixed;
+  top: 16px;
+  right: 20px;
+  z-index: 1000;
+  background: var(--surface1);
+  border: 1px solid var(--border);
+  color: var(--text);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+  box-shadow: var(--shadow);
+}
+#theme-toggle:hover { background: var(--surface2); border-color: var(--accent); }
+
+/* ===== Sidebar ===== */
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: var(--sidebar-w);
+  height: 100vh;
+  background: var(--surface1);
+  border-right: 1px solid var(--border);
+  overflow-y: auto;
+  padding: 20px 0;
+  z-index: 100;
+  transition: transform 0.3s;
+}
+
+.sidebar-header {
+  padding: 0 20px 16px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 12px;
+}
+
+.sidebar-header h2 {
+  font-size: 16px;
+  color: var(--text);
+  font-weight: 700;
+}
+
+.sidebar-header .subtitle {
+  font-size: 12px;
+  color: var(--muted);
+  margin-top: 2px;
+}
+
+.sidebar-section {
+  margin-bottom: 8px;
+}
+
+.sidebar-section-title {
+  padding: 6px 20px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+}
+
+.sidebar-link {
+  display: block;
+  padding: 5px 20px 5px 28px;
+  font-size: 13px;
+  color: var(--muted);
+  text-decoration: none;
+  border-left: 2px solid transparent;
+  transition: all 0.15s;
+  line-height: 1.4;
+}
+
+.sidebar-link:hover {
+  color: var(--text);
+  background: var(--accent-dim);
+  border-left-color: var(--accent);
+  text-decoration: none;
+}
+
+.sidebar-link.active {
+  color: var(--accent);
+  border-left-color: var(--accent);
+  background: var(--accent-dim);
+}
+
+/* ===== Mobile sidebar toggle ===== */
+#sidebar-toggle {
+  display: none;
+  position: fixed;
+  top: 16px;
+  left: 16px;
+  z-index: 200;
+  background: var(--surface1);
+  border: 1px solid var(--border);
+  color: var(--text);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 20px;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--shadow);
+}
+
+/* ===== Main Content ===== */
+.main {
+  margin-left: var(--sidebar-w);
+  padding: 40px 48px 80px;
+  max-width: calc(860px + var(--sidebar-w) + 96px);
+}
+
+.page-title {
+  font-size: 32px;
+  font-weight: 800;
+  margin-bottom: 4px;
+  color: var(--text);
+}
+
+.page-subtitle {
+  font-size: 15px;
+  color: var(--muted);
+  margin-bottom: 36px;
+}
+
+/* ===== How-to Box ===== */
+.how-to {
+  background: var(--surface1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px 24px;
+  margin-bottom: 36px;
+}
+
+.how-to h3 {
+  font-size: 15px;
+  font-weight: 700;
+  margin-bottom: 8px;
+  color: var(--accent);
+}
+
+.how-to ul {
+  padding-left: 20px;
+  margin: 0;
+}
+
+.how-to li {
+  font-size: 14px;
+  color: var(--muted);
+  margin-bottom: 3px;
+}
+
+/* ===== Sections ===== */
+.section {
+  margin-bottom: 48px;
+}
+
+.section-label {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  padding: 3px 10px;
+  border-radius: 4px;
+  margin-bottom: 12px;
+}
+
+.section-label.review { background: var(--yellow-dim); color: var(--yellow); }
+.section-label.new { background: var(--green-dim); color: var(--green); }
+
+.section-title {
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 24px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--border);
+}
+
+/* ===== Concept Cards ===== */
+.concept {
+  background: var(--surface1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 28px;
+  margin-bottom: 28px;
+  box-shadow: var(--shadow);
+}
+
+.concept-header {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  margin-bottom: 6px;
+  flex-wrap: wrap;
+}
+
+.concept h3 {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.concept-meta {
+  font-size: 12px;
+  color: var(--muted);
+  background: var(--surface2);
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
+.concept h4 {
+  font-size: 15px;
+  font-weight: 600;
+  margin: 20px 0 8px;
+  color: var(--text);
+}
+
+.concept p, .concept li {
+  color: var(--text);
+  line-height: 1.7;
+}
+
+.concept ul, .concept ol {
+  padding-left: 22px;
+  margin: 8px 0;
+}
+
+.concept li {
+  margin-bottom: 4px;
+}
+
+/* ===== Code Blocks ===== */
+pre {
+  background: var(--code-bg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 16px 18px;
+  overflow-x: auto;
+  margin: 10px 0 14px;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--text);
+  position: relative;
+}
+
+code {
+  font-family: var(--font-mono);
+  font-size: 0.9em;
+}
+
+:not(pre) > code {
+  background: var(--surface2);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.88em;
+}
+
+/* ===== Good/Bad Examples ===== */
+.do-dont {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin: 10px 0;
+}
+
+.do-box, .dont-box {
+  border-radius: 6px;
+  padding: 14px;
+  border: 1px solid;
+}
+
+.do-box {
+  background: var(--green-dim);
+  border-color: var(--green);
+}
+
+.dont-box {
+  background: var(--red-dim);
+  border-color: var(--red);
+}
+
+.do-box .label, .dont-box .label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 6px;
+}
+
+.do-box .label { color: var(--green); }
+.dont-box .label { color: var(--red); }
+
+.do-box pre, .dont-box pre {
+  margin: 0;
+  border: none;
+  background: transparent;
+  padding: 0;
+  font-size: 12.5px;
+}
+
+/* ===== Key Rules ===== */
+.rules-list {
+  list-style: none;
+  padding: 0;
+  margin: 8px 0;
+}
+
+.rules-list li {
+  padding: 6px 0 6px 24px;
+  position: relative;
+}
+
+.rules-list li::before {
+  content: "\2192";
+  position: absolute;
+  left: 2px;
+  color: var(--accent);
+  font-weight: 700;
+}
+
+/* ===== Exercises ===== */
+.exercise {
+  background: var(--purple-dim);
+  border: 1px solid var(--purple);
+  border-radius: 6px;
+  padding: 14px 18px;
+  margin: 8px 0;
+}
+
+.exercise .exercise-label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--purple);
+  margin-bottom: 4px;
+}
+
+/* ===== Challenge (Review) ===== */
+.challenge {
+  background: var(--orange-dim);
+  border: 1px solid var(--orange);
+  border-radius: 6px;
+  padding: 14px 18px;
+  margin: 10px 0;
+}
+
+.challenge .challenge-label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--orange);
+  margin-bottom: 4px;
+}
+
+/* ===== Pitfall ===== */
+.pitfall {
+  background: var(--red-dim);
+  border-left: 3px solid var(--red);
+  border-radius: 0 6px 6px 0;
+  padding: 10px 14px;
+  margin: 10px 0;
+  font-size: 14px;
+}
+
+.pitfall strong {
+  color: var(--red);
+}
+
+/* ===== Connection ===== */
+.connection {
+  background: var(--accent-dim);
+  border-left: 3px solid var(--accent);
+  border-radius: 0 6px 6px 0;
+  padding: 10px 14px;
+  margin: 10px 0;
+  font-size: 14px;
+  color: var(--muted);
+}
+
+/* ===== Output Block ===== */
+.output {
+  background: var(--green-dim);
+  border: 1px solid var(--green);
+  border-radius: 6px;
+  padding: 12px 16px;
+  margin: 8px 0 14px;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--text);
+  white-space: pre-wrap;
+}
+
+.output .output-label {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--green);
+  margin-bottom: 4px;
+}
+
+/* ===== Footer ===== */
+.footer {
+  margin-top: 60px;
+  padding: 24px 0;
+  border-top: 1px solid var(--border);
+}
+
+.footer h4 {
+  font-size: 14px;
+  color: var(--muted);
+  margin-bottom: 10px;
+}
+
+.footer ul {
+  list-style: none;
+  padding: 0;
+}
+
+.footer li {
+  margin-bottom: 4px;
+  font-size: 14px;
+}
+
+.footer li a { color: var(--accent); }
+.footer .current { color: var(--green); font-weight: 600; }
+
+/* ===== Responsive ===== */
+@media (max-width: 900px) {
+  .sidebar {
+    transform: translateX(-100%);
+  }
+  .sidebar.open {
+    transform: translateX(0);
+    box-shadow: 4px 0 20px rgba(0,0,0,0.5);
+  }
+  #sidebar-toggle {
+    display: flex;
+  }
+  .main {
+    margin-left: 0;
+    padding: 60px 20px 60px;
+    max-width: 100%;
+  }
+  .do-dont {
+    grid-template-columns: 1fr;
+  }
+  #theme-toggle {
+    right: 14px;
+    top: 16px;
+  }
+}
+</style>
+</head>
+<body>
+
+<!-- Theme Toggle -->
+<button id="theme-toggle" aria-label="Toggle theme" title="Toggle light/dark theme">&#9789;</button>
+
+<!-- Mobile Sidebar Toggle -->
+<button id="sidebar-toggle" aria-label="Toggle sidebar">&#9776;</button>
+
+<!-- Sidebar -->
+<nav class="sidebar" id="sidebar">
+  <div class="sidebar-header">
+    <h2>Python Guide</h2>
+    <div class="subtitle">Day 11 &mdash; 2026-06-08</div>
+  </div>
+
+  <div class="sidebar-section">
+    <div class="sidebar-section-title">Review (6 concepts)</div>
+    <a href="#review-fstring-power" class="sidebar-link">F-String Power Features</a>
+    <a href="#review-unpacking-star" class="sidebar-link">Unpacking &amp; Star Expressions</a>
+    <a href="#review-counter-basics" class="sidebar-link">Counter</a>
+    <a href="#review-decorators-basics" class="sidebar-link">Function Decorators &amp; @wraps</a>
+    <a href="#review-string-methods" class="sidebar-link">String Methods Deep Dive</a>
+    <a href="#review-defaultdict-deque" class="sidebar-link">defaultdict &amp; deque</a>
+  </div>
+
+  <div class="sidebar-section">
+    <div class="sidebar-section-title">Advanced Topics (3 concepts)</div>
+    <a href="#cpython-internals" class="sidebar-link">CPython Internals: GIL &amp; Refcounting</a>
+    <a href="#c-extensions" class="sidebar-link">C Extensions: ctypes &amp; cffi</a>
+    <a href="#array-memoryview" class="sidebar-link">array Module &amp; memoryview</a>
+  </div>
+
+  <div class="sidebar-section">
+    <div class="sidebar-section-title">Advanced Iteration (1 concept)</div>
+    <a href="#itertools-recipes" class="sidebar-link">Advanced itertools Recipes</a>
+  </div>
+
+  <div class="sidebar-section">
+    <div class="sidebar-section-title">Memory Management (1 concept)</div>
+    <a href="#weak-references" class="sidebar-link">Weak References</a>
+  </div>
+</nav>
+
+<!-- Main Content -->
+<div class="main">
+
+<h1 class="page-title">Python Daily Guide</h1>
+<p class="page-subtitle">Day 11 &mdash; Monday, June 8, 2026 &bull; 6 reviews, 5 new concepts</p>
+
+<!-- How to Use -->
+<div class="how-to">
+  <h3>How to Use This Guide</h3>
+  <ul>
+    <li><strong>Review cards</strong> &mdash; skim the reminder, write the key pattern from memory, then try the challenge.</li>
+    <li><strong>New concepts</strong> &mdash; read the explanation, run every code example in a REPL, then do the exercises.</li>
+    <li><strong>Don't peek at solutions</strong> &mdash; struggle for at least 10 minutes before looking things up.</li>
+    <li><strong>Connections</strong> &mdash; pay attention to how concepts link together across days.</li>
+  </ul>
+</div>
+
+
+<!-- ============================================================ -->
+<!-- REVIEW SECTION -->
+<!-- ============================================================ -->
+<div class="section">
+  <span class="section-label review">Review</span>
+  <h2 class="section-title">Review &mdash; 6 Concepts</h2>
+
+  <!-- Review 1: F-String Power Features -->
+  <div class="concept" id="review-fstring-power">
+    <div class="concept-header">
+      <h3>F-String Power Features</h3>
+      <span class="concept-meta">Strings &bull; 8 days since last review &bull; rep 2</span>
+    </div>
+
+    <h4>Quick Reminder</h4>
+    <p>The <code>=</code> specifier prints both the expression and its value for debugging: <code>f"{x=}"</code>. Format specs work inside f-strings for precision, alignment, and date formatting: <code>f"{val:.2f}"</code>, <code>f"{dt:%Y-%m-%d}"</code>. Arbitrary expressions (including function calls and ternaries) are valid inside the braces.</p>
+
+    <h4>Key Pattern &mdash; Debugging &amp; Formatting</h4>
+<pre>name = "Alice"
+score = 97.6543
+from datetime import date
+today = date(2026, 6, 8)
+
+# Debug with = specifier
+print(f"{name=}")             # name='Alice'
+print(f"{score=:.2f}")        # score=97.65
+print(f"{today=:%B %d, %Y}") # today=June 08, 2026
+
+# Right-aligned table columns
+items = [("Widget", 3, 9.99), ("Gadget", 12, 24.50), ("Bolt", 150, 0.25)]
+print(f"{'Item':&lt;10} {'Qty':&gt;5} {'Price':&gt;8}")
+for item, qty, price in items:
+    print(f"{item:&lt;10} {qty:&gt;5} {price:&gt;8.2f}")</pre>
+    <div class="output"><div class="output-label">Output</div>Item        Qty    Price
+Widget          3     9.99
+Gadget         12    24.50
+Bolt          150     0.25</div>
+
+    <div class="challenge">
+      <div class="challenge-label">Challenge</div>
+      <p>Format a table of student names and scores with names left-aligned in 15 chars and scores right-aligned in 8 chars with 1 decimal place. Include a header row with the same alignment.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>#1 Pitfall:</strong> The <code>=</code> specifier includes the expression text verbatim. <code>f"{x + 1=}"</code> outputs <code>x + 1=6</code> (not just <code>6</code>). This is intentional for debugging but can surprise you if you expect only the value.
+    </div>
+  </div>
+
+  <!-- Review 2: Unpacking & Star Expressions -->
+  <div class="concept" id="review-unpacking-star">
+    <div class="concept-header">
+      <h3>Unpacking &amp; Star Expressions</h3>
+      <span class="concept-meta">Unpacking &bull; 8 days since last review &bull; rep 2</span>
+    </div>
+
+    <h4>Quick Reminder</h4>
+    <p>Use <code>first, *rest = seq</code> to capture head/tail. Use <code>*args</code> (tuple) in function signatures and <code>**kwargs</code> (dict) for keyword arguments. Star unpacking works in assignments, function calls, and literal constructors like <code>[*a, *b]</code> and <code>{**d1, **d2}</code>.</p>
+
+    <h4>Key Pattern &mdash; Head/Tail &amp; Dict Merging</h4>
+<pre># Head, middle, tail
+first, *middle, last = [10, 20, 30, 40, 50]
+print(first, middle, last)  # 10 [20, 30, 40] 50
+
+# Swap without temp
+a, b = 1, 2
+a, b = b, a
+print(a, b)  # 2 1
+
+# Merge dicts (3.9+ also has d1 | d2)
+defaults = {"color": "blue", "size": 10}
+overrides = {"size": 20, "bold": True}
+merged = {**defaults, **overrides}
+print(merged)  # {'color': 'blue', 'size': 20, 'bold': True}
+
+# Unpack into function call
+def greet(name, greeting="Hello"):
+    return f"{greeting}, {name}!"
+args = {"name": "Alice", "greeting": "Hi"}
+print(greet(**args))  # Hi, Alice!</pre>
+
+    <div class="challenge">
+      <div class="challenge-label">Challenge</div>
+      <p>Given two sorted lists <code>a = [1, 3, 5]</code> and <code>b = [2, 4, 6]</code>, create a single sorted list using unpacking and <code>sorted()</code>. Then unpack the result into the first element, middle elements, and last element.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>#1 Pitfall:</strong> <code>*args</code> captures as a <strong>tuple</strong>, not a list. In assignments like <code>first, *rest = seq</code>, <code>rest</code> is a <strong>list</strong>. This inconsistency catches people off guard.
+    </div>
+  </div>
+
+  <!-- Review 3: Counter -->
+  <div class="concept" id="review-counter-basics">
+    <div class="concept-header">
+      <h3>Counter</h3>
+      <span class="concept-meta">Collections &bull; 8 days since last review &bull; rep 2</span>
+    </div>
+
+    <h4>Quick Reminder</h4>
+    <p><code>Counter</code> is a dict subclass for counting hashable objects. <code>most_common(n)</code> returns the n most frequent items. Supports arithmetic: <code>c1 + c2</code> adds counts, <code>c1 - c2</code> subtracts (keeping only positive). <code>elements()</code> returns an iterator repeating each element by its count.</p>
+
+    <h4>Key Pattern &mdash; Frequency Analysis</h4>
+<pre>from collections import Counter
+
+words = "the cat sat on the mat the cat".split()
+freq = Counter(words)
+print(freq)                  # Counter({'the': 3, 'cat': 2, ...})
+print(freq.most_common(2))   # [('the', 3), ('cat', 2)]
+
+# Arithmetic
+c1 = Counter(a=3, b=1)
+c2 = Counter(a=1, b=2)
+print(c1 + c2)  # Counter({'a': 4, 'b': 3})
+print(c1 - c2)  # Counter({'a': 2})  -- b dropped (would be -1)
+
+# elements() iterator
+c = Counter(a=2, b=3)
+print(sorted(c.elements()))  # ['a', 'a', 'b', 'b', 'b']</pre>
+
+    <div class="challenge">
+      <div class="challenge-label">Challenge</div>
+      <p>Given a list of integers <code>[1, 1, 1, 2, 2, 3]</code>, find the <code>k=2</code> most frequent elements. Return just the element values, not the counts.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>#1 Pitfall:</strong> Subtraction keeps only positive counts but does not remove zero-count keys from the internal dict. After <code>c1 - c2</code>, accessing <code>c["b"]</code> returns <code>0</code> (Counter default), but that key is gone. However, <code>c1.subtract(c2)</code> (in-place) <em>does</em> keep negative values.
+    </div>
+  </div>
+
+  <!-- Review 4: Function Decorators & @wraps -->
+  <div class="concept" id="review-decorators-basics">
+    <div class="concept-header">
+      <h3>Function Decorators &amp; @wraps</h3>
+      <span class="concept-meta">Decorators &bull; 8 days since last review &bull; rep 2</span>
+    </div>
+
+    <h4>Quick Reminder</h4>
+    <p>A decorator is a function that takes a function and returns a new function. Use <code>@functools.wraps(func)</code> inside your wrapper to preserve <code>__name__</code>, <code>__doc__</code>, and <code>__module__</code>. Without <code>@wraps</code>, debugging and introspection break because the wrapper hides the original function's identity.</p>
+
+    <h4>Key Pattern &mdash; Timer Decorator with @wraps</h4>
+<pre>import functools
+import time
+
+def timer(func):
+    @functools.wraps(func)
+    def wrapper(*args, **kwargs):
+        start = time.perf_counter()
+        result = func(*args, **kwargs)
+        elapsed = time.perf_counter() - start
+        print(f"{func.__name__} took {elapsed:.4f}s")
+        return result
+    return wrapper
+
+@timer
+def slow_sum(n):
+    """Sum numbers up to n with a deliberate pause."""
+    time.sleep(0.01)
+    return sum(range(n))
+
+result = slow_sum(1000)
+print(f"Result: {result}")
+print(f"Name: {slow_sum.__name__}")  # slow_sum (not wrapper)
+print(f"Doc: {slow_sum.__doc__}")    # Sum numbers up to n...</pre>
+
+    <div class="challenge">
+      <div class="challenge-label">Challenge</div>
+      <p>Write a <code>retry(max_attempts=3)</code> decorator that catches exceptions and retries the decorated function up to <code>max_attempts</code> times before re-raising. Use <code>@functools.wraps</code>.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>#1 Pitfall:</strong> Forgetting <code>@wraps</code> loses the original function's <code>__name__</code> and <code>__doc__</code>. This makes debugging painful because tracebacks and <code>help()</code> show the wrapper's info instead of the decorated function's.
+    </div>
+  </div>
+
+  <!-- Review 5: String Methods Deep Dive -->
+  <div class="concept" id="review-string-methods">
+    <div class="concept-header">
+      <h3>String Methods Deep Dive</h3>
+      <span class="concept-meta">Strings &bull; 7 days since last review &bull; rep 2</span>
+    </div>
+
+    <h4>Quick Reminder</h4>
+    <p><code>s.partition(sep)</code> returns <code>(before, sep, after)</code> &mdash; unlike <code>split()</code>, it preserves the separator. <code>s.removeprefix()</code> and <code>s.removesuffix()</code> (3.9+) cleanly strip known prefixes/suffixes. <code>str.translate()</code> with <code>str.maketrans()</code> does bulk character replacement in one pass.</p>
+
+    <h4>Key Pattern &mdash; partition for Structured Parsing</h4>
+<pre>line = "error: file not found: /tmp/data.csv"
+severity, sep, message = line.partition(": ")
+print(severity)  # error
+print(message)   # file not found: /tmp/data.csv
+
+# removeprefix/removesuffix
+filename = "test_utils.py"
+print(filename.removeprefix("test_"))  # utils.py
+print(filename.removesuffix(".py"))    # test_utils
+
+# translate for bulk replacement
+table = str.maketrans("aeiou", "12345")
+print("hello world".translate(table))  # h2ll4 w4rld</pre>
+
+    <div class="challenge">
+      <div class="challenge-label">Challenge</div>
+      <p>Implement a simple template engine: given a template string like <code>"Hello, {name}! You have {count} messages."</code> and a dict <code>{"name": "Alice", "count": "5"}</code>, replace each <code>{key}</code> with the corresponding value using only <code>str</code> methods (no f-strings, no <code>.format()</code>).</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>#1 Pitfall:</strong> <code>split()</code> discards the separator and splits on <em>all</em> occurrences. <code>partition()</code> keeps the separator and only splits on the <em>first</em> occurrence. Use <code>partition</code> when you need to split at the first delimiter and preserve the rest intact.
+    </div>
+  </div>
+
+  <!-- Review 6: defaultdict & deque -->
+  <div class="concept" id="review-defaultdict-deque">
+    <div class="concept-header">
+      <h3>defaultdict &amp; deque</h3>
+      <span class="concept-meta">Collections &bull; 7 days since last review &bull; rep 2</span>
+    </div>
+
+    <h4>Quick Reminder</h4>
+    <p><code>defaultdict(factory)</code> auto-creates missing keys using the factory function. <code>deque</code> supports O(1) append/pop on both ends, <code>appendleft()</code>, <code>rotate(n)</code>, and <code>maxlen</code> for bounded buffers. Together they cover grouping, counting, and sliding-window patterns.</p>
+
+    <h4>Key Pattern &mdash; Grouping &amp; Sliding Window</h4>
+<pre>from collections import defaultdict, deque
+
+# Group words by first letter
+words = ["apple", "banana", "avocado", "blueberry", "cherry", "apricot"]
+groups = defaultdict(list)
+for w in words:
+    groups[w[0]].append(w)
+print(dict(groups))
+# {'a': ['apple', 'avocado', 'apricot'], 'b': ['banana', 'blueberry'], 'c': ['cherry']}
+
+# Sliding window with maxlen
+stream = [1, 2, 3, 4, 5, 6, 7, 8]
+window = deque(maxlen=3)
+for val in stream:
+    window.append(val)
+    if len(window) == 3:
+        print(f"Window: {list(window)}, avg: {sum(window)/3:.1f}")</pre>
+    <div class="output"><div class="output-label">Output</div>Window: [1, 2, 3], avg: 2.0
+Window: [2, 3, 4], avg: 3.0
+Window: [3, 4, 5], avg: 4.0
+Window: [4, 5, 6], avg: 5.0
+Window: [5, 6, 7], avg: 6.0
+Window: [6, 7, 8], avg: 7.0</div>
+
+    <div class="challenge">
+      <div class="challenge-label">Challenge</div>
+      <p>Implement a simple LRU cache using a <code>deque</code> and a <code>dict</code>. The cache should support <code>get(key)</code> and <code>put(key, value)</code> with a fixed capacity. When full, evict the least recently used item.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>#1 Pitfall:</strong> <code>defaultdict</code> creates entries on any missing-key <em>access</em> (including <code>d[key]</code>), not just on assignment. Checking membership with <code>key in d</code> does <strong>not</strong> create an entry, but <code>d[key]</code> does. Use <code>d.get(key)</code> or <code>key in d</code> to avoid accidental entry creation.
+    </div>
+  </div>
+
+</div><!-- end review section -->
+
+
+<!-- ============================================================ -->
+<!-- NEW CONCEPTS SECTION -->
+<!-- ============================================================ -->
+<div class="section">
+  <span class="section-label new">New</span>
+  <h2 class="section-title">New Concepts &mdash; 5 Topics</h2>
+
+  <!-- New 1: CPython Internals: GIL & Reference Counting -->
+  <div class="concept" id="cpython-internals">
+    <div class="concept-header">
+      <h3>CPython Internals: GIL &amp; Reference Counting</h3>
+      <span class="concept-meta">Advanced Topics &bull; New today</span>
+    </div>
+
+    <h4>Why It Matters</h4>
+    <p>Understanding the GIL explains why threading does not speed up CPU-bound Python code, and reference counting explains why most objects are freed immediately without waiting for a garbage collection cycle. This knowledge is essential for writing performant concurrent Python.</p>
+
+    <h4>Reference Counting</h4>
+    <p>Every CPython object has an internal counter (<code>ob_refcnt</code>) tracking how many references point to it. When you assign an object to a variable, the count goes up. When a reference goes away (variable reassigned, goes out of scope, <code>del</code>), the count goes down. When it hits zero, the object is freed immediately.</p>
+
+<pre>import sys
+
+a = []           # New list object, refcount starts at 1
+print(sys.getrefcount(a))  # 2 (a + the argument to getrefcount)
+
+b = a            # Another reference
+print(sys.getrefcount(a))  # 3 (a + b + argument)
+
+del b            # Remove one reference
+print(sys.getrefcount(a))  # 2 again</pre>
+    <div class="output"><div class="output-label">Output</div>2
+3
+2</div>
+
+    <h4>The Global Interpreter Lock (GIL)</h4>
+    <p>The GIL is a mutex that allows only one thread to execute Python bytecode at a time. It exists because CPython's reference counting is not thread-safe &mdash; without the GIL, concurrent increments and decrements would corrupt object counts. The GIL means <code>threading</code> is great for I/O-bound tasks (the GIL is released during I/O waits) but useless for CPU-bound parallelism.</p>
+
+<pre>import threading
+import time
+
+def cpu_work(n):
+    """CPU-bound: count to n."""
+    total = 0
+    for i in range(n):
+        total += i
+    return total
+
+N = 5_000_000
+
+# Single-threaded
+start = time.perf_counter()
+cpu_work(N)
+cpu_work(N)
+single = time.perf_counter() - start
+
+# Two threads (GIL prevents true parallelism)
+start = time.perf_counter()
+t1 = threading.Thread(target=cpu_work, args=(N,))
+t2 = threading.Thread(target=cpu_work, args=(N,))
+t1.start(); t2.start()
+t1.join(); t2.join()
+threaded = time.perf_counter() - start
+
+print(f"Single-threaded: {single:.3f}s")
+print(f"Two threads:     {threaded:.3f}s")
+print(f"Speedup: {single/threaded:.2f}x")  # ~1.0x (no speedup!)</pre>
+    <div class="output"><div class="output-label">Output</div>Single-threaded: 0.312s
+Two threads:     0.318s
+Speedup: 0.98x</div>
+
+    <h4>Integer Interning &amp; Object Identity</h4>
+    <p>CPython interns (caches and reuses) small integers from -5 to 256 and short strings. This means <code>is</code> checks can behave unexpectedly:</p>
+
+<pre>a = 256
+b = 256
+print(a is b)   # True -- same cached object
+
+a = 257
+b = 257
+print(a is b)   # False -- different objects (outside interning range)
+
+# ALWAYS use == for value comparison
+print(a == b)   # True</pre>
+    <div class="output"><div class="output-label">Output</div>True
+False
+True</div>
+
+    <h4>Garbage Collection &amp; Reference Cycles</h4>
+    <p>Reference counting cannot handle cycles (A references B, B references A). The <code>gc</code> module runs a cycle detector periodically to find and free these:</p>
+
+<pre>import gc
+
+class Node:
+    def __init__(self, name):
+        self.name = name
+        self.ref = None
+    def __repr__(self):
+        return f"Node({self.name!r})"
+
+# Create a cycle
+a = Node("A")
+b = Node("B")
+a.ref = b
+b.ref = a
+
+# Delete our references -- but the cycle keeps them alive
+del a, b
+
+# Force cycle collection
+collected = gc.collect()
+print(f"Collected {collected} objects")  # Collected 2+ objects</pre>
+    <div class="output"><div class="output-label">Output</div>Collected 4 objects</div>
+
+    <h4>Key Rules</h4>
+    <ul class="rules-list">
+      <li>Use <code>multiprocessing</code> for CPU-bound parallelism (each process has its own GIL).</li>
+      <li>Use <code>threading</code> for I/O-bound concurrency (GIL is released during I/O).</li>
+      <li>Use <code>asyncio</code> for many concurrent I/O connections with lower overhead than threads.</li>
+      <li>Always compare values with <code>==</code>, never <code>is</code> (unless checking for <code>None</code>).</li>
+      <li>Avoid reference cycles where possible; use <code>weakref</code> to break them.</li>
+    </ul>
+
+    <div class="pitfall">
+      <strong>#1 Pitfall:</strong> Using <code>is</code> instead of <code>==</code> for value comparison. Interning makes <code>is</code> work for small integers and short strings by coincidence, but it fails unpredictably for larger values. Always use <code>==</code> unless you specifically need identity checks.
+    </div>
+
+    <div class="connection">
+      <strong>Connection:</strong> The GIL limitation directly relates to the <em>threading vs multiprocessing vs asyncio</em> concepts from Day 8. Understanding <em>why</em> threading fails for CPU work comes down to this single lock. The <code>weakref</code> module (covered later today) is a direct tool for avoiding the reference cycles that <code>gc</code> must clean up.
+    </div>
+
+    <div class="exercise">
+      <div class="exercise-label">Exercise 1</div>
+      <p>Write a function that creates a variable, prints its refcount, adds two more references to it, prints the new refcount, then deletes both extra references and prints the final refcount. Verify the counts match your expectations.</p>
+    </div>
+
+    <div class="exercise">
+      <div class="exercise-label">Exercise 2</div>
+      <p>Benchmark a CPU-bound function (e.g., computing the sum of squares up to 10 million) running twice sequentially vs. running in two threads vs. running in two <code>multiprocessing.Process</code> instances. Compare the wall-clock times.</p>
+    </div>
+
+    <div class="exercise">
+      <div class="exercise-label">Exercise 3</div>
+      <p>Create a reference cycle between two objects. Verify they persist after <code>del</code> by checking <code>gc.get_objects()</code> (or by using a <code>__del__</code> method that prints when called). Then call <code>gc.collect()</code> and verify the cycle is broken.</p>
+    </div>
+  </div>
+
+  <!-- New 2: C Extensions: ctypes & cffi -->
+  <div class="concept" id="c-extensions">
+    <div class="concept-header">
+      <h3>C Extensions: ctypes &amp; cffi</h3>
+      <span class="concept-meta">Advanced Topics &bull; New today</span>
+    </div>
+
+    <h4>Why It Matters</h4>
+    <p>Calling C libraries from Python lets you use high-performance native code or interface with operating system libraries. <code>ctypes</code> ships with Python (no compilation needed), while <code>cffi</code> offers a higher-level, safer API for complex interfaces.</p>
+
+    <h4>ctypes: Loading Libraries &amp; Calling Functions</h4>
+    <p>Load a shared library with <code>ctypes.CDLL</code>, then set <code>.argtypes</code> and <code>.restype</code> for type safety before calling functions.</p>
+
+<pre>import ctypes
+import ctypes.util
+
+# Find and load the C math library
+libm_path = ctypes.util.find_library("m")
+if libm_path:
+    libm = ctypes.CDLL(libm_path)
+else:
+    # On macOS, math functions are in libSystem
+    libm = ctypes.CDLL("/usr/lib/libSystem.B.dylib")
+
+# Configure argument and return types
+libm.sqrt.argtypes = [ctypes.c_double]
+libm.sqrt.restype = ctypes.c_double
+
+libm.pow.argtypes = [ctypes.c_double, ctypes.c_double]
+libm.pow.restype = ctypes.c_double
+
+# Call the functions
+print(f"sqrt(144) = {libm.sqrt(144.0)}")   # 12.0
+print(f"pow(2, 10) = {libm.pow(2.0, 10.0)}")  # 1024.0</pre>
+    <div class="output"><div class="output-label">Output</div>sqrt(144) = 12.0
+pow(2, 10) = 1024.0</div>
+
+    <h4>ctypes: Calling libc Functions</h4>
+<pre>import ctypes
+import ctypes.util
+
+# Load libc
+libc_path = ctypes.util.find_library("c")
+libc = ctypes.CDLL(libc_path)
+
+# time() returns seconds since epoch
+libc.time.argtypes = [ctypes.c_void_p]  # NULL pointer
+libc.time.restype = ctypes.c_long
+
+timestamp = libc.time(None)
+print(f"Unix timestamp: {timestamp}")
+
+# strlen with a byte string
+libc.strlen.argtypes = [ctypes.c_char_p]
+libc.strlen.restype = ctypes.c_size_t
+
+length = libc.strlen(b"Hello, ctypes!")
+print(f"String length: {length}")  # 13</pre>
+    <div class="output"><div class="output-label">Output</div>Unix timestamp: 1780992000
+String length: 13</div>
+
+    <h4>ctypes: Structures for C Structs</h4>
+<pre>import ctypes
+
+class Point(ctypes.Structure):
+    _fields_ = [
+        ("x", ctypes.c_double),
+        ("y", ctypes.c_double),
+    ]
+
+    def __repr__(self):
+        return f"Point(x={self.x}, y={self.y})"
+
+import math
+
+def distance(p1, p2):
+    return math.sqrt((p1.x - p2.x)**2 + (p1.y - p2.y)**2)
+
+origin = Point(0.0, 0.0)
+target = Point(3.0, 4.0)
+print(f"Origin: {origin}")
+print(f"Target: {target}")
+print(f"Distance: {distance(origin, target)}")  # 5.0</pre>
+    <div class="output"><div class="output-label">Output</div>Origin: Point(x=0.0, y=0.0)
+Target: Point(x=3.0, y=4.0)
+Distance: 5.0</div>
+
+    <h4>cffi: Higher-Level Alternative</h4>
+<pre># pip install cffi  (if not already installed)
+from cffi import FFI
+
+ffi = FFI()
+
+# Declare the C functions we want to use
+ffi.cdef("""
+    double sqrt(double x);
+    int abs(int x);
+    int toupper(int c);
+""")
+
+# Load the C library
+lib = ffi.dlopen(None)  # None loads the default C library
+
+print(f"sqrt(2) = {lib.sqrt(2.0):.6f}")     # 1.414214
+print(f"abs(-42) = {lib.abs(-42)}")           # 42
+print(f"toupper('a') = {chr(lib.toupper(ord('a')))}")  # A</pre>
+    <div class="output"><div class="output-label">Output</div>sqrt(2) = 1.414214
+abs(-42) = 42
+toupper('a') = A</div>
+
+    <h4>Key Rules</h4>
+    <ul class="rules-list">
+      <li>Always set <code>argtypes</code> and <code>restype</code> before calling ctypes functions &mdash; wrong types cause segfaults.</li>
+      <li>Prefer <code>cffi</code> over <code>ctypes</code> for complex interfaces (better error messages, easier struct handling).</li>
+      <li>Use <code>c_char_p</code> for C strings, but always pass <code>bytes</code> objects (not <code>str</code>).</li>
+      <li>Be careful with memory ownership &mdash; if C allocates memory, you may need to free it.</li>
+    </ul>
+
+    <div class="pitfall">
+      <strong>#1 Pitfall:</strong> Forgetting to set <code>restype</code>. By default, ctypes assumes all functions return <code>c_int</code>. If a function returns a <code>double</code> or pointer and you forget to set <code>restype</code>, you get garbage values or crashes silently.
+    </div>
+
+    <div class="connection">
+      <strong>Connection:</strong> C extensions relate to the <em>struct &amp; Binary Data</em> concept from Day 9 &mdash; both deal with bridging Python and low-level C data representations. The <code>ctypes.Structure</code> class is analogous to <code>struct.pack/unpack</code> but gives you named fields.
+    </div>
+
+    <div class="exercise">
+      <div class="exercise-label">Exercise 1</div>
+      <p>Use <code>ctypes</code> to call <code>time()</code> from libc and print the current Unix timestamp. Set <code>argtypes</code> and <code>restype</code> properly.</p>
+    </div>
+
+    <div class="exercise">
+      <div class="exercise-label">Exercise 2</div>
+      <p>Create a <code>ctypes.Structure</code> subclass representing a <code>Point</code> with <code>c_double</code> fields for <code>x</code> and <code>y</code>. Write a Python function that computes the distance between two Points.</p>
+    </div>
+
+    <div class="exercise">
+      <div class="exercise-label">Exercise 3</div>
+      <p>Use <code>cffi</code> to call <code>toupper</code> from libc. Convert the character <code>'z'</code> to its uppercase equivalent and print the result.</p>
+    </div>
+  </div>
+
+  <!-- New 3: Performance: array Module & memoryview -->
+  <div class="concept" id="array-memoryview">
+    <div class="concept-header">
+      <h3>Performance: array Module &amp; memoryview</h3>
+      <span class="concept-meta">Advanced Topics &bull; New today</span>
+    </div>
+
+    <h4>Why It Matters</h4>
+    <p><code>array.array</code> provides typed storage that is far more memory-efficient than lists for numeric data. <code>memoryview</code> enables zero-copy slicing of binary data, avoiding expensive copies when processing large buffers.</p>
+
+    <h4>array.array: Typed Arrays</h4>
+    <p><code>array.array(typecode, initializer)</code> stores raw C values instead of Python objects. Common type codes: <code>'i'</code> (signed int), <code>'f'</code> (float), <code>'d'</code> (double), <code>'b'</code> (signed byte).</p>
+
+<pre>import array
+import sys
+
+# Compare memory usage: list vs array
+py_list = list(range(10000))
+int_array = array.array('i', range(10000))
+
+list_size = sys.getsizeof(py_list)
+array_size = sys.getsizeof(int_array)
+
+print(f"list size:  {list_size:>8,} bytes")
+print(f"array size: {array_size:>8,} bytes")
+print(f"Ratio: {list_size / array_size:.1f}x more memory for list")</pre>
+    <div class="output"><div class="output-label">Output</div>list size:    85,176 bytes
+array size:   40,284 bytes
+Ratio: 2.1x more memory for list</div>
+
+    <h4>array Operations</h4>
+<pre>import array
+
+# Create a double array
+temps = array.array('d', [20.5, 22.1, 19.8, 23.4, 21.7])
+print(f"Type code: {temps.typecode}")    # d
+print(f"Item size: {temps.itemsize} bytes")  # 8
+
+# Standard sequence operations work
+temps.append(24.0)
+temps.extend([18.9, 25.1])
+print(f"Length: {len(temps)}")           # 8
+print(f"Max: {max(temps)}")             # 25.1
+
+# Convert to/from bytes
+raw_bytes = temps.tobytes()
+print(f"Bytes length: {len(raw_bytes)}")  # 64 (8 doubles * 8 bytes)
+
+# Reconstruct from bytes
+restored = array.array('d')
+restored.frombytes(raw_bytes)
+print(f"Restored: {list(restored)[:3]}...")  # [20.5, 22.1, 19.8]...</pre>
+    <div class="output"><div class="output-label">Output</div>Type code: d
+Item size: 8 bytes
+Length: 8
+Max: 25.1
+Bytes length: 64
+Restored: [20.5, 22.1, 19.8]...</div>
+
+    <h4>memoryview: Zero-Copy Buffer Access</h4>
+    <p>Slicing a <code>bytes</code> object creates a copy. Slicing a <code>memoryview</code> creates a <em>view</em> into the same memory &mdash; no data is copied.</p>
+
+<pre>import sys
+
+data = b"A" * 1_000_000  # 1 MB of data
+
+# Regular slicing copies data
+slice_copy = data[100:200]
+print(f"bytes slice type: {type(slice_copy).__name__}")
+# This created a new 100-byte object
+
+# memoryview slicing is zero-copy
+mv = memoryview(data)
+slice_view = mv[100:200]
+print(f"memoryview slice type: {type(slice_view).__name__}")
+print(f"Same buffer? {slice_view.obj is data}")  # True
+
+# Compare sizes
+print(f"bytes slice size: {sys.getsizeof(data[100:1000])} bytes")
+print(f"memoryview slice size: {sys.getsizeof(mv[100:1000])} bytes")</pre>
+    <div class="output"><div class="output-label">Output</div>bytes slice type: bytes
+memoryview slice type: memoryview
+Same buffer? True
+bytes slice size: 933 bytes
+memoryview slice size: 183 bytes</div>
+
+    <h4>memoryview for Binary Parsing</h4>
+<pre>import struct
+
+# Simulate a binary packet: [4-byte header][8-byte payload][4-byte checksum]
+header = struct.pack('&gt;I', 42)           # 4 bytes: message ID
+payload = struct.pack('&gt;d', 3.14159)     # 8 bytes: a double value
+checksum = struct.pack('&gt;I', 0xDEADBEEF) # 4 bytes: checksum
+packet = header + payload + checksum
+
+# Parse with memoryview -- no copies!
+mv = memoryview(packet)
+msg_id = struct.unpack('&gt;I', mv[0:4])[0]
+value = struct.unpack('&gt;d', mv[4:12])[0]
+chk = struct.unpack('&gt;I', mv[12:16])[0]
+
+print(f"Message ID: {msg_id}")
+print(f"Value: {value:.5f}")
+print(f"Checksum: 0x{chk:08X}")</pre>
+    <div class="output"><div class="output-label">Output</div>Message ID: 42
+Value: 3.14159
+Checksum: 0xDEADBEEF</div>
+
+    <h4>Key Rules</h4>
+    <ul class="rules-list">
+      <li>Use <code>array.array</code> for simple typed storage and binary I/O &mdash; it lacks vectorized operations.</li>
+      <li>Use <code>memoryview</code> for zero-copy access to large buffers (bytes, bytearray, array.array).</li>
+      <li>Use <code>numpy</code> for actual numeric computation (vectorized ops, broadcasting, linear algebra).</li>
+      <li>A <code>memoryview</code> holds a reference to the original object &mdash; the original cannot be garbage collected while any view exists.</li>
+    </ul>
+
+    <div class="pitfall">
+      <strong>#1 Pitfall:</strong> Using <code>array.array</code> when you need <code>numpy</code>. The <code>array</code> module has no vectorized operations &mdash; you still need Python loops to process elements. For math-heavy workloads, <code>numpy</code> is orders of magnitude faster.
+    </div>
+
+    <div class="connection">
+      <strong>Connection:</strong> This concept pairs directly with <em>struct &amp; Binary Data</em> from Day 9 and <em>Memory Optimization</em> from Day 9. The <code>memoryview</code> + <code>struct.unpack</code> pattern is the standard way to parse binary protocols without copying data.
+    </div>
+
+    <div class="exercise">
+      <div class="exercise-label">Exercise 1</div>
+      <p>Create an <code>array.array</code> of 10,000 doubles and a regular list of 10,000 floats. Compare their memory usage with <code>sys.getsizeof()</code>. Note: <code>getsizeof</code> on a list does not count the size of the contained float objects &mdash; compute the total as <code>getsizeof(lst) + len(lst) * getsizeof(0.0)</code>.</p>
+    </div>
+
+    <div class="exercise">
+      <div class="exercise-label">Exercise 2</div>
+      <p>Create a 1 MB <code>bytearray</code>, wrap it in a <code>memoryview</code>, and extract a 1000-byte slice. Verify the slice does not copy data by checking that <code>slice.obj is original_bytearray</code> returns <code>True</code>.</p>
+    </div>
+
+    <div class="exercise">
+      <div class="exercise-label">Exercise 3</div>
+      <p>Simulate a binary file with a 4-byte integer count followed by that many 8-byte doubles. Pack it with <code>struct</code>, then parse it back using <code>memoryview</code> slicing and <code>struct.unpack</code> &mdash; never copying the buffer.</p>
+    </div>
+  </div>
+
+  <!-- New 4: Weak References -->
+  <div class="concept" id="weak-references">
+    <div class="concept-header">
+      <h3>Weak References</h3>
+      <span class="concept-meta">Memory Management &bull; New today</span>
+    </div>
+
+    <h4>Why It Matters</h4>
+    <p>Weak references let you reference objects without preventing garbage collection. This is essential for caches (entries disappear when the cached object is no longer needed), observer patterns (observers are automatically unregistered), and breaking reference cycles.</p>
+
+    <h4>Basic Weak References</h4>
+    <p><code>weakref.ref(obj)</code> creates a weak reference. Call it like a function to get the object back (or <code>None</code> if it has been collected). Not all types support weak references &mdash; <code>int</code>, <code>str</code>, <code>tuple</code>, <code>list</code>, and <code>dict</code> do not (but their subclasses can).</p>
+
+<pre>import weakref
+
+class MyObj:
+    def __init__(self, name):
+        self.name = name
+    def __repr__(self):
+        return f"MyObj({self.name!r})"
+
+obj = MyObj("important")
+weak = weakref.ref(obj)
+
+print(f"Alive: {weak()}")    # MyObj('important')
+print(f"Is alive: {weak() is not None}")  # True
+
+del obj  # Remove the strong reference
+
+print(f"After del: {weak()}")  # None (object was collected)</pre>
+    <div class="output"><div class="output-label">Output</div>Alive: MyObj('important')
+Is alive: True
+After del: None</div>
+
+    <h4>WeakValueDictionary as a Cache</h4>
+    <p>A <code>WeakValueDictionary</code> holds weak references to its values. When a value is garbage collected (no more strong references), the entry is automatically removed.</p>
+
+<pre>import weakref
+
+class ExpensiveObject:
+    def __init__(self, key):
+        self.key = key
+        self.data = list(range(1000))  # simulate expensive data
+    def __repr__(self):
+        return f"ExpensiveObject({self.key!r})"
+
+cache = weakref.WeakValueDictionary()
+
+def get_or_create(key):
+    if key in cache:
+        print(f"  Cache hit for {key!r}")
+        return cache[key]
+    print(f"  Creating new object for {key!r}")
+    obj = ExpensiveObject(key)
+    cache[key] = obj
+    return obj
+
+# Use the cache
+a = get_or_create("alpha")   # Creating new
+b = get_or_create("beta")    # Creating new
+_ = get_or_create("alpha")   # Cache hit!
+
+print(f"Cache keys: {list(cache.keys())}")  # ['alpha', 'beta']
+
+# Remove strong reference to 'beta'
+del b
+import gc; gc.collect()
+
+print(f"After del b: {list(cache.keys())}")  # ['alpha'] -- beta removed!</pre>
+    <div class="output"><div class="output-label">Output</div>  Creating new object for 'alpha'
+  Creating new object for 'beta'
+  Cache hit for 'alpha'
+Cache keys: ['alpha', 'beta']
+After del b: ['alpha']</div>
+
+    <h4>weakref.finalize for Cleanup</h4>
+    <p>Use <code>weakref.finalize</code> instead of <code>__del__</code> for cleanup callbacks. It is more reliable and does not interfere with garbage collection of cycles.</p>
+
+<pre>import weakref
+
+class TempFile:
+    def __init__(self, path):
+        self.path = path
+        # Register cleanup that runs when object is collected
+        self._finalizer = weakref.finalize(
+            self, TempFile._cleanup, path
+        )
+
+    @staticmethod
+    def _cleanup(path):
+        print(f"Cleaning up temp file: {path}")
+
+    def __repr__(self):
+        return f"TempFile({self.path!r})"
+
+f = TempFile("/tmp/data.csv")
+print(f"Created: {f}")
+print(f"Weak ref alive: {f._finalizer.alive}")
+
+del f  # Triggers cleanup callback</pre>
+    <div class="output"><div class="output-label">Output</div>Created: TempFile('/tmp/data.csv')
+Weak ref alive: True
+Cleaning up temp file: /tmp/data.csv</div>
+
+    <h4>WeakSet for Observer Pattern</h4>
+<pre>import weakref
+
+class EventEmitter:
+    def __init__(self):
+        self._listeners = weakref.WeakSet()
+
+    def add_listener(self, listener):
+        self._listeners.add(listener)
+
+    def emit(self, event):
+        for listener in list(self._listeners):
+            listener.on_event(event)
+
+class Logger:
+    def __init__(self, name):
+        self.name = name
+    def on_event(self, event):
+        print(f"[{self.name}] received: {event}")
+
+emitter = EventEmitter()
+log1 = Logger("FileLog")
+log2 = Logger("ConsoleLog")
+
+emitter.add_listener(log1)
+emitter.add_listener(log2)
+
+emitter.emit("startup")
+# [FileLog] received: startup
+# [ConsoleLog] received: startup
+
+del log2  # Automatically unregistered!
+import gc; gc.collect()
+
+emitter.emit("shutdown")
+# [FileLog] received: shutdown   (only one listener now)</pre>
+    <div class="output"><div class="output-label">Output</div>[FileLog] received: startup
+[ConsoleLog] received: startup
+[FileLog] received: shutdown</div>
+
+    <h4>Key Rules</h4>
+    <ul class="rules-list">
+      <li>Use <code>WeakValueDictionary</code> for caches where entries should disappear when no longer referenced.</li>
+      <li>Use <code>weakref.finalize</code> instead of <code>__del__</code> for cleanup &mdash; it is more predictable and GC-safe.</li>
+      <li>Not all types support weak references: <code>int</code>, <code>str</code>, <code>tuple</code>, <code>list</code>, <code>dict</code> cannot be weakly referenced directly.</li>
+      <li>Always check <code>weak() is not None</code> before using a dereferenced weak reference.</li>
+    </ul>
+
+    <div class="pitfall">
+      <strong>#1 Pitfall:</strong> Trying to create weak references to built-in types like <code>int</code>, <code>str</code>, or <code>list</code> raises <code>TypeError</code>. Only user-defined classes (and some C extension types) support weak references. If you need a weak reference to a built-in, create a subclass.
+    </div>
+
+    <div class="connection">
+      <strong>Connection:</strong> Weak references directly solve the reference-cycle problem discussed in <em>CPython Internals</em> above. They also complement <em>Context Managers</em> (reviewed today on Day 10) &mdash; both are patterns for managing resource lifetimes, but weakrefs handle automatic cleanup while context managers handle explicit cleanup.
+    </div>
+
+    <div class="exercise">
+      <div class="exercise-label">Exercise 1</div>
+      <p>Create a <code>WeakValueDictionary</code> cache that stores user-defined objects. Add three entries, delete the strong reference to one, force garbage collection, and verify the cache automatically lost that entry.</p>
+    </div>
+
+    <div class="exercise">
+      <div class="exercise-label">Exercise 2</div>
+      <p>Use <code>weakref.finalize</code> to log a message when an object is garbage collected. Create the object, register the finalizer, then delete the object and observe the log message.</p>
+    </div>
+
+    <div class="exercise">
+      <div class="exercise-label">Exercise 3</div>
+      <p>Build a simple observer pattern where an <code>EventBus</code> tracks subscribers via <code>WeakSet</code>. Demonstrate that when a subscriber object is deleted, it is automatically removed from the event bus without explicit unsubscription.</p>
+    </div>
+  </div>
+
+  <!-- New 5: Advanced itertools Recipes -->
+  <div class="concept" id="itertools-recipes">
+    <div class="concept-header">
+      <h3>Advanced itertools Recipes</h3>
+      <span class="concept-meta">Advanced Iteration &bull; New today</span>
+    </div>
+
+    <h4>Why It Matters</h4>
+    <p>The <code>itertools</code> recipes and newer additions solve common iteration problems efficiently with zero intermediate lists. Mastering these patterns lets you process large or infinite sequences without blowing up memory.</p>
+
+    <h4>pairwise() &mdash; Overlapping Pairs (3.10+)</h4>
+    <p><code>itertools.pairwise(iterable)</code> yields consecutive overlapping pairs from an iterable. Perfect for computing differences, detecting changes, or processing sequential neighbors.</p>
+
+<pre>from itertools import pairwise
+
+# Compute consecutive differences
+prices = [100, 105, 102, 110, 108, 115]
+deltas = [b - a for a, b in pairwise(prices)]
+print(f"Prices: {prices}")
+print(f"Deltas: {deltas}")  # [5, -3, 8, -2, 7]
+
+# Find max consecutive increase
+max_jump = max(b - a for a, b in pairwise(prices))
+print(f"Max jump: {max_jump}")  # 8
+
+# Detect sign changes
+values = [1, 3, -2, -5, 4, 7, -1]
+sign_changes = [
+    i for i, (a, b) in enumerate(pairwise(values))
+    if (a &gt; 0) != (b &gt; 0)
+]
+print(f"Sign changes at indices: {sign_changes}")  # [1, 3, 5]</pre>
+    <div class="output"><div class="output-label">Output</div>Prices: [100, 105, 102, 110, 108, 115]
+Deltas: [5, -3, 8, -2, 7]
+Max jump: 8
+Sign changes at indices: [1, 3, 5]</div>
+
+    <h4>tee() &mdash; Independent Iterators from One Source</h4>
+    <p><code>itertools.tee(iterable, n)</code> creates <code>n</code> independent iterators from a single iterable. Useful when you need multiple passes over data that can only be iterated once (like a generator).</p>
+
+<pre>from itertools import tee
+
+def fibonacci():
+    a, b = 0, 1
+    while True:
+        yield a
+        a, b = b, a + b
+
+# Create two independent iterators from one generator
+fib1, fib2 = tee(fibonacci(), 2)
+
+# Use fib1 for the values, fib2 (advanced by 1) for next values
+from itertools import islice
+next(fib2)  # Advance fib2 by one position
+
+# Compute ratios of consecutive Fibonacci numbers (approaches golden ratio)
+pairs = zip(islice(fib1, 2, 10), islice(fib2, 2, 10))
+for a, b in pairs:
+    if a != 0:
+        print(f"{b}/{a} = {b/a:.6f}")</pre>
+    <div class="output"><div class="output-label">Output</div>2/1 = 2.000000
+3/2 = 1.500000
+5/3 = 1.666667
+8/5 = 1.600000
+13/8 = 1.625000
+21/13 = 1.615385
+34/21 = 1.619048
+55/34 = 1.617647</div>
+
+    <h4>Implementing sliding_window</h4>
+    <p>A sliding window over an iterable is one of the most common itertools recipes. Here is the standard implementation using <code>deque</code>:</p>
+
+<pre>from collections import deque
+from itertools import islice
+
+def sliding_window(iterable, n):
+    """Yield overlapping windows of size n."""
+    it = iter(iterable)
+    window = deque(islice(it, n), maxlen=n)
+    if len(window) == n:
+        yield tuple(window)
+    for item in it:
+        window.append(item)
+        yield tuple(window)
+
+# Moving average
+data = [10, 20, 30, 40, 50, 60, 70]
+for window in sliding_window(data, 3):
+    avg = sum(window) / len(window)
+    print(f"{window} -> avg = {avg:.1f}")</pre>
+    <div class="output"><div class="output-label">Output</div>(10, 20, 30) -> avg = 20.0
+(20, 30, 40) -> avg = 30.0
+(30, 40, 50) -> avg = 40.0
+(40, 50, 60) -> avg = 50.0
+(50, 60, 70) -> avg = 60.0</div>
+
+    <h4>Composing itertools: accumulate &amp; chain</h4>
+<pre>from itertools import accumulate, chain
+import operator
+
+# Running product with accumulate
+nums = [2, 3, 4, 5]
+running_product = list(accumulate(nums, operator.mul))
+print(f"Running product: {running_product}")  # [2, 6, 24, 120]
+
+# Running max
+values = [3, 1, 4, 1, 5, 9, 2, 6]
+running_max = list(accumulate(values, max))
+print(f"Running max: {running_max}")  # [3, 3, 4, 4, 5, 9, 9, 9]
+
+# Flatten nested iterables with chain.from_iterable
+nested = [[1, 2], [3, 4, 5], [6], [7, 8, 9, 10]]
+flat = list(chain.from_iterable(nested))
+print(f"Flattened: {flat}")  # [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+
+# Combine: flatten + accumulate for running sum of nested data
+running_sum = list(accumulate(chain.from_iterable(nested)))
+print(f"Running sum: {running_sum}")  # [1, 3, 6, 10, 15, 21, 28, 36, 45, 55]</pre>
+    <div class="output"><div class="output-label">Output</div>Running product: [2, 6, 24, 120]
+Running max: [3, 3, 4, 4, 5, 9, 9, 9]
+Flattened: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+Running sum: [1, 3, 6, 10, 15, 21, 28, 36, 45, 55]</div>
+
+    <h4>Key Rules</h4>
+    <ul class="rules-list">
+      <li>Prefer <code>itertools</code> for large/infinite sequences to avoid materializing the whole dataset in memory.</li>
+      <li>Use a plain <code>list</code> for small data &mdash; the overhead of lazy iteration is not worth it for a few items.</li>
+      <li>Compose <code>itertools</code> functions for complex transformations (e.g., <code>chain.from_iterable</code> + <code>accumulate</code>).</li>
+      <li>After calling <code>tee()</code>, do not use the original iterator &mdash; it will desync the tee'd copies.</li>
+    </ul>
+
+    <div class="pitfall">
+      <strong>#1 Pitfall:</strong> Using the original iterator after calling <code>tee()</code>. Advancing the original invalidates the tee'd copies because they share the underlying data. Always use only the copies returned by <code>tee()</code>.
+    </div>
+
+    <div class="connection">
+      <strong>Connection:</strong> This extends the <em>itertools</em> basics from Day 7 with real-world recipes. The <code>sliding_window</code> recipe uses <code>deque(maxlen=n)</code> from the <em>defaultdict &amp; deque</em> concept reviewed above, showing how these tools compose together.
+    </div>
+
+    <div class="exercise">
+      <div class="exercise-label">Exercise 1</div>
+      <p>Use <code>pairwise()</code> to find the maximum absolute difference between consecutive elements in a list of numbers.</p>
+    </div>
+
+    <div class="exercise">
+      <div class="exercise-label">Exercise 2</div>
+      <p>Implement a <code>sliding_window(iterable, n)</code> function using <code>deque</code> and <code>islice</code>. Test it by computing a 4-element moving average over <code>[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]</code>.</p>
+    </div>
+
+    <div class="exercise">
+      <div class="exercise-label">Exercise 3</div>
+      <p>Use <code>itertools.tee</code> and <code>zip</code> to compute the forward differences of a sequence (i.e., <code>seq[i+1] - seq[i]</code>) in a single pass. Test it on <code>[10, 13, 11, 17, 14]</code> to get <code>[3, -2, 6, -3]</code>.</p>
+    </div>
+  </div>
+
+</div><!-- end new concepts section -->
+
+
+<!-- ============================================================ -->
+<!-- FOOTER -->
+<!-- ============================================================ -->
+<div class="footer">
+  <h4>All Python Study Guides</h4>
+    <ul>
+    <li><a href="python-guides/python-guide-2026-07-09.html">2026-07-09</a> (Day 39)</li>
+    <li><a href="python-guides/python-guide-2026-07-08.html">2026-07-08</a> (Day 38)</li>
+    <li><a href="python-guides/python-guide-2026-07-07.html">2026-07-07</a> (Day 37)</li>
+    <li><a href="python-guides/python-guide-2026-07-06.html">2026-07-06</a> (Day 36)</li>
+    <li><a href="python-guides/python-guide-2026-07-05.html">2026-07-05</a> (Day 35)</li>
+    <li><a href="python-guides/python-guide-2026-07-04.html">2026-07-04</a> (Day 34)</li>
+    <li><a href="python-guides/python-guide-2026-07-03.html">2026-07-03</a> (Day 33)</li>
+    <li><a href="python-guides/python-guide-2026-07-02.html">2026-07-02</a> (Day 32)</li>
+    <li><a href="python-guides/python-guide-2026-07-01.html">2026-07-01</a> (Day 31)</li>
+    <li><a href="python-guides/python-guide-2026-06-30.html">2026-06-30</a> (Day 30)</li>
+    <li><a href="python-guides/python-guide-2026-06-29.html">2026-06-29</a> (Day 29)</li>
+    <li><a href="python-guides/python-guide-2026-06-28.html">2026-06-28</a> (Day 28)</li>
+    <li><a href="python-guides/python-guide-2026-06-27.html">2026-06-27</a> (Day 27)</li>
+    <li><a href="python-guides/python-guide-2026-06-26.html">2026-06-26</a> (Day 26)</li>
+    <li><a href="python-guides/python-guide-2026-06-25.html">2026-06-25</a> (Day 25)</li>
+    <li><a href="python-guides/python-guide-2026-06-24.html">2026-06-24</a> (Day 24)</li>
+    <li><a href="python-guides/python-guide-2026-06-23.html">2026-06-23</a> (Day 23)</li>
+    <li><a href="python-guides/python-guide-2026-06-22.html">2026-06-22</a> (Day 22)</li>
+    <li><a href="python-guides/python-guide-2026-06-21.html">2026-06-21</a> (Day 21)</li>
+    <li><a href="python-guides/python-guide-2026-06-19.html">2026-06-19</a> (Day 20)</li>
+    <li><a href="python-guides/python-guide-2026-06-18.html">2026-06-18</a> (Day 19)</li>
+    <li><a href="python-guides/python-guide-2026-06-17.html">2026-06-17</a> (Day 18)</li>
+    <li><a href="python-guides/python-guide-2026-06-15.html">2026-06-15</a> (Day 17)</li>
+    <li><a href="python-guides/python-guide-2026-06-13.html">2026-06-13</a> (Day 16)</li>
+    <li><a href="python-guides/python-guide-2026-06-12.html">2026-06-12</a> (Day 15)</li>
+    <li><a href="python-guides/python-guide-2026-06-11.html">2026-06-11</a> (Day 14)</li>
+    <li><a href="python-guides/python-guide-2026-06-10.html">2026-06-10</a> (Day 13)</li>
+    <li><a href="python-guides/python-guide-2026-06-09.html">2026-06-09</a> (Day 12)</li>
+    <li class="current"><a href="python-guides/python-guide-2026-06-08.html">2026-06-08</a> </li>
+    <li><a href="python-guides/python-guide-2026-06-07.html">2026-06-07</a> (Day 10)</li>
+    <li><a href="python-guides/python-guide-2026-06-05.html">2026-06-05</a> (Day 9)</li>
+    <li><a href="python-guides/python-guide-2026-06-04.html">2026-06-04</a> (Day 8)</li>
+    <li><a href="python-guides/python-guide-2026-06-03.html">2026-06-03</a> (Day 7)</li>
+    <li><a href="python-guides/python-guide-2026-06-02.html">2026-06-02</a> (Day 6)</li>
+    <li><a href="python-guides/python-guide-2026-06-01.html">2026-06-01</a> (Day 5)</li>
+    <li><a href="python-guides/python-guide-2026-05-31.html">2026-05-31</a> (Day 4)</li>
+    <li><a href="python-guides/python-guide-2026-05-30.html">2026-05-30</a> (Day 3)</li>
+    <li><a href="python-guides/python-guide-2026-05-29.html">2026-05-29</a> (Day 2)</li>
+    <li><a href="python-guides/python-guide-2026-05-28.html">2026-05-28</a> (Day 1)</li>
+  </ul>
+</div>
+
+</div><!-- end main -->
+
+<script>
+(function() {
+  // ===== Theme Toggle =====
+  var THEME_KEY = 'lc-pyguide-theme';
+  var toggle = document.getElementById('theme-toggle');
+  var html = document.documentElement;
+
+  function setTheme(theme) {
+    html.setAttribute('data-theme', theme);
+    localStorage.setItem(THEME_KEY, theme);
+    toggle.textContent = theme === 'dark' ? '☽' : '☀';
+    toggle.title = theme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme';
+  }
+
+  var saved = localStorage.getItem(THEME_KEY) || 'dark';
+  setTheme(saved);
+
+  toggle.addEventListener('click', function() {
+    var current = html.getAttribute('data-theme');
+    setTheme;
+  });
+
+  // ===== Mobile Sidebar Toggle =====
+  var sidebarToggle = document.getElementById('sidebar-toggle');
+  var sidebar = document.getElementById('sidebar');
+
+  sidebarToggle.addEventListener('click', function() {
+    sidebar.classList.toggle('open');
+  });
+
+  // Close sidebar when clicking a link on mobile
+  sidebar.querySelectorAll('.sidebar-link').forEach(function(link) {
+    link.addEventListener('click', function() {
+      if (window.innerWidth <= 900) {
+        sidebar.classList.remove('open');
+      }
+    });
+  });
+
+  // ===== Active Sidebar Link on Scroll =====
+  var links = document.querySelectorAll('.sidebar-link');
+  var sections = [];
+
+  links.forEach(function(link) {
+    var id = link.getAttribute('href').slice(1);
+    var el = document.getElementById(id);
+    if (el) sections.push({ id: id, el: el, link: link });
+  });
+
+  function updateActive() {
+    var current = null;
+    var scrollY = window.scrollY + 100;
+
+    for (var i = sections.length - 1; i >= 0; i--) {
+      if (sections[i].el.offsetTop <= scrollY) {
+        current = sections[i];
+        break;
+      }
+    }
+
+    links.forEach(function(l) { l.classList.remove('active'); });
+    if  current.link.classList.add('active');
+  }
+
+  window.addEventListener('scroll', updateActive, { passive: true });
+  updateActive();
+})();
+</script>
+
+</body>
+</html>

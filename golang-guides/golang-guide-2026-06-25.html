@@ -1,0 +1,1605 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Go Study Guide &mdash; Day 20 (2026-06-25)</title>
+<style>
+/* ===== CSS Variables ===== */
+:root {
+  --bg: #0d1117;
+  --surface1: #161b22;
+  --surface2: #1c2129;
+  --border: #30363d;
+  --text: #e6edf3;
+  --muted: #8b949e;
+  --accent: #58a6ff;
+  --accent-dim: #1f6feb33;
+  --green: #3fb950;
+  --green-dim: #23863633;
+  --yellow: #d29922;
+  --yellow-dim: #d2992233;
+  --red: #f85149;
+  --red-dim: #f8514933;
+  --purple: #bc8cff;
+  --purple-dim: #bc8cff22;
+  --orange: #f0883e;
+  --orange-dim: #f0883e22;
+  --code-bg: #0d1117;
+  --sidebar-w: 300px;
+  --font-mono: 'SF Mono', 'Cascadia Code', 'Fira Code', Consolas, monospace;
+  --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+  --radius: 8px;
+  --shadow: 0 1px 3px rgba(0,0,0,0.4);
+}
+
+[data-theme="light"] {
+  --bg: #ffffff;
+  --surface1: #f6f8fa;
+  --surface2: #f0f3f6;
+  --border: #d0d7de;
+  --text: #1f2328;
+  --muted: #656d76;
+  --accent: #0969da;
+  --accent-dim: #0969da1a;
+  --green: #1a7f37;
+  --green-dim: #1a7f3718;
+  --yellow: #9a6700;
+  --yellow-dim: #9a670018;
+  --red: #cf222e;
+  --red-dim: #cf222e18;
+  --purple: #8250df;
+  --purple-dim: #8250df18;
+  --orange: #bc4c00;
+  --orange-dim: #bc4c0018;
+  --code-bg: #f6f8fa;
+  --shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+/* ===== Reset & Base ===== */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: var(--font-sans);
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.7;
+  font-size: 16px;
+  transition: background 0.2s, color 0.2s;
+}
+
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+/* ===== Theme Toggle ===== */
+#theme-toggle {
+  position: fixed;
+  top: 16px;
+  right: 20px;
+  z-index: 1000;
+  background: var(--surface1);
+  border: 1px solid var(--border);
+  color: var(--text);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+  box-shadow: var(--shadow);
+}
+#theme-toggle:hover { background: var(--surface2); border-color: var(--accent); }
+
+/* ===== Sidebar ===== */
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: var(--sidebar-w);
+  height: 100vh;
+  background: var(--surface1);
+  border-right: 1px solid var(--border);
+  overflow-y: auto;
+  padding: 20px 0;
+  z-index: 100;
+  transition: transform 0.3s;
+}
+
+.sidebar-header {
+  padding: 0 20px 16px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 12px;
+}
+
+.sidebar-header h2 {
+  font-size: 16px;
+  color: var(--text);
+  font-weight: 700;
+}
+
+.sidebar-header .subtitle {
+  font-size: 12px;
+  color: var(--muted);
+  margin-top: 2px;
+}
+
+.sidebar-section {
+  margin-bottom: 8px;
+}
+
+.sidebar-section-title {
+  padding: 6px 20px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+}
+
+.sidebar-link {
+  display: block;
+  padding: 5px 20px 5px 28px;
+  font-size: 13px;
+  color: var(--muted);
+  text-decoration: none;
+  border-left: 2px solid transparent;
+  transition: all 0.15s;
+  line-height: 1.4;
+}
+
+.sidebar-link:hover {
+  color: var(--text);
+  background: var(--accent-dim);
+  border-left-color: var(--accent);
+  text-decoration: none;
+}
+
+.sidebar-link.active {
+  color: var(--accent);
+  border-left-color: var(--accent);
+  background: var(--accent-dim);
+}
+
+/* ===== Mobile sidebar toggle ===== */
+#sidebar-toggle {
+  display: none;
+  position: fixed;
+  top: 16px;
+  left: 16px;
+  z-index: 200;
+  background: var(--surface1);
+  border: 1px solid var(--border);
+  color: var(--text);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 20px;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--shadow);
+}
+
+/* ===== Main Content ===== */
+.main {
+  margin-left: var(--sidebar-w);
+  padding: 40px 48px 80px;
+  max-width: calc(860px + var(--sidebar-w) + 96px);
+}
+
+.page-title {
+  font-size: 32px;
+  font-weight: 800;
+  margin-bottom: 4px;
+  color: var(--text);
+}
+
+.page-subtitle {
+  font-size: 15px;
+  color: var(--muted);
+  margin-bottom: 36px;
+}
+
+/* ===== Sections ===== */
+.section {
+  margin-bottom: 48px;
+}
+
+.section-label {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  padding: 3px 10px;
+  border-radius: 4px;
+  margin-bottom: 12px;
+}
+
+.section-label.review { background: var(--yellow-dim); color: var(--yellow); }
+.section-label.new { background: var(--green-dim); color: var(--green); }
+
+.section-title {
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 24px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--border);
+}
+
+/* ===== How To Use ===== */
+.how-to-use {
+  background: var(--surface1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px 24px;
+  margin-bottom: 36px;
+}
+
+.how-to-use h3 {
+  font-size: 16px;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.how-to-use ul {
+  padding-left: 22px;
+  margin: 0;
+}
+
+.how-to-use li {
+  font-size: 14px;
+  color: var(--muted);
+  margin-bottom: 4px;
+}
+
+/* ===== Concept Cards ===== */
+.concept {
+  background: var(--surface1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 28px;
+  margin-bottom: 28px;
+  box-shadow: var(--shadow);
+}
+
+.concept-header {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  margin-bottom: 6px;
+  flex-wrap: wrap;
+}
+
+.concept h3 {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.concept-meta {
+  font-size: 12px;
+  color: var(--muted);
+  background: var(--surface2);
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
+.concept h4 {
+  font-size: 15px;
+  font-weight: 600;
+  margin: 20px 0 8px;
+  color: var(--text);
+}
+
+.concept p, .concept li {
+  color: var(--text);
+  line-height: 1.7;
+}
+
+.concept ul, .concept ol {
+  padding-left: 22px;
+  margin: 8px 0;
+}
+
+.concept li {
+  margin-bottom: 4px;
+}
+
+.concept .why-matters {
+  font-style: italic;
+  color: var(--muted);
+  margin: 6px 0 16px;
+  font-size: 15px;
+}
+
+/* ===== Code Blocks ===== */
+pre {
+  background: var(--code-bg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 16px 18px;
+  overflow-x: auto;
+  margin: 10px 0 14px;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--text);
+  position: relative;
+}
+
+pre::after {
+  content: 'Go';
+  position: absolute;
+  top: 6px;
+  right: 10px;
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  opacity: 0.6;
+}
+
+code {
+  font-family: var(--font-mono);
+  font-size: 0.9em;
+}
+
+:not(pre) > code {
+  background: var(--surface2);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.88em;
+}
+
+/* ===== Output Blocks ===== */
+.output {
+  background: var(--green-dim);
+  border: 1px solid var(--green);
+  border-radius: 6px;
+  padding: 12px 16px;
+  margin: 6px 0 14px;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--text);
+  white-space: pre-wrap;
+}
+
+.output::after { content: none; }
+
+.output-label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--green);
+  margin-bottom: 4px;
+}
+
+/* ===== Good/Bad Examples ===== */
+.do-dont {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin: 10px 0;
+}
+
+.do-box, .dont-box {
+  border-radius: 6px;
+  padding: 14px;
+  border: 1px solid;
+}
+
+.do-box {
+  background: var(--green-dim);
+  border-color: var(--green);
+}
+
+.dont-box {
+  background: var(--red-dim);
+  border-color: var(--red);
+}
+
+.do-box .label, .dont-box .label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 6px;
+}
+
+.do-box .label { color: var(--green); }
+.dont-box .label { color: var(--red); }
+
+.do-box pre, .dont-box pre {
+  margin: 0;
+  border: none;
+  background: transparent;
+  padding: 0;
+  font-size: 12.5px;
+}
+
+.do-box pre::after, .dont-box pre::after { content: none; }
+
+/* ===== Key Rules ===== */
+.rules-list {
+  list-style: none;
+  padding: 0;
+  margin: 8px 0;
+}
+
+.rules-list li {
+  padding: 6px 0 6px 24px;
+  position: relative;
+}
+
+.rules-list li::before {
+  content: "\2192";
+  position: absolute;
+  left: 2px;
+  color: var(--accent);
+  font-weight: 700;
+}
+
+/* ===== Exercises ===== */
+.exercise {
+  background: var(--purple-dim);
+  border: 1px solid var(--purple);
+  border-radius: 6px;
+  padding: 14px 18px;
+  margin: 8px 0;
+}
+
+.exercise .exercise-label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--purple);
+  margin-bottom: 4px;
+}
+
+/* ===== Pitfall ===== */
+.pitfall {
+  background: var(--red-dim);
+  border-left: 3px solid var(--red);
+  border-radius: 0 6px 6px 0;
+  padding: 10px 14px;
+  margin: 10px 0;
+  font-size: 14px;
+}
+
+.pitfall strong {
+  color: var(--red);
+}
+
+/* ===== Connection ===== */
+.connection {
+  background: var(--accent-dim);
+  border-left: 3px solid var(--accent);
+  border-radius: 0 6px 6px 0;
+  padding: 10px 14px;
+  margin: 10px 0;
+  font-size: 14px;
+  color: var(--muted);
+}
+
+/* ===== Review Cards ===== */
+.review-card {
+  background: var(--surface1);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--purple);
+  border-radius: var(--radius);
+  padding: 20px 24px;
+  margin-bottom: 16px;
+  box-shadow: var(--shadow);
+}
+
+.review-card .review-header {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  margin-bottom: 6px;
+  flex-wrap: wrap;
+}
+
+.review-card h3 {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.review-card .review-meta {
+  font-size: 12px;
+  color: var(--muted);
+  background: var(--surface2);
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
+.review-card h4 {
+  font-size: 14px;
+  font-weight: 600;
+  margin: 14px 0 6px;
+  color: var(--text);
+}
+
+.review-card p, .review-card li {
+  color: var(--text);
+  line-height: 1.6;
+  font-size: 14px;
+}
+
+.review-card pre {
+  font-size: 12.5px;
+  padding: 12px 14px;
+  margin: 6px 0 10px;
+}
+
+.review-card .pitfall {
+  font-size: 13px;
+  padding: 8px 12px;
+}
+
+/* ===== Topic Badge ===== */
+.topic-badge {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 2px 8px;
+  border-radius: 4px;
+  background: var(--accent-dim);
+  color: var(--accent);
+  margin-left: 4px;
+}
+
+/* ===== Footer ===== */
+.footer {
+  margin-top: 60px;
+  padding: 24px 0;
+  border-top: 1px solid var(--border);
+}
+
+.footer h4 {
+  font-size: 14px;
+  color: var(--muted);
+  margin-bottom: 10px;
+}
+
+.footer ul {
+  list-style: none;
+  padding: 0;
+}
+
+.footer li {
+  margin-bottom: 4px;
+  font-size: 14px;
+}
+
+.footer li a { color: var(--accent); }
+.footer .current { color: var(--green); font-weight: 600; }
+
+/* ===== Bash code blocks ===== */
+pre.bash::after {
+  content: 'Bash';
+}
+
+/* ===== YAML code blocks ===== */
+pre.yaml-code::after {
+  content: 'YAML';
+}
+
+/* ===== go.mod code blocks ===== */
+pre.gomod::after {
+  content: 'go.mod';
+}
+
+/* ===== Responsive ===== */
+@media (max-width: 900px) {
+  .sidebar {
+    transform: translateX(-100%);
+  }
+  .sidebar.open {
+    transform: translateX(0);
+    box-shadow: 4px 0 20px rgba(0,0,0,0.5);
+  }
+  #sidebar-toggle {
+    display: flex;
+  }
+  .main {
+    margin-left: 0;
+    padding: 60px 20px 60px;
+    max-width: 100%;
+  }
+  .do-dont {
+    grid-template-columns: 1fr;
+  }
+  #theme-toggle {
+    right: 14px;
+    top: 16px;
+  }
+}
+</style>
+</head>
+<body>
+
+<!-- Theme Toggle -->
+<button id="theme-toggle" aria-label="Toggle theme" title="Toggle light/dark theme">&#9789;</button>
+
+<!-- Mobile Sidebar Toggle -->
+<button id="sidebar-toggle" aria-label="Toggle sidebar">&#9776;</button>
+
+<!-- Sidebar -->
+<nav class="sidebar" id="sidebar">
+  <div class="sidebar-header">
+    <h2>Go Guide</h2>
+    <div class="subtitle">Day 20 &mdash; 2026-06-25</div>
+  </div>
+
+  <div class="sidebar-section">
+    <div class="sidebar-section-title">Review (6 concepts)</div>
+    <a href="#module_management" class="sidebar-link">Module Management</a>
+    <a href="#cross_compilation" class="sidebar-link">Cross-Compilation &amp; Build Tags</a>
+    <a href="#websocket_go" class="sidebar-link">WebSocket in Go</a>
+    <a href="#profiling_pprof" class="sidebar-link">Profiling with pprof</a>
+    <a href="#otel_tracing" class="sidebar-link">OpenTelemetry &amp; Tracing</a>
+    <a href="#go_embed" class="sidebar-link">Embedding &amp; go:embed</a>
+  </div>
+
+  <div class="sidebar-section">
+    <div class="sidebar-section-title">Language &amp; Std Lib Additions (3)</div>
+    <a href="#builtin_min_max_clear" class="sidebar-link">min, max, clear Builtins</a>
+    <a href="#cmp_package" class="sidebar-link">cmp Package</a>
+    <a href="#sync_once_helpers" class="sidebar-link">sync.OnceFunc / OnceValue</a>
+  </div>
+
+  <div class="sidebar-section">
+    <div class="sidebar-section-title">Networking &amp; Security Tooling (2)</div>
+    <a href="#net_netip" class="sidebar-link">net/netip</a>
+    <a href="#govulncheck" class="sidebar-link">govulncheck</a>
+  </div>
+</nav>
+
+<!-- Main Content -->
+<div class="main">
+
+<h1 class="page-title">Go Daily Guide &mdash; 2026-06-25 (Day 20)</h1>
+<p class="page-subtitle">Day 20 &mdash; Thursday, June 25, 2026 &bull; 11 concepts (6 review + 5 new)</p>
+
+<!-- How to Use -->
+<div class="how-to-use">
+  <h3>How to Use This Guide</h3>
+  <ul>
+    <li>Start with the <strong>Review</strong> section &mdash; try to recall each concept before reading the refresher</li>
+    <li>Complete the challenge exercise for each review card without looking back at previous days</li>
+    <li>Then work through the <strong>New Concepts</strong> section, typing out every code example yourself</li>
+    <li>Pay special attention to the common mistakes sections (they highlight real Go gotchas)</li>
+    <li>Complete the exercises at the bottom of each concept without looking at solutions</li>
+    <li>Use <code>go run main.go</code> to test your code locally, or use the <a href="https://go.dev/play/" target="_blank">Go Playground</a></li>
+  </ul>
+</div>
+
+<!-- ============================================================ -->
+<!-- REVIEW SECTION -->
+<!-- ============================================================ -->
+<div class="section">
+  <span class="section-label review">Review</span>
+  <h2 class="section-title">Spaced Repetition Review &mdash; 6 Concepts</h2>
+
+  <!-- Review 1: Module Management -->
+  <div class="review-card" id="module_management">
+    <div class="review-header">
+      <h3>Module Management: go.mod, Workspaces &amp; Versioning</h3>
+      <span class="review-meta">Production Go &bull; overdue 13d &bull; rep 0</span>
+    </div>
+
+    <h4>Quick Reminder</h4>
+    <p>A module is a tree of packages rooted at a <code>go.mod</code> file. <code>go.mod</code> records the module path, the language version, and dependency <code>require</code>s (transitive ones are marked <code>// indirect</code>). <strong>Semantic Import Versioning</strong> means major version 2+ must appear in the import path (<code>.../widget/v2</code>). <code>go mod tidy</code> keeps <code>go.mod</code>/<code>go.sum</code> in sync with the code; <code>replace</code> swaps a dependency for a local fork during development.</p>
+
+    <h4>A typical go.mod</h4>
+<pre class="gomod">module github.com/acme/widget
+
+go 1.24
+
+require (
+    github.com/google/uuid v1.6.0
+    golang.org/x/sync v0.10.0
+)
+
+require github.com/davecgh/go-spew v1.1.1 // indirect
+
+// Swap in a local checkout while debugging upstream
+replace github.com/google/uuid =&gt; ../uuid-fork</pre>
+
+    <h4>The commands you reach for daily</h4>
+<pre class="bash">go mod init github.com/acme/widget   # create a module
+go get github.com/google/uuid@v1.6.0 # add / pin a dependency
+go mod tidy                          # add missing, drop unused, fix go.sum
+go mod why github.com/davecgh/go-spew # explain why it is needed
+go list -m all                       # full build list (MVS-selected versions)</pre>
+    <div class="output-label">Output of go mod why</div>
+    <div class="output"># github.com/davecgh/go-spew/spew
+github.com/acme/widget
+github.com/stretchr/testify/assert
+github.com/davecgh/go-spew/spew</div>
+
+    <div class="exercise">
+      <div class="exercise-label">Challenge Exercise</div>
+      <p>Create a module <code>example.com/mathx</code>, add an external dependency, then run <code>go mod tidy</code> and inspect the resulting <code>go.sum</code>. Next, simulate a breaking v2 release: explain what the import path and <code>go.mod</code> module line must become, and why a consumer can import both v1 and v2 of the same module simultaneously. Finally, use a <code>replace</code> directive to point one dependency at a sibling directory and confirm with <code>go list -m</code>.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>Pitfall:</strong> Hand-editing <code>require</code> versions and forgetting <code>go.sum</code>. Go verifies every download against <code>go.sum</code> checksums; if they drift you get "checksum mismatch" or "missing go.sum entry" errors. Always change versions with <code>go get pkg@version</code> followed by <code>go mod tidy</code> rather than editing the file by hand.
+    </div>
+  </div>
+
+  <!-- Review 2: Cross-Compilation & Build Tags -->
+  <div class="review-card" id="cross_compilation">
+    <div class="review-header">
+      <h3>Cross-Compilation &amp; Build Tags</h3>
+      <span class="review-meta">Production Go &bull; overdue 13d &bull; rep 0</span>
+    </div>
+
+    <h4>Quick Reminder</h4>
+    <p>Go cross-compiles by simply setting <code>GOOS</code> and <code>GOARCH</code> &mdash; no cross toolchain to install. Set <code>CGO_ENABLED=0</code> for a fully static binary that runs in a scratch container. <strong>Build constraints</strong> select which files compile for which target, either via a <code>//go:build</code> line at the top of a file or via filename suffixes like <code>_linux.go</code> / <code>_amd64.go</code>.</p>
+
+    <h4>A build-tagged file</h4>
+<pre>//go:build linux
+
+package main
+
+import "fmt"
+
+// Only compiled into linux builds; provide a _windows.go twin.
+func platform() string { return "linux" }
+
+func main() { fmt.Println("running on", platform()) }</pre>
+
+    <h4>Building for another OS/arch</h4>
+<pre class="bash">go tool dist list                 # every supported GOOS/GOARCH pair
+
+# static linux/arm64 binary, built from macOS, no C toolchain:
+CGO_ENABLED=0 GOOS=linux GOARCH=arm64 go build -o app .
+
+file app</pre>
+    <div class="output-label">Output of file app</div>
+    <div class="output">app: ELF 64-bit LSB executable, ARM aarch64, version 1 (SYSV),
+statically linked, Go BuildID=..., not stripped</div>
+
+    <div class="exercise">
+      <div class="exercise-label">Challenge Exercise</div>
+      <p>Write two files, <code>greet_linux.go</code> and <code>greet_darwin.go</code>, each defining <code>greeting() string</code> differently, plus a shared <code>main.go</code> that prints it. Build for both targets without changing any source and confirm the output differs. Then convert the filename-based selection into explicit <code>//go:build</code> constraints with a custom tag (<code>//go:build premium</code>) and build with <code>-tags premium</code>.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>Pitfall:</strong> Putting the <code>//go:build</code> line anywhere but the very top. The constraint must appear <em>before</em> the <code>package</code> clause, followed by a blank line; a stray comment or import above it silently disables the constraint, so the file compiles on every platform. Run <code>go vet</code> &mdash; it flags malformed build tags.
+    </div>
+  </div>
+
+  <!-- Review 3: WebSocket in Go -->
+  <div class="review-card" id="websocket_go">
+    <div class="review-header">
+      <h3>WebSocket in Go</h3>
+      <span class="review-meta">Advanced Networking &bull; overdue 12d &bull; rep 0</span>
+    </div>
+
+    <h4>Quick Reminder</h4>
+    <p>WebSockets give you a persistent, full-duplex connection over a single HTTP upgrade. The standard library has no WebSocket server, so most code uses <code>github.com/gorilla/websocket</code>: an <code>Upgrader</code> turns an incoming HTTP request into a <code>*websocket.Conn</code>, then you loop on <code>ReadMessage</code>/<code>WriteMessage</code>. Each connection should be handled in its own goroutine.</p>
+
+    <h4>A minimal echo server</h4>
+<pre>package main
+
+import (
+    "log"
+    "net/http"
+
+    "github.com/gorilla/websocket"
+)
+
+var upgrader = websocket.Upgrader{
+    CheckOrigin: func(r *http.Request) bool { return true }, // dev only
+}
+
+func echo(w http.ResponseWriter, r *http.Request) {
+    conn, err := upgrader.Upgrade(w, r, nil)
+    if err != nil {
+        log.Println("upgrade:", err)
+        return
+    }
+    defer conn.Close()
+    for {
+        mt, msg, err := conn.ReadMessage()
+        if err != nil {
+            break // client closed or read error
+        }
+        if err := conn.WriteMessage(mt, msg); err != nil {
+            break
+        }
+    }
+}
+
+func main() {
+    http.HandleFunc("/ws", echo)
+    log.Fatal(http.ListenAndServe(":8080", nil))
+}</pre>
+    <div class="output-label">Transcript (client &harr; server on ws://localhost:8080/ws)</div>
+    <div class="output">client -&gt; "hello"
+server -&gt; "hello"
+client -&gt; "again"
+server -&gt; "again"</div>
+
+    <div class="exercise">
+      <div class="exercise-label">Challenge Exercise</div>
+      <p>Extend the echo server into a tiny chat hub: keep a set of connected <code>*websocket.Conn</code> guarded by a mutex, and broadcast every received message to all clients. Add a write deadline (<code>conn.SetWriteDeadline</code>) and a ping/pong keep-alive so dead connections are detected and evicted. Why must all writes to a single connection be serialized through one goroutine?</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>Pitfall:</strong> Concurrent writes to one <code>*websocket.Conn</code>. The connection supports one concurrent reader and one concurrent writer only &mdash; calling <code>WriteMessage</code> from multiple goroutines corrupts frames. Funnel all outbound messages through a single writer goroutine (often fed by a channel), and never forget <code>CheckOrigin</code> in production to avoid cross-site hijacking.
+    </div>
+  </div>
+
+  <!-- Review 4: Profiling with pprof -->
+  <div class="review-card" id="profiling_pprof">
+    <div class="review-header">
+      <h3>Profiling with pprof</h3>
+      <span class="review-meta">Observability &amp; Profiling &bull; overdue 12d &bull; rep 0</span>
+    </div>
+
+    <h4>Quick Reminder</h4>
+    <p><code>pprof</code> samples where your program spends CPU and where it allocates. Import <code>net/http/pprof</code> for the side-effect &mdash; it registers <code>/debug/pprof/</code> handlers on the default mux &mdash; or use <code>runtime/pprof</code> to write a profile from code or a benchmark. Then analyze with <code>go tool pprof</code> (<code>top</code>, <code>list</code>, <code>web</code>).</p>
+
+    <h4>Capturing a CPU profile in code</h4>
+<pre>package main
+
+import (
+    "os"
+    "runtime/pprof"
+)
+
+func main() {
+    f, _ := os.Create("cpu.prof")
+    defer f.Close()
+
+    pprof.StartCPUProfile(f) // begin sampling
+    defer pprof.StopCPUProfile()
+
+    hotLoop() // the work you want to measure
+}
+
+func hotLoop() {
+    sum := 0
+    for i := 0; i &lt; 1_000_000_000; i++ {
+        sum += i % 7
+    }
+    _ = sum
+}</pre>
+    <div class="output-label">Analyzing it: go tool pprof -top cpu.prof</div>
+    <div class="output">Showing nodes accounting for 1.42s, 100% of 1.42s total
+      flat  flat%   sum%        cum   cum%
+     1.42s   100%   100%      1.42s   100%  main.hotLoop
+         0     0%   100%      1.42s   100%  main.main</div>
+
+    <div class="exercise">
+      <div class="exercise-label">Challenge Exercise</div>
+      <p>Add <code>import _ "net/http/pprof"</code> and start <code>http.ListenAndServe("localhost:6060", nil)</code> in a goroutine. Capture a live 30-second CPU profile with <code>go tool pprof http://localhost:6060/debug/pprof/profile?seconds=30</code>, then use <code>list hotLoop</code> to see line-level cost and <code>web</code> for a call graph. Separately, grab a heap profile (<code>/debug/pprof/heap</code>) and identify the top allocation site.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>Pitfall:</strong> Exposing <code>net/http/pprof</code> on a public listener. Its import auto-registers handlers on <code>http.DefaultServeMux</code>, so if your main API also uses the default mux, <code>/debug/pprof/</code> becomes internet-reachable &mdash; an information-disclosure and DoS risk. Bind pprof to <code>localhost</code> (or a separate, firewalled port) only.
+    </div>
+  </div>
+
+  <!-- Review 5: OpenTelemetry & Tracing -->
+  <div class="review-card" id="otel_tracing">
+    <div class="review-header">
+      <h3>OpenTelemetry &amp; Tracing</h3>
+      <span class="review-meta">Observability &amp; Profiling &bull; overdue 12d &bull; rep 0</span>
+    </div>
+
+    <h4>Quick Reminder</h4>
+    <p>Distributed tracing follows one request across services as a tree of <em>spans</em>. With OpenTelemetry you configure a <code>TracerProvider</code> (with an exporter), obtain a <code>Tracer</code>, and call <code>tracer.Start(ctx, name)</code> to open a span &mdash; always <code>defer span.End()</code>. The returned <code>ctx</code> carries the span, so child spans nest automatically and context propagates across RPC boundaries.</p>
+
+    <h4>One span with the stdout exporter</h4>
+<pre>package main
+
+import (
+    "context"
+
+    "go.opentelemetry.io/otel"
+    "go.opentelemetry.io/otel/attribute"
+    "go.opentelemetry.io/otel/exporters/stdout/stdouttrace"
+    sdktrace "go.opentelemetry.io/otel/sdk/trace"
+    "go.opentelemetry.io/otel/trace"
+)
+
+func main() {
+    exp, _ := stdouttrace.New(stdouttrace.WithPrettyPrint())
+    tp := sdktrace.NewTracerProvider(sdktrace.WithBatcher(exp))
+    defer tp.Shutdown(context.Background())
+    otel.SetTracerProvider(tp)
+
+    tr := otel.Tracer("checkout")
+    ctx, span := tr.Start(context.Background(), "PlaceOrder")
+    span.SetAttributes(attribute.Int("items", 3))
+    doWork(ctx, tr) // child span nests under this one
+    span.End()
+}
+
+func doWork(ctx context.Context, tr trace.Tracer) {
+    _, span := tr.Start(ctx, "ChargeCard")
+    defer span.End()
+}</pre>
+    <div class="output-label">Exported span (abridged JSON)</div>
+    <div class="output">{
+  "Name": "PlaceOrder",
+  "SpanContext": { "TraceID": "7b1c...", "SpanID": "a14f..." },
+  "Attributes": [ { "Key": "items", "Value": { "Type": "INT64", "Value": 3 } } ],
+  "ChildSpanCount": 1
+}</div>
+
+    <div class="exercise">
+      <div class="exercise-label">Challenge Exercise</div>
+      <p>Instrument a two-handler HTTP service with <code>otelhttp</code> middleware so each request opens a root span automatically. Inside a handler, start a child span around a simulated DB call, record an error with <code>span.RecordError(err)</code> and set <code>span.SetStatus(codes.Error, ...)</code>. Then swap the stdout exporter for an OTLP exporter pointed at a local collector and confirm the trace tree appears intact.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>Pitfall:</strong> Dropping the context. If you call <code>tracer.Start(context.Background(), ...)</code> inside a handler instead of threading the request's <code>ctx</code>, the new span becomes a disconnected root &mdash; the parent/child relationship is lost and traces fragment. Always start child spans from the incoming <code>ctx</code> and pass the returned <code>ctx</code> downward.
+    </div>
+  </div>
+
+  <!-- Review 6: Embedding & go:embed -->
+  <div class="review-card" id="go_embed">
+    <div class="review-header">
+      <h3>Embedding &amp; go:embed</h3>
+      <span class="review-meta">Observability &amp; Profiling &bull; overdue 12d &bull; rep 0</span>
+    </div>
+
+    <h4>Quick Reminder</h4>
+    <p>The <code>//go:embed</code> directive bakes files into the compiled binary at build time, so you ship a single self-contained executable &mdash; no sidecar assets to deploy. A single file can embed into a <code>string</code> or <code>[]byte</code>; one or more files (with globs) embed into an <code>embed.FS</code>, which satisfies <code>fs.FS</code> and plugs straight into <code>http.FileServer</code> or <code>template.ParseFS</code>.</p>
+
+    <h4>Embedding a string and a filesystem</h4>
+<pre>package main
+
+import (
+    "embed"
+    "fmt"
+    "net/http"
+)
+
+//go:embed version.txt
+var version string
+
+//go:embed static/*
+var staticFS embed.FS
+
+func main() {
+    fmt.Println("version:", version)
+
+    // Serve the embedded static/ directory.
+    http.Handle("/static/", http.FileServer(http.FS(staticFS)))
+    // http.ListenAndServe(":8080", nil)
+}</pre>
+    <div class="output-label">Output (with version.txt containing 1.4.2)</div>
+    <div class="output">version: 1.4.2</div>
+
+    <div class="exercise">
+      <div class="exercise-label">Challenge Exercise</div>
+      <p>Embed a directory of HTML templates with <code>//go:embed templates/*.tmpl</code> and parse them via <code>template.ParseFS(tmplFS, "templates/*.tmpl")</code>, then render one to <code>os.Stdout</code>. Next, embed a <code>static/</code> folder and serve it, but strip the prefix so <code>/assets/app.css</code> maps to <code>static/app.css</code> using <code>fs.Sub</code> + <code>http.StripPrefix</code>. What happens at build time if the embed pattern matches no files?</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>Pitfall:</strong> Expecting <code>//go:embed</code> to pick up files outside the package directory or with leading dots. The pattern is relative to the source file's directory, cannot use <code>..</code> to escape it, and (by default) ignores files beginning with <code>.</code> or <code>_</code>. A non-matching pattern is a <em>compile-time</em> error, which is good &mdash; but it surprises people who typo a path.
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- NEW CONCEPTS SECTION -->
+<!-- ============================================================ -->
+<div class="section">
+  <span class="section-label new">New</span>
+  <h2 class="section-title">New Concepts &mdash; 5 in 2 Sections</h2>
+
+  <h3 style="font-size:18px;margin:8px 0 18px;color:var(--muted);">Section 1 &mdash; Language &amp; Standard Library Additions (Go 1.21+)</h3>
+
+  <!-- New 1: min, max, clear builtins -->
+  <div class="concept" id="builtin_min_max_clear">
+    <div class="concept-header">
+      <h3>The min, max, and clear Builtins</h3>
+      <span class="topic-badge">Language</span>
+    </div>
+    <p class="why-matters">Why it matters: Go 1.21 added three <em>builtins</em> &mdash; <code>min</code>, <code>max</code>, and <code>clear</code> &mdash; that retire a pile of tiny helper functions. They need no import, work generically over any ordered type, and <code>clear</code> finally gives a one-liner for emptying a map or zeroing a slice.</p>
+
+    <h4>min and max: variadic and generic</h4>
+    <p><code>min</code> and <code>max</code> take one or more arguments of any <em>ordered</em> type (integers, floats, strings) and return the smallest/largest. They are evaluated like calls but resolved by the compiler, and even work in constant expressions.</p>
+<pre>package main
+
+import "fmt"
+
+func main() {
+    fmt.Println(min(3, 1, 2))             // ints
+    fmt.Println(max(3.5, 2.1, 9.9))       // floats
+    fmt.Println(min("banana", "apple"))   // strings, lexicographic
+
+    const limit = max(8, 16, 4)           // usable as a constant
+    fmt.Println("limit:", limit)
+}</pre>
+    <div class="output-label">Output</div>
+    <div class="output">1
+9.9
+apple
+limit: 16</div>
+
+    <h4>clear: empty a map, zero a slice</h4>
+    <p><code>clear</code> deletes every entry from a map (length becomes 0) or sets every element of a slice to its zero value (length is <em>unchanged</em>). Reusing a cleared buffer avoids a fresh allocation.</p>
+<pre>package main
+
+import "fmt"
+
+func main() {
+    m := map[string]int{"a": 1, "b": 2}
+    clear(m)
+    fmt.Println("map len:", len(m)) // 0
+
+    s := []int{1, 2, 3}
+    clear(s)                        // length stays 3
+    fmt.Println("slice:", s, "len:", len(s))
+}</pre>
+    <div class="output-label">Output</div>
+    <div class="output">map len: 0
+slice: [0 0 0] len: 3</div>
+
+    <h4>Common Mistakes</h4>
+    <div class="do-dont">
+      <div class="dont-box">
+        <div class="label">Wrong</div>
+<pre>// Hand-rolled helper, only for ints,
+// shadowed by every other package.
+func maxInt(a, b int) int {
+    if a &gt; b { return a }
+    return b
+}
+m := maxInt(x, y)</pre>
+      </div>
+      <div class="do-box">
+        <div class="label">Right</div>
+<pre>// Builtin: generic, variadic,
+// no import, no helper to maintain.
+m := max(x, y)
+hi := max(a, b, c, d) // any arity</pre>
+      </div>
+    </div>
+
+    <h4>Key Rules</h4>
+    <ul class="rules-list">
+      <li><code>min</code>/<code>max</code> accept one or more args of any ordered type and need no import.</li>
+      <li>They work in constant expressions when all arguments are constants.</li>
+      <li><code>clear(map)</code> removes all keys; <code>clear(slice)</code> zeroes elements but keeps <code>len</code> and <code>cap</code>.</li>
+      <li>For floats, if any argument is <code>NaN</code> the result is <code>NaN</code> (NaN propagates).</li>
+    </ul>
+
+    <div class="exercise">
+      <div class="exercise-label">Practice Exercise</div>
+      <p>Write <code>clamp[T cmp.Ordered](v, lo, hi T) T</code> implemented purely with <code>min</code> and <code>max</code> (no <code>if</code>). Then write a function that reuses a single <code>[]byte</code> scratch buffer across iterations by calling <code>clear</code> instead of re-allocating, and confirm with <code>-benchmem</code> that allocations drop to zero. Finally, demonstrate the <code>NaN</code> propagation rule for <code>max(math.NaN(), 1.0)</code>.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>Pitfall:</strong> Assuming <code>clear</code> shrinks a slice. It does not change <code>len</code> &mdash; it only writes zero values into the existing elements. If you want an empty slice, use <code>s = s[:0]</code> (keep capacity) or <code>s = nil</code>; reach for <code>clear(s)</code> only when you specifically need the old elements zeroed (e.g., to release pointers for GC).
+    </div>
+
+    <div class="connection">
+      <strong>Connections:</strong> <code>min</code>/<code>max</code> rely on the same ordering notion formalized by the <a href="#cmp_package">cmp package</a>'s <code>cmp.Ordered</code> constraint, and <code>clear</code> pairs naturally with buffer-reuse patterns like <code>sync.Pool</code>.
+    </div>
+  </div>
+
+  <!-- New 2: cmp package -->
+  <div class="concept" id="cmp_package">
+    <div class="concept-header">
+      <h3>The cmp Package: Ordered, Compare &amp; Or</h3>
+      <span class="topic-badge">Std Lib</span>
+    </div>
+    <p class="why-matters">Why it matters: The <code>cmp</code> package (Go 1.21, extended in 1.22) is the small but essential glue for generic ordering. <code>cmp.Ordered</code> is the constraint behind <code>min</code>/<code>max</code> and <code>slices.Sort</code>; <code>cmp.Compare</code> gives the three-way result that <code>slices.SortFunc</code> wants; and <code>cmp.Or</code> collapses fallback chains into a single expression.</p>
+
+    <h4>Multi-key sorting with Compare + Or</h4>
+    <p><code>cmp.Compare(a, b)</code> returns <code>-1</code>, <code>0</code>, or <code>+1</code>. <code>cmp.Or</code> returns its first non-zero argument, so chaining comparisons gives a clean "sort by X, then by Y" tiebreaker without nested <code>if</code>s.</p>
+<pre>package main
+
+import (
+    "cmp"
+    "fmt"
+    "slices"
+)
+
+type Person struct {
+    Name string
+    Age  int
+}
+
+func main() {
+    people := []Person{
+        {"Bob", 30}, {"Alice", 30}, {"Carol", 25},
+    }
+    slices.SortFunc(people, func(a, b Person) int {
+        return cmp.Or(
+            cmp.Compare(a.Age, b.Age),   // primary key
+            cmp.Compare(a.Name, b.Name), // tiebreaker
+        )
+    })
+    fmt.Println(people)
+}</pre>
+    <div class="output-label">Output</div>
+    <div class="output">[{Carol 25} {Alice 30} {Bob 30}]</div>
+
+    <h4>cmp.Or for default values</h4>
+    <p>Because <code>cmp.Or</code> returns the first non-<em>zero</em> value, it doubles as a concise "use this, else the fallback" for strings, numbers, or any comparable type.</p>
+<pre>package main
+
+import (
+    "cmp"
+    "fmt"
+)
+
+func main() {
+    var fromFlag string // empty: user passed nothing
+    fromEnv := ""       // also empty
+
+    port := cmp.Or(fromFlag, fromEnv, "8080") // first non-empty wins
+    fmt.Println("port:", port)
+
+    timeout := cmp.Or(0, 0, 30) // first non-zero int
+    fmt.Println("timeout:", timeout)
+}</pre>
+    <div class="output-label">Output</div>
+    <div class="output">port: 8080
+timeout: 30</div>
+
+    <h4>Common Mistakes</h4>
+    <div class="do-dont">
+      <div class="dont-box">
+        <div class="label">Wrong</div>
+<pre>// Returning a bool from a SortFunc
+// comparator -- wrong signature.
+slices.SortFunc(xs, func(a, b T) bool {
+    return a.Age &lt; b.Age // does not compile
+})</pre>
+      </div>
+      <div class="do-box">
+        <div class="label">Right</div>
+<pre>// SortFunc wants an int: -1/0/+1.
+slices.SortFunc(xs, func(a, b T) int {
+    return cmp.Compare(a.Age, b.Age)
+})</pre>
+      </div>
+    </div>
+
+    <h4>Key Rules</h4>
+    <ul class="rules-list">
+      <li><code>cmp.Ordered</code> is the constraint for types supporting <code>&lt; &lt;= &gt;= &gt;</code> &mdash; use it to bound your own generics.</li>
+      <li><code>cmp.Compare(a,b)</code> returns <code>-1/0/+1</code>; <code>cmp.Less(a,b)</code> returns a bool when you need one.</li>
+      <li><code>cmp.Or(vals...)</code> returns the first non-zero value, or the zero value if all are zero.</li>
+      <li><code>cmp.Compare</code> orders <code>NaN</code> as less than everything, unlike the raw <code>&lt;</code> operator &mdash; handy for deterministic float sorts.</li>
+    </ul>
+
+    <div class="exercise">
+      <div class="exercise-label">Practice Exercise</div>
+      <p>Sort a slice of <code>Order{Priority int, Created time.Time, ID string}</code> by descending priority, then oldest first, then ID, using a single <code>cmp.Or</code> chain (negate the priority comparison for descending). Then write a generic <code>coalesce[T comparable](vals ...T) T</code> and compare it to <code>cmp.Or</code>. Finally, show how <code>cmp.Compare</code> and the bare <code>&lt;</code> operator differ when sorting a slice containing <code>math.NaN()</code>.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>Pitfall:</strong> Treating <code>cmp.Or</code> as a null-coalescing operator that skips "missing" values. It tests against the type's <em>zero</em> value, so a legitimately-zero entry (e.g., an <code>int</code> count of <code>0</code> or an explicit empty string) is treated as "absent" and skipped. When zero is a valid value, use an explicit <code>ok</code> check instead.
+    </div>
+
+    <div class="connection">
+      <strong>Connections:</strong> <code>cmp</code> underpins the <a href="#builtin_min_max_clear">min/max builtins</a> and the <code>slices</code>/<code>maps</code> packages; its three-way comparator is exactly the shape <code>container/heap</code> and <code>sort.Slice</code> ultimately rely on.
+    </div>
+  </div>
+
+  <!-- New 3: sync.OnceFunc / OnceValue / OnceValues -->
+  <div class="concept" id="sync_once_helpers">
+    <div class="concept-header">
+      <h3>sync.OnceFunc, OnceValue &amp; OnceValues</h3>
+      <span class="topic-badge">Concurrency</span>
+    </div>
+    <p class="why-matters">Why it matters: Go 1.21 added three helpers that wrap the <code>sync.Once</code> boilerplate into a function you can just call. They make thread-safe lazy initialization a one-liner &mdash; no package-level <code>Once</code> variable, no manually-shared result field &mdash; and they correctly propagate panics.</p>
+
+    <h4>OnceValue: cache an expensive result</h4>
+    <p><code>sync.OnceValue(f)</code> returns a function that runs <code>f</code> exactly once and caches its return value; every later call returns the cached value without re-running <code>f</code>, safely under concurrency.</p>
+<pre>package main
+
+import (
+    "fmt"
+    "sync"
+)
+
+type Config struct{ Port int }
+
+// loadConfig runs its body at most once, on first call.
+var loadConfig = sync.OnceValue(func() Config {
+    fmt.Println("loading config...") // side effect: happens once
+    return Config{Port: 8080}
+})
+
+func main() {
+    fmt.Println(loadConfig().Port)
+    fmt.Println(loadConfig().Port) // cached: no reload
+}</pre>
+    <div class="output-label">Output</div>
+    <div class="output">loading config...
+8080
+8080</div>
+
+    <h4>OnceValues and OnceFunc</h4>
+    <p><code>sync.OnceValues</code> caches a two-value <code>(T, error)</code> result &mdash; perfect for "load once, reuse the same error too." <code>sync.OnceFunc</code> wraps a side-effecting function with no return value.</p>
+<pre>package main
+
+import (
+    "fmt"
+    "sync"
+)
+
+func main() {
+    load := sync.OnceValues(func() ([]byte, error) {
+        return []byte("data"), nil
+    })
+    b, err := load()
+    _, _ = load() // same cached (value, error)
+    fmt.Println(string(b), err)
+
+    shutdown := sync.OnceFunc(func() { fmt.Println("closing pool") })
+    shutdown()
+    shutdown() // no-op the second time
+}</pre>
+    <div class="output-label">Output</div>
+    <div class="output">data &lt;nil&gt;
+closing pool</div>
+
+    <h4>Common Mistakes</h4>
+    <div class="do-dont">
+      <div class="dont-box">
+        <div class="label">Wrong</div>
+<pre>// Manual Once + shared field:
+var once sync.Once
+var cfg Config
+func get() Config {
+    once.Do(func() { cfg = load() })
+    return cfg
+}</pre>
+      </div>
+      <div class="do-box">
+        <div class="label">Right</div>
+<pre>// One line, no shared mutable state.
+var get = sync.OnceValue(load)
+// get() returns the cached Config
+</pre>
+      </div>
+    </div>
+
+    <h4>Key Rules</h4>
+    <ul class="rules-list">
+      <li><code>OnceFunc(f)</code> &rarr; <code>func()</code>; <code>OnceValue(f)</code> &rarr; <code>func() T</code>; <code>OnceValues(f)</code> &rarr; <code>func() (T1, T2)</code>.</li>
+      <li>The wrapped function runs at most once even under concurrent calls; later calls return instantly.</li>
+      <li>If <code>f</code> panics, the panic is re-raised on the first call and every subsequent call also panics with the same value.</li>
+      <li>Assign the wrapper to a package-level <code>var</code> for lazy singletons &mdash; it captures no external mutable state.</li>
+    </ul>
+
+    <div class="exercise">
+      <div class="exercise-label">Practice Exercise</div>
+      <p>Replace a hand-written <code>sync.Once</code> singleton (e.g., a database handle) with <code>sync.OnceValues</code> that returns <code>(*sql.DB, error)</code>, so callers get the same connection <em>and</em> the same initialization error. Launch 100 goroutines that all call it and assert with <code>-race</code> that the init body ran exactly once. Then make the init function panic and confirm that every caller observes the panic, not a zero value.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>Pitfall:</strong> Re-creating the wrapper on every call. <code>sync.OnceValue(f)</code> only memoizes if you call the <em>same returned function</em> repeatedly. Writing <code>sync.OnceValue(load)()</code> inline each time builds a brand-new once-wrapper per call, so <code>load</code> runs every time. Store the wrapper once (package var or struct field) and reuse it.
+    </div>
+
+    <div class="connection">
+      <strong>Connections:</strong> These build directly on the <code>sync.Once</code> primitive from the <a href="#cmp_package">sync package</a> family and are the idiomatic modern way to express lazy initialization that older code did with package-level <code>Once</code> variables.
+    </div>
+  </div>
+
+  <h3 style="font-size:18px;margin:28px 0 18px;color:var(--muted);">Section 2 &mdash; Networking &amp; Security Tooling</h3>
+
+  <!-- New 4: net/netip -->
+  <div class="concept" id="net_netip">
+    <div class="concept-header">
+      <h3>net/netip: Modern IP Address Types</h3>
+      <span class="topic-badge">Networking</span>
+    </div>
+    <p class="why-matters">Why it matters: The classic <code>net.IP</code> is a <code>[]byte</code> slice &mdash; it allocates, is not comparable, can't be a map key, and has an ambiguous zero value. <code>net/netip</code> (Go 1.18+) replaces it with small, allocation-free <em>value</em> types: <code>Addr</code>, <code>AddrPort</code>, and <code>Prefix</code> are comparable and usable directly as map keys.</p>
+
+    <h4>Parsing and inspecting an address</h4>
+    <p><code>netip.Addr</code> is an immutable value. <code>ParseAddr</code> returns an error; <code>MustParseAddr</code> panics on bad input (use it only for constants/tests). Rich predicates like <code>Is4</code>, <code>IsPrivate</code>, and <code>IsLoopback</code> come for free.</p>
+<pre>package main
+
+import (
+    "fmt"
+    "net/netip"
+)
+
+func main() {
+    ip := netip.MustParseAddr("192.168.1.10")
+    fmt.Println(ip.Is4(), ip.IsPrivate(), ip.IsLoopback())
+
+    // Addr is comparable -> works as a map key, no allocation.
+    seen := map[netip.Addr]int{}
+    seen[ip]++
+    seen[ip]++
+    fmt.Println("hits:", seen[ip])
+}</pre>
+    <div class="output-label">Output</div>
+    <div class="output">true true false
+hits: 2</div>
+
+    <h4>CIDR membership with Prefix</h4>
+    <p><code>netip.Prefix</code> models a CIDR block; <code>Contains</code> answers "is this address inside the subnet?" &mdash; the workhorse of allow-lists and routing tables.</p>
+<pre>package main
+
+import (
+    "fmt"
+    "net/netip"
+)
+
+func main() {
+    private := netip.MustParsePrefix("10.0.0.0/8")
+
+    fmt.Println(private.Contains(netip.MustParseAddr("10.1.2.3"))) // inside
+    fmt.Println(private.Contains(netip.MustParseAddr("11.0.0.1"))) // outside
+
+    // AddrPort bundles an address with a port.
+    ap := netip.MustParseAddrPort("[2001:db8::1]:443")
+    fmt.Println(ap.Addr(), ap.Port())
+}</pre>
+    <div class="output-label">Output</div>
+    <div class="output">true
+false
+2001:db8::1 443</div>
+
+    <h4>Common Mistakes</h4>
+    <div class="do-dont">
+      <div class="dont-box">
+        <div class="label">Wrong</div>
+<pre>// net.IP: a []byte slice. Not comparable,
+// can't be a map key, allocates on parse.
+ip := net.ParseIP("10.0.0.1")
+m := map[string]int{ip.String(): 1} // stringify to key</pre>
+      </div>
+      <div class="do-box">
+        <div class="label">Right</div>
+<pre>// netip.Addr: a comparable value type.
+ip := netip.MustParseAddr("10.0.0.1")
+m := map[netip.Addr]int{ip: 1} // direct key</pre>
+      </div>
+    </div>
+
+    <h4>Key Rules</h4>
+    <ul class="rules-list">
+      <li><code>netip.Addr</code>/<code>AddrPort</code>/<code>Prefix</code> are small, immutable, comparable value types &mdash; no allocation, usable as map keys.</li>
+      <li>Use <code>ParseAddr</code> (returns <code>error</code>) for untrusted input; reserve <code>MustParseAddr</code> for constants and tests.</li>
+      <li><code>Prefix.Contains</code> does CIDR membership; <code>Addr.Is4</code>/<code>Is6</code>/<code>IsPrivate</code>/<code>IsLoopback</code> classify addresses.</li>
+      <li>Convert to/from the legacy API with <code>netip.AddrFromSlice</code> and <code>Addr.AsSlice</code> only at the boundary with older <code>net.IP</code> code.</li>
+    </ul>
+
+    <div class="exercise">
+      <div class="exercise-label">Practice Exercise</div>
+      <p>Build an IP allow-list checker that loads a set of CIDR strings into <code>[]netip.Prefix</code> and reports whether a request's <code>netip.Addr</code> matches any block. Then write a small rate-limiter keyed by <code>netip.Addr</code> (map of address &rarr; counter) and note how using the value type avoids the per-request string allocation of <code>net.IP.String()</code>. Handle IPv4-in-IPv6 forms with <code>Addr.Unmap</code>.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>Pitfall:</strong> Comparing a 4-in-6 mapped address (<code>::ffff:10.0.0.1</code>) directly against a pure IPv4 <code>Addr</code>. They are distinct <code>Addr</code> values and won't be equal, so map lookups miss. Normalize with <code>Addr.Unmap</code> (or <code>Is4In6</code> checks) before comparing or using addresses as keys.
+    </div>
+
+    <div class="connection">
+      <strong>Connections:</strong> <code>netip.Addr</code>'s comparability makes it a natural map key alongside the concurrency caches from earlier guides, and it is the recommended address type for any new <code>net</code>/<code>net/http</code> code you write.
+    </div>
+  </div>
+
+  <!-- New 5: govulncheck -->
+  <div class="concept" id="govulncheck">
+    <div class="concept-header">
+      <h3>govulncheck: Vulnerability Scanning</h3>
+      <span class="topic-badge">Security</span>
+    </div>
+    <p class="why-matters">Why it matters: Knowing a dependency <em>contains</em> a CVE is noisy; knowing your code actually <em>calls</em> the vulnerable function is actionable. <code>govulncheck</code> uses call-graph analysis against the official Go vulnerability database, so it reports only vulnerabilities reachable from your code &mdash; dramatically cutting false positives compared to manifest-only scanners.</p>
+
+    <h4>Install and run</h4>
+    <p>It is a standalone tool, not part of the <code>go</code> command. Install it once, then point it at your packages. <code>./...</code> scans the whole module.</p>
+<pre class="bash">go install golang.org/x/vuln/cmd/govulncheck@latest
+
+govulncheck ./...            # scan source (call-graph aware)
+govulncheck -mode=binary app # scan an already-built binary</pre>
+
+    <h4>Reading the output</h4>
+    <p>Each finding links to a <code>GO-...</code> advisory and shows the exact call stack that reaches the vulnerable symbol &mdash; that trace is what tells you the issue is real for <em>your</em> program, not just present in a dependency.</p>
+<pre class="bash">=== Symbol Results ===
+
+Vulnerability #1: GO-2024-2687
+    HTTP/2 CONTINUATION flood enables DoS in net/http
+  More info: https://pkg.go.dev/vuln/GO-2024-2687
+  Standard library
+    Found in: net/http@go1.21.4
+    Fixed in: net/http@go1.21.9
+    Example trace:
+      main.go:28:21: yourapp.serve calls http.ListenAndServe</pre>
+    <div class="output-label">Summary line</div>
+    <div class="output">Your code is affected by 1 vulnerability from the Go standard library.
+Fix by upgrading the Go toolchain to go1.21.9 or later.</div>
+
+    <h4>Common Mistakes</h4>
+    <div class="do-dont">
+      <div class="dont-box">
+        <div class="label">Wrong</div>
+<pre># Manifest-only scan: flags every CVE
+# in the dependency tree, even unused code.
+# Hundreds of "vulns" -> alert fatigue,
+# real issues get ignored.</pre>
+      </div>
+      <div class="do-box">
+        <div class="label">Right</div>
+<pre># Call-graph aware: only reports vulns
+# your code can actually reach.
+govulncheck ./...
+# few, high-signal findings to triage</pre>
+      </div>
+    </div>
+
+    <h4>Key Rules</h4>
+    <ul class="rules-list">
+      <li>Install separately (<code>go install golang.org/x/vuln/cmd/govulncheck@latest</code>); it is not bundled with <code>go</code>.</li>
+      <li>Source mode (<code>./...</code>) is call-graph aware and reports only <em>reachable</em> vulnerabilities; binary mode is coarser.</li>
+      <li>It covers both third-party modules <em>and</em> the standard library / toolchain version you build with.</li>
+      <li>A non-zero exit code on findings makes it a clean CI gate &mdash; run it on every PR.</li>
+    </ul>
+
+    <div class="exercise">
+      <div class="exercise-label">Practice Exercise</div>
+      <p>Pin an old, known-vulnerable dependency version in a throwaway module, run <code>govulncheck ./...</code>, and read the reported call trace to confirm reachability. Then add the function call that touches the vulnerable symbol and re-run to see the finding change from "imported" to "called." Finally, wire <code>govulncheck ./...</code> into a GitHub Actions step and verify the job fails when a vulnerability is reachable.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>Pitfall:</strong> Treating a clean <code>govulncheck</code> run as proof of total safety. It only knows about vulnerabilities <em>published</em> in the Go vuln database and analyzes static reachability &mdash; it can't see logic bugs, secrets in code, or issues reached only via reflection. Use it as one layer alongside <code>go vet</code>, static analysis, and dependency review, not a substitute for them.
+    </div>
+
+    <div class="connection">
+      <strong>Connections:</strong> <code>govulncheck</code> complements <a href="#module_management">module management</a> (it tells you <em>which</em> upgrade to make) and the <code>go vet</code>/<code>staticcheck</code> tooling, rounding out a production-grade CI quality gate.
+    </div>
+  </div>
+
+</div><!-- end New Concepts section -->
+
+
+<!-- ============================================================ -->
+<!-- FOOTER -->
+<!-- ============================================================ -->
+<footer class="footer">
+  <h4>All Go Guides</h4>
+  <ul>
+    <li><a href="golang-guides/golang-guide-2026-07-09.html">Day 34 &mdash; 2026-07-09</a></li>
+    <li><a href="golang-guides/golang-guide-2026-07-08.html">Day 33 &mdash; 2026-07-08</a></li>
+    <li><a href="golang-guides/golang-guide-2026-07-07.html">Day 32 &mdash; 2026-07-07</a></li>
+    <li><a href="golang-guides/golang-guide-2026-07-06.html">Day 31 &mdash; 2026-07-06</a></li>
+    <li><a href="golang-guides/golang-guide-2026-07-05.html">Day 30 &mdash; 2026-07-05</a></li>
+    <li><a href="golang-guides/golang-guide-2026-07-04.html">Day 29 &mdash; 2026-07-04</a></li>
+    <li><a href="golang-guides/golang-guide-2026-07-03.html">Day 28 &mdash; 2026-07-03</a></li>
+    <li><a href="golang-guides/golang-guide-2026-07-02.html">Day 27 &mdash; 2026-07-02</a></li>
+    <li><a href="golang-guides/golang-guide-2026-07-01.html">Day 26 &mdash; 2026-07-01</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-30.html">Day 25 &mdash; 2026-06-30</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-29.html">Day 24 &mdash; 2026-06-29</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-28.html">Day 23 &mdash; 2026-06-28</a></li>
+    <li class="current">Day 22 &mdash; 2026-06-27 (current)</li>
+    <li><a href="golang-guides/golang-guide-2026-06-26.html">Day 21 &mdash; 2026-06-26</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-25.html">Day 20 &mdash; 2026-06-25</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-24.html">Day 19 &mdash; 2026-06-24</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-23.html">Day 18 &mdash; 2026-06-23</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-22.html">Day 17 &mdash; 2026-06-22</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-21.html">Day 16 &mdash; 2026-06-21</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-19.html">Day 15 &mdash; 2026-06-19</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-18.html">Day 14 &mdash; 2026-06-18</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-17.html">Day 13 &mdash; 2026-06-17</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-15.html">Day 12 &mdash; 2026-06-15</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-13.html">Day 11 &mdash; 2026-06-13</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-12.html">Day 10 &mdash; 2026-06-12</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-11.html">Day 9 &mdash; 2026-06-11</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-10.html">Day 8 &mdash; 2026-06-10</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-09.html">Day 7 &mdash; 2026-06-09</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-08.html">Day 6 &mdash; 2026-06-08</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-07.html">Day 5 &mdash; 2026-06-07</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-05.html">Day 4 &mdash; 2026-06-05</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-04.html">Day 3 &mdash; 2026-06-04</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-03.html">Day 2 &mdash; 2026-06-03</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-02.html">Day 1 &mdash; 2026-06-02</a></li>
+  </ul>
+
+  <h4 style="margin-top: 20px;">All Guides</h4>
+  <ul>
+    <li><a href="guide.html">LeetCode Study Guide</a></li>
+    <li><a href="lang-guide.html">Multi-Language Guide</a></li>
+    <li><a href="python-guide.html">Python Guide</a></li>
+    <li><a href="typescript-guide.html">TypeScript Guide</a></li>
+    <li><a href="javascript-guide.html">JavaScript Guide</a></li>
+    <li><a href="golang-guide.html">Go Guide (current)</a></li>
+    <li><a href="report.html">Performance Report</a></li>
+  </ul>
+</footer>
+
+</div><!-- end main -->
+
+<script>
+// ===== Theme Toggle =====
+(function() {
+  var KEY = 'lc-goguide-theme';
+  var toggle = document.getElementById('theme-toggle');
+  var html = document.documentElement;
+
+  function setTheme(theme) {
+    html.setAttribute('data-theme', theme);
+    localStorage.setItem(KEY, theme);
+    toggle.textContent = theme === 'dark' ? '☽' : '☀';
+  }
+
+  var saved = localStorage.getItem(KEY) || 'dark';
+  setTheme(saved);
+
+  toggle.addEventListener('click', function() {
+    setTheme(html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
+  });
+})();
+
+// ===== Mobile Sidebar Toggle =====
+(function() {
+  var btn = document.getElementById('sidebar-toggle');
+  var sidebar = document.getElementById('sidebar');
+
+  btn.addEventListener('click', function() {
+    sidebar.classList.toggle('open');
+  });
+
+  // Close sidebar when clicking a link (mobile)
+  sidebar.querySelectorAll('.sidebar-link').forEach(function(link) {
+    link.addEventListener('click', function() {
+      if (window.innerWidth <= 900) {
+        sidebar.classList.remove('open');
+      }
+    });
+  });
+})();
+
+// ===== Active Sidebar Link on Scroll =====
+(function() {
+  var links = document.querySelectorAll('.sidebar-link');
+  var sections = [];
+
+  links.forEach(function(link) {
+    var id = link.getAttribute('href').replace('#', '');
+    var el = document.getElementById(id);
+    if (el) sections.push({ id: id, el: el, link: link });
+  });
+
+  function onScroll() {
+    var scrollTop = window.scrollY + 120;
+    var current = null;
+
+    for (var i = sections.length - 1; i >= 0; i--) {
+      if (sections[i].el.offsetTop <= scrollTop) {
+        current = sections[i];
+        break;
+      }
+    }
+
+    links.forEach(function(l) { l.classList.remove('active'); });
+    if (current) current.link.classList.add('active');
+  }
+
+  window.addEventListener('scroll', onScroll);
+  onScroll();
+})();
+</script>
+</body>
+</html>

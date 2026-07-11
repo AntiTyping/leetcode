@@ -1,0 +1,2577 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Go Study Guide &mdash; Day 2 (2026-06-03)</title>
+<style>
+/* ===== CSS Variables ===== */
+:root {
+  --bg: #0d1117;
+  --surface1: #161b22;
+  --surface2: #1c2333;
+  --border: #30363d;
+  --text: #e6edf3;
+  --muted: #8b949e;
+  --accent: #58a6ff;
+  --accent-dim: #1f6feb33;
+  --green: #3fb950;
+  --green-dim: #23863633;
+  --yellow: #d29922;
+  --yellow-dim: #d2992233;
+  --red: #f85149;
+  --red-dim: #f8514933;
+  --purple: #bc8cff;
+  --purple-dim: #bc8cff22;
+  --orange: #f0883e;
+  --orange-dim: #f0883e22;
+  --code-bg: #0d1117;
+  --sidebar-w: 300px;
+  --font-mono: 'SF Mono', 'Cascadia Code', 'Fira Code', Consolas, monospace;
+  --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+  --radius: 8px;
+  --shadow: 0 1px 3px rgba(0,0,0,0.4);
+}
+
+[data-theme="light"] {
+  --bg: #ffffff;
+  --surface1: #f6f8fa;
+  --surface2: #f0f3f6;
+  --border: #d0d7de;
+  --text: #1f2328;
+  --muted: #656d76;
+  --accent: #0969da;
+  --accent-dim: #0969da1a;
+  --green: #1a7f37;
+  --green-dim: #1a7f3718;
+  --yellow: #9a6700;
+  --yellow-dim: #9a670018;
+  --red: #cf222e;
+  --red-dim: #cf222e18;
+  --purple: #8250df;
+  --purple-dim: #8250df18;
+  --orange: #bc4c00;
+  --orange-dim: #bc4c0018;
+  --code-bg: #f6f8fa;
+  --shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+/* ===== Reset & Base ===== */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: var(--font-sans);
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.7;
+  font-size: 16px;
+  transition: background 0.2s, color 0.2s;
+}
+
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+/* ===== Theme Toggle ===== */
+#theme-toggle {
+  position: fixed;
+  top: 16px;
+  right: 20px;
+  z-index: 1000;
+  background: var(--surface1);
+  border: 1px solid var(--border);
+  color: var(--text);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+  box-shadow: var(--shadow);
+}
+#theme-toggle:hover { background: var(--surface2); border-color: var(--accent); }
+
+/* ===== Sidebar ===== */
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: var(--sidebar-w);
+  height: 100vh;
+  background: var(--surface1);
+  border-right: 1px solid var(--border);
+  overflow-y: auto;
+  padding: 20px 0;
+  z-index: 100;
+  transition: transform 0.3s;
+}
+
+.sidebar-header {
+  padding: 0 20px 16px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 12px;
+}
+
+.sidebar-header h2 {
+  font-size: 16px;
+  color: var(--text);
+  font-weight: 700;
+}
+
+.sidebar-header .subtitle {
+  font-size: 12px;
+  color: var(--muted);
+  margin-top: 2px;
+}
+
+.sidebar-section {
+  margin-bottom: 8px;
+}
+
+.sidebar-section-title {
+  padding: 6px 20px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+}
+
+.sidebar-link {
+  display: block;
+  padding: 5px 20px 5px 28px;
+  font-size: 13px;
+  color: var(--muted);
+  text-decoration: none;
+  border-left: 2px solid transparent;
+  transition: all 0.15s;
+  line-height: 1.4;
+}
+
+.sidebar-link:hover {
+  color: var(--text);
+  background: var(--accent-dim);
+  border-left-color: var(--accent);
+  text-decoration: none;
+}
+
+.sidebar-link.active {
+  color: var(--accent);
+  border-left-color: var(--accent);
+  background: var(--accent-dim);
+}
+
+/* ===== Mobile sidebar toggle ===== */
+#sidebar-toggle {
+  display: none;
+  position: fixed;
+  top: 16px;
+  left: 16px;
+  z-index: 200;
+  background: var(--surface1);
+  border: 1px solid var(--border);
+  color: var(--text);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 20px;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--shadow);
+}
+
+/* ===== Main Content ===== */
+.main {
+  margin-left: var(--sidebar-w);
+  padding: 40px 48px 80px;
+  max-width: calc(860px + var(--sidebar-w) + 96px);
+}
+
+.page-title {
+  font-size: 32px;
+  font-weight: 800;
+  margin-bottom: 4px;
+  color: var(--text);
+}
+
+.page-subtitle {
+  font-size: 15px;
+  color: var(--muted);
+  margin-bottom: 36px;
+}
+
+/* ===== Sections ===== */
+.section {
+  margin-bottom: 48px;
+}
+
+.section-label {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  padding: 3px 10px;
+  border-radius: 4px;
+  margin-bottom: 12px;
+}
+
+.section-label.review { background: var(--yellow-dim); color: var(--yellow); }
+.section-label.new { background: var(--green-dim); color: var(--green); }
+
+.section-title {
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 24px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--border);
+}
+
+/* ===== How To Use ===== */
+.how-to-use {
+  background: var(--surface1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px 24px;
+  margin-bottom: 36px;
+}
+
+.how-to-use h3 {
+  font-size: 16px;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.how-to-use ul {
+  padding-left: 22px;
+  margin: 0;
+}
+
+.how-to-use li {
+  font-size: 14px;
+  color: var(--muted);
+  margin-bottom: 4px;
+}
+
+/* ===== Concept Cards ===== */
+.concept {
+  background: var(--surface1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 28px;
+  margin-bottom: 28px;
+  box-shadow: var(--shadow);
+}
+
+.concept-header {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  margin-bottom: 6px;
+  flex-wrap: wrap;
+}
+
+.concept h3 {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.concept-meta {
+  font-size: 12px;
+  color: var(--muted);
+  background: var(--surface2);
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
+.concept h4 {
+  font-size: 15px;
+  font-weight: 600;
+  margin: 20px 0 8px;
+  color: var(--text);
+}
+
+.concept p, .concept li {
+  color: var(--text);
+  line-height: 1.7;
+}
+
+.concept ul, .concept ol {
+  padding-left: 22px;
+  margin: 8px 0;
+}
+
+.concept li {
+  margin-bottom: 4px;
+}
+
+/* ===== Code Blocks ===== */
+pre {
+  background: var(--code-bg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 16px 18px;
+  overflow-x: auto;
+  margin: 10px 0 14px;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--text);
+  position: relative;
+}
+
+code {
+  font-family: var(--font-mono);
+  font-size: 0.9em;
+}
+
+:not(pre) > code {
+  background: var(--surface2);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.88em;
+}
+
+/* ===== Output Blocks ===== */
+.output {
+  background: var(--green-dim);
+  border: 1px solid var(--green);
+  border-radius: 6px;
+  padding: 12px 16px;
+  margin: 6px 0 14px;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--text);
+  white-space: pre-wrap;
+}
+
+.output-label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--green);
+  margin-bottom: 4px;
+}
+
+/* ===== Good/Bad Examples ===== */
+.do-dont {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin: 10px 0;
+}
+
+.do-box, .dont-box {
+  border-radius: 6px;
+  padding: 14px;
+  border: 1px solid;
+}
+
+.do-box {
+  background: var(--green-dim);
+  border-color: var(--green);
+}
+
+.dont-box {
+  background: var(--red-dim);
+  border-color: var(--red);
+}
+
+.do-box .label, .dont-box .label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 6px;
+}
+
+.do-box .label { color: var(--green); }
+.dont-box .label { color: var(--red); }
+
+.do-box pre, .dont-box pre {
+  margin: 0;
+  border: none;
+  background: transparent;
+  padding: 0;
+  font-size: 12.5px;
+}
+
+/* ===== Key Rules ===== */
+.rules-list {
+  list-style: none;
+  padding: 0;
+  margin: 8px 0;
+}
+
+.rules-list li {
+  padding: 6px 0 6px 24px;
+  position: relative;
+}
+
+.rules-list li::before {
+  content: "\2192";
+  position: absolute;
+  left: 2px;
+  color: var(--accent);
+  font-weight: 700;
+}
+
+/* ===== Exercises ===== */
+.exercise {
+  background: var(--purple-dim);
+  border: 1px solid var(--purple);
+  border-radius: 6px;
+  padding: 14px 18px;
+  margin: 8px 0;
+}
+
+.exercise .exercise-label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--purple);
+  margin-bottom: 4px;
+}
+
+/* ===== Pitfall ===== */
+.pitfall {
+  background: var(--red-dim);
+  border-left: 3px solid var(--red);
+  border-radius: 0 6px 6px 0;
+  padding: 10px 14px;
+  margin: 10px 0;
+  font-size: 14px;
+}
+
+.pitfall strong {
+  color: var(--red);
+}
+
+/* ===== Connection ===== */
+.connection {
+  background: var(--accent-dim);
+  border-left: 3px solid var(--accent);
+  border-radius: 0 6px 6px 0;
+  padding: 10px 14px;
+  margin: 10px 0;
+  font-size: 14px;
+  color: var(--muted);
+}
+
+/* ===== Review Cards ===== */
+.review-card {
+  background: var(--surface1);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--yellow);
+  border-radius: var(--radius);
+  padding: 20px 24px;
+  margin-bottom: 16px;
+  box-shadow: var(--shadow);
+}
+
+.review-card .review-header {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  margin-bottom: 6px;
+  flex-wrap: wrap;
+}
+
+.review-card h3 {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.review-card .review-meta {
+  font-size: 12px;
+  color: var(--muted);
+  background: var(--surface2);
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
+.review-card h4 {
+  font-size: 14px;
+  font-weight: 600;
+  margin: 14px 0 6px;
+  color: var(--text);
+}
+
+.review-card p, .review-card li {
+  color: var(--text);
+  line-height: 1.6;
+  font-size: 14px;
+}
+
+.review-card pre {
+  font-size: 12.5px;
+  padding: 12px 14px;
+  margin: 6px 0 10px;
+}
+
+.review-card .pitfall {
+  font-size: 13px;
+  padding: 8px 12px;
+}
+
+/* ===== Footer ===== */
+.footer {
+  margin-top: 60px;
+  padding: 24px 0;
+  border-top: 1px solid var(--border);
+}
+
+.footer h4 {
+  font-size: 14px;
+  color: var(--muted);
+  margin-bottom: 10px;
+}
+
+.footer ul {
+  list-style: none;
+  padding: 0;
+}
+
+.footer li {
+  margin-bottom: 4px;
+  font-size: 14px;
+}
+
+.footer li a { color: var(--accent); }
+.footer .current { color: var(--green); font-weight: 600; }
+
+/* ===== Responsive ===== */
+@media (max-width: 900px) {
+  .sidebar {
+    transform: translateX(-100%);
+  }
+  .sidebar.open {
+    transform: translateX(0);
+    box-shadow: 4px 0 20px rgba(0,0,0,0.5);
+  }
+  #sidebar-toggle {
+    display: flex;
+  }
+  .main {
+    margin-left: 0;
+    padding: 60px 20px 60px;
+    max-width: 100%;
+  }
+  .do-dont {
+    grid-template-columns: 1fr;
+  }
+  #theme-toggle {
+    right: 14px;
+    top: 16px;
+  }
+}
+</style>
+</head>
+<body>
+
+<!-- Theme Toggle -->
+<button id="theme-toggle" aria-label="Toggle theme" title="Toggle light/dark theme">&#9789;</button>
+
+<!-- Mobile Sidebar Toggle -->
+<button id="sidebar-toggle" aria-label="Toggle sidebar">&#9776;</button>
+
+<!-- Sidebar -->
+<nav class="sidebar" id="sidebar">
+  <div class="sidebar-header">
+    <h2>Go Guide</h2>
+    <div class="subtitle">Day 2 &mdash; 2026-06-03</div>
+  </div>
+
+  <div class="sidebar-section">
+    <div class="sidebar-section-title">Review (6 concepts)</div>
+    <a href="#review-slices-deep-dive" class="sidebar-link">Slices Deep Dive</a>
+    <a href="#review-maps" class="sidebar-link">Maps</a>
+    <a href="#review-strings-runes" class="sidebar-link">Strings &amp; Runes</a>
+    <a href="#review-structs-methods" class="sidebar-link">Structs &amp; Methods</a>
+    <a href="#review-pointers" class="sidebar-link">Pointers</a>
+    <a href="#review-error-handling" class="sidebar-link">Error Handling</a>
+  </div>
+
+  <div class="sidebar-section">
+    <div class="sidebar-section-title">New: Functions &amp; Control Flow (6)</div>
+    <a href="#first-class-functions" class="sidebar-link">First-class Functions</a>
+    <a href="#defer-panic-recover" class="sidebar-link">Defer, Panic, Recover</a>
+    <a href="#init-functions" class="sidebar-link">Init Functions</a>
+    <a href="#variadic-functions" class="sidebar-link">Variadic Functions</a>
+    <a href="#generics-basics" class="sidebar-link">Type Parameters (Generics)</a>
+    <a href="#multiple-return-values" class="sidebar-link">Multiple Return Values</a>
+  </div>
+</nav>
+
+<!-- Main Content -->
+<div class="main">
+
+<h1 class="page-title">Go Daily Guide</h1>
+<p class="page-subtitle">Day 2 &mdash; Tuesday, June 3, 2026 &bull; 6 review + 6 new concepts</p>
+
+<!-- How to Use -->
+<div class="how-to-use">
+  <h3>How to Use This Guide</h3>
+  <ul>
+    <li>Start with the <strong>Review</strong> section &mdash; try to recall each concept before reading the refresher</li>
+    <li>Complete the challenge exercise for each review card without looking back at Day 1</li>
+    <li>Then work through the <strong>New Concepts</strong> section, typing out every code example yourself</li>
+    <li>Pay special attention to the common mistakes sections (they highlight real Go gotchas)</li>
+    <li>Complete the exercises at the bottom of each concept without looking at solutions</li>
+    <li>Use <code>go run main.go</code> to test your code locally, or use the <a href="https://go.dev/play/" target="_blank">Go Playground</a></li>
+  </ul>
+</div>
+
+<!-- ============================================================ -->
+<!-- REVIEW SECTION -->
+<!-- ============================================================ -->
+<div class="section">
+  <span class="section-label review">Review</span>
+  <h2 class="section-title">Spaced Repetition Review &mdash; 6 Concepts from Day 1</h2>
+
+  <!-- Review 1: Slices Deep Dive -->
+  <div class="review-card" id="review-slices-deep-dive">
+    <div class="review-header">
+      <h3>Slices Deep Dive</h3>
+      <span class="review-meta">Go Foundations &bull; 1 day ago</span>
+    </div>
+
+    <h4>Quick Reminder</h4>
+    <p>Slices are dynamic views into backing arrays with three components: pointer, length, and capacity. When <code>append</code> exceeds capacity, a new backing array is allocated.</p>
+
+    <h4>Key Pattern</h4>
+<pre>// Pre-allocate, then append — avoids repeated allocations
+result := make([]int, 0, len(input))
+for _, v := range input {
+    if v > 0 {
+        result = append(result, v)
+    }
+}
+// Three-index slice for safe sub-slicing
+safe := original[1:4:4] // cap limited — append won't corrupt original</pre>
+
+    <div class="exercise">
+      <div class="exercise-label">Challenge Exercise</div>
+      <p>Write a function <code>Compact(s []int) []int</code> that removes all zero values from a slice <strong>in-place</strong> (reusing the original backing array, no new allocation). Return the shortened slice. For input <code>[]int{0, 1, 0, 2, 3, 0, 4}</code>, expect <code>[1 2 3 4]</code>.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>#1 Pitfall:</strong> Forgetting to reassign <code>append</code> &mdash; <code>append(s, v)</code> without <code>s = append(s, v)</code> silently discards the result.
+    </div>
+  </div>
+
+  <!-- Review 2: Maps -->
+  <div class="review-card" id="review-maps">
+    <div class="review-header">
+      <h3>Maps</h3>
+      <span class="review-meta">Go Foundations &bull; 1 day ago</span>
+    </div>
+
+    <h4>Quick Reminder</h4>
+    <p>Maps are reference-type hash tables with O(1) average access. A nil map allows reads (returning zero values) but panics on writes. Use comma-ok to distinguish "missing" from "zero value."</p>
+
+    <h4>Key Pattern</h4>
+<pre>// Comma-ok pattern for safe lookup
+if val, ok := m[key]; ok {
+    // key exists, use val
+} else {
+    // key is missing
+}
+
+// Map of slices for grouping
+groups := make(map[string][]int)
+groups[key] = append(groups[key], value)</pre>
+
+    <div class="exercise">
+      <div class="exercise-label">Challenge Exercise</div>
+      <p>Write a function <code>Intersect(a, b map[string]int) map[string]int</code> that returns a new map containing only keys present in <strong>both</strong> input maps. If a key exists in both, use the value from map <code>a</code>. For <code>a = map[string]int{"x": 1, "y": 2, "z": 3}</code> and <code>b = map[string]int{"y": 20, "z": 30, "w": 40}</code>, expect <code>map[y:2 z:3]</code>.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>#1 Pitfall:</strong> Writing to a nil map &mdash; <code>var m map[string]int; m["key"] = 1</code> panics. Always initialize with <code>make()</code> or a literal.
+    </div>
+  </div>
+
+  <!-- Review 3: Strings & Runes -->
+  <div class="review-card" id="review-strings-runes">
+    <div class="review-header">
+      <h3>Strings &amp; Runes</h3>
+      <span class="review-meta">Go Foundations &bull; 1 day ago</span>
+    </div>
+
+    <h4>Quick Reminder</h4>
+    <p>Go strings are immutable byte sequences encoded as UTF-8. <code>len(s)</code> counts bytes, not characters. Use <code>[]rune(s)</code> for character-level operations and <code>strings.Builder</code> for efficient concatenation in loops.</p>
+
+    <h4>Key Pattern</h4>
+<pre>// Unicode-safe character iteration
+for i, r := range s {
+    fmt.Printf("index=%d rune=%c\n", i, r)
+}
+
+// Efficient string building
+var b strings.Builder
+for _, word := range words {
+    b.WriteString(word)
+    b.WriteByte(' ')
+}
+result := b.String()</pre>
+
+    <div class="exercise">
+      <div class="exercise-label">Challenge Exercise</div>
+      <p>Write a function <code>Truncate(s string, maxRunes int) string</code> that truncates a string to at most <code>maxRunes</code> characters (not bytes) and appends "..." if it was truncated. For <code>Truncate("Hello, World!", 5)</code> expect <code>"Hello..."</code>. Must handle multi-byte characters correctly.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>#1 Pitfall:</strong> Using <code>len(s)</code> to count characters &mdash; it counts bytes. A 4-byte emoji has <code>len() == 4</code> but is 1 rune.
+    </div>
+  </div>
+
+  <!-- Review 4: Structs & Methods -->
+  <div class="review-card" id="review-structs-methods">
+    <div class="review-header">
+      <h3>Structs &amp; Methods</h3>
+      <span class="review-meta">Go Foundations &bull; 1 day ago</span>
+    </div>
+
+    <h4>Quick Reminder</h4>
+    <p>Structs group named fields into custom types. Methods with pointer receivers can modify the struct; value receivers work on copies. Embedding promotes methods for composition (not inheritance).</p>
+
+    <h4>Key Pattern</h4>
+<pre>type Account struct {
+    Owner   string
+    Balance float64
+}
+
+// Pointer receiver — modifies the original
+func (a *Account) Deposit(amount float64) {
+    a.Balance += amount
+}
+
+// Value receiver — read-only, works on a copy
+func (a Account) String() string {
+    return fmt.Sprintf("%s: $%.2f", a.Owner, a.Balance)
+}</pre>
+
+    <div class="exercise">
+      <div class="exercise-label">Challenge Exercise</div>
+      <p>Create a <code>Counter</code> struct with an unexported <code>count int</code> field. Add methods <code>Increment()</code>, <code>Decrement()</code>, <code>Reset()</code>, and <code>Value() int</code>. Ensure <code>Decrement</code> never lets the count go below zero. Decide which methods need pointer receivers and why.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>#1 Pitfall:</strong> Using a value receiver when you need to mutate the struct &mdash; changes are silently lost because the method operates on a copy.
+    </div>
+  </div>
+
+  <!-- Review 5: Pointers -->
+  <div class="review-card" id="review-pointers">
+    <div class="review-header">
+      <h3>Pointers</h3>
+      <span class="review-meta">Go Foundations &bull; 1 day ago</span>
+    </div>
+
+    <h4>Quick Reminder</h4>
+    <p>Pointers hold memory addresses. Use <code>&amp;</code> to get the address, <code>*</code> to dereference. Go auto-dereferences struct field access through pointers. No pointer arithmetic. Use pointers for mutation and large structs; avoid for small value types, maps, and slices.</p>
+
+    <h4>Key Pattern</h4>
+<pre>// Constructor pattern — return pointer to new struct
+func NewServer(host string, port int) *Server {
+    return &Server{Host: host, Port: port}
+}
+
+// nil-safe method
+func (s *Server) Addr() string {
+    if s == nil {
+        return "&lt;nil&gt;"
+    }
+    return fmt.Sprintf("%s:%d", s.Host, s.Port)
+}</pre>
+
+    <div class="exercise">
+      <div class="exercise-label">Challenge Exercise</div>
+      <p>Write a function <code>Filter(head *Node, predicate func(int) bool) *Node</code> that takes a singly linked list and returns a new list containing only nodes where <code>predicate</code> returns true. The original list must remain unchanged. Use <code>Node{Value int, Next *Node}</code>.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>#1 Pitfall:</strong> Dereferencing a nil pointer &mdash; causes a runtime panic. Always check <code>if p != nil</code> before accessing <code>*p</code> or <code>p.Field</code>.
+    </div>
+  </div>
+
+  <!-- Review 6: Error Handling -->
+  <div class="review-card" id="review-error-handling">
+    <div class="review-header">
+      <h3>Error Handling</h3>
+      <span class="review-meta">Go Foundations &bull; 1 day ago</span>
+    </div>
+
+    <h4>Quick Reminder</h4>
+    <p>Go uses explicit error returns instead of exceptions. Wrap errors with <code>fmt.Errorf("context: %w", err)</code> to preserve the chain. Use <code>errors.Is</code> and <code>errors.As</code> to inspect wrapped errors.</p>
+
+    <h4>Key Pattern</h4>
+<pre>// Wrap with context, use %w to preserve chain
+func fetchUser(id int) (*User, error) {
+    row, err := db.Query(id)
+    if err != nil {
+        return nil, fmt.Errorf("fetchUser(%d): %w", id, err)
+    }
+    return parseRow(row)
+}
+
+// Check sentinel errors through wrap chain
+if errors.Is(err, ErrNotFound) {
+    // handle not found
+}</pre>
+
+    <div class="exercise">
+      <div class="exercise-label">Challenge Exercise</div>
+      <p>Define a <code>MultiError</code> struct that collects multiple errors (a <code>[]error</code> field). Implement the <code>error</code> interface to display all collected errors. Add an <code>Add(err error)</code> method and an <code>Err() error</code> method that returns nil if no errors were collected, or the <code>*MultiError</code> otherwise. Test by collecting 3 errors and printing the result.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>#1 Pitfall:</strong> Using <code>%v</code> instead of <code>%w</code> in <code>fmt.Errorf</code> &mdash; breaks the error chain so <code>errors.Is</code> and <code>errors.As</code> stop working.
+    </div>
+  </div>
+
+</div><!-- end review section -->
+
+<!-- ============================================================ -->
+<!-- NEW CONCEPTS: FUNCTIONS & CONTROL FLOW -->
+<!-- ============================================================ -->
+<div class="section">
+  <span class="section-label new">New</span>
+  <h2 class="section-title">Functions &amp; Control Flow &mdash; 6 Concepts</h2>
+
+  <!-- ========== CONCEPT 1: First-class Functions ========== -->
+  <div class="concept" id="first-class-functions">
+    <div class="concept-header">
+      <h3>First-class Functions</h3>
+      <span class="concept-meta">Functions &amp; Control Flow &bull; New</span>
+    </div>
+
+    <p>In Go, functions are first-class values: they can be assigned to variables, passed as arguments, and returned from other functions. This enables powerful patterns like callbacks, middleware, and factory functions.</p>
+
+    <h4>Function Types &amp; Variables</h4>
+<pre>package main
+
+import "fmt"
+
+// Declare a function type
+type MathFunc func(int, int) int
+
+func add(a, b int) int { return a + b }
+func mul(a, b int) int { return a * b }
+
+func main() {
+    // Assign function to a variable
+    var op MathFunc = add
+    fmt.Println("add(3, 4):", op(3, 4))
+
+    op = mul
+    fmt.Println("mul(3, 4):", op(3, 4))
+
+    // Functions in a map
+    ops := map[string]MathFunc{
+        "+": add,
+        "*": mul,
+    }
+    fmt.Println("ops[\"+\"](10, 5):", ops["+"](10, 5))
+    fmt.Println("ops[\"*\"](10, 5):", ops["*"](10, 5))
+}</pre>
+    <div class="output">
+      <div class="output-label">Output</div>
+add(3, 4): 7
+mul(3, 4): 12
+ops["+"](10, 5): 15
+ops["*"](10, 5): 50
+    </div>
+
+    <h4>Anonymous Functions (Function Literals)</h4>
+<pre>package main
+
+import "fmt"
+
+func main() {
+    // Anonymous function assigned to variable
+    double := func(n int) int {
+        return n * 2
+    }
+    fmt.Println("double(5):", double(5))
+
+    // Immediately invoked function expression (IIFE)
+    result := func(a, b int) int {
+        return a + b
+    }(10, 20)
+    fmt.Println("IIFE result:", result)
+
+    // Anonymous function in a slice
+    transforms := []func(int) int{
+        func(n int) int { return n * 2 },
+        func(n int) int { return n + 10 },
+        func(n int) int { return n * n },
+    }
+
+    val := 3
+    for _, fn := range transforms {
+        val = fn(val)
+    }
+    fmt.Println("After transforms:", val) // 3 -> 6 -> 16 -> 256
+}</pre>
+    <div class="output">
+      <div class="output-label">Output</div>
+double(5): 10
+IIFE result: 30
+After transforms: 256
+    </div>
+
+    <h4>Closures: Capturing Variables</h4>
+<pre>package main
+
+import "fmt"
+
+func makeCounter() func() int {
+    count := 0 // captured by the returned function
+    return func() int {
+        count++
+        return count
+    }
+}
+
+func main() {
+    counter1 := makeCounter()
+    counter2 := makeCounter() // independent counter
+
+    fmt.Println("c1:", counter1()) // 1
+    fmt.Println("c1:", counter1()) // 2
+    fmt.Println("c1:", counter1()) // 3
+    fmt.Println("c2:", counter2()) // 1 — separate state
+    fmt.Println("c2:", counter2()) // 2
+}</pre>
+    <div class="output">
+      <div class="output-label">Output</div>
+c1: 1
+c1: 2
+c1: 3
+c2: 1
+c2: 2
+    </div>
+
+    <div class="pitfall">
+      <strong>Closure variable capture:</strong> Closures capture variables <em>by reference</em>, not by value. If the outer variable changes, the closure sees the new value. This is especially dangerous in loops &mdash; all iterations share the same variable (in Go &lt; 1.22).
+    </div>
+
+    <h4>Callbacks: Passing Functions as Parameters</h4>
+<pre>package main
+
+import (
+    "fmt"
+    "sort"
+)
+
+// Apply calls fn on each element and returns results
+func Apply(nums []int, fn func(int) int) []int {
+    result := make([]int, len(nums))
+    for i, v := range nums {
+        result[i] = fn(v)
+    }
+    return result
+}
+
+// Filter returns elements where predicate is true
+func Filter(nums []int, predicate func(int) bool) []int {
+    result := make([]int, 0)
+    for _, v := range nums {
+        if predicate(v) {
+            result = append(result, v)
+        }
+    }
+    return result
+}
+
+func main() {
+    nums := []int{1, 2, 3, 4, 5, 6, 7, 8, 9, 10}
+
+    doubled := Apply(nums, func(n int) int { return n * 2 })
+    fmt.Println("Doubled:", doubled)
+
+    evens := Filter(nums, func(n int) bool { return n%2 == 0 })
+    fmt.Println("Evens:", evens)
+
+    // sort.Slice uses a comparison callback
+    words := []string{"banana", "apple", "cherry", "date"}
+    sort.Slice(words, func(i, j int) bool {
+        return len(words[i]) < len(words[j])
+    })
+    fmt.Println("Sorted by length:", words)
+}</pre>
+    <div class="output">
+      <div class="output-label">Output</div>
+Doubled: [2 4 6 8 10 12 14 16 18 20]
+Evens: [2 4 6 8 10]
+Sorted by length: [date apple banana cherry]
+    </div>
+
+    <h4>Factory Pattern: Returning Functions</h4>
+<pre>package main
+
+import (
+    "fmt"
+    "strings"
+)
+
+// Factory: returns a function configured by the parameter
+func makeGreeter(greeting string) func(string) string {
+    return func(name string) string {
+        return fmt.Sprintf("%s, %s!", greeting, name)
+    }
+}
+
+// Multiplier factory
+func multiplier(factor int) func(int) int {
+    return func(n int) int {
+        return n * factor
+    }
+}
+
+// Middleware-style: wraps a function with logging
+func withPrefix(prefix string, fn func(string) string) func(string) string {
+    return func(s string) string {
+        result := fn(s)
+        return fmt.Sprintf("[%s] %s", prefix, result)
+    }
+}
+
+func main() {
+    hello := makeGreeter("Hello")
+    bonjour := makeGreeter("Bonjour")
+    fmt.Println(hello("Alice"))
+    fmt.Println(bonjour("Bob"))
+
+    triple := multiplier(3)
+    fmt.Println("triple(7):", triple(7))
+
+    upper := func(s string) string { return strings.ToUpper(s) }
+    logged := withPrefix("INFO", upper)
+    fmt.Println(logged("hello world"))
+}</pre>
+    <div class="output">
+      <div class="output-label">Output</div>
+Hello, Alice!
+Bonjour, Bob!
+triple(7): 21
+[INFO] HELLO WORLD
+    </div>
+
+    <h4>Common Mistakes</h4>
+    <div class="do-dont">
+      <div class="do-box">
+        <div class="label">Do: Capture loop var safely</div>
+<pre>for _, v := range items {
+    v := v // shadow for closure safety
+    go func() { process(v) }()
+}</pre>
+      </div>
+      <div class="dont-box">
+        <div class="label">Don't: Capture loop var directly (Go &lt; 1.22)</div>
+<pre>for _, v := range items {
+    go func() { process(v) }()
+    // all goroutines see the LAST v!
+}</pre>
+      </div>
+    </div>
+    <div class="do-dont">
+      <div class="do-box">
+        <div class="label">Do: Use named types for complex signatures</div>
+<pre>type Handler func(req Request) Response
+func middleware(h Handler) Handler { ... }</pre>
+      </div>
+      <div class="dont-box">
+        <div class="label">Don't: Deeply nested inline signatures</div>
+<pre>func f(fn func(func(int) int) func(int) int) { ... }
+// unreadable!</pre>
+      </div>
+    </div>
+
+    <h4>Key Rules</h4>
+    <ul class="rules-list">
+      <li>Functions are values: assign them to variables, pass as arguments, return from functions</li>
+      <li>Closures capture variables by reference &mdash; be cautious in loops (shadow or use Go 1.22+)</li>
+      <li>Use named function types (<code>type MathFunc func(int, int) int</code>) for readability</li>
+    </ul>
+
+    <div class="connection">
+      <strong>Connection:</strong> First-class functions enable the <em>Defer, Panic, Recover</em> pattern (deferred functions are closures). <em>Variadic Functions</em> can be combined with function parameters for flexible APIs. The sort package (<em>Slices</em>) relies heavily on comparison callbacks.
+    </div>
+
+    <div class="exercise">
+      <div class="exercise-label">Exercise 1</div>
+      <p>Write a <code>Compose(f, g func(int) int) func(int) int</code> function that returns a new function applying <code>f(g(x))</code>. Test by composing <code>double</code> and <code>addOne</code> functions.</p>
+    </div>
+    <div class="exercise">
+      <div class="exercise-label">Exercise 2</div>
+      <p>Implement a <code>Reduce(nums []int, initial int, fn func(acc, val int) int) int</code> function. Use it to compute the sum and product of <code>[]int{1, 2, 3, 4, 5}</code>.</p>
+    </div>
+    <div class="exercise">
+      <div class="exercise-label">Exercise 3</div>
+      <p>Build a pipeline: write <code>Pipeline(fns ...func(string) string) func(string) string</code> that chains all functions together. Test with <code>strings.TrimSpace</code>, <code>strings.ToUpper</code>, and a custom function that adds exclamation marks.</p>
+    </div>
+  </div>
+
+  <!-- ========== CONCEPT 2: Defer, Panic, Recover ========== -->
+  <div class="concept" id="defer-panic-recover">
+    <div class="concept-header">
+      <h3>Defer, Panic, Recover</h3>
+      <span class="concept-meta">Functions &amp; Control Flow &bull; New</span>
+    </div>
+
+    <p>Go's <code>defer</code> statement schedules a function call to run when the surrounding function returns. Combined with <code>panic</code> and <code>recover</code>, it provides a structured way to handle cleanup and truly exceptional errors.</p>
+
+    <h4>Defer Basics</h4>
+<pre>package main
+
+import "fmt"
+
+func main() {
+    fmt.Println("start")
+    defer fmt.Println("deferred 1")
+    defer fmt.Println("deferred 2")
+    defer fmt.Println("deferred 3")
+    fmt.Println("end")
+    // Deferred calls run in LIFO order after "end"
+}</pre>
+    <div class="output">
+      <div class="output-label">Output</div>
+start
+end
+deferred 3
+deferred 2
+deferred 1
+    </div>
+
+    <p>Key insight: deferred calls execute in <strong>LIFO (last-in, first-out)</strong> order, like a stack.</p>
+
+    <h4>Defer for Resource Cleanup</h4>
+<pre>package main
+
+import (
+    "fmt"
+    "os"
+)
+
+func readFile(path string) (string, error) {
+    f, err := os.Open(path)
+    if err != nil {
+        return "", fmt.Errorf("readFile: %w", err)
+    }
+    defer f.Close() // always runs, even on error return
+
+    buf := make([]byte, 1024)
+    n, err := f.Read(buf)
+    if err != nil {
+        return "", fmt.Errorf("readFile read: %w", err)
+    }
+    return string(buf[:n]), nil
+}
+
+func main() {
+    content, err := readFile("test.txt")
+    if err != nil {
+        fmt.Println("Error:", err)
+        return
+    }
+    fmt.Println("Content:", content)
+}</pre>
+    <div class="output">
+      <div class="output-label">Output (if file doesn't exist)</div>
+Error: readFile: open test.txt: no such file or directory
+    </div>
+
+    <h4>Deferred Arguments Are Evaluated Immediately</h4>
+<pre>package main
+
+import "fmt"
+
+func main() {
+    x := 10
+    defer fmt.Println("deferred x =", x) // x is evaluated NOW (10)
+    x = 20
+    fmt.Println("current x =", x)
+}</pre>
+    <div class="output">
+      <div class="output-label">Output</div>
+current x = 20
+deferred x = 10
+    </div>
+
+    <div class="pitfall">
+      <strong>Arguments evaluated at defer time:</strong> The arguments to a deferred function call are evaluated <em>when the defer statement executes</em>, not when the deferred function runs. To capture a later value, use a closure.
+    </div>
+
+    <h4>Named Returns with Defer</h4>
+<pre>package main
+
+import "fmt"
+
+func divide(a, b float64) (result float64, err error) {
+    defer func() {
+        if err != nil {
+            fmt.Println("Division failed, cleaning up...")
+        }
+    }()
+
+    if b == 0 {
+        err = fmt.Errorf("division by zero")
+        return // named return: result=0.0, err is set
+    }
+    result = a / b
+    return
+}
+
+func main() {
+    r, err := divide(10, 3)
+    if err == nil {
+        fmt.Printf("10 / 3 = %.4f\n", r)
+    }
+
+    r, err = divide(10, 0)
+    if err != nil {
+        fmt.Println("Error:", err)
+    }
+}</pre>
+    <div class="output">
+      <div class="output-label">Output</div>
+10 / 3 = 3.3333
+Division failed, cleaning up...
+Error: division by zero
+    </div>
+
+    <h4>Panic: Unrecoverable Errors</h4>
+<pre>package main
+
+import "fmt"
+
+func mustPositive(n int) int {
+    if n <= 0 {
+        panic(fmt.Sprintf("mustPositive: got %d, want positive", n))
+    }
+    return n
+}
+
+func main() {
+    fmt.Println(mustPositive(5))
+
+    // This will panic and crash the program
+    // fmt.Println(mustPositive(-1))
+
+    fmt.Println("Program continues normally")
+}</pre>
+    <div class="output">
+      <div class="output-label">Output</div>
+5
+Program continues normally
+    </div>
+
+    <h4>Recover: Catching Panics</h4>
+<pre>package main
+
+import "fmt"
+
+func safeDivide(a, b int) (result int, err error) {
+    defer func() {
+        if r := recover(); r != nil {
+            err = fmt.Errorf("recovered from panic: %v", r)
+        }
+    }()
+
+    // This will panic if b == 0 (integer division by zero)
+    return a / b, nil
+}
+
+func main() {
+    result, err := safeDivide(10, 2)
+    fmt.Println("10 / 2 =", result, "err:", err)
+
+    result, err = safeDivide(10, 0)
+    fmt.Println("10 / 0 =", result, "err:", err)
+
+    fmt.Println("Program still running!")
+}</pre>
+    <div class="output">
+      <div class="output-label">Output</div>
+10 / 2 = 5 err: &lt;nil&gt;
+10 / 0 = 0 err: recovered from panic: runtime error: integer divide by zero
+Program still running!
+    </div>
+
+    <h4>When to Use Panic vs Errors</h4>
+    <div class="do-dont">
+      <div class="do-box">
+        <div class="label">Do: Return errors for expected failures</div>
+<pre>func ParseConfig(path string) (*Config, error) {
+    data, err := os.ReadFile(path)
+    if err != nil {
+        return nil, fmt.Errorf("parse config: %w", err)
+    }
+    // ...
+}</pre>
+      </div>
+      <div class="dont-box">
+        <div class="label">Don't: Panic for normal errors</div>
+<pre>func ParseConfig(path string) *Config {
+    data, err := os.ReadFile(path)
+    if err != nil {
+        panic(err) // too aggressive!
+    }
+    // ...
+}</pre>
+      </div>
+    </div>
+    <p><strong>Use panic only for:</strong> programmer errors (nil dereference, index out of bounds), truly impossible states, or in <code>init()</code> when setup is critical. Recover is appropriate in HTTP servers (don't let one bad request crash the server) and test helpers.</p>
+
+    <h4>Real-World: HTTP Server Recovery Middleware</h4>
+<pre>package main
+
+import "fmt"
+
+// Simulated handler type
+type HandlerFunc func(request string) string
+
+func recoveryMiddleware(next HandlerFunc) HandlerFunc {
+    return func(request string) (response string) {
+        defer func() {
+            if r := recover(); r != nil {
+                response = fmt.Sprintf("500 Internal Server Error: %v", r)
+            }
+        }()
+        return next(request)
+    }
+}
+
+func riskyHandler(request string) string {
+    if request == "bad" {
+        panic("database connection lost")
+    }
+    return "200 OK: " + request
+}
+
+func main() {
+    safe := recoveryMiddleware(riskyHandler)
+    fmt.Println(safe("hello"))
+    fmt.Println(safe("bad"))
+    fmt.Println(safe("still working"))
+}</pre>
+    <div class="output">
+      <div class="output-label">Output</div>
+200 OK: hello
+500 Internal Server Error: database connection lost
+200 OK: still working
+    </div>
+
+    <h4>Key Rules</h4>
+    <ul class="rules-list">
+      <li><code>defer</code> runs when the surrounding function returns; multiple defers execute in LIFO order</li>
+      <li>Deferred function arguments are evaluated immediately; use closures to capture later values</li>
+      <li>Use <code>panic</code> only for programmer errors and truly impossible states; use error returns for everything else</li>
+    </ul>
+
+    <div class="connection">
+      <strong>Connection:</strong> Defer is essential for resource cleanup, which you first saw in <em>Error Handling</em>. The recovery middleware pattern relies on <em>First-class Functions</em> (closures). <em>Init Functions</em> (next concept) sometimes use <code>panic</code> for critical setup failures.
+    </div>
+
+    <div class="exercise">
+      <div class="exercise-label">Exercise 1</div>
+      <p>Write a function <code>TimeTrack(name string) func()</code> that records the start time and returns a function to print the elapsed time. Use it with <code>defer TimeTrack("myFunc")()</code> to time how long a function takes. Hint: use <code>time.Now()</code> and <code>time.Since()</code>.</p>
+    </div>
+    <div class="exercise">
+      <div class="exercise-label">Exercise 2</div>
+      <p>Write a <code>SafeCall(fn func()) (panicValue interface{})</code> function that calls <code>fn</code> and returns the panic value if <code>fn</code> panics, or nil if it completes normally. Test with both panicking and non-panicking functions.</p>
+    </div>
+    <div class="exercise">
+      <div class="exercise-label">Exercise 3</div>
+      <p>Demonstrate defer ordering: write a function that defers 5 numbered print statements (1 through 5) and confirm they print in reverse order. Then modify it so that one deferred function captures a changing loop variable correctly using a closure.</p>
+    </div>
+  </div>
+
+  <!-- ========== CONCEPT 3: Init Functions ========== -->
+  <div class="concept" id="init-functions">
+    <div class="concept-header">
+      <h3>Init Functions</h3>
+      <span class="concept-meta">Functions &amp; Control Flow &bull; New</span>
+    </div>
+
+    <p>Every Go source file can contain one or more <code>init()</code> functions that run automatically before <code>main()</code>. They are used for package-level setup like validating configuration, registering drivers, or initializing global state.</p>
+
+    <h4>Basic init() Function</h4>
+<pre>package main
+
+import "fmt"
+
+var config map[string]string
+
+func init() {
+    fmt.Println("init() called: setting up config")
+    config = map[string]string{
+        "env":  "production",
+        "port": "8080",
+    }
+}
+
+func main() {
+    fmt.Println("main() called")
+    fmt.Println("Config:", config)
+}</pre>
+    <div class="output">
+      <div class="output-label">Output</div>
+init() called: setting up config
+main() called
+Config: map[env:production port:8080]
+    </div>
+
+    <h4>Multiple init() Functions in One File</h4>
+<pre>package main
+
+import "fmt"
+
+func init() {
+    fmt.Println("first init()")
+}
+
+func init() {
+    fmt.Println("second init()")
+}
+
+func init() {
+    fmt.Println("third init()")
+}
+
+func main() {
+    fmt.Println("main()")
+}</pre>
+    <div class="output">
+      <div class="output-label">Output</div>
+first init()
+second init()
+third init()
+main()
+    </div>
+    <p>Multiple <code>init()</code> functions in the same file run in <strong>top-to-bottom</strong> order. Across files in the same package, they run in the order files are presented to the compiler (alphabetical by filename).</p>
+
+    <h4>Package Initialization Order</h4>
+<pre>package main
+
+import "fmt"
+
+// 1. Package-level variables are initialized first (in dependency order)
+var a = initVar("a")
+var b = initVar("b")
+
+func initVar(name string) string {
+    fmt.Printf("  var %s initialized\n", name)
+    return name
+}
+
+// 2. Then init() functions run
+func init() {
+    fmt.Println("  init() runs after variables")
+}
+
+// 3. Finally main() runs
+func main() {
+    fmt.Println("  main() runs last")
+}</pre>
+    <div class="output">
+      <div class="output-label">Output</div>
+  var a initialized
+  var b initialized
+  init() runs after variables
+  main() runs last
+    </div>
+
+    <h4>Blank Import for Side Effects</h4>
+<pre>package main
+
+import (
+    "fmt"
+
+    // The blank import runs the package's init() functions
+    // without importing any names into the current file.
+    // Common examples:
+    //   _ "image/png"         — registers PNG decoder
+    //   _ "net/http/pprof"    — registers pprof handlers
+    //   _ "github.com/lib/pq" — registers postgres driver
+)
+
+// Simulating a "driver registration" pattern
+var drivers = map[string]string{}
+
+func registerDriver(name, info string) {
+    drivers[name] = info
+    fmt.Printf("Registered driver: %s\n", name)
+}
+
+func init() {
+    registerDriver("sqlite", "SQLite 3.x in-memory")
+}
+
+func main() {
+    fmt.Println("Available drivers:", drivers)
+}</pre>
+    <div class="output">
+      <div class="output-label">Output</div>
+Registered driver: sqlite
+Available drivers: map[sqlite:SQLite 3.x in-memory]
+    </div>
+
+    <h4>init() with Validation</h4>
+<pre>package main
+
+import (
+    "fmt"
+    "os"
+)
+
+var requiredEnvVars = []string{"HOME"}
+var envValues map[string]string
+
+func init() {
+    envValues = make(map[string]string)
+    for _, key := range requiredEnvVars {
+        val := os.Getenv(key)
+        if val == "" {
+            // In production code, you might panic here
+            fmt.Printf("WARNING: env var %s not set\n", key)
+        }
+        envValues[key] = val
+    }
+    fmt.Println("Environment validated")
+}
+
+func main() {
+    fmt.Println("HOME =", envValues["HOME"])
+}</pre>
+    <div class="output">
+      <div class="output-label">Output</div>
+Environment validated
+HOME = /Users/yourname
+    </div>
+
+    <h4>When to Use init() vs Explicit Initialization</h4>
+    <div class="do-dont">
+      <div class="do-box">
+        <div class="label">Do: Use init() for driver/codec registration</div>
+<pre>func init() {
+    sql.Register("postgres", &Driver{})
+    // or image decoder registration
+}</pre>
+      </div>
+      <div class="dont-box">
+        <div class="label">Don't: Use init() for complex logic</div>
+<pre>func init() {
+    db, err := sql.Open("postgres", connStr)
+    // hard to test, hard to handle errors
+    // no way to pass config
+}</pre>
+      </div>
+    </div>
+
+    <h4>Common Mistakes</h4>
+    <div class="do-dont">
+      <div class="do-box">
+        <div class="label">Do: Keep init() simple and deterministic</div>
+<pre>func init() {
+    // Register, validate config, set defaults
+    defaultTimeout = 30 * time.Second
+}</pre>
+      </div>
+      <div class="dont-box">
+        <div class="label">Don't: Make network calls or I/O in init()</div>
+<pre>func init() {
+    resp, _ := http.Get("http://api.com/config")
+    // blocks program startup
+    // impossible to test
+    // ignoring error!
+}</pre>
+      </div>
+    </div>
+
+    <h4>Key Rules</h4>
+    <ul class="rules-list">
+      <li><code>init()</code> runs before <code>main()</code>, after package-level variables are initialized</li>
+      <li>Multiple <code>init()</code> functions are allowed (same file: top-to-bottom; same package: file order)</li>
+      <li>Keep <code>init()</code> simple &mdash; use it for registration and validation, not complex logic or I/O</li>
+    </ul>
+
+    <div class="connection">
+      <strong>Connection:</strong> <code>init()</code> often uses <code>panic</code> for critical setup failures (<em>Defer, Panic, Recover</em>). The blank import pattern relies on understanding Go's package system. Explicit constructors (<em>Structs &amp; Methods</em>) are often preferred over <code>init()</code> for testability.
+    </div>
+
+    <div class="exercise">
+      <div class="exercise-label">Exercise 1</div>
+      <p>Create a program with two <code>init()</code> functions in the same file. The first should initialize a global map; the second should populate it with 3 default entries. Print the map in <code>main()</code>.</p>
+    </div>
+    <div class="exercise">
+      <div class="exercise-label">Exercise 2</div>
+      <p>Write an <code>init()</code> function that checks for a required environment variable (e.g., <code>APP_MODE</code>). If the variable is not set, print a warning and set a default value. Verify the behavior with and without the env var set.</p>
+    </div>
+  </div>
+
+  <!-- ========== CONCEPT 4: Variadic Functions ========== -->
+  <div class="concept" id="variadic-functions">
+    <div class="concept-header">
+      <h3>Variadic Functions</h3>
+      <span class="concept-meta">Functions &amp; Control Flow &bull; New</span>
+    </div>
+
+    <p>Variadic functions accept a variable number of arguments using the <code>...</code> syntax. Inside the function, the variadic parameter is a slice. This is how built-in functions like <code>fmt.Println</code> and <code>append</code> work.</p>
+
+    <h4>Basic Variadic Function</h4>
+<pre>package main
+
+import "fmt"
+
+func sum(nums ...int) int {
+    total := 0
+    for _, n := range nums {
+        total += n
+    }
+    return total
+}
+
+func main() {
+    fmt.Println("sum():", sum())              // 0 — nums is nil
+    fmt.Println("sum(1):", sum(1))            // 1
+    fmt.Println("sum(1,2,3):", sum(1, 2, 3))  // 6
+    fmt.Println("sum(1..10):", sum(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)) // 55
+}</pre>
+    <div class="output">
+      <div class="output-label">Output</div>
+sum(): 0
+sum(1): 1
+sum(1,2,3): 6
+sum(1..10): 55
+    </div>
+
+    <h4>The Variadic Parameter Is a Slice</h4>
+<pre>package main
+
+import "fmt"
+
+func inspect(label string, values ...int) {
+    fmt.Printf("%s: %v (type: %T, len: %d, nil: %v)\n",
+        label, values, values, len(values), values == nil)
+}
+
+func main() {
+    inspect("no args")              // nil slice
+    inspect("one arg", 42)          // []int{42}
+    inspect("three args", 1, 2, 3)  // []int{1, 2, 3}
+}</pre>
+    <div class="output">
+      <div class="output-label">Output</div>
+no args: [] (type: []int, len: 0, nil: true)
+one arg: [42] (type: []int, len: 1, nil: false)
+three args: [1 2 3] (type: []int, len: 3, nil: false)
+    </div>
+
+    <h4>Unpacking Slices with ...</h4>
+<pre>package main
+
+import "fmt"
+
+func sum(nums ...int) int {
+    total := 0
+    for _, n := range nums {
+        total += n
+    }
+    return total
+}
+
+func main() {
+    numbers := []int{10, 20, 30, 40}
+
+    // Unpack a slice into variadic arguments
+    fmt.Println("sum(slice...):", sum(numbers...))
+
+    // This is how append works internally
+    a := []int{1, 2, 3}
+    b := []int{4, 5, 6}
+    a = append(a, b...) // unpack b into append's variadic parameter
+    fmt.Println("appended:", a)
+}</pre>
+    <div class="output">
+      <div class="output-label">Output</div>
+sum(slice...): 100
+appended: [1 2 3 4 5 6]
+    </div>
+
+    <h4>Variadic Must Be Last Parameter</h4>
+<pre>package main
+
+import "fmt"
+
+// OK: variadic is the last parameter
+func log(level string, messages ...string) {
+    for _, msg := range messages {
+        fmt.Printf("[%s] %s\n", level, msg)
+    }
+}
+
+// NOT ALLOWED: variadic must be last
+// func bad(items ...int, name string) {} // compile error!
+
+func main() {
+    log("INFO", "server started", "listening on :8080")
+    log("ERROR", "connection lost")
+    log("DEBUG") // zero variadic args — messages is nil
+}</pre>
+    <div class="output">
+      <div class="output-label">Output</div>
+[INFO] server started
+[INFO] listening on :8080
+[ERROR] connection lost
+    </div>
+
+    <h4>Real-World: Flexible Constructors with Options</h4>
+<pre>package main
+
+import "fmt"
+
+type ServerConfig struct {
+    Host    string
+    Port    int
+    Verbose bool
+}
+
+type Option func(*ServerConfig)
+
+func WithHost(host string) Option {
+    return func(c *ServerConfig) { c.Host = host }
+}
+
+func WithPort(port int) Option {
+    return func(c *ServerConfig) { c.Port = port }
+}
+
+func WithVerbose() Option {
+    return func(c *ServerConfig) { c.Verbose = true }
+}
+
+func NewServer(opts ...Option) *ServerConfig {
+    cfg := &ServerConfig{
+        Host: "localhost",
+        Port: 8080,
+    }
+    for _, opt := range opts {
+        opt(cfg)
+    }
+    return cfg
+}
+
+func main() {
+    s1 := NewServer() // all defaults
+    fmt.Printf("s1: %+v\n", *s1)
+
+    s2 := NewServer(WithHost("0.0.0.0"), WithPort(9090), WithVerbose())
+    fmt.Printf("s2: %+v\n", *s2)
+
+    s3 := NewServer(WithPort(3000))
+    fmt.Printf("s3: %+v\n", *s3)
+}</pre>
+    <div class="output">
+      <div class="output-label">Output</div>
+s1: {Host:localhost Port:8080 Verbose:false}
+s2: {Host:0.0.0.0 Port:9090 Verbose:true}
+s3: {Host:localhost Port:3000 Verbose:false}
+    </div>
+
+    <h4>Common Mistakes</h4>
+    <div class="do-dont">
+      <div class="do-box">
+        <div class="label">Do: Unpack slices with ...</div>
+<pre>nums := []int{1, 2, 3}
+result := sum(nums...)</pre>
+      </div>
+      <div class="dont-box">
+        <div class="label">Don't: Pass slice directly</div>
+<pre>nums := []int{1, 2, 3}
+result := sum(nums) // compile error!</pre>
+      </div>
+    </div>
+    <div class="do-dont">
+      <div class="do-box">
+        <div class="label">Do: Handle empty variadic calls</div>
+<pre>func max(nums ...int) (int, bool) {
+    if len(nums) == 0 {
+        return 0, false
+    }
+    // ...
+}</pre>
+      </div>
+      <div class="dont-box">
+        <div class="label">Don't: Assume non-empty</div>
+<pre>func max(nums ...int) int {
+    m := nums[0] // panic if called as max()!
+    // ...
+}</pre>
+      </div>
+    </div>
+
+    <h4>Key Rules</h4>
+    <ul class="rules-list">
+      <li>Variadic parameter must be the last parameter in the function signature</li>
+      <li>Inside the function, the variadic parameter is a <code>[]T</code> (nil when called with no args)</li>
+      <li>Use <code>slice...</code> to unpack a slice into variadic arguments; <code>append(a, b...)</code> is the most common example</li>
+    </ul>
+
+    <div class="connection">
+      <strong>Connection:</strong> The <code>append()</code> built-in you learned in <em>Slices Deep Dive</em> is variadic: <code>func append(s []T, elems ...T) []T</code>. The functional options pattern combines variadic functions with <em>First-class Functions</em> for clean API design. <em>Generics</em> (next concept) can make variadic helpers type-safe.
+    </div>
+
+    <div class="exercise">
+      <div class="exercise-label">Exercise 1</div>
+      <p>Write a function <code>Max(nums ...int) (int, bool)</code> that returns the maximum value and true, or 0 and false if called with no arguments. Test with 0, 1, and many arguments.</p>
+    </div>
+    <div class="exercise">
+      <div class="exercise-label">Exercise 2</div>
+      <p>Write a function <code>Concat(sep string, parts ...string) string</code> that joins all parts with the separator. For <code>Concat("-", "a", "b", "c")</code> expect <code>"a-b-c"</code>. For <code>Concat("-")</code> expect <code>""</code>.</p>
+    </div>
+    <div class="exercise">
+      <div class="exercise-label">Exercise 3</div>
+      <p>Implement the functional options pattern for a <code>Logger</code> struct with fields <code>Prefix string</code>, <code>Verbose bool</code>, and <code>MaxSize int</code>. Create option functions <code>WithPrefix</code>, <code>WithVerboseMode</code>, and <code>WithMaxSize</code>. Create loggers with different combinations of options.</p>
+    </div>
+  </div>
+
+  <!-- ========== CONCEPT 5: Type Parameters (Generics) ========== -->
+  <div class="concept" id="generics-basics">
+    <div class="concept-header">
+      <h3>Type Parameters (Generics)</h3>
+      <span class="concept-meta">Functions &amp; Control Flow &bull; New</span>
+    </div>
+
+    <p>Go 1.18 introduced generics (type parameters), allowing you to write functions and types that work with any type meeting a constraint. This eliminates the need for <code>interface{}</code> with type assertions in many cases, providing compile-time type safety.</p>
+
+    <h4>Basic Generic Function</h4>
+<pre>package main
+
+import (
+    "cmp"
+    "fmt"
+)
+
+// Min returns the smaller of two values.
+// [T cmp.Ordered] means T must support &lt;, &gt;, &lt;=, &gt;=
+func Min[T cmp.Ordered](a, b T) T {
+    if a &lt; b {
+        return a
+    }
+    return b
+}
+
+func Max[T cmp.Ordered](a, b T) T {
+    if a &gt; b {
+        return a
+    }
+    return b
+}
+
+func main() {
+    fmt.Println("Min(3, 7):", Min(3, 7))
+    fmt.Println("Min(3.14, 2.71):", Min(3.14, 2.71))
+    fmt.Println("Min(\"apple\", \"banana\"):", Min("apple", "banana"))
+
+    fmt.Println("Max(3, 7):", Max(3, 7))
+    fmt.Println("Max(\"x\", \"a\"):", Max("x", "a"))
+}</pre>
+    <div class="output">
+      <div class="output-label">Output</div>
+Min(3, 7): 3
+Min(3.14, 2.71): 2.71
+Min("apple", "banana"): apple
+Max(3, 7): 7
+Max("x", "a"): x
+    </div>
+
+    <h4>Constraints: any, comparable, cmp.Ordered</h4>
+<pre>package main
+
+import (
+    "cmp"
+    "fmt"
+)
+
+// [T any] — no constraint, any type allowed
+func PrintSlice[T any](label string, s []T) {
+    fmt.Printf("%s: %v\n", label, s)
+}
+
+// [T comparable] — supports == and !=
+func Contains[T comparable](s []T, target T) bool {
+    for _, v := range s {
+        if v == target {
+            return true
+        }
+    }
+    return false
+}
+
+// [T cmp.Ordered] — supports &lt;, &gt;, &lt;=, &gt;=
+func SortedInsert[T cmp.Ordered](s []T, val T) []T {
+    i := 0
+    for i &lt; len(s) &amp;&amp; s[i] &lt; val {
+        i++
+    }
+    // Insert at position i
+    s = append(s, *new(T))   // grow by one
+    copy(s[i+1:], s[i:])     // shift right
+    s[i] = val
+    return s
+}
+
+func main() {
+    PrintSlice("ints", []int{1, 2, 3})
+    PrintSlice("strings", []string{"a", "b", "c"})
+
+    fmt.Println("Contains 3?", Contains([]int{1, 2, 3, 4}, 3))
+    fmt.Println("Contains \"x\"?", Contains([]string{"a", "b"}, "x"))
+
+    sorted := []int{1, 3, 5, 7}
+    sorted = SortedInsert(sorted, 4)
+    fmt.Println("After insert 4:", sorted)
+}</pre>
+    <div class="output">
+      <div class="output-label">Output</div>
+ints: [1 2 3]
+strings: [a b c]
+Contains 3? true
+Contains "x"? false
+After insert 4: [1 3 4 5 7]
+    </div>
+
+    <h4>The ~ Underlying Type Approximation</h4>
+<pre>package main
+
+import (
+    "fmt"
+)
+
+// Without ~, this only matches exact int
+type StrictInt interface {
+    int
+}
+
+// With ~, this matches any type whose underlying type is int
+type AnyInt interface {
+    ~int
+}
+
+func DoubleAnyInt[T AnyInt](v T) T {
+    return v * 2
+}
+
+type UserID int
+type Score int
+
+func main() {
+    var id UserID = 42
+    var score Score = 95
+
+    fmt.Println("Double UserID:", DoubleAnyInt(id))
+    fmt.Println("Double Score:", DoubleAnyInt(score))
+    fmt.Println("Double int:", DoubleAnyInt(10))
+}</pre>
+    <div class="output">
+      <div class="output-label">Output</div>
+Double UserID: 84
+Double Score: 190
+Double int: 20
+    </div>
+
+    <h4>Generic Structs</h4>
+<pre>package main
+
+import "fmt"
+
+type Pair[T, U any] struct {
+    First  T
+    Second U
+}
+
+func NewPair[T, U any](first T, second U) Pair[T, U] {
+    return Pair[T, U]{First: first, Second: second}
+}
+
+func (p Pair[T, U]) String() string {
+    return fmt.Sprintf("(%v, %v)", p.First, p.Second)
+}
+
+// Generic stack
+type Stack[T any] struct {
+    items []T
+}
+
+func (s *Stack[T]) Push(val T) {
+    s.items = append(s.items, val)
+}
+
+func (s *Stack[T]) Pop() (T, bool) {
+    if len(s.items) == 0 {
+        var zero T
+        return zero, false
+    }
+    top := s.items[len(s.items)-1]
+    s.items = s.items[:len(s.items)-1]
+    return top, true
+}
+
+func (s *Stack[T]) Size() int {
+    return len(s.items)
+}
+
+func main() {
+    p := NewPair("name", 42)
+    fmt.Println("Pair:", p)
+
+    // String stack
+    strStack := &Stack[string]{}
+    strStack.Push("hello")
+    strStack.Push("world")
+    fmt.Println("Stack size:", strStack.Size())
+    if val, ok := strStack.Pop(); ok {
+        fmt.Println("Popped:", val)
+    }
+
+    // Int stack
+    intStack := &Stack[int]{}
+    intStack.Push(1)
+    intStack.Push(2)
+    intStack.Push(3)
+    if val, ok := intStack.Pop(); ok {
+        fmt.Println("Popped int:", val)
+    }
+}</pre>
+    <div class="output">
+      <div class="output-label">Output</div>
+Pair: (name, 42)
+Stack size: 2
+Popped: world
+Popped int: 3
+    </div>
+
+    <h4>When to Use Generics vs Interfaces</h4>
+    <div class="do-dont">
+      <div class="do-box">
+        <div class="label">Do: Generics for type-safe containers</div>
+<pre>type Set[T comparable] struct {
+    m map[T]struct{}
+}
+// Compile-time type safety, no assertions</pre>
+      </div>
+      <div class="dont-box">
+        <div class="label">Don't: Generics when interfaces suffice</div>
+<pre>// Unnecessary generic — interface is simpler
+func Print[T fmt.Stringer](v T) {
+    fmt.Println(v.String())
+}
+// Just use: func Print(v fmt.Stringer)</pre>
+      </div>
+    </div>
+
+    <h4>Common Mistakes</h4>
+    <div class="do-dont">
+      <div class="do-box">
+        <div class="label">Do: Use zero value with var</div>
+<pre>func First[T any](s []T) (T, bool) {
+    var zero T
+    if len(s) == 0 {
+        return zero, false
+    }
+    return s[0], true
+}</pre>
+      </div>
+      <div class="dont-box">
+        <div class="label">Don't: Use nil for generic zero</div>
+<pre>func First[T any](s []T) (T, bool) {
+    if len(s) == 0 {
+        return nil, false // compile error for non-pointer T!
+    }
+}</pre>
+      </div>
+    </div>
+
+    <h4>Key Rules</h4>
+    <ul class="rules-list">
+      <li>Use <code>[T any]</code> for unconstrained types, <code>[T comparable]</code> for map keys and equality, <code>[T cmp.Ordered]</code> for sorting</li>
+      <li>The <code>~</code> prefix in constraints matches underlying types: <code>~int</code> matches <code>type MyInt int</code></li>
+      <li>Prefer interfaces when behavior matters; prefer generics when you need type-safe containers or algorithms</li>
+    </ul>
+
+    <div class="connection">
+      <strong>Connection:</strong> Generic containers replace the <code>interface{}</code> + type assertion pattern from <em>Interfaces</em>. The generic <code>Stack</code> above improves on the <code>[]int</code> stack from <em>Slices Deep Dive</em>. <em>Multiple Return Values</em> (next concept) pair with generics for the <code>(T, bool)</code> pattern.
+    </div>
+
+    <div class="exercise">
+      <div class="exercise-label">Exercise 1</div>
+      <p>Write a generic function <code>Map[T, U any](s []T, fn func(T) U) []U</code> that applies <code>fn</code> to each element. Test by converting <code>[]int{1,2,3}</code> to <code>[]string{"1","2","3"}</code>.</p>
+    </div>
+    <div class="exercise">
+      <div class="exercise-label">Exercise 2</div>
+      <p>Implement a generic <code>Set[T comparable]</code> with methods <code>Add(T)</code>, <code>Contains(T) bool</code>, <code>Remove(T)</code>, and <code>Size() int</code>. Test with both <code>string</code> and <code>int</code> sets.</p>
+    </div>
+    <div class="exercise">
+      <div class="exercise-label">Exercise 3</div>
+      <p>Write a generic <code>Filter[T any](s []T, fn func(T) bool) []T</code> and a generic <code>Reduce[T, U any](s []T, initial U, fn func(U, T) U) U</code>. Use them together to find the sum of all even numbers in <code>[]int{1,2,3,4,5,6,7,8,9,10}</code>. Expected output: <code>30</code>.</p>
+    </div>
+  </div>
+
+  <!-- ========== CONCEPT 6: Multiple Return Values ========== -->
+  <div class="concept" id="multiple-return-values">
+    <div class="concept-header">
+      <h3>Multiple Return Values</h3>
+      <span class="concept-meta">Functions &amp; Control Flow &bull; New</span>
+    </div>
+
+    <p>Go functions can return multiple values, and this feature is central to Go's error handling and many idiomatic patterns. The <code>(value, error)</code> and <code>(value, ok)</code> patterns are foundational to writing correct Go.</p>
+
+    <h4>The (value, error) Pattern</h4>
+<pre>package main
+
+import (
+    "errors"
+    "fmt"
+    "strconv"
+)
+
+var ErrNegative = errors.New("negative number not allowed")
+
+func safeSqrt(n float64) (float64, error) {
+    if n &lt; 0 {
+        return 0, ErrNegative
+    }
+    // Simple Newton's method approximation
+    if n == 0 {
+        return 0, nil
+    }
+    x := n
+    for i := 0; i &lt; 20; i++ {
+        x = (x + n/x) / 2
+    }
+    return x, nil
+}
+
+func main() {
+    result, err := safeSqrt(16)
+    if err != nil {
+        fmt.Println("Error:", err)
+    } else {
+        fmt.Printf("sqrt(16) = %.4f\n", result)
+    }
+
+    result, err = safeSqrt(-4)
+    if err != nil {
+        fmt.Println("Error:", err)
+    }
+
+    // strconv.Atoi is a standard library (value, error) function
+    n, err := strconv.Atoi("123")
+    if err != nil {
+        fmt.Println("Parse error:", err)
+    } else {
+        fmt.Println("Parsed:", n)
+    }
+}</pre>
+    <div class="output">
+      <div class="output-label">Output</div>
+sqrt(16) = 4.0000
+Error: negative number not allowed
+Parsed: 123
+    </div>
+
+    <h4>Named Return Values</h4>
+<pre>package main
+
+import "fmt"
+
+// Named returns serve as documentation and allow naked returns
+func divide(a, b float64) (result float64, err error) {
+    if b == 0 {
+        err = fmt.Errorf("division by zero")
+        return // naked return: returns result=0, err=set
+    }
+    result = a / b
+    return // naked return: returns result=set, err=nil
+}
+
+// Better: named returns for docs, but explicit return for clarity
+func divideClear(a, b float64) (result float64, err error) {
+    if b == 0 {
+        return 0, fmt.Errorf("division by zero")
+    }
+    return a / b, nil
+}
+
+func main() {
+    r, err := divide(10, 3)
+    if err == nil {
+        fmt.Printf("10 / 3 = %.4f\n", r)
+    }
+
+    r, err = divide(10, 0)
+    if err != nil {
+        fmt.Println("Error:", err)
+    }
+
+    r, err = divideClear(20, 4)
+    if err == nil {
+        fmt.Printf("20 / 4 = %.4f\n", r)
+    }
+}</pre>
+    <div class="output">
+      <div class="output-label">Output</div>
+10 / 3 = 3.3333
+Error: division by zero
+20 / 4 = 5.0000
+    </div>
+
+    <div class="pitfall">
+      <strong>Naked returns reduce readability:</strong> Naked returns (just <code>return</code> without values) are allowed with named return values, but they make it hard to see what's being returned, especially in long functions. Use explicit return values for clarity; use named returns mainly for documentation.
+    </div>
+
+    <h4>The Comma-Ok Idiom</h4>
+<pre>package main
+
+import "fmt"
+
+func main() {
+    // Map lookup: val, ok := m[key]
+    m := map[string]int{"a": 1, "b": 0}
+
+    val, ok := m["a"]
+    fmt.Printf("m[\"a\"]: val=%d, ok=%v\n", val, ok)
+
+    val, ok = m["b"]
+    fmt.Printf("m[\"b\"]: val=%d, ok=%v\n", val, ok) // 0, true — key exists!
+
+    val, ok = m["c"]
+    fmt.Printf("m[\"c\"]: val=%d, ok=%v\n", val, ok) // 0, false — missing!
+
+    // Type assertion: val, ok := iface.(Type)
+    var i interface{} = "hello"
+
+    s, ok := i.(string)
+    fmt.Printf("string assertion: s=%q, ok=%v\n", s, ok)
+
+    n, ok := i.(int)
+    fmt.Printf("int assertion: n=%d, ok=%v\n", n, ok) // safe: ok=false
+
+    // Channel receive: val, ok := &lt;-ch
+    ch := make(chan int, 1)
+    ch &lt;- 42
+    close(ch)
+
+    v1, ok1 := &lt;-ch
+    fmt.Printf("receive 1: val=%d, ok=%v\n", v1, ok1) // 42, true
+
+    v2, ok2 := &lt;-ch
+    fmt.Printf("receive 2: val=%d, ok=%v\n", v2, ok2) // 0, false (closed)
+}</pre>
+    <div class="output">
+      <div class="output-label">Output</div>
+m["a"]: val=1, ok=true
+m["b"]: val=0, ok=true
+m["c"]: val=0, ok=false
+string assertion: s="hello", ok=true
+int assertion: n=0, ok=false
+receive 1: val=42, ok=true
+receive 2: val=0, ok=false
+    </div>
+
+    <h4>Ignoring Returns with _</h4>
+<pre>package main
+
+import (
+    "fmt"
+    "strconv"
+)
+
+func main() {
+    // Ignore error (use sparingly!)
+    n, _ := strconv.Atoi("42")
+    fmt.Println("Parsed:", n)
+
+    // Ignore value, only check existence
+    m := map[string]int{"x": 10}
+    _, exists := m["x"]
+    fmt.Println("x exists?", exists)
+
+    // Ignore index in range
+    nums := []int{10, 20, 30}
+    for _, v := range nums {
+        fmt.Print(v, " ")
+    }
+    fmt.Println()
+}</pre>
+    <div class="output">
+      <div class="output-label">Output</div>
+Parsed: 42
+x exists? true
+10 20 30
+    </div>
+
+    <h4>Multi-value Returns Cannot Be Used in Expressions</h4>
+<pre>package main
+
+import (
+    "fmt"
+    "strconv"
+)
+
+func main() {
+    // This does NOT compile:
+    // result := strconv.Atoi("42") + 1
+
+    // You must assign first, then use:
+    n, err := strconv.Atoi("42")
+    if err != nil {
+        fmt.Println("Error:", err)
+        return
+    }
+    result := n + 1
+    fmt.Println("Result:", result)
+
+    // Exception: multi-value return CAN be passed to a function
+    // that accepts exactly those types
+    fmt.Println(strconv.Atoi("99")) // fmt.Println(int, error) works!
+}</pre>
+    <div class="output">
+      <div class="output-label">Output</div>
+Result: 43
+99 &lt;nil&gt;
+    </div>
+
+    <h4>Real-World: Multiple Returns for Clean API</h4>
+<pre>package main
+
+import (
+    "fmt"
+    "strings"
+)
+
+// ParseKeyValue parses "key=value" strings
+func ParseKeyValue(s string) (key, value string, err error) {
+    parts := strings.SplitN(s, "=", 2)
+    if len(parts) != 2 {
+        return "", "", fmt.Errorf("invalid format: %q (expected key=value)", s)
+    }
+    return strings.TrimSpace(parts[0]), strings.TrimSpace(parts[1]), nil
+}
+
+func main() {
+    entries := []string{
+        "name = Alice",
+        "age=30",
+        "invalid",
+        "city = New York",
+    }
+
+    for _, entry := range entries {
+        key, value, err := ParseKeyValue(entry)
+        if err != nil {
+            fmt.Println("Error:", err)
+            continue
+        }
+        fmt.Printf("  %s -> %s\n", key, value)
+    }
+}</pre>
+    <div class="output">
+      <div class="output-label">Output</div>
+  name -> Alice
+  age -> 30
+Error: invalid format: "invalid" (expected key=value)
+  city -> New York
+    </div>
+
+    <h4>Common Mistakes</h4>
+    <div class="do-dont">
+      <div class="do-box">
+        <div class="label">Do: Always check error returns</div>
+<pre>val, err := doSomething()
+if err != nil {
+    return fmt.Errorf("context: %w", err)
+}
+// use val</pre>
+      </div>
+      <div class="dont-box">
+        <div class="label">Don't: Silently ignore errors</div>
+<pre>val, _ := doSomething()
+// if it failed, val is zero value
+// and you don't know why</pre>
+      </div>
+    </div>
+    <div class="do-dont">
+      <div class="do-box">
+        <div class="label">Do: Explicit return values for clarity</div>
+<pre>func f() (int, error) {
+    return 42, nil
+}</pre>
+      </div>
+      <div class="dont-box">
+        <div class="label">Don't: Naked returns in long functions</div>
+<pre>func f() (result int, err error) {
+    // ... 50 lines of code ...
+    return // what is being returned?
+}</pre>
+      </div>
+    </div>
+
+    <h4>Key Rules</h4>
+    <ul class="rules-list">
+      <li>The <code>(value, error)</code> pattern is the standard way to report failure in Go</li>
+      <li>The comma-ok idiom (<code>val, ok</code>) works for map lookups, type assertions, and channel receives</li>
+      <li>Multi-value returns cannot be used directly in expressions; assign to variables first</li>
+    </ul>
+
+    <div class="connection">
+      <strong>Connection:</strong> Multiple return values are the foundation of <em>Error Handling</em> (the <code>(T, error)</code> pattern). The comma-ok idiom connects to <em>Maps</em> (key lookup), <em>Interfaces</em> (type assertions), and upcoming channels. <em>Generics</em> use the <code>(T, bool)</code> pattern in functions like <code>First</code> and <code>Pop</code>.
+    </div>
+
+    <div class="exercise">
+      <div class="exercise-label">Exercise 1</div>
+      <p>Write a function <code>MinMax(nums []int) (min, max int, err error)</code> that returns the minimum and maximum values from a slice. Return an error if the slice is empty. Test with <code>[]int{5, 1, 9, 3, 7}</code> (expect <code>1, 9, nil</code>) and an empty slice.</p>
+    </div>
+    <div class="exercise">
+      <div class="exercise-label">Exercise 2</div>
+      <p>Write a function <code>SafeGet(m map[string]int, key string, defaultVal int) int</code> that returns the map value if the key exists, or <code>defaultVal</code> if it doesn't. Use the comma-ok idiom internally. Test with both existing and missing keys.</p>
+    </div>
+    <div class="exercise">
+      <div class="exercise-label">Exercise 3</div>
+      <p>Write a function <code>ParseInts(strs []string) ([]int, []error)</code> that attempts to parse each string as an integer. Return a slice of successfully parsed ints and a slice of errors for failed conversions. For <code>[]string{"1", "abc", "3", "xyz", "5"}</code> expect ints <code>[1, 3, 5]</code> and 2 errors.</p>
+    </div>
+  </div>
+
+</div><!-- end section -->
+
+<!-- ============================================================ -->
+<!-- FOOTER -->
+<!-- ============================================================ -->
+<footer class="footer">
+  <h4>All Guides</h4>
+  <ul>
+    <li><a href="golang-guides/golang-guide-2026-07-09.html">2026-07-09</a> (Day 34)</li>
+    <li><a href="golang-guides/golang-guide-2026-07-08.html">2026-07-08</a> (Day 33)</li>
+    <li><a href="golang-guides/golang-guide-2026-07-07.html">2026-07-07</a> (Day 32)</li>
+    <li><a href="golang-guides/golang-guide-2026-07-06.html">2026-07-06</a> (Day 31)</li>
+    <li><a href="golang-guides/golang-guide-2026-07-05.html">2026-07-05</a> (Day 30)</li>
+    <li><a href="golang-guides/golang-guide-2026-07-04.html">2026-07-04</a> (Day 29)</li>
+    <li><a href="golang-guides/golang-guide-2026-07-03.html">2026-07-03</a> (Day 28)</li>
+    <li><a href="golang-guides/golang-guide-2026-07-02.html">2026-07-02</a> (Day 27)</li>
+    <li><a href="golang-guides/golang-guide-2026-07-01.html">2026-07-01</a> (Day 26)</li>
+    <li><a href="golang-guides/golang-guide-2026-06-30.html">2026-06-30</a> (Day 25)</li>
+    <li><a href="golang-guides/golang-guide-2026-06-29.html">2026-06-29</a> (Day 24)</li>
+    <li><a href="golang-guides/golang-guide-2026-06-28.html">2026-06-28</a> (Day 23)</li>
+    <li><a href="golang-guides/golang-guide-2026-06-27.html">2026-06-27</a> (Day 22)</li>
+    <li><a href="golang-guides/golang-guide-2026-06-26.html">2026-06-26</a> (Day 21)</li>
+    <li><a href="golang-guides/golang-guide-2026-06-25.html">2026-06-25</a> (Day 20)</li>
+    <li><a href="golang-guides/golang-guide-2026-06-24.html">2026-06-24</a> (Day 19)</li>
+    <li><a href="golang-guides/golang-guide-2026-06-23.html">2026-06-23</a> (Day 18)</li>
+    <li><a href="golang-guides/golang-guide-2026-06-22.html">2026-06-22</a> (Day 17)</li>
+    <li><a href="golang-guides/golang-guide-2026-06-19.html">2026-06-19</a> (Day 15)</li>
+    <li><a href="golang-guides/golang-guide-2026-06-18.html">2026-06-18</a> (Day 14)</li>
+    <li><a href="golang-guides/golang-guide-2026-06-17.html">2026-06-17</a> (Day 13)</li>
+    <li><a href="golang-guides/golang-guide-2026-06-15.html">2026-06-15</a> (Day 12)</li>
+    <li><a href="golang-guides/golang-guide-2026-06-13.html">2026-06-13</a> (Day 11)</li>
+    <li><a href="golang-guides/golang-guide-2026-06-12.html">2026-06-12</a> (Day 10)</li>
+    <li><a href="golang-guides/golang-guide-2026-06-11.html">2026-06-11</a> (Day 9)</li>
+    <li><a href="golang-guides/golang-guide-2026-06-10.html">2026-06-10</a> (Day 8)</li>
+    <li><a href="golang-guides/golang-guide-2026-06-09.html">2026-06-09</a> (Day 7)</li>
+    <li><a href="golang-guides/golang-guide-2026-06-08.html">2026-06-08</a> (Day 6)</li>
+    <li><a href="golang-guides/golang-guide-2026-06-07.html">2026-06-07</a> (Day 5)</li>
+    <li><a href="golang-guides/golang-guide-2026-06-05.html">2026-06-05</a> (Day 4)</li>
+    <li><a href="golang-guides/golang-guide-2026-06-04.html">2026-06-04</a> (Day 3)</li>
+    <li><a href="golang-guides/golang-guide-2026-06-03.html">2026-06-03</a> (Day 2)</li>
+    <li><a href="golang-guides/golang-guide-2026-06-02.html">2026-06-02</a> (Day 1)</li>
+  </ul>
+</footer>
+
+</div><!-- end main -->
+
+<script>
+// ===== Theme Toggle =====
+(function() {
+  const KEY = 'lc-goguide-theme';
+  const toggle = document.getElementById('theme-toggle');
+  const html = document.documentElement;
+
+  function setTheme(theme) {
+    html.setAttribute('data-theme', theme);
+    localStorage.setItem(KEY, theme);
+    toggle.textContent = theme === 'dark' ? '☽' : '☀';
+  }
+
+  const saved = localStorage.getItem(KEY) || 'dark';
+  setTheme(saved);
+
+  toggle.addEventListener('click', function() {
+    setTheme(html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
+  });
+})();
+
+// ===== Mobile Sidebar Toggle =====
+(function() {
+  const btn = document.getElementById('sidebar-toggle');
+  const sidebar = document.getElementById('sidebar');
+
+  btn.addEventListener('click', function() {
+    sidebar.classList.toggle('open');
+  });
+
+  // Close sidebar when clicking a link (mobile)
+  sidebar.querySelectorAll('.sidebar-link').forEach(function(link) {
+    link.addEventListener('click', function() {
+      if (window.innerWidth <= 900) {
+        sidebar.classList.remove('open');
+      }
+    });
+  });
+})();
+
+// ===== Active Sidebar Link on Scroll =====
+(function() {
+  const links = document.querySelectorAll('.sidebar-link');
+  const sections = [];
+
+  links.forEach(function(link) {
+    var id = link.getAttribute('href').replace('#', '');
+    var el = document.getElementById(id);
+    if (el) sections.push({ id: id, el: el, link: link });
+  });
+
+  function onScroll() {
+    var scrollTop = window.scrollY + 120;
+    var current = null;
+
+    for (var i = sections.length - 1; i >= 0; i--) {
+      if (sections[i].el.offsetTop <= scrollTop) {
+        current = sections[i];
+        break;
+      }
+    }
+
+    links.forEach(function(l) { l.classList.remove('active'); });
+    if  current.link.classList.add('active');
+  }
+
+  window.addEventListener('scroll', onScroll);
+  onScroll();
+})();
+</script>
+
+</body>
+</html>

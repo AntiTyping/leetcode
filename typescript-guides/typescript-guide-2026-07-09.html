@@ -1,0 +1,1177 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TypeScript Daily Guide — 2026-07-09 (Day 36)</title>
+<style>
+:root {
+  --bg: #0d1117;
+  --surface: #161b22;
+  --surface2: #1c2129;
+  --border: #30363d;
+  --text: #e6edf3;
+  --text-muted: #8b949e;
+  --accent: #58a6ff;
+  --accent-bg: rgba(56,139,253,0.15);
+  --green: #3fb950;
+  --green-bg: rgba(63,185,80,0.08);
+  --red: #f85149;
+  --red-bg: rgba(248,81,73,0.08);
+  --yellow: #d29922;
+  --yellow-bg: rgba(210,153,34,0.1);
+  --orange: #db6d28;
+  --purple: #bc8cff;
+  --purple-bg: rgba(188,140,255,0.08);
+  --purple-border: rgba(188,140,255,0.2);
+  --link: #58a6ff;
+  --code-bg: #1c2129;
+  --output-bg: #0e1c0e;
+  --output-border: #1a3a1a;
+  --sidebar-bg: #161b22;
+  --sidebar-active: rgba(56,139,253,0.15);
+  --exercise-border: #30363d;
+}
+[data-theme="light"] {
+  --bg: #ffffff;
+  --surface: #f6f8fa;
+  --surface2: #eef1f5;
+  --border: #d0d7de;
+  --text: #1f2328;
+  --text-muted: #656d76;
+  --accent: #0969da;
+  --accent-bg: rgba(9,105,218,0.1);
+  --green: #1a7f37;
+  --green-bg: rgba(26,127,55,0.06);
+  --red: #cf222e;
+  --red-bg: rgba(207,34,46,0.06);
+  --yellow: #9a6700;
+  --yellow-bg: rgba(154,103,0,0.06);
+  --orange: #bc4c00;
+  --purple: #8250df;
+  --purple-bg: rgba(130,80,223,0.06);
+  --purple-border: rgba(130,80,223,0.15);
+  --link: #0969da;
+  --code-bg: #eef1f5;
+  --output-bg: #f0faf0;
+  --output-border: #c6e6c6;
+  --sidebar-bg: #f6f8fa;
+  --sidebar-active: rgba(9,105,218,0.1);
+  --exercise-border: #d0d7de;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;font-size:16px;line-height:1.7;color:var(--text);background:var(--bg);display:flex;min-height:100vh}
+a{color:var(--link);text-decoration:none}
+a:hover{text-decoration:underline}
+
+/* Sidebar */
+.sidebar{position:fixed;top:0;left:0;width:300px;height:100vh;background:var(--sidebar-bg);border-right:1px solid var(--border);overflow-y:auto;padding:20px 0;z-index:100}
+.sidebar-header{padding:16px 20px;border-bottom:1px solid var(--border);margin-bottom:12px}
+.sidebar-header h2{font-size:15px;font-weight:600;color:var(--text)}
+.sidebar-header .date{font-size:13px;color:var(--text-muted);margin-top:2px}
+.sidebar-section{padding:8px 20px 4px;font-size:12px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px}
+.sidebar-section.review-label{color:var(--purple)}
+.sidebar-nav{list-style:none;padding:0}
+.sidebar-nav li a{display:block;padding:6px 20px 6px 28px;font-size:14px;color:var(--text-muted);transition:all 0.15s}
+.sidebar-nav li a:hover,.sidebar-nav li a.active{color:var(--accent);background:var(--sidebar-active);text-decoration:none}
+.sidebar-nav li a .nav-id{font-size:11px;color:var(--text-muted);opacity:0.6;margin-left:6px}
+
+/* Main */
+.main{margin-left:300px;flex:1;padding:40px;max-width:1160px}
+.content{max-width:860px;margin:0 auto}
+
+/* Theme Toggle */
+.theme-toggle{position:fixed;top:16px;right:20px;z-index:200;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:8px 12px;cursor:pointer;color:var(--text);font-size:18px;line-height:1;transition:all 0.15s}
+.theme-toggle:hover{border-color:var(--accent)}
+
+/* Header */
+.guide-header{text-align:center;padding:32px 0 40px;border-bottom:1px solid var(--border);margin-bottom:40px}
+.guide-header h1{font-size:28px;font-weight:700;margin-bottom:8px}
+.guide-header .meta{font-size:15px;color:var(--text-muted)}
+.guide-header .meta span{margin:0 8px}
+.badge{display:inline-block;padding:2px 10px;border-radius:12px;font-size:13px;font-weight:500}
+.badge-blue{background:var(--accent-bg);color:var(--accent)}
+.badge-purple{background:var(--purple-bg);color:var(--purple)}
+
+/* How To Use */
+.how-to-use{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:24px 28px;margin-bottom:40px}
+.how-to-use h2{font-size:18px;margin-bottom:12px}
+.how-to-use ol{padding-left:24px}
+.how-to-use li{margin-bottom:6px;color:var(--text-muted)}
+
+/* Review Section */
+.review-section{margin-bottom:48px}
+.review-section-header{font-size:22px;font-weight:700;padding-bottom:12px;border-bottom:2px solid var(--purple);margin-bottom:28px;display:flex;align-items:center;gap:12px;color:var(--purple)}
+
+/* Review Card */
+.review-card{background:var(--purple-bg);border:1px solid var(--purple-border);border-left:4px solid var(--purple);border-radius:10px;padding:28px;margin-bottom:24px}
+.review-card .review-header{display:flex;align-items:center;gap:12px;margin-bottom:12px;flex-wrap:wrap}
+.review-card .review-title{font-size:18px;font-weight:700;color:var(--purple)}
+.review-card .review-meta{font-size:13px;color:var(--text-muted)}
+.review-card .review-reminder{color:var(--text-muted);font-style:italic;margin-bottom:16px;padding-left:14px;border-left:3px solid var(--purple)}
+.review-card .review-pattern{margin-bottom:16px}
+.review-card .review-pattern strong{display:block;margin-bottom:8px;font-size:14px;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px}
+.review-card .review-challenge{margin-bottom:12px}
+.review-card .review-challenge strong{display:block;margin-bottom:8px;font-size:14px;color:var(--yellow);text-transform:uppercase;letter-spacing:0.5px}
+.review-card .review-challenge p{line-height:1.6}
+.review-card .review-pitfall{background:var(--red-bg);border:1px solid rgba(248,81,73,0.15);border-radius:6px;padding:12px 16px;font-size:14px;line-height:1.6}
+.review-card .review-pitfall strong{color:var(--red);margin-right:4px}
+.review-card code{background:var(--code-bg);padding:2px 6px;border-radius:4px;font-family:'SF Mono','Fira Code','Consolas',monospace;font-size:13px}
+
+/* Topic Section */
+.topic-section{margin-bottom:48px}
+.topic-section-header{font-size:22px;font-weight:700;padding-bottom:12px;border-bottom:2px solid var(--accent);margin-bottom:28px;display:flex;align-items:center;gap:12px}
+.topic-section-header .section-num{background:var(--accent);color:#fff;width:32px;height:32px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:15px;font-weight:700;flex-shrink:0}
+
+/* Concept Card */
+.concept-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:28px;margin-bottom:32px}
+.concept-header{display:flex;align-items:center;gap:12px;margin-bottom:16px;flex-wrap:wrap}
+.concept-title{font-size:20px;font-weight:700}
+.ttag{display:inline-block;padding:2px 10px;border-radius:12px;font-size:12px;font-weight:500;background:var(--accent-bg);color:var(--accent)}
+
+.why-matters{color:var(--text-muted);font-style:italic;margin-bottom:20px;padding-left:14px;border-left:3px solid var(--accent)}
+.explanation{margin-bottom:20px;line-height:1.8}
+.explanation p{margin-bottom:12px}
+.explanation ul,.explanation ol{padding-left:24px;margin-bottom:12px}
+.explanation li{margin-bottom:4px}
+.explanation code{background:var(--code-bg);padding:2px 6px;border-radius:4px;font-family:'SF Mono','Fira Code','Consolas',monospace;font-size:14px}
+.step{display:flex;gap:12px;margin-bottom:10px;align-items:flex-start}
+.step-num{background:var(--accent-bg);color:var(--accent);width:24px;height:24px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;margin-top:3px}
+
+/* Code Examples */
+.code-example{margin-bottom:20px;border:1px solid var(--border);border-radius:8px;overflow:hidden}
+.lang-badge{background:var(--surface2);color:var(--text-muted);font-size:12px;font-weight:600;padding:6px 14px;border-bottom:1px solid var(--border);font-family:'SF Mono','Fira Code','Consolas',monospace}
+pre{margin:0;padding:16px;overflow-x:auto;background:var(--code-bg);font-family:'SF Mono','Fira Code','Consolas',monospace;font-size:13.5px;line-height:1.6;white-space:pre-wrap}
+pre code{background:none;padding:0;font-size:inherit}
+.output{background:var(--output-bg);border-top:1px solid var(--output-border);padding:12px 16px;font-family:'SF Mono','Fira Code','Consolas',monospace;font-size:13px;color:var(--green);white-space:pre-wrap}
+.output::before{content:"Output:";display:block;font-size:11px;font-weight:600;color:var(--text-muted);margin-bottom:4px;text-transform:uppercase;letter-spacing:0.5px}
+.type-result{background:var(--output-bg);border-top:1px solid var(--output-border);padding:12px 16px;font-family:'SF Mono','Fira Code','Consolas',monospace;font-size:13px;color:var(--green);white-space:pre-wrap}
+.type-result::before{content:"Type Result:";display:block;font-size:11px;font-weight:600;color:var(--text-muted);margin-bottom:4px;text-transform:uppercase;letter-spacing:0.5px}
+.type-error{background:var(--red-bg);border-top:1px solid rgba(248,81,73,0.2);padding:12px 16px;font-family:'SF Mono','Fira Code','Consolas',monospace;font-size:13px;color:var(--red);white-space:pre-wrap}
+.type-error::before{content:"Type Error:";display:block;font-size:11px;font-weight:600;color:var(--red);margin-bottom:4px;text-transform:uppercase;letter-spacing:0.5px}
+
+/* Callouts */
+.callout-warning{background:var(--yellow-bg);border:1px solid rgba(210,153,34,0.2);border-radius:8px;padding:20px;margin-bottom:20px}
+.callout-warning strong{color:var(--yellow);display:block;margin-bottom:12px;font-size:16px}
+.mistake,.correct{padding:10px 14px;border-radius:6px;margin-bottom:10px;font-size:14px;line-height:1.6}
+.mistake{background:var(--red-bg);border-left:3px solid var(--red)}
+.mistake code,.correct code{background:var(--code-bg);padding:2px 6px;border-radius:4px;font-family:'SF Mono','Fira Code','Consolas',monospace;font-size:13px}
+.correct{background:var(--green-bg);border-left:3px solid var(--green)}
+
+/* Key Rules */
+.key-rules{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:20px;margin-bottom:20px}
+.key-rules strong{display:block;margin-bottom:10px;font-size:16px}
+.key-rules ul{padding-left:20px}
+.key-rules li{margin-bottom:6px}
+.key-rules code{background:var(--code-bg);padding:2px 6px;border-radius:4px;font-family:'SF Mono','Fira Code','Consolas',monospace;font-size:13px}
+
+/* Exercises */
+.exercises{border:2px dashed var(--exercise-border);border-radius:8px;padding:20px;margin-bottom:20px;margin-left:12px}
+.exercises strong{display:block;margin-bottom:14px;font-size:16px;color:var(--purple)}
+.exercise{margin-bottom:14px;padding-left:38px;position:relative;line-height:1.6}
+.exercise:last-child{margin-bottom:0}
+.exercise-num{position:absolute;left:0;top:2px;background:var(--purple);color:#fff;width:24px;height:24px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:12px;font-weight:700}
+.exercise code{background:var(--code-bg);padding:2px 6px;border-radius:4px;font-family:'SF Mono','Fira Code','Consolas',monospace;font-size:13px}
+
+/* Connections */
+.connections{background:var(--accent-bg);border:1px solid rgba(56,139,253,0.2);border-radius:8px;padding:16px 20px;font-size:14px;color:var(--text-muted)}
+.connections strong{color:var(--accent);margin-right:6px}
+
+/* Cross-links */
+.cross-links{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:20px 24px;margin-bottom:40px;text-align:center}
+.cross-links a{margin:0 10px;font-weight:500}
+
+/* Footer */
+.guide-footer{border-top:1px solid var(--border);padding-top:32px;margin-top:48px}
+.guide-footer h2{font-size:18px;margin-bottom:16px}
+.guide-footer ul{list-style:none;padding:0}
+.guide-footer li{padding:6px 0}
+.guide-footer li a{font-weight:500}
+
+/* Responsive */
+@media(max-width:900px){
+  .sidebar{display:none}
+  .main{margin-left:0}
+  .theme-toggle{top:12px;right:12px}
+}
+</style>
+</head>
+<body>
+
+<!-- Theme Toggle -->
+<button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">&#x1F319;</button>
+
+<!-- Sidebar -->
+<nav class="sidebar">
+  <div class="sidebar-header">
+    <h2>TypeScript Daily Guide</h2>
+    <div class="date">2026-07-09 &mdash; Day 36</div>
+  </div>
+
+  <div class="sidebar-section review-label">Review (6 concepts)</div>
+  <ul class="sidebar-nav">
+    <li><a href="#review_class">Class Patterns <span class="nav-id">R1</span></a></li>
+    <li><a href="#review_proxy">Proxy &amp; Reflect Typing <span class="nav-id">R2</span></a></li>
+    <li><a href="#review_tlp">Type-Level Programming <span class="nav-id">R3</span></a></li>
+    <li><a href="#review_variance">Covariance &amp; Contravariance <span class="nav-id">R4</span></a></li>
+    <li><a href="#review_template">Template Literal Types &mdash; Advanced <span class="nav-id">R5</span></a></li>
+    <li><a href="#review_reactgeneric">React: Generic Components <span class="nav-id">R6</span></a></li>
+  </ul>
+
+  <div class="sidebar-section">API Composition at the Edge</div>
+  <ul class="sidebar-nav">
+    <li><a href="#api_gateway">API Gateway: Typed Routing &amp; Aggregation <span class="nav-id">#1</span></a></li>
+    <li><a href="#bff_pattern">Backend-for-Frontend: Typed View Models <span class="nav-id">#2</span></a></li>
+    <li><a href="#graphql_federation">GraphQL Federation: Typed Subgraphs <span class="nav-id">#3</span></a></li>
+  </ul>
+
+  <div class="sidebar-section">Scaling Reads &amp; Flow Control</div>
+  <ul class="sidebar-nav">
+    <li><a href="#caching_strategies">Multi-Layer Caching Strategies <span class="nav-id">#4</span></a></li>
+    <li><a href="#backpressure">Backpressure &amp; Flow Control <span class="nav-id">#5</span></a></li>
+  </ul>
+</nav>
+
+<!-- Main Content -->
+<div class="main">
+<div class="content">
+
+<!-- Header -->
+<header class="guide-header">
+  <h1>TypeScript Daily Guide &mdash; Day 36</h1>
+  <div class="meta">
+    <span>2026-07-09</span>
+    <span>&middot;</span>
+    <span>Day 36 of 36</span>
+    <span>&middot;</span>
+    <span class="badge badge-purple">6 reviews</span>
+    <span class="badge badge-blue">5 new concepts</span>
+  </div>
+</header>
+
+<!-- How to Use -->
+<div class="how-to-use">
+  <h2>How to Use This Guide</h2>
+  <ol>
+    <li><strong>Review first</strong> &mdash; scan each purple review card; if the concept feels solid, move on; if fuzzy, re-read the code pattern</li>
+    <li><strong>Attempt the challenge exercise</strong> on any review card that felt shaky &mdash; this is your best reinforcement signal</li>
+    <li><strong>Work through new concepts</strong> top to bottom &mdash; each builds on the previous</li>
+    <li><strong>Type every code example</strong> yourself and run it with <code>node</code>/<code>tsx</code> &mdash; hover over inferred types in your editor to build intuition</li>
+    <li><strong>Do at least 2 exercises per concept</strong> before moving to the next one</li>
+  </ol>
+</div>
+
+<!-- Cross-links -->
+<div class="cross-links">
+  <a href="guide.html">LeetCode Guide</a>
+  <a href="lang-guide.html">Lang Guide</a>
+  <a href="python-guide.html">Python Guide</a>
+  <a href="golang-guide.html">Go Guide</a>
+  <a href="javascript-guide.html">JS Guide</a>
+  <a href="report.html">Report</a>
+</div>
+
+<!-- ============================================================ -->
+<!-- REVIEW SECTION                                                -->
+<!-- ============================================================ -->
+<div class="review-section">
+<div class="review-section-header">Review &mdash; 6 Concepts</div>
+
+<!-- R1: Class Patterns -->
+<div class="review-card" id="review_class">
+  <div class="review-header">
+    <span class="review-title">R1. Class Patterns</span>
+    <span class="badge badge-purple">Runtime Patterns</span>
+    <span class="review-meta">15 days since review &middot; rep 3 &rarr; 4</span>
+  </div>
+  <div class="review-reminder">TypeScript adds two <em>different</em> privacy systems: compile-time <code>private</code>/<code>protected</code> (erased, enforced only by the checker) and runtime <code>#name</code> ECMAScript private fields (truly inaccessible outside the class). <strong>Parameter properties</strong> (<code>constructor(private x: number)</code>) declare and assign in one line. <code>readonly</code>, <code>abstract</code>, <code>override</code>, <code>implements</code>, and <code>static</code> blocks round out the toolkit.</div>
+
+  <div class="review-pattern">
+    <strong>Key Pattern</strong>
+    <div class="code-example">
+<pre><code>abstract class Repository&lt;T extends { id: string }&gt; {
+  // parameter property: declares + assigns this.store in one line
+  constructor(protected readonly store: Map&lt;string, T&gt; = new Map()) {}
+
+  #auditLog: string[] = [];              // true runtime private (ES field)
+
+  abstract validate(entity: T): void;    // subclasses must implement
+
+  save(entity: T): void {
+    this.validate(entity);
+    this.#auditLog.push(`save ${entity.id}`);   // only this class sees #auditLog
+    this.store.set(entity.id, entity);
+  }
+}
+
+class UserRepo extends Repository&lt;{ id: string; email: string }&gt; {
+  override validate(u: { id: string; email: string }): void {
+    if (!u.email.includes("@")) throw new Error("bad email");
+  }
+}</code></pre>
+<div class="type-result">parameter properties cut boilerplate; #auditLog is inaccessible outside the class even at runtime</div>
+    </div>
+  </div>
+
+  <div class="review-challenge">
+    <strong>Challenge Exercise</strong>
+    <p>Explain the difference between <code>private field</code> and <code>#field</code> for: (a) JSON serialization, (b) subclass access, (c) <code>in</code>-based brand checks (<code>#field in obj</code>). Then write a <code>Disposable</code> class using a <code>static</code> initialization block plus a <code>[Symbol.dispose]()</code> method and use it with <code>using</code>.</p>
+  </div>
+
+  <div class="review-pitfall">
+    <strong>Pitfall:</strong> Treating <code>private</code> as a security boundary &mdash; it is erased at compile time, so <code>(obj as any).secret</code> reaches it at runtime and it appears in <code>JSON.stringify</code>. Use <code>#name</code> when you need real encapsulation; note <code>#name</code> fields are <em>not</em> enumerated by <code>JSON.stringify</code>.
+  </div>
+</div>
+
+<!-- R2: Proxy & Reflect Typing -->
+<div class="review-card" id="review_proxy">
+  <div class="review-header">
+    <span class="review-title">R2. Proxy &amp; Reflect Typing</span>
+    <span class="badge badge-purple">Runtime Patterns</span>
+    <span class="review-meta">15 days since review &middot; rep 3 &rarr; 4</span>
+  </div>
+  <div class="review-reminder">A <code>Proxy</code> wraps a target with a <code>ProxyHandler&lt;T&gt;</code> of traps (<code>get</code>, <code>set</code>, <code>has</code>, &hellip;). <code>new Proxy(target, handler)</code> is typed to return <code>T</code>, so the wrapper is transparent to callers. Inside traps, forward to <code>Reflect.get</code>/<code>Reflect.set</code> so default behavior (prototype chain, receivers) stays correct rather than re-implementing it by hand.</div>
+
+  <div class="review-pattern">
+    <strong>Key Pattern</strong>
+    <div class="code-example">
+<pre><code>function readonlyView&lt;T extends object&gt;(target: T): Readonly&lt;T&gt; {
+  return new Proxy(target, {
+    get(t, prop, receiver) {
+      return Reflect.get(t, prop, receiver);   // preserve default semantics
+    },
+    set() {
+      throw new Error("this view is read-only");
+    },
+  });   // Proxy&lt;T&gt; is typed as T, so the result is Readonly&lt;T&gt;
+}
+
+const cfg = readonlyView({ port: 3000, host: "localhost" });
+cfg.port;        // 3000 — typed number
+// cfg.port = 8080;   // compiles-error via Readonly&lt;T&gt;, throws at runtime</code></pre>
+<div class="type-result">the Proxy is transparently typed as T; Reflect keeps trap behavior faithful to the default</div>
+    </div>
+  </div>
+
+  <div class="review-challenge">
+    <strong>Challenge Exercise</strong>
+    <p>Build a typed <code>observable&lt;T extends object&gt;(obj, onChange)</code> whose <code>set</code> trap fires <code>onChange(key, value)</code> with <code>key</code> narrowed to <code>keyof T</code>. Then explain why the handler&rsquo;s <code>prop</code> parameter is <code>string | symbol</code> (not <code>keyof T</code>) and how you safely narrow it, and why deep observation needs to wrap nested objects recursively.</p>
+  </div>
+
+  <div class="review-pitfall">
+    <strong>Pitfall:</strong> Re-implementing a trap by hand (<code>return t[prop]</code>) instead of forwarding to <code>Reflect</code> &mdash; you drop the correct <code>receiver</code>, breaking getters/setters defined on a prototype. Also, trap params are typed loosely (<code>PropertyKey</code>), so you must narrow before treating <code>prop</code> as a <code>keyof T</code>.
+  </div>
+</div>
+
+<!-- R3: Type-Level Programming -->
+<div class="review-card" id="review_tlp">
+  <div class="review-header">
+    <span class="review-title">R3. Type-Level Programming</span>
+    <span class="badge badge-purple">Advanced Patterns &amp; Performance</span>
+    <span class="review-meta">15 days since review &middot; rep 3 &rarr; 4</span>
+  </div>
+  <div class="review-reminder">TypeScript&rsquo;s type system is itself a (Turing-complete) functional language: conditional types are <code>if</code>, <code>infer</code> is pattern-matching/destructuring, recursion via a type referencing itself, and tuples act as the accumulator. You compute <em>types from types</em> &mdash; parse a route string, build a record, sum tuple lengths &mdash; all at compile time with no runtime cost.</div>
+
+  <div class="review-pattern">
+    <strong>Key Pattern</strong>
+    <div class="code-example">
+<pre><code>// Recursively split a delimited string literal into a tuple of parts
+type Split&lt;S extends string, D extends string&gt; =
+  S extends `${infer Head}${D}${infer Tail}`
+    ? [Head, ...Split&lt;Tail, D&gt;]
+    : [S];
+
+type Parts = Split&lt;"a.b.c", "."&gt;;   // ["a", "b", "c"]
+
+// Recursively build a union of the tuple's element types
+type Elem&lt;T extends readonly unknown[]&gt; = T[number];
+type P = Elem&lt;Parts&gt;;               // "a" | "b" | "c"</code></pre>
+<div class="type-result">conditional + infer + recursion turns a string literal into a structured type at compile time</div>
+    </div>
+  </div>
+
+  <div class="review-challenge">
+    <strong>Challenge Exercise</strong>
+    <p>Write <code>Join&lt;T extends string[], D extends string&gt;</code> (the inverse of <code>Split</code>), then a <code>PathValue&lt;T, P extends string&gt;</code> that reads a nested value type by a dotted path like <code>"user.address.city"</code>. Explain why deep recursion can hit TS&rsquo;s instantiation-depth limit and how a tail-recursive accumulator shape helps.</p>
+  </div>
+
+  <div class="review-pitfall">
+    <strong>Pitfall:</strong> Unbounded recursion &mdash; TS caps type instantiation depth (~50/1000) and errors with &ldquo;Type instantiation is excessively deep and possibly infinite.&rdquo; Prefer tail-recursive patterns (accumulate in a tuple parameter) and add base cases early. Heavy type-level code also slows the compiler; measure with <code>--extendedDiagnostics</code>.
+  </div>
+</div>
+
+<!-- R4: Covariance & Contravariance -->
+<div class="review-card" id="review_variance">
+  <div class="review-header">
+    <span class="review-title">R4. Covariance &amp; Contravariance</span>
+    <span class="badge badge-purple">Advanced Patterns &amp; Performance</span>
+    <span class="review-meta">15 days since review &middot; rep 3 &rarr; 4</span>
+  </div>
+  <div class="review-reminder">Variance describes how subtyping flows through generic positions. Producers (return types, readonly output) are <strong>covariant</strong>: <code>Cat</code> &sub; <code>Animal</code> &rArr; <code>() =&gt; Cat</code> &sub; <code>() =&gt; Animal</code>. Consumers (function parameters) are <strong>contravariant</strong>: <code>(a: Animal) =&gt; void</code> &sub; <code>(c: Cat) =&gt; void</code>. TS checks method parameters <em>bivariantly</em> for ergonomics, but <code>strictFunctionTypes</code> checks standalone function-typed properties contravariantly.</div>
+
+  <div class="review-pattern">
+    <strong>Key Pattern</strong>
+    <div class="code-example">
+<pre><code>class Animal { move() {} }
+class Cat extends Animal { meow() {} }
+
+// Covariant (output): a Cat producer is a valid Animal producer
+const makeCat: () =&gt; Cat = () =&gt; new Cat();
+const makeAnimal: () =&gt; Animal = makeCat;          // OK
+
+// Contravariant (input) under strictFunctionTypes:
+let handleCat: (c: Cat) =&gt; void = (c) =&gt; c.meow();
+let handleAnimal: (a: Animal) =&gt; void = (a) =&gt; a.move();
+handleCat = handleAnimal;      // OK: broader consumer is assignable
+// handleAnimal = handleCat;   // Error: a Cat handler can't accept any Animal</code></pre>
+<div class="type-result">outputs vary with the subtype (covariant); inputs vary against it (contravariant)</div>
+    </div>
+  </div>
+
+  <div class="review-challenge">
+    <strong>Challenge Exercise</strong>
+    <p>Show why <code>Array&lt;Cat&gt;</code> being assignable to <code>Array&lt;Animal&gt;</code> is <em>unsound</em> (push an <code>Animal</code> into the aliased <code>Cat[]</code>). Then annotate a generic <code>type Handler&lt;in T&gt;</code> and <code>type Box&lt;out T&gt;</code> with explicit variance (TS 4.7) and explain what the compiler now verifies and rejects.</p>
+  </div>
+
+  <div class="review-pitfall">
+    <strong>Pitfall:</strong> Assuming method parameters are checked contravariantly &mdash; they are <em>bivariant</em> by design (so <code>Array&lt;Cat&gt;.push</code> stays usable), which quietly permits some unsound assignments. Write callbacks as <code>readonly</code> function-typed <em>properties</em>, not methods, to get the stricter contravariant check under <code>strictFunctionTypes</code>.
+  </div>
+</div>
+
+<!-- R5: Template Literal Types — Advanced -->
+<div class="review-card" id="review_template">
+  <div class="review-header">
+    <span class="review-title">R5. Template Literal Types &mdash; Advanced</span>
+    <span class="badge badge-purple">Advanced Patterns &amp; Performance</span>
+    <span class="review-meta">15 days since review &middot; rep 3 &rarr; 4</span>
+  </div>
+  <div class="review-reminder">Template literal types build and <em>parse</em> string types. Combined with <code>infer</code> they destructure literals; with mapped types + key remapping (<code>as</code>) they synthesize keys; and the intrinsics <code>Uppercase</code>/<code>Lowercase</code>/<code>Capitalize</code>/<code>Uncapitalize</code> transform them. This is what powers typed event names, CSS units, and route params.</div>
+
+  <div class="review-pattern">
+    <strong>Key Pattern</strong>
+    <div class="code-example">
+<pre><code>// Extract :params from an Express-style path into a typed record
+type PathParams&lt;S extends string&gt; =
+  S extends `${string}:${infer Param}/${infer Rest}`
+    ? { [K in Param | keyof PathParams&lt;`/${Rest}`&gt;]: string }
+    : S extends `${string}:${infer Last}`
+      ? { [K in Last]: string }
+      : {};
+
+type P = PathParams&lt;"/users/:userId/posts/:postId"&gt;;
+// { userId: string; postId: string }
+
+// Key remapping: generate typed event handler props
+type Handlers&lt;T&gt; = { [K in keyof T &amp; string as `on${Capitalize&lt;K&gt;}`]: (v: T[K]) =&gt; void };
+type H = Handlers&lt;{ click: MouseEvent; focus: FocusEvent }&gt;;
+// { onClick: (v: MouseEvent) =&gt; void; onFocus: (v: FocusEvent) =&gt; void }</code></pre>
+<div class="type-result">template literals parse and synthesize string keys; Capitalize is a built-in intrinsic</div>
+    </div>
+  </div>
+
+  <div class="review-challenge">
+    <strong>Challenge Exercise</strong>
+    <p>Write a <code>Trim&lt;S&gt;</code> that strips leading/trailing spaces from a string literal type, and a <code>Replace&lt;S, From, To&gt;</code> / <code>ReplaceAll</code>. Then build a typed <code>querystring</code> parser: <code>ParseQS&lt;"a=1&amp;b=2"&gt;</code> &rarr; <code>{ a: "1"; b: "2" }</code>. Note where a <code>string</code> (non-literal) input collapses the result to <code>string</code>.</p>
+  </div>
+
+  <div class="review-pitfall">
+    <strong>Pitfall:</strong> Expecting parsing to work on a widened <code>string</code> &mdash; template literal inference only fires on <em>literal</em> types. Pass values through <code>as const</code> or a generic constrained to <code>extends string</code> so the literal is preserved; a plain <code>string</code> matches the fallback branch and you lose all structure.
+  </div>
+</div>
+
+<!-- R6: React — Generic Components -->
+<div class="review-card" id="review_reactgeneric">
+  <div class="review-header">
+    <span class="review-title">R6. React + TypeScript: Generic Components</span>
+    <span class="badge badge-purple">React + TypeScript</span>
+    <span class="review-meta">6 days since review &middot; rep 2 &rarr; 3</span>
+  </div>
+  <div class="review-reminder">A generic component lets one component work over many item types while keeping full inference at the call site &mdash; a <code>&lt;List items={users} renderItem={u =&gt; u.name} /&gt;</code> where <code>u</code> is inferred as <code>User</code>. Write it as a generic <em>function</em>; in <code>.tsx</code> the type parameter needs a trailing comma (<code>&lt;T,&gt;</code>) so the parser doesn&rsquo;t read it as JSX.</div>
+
+  <div class="review-pattern">
+    <strong>Key Pattern</strong>
+    <div class="code-example">
+<pre><code>interface ListProps&lt;T&gt; {
+  items: readonly T[];
+  renderItem: (item: T, index: number) =&gt; React.ReactNode;
+  keyOf: (item: T) =&gt; React.Key;
+}
+
+// &lt;T,&gt; trailing comma disambiguates from JSX in .tsx files
+function List&lt;T,&gt;({ items, renderItem, keyOf }: ListProps&lt;T&gt;) {
+  return &lt;ul&gt;{items.map((it, i) =&gt; (
+    &lt;li key={keyOf(it)}&gt;{renderItem(it, i)}&lt;/li&gt;
+  ))}&lt;/ul&gt;;
+}
+
+// T is inferred as User at the call site — item is fully typed
+&lt;List items={users} keyOf={u =&gt; u.id} renderItem={(u) =&gt; u.name} /&gt;;</code></pre>
+<div class="type-result">the type parameter flows from `items` to `renderItem`; the call site needs no explicit &lt;User&gt;</div>
+    </div>
+  </div>
+
+  <div class="review-challenge">
+    <strong>Challenge Exercise</strong>
+    <p>Make <code>List</code> also accept an optional <code>getKey</code> that defaults to indexing when <code>T</code> has an <code>id</code> field &mdash; use a conditional/overloaded prop type. Then combine generics with <code>forwardRef</code> (which erases type params) and explain the common workaround: a cast to a generic function type, or a <code>fixForwardRef</code> helper.</p>
+  </div>
+
+  <div class="review-pitfall">
+    <strong>Pitfall:</strong> Writing the type parameter as <code>&lt;T&gt;</code> in a <code>.tsx</code> file &mdash; the parser sees an opening JSX tag and errors. Use <code>&lt;T,&gt;</code> or <code>&lt;T extends unknown&gt;</code>. Also, <code>React.forwardRef</code> drops the generic; if you need a generic + ref component, cast the result rather than expecting inference to survive.
+  </div>
+</div>
+
+</div><!-- end review-section -->
+
+<!-- ============================================================ -->
+<!-- TOPIC SECTION 1: API Composition at the Edge                  -->
+<!-- ============================================================ -->
+<div class="topic-section">
+<div class="topic-section-header"><span class="section-num">1</span>API Composition at the Edge</div>
+
+<!-- Concept 1: API Gateway -->
+<div class="concept-card" id="api_gateway">
+  <div class="concept-header">
+    <span class="concept-title">1. API Gateway: Typed Routing &amp; Aggregation</span>
+    <span class="ttag">Node.js + TypeScript</span>
+  </div>
+
+  <div class="why-matters">Once you split a system into services (07-07), clients shouldn&rsquo;t talk to each one directly &mdash; they&rsquo;d juggle N hosts, N auth schemes, and N-way fan-out. An <strong>API gateway</strong> is the single edge process that routes each request to the right upstream, applies cross-cutting concerns (auth, rate limiting, CORS &mdash; all from 07-06) once, and can <em>aggregate</em> several upstream calls into one response. Typing the route table and the aggregated shape turns &ldquo;which service handles this and what does it return?&rdquo; into a compiler-checked contract instead of a runtime guess.</div>
+
+  <div class="explanation">
+    <p>Two responsibilities to type. First, <strong>routing</strong>: a typed registry maps a method+path pattern to an upstream target and a response type, so adding a route without a handler &mdash; or returning the wrong shape &mdash; fails to compile. Second, <strong>aggregation</strong>: a gateway endpoint calls several upstreams concurrently (<code>Promise.all</code>) and merges their typed results into one view. The gateway is a <em>tolerant reader</em> &mdash; it validates each upstream response at the boundary (Zod, R6 from 07-08) because those services deploy independently and can drift.</p>
+    <p>Keep the gateway thin: it composes and forwards, it doesn&rsquo;t own business logic. Resilience matters because it fans out &mdash; one slow upstream shouldn&rsquo;t hang the whole response, so wrap calls with timeouts (07-04) and decide per-field whether a failed upstream is fatal or degrades gracefully to a partial result.</p>
+    <div class="step"><span class="step-num">1</span><div>Declare a typed route table: pattern &rarr; upstream + response type.</div></div>
+    <div class="step"><span class="step-num">2</span><div>Apply cross-cutting concerns (auth, rate limit) once at the edge.</div></div>
+    <div class="step"><span class="step-num">3</span><div>Fan out concurrently, validate each response, merge into one typed shape.</div></div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 1 of 4 &mdash; a typed route registry</div>
+<pre><code>type Method = "GET" | "POST" | "PUT" | "DELETE";
+
+interface Route&lt;Res&gt; {
+  method: Method;
+  pattern: string;              // e.g. "/users/:id"
+  upstream: string;             // base URL of the owning service
+  handle: (req: GatewayRequest) =&gt; Promise&lt;Res&gt;;
+}
+
+// helper keeps Res inferred per route instead of widening to unknown
+const route = &lt;Res&gt;(r: Route&lt;Res&gt;): Route&lt;Res&gt; =&gt; r;</code></pre>
+<div class="type-result">each route carries its own response type; the `route` helper preserves Res via inference</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 2 of 4 &mdash; a typed upstream fetch that validates at the boundary</div>
+<pre><code>import { z } from "zod";
+
+async function callUpstream&lt;S extends z.ZodType&gt;(
+  base: string, path: string, schema: S,
+): Promise&lt;z.infer&lt;S&gt;&gt; {
+  const res = await fetch(`${base}${path}`, { signal: AbortSignal.timeout(2000) });
+  if (!res.ok) throw new Error(`upstream ${res.status}`);
+  return schema.parse(await res.json());     // trust boundary: independently deployed
+}</code></pre>
+<div class="type-result">the upstream is another deploy — parse (not cast) its response so drift fails loudly here</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 3 of 4 &mdash; an aggregation endpoint fanning out concurrently</div>
+<pre><code>const User = z.object({ id: z.string(), name: z.string() });
+const Orders = z.array(z.object({ id: z.string(), total: z.number() }));
+
+interface Dashboard { user: z.infer&lt;typeof User&gt;; orders: z.infer&lt;typeof Orders&gt; }
+
+async function getDashboard(userId: string): Promise&lt;Dashboard&gt; {
+  const [user, orders] = await Promise.all([               // one round trip's worth of latency
+    callUpstream("http://users", `/users/${userId}`, User),
+    callUpstream("http://orders", `/orders?user=${userId}`, Orders),
+  ]);
+  return { user, orders };                                 // merged, fully typed view
+}</code></pre>
+<div class="type-result">Promise.all fans out; the merged Dashboard is typed from each validated upstream</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 4 of 4 &mdash; graceful degradation for non-critical upstreams</div>
+<pre><code>async function optional&lt;T&gt;(p: Promise&lt;T&gt;): Promise&lt;T | null&gt; {
+  return p.catch(() =&gt; null);        // a failed non-critical call degrades, not crashes
+}
+
+async function getDashboardResilient(userId: string) {
+  const [user, orders] = await Promise.all([
+    callUpstream("http://users", `/users/${userId}`, User),   // critical: may throw
+    optional(callUpstream("http://orders", `/orders?user=${userId}`, Orders)),
+  ]);
+  return { user, orders: orders ?? [] };   // orders is T | null in the type — handled
+}</code></pre>
+<div class="type-result">wrapping in `optional` makes the degraded field `T | null`, forcing you to handle the gap</div>
+  </div>
+
+  <div class="callout-warning">
+    <strong>Common Mistakes:</strong>
+    <div class="mistake">&#10060; Casting upstream JSON with <code>as Dashboard</code> &mdash; a service you don&rsquo;t deploy renames a field and the gateway forwards garbage that crashes clients downstream.</div>
+    <div class="correct">&#9989; Parse each upstream response with a schema at the gateway boundary; treat other services as untrusted input.</div>
+    <div class="mistake">&#10060; Fanning out with sequential <code>await</code>s &mdash; latency stacks, and one slow upstream with no timeout hangs the whole request.</div>
+    <div class="correct">&#9989; Use <code>Promise.all</code> with per-call timeouts, and decide explicitly which upstreams are critical vs degradable.</div>
+  </div>
+
+  <div class="key-rules">
+    <strong>Key Rules:</strong>
+    <ul>
+      <li>The gateway is the single edge: route, apply auth/rate-limit/CORS once, aggregate &mdash; but hold no business logic.</li>
+      <li>Type the route table so a route and its response shape are checked, not stringly assumed.</li>
+      <li>Validate every upstream response at the boundary &mdash; independently deployed services drift.</li>
+      <li>Fan out concurrently with timeouts; model degradable upstreams as <code>T | null</code> so gaps are handled.</li>
+    </ul>
+  </div>
+
+  <div class="exercises">
+    <strong>Practice Exercises:</strong>
+    <div class="exercise"><span class="exercise-num">1</span>Add a typed <code>match(method, path)</code> that returns the <code>Route</code> whose <code>pattern</code> matches, extracting <code>:params</code> with the template-literal <code>PathParams</code> from R5.</div>
+    <div class="exercise"><span class="exercise-num">2</span>Wrap <code>callUpstream</code> with the retry/circuit-breaker from 07-04 and surface a typed <code>{ ok } | { degraded }</code> result per upstream.</div>
+    <div class="exercise"><span class="exercise-num">3</span>Add response caching (Concept 4) keyed by method+path so identical aggregations within a TTL skip the fan-out.</div>
+  </div>
+
+  <div class="connections"><strong>Connections:</strong> The gateway applies 07-06&rsquo;s CORS/security-headers and rate limiting once at the edge, and 07-04&rsquo;s timeouts/retries protect its fan-out. Boundary validation is R6&rsquo;s Zod applied to <em>internal</em> upstreams, and the aggregated view model is exactly what a Backend-for-Frontend (Concept 2) specializes per client.</div>
+</div>
+
+<!-- Concept 2: Backend-for-Frontend -->
+<div class="concept-card" id="bff_pattern">
+  <div class="concept-header">
+    <span class="concept-title">2. Backend-for-Frontend: Typed View Models</span>
+    <span class="ttag">Node.js + TypeScript</span>
+  </div>
+
+  <div class="why-matters">A generic API gateway serves everyone the same way, but a mobile app and a web dashboard need <em>different</em> shapes: mobile wants a lean payload over a slow link, web wants a rich aggregate. A <strong>Backend-for-Frontend</strong> (BFF) is a gateway dedicated to one client, owning the <em>view model</em> that screen needs. Typing the view model separately from the domain models lets you reshape, rename, and trim per client without leaking internal entities &mdash; the frontend codes against a type built for it.</div>
+
+  <div class="explanation">
+    <p>The core discipline is separating <strong>domain models</strong> (what services return) from <strong>view models</strong> (what a screen renders). The BFF calls upstreams (reusing the gateway&rsquo;s typed fetch), then runs a typed <em>assembler</em>: a pure function <code>(domain...) =&gt; ViewModel</code> that picks fields, flattens nesting, computes derived values, and formats for display. Because the assembler&rsquo;s output type is the client&rsquo;s contract, TypeScript catches any drift between what the BFF produces and what the UI consumes.</p>
+    <p>A BFF-per-client also lets teams move independently: the mobile BFF can add a field without touching the web BFF. Keep assemblers pure and testable, and derive the shared client type from them (or a Zod schema) so the API client on the frontend and the assembler on the backend can&rsquo;t disagree &mdash; the same single-source-of-truth idea as contract testing (07-08).</p>
+    <div class="step"><span class="step-num">1</span><div>Keep domain models (upstream) distinct from view models (client-facing).</div></div>
+    <div class="step"><span class="step-num">2</span><div>Assemble with a pure, typed function that trims/flattens/derives per screen.</div></div>
+    <div class="step"><span class="step-num">3</span><div>Export the view-model type as the client contract; the UI codes against it.</div></div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 1 of 4 &mdash; domain models vs a screen-specific view model</div>
+<pre><code>// Domain models — the raw shapes upstream services return
+interface UserDomain { id: string; firstName: string; lastName: string; avatarKey: string }
+interface OrderDomain { id: string; total: number; status: "paid" | "shipped"; createdAt: string }
+
+// View model — exactly what the mobile "account" screen renders
+interface AccountView {
+  displayName: string;              // derived: firstName + lastName
+  avatarUrl: string;                // derived: CDN url from avatarKey
+  recentOrders: { id: string; total: string; shipped: boolean }[];  // trimmed + formatted
+}</code></pre>
+<div class="type-result">the view model is shaped for the screen, decoupled from internal domain fields</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 2 of 4 &mdash; a pure, typed assembler</div>
+<pre><code>function toAccountView(user: UserDomain, orders: OrderDomain[]): AccountView {
+  return {
+    displayName: `${user.firstName} ${user.lastName}`,
+    avatarUrl: `https://cdn.example.com/${user.avatarKey}`,
+    recentOrders: orders.slice(0, 5).map((o) =&gt; ({
+      id: o.id,
+      total: `$${o.total.toFixed(2)}`,          // formatted for display
+      shipped: o.status === "shipped",          // derived boolean the UI wants
+    })),
+  };
+}</code></pre>
+<div class="type-result">a pure (domain...) =&gt; ViewModel function — trivially unit-testable, no I/O</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 3 of 4 &mdash; the BFF endpoint wires fetch + assemble</div>
+<pre><code>async function accountBff(userId: string): Promise&lt;AccountView&gt; {
+  const [user, orders] = await Promise.all([
+    callUpstream("http://users", `/users/${userId}`, UserSchema),
+    callUpstream("http://orders", `/orders?user=${userId}`, OrderArraySchema),
+  ]);
+  return toAccountView(user, orders);     // I/O at the edge, logic in the pure assembler
+}</code></pre>
+<div class="type-result">the endpoint does I/O; the typed assembler owns the shape the client depends on</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 4 of 4 &mdash; the frontend shares the exact view-model type</div>
+<pre><code>// shared package: the BFF exports AccountView; the app imports it
+import type { AccountView } from "@app/bff-account";
+
+async function fetchAccount(): Promise&lt;AccountView&gt; {
+  const res = await fetch("/bff/account");
+  return res.json() as Promise&lt;AccountView&gt;;   // same type both sides — can't drift
+}
+// If the BFF changes AccountView, the frontend fails to compile — a caught contract break</code></pre>
+<div class="type-result">one shared view-model type binds producer and consumer; a change breaks the build, not prod</div>
+  </div>
+
+  <div class="callout-warning">
+    <strong>Common Mistakes:</strong>
+    <div class="mistake">&#10060; Returning raw domain models straight to the client &mdash; internal fields leak, and every UI tweak forces a service change.</div>
+    <div class="correct">&#9989; Define a view model per screen and map to it in a pure assembler; keep domain shapes internal.</div>
+    <div class="mistake">&#10060; One shared BFF trying to satisfy web and mobile at once &mdash; it accretes conditionals and couples the two clients.</div>
+    <div class="correct">&#9989; One BFF per client (or per team) so each evolves its view models independently.</div>
+  </div>
+
+  <div class="key-rules">
+    <strong>Key Rules:</strong>
+    <ul>
+      <li>A BFF is a client-specific gateway: it owns the view model that one frontend renders.</li>
+      <li>Separate domain models (upstream) from view models (client) &mdash; map between them in a pure assembler.</li>
+      <li>Do I/O at the endpoint, logic in the assembler; pure functions are easy to type and test.</li>
+      <li>Share the view-model type (or a Zod schema) with the frontend so producer and consumer can&rsquo;t drift.</li>
+    </ul>
+  </div>
+
+  <div class="exercises">
+    <strong>Practice Exercises:</strong>
+    <div class="exercise"><span class="exercise-num">1</span>Write a second view model (<code>OrderDetailView</code>) and assembler from the same domain models; note how the domain layer stays untouched.</div>
+    <div class="exercise"><span class="exercise-num">2</span>Derive <code>AccountView</code> from a Zod schema so the frontend gets both the runtime parser and the static type in one export.</div>
+    <div class="exercise"><span class="exercise-num">3</span>Add a <code>Pick</code>/<code>Omit</code>-based utility that proves at compile time your view model uses only fields present on the domain model.</div>
+  </div>
+
+  <div class="connections"><strong>Connections:</strong> The BFF is a specialization of the API gateway (Concept 1) &mdash; same typed upstream fetch, but with a per-client view model. The domain&rarr;view mapping reuses <code>Pick</code>/<code>Omit</code> utility types, and sharing the view-model type is contract testing&rsquo;s (07-08) single-source-of-truth applied within your own stack. Pure assemblers echo the BFF-flavored pipe/compose functional patterns.</div>
+</div>
+
+<!-- Concept 3: GraphQL Federation -->
+<div class="concept-card" id="graphql_federation">
+  <div class="concept-header">
+    <span class="concept-title">3. GraphQL Federation: Typed Subgraphs</span>
+    <span class="ttag">TypeScript</span>
+  </div>
+
+  <div class="why-matters">A single monolithic GraphQL schema doesn&rsquo;t scale across teams &mdash; everyone edits one file and one deploy. <strong>Federation</strong> composes many independently owned <em>subgraphs</em> into one supergraph that clients query as if it were monolithic. Each team owns the types it&rsquo;s responsible for and can <em>extend</em> types owned elsewhere. The TypeScript payoff comes from codegen: each subgraph gets generated resolver types from its schema, so a resolver that returns the wrong shape or forgets a reference resolver fails to compile.</div>
+
+  <div class="explanation">
+    <p>The key primitive is the <strong>entity</strong>: a type marked <code>@key(fields: "id")</code> that can be referenced and extended across subgraphs. The owning subgraph defines the entity and a <code>__resolveReference</code> that fetches it by its key; another subgraph can add fields to that same entity, resolving them from its own data. The gateway (router) plans a query, calls each subgraph for the fields it owns, and stitches the result &mdash; the client never sees the seams.</p>
+    <p>Typing is codegen-driven: tools like GraphQL Code Generator read each subgraph&rsquo;s SDL and emit <code>Resolvers</code> types, so your resolver map is checked against the schema field-by-field. That means the schema is the source of truth and the resolvers can&rsquo;t drift from it &mdash; the same generate-types-from-schema discipline as tRPC/OpenAPI, but split across services. Federation is not a data-fetching silver bullet: naive reference resolvers cause N+1 calls, so batch with DataLoader.</p>
+    <div class="step"><span class="step-num">1</span><div>Mark shared types as entities with <code>@key</code>; each is owned by one subgraph.</div></div>
+    <div class="step"><span class="step-num">2</span><div>Generate resolver types per subgraph so resolvers match the schema.</div></div>
+    <div class="step"><span class="step-num">3</span><div>Extend entities from other subgraphs via <code>__resolveReference</code>; batch to avoid N+1.</div></div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">GraphQL &middot; example 1 of 4 &mdash; two subgraphs sharing an entity</div>
+<pre><code># users subgraph — OWNS the User entity
+type User @key(fields: "id") {
+  id: ID!
+  name: String!
+}
+
+# reviews subgraph — EXTENDS User with fields it owns
+extend type User @key(fields: "id") {
+  id: ID! @external
+  reviews: [Review!]!         # resolved from the reviews service's data
+}
+type Review { id: ID!  body: String! }</code></pre>
+<div class="type-result">@key makes User a federated entity; a second subgraph extends it without owning it</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 2 of 4 &mdash; codegen-typed resolvers (users subgraph)</div>
+<pre><code>// generated by graphql-codegen from the subgraph SDL
+import type { Resolvers } from "./generated/resolvers.js";
+
+export const resolvers: Resolvers = {
+  User: {
+    // reference resolver: rehydrate a User from just its @key
+    __resolveReference(ref) {          // ref is typed { id: string }
+      return db.users.findById(ref.id);   // must return the User shape
+    },
+  },
+  Query: {
+    user: (_p, args) =&gt; db.users.findById(args.id),   // args typed from schema
+  },
+};</code></pre>
+<div class="type-result">Resolvers is generated from the schema — a wrong return shape or missing field won't compile</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 3 of 4 &mdash; the extending subgraph resolves added fields</div>
+<pre><code>import type { Resolvers } from "./generated/resolvers.js";
+
+export const resolvers: Resolvers = {
+  User: {
+    // this subgraph only knows the User's id (the @key); it resolves `reviews`
+    reviews: (user) =&gt; reviewLoader.load(user.id),   // user: { id: string }
+  },
+};</code></pre>
+<div class="type-result">the reviews subgraph fills in its own field on a User it doesn't own, keyed by id</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 4 of 4 &mdash; batch reference resolution to kill N+1</div>
+<pre><code>import DataLoader from "dataloader";
+
+// one batched query per tick instead of one DB hit per referenced User
+const reviewLoader = new DataLoader&lt;string, Review[]&gt;(async (userIds) =&gt; {
+  const rows = await db.reviews.findByUserIds(userIds as string[]);
+  const byUser = new Map&lt;string, Review[]&gt;();
+  for (const r of rows) (byUser.get(r.userId) ?? byUser.set(r.userId, []).get(r.userId)!).push(r);
+  return userIds.map((id) =&gt; byUser.get(id) ?? []);   // must return in input order
+});</code></pre>
+<div class="type-result">DataLoader coalesces per-entity reference resolves into one batched, ordered fetch</div>
+  </div>
+
+  <div class="callout-warning">
+    <strong>Common Mistakes:</strong>
+    <div class="mistake">&#10060; Hand-writing resolver types to match the SDL &mdash; they silently drift from the schema and break at query time, not build time.</div>
+    <div class="correct">&#9989; Generate <code>Resolvers</code> from each subgraph&rsquo;s schema so resolvers are checked field-by-field against it.</div>
+    <div class="mistake">&#10060; A reference resolver that hits the DB once per referenced entity &mdash; a classic N+1 that melts under load.</div>
+    <div class="correct">&#9989; Batch reference/field resolution with DataLoader so many keys become one ordered query.</div>
+  </div>
+
+  <div class="key-rules">
+    <strong>Key Rules:</strong>
+    <ul>
+      <li>Federation composes independently owned subgraphs into one supergraph; each entity has a single owner.</li>
+      <li><code>@key</code> makes a type a federated entity; other subgraphs <code>extend</code> it and resolve their own fields.</li>
+      <li>Generate resolver types from each subgraph&rsquo;s SDL &mdash; the schema is the source of truth, resolvers are checked against it.</li>
+      <li>Reference/field resolvers are N+1 magnets; batch with DataLoader and return results in input order.</li>
+    </ul>
+  </div>
+
+  <div class="exercises">
+    <strong>Practice Exercises:</strong>
+    <div class="exercise"><span class="exercise-num">1</span>Add a <code>products</code> subgraph that extends <code>Review</code> with a <code>product: Product</code> field and write its <code>__resolveReference</code>.</div>
+    <div class="exercise"><span class="exercise-num">2</span>Configure graphql-codegen&rsquo;s <code>typescript-resolvers</code> with a <code>mappers</code> entry so resolver parents use your DB row type, not the GraphQL type.</div>
+    <div class="exercise"><span class="exercise-num">3</span>Add a contract check (07-08) that fails CI if a subgraph removes a field another subgraph&rsquo;s <code>@requires</code> depends on.</div>
+  </div>
+
+  <div class="connections"><strong>Connections:</strong> Federation is the API gateway (Concept 1) idea for GraphQL &mdash; a router stitching typed subgraphs instead of a REST gateway aggregating endpoints. Codegen&rsquo;d resolver types are the schema-first, generate-types discipline of GraphQL Codegen and tRPC/OpenAPI. The N+1/DataLoader concern previews Concept 4&rsquo;s caching, and cross-subgraph field ownership is the same &ldquo;don&rsquo;t break used fields&rdquo; promise as consumer-driven contracts (07-08).</div>
+</div>
+
+</div><!-- end topic-section 1 -->
+
+<!-- ============================================================ -->
+<!-- TOPIC SECTION 2: Scaling Reads & Flow Control                 -->
+<!-- ============================================================ -->
+<div class="topic-section">
+<div class="topic-section-header"><span class="section-num">2</span>Scaling Reads &amp; Flow Control</div>
+
+<!-- Concept 4: Multi-Layer Caching -->
+<div class="concept-card" id="caching_strategies">
+  <div class="concept-header">
+    <span class="concept-title">4. Multi-Layer Caching Strategies</span>
+    <span class="ttag">Node.js + TypeScript</span>
+  </div>
+
+  <div class="why-matters">A gateway that fans out (Concept 1) and a federation router (Concept 3) both re-fetch the same hot data constantly. Caching turns repeat reads into cheap lookups, but a cache is a <em>second copy of the truth</em> &mdash; get the write path or the key wrong and you serve stale or leaked data. Typing a cache abstraction (a serializer + a typed key + a TTL) makes &ldquo;what&rsquo;s stored under this key and how fresh is it?&rdquo; explicit, and lets you swap an in-memory layer and Redis behind one interface.</div>
+
+  <div class="explanation">
+    <p>Two write strategies dominate. <strong>Cache-aside</strong> (lazy): on read, check the cache; on miss, load from the source, populate the cache, return &mdash; the application owns the cache. <strong>Write-through</strong>: writes go to the cache and the store together, so the cache is never stale for writes (at the cost of write latency). Both need a <strong>TTL</strong> so entries eventually expire, and explicit <strong>invalidation</strong> on mutation. A typed <code>Cache&lt;T&gt;</code> interface with a serializer keeps stored/loaded types honest across an in-process Map and a Redis backend.</p>
+    <p>The subtle failure is the <strong>cache stampede</strong>: a popular key expires and a thundering herd of requests all miss and hit the source at once. Guard it by coalescing concurrent misses for the same key into a single in-flight promise (single-flight). And always design the key namespace deliberately &mdash; include a version prefix so a schema change can invalidate a whole class of entries at once.</p>
+    <div class="step"><span class="step-num">1</span><div>Model a typed <code>Cache&lt;T&gt;</code> (get/set/del + TTL) with a serializer, backend-agnostic.</div></div>
+    <div class="step"><span class="step-num">2</span><div>Read via cache-aside; write via write-through or explicit invalidation.</div></div>
+    <div class="step"><span class="step-num">3</span><div>Coalesce concurrent misses (single-flight) to prevent stampedes.</div></div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 1 of 4 &mdash; a backend-agnostic typed cache</div>
+<pre><code>interface Cache&lt;T&gt; {
+  get(key: string): Promise&lt;T | undefined&gt;;
+  set(key: string, value: T, ttlMs: number): Promise&lt;void&gt;;
+  del(key: string): Promise&lt;void&gt;;
+}
+
+// Redis-backed instance: the serializer keeps T honest across the wire
+function redisCache&lt;T&gt;(redis: Redis, schema: { parse: (u: unknown) =&gt; T }): Cache&lt;T&gt; {
+  return {
+    async get(key) {
+      const raw = await redis.get(key);
+      return raw == null ? undefined : schema.parse(JSON.parse(raw));   // validate on read
+    },
+    async set(key, value, ttlMs) { await redis.set(key, JSON.stringify(value), "PX", ttlMs); },
+    async del(key) { await redis.del(key); },
+  };
+}</code></pre>
+<div class="type-result">one Cache&lt;T&gt; interface spans Map/Redis; the schema re-validates data crossing the process boundary</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 2 of 4 &mdash; cache-aside read</div>
+<pre><code>async function getUser(cache: Cache&lt;User&gt;, id: string): Promise&lt;User&gt; {
+  const key = `user:v1:${id}`;                 // versioned namespace
+  const hit = await cache.get(key);
+  if (hit) return hit;                         // fast path
+
+  const user = await db.users.findById(id);    // miss: load from source of truth
+  await cache.set(key, user, 60_000);          // populate for next time
+  return user;
+}</code></pre>
+<div class="type-result">check-miss-load-populate: the app owns the cache; the DB stays the source of truth</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 3 of 4 &mdash; write-through keeps the cache fresh on mutation</div>
+<pre><code>async function updateUser(cache: Cache&lt;User&gt;, id: string, patch: Partial&lt;User&gt;): Promise&lt;User&gt; {
+  const updated = await db.users.update(id, patch);   // write the store
+  await cache.set(`user:v1:${id}`, updated, 60_000);  // write the cache in the same op
+  return updated;                                     // cache can't be stale for this write
+}
+// simpler alternative: write the store, then cache.del(key) — next read repopulates (write-invalidate)</code></pre>
+<div class="type-result">write-through updates both copies together; write-invalidate deletes and lets the next read refill</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 4 of 4 &mdash; single-flight to prevent a stampede</div>
+<pre><code>function singleFlight&lt;T&gt;() {
+  const inflight = new Map&lt;string, Promise&lt;T&gt;&gt;();
+  return (key: string, load: () =&gt; Promise&lt;T&gt;): Promise&lt;T&gt; =&gt; {
+    const existing = inflight.get(key);
+    if (existing) return existing;                    // join the in-flight load
+    const p = load().finally(() =&gt; inflight.delete(key));
+    inflight.set(key, p);
+    return p;
+  };
+}
+
+const flight = singleFlight&lt;User&gt;();
+// on a hot-key miss, 100 concurrent callers share ONE db load, not 100
+const user = await flight(`user:v1:${id}`, () =&gt; db.users.findById(id));</code></pre>
+<div class="type-result">concurrent misses for a key collapse into a single in-flight promise — no thundering herd</div>
+  </div>
+
+  <div class="callout-warning">
+    <strong>Common Mistakes:</strong>
+    <div class="mistake">&#10060; Caching on read but never invalidating on write &mdash; the cache serves a stale value until the TTL lapses, sometimes for minutes.</div>
+    <div class="correct">&#9989; Pair every mutation with a write-through update or a <code>del(key)</code>; treat invalidation as part of the write.</div>
+    <div class="mistake">&#10060; Letting every concurrent miss hit the database &mdash; a popular key&rsquo;s expiry triggers a stampede that can topple the source.</div>
+    <div class="correct">&#9989; Coalesce concurrent misses with single-flight, and consider a small random TTL jitter so keys don&rsquo;t all expire together.</div>
+  </div>
+
+  <div class="key-rules">
+    <strong>Key Rules:</strong>
+    <ul>
+      <li>A cache is a second copy of the truth &mdash; every write path must update or invalidate it, not just the read path.</li>
+      <li>Cache-aside (lazy load on miss) is the default; write-through trades write latency for never-stale writes.</li>
+      <li>Type a backend-agnostic <code>Cache&lt;T&gt;</code> with a serializer that re-validates data crossing the process boundary.</li>
+      <li>Use versioned key namespaces and single-flight coalescing; add TTL jitter to avoid synchronized expiry.</li>
+    </ul>
+  </div>
+
+  <div class="exercises">
+    <strong>Practice Exercises:</strong>
+    <div class="exercise"><span class="exercise-num">1</span>Add an in-process <code>Map</code>-based L1 in front of the Redis L2 and write a <code>tiered(l1, l2)</code> that reads L1&rarr;L2&rarr;source and back-fills both.</div>
+    <div class="exercise"><span class="exercise-num">2</span>Implement stale-while-revalidate: serve the expired value immediately while a background refresh repopulates the key.</div>
+    <div class="exercise"><span class="exercise-num">3</span>Add a typed <code>invalidateByPrefix("user:v1:")</code> and use a version bump (<code>v1</code>&rarr;<code>v2</code>) to invalidate a whole class of entries after a schema change.</div>
+  </div>
+
+  <div class="connections"><strong>Connections:</strong> Caching is what makes the API gateway (Concept 1) and federation (Concept 3) affordable under load &mdash; the DataLoader batching there is request-scoped caching, this is cross-request. The typed <code>Cache&lt;T&gt;</code> with a Zod serializer reuses R6&rsquo;s boundary validation for the Redis wire, and single-flight is a flow-control cousin of Concept 5&rsquo;s backpressure &mdash; both bound concurrency to protect a downstream.</div>
+</div>
+
+<!-- Concept 5: Backpressure & Flow Control -->
+<div class="concept-card" id="backpressure">
+  <div class="concept-header">
+    <span class="concept-title">5. Backpressure &amp; Flow Control in Typed Pipelines</span>
+    <span class="ttag">Node.js + TypeScript</span>
+  </div>
+
+  <div class="why-matters">A fast producer feeding a slow consumer &mdash; a firehose of DB rows piped to a rate-limited API, thousands of queued jobs (07-08) hitting one worker &mdash; will buffer unbounded and eventually exhaust memory. <strong>Backpressure</strong> is the mechanism by which a slow consumer tells a fast producer to <em>slow down</em>. Pull-based async iteration in TypeScript gives you this for free: the producer only advances when the consumer asks for the next value, so a <code>for await</code> loop that does slow work naturally throttles the source.</div>
+
+  <div class="explanation">
+    <p>The typed primitive is the <strong>async iterable</strong> (<code>AsyncIterable&lt;T&gt;</code> / <code>async function*</code>). It is <em>pull-based</em>: each <code>await next()</code> runs the generator up to the next <code>yield</code> and then pauses &mdash; no value is produced until requested. So a consumer that awaits slow work between pulls automatically bounds how far ahead the producer runs. This is the opposite of an event emitter (push-based), which fires regardless of whether anyone can keep up and needs a manual buffer.</p>
+    <p>To go faster than strictly sequential without going unbounded, process with a <strong>bounded concurrency</strong> window: keep at most N items in flight, and only pull the next when a slot frees. That&rsquo;s the flow-control sweet spot &mdash; throughput without unbounded buffering. Node&rsquo;s stream layer encodes the same idea in <code>highWaterMark</code> and the <code>.pipe()</code> / <code>pipeline()</code> contract, but async iterators express it more directly and with better types.</p>
+    <div class="step"><span class="step-num">1</span><div>Model the source as a pull-based <code>AsyncIterable&lt;T&gt;</code> (<code>async function*</code>).</div></div>
+    <div class="step"><span class="step-num">2</span><div>Consume with <code>for await</code> so slow work throttles the producer automatically.</div></div>
+    <div class="step"><span class="step-num">3</span><div>For throughput, process with a bounded-concurrency window, not an unbounded buffer.</div></div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 1 of 4 &mdash; a pull-based typed source</div>
+<pre><code>// paginates a DB, yielding one page at a time — nothing runs until pulled
+async function* fetchAllUsers(pageSize = 100): AsyncGenerator&lt;User, void, unknown&gt; {
+  let cursor: string | null = null;
+  do {
+    const { rows, next } = await db.users.page(cursor, pageSize);  // one page per pull
+    for (const u of rows) yield u;
+    cursor = next;
+  } while (cursor);
+}</code></pre>
+<div class="type-result">AsyncGenerator&lt;User&gt; is lazy: the next page is fetched only when the consumer asks</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 2 of 4 &mdash; a slow consumer throttles the producer for free</div>
+<pre><code>async function syncToApi() {
+  for await (const user of fetchAllUsers()) {
+    await rateLimitedApi.send(user);   // slow: the loop won't pull the next user until this resolves
+  }
+  // memory stays flat — the generator is paused between iterations, no giant buffer
+}</code></pre>
+<div class="type-result">`for await` pulls one at a time; the producer can't outrun the consumer — backpressure by construction</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 3 of 4 &mdash; bounded concurrency for throughput without a firehose</div>
+<pre><code>async function mapBounded&lt;T, R&gt;(
+  src: AsyncIterable&lt;T&gt;, limit: number, fn: (item: T) =&gt; Promise&lt;R&gt;,
+): Promise&lt;R[]&gt; {
+  const results: R[] = [];
+  const inflight = new Set&lt;Promise&lt;void&gt;&gt;();
+  for await (const item of src) {
+    const p = fn(item).then((r) =&gt; { results.push(r); });
+    inflight.add(p);
+    p.finally(() =&gt; inflight.delete(p));
+    if (inflight.size &gt;= limit) await Promise.race(inflight);   // wait for a slot before pulling next
+  }
+  await Promise.all(inflight);
+  return results;
+}
+
+// at most 5 sends in flight at once — faster than sequential, still bounded
+await mapBounded(fetchAllUsers(), 5, (u) =&gt; rateLimitedApi.send(u));</code></pre>
+<div class="type-result">the window caps in-flight work at `limit`; pulling pauses until a slot frees — throughput with a ceiling</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 4 of 4 &mdash; Node streams encode the same contract</div>
+<pre><code>import { pipeline } from "node:stream/promises";
+import { Readable, Transform } from "node:stream";
+
+// highWaterMark is the buffer bound; pipeline propagates backpressure + errors
+await pipeline(
+  Readable.from(fetchAllUsers()),                        // async iterable -&gt; stream
+  new Transform({
+    objectMode: true, highWaterMark: 16,                 // at most 16 buffered objects
+    transform(user: User, _enc, cb) { enrich(user).then((u) =&gt; cb(null, u), cb); },
+  }),
+  async function (source) { for await (const u of source) await sink.write(u); },
+);</code></pre>
+<div class="type-result">streams express backpressure via highWaterMark; pipeline() wires throttling + error propagation</div>
+  </div>
+
+  <div class="callout-warning">
+    <strong>Common Mistakes:</strong>
+    <div class="mistake">&#10060; <code>Promise.all(items.map(fn))</code> over a huge source &mdash; it launches everything at once, unbounded, and can exhaust memory or hammer the downstream.</div>
+    <div class="correct">&#9989; Iterate a pull-based source and cap in-flight work with a bounded-concurrency window.</div>
+    <div class="mistake">&#10060; Pushing from an event emitter into an unbounded array when the consumer is slower than the producer &mdash; the buffer grows without limit.</div>
+    <div class="correct">&#9989; Prefer pull-based <code>AsyncIterable</code> (or streams with <code>highWaterMark</code>) so the consumer&rsquo;s pace controls the producer.</div>
+  </div>
+
+  <div class="key-rules">
+    <strong>Key Rules:</strong>
+    <ul>
+      <li>Backpressure = a slow consumer throttling a fast producer; without it, buffers grow until memory dies.</li>
+      <li>Async iterables are pull-based: nothing is produced until requested, so <code>for await</code> throttles for free.</li>
+      <li>For throughput, use a bounded-concurrency window (at most N in flight), never an unbounded <code>Promise.all</code>.</li>
+      <li>Node streams encode the same contract via <code>highWaterMark</code>; <code>pipeline()</code> propagates both backpressure and errors.</li>
+    </ul>
+  </div>
+
+  <div class="exercises">
+    <strong>Practice Exercises:</strong>
+    <div class="exercise"><span class="exercise-num">1</span>Write a typed <code>batch&lt;T&gt;(src: AsyncIterable&lt;T&gt;, size): AsyncIterable&lt;T[]&gt;</code> that groups a stream into fixed-size arrays for bulk inserts.</div>
+    <div class="exercise"><span class="exercise-num">2</span>Add cancellation to <code>mapBounded</code> via an <code>AbortSignal</code> so a downstream failure stops pulling and drains in-flight work.</div>
+    <div class="exercise"><span class="exercise-num">3</span>Compare <code>mapBounded</code> throughput/memory against <code>Promise.all(map)</code> on a 1M-row source and explain the difference you observe.</div>
+  </div>
+
+  <div class="connections"><strong>Connections:</strong> Pull-based iteration is the streaming/async-iteration typing you&rsquo;ve met before, applied to flow control; the bounded window is the same concurrency-capping idea as caching&rsquo;s single-flight (Concept 4) and job-queue concurrency (07-08). <code>AbortSignal</code> cancellation ties to 07-04&rsquo;s timeouts, and this is what keeps a gateway&rsquo;s (Concept 1) fan-out or a BFF&rsquo;s (Concept 2) bulk work from overwhelming a downstream service.</div>
+</div>
+
+</div><!-- end topic-section 2 -->
+
+<!-- Footer -->
+<footer class="guide-footer">
+  <h2>All Guides</h2>
+  <ul>
+    <li><a href="typescript-guides/typescript-guide-2026-07-09.html">2026-07-09</a> (Day 36)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-07-08.html">2026-07-08</a> (Day 35)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-07-07.html">2026-07-07</a> (Day 34)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-07-06.html">2026-07-06</a> (Day 33)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-07-05.html">2026-07-05</a> (Day 32)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-07-04.html">2026-07-04</a> (Day 31)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-07-03.html">2026-07-03</a> (Day 30)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-07-02.html">2026-07-02</a> (Day 29)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-07-01.html">2026-07-01</a> (Day 28)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-30.html">2026-06-30</a> (Day 27)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-29.html">2026-06-29</a> (Day 26)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-28.html">2026-06-28</a> (Day 25)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-27.html">2026-06-27</a> (Day 24)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-26.html">2026-06-26</a> (Day 23)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-25.html">2026-06-25</a> (Day 22)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-24.html">2026-06-24</a> (Day 21)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-23.html">2026-06-23</a> (Day 20)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-22.html">2026-06-22</a> (Day 19)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-21.html">2026-06-21</a> (Day 18)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-19.html">2026-06-19</a> (Day 17)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-18.html">2026-06-18</a> (Day 16)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-17.html">2026-06-17</a> (Day 15)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-15.html">2026-06-15</a> (Day 14)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-13.html">2026-06-13</a> (Day 13)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-12.html">2026-06-12</a> (Day 12)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-11.html">2026-06-11</a> (Day 11)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-10.html">2026-06-10</a> (Day 10)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-09.html">2026-06-09</a> (Day 9)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-08.html">2026-06-08</a> (Day 8)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-07.html">2026-06-07</a> (Day 7)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-05.html">2026-06-05</a> (Day 6)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-04.html">2026-06-04</a> (Day 5)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-03.html">2026-06-03</a> (Day 4)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-02.html">2026-06-02</a> (Day 3)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-01.html">2026-06-01</a> (Day 2)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-05-31.html">2026-05-31</a> (Day 1)</li>
+  </ul>
+</footer>
+
+</div><!-- end content -->
+</div><!-- end main -->
+
+<script>
+// Theme toggle
+(function() {
+  var toggle = document.getElementById('themeToggle');
+  var html = document.documentElement;
+  var STORAGE_KEY = 'lc-tsguide-theme';
+
+  function setTheme(theme) {
+    html.setAttribute('data-theme', theme);
+    toggle.textContent = theme === 'dark' ? '\u{1F319}' : '\u{2600}\u{FE0F}';
+    try { localStorage.setItem(STORAGE_KEY, theme); } catch(e) {}
+  }
+
+  try {
+    var saved = localStorage.getItem(STORAGE_KEY);
+    if (saved) setTheme(saved);
+  } catch(e) {}
+
+  toggle.addEventListener('click', function() {
+    var current = html.getAttribute('data-theme') || 'dark';
+    setTheme(current === 'dark' ? 'light' : 'dark');
+  });
+})();
+
+// Sidebar active link tracking
+(function() {
+  var links = document.querySelectorAll('.sidebar-nav a');
+  var sections = [];
+  links.forEach(function(link) {
+    var id = link.getAttribute('href').replace('#', '');
+    var el = document.getElementById(id);
+    if (el) sections.push({ link: link, el: el });
+  });
+
+  function updateActive() {
+    var current = null;
+    var scrollY = window.scrollY + 120;
+    for (var i = sections.length - 1; i >= 0; i--) {
+      if (sections[i].el.offsetTop <= scrollY) {
+        current = sections[i];
+        break;
+      }
+    }
+    links.forEach(function(l) { l.classList.remove('active'); });
+    if (current) current.link.classList.add('active');
+  }
+
+  window.addEventListener('scroll', updateActive);
+  updateActive();
+})();
+</script>
+
+</body>
+</html>

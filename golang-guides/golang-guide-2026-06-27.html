@@ -1,0 +1,1740 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Go Study Guide &mdash; Day 22 (2026-06-27)</title>
+<style>
+/* ===== CSS Variables ===== */
+:root {
+  --bg: #0d1117;
+  --surface1: #161b22;
+  --surface2: #1c2129;
+  --border: #30363d;
+  --text: #e6edf3;
+  --muted: #8b949e;
+  --accent: #58a6ff;
+  --accent-dim: #1f6feb33;
+  --green: #3fb950;
+  --green-dim: #23863633;
+  --yellow: #d29922;
+  --yellow-dim: #d2992233;
+  --red: #f85149;
+  --red-dim: #f8514933;
+  --purple: #bc8cff;
+  --purple-dim: #bc8cff22;
+  --orange: #f0883e;
+  --orange-dim: #f0883e22;
+  --code-bg: #0d1117;
+  --sidebar-w: 300px;
+  --font-mono: 'SF Mono', 'Cascadia Code', 'Fira Code', Consolas, monospace;
+  --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+  --radius: 8px;
+  --shadow: 0 1px 3px rgba(0,0,0,0.4);
+}
+
+[data-theme="light"] {
+  --bg: #ffffff;
+  --surface1: #f6f8fa;
+  --surface2: #f0f3f6;
+  --border: #d0d7de;
+  --text: #1f2328;
+  --muted: #656d76;
+  --accent: #0969da;
+  --accent-dim: #0969da1a;
+  --green: #1a7f37;
+  --green-dim: #1a7f3718;
+  --yellow: #9a6700;
+  --yellow-dim: #9a670018;
+  --red: #cf222e;
+  --red-dim: #cf222e18;
+  --purple: #8250df;
+  --purple-dim: #8250df18;
+  --orange: #bc4c00;
+  --orange-dim: #bc4c0018;
+  --code-bg: #f6f8fa;
+  --shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+/* ===== Reset & Base ===== */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: var(--font-sans);
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.7;
+  font-size: 16px;
+  transition: background 0.2s, color 0.2s;
+}
+
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+/* ===== Theme Toggle ===== */
+#theme-toggle {
+  position: fixed;
+  top: 16px;
+  right: 20px;
+  z-index: 1000;
+  background: var(--surface1);
+  border: 1px solid var(--border);
+  color: var(--text);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+  box-shadow: var(--shadow);
+}
+#theme-toggle:hover { background: var(--surface2); border-color: var(--accent); }
+
+/* ===== Sidebar ===== */
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: var(--sidebar-w);
+  height: 100vh;
+  background: var(--surface1);
+  border-right: 1px solid var(--border);
+  overflow-y: auto;
+  padding: 20px 0;
+  z-index: 100;
+  transition: transform 0.3s;
+}
+
+.sidebar-header {
+  padding: 0 20px 16px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 12px;
+}
+
+.sidebar-header h2 {
+  font-size: 16px;
+  color: var(--text);
+  font-weight: 700;
+}
+
+.sidebar-header .subtitle {
+  font-size: 12px;
+  color: var(--muted);
+  margin-top: 2px;
+}
+
+.sidebar-section {
+  margin-bottom: 8px;
+}
+
+.sidebar-section-title {
+  padding: 6px 20px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+}
+
+.sidebar-link {
+  display: block;
+  padding: 5px 20px 5px 28px;
+  font-size: 13px;
+  color: var(--muted);
+  text-decoration: none;
+  border-left: 2px solid transparent;
+  transition: all 0.15s;
+  line-height: 1.4;
+}
+
+.sidebar-link:hover {
+  color: var(--text);
+  background: var(--accent-dim);
+  border-left-color: var(--accent);
+  text-decoration: none;
+}
+
+.sidebar-link.active {
+  color: var(--accent);
+  border-left-color: var(--accent);
+  background: var(--accent-dim);
+}
+
+/* ===== Mobile sidebar toggle ===== */
+#sidebar-toggle {
+  display: none;
+  position: fixed;
+  top: 16px;
+  left: 16px;
+  z-index: 200;
+  background: var(--surface1);
+  border: 1px solid var(--border);
+  color: var(--text);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 20px;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--shadow);
+}
+
+/* ===== Main Content ===== */
+.main {
+  margin-left: var(--sidebar-w);
+  padding: 40px 48px 80px;
+  max-width: calc(860px + var(--sidebar-w) + 96px);
+}
+
+.page-title {
+  font-size: 32px;
+  font-weight: 800;
+  margin-bottom: 4px;
+  color: var(--text);
+}
+
+.page-subtitle {
+  font-size: 15px;
+  color: var(--muted);
+  margin-bottom: 36px;
+}
+
+/* ===== Sections ===== */
+.section {
+  margin-bottom: 48px;
+}
+
+.section-label {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  padding: 3px 10px;
+  border-radius: 4px;
+  margin-bottom: 12px;
+}
+
+.section-label.review { background: var(--yellow-dim); color: var(--yellow); }
+.section-label.new { background: var(--green-dim); color: var(--green); }
+
+.section-title {
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 24px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--border);
+}
+
+/* ===== How To Use ===== */
+.how-to-use {
+  background: var(--surface1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px 24px;
+  margin-bottom: 36px;
+}
+
+.how-to-use h3 {
+  font-size: 16px;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.how-to-use ul {
+  padding-left: 22px;
+  margin: 0;
+}
+
+.how-to-use li {
+  font-size: 14px;
+  color: var(--muted);
+  margin-bottom: 4px;
+}
+
+/* ===== Concept Cards ===== */
+.concept {
+  background: var(--surface1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 28px;
+  margin-bottom: 28px;
+  box-shadow: var(--shadow);
+}
+
+.concept-header {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  margin-bottom: 6px;
+  flex-wrap: wrap;
+}
+
+.concept h3 {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.concept-meta {
+  font-size: 12px;
+  color: var(--muted);
+  background: var(--surface2);
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
+.concept h4 {
+  font-size: 15px;
+  font-weight: 600;
+  margin: 20px 0 8px;
+  color: var(--text);
+}
+
+.concept p, .concept li {
+  color: var(--text);
+  line-height: 1.7;
+}
+
+.concept ul, .concept ol {
+  padding-left: 22px;
+  margin: 8px 0;
+}
+
+.concept li {
+  margin-bottom: 4px;
+}
+
+.concept .why-matters {
+  font-style: italic;
+  color: var(--muted);
+  margin: 6px 0 16px;
+  font-size: 15px;
+}
+
+/* ===== Code Blocks ===== */
+pre {
+  background: var(--code-bg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 16px 18px;
+  overflow-x: auto;
+  margin: 10px 0 14px;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--text);
+  position: relative;
+}
+
+pre::after {
+  content: 'Go';
+  position: absolute;
+  top: 6px;
+  right: 10px;
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  opacity: 0.6;
+}
+
+code {
+  font-family: var(--font-mono);
+  font-size: 0.9em;
+}
+
+:not(pre) > code {
+  background: var(--surface2);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.88em;
+}
+
+/* ===== Output Blocks ===== */
+.output {
+  background: var(--green-dim);
+  border: 1px solid var(--green);
+  border-radius: 6px;
+  padding: 12px 16px;
+  margin: 6px 0 14px;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--text);
+  white-space: pre-wrap;
+}
+
+.output::after { content: none; }
+
+.output-label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--green);
+  margin-bottom: 4px;
+}
+
+/* ===== Good/Bad Examples ===== */
+.do-dont {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin: 10px 0;
+}
+
+.do-box, .dont-box {
+  border-radius: 6px;
+  padding: 14px;
+  border: 1px solid;
+}
+
+.do-box {
+  background: var(--green-dim);
+  border-color: var(--green);
+}
+
+.dont-box {
+  background: var(--red-dim);
+  border-color: var(--red);
+}
+
+.do-box .label, .dont-box .label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 6px;
+}
+
+.do-box .label { color: var(--green); }
+.dont-box .label { color: var(--red); }
+
+.do-box pre, .dont-box pre {
+  margin: 0;
+  border: none;
+  background: transparent;
+  padding: 0;
+  font-size: 12.5px;
+}
+
+.do-box pre::after, .dont-box pre::after { content: none; }
+
+/* ===== Key Rules ===== */
+.rules-list {
+  list-style: none;
+  padding: 0;
+  margin: 8px 0;
+}
+
+.rules-list li {
+  padding: 6px 0 6px 24px;
+  position: relative;
+}
+
+.rules-list li::before {
+  content: "\2192";
+  position: absolute;
+  left: 2px;
+  color: var(--accent);
+  font-weight: 700;
+}
+
+/* ===== Exercises ===== */
+.exercise {
+  background: var(--purple-dim);
+  border: 1px solid var(--purple);
+  border-radius: 6px;
+  padding: 14px 18px;
+  margin: 8px 0;
+}
+
+.exercise .exercise-label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--purple);
+  margin-bottom: 4px;
+}
+
+/* ===== Pitfall ===== */
+.pitfall {
+  background: var(--red-dim);
+  border-left: 3px solid var(--red);
+  border-radius: 0 6px 6px 0;
+  padding: 10px 14px;
+  margin: 10px 0;
+  font-size: 14px;
+}
+
+.pitfall strong {
+  color: var(--red);
+}
+
+/* ===== Connection ===== */
+.connection {
+  background: var(--accent-dim);
+  border-left: 3px solid var(--accent);
+  border-radius: 0 6px 6px 0;
+  padding: 10px 14px;
+  margin: 10px 0;
+  font-size: 14px;
+  color: var(--muted);
+}
+
+/* ===== Review Cards ===== */
+.review-card {
+  background: var(--surface1);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--purple);
+  border-radius: var(--radius);
+  padding: 20px 24px;
+  margin-bottom: 16px;
+  box-shadow: var(--shadow);
+}
+
+.review-card .review-header {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  margin-bottom: 6px;
+  flex-wrap: wrap;
+}
+
+.review-card h3 {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.review-card .review-meta {
+  font-size: 12px;
+  color: var(--muted);
+  background: var(--surface2);
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
+.review-card h4 {
+  font-size: 14px;
+  font-weight: 600;
+  margin: 14px 0 6px;
+  color: var(--text);
+}
+
+.review-card p, .review-card li {
+  color: var(--text);
+  line-height: 1.6;
+  font-size: 14px;
+}
+
+.review-card pre {
+  font-size: 12.5px;
+  padding: 12px 14px;
+  margin: 6px 0 10px;
+}
+
+.review-card .pitfall {
+  font-size: 13px;
+  padding: 8px 12px;
+}
+
+/* ===== Topic Badge ===== */
+.topic-badge {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 2px 8px;
+  border-radius: 4px;
+  background: var(--accent-dim);
+  color: var(--accent);
+  margin-left: 4px;
+}
+
+/* ===== Footer ===== */
+.footer {
+  margin-top: 60px;
+  padding: 24px 0;
+  border-top: 1px solid var(--border);
+}
+
+.footer h4 {
+  font-size: 14px;
+  color: var(--muted);
+  margin-bottom: 10px;
+}
+
+.footer ul {
+  list-style: none;
+  padding: 0;
+}
+
+.footer li {
+  margin-bottom: 4px;
+  font-size: 14px;
+}
+
+.footer li a { color: var(--accent); }
+.footer .current { color: var(--green); font-weight: 600; }
+
+/* ===== Bash code blocks ===== */
+pre.bash::after {
+  content: 'Bash';
+}
+
+/* ===== YAML code blocks ===== */
+pre.yaml-code::after {
+  content: 'YAML';
+}
+
+/* ===== Responsive ===== */
+@media (max-width: 900px) {
+  .sidebar {
+    transform: translateX(-100%);
+  }
+  .sidebar.open {
+    transform: translateX(0);
+    box-shadow: 4px 0 20px rgba(0,0,0,0.5);
+  }
+  #sidebar-toggle {
+    display: flex;
+  }
+  .main {
+    margin-left: 0;
+    padding: 60px 20px 60px;
+    max-width: 100%;
+  }
+  .do-dont {
+    grid-template-columns: 1fr;
+  }
+  #theme-toggle {
+    right: 14px;
+    top: 16px;
+  }
+}
+</style>
+</head>
+<body>
+
+<!-- Theme Toggle -->
+<button id="theme-toggle" aria-label="Toggle theme" title="Toggle light/dark theme">&#9789;</button>
+
+<!-- Mobile Sidebar Toggle -->
+<button id="sidebar-toggle" aria-label="Toggle sidebar">&#9776;</button>
+
+<!-- Sidebar -->
+<nav class="sidebar" id="sidebar">
+  <div class="sidebar-header">
+    <h2>Go Guide</h2>
+    <div class="subtitle">Day 22 &mdash; 2026-06-27</div>
+  </div>
+
+  <div class="sidebar-section">
+    <div class="sidebar-section-title">Review (6 concepts)</div>
+    <a href="#multiple_return_values" class="sidebar-link">Multiple Return Values</a>
+    <a href="#custom_constraints" class="sidebar-link">Custom Constraints</a>
+    <a href="#sync_package" class="sidebar-link">sync Package</a>
+    <a href="#errgroup" class="sidebar-link">errgroup</a>
+    <a href="#httptest" class="sidebar-link">httptest</a>
+    <a href="#functional_options" class="sidebar-link">Functional Options</a>
+  </div>
+
+  <div class="sidebar-section">
+    <div class="sidebar-section-title">Modern Standard Library (3)</div>
+    <a href="#os_root" class="sidebar-link">os.Root</a>
+    <a href="#weak_pointers" class="sidebar-link">weak Pointers</a>
+    <a href="#testing_synctest" class="sidebar-link">testing/synctest</a>
+  </div>
+
+  <div class="sidebar-section">
+    <div class="sidebar-section-title">Concurrency &amp; Data Structures (2)</div>
+    <a href="#sync_map" class="sidebar-link">sync.Map</a>
+    <a href="#container_heap" class="sidebar-link">container/heap</a>
+  </div>
+</nav>
+
+<!-- Main Content -->
+<div class="main">
+
+<h1 class="page-title">Go Daily Guide &mdash; 2026-06-27 (Day 22)</h1>
+<p class="page-subtitle">Day 22 &mdash; Saturday, June 27, 2026 &bull; 11 concepts (6 review + 5 new)</p>
+
+<!-- How to Use -->
+<div class="how-to-use">
+  <h3>How to Use This Guide</h3>
+  <ul>
+    <li>Start with the <strong>Review</strong> section &mdash; try to recall each concept before reading the refresher</li>
+    <li>Complete the challenge exercise for each review card without looking back at previous days</li>
+    <li>Then work through the <strong>New Concepts</strong> section, typing out every code example yourself</li>
+    <li>Pay special attention to the common mistakes sections (they highlight real Go gotchas)</li>
+    <li>Complete the exercises at the bottom of each concept without looking at solutions</li>
+    <li>Use <code>go run main.go</code> to test your code locally, or use the <a href="https://go.dev/play/" target="_blank">Go Playground</a></li>
+  </ul>
+</div>
+
+<!-- ============================================================ -->
+<!-- REVIEW SECTION -->
+<!-- ============================================================ -->
+<div class="section">
+  <span class="section-label review">Review</span>
+  <h2 class="section-title">Spaced Repetition Review &mdash; 6 Concepts</h2>
+
+  <!-- Review 1: Multiple Return Values -->
+  <div class="review-card" id="multiple_return_values">
+    <div class="review-header">
+      <h3>Multiple Return Values</h3>
+      <span class="review-meta">Functions &amp; Control Flow &bull; due today &bull; rep 3</span>
+    </div>
+
+    <h4>Quick Reminder</h4>
+    <p>Go functions return any number of values, and two idioms dominate: <code>(value, error)</code> for operations that can fail, and the <em>comma-ok</em> form <code>(value, bool)</code> for map lookups, type assertions, and channel receives. <strong>Named return values</strong> document intent and enable a bare <code>return</code>, while the blank identifier <code>_</code> discards results you don't need.</p>
+
+    <h4>Key Pattern</h4>
+<pre>package main
+
+import (
+    "errors"
+    "fmt"
+)
+
+// Named returns (q, r, err) document the result shape.
+func divmod(a, b int) (q, r int, err error) {
+    if b == 0 {
+        return 0, 0, errors.New("division by zero")
+    }
+    return a / b, a % b, nil
+}
+
+func main() {
+    q, r, _ := divmod(17, 5)
+    fmt.Println(q, r)
+
+    counts := map[string]int{"go": 3}
+    if n, ok := counts["go"]; ok { // comma-ok: distinguishes 0 from absent
+        fmt.Println("found:", n)
+    }
+    if _, ok := counts["rust"]; !ok {
+        fmt.Println("rust missing")
+    }
+}</pre>
+    <div class="output-label">Output</div>
+    <div class="output">3 2
+found: 3
+rust missing</div>
+
+    <div class="exercise">
+      <div class="exercise-label">Challenge Exercise</div>
+      <p>Write <code>parsePair(s string) (k, v string, ok bool)</code> that splits <code>"key=value"</code> on the first <code>=</code> and returns <code>ok=false</code> when there is no <code>=</code>. Then write a function with named returns that uses a <code>defer</code> closure to wrap an error with extra context (<code>err = fmt.Errorf("load: %w", err)</code>) only when the bare <code>return</code> path produced a non-nil error. Explain how the deferred closure can observe and mutate the named return.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>Pitfall:</strong> Using <code>:=</code> in an inner scope and accidentally <em>shadowing</em> a named return, so the value you set never reaches the caller. With named returns, assign with <code>=</code> in nested blocks, and never silently discard the <code>error</code> result with <code>_</code> unless you have truly handled the failure.
+    </div>
+  </div>
+
+  <!-- Review 2: Custom Constraints -->
+  <div class="review-card" id="custom_constraints">
+    <div class="review-header">
+      <h3>Custom Constraints</h3>
+      <span class="review-meta">Functions &amp; Control Flow &bull; due today &bull; rep 3</span>
+    </div>
+
+    <h4>Quick Reminder</h4>
+    <p>A constraint is an interface used as a type-parameter bound. Beyond methods, a constraint can list a <em>type set</em>: a union of types joined with <code>|</code>, where <code>~T</code> admits every named type whose <em>underlying</em> type is <code>T</code>. The compiler permits an operator inside the generic body only if it is valid for <em>every</em> type in the set, so a numeric union enables <code>+</code> and an ordered union enables <code>&lt;</code>.</p>
+
+    <h4>Key Pattern</h4>
+<pre>package main
+
+import "fmt"
+
+// ~ admits named types (like Celsius) whose underlying type matches.
+type Numeric interface {
+    ~int | ~int64 | ~float64
+}
+
+func Sum[T Numeric](xs []T) T {
+    var total T // zero value of T
+    for _, x := range xs {
+        total += x // legal: every type in the set supports +
+    }
+    return total
+}
+
+type Celsius float64
+
+func main() {
+    fmt.Println(Sum([]int{1, 2, 3}))
+    fmt.Println(Sum([]Celsius{1.5, 2.5})) // Celsius has underlying float64
+}</pre>
+    <div class="output-label">Output</div>
+    <div class="output">6
+4</div>
+
+    <div class="exercise">
+      <div class="exercise-label">Challenge Exercise</div>
+      <p>Define <code>Ordered</code> (ints, floats, strings) and write <code>Min[T Ordered](xs []T) (T, bool)</code> returning <code>ok=false</code> for an empty slice. Then build a constraint that requires <em>both</em> a method (<code>fmt.Stringer</code>) and a type set, and explain when the intersection of a method element and a type set is empty &mdash; making the constraint impossible to satisfy. Finally, show why a plain <code>any</code> type parameter cannot use <code>&lt;</code> while an <code>Ordered</code> one can.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>Pitfall:</strong> Listing a concrete type (<code>int</code>) instead of <code>~int</code> in the union. Without the tilde, a named type such as <code>Celsius</code> or <code>type ID int</code> will <em>not</em> satisfy the constraint, and instantiation fails with a confusing "does not implement" error even though the underlying type matches.
+    </div>
+  </div>
+
+  <!-- Review 3: sync Package -->
+  <div class="review-card" id="sync_package">
+    <div class="review-header">
+      <h3>sync Package</h3>
+      <span class="review-meta">Concurrency &bull; due today &bull; rep 3</span>
+    </div>
+
+    <h4>Quick Reminder</h4>
+    <p>The <code>sync</code> package guards shared state when channels are overkill. <code>Mutex</code>/<code>RWMutex</code> protect critical sections (always <code>defer Unlock()</code>); <code>WaitGroup</code> joins a set of goroutines via <code>Add</code>/<code>Done</code>/<code>Wait</code>; and <code>Once</code> runs an initializer exactly once even under concurrent callers. None of these may be <em>copied</em> after first use &mdash; pass them by pointer.</p>
+
+    <h4>Key Pattern</h4>
+<pre>package main
+
+import (
+    "fmt"
+    "sync"
+)
+
+func main() {
+    var (
+        mu    sync.Mutex
+        wg    sync.WaitGroup
+        count int
+    )
+    for i := 0; i &lt; 100; i++ {
+        wg.Add(1)
+        go func() {
+            defer wg.Done()
+            mu.Lock()
+            count++ // protected critical section
+            mu.Unlock()
+        }()
+    }
+    wg.Wait() // block until all 100 goroutines finish
+
+    var once sync.Once
+    for i := 0; i &lt; 3; i++ {
+        once.Do(func() { fmt.Println("init once") }) // runs a single time
+    }
+    fmt.Println("count:", count)
+}</pre>
+    <div class="output-label">Output</div>
+    <div class="output">init once
+count: 100</div>
+
+    <div class="exercise">
+      <div class="exercise-label">Challenge Exercise</div>
+      <p>Build a concurrency-safe <code>Counter</code> struct embedding a <code>sync.Mutex</code> with <code>Inc()</code> and <code>Value()</code> methods, and prove it is race-free under <code>go test -race</code>. Then convert a read-heavy lookup cache to <code>sync.RWMutex</code> so many readers share <code>RLock</code> while writers take the exclusive <code>Lock</code>. Finally, replace a lazy <code>if cfg == nil</code> init with <code>sync.Once</code> and explain why the manual check has a data race.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>Pitfall:</strong> Copying a struct that contains a <code>sync.Mutex</code> (e.g. passing it by value or appending it to a slice). The copy has its own independent lock, so two goroutines can enter the "protected" section simultaneously. <code>go vet</code> flags this as a lock copy &mdash; always hold sync types behind a pointer.
+    </div>
+  </div>
+
+  <!-- Review 4: errgroup -->
+  <div class="review-card" id="errgroup">
+    <div class="review-header">
+      <h3>errgroup</h3>
+      <span class="review-meta">Concurrency &bull; due today &bull; rep 3</span>
+    </div>
+
+    <h4>Quick Reminder</h4>
+    <p><code>golang.org/x/sync/errgroup</code> is a <code>WaitGroup</code> that also collects errors. <code>g.Go(func() error)</code> launches each task; <code>g.Wait()</code> blocks and returns the <em>first</em> non-nil error. <code>errgroup.WithContext</code> returns a context that is canceled the moment any task fails, so siblings can bail out early, and <code>g.SetLimit(n)</code> bounds concurrency.</p>
+
+    <h4>Key Pattern</h4>
+<pre>package main
+
+import (
+    "context"
+    "errors"
+    "fmt"
+
+    "golang.org/x/sync/errgroup"
+)
+
+func main() {
+    g, ctx := errgroup.WithContext(context.Background())
+
+    g.Go(func() error { return nil })
+    g.Go(func() error { return errors.New("task 2 failed") }) // cancels ctx
+    g.Go(func() error {
+        &lt;-ctx.Done()       // observes the cancellation from task 2
+        return ctx.Err()
+    })
+
+    if err := g.Wait(); err != nil {
+        fmt.Println("first error:", err)
+    }
+}</pre>
+    <div class="output-label">Output</div>
+    <div class="output">first error: task 2 failed</div>
+
+    <div class="exercise">
+      <div class="exercise-label">Challenge Exercise</div>
+      <p>Fetch a slice of URLs concurrently with <code>errgroup.WithContext</code>, writing each body into a pre-sized <code>results []string</code> by index (disjoint slots, no mutex). Add <code>g.SetLimit(4)</code> to cap in-flight requests, and confirm that when one fetch returns an error the others observe <code>ctx.Done()</code> and stop. Explain why <code>g.Wait()</code> returns only the first error and how you would collect <em>all</em> of them with <code>errors.Join</code> instead.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>Pitfall:</strong> Ignoring the context that <code>WithContext</code> hands back. If your tasks never select on <code>ctx.Done()</code> (or pass it to <code>http.NewRequestWithContext</code>), a failure in one task can't actually stop the others &mdash; you lose the early-cancellation benefit and keep doing doomed work.
+    </div>
+  </div>
+
+  <!-- Review 5: httptest -->
+  <div class="review-card" id="httptest">
+    <div class="review-header">
+      <h3>httptest</h3>
+      <span class="review-meta">Testing &amp; Tooling &bull; due today &bull; rep 3</span>
+    </div>
+
+    <h4>Quick Reminder</h4>
+    <p><code>net/http/httptest</code> tests HTTP code without a real port. To test a <em>handler</em>, drive it with <code>httptest.NewRequest</code> plus a <code>ResponseRecorder</code> and inspect <code>rec.Code</code>/<code>rec.Body</code>. To test a <em>client</em>, stand up an ephemeral <code>httptest.NewServer</code> (real loopback socket) and point your code at <code>ts.URL</code> &mdash; always <code>defer ts.Close()</code>.</p>
+
+    <h4>Key Pattern</h4>
+<pre>package main
+
+import (
+    "fmt"
+    "io"
+    "net/http"
+    "net/http/httptest"
+)
+
+func greet(w http.ResponseWriter, r *http.Request) {
+    fmt.Fprintf(w, "hello %s", r.URL.Query().Get("name"))
+}
+
+func main() {
+    // 1) Handler test: recorder, no network.
+    req := httptest.NewRequest("GET", "/?name=Ada", nil)
+    rec := httptest.NewRecorder()
+    greet(rec, req)
+    fmt.Println("status:", rec.Code)
+    fmt.Println("body:", rec.Body.String())
+
+    // 2) Client test: real ephemeral server.
+    ts := httptest.NewServer(http.HandlerFunc(greet))
+    defer ts.Close()
+    resp, _ := http.Get(ts.URL + "?name=Bo")
+    b, _ := io.ReadAll(resp.Body)
+    resp.Body.Close()
+    fmt.Println("server said:", string(b))
+}</pre>
+    <div class="output-label">Output</div>
+    <div class="output">status: 200
+body: hello Ada
+server said: hello Bo</div>
+
+    <div class="exercise">
+      <div class="exercise-label">Challenge Exercise</div>
+      <p>Write a table-driven test for a handler that returns <code>400</code> on a missing query parameter and <code>200</code> otherwise, asserting on <code>rec.Code</code> and <code>rec.Body</code>. Then test a <em>client wrapper</em> against an <code>httptest.NewServer</code> that returns <code>500</code>, verifying your wrapper surfaces a typed error. Finally, swap to <code>httptest.NewTLSServer</code> and use <code>ts.Client()</code> so the client trusts the test certificate.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>Pitfall:</strong> Forgetting <code>defer ts.Close()</code> (and <code>resp.Body.Close()</code>). Each leaked test server keeps a listener and goroutine alive, and unclosed bodies leak connections &mdash; across a large suite this exhausts file descriptors and produces flaky, order-dependent failures.
+    </div>
+  </div>
+
+  <!-- Review 6: Functional Options -->
+  <div class="review-card" id="functional_options">
+    <div class="review-header">
+      <h3>Functional Options Pattern</h3>
+      <span class="review-meta">Advanced Patterns &bull; due today &bull; rep 3</span>
+    </div>
+
+    <h4>Quick Reminder</h4>
+    <p>The functional options pattern gives constructors a clean, extensible, backward-compatible API. Each option is a function that mutates a config struct (<code>type Option func(*Server)</code>); the constructor seeds sensible defaults, then applies the variadic <code>opts ...Option</code>. Callers set only what they care about, and adding a new option never breaks existing call sites.</p>
+
+    <h4>Key Pattern</h4>
+<pre>package main
+
+import "fmt"
+
+type Server struct {
+    host string
+    port int
+    tls  bool
+}
+
+type Option func(*Server)
+
+func WithHost(h string) Option { return func(s *Server) { s.host = h } }
+func WithPort(p int) Option    { return func(s *Server) { s.port = p } }
+func WithTLS() Option          { return func(s *Server) { s.tls = true } }
+
+func NewServer(opts ...Option) *Server {
+    s := &amp;Server{host: "localhost", port: 8080} // defaults
+    for _, opt := range opts {
+        opt(s)
+    }
+    return s
+}
+
+func main() {
+    s := NewServer(WithPort(9090), WithTLS()) // host keeps its default
+    fmt.Printf("%s:%d tls=%v\n", s.host, s.port, s.tls)
+}</pre>
+    <div class="output-label">Output</div>
+    <div class="output">localhost:9090 tls=true</div>
+
+    <div class="exercise">
+      <div class="exercise-label">Challenge Exercise</div>
+      <p>Add a <code>WithTimeout(d time.Duration)</code> option and a <code>WithLogger</code> option, then design one that can <em>fail</em> validation: change <code>Option</code> to <code>func(*Server) error</code> so <code>NewServer</code> can return <code>(*Server, error)</code> and reject, say, a negative port. Discuss the trade-off versus a plain config struct, and explain why keeping the struct fields unexported is what makes options the only configuration path.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>Pitfall:</strong> Exporting the config struct's fields. If callers can set <code>s.Port</code> directly, the options become optional decoration, validation can be bypassed, and you lose the encapsulation that justified the pattern. Keep fields unexported so the constructor is the single source of truth.
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- NEW CONCEPTS SECTION -->
+<!-- ============================================================ -->
+<div class="section">
+  <span class="section-label new">New</span>
+  <h2 class="section-title">New Concepts &mdash; 5 in 2 Sections</h2>
+
+  <h3 style="font-size:18px;margin:8px 0 18px;color:var(--muted);">Section 1 &mdash; Modern Standard Library</h3>
+
+  <!-- New 1: os.Root -->
+  <div class="concept" id="os_root">
+    <div class="concept-header">
+      <h3>os.Root: Directory-Scoped Filesystem Access</h3>
+      <span class="topic-badge">Std Lib</span>
+    </div>
+    <p class="why-matters">Why it matters: <code>os.Root</code> (Go 1.24) confines all file operations to a single directory tree. Every path is resolved <em>relative to the root</em> and any attempt to escape it &mdash; via <code>..</code>, an absolute path, or a symlink pointing outside &mdash; is rejected by the OS-level checks. It is the robust answer to path-traversal bugs that hand-rolled <code>filepath.Clean</code> guards keep getting wrong.</p>
+
+    <h4>Open a root and read inside it</h4>
+    <p><code>os.OpenRoot(dir)</code> returns an <code>*os.Root</code> whose methods (<code>Open</code>, <code>Create</code>, <code>Mkdir</code>, <code>Stat</code>, ...) behave like the <code>os</code> equivalents but can never reach outside <code>dir</code>.</p>
+<pre>package main
+
+import (
+    "fmt"
+    "io"
+    "os"
+)
+
+func main() {
+    dir, _ := os.MkdirTemp("", "demo")
+    defer os.RemoveAll(dir)
+    os.WriteFile(dir+"/note.txt", []byte("inside"), 0o644)
+
+    root, err := os.OpenRoot(dir)
+    if err != nil {
+        fmt.Println("open root:", err)
+        return
+    }
+    defer root.Close()
+
+    f, err := root.Open("note.txt") // resolved relative to the root
+    if err != nil {
+        fmt.Println("open:", err)
+        return
+    }
+    data, _ := io.ReadAll(f)
+    f.Close()
+    fmt.Println("read:", string(data))
+
+    // A path that climbs out of the root is refused.
+    if _, err := root.Open("../../../etc/passwd"); err != nil {
+        fmt.Println("traversal blocked:", true)
+    }
+}</pre>
+    <div class="output-label">Output</div>
+    <div class="output">read: inside
+traversal blocked: true</div>
+
+    <h4>Writes are confined too</h4>
+    <p>The same containment applies to <code>Create</code>, <code>Mkdir</code>, and <code>Remove</code> &mdash; an escaping path fails <em>before</em> any file is touched, so an attacker-controlled filename can't write outside your upload directory.</p>
+<pre>package main
+
+import (
+    "fmt"
+    "os"
+)
+
+func main() {
+    dir, _ := os.MkdirTemp("", "uploads")
+    defer os.RemoveAll(dir)
+
+    root, _ := os.OpenRoot(dir)
+    defer root.Close()
+
+    f, err := root.Create("report.txt") // stays inside the root
+    if err != nil {
+        fmt.Println("create:", err)
+        return
+    }
+    f.WriteString("ok")
+    f.Close()
+
+    _, err = root.Create("../escape.txt") // rejected, nothing written
+    fmt.Println("blocked climb-out:", err != nil)
+}</pre>
+    <div class="output-label">Output</div>
+    <div class="output">blocked climb-out: true</div>
+
+    <h4>Common Mistakes</h4>
+    <div class="do-dont">
+      <div class="dont-box">
+        <div class="label">Wrong</div>
+<pre>// Manual guard: filepath.Join cleans
+// ".." but does NOT stop a symlink
+// inside dir from pointing elsewhere.
+p := filepath.Join(dir, userPath)
+os.ReadFile(p)</pre>
+      </div>
+      <div class="do-box">
+        <div class="label">Right</div>
+<pre>root, _ := os.OpenRoot(dir)
+defer root.Close()
+f, err := root.Open(userPath)
+// .. , absolute paths, and escaping
+// symlinks are all rejected</pre>
+      </div>
+    </div>
+
+    <h4>Key Rules</h4>
+    <ul class="rules-list">
+      <li><code>os.OpenRoot(dir)</code> returns an <code>*os.Root</code>; always <code>defer root.Close()</code> like any file handle.</li>
+      <li>Methods mirror <code>os</code>: <code>Open</code>, <code>OpenFile</code>, <code>Create</code>, <code>Mkdir</code>, <code>Stat</code>, <code>Remove</code> &mdash; all relative to the root.</li>
+      <li>Escapes via <code>..</code>, absolute paths, and symlinks resolving outside the root are <strong>rejected</strong>, not silently clamped.</li>
+      <li>Use it anywhere you handle untrusted path components: uploads, archive extraction (zip-slip), plugin directories.</li>
+    </ul>
+
+    <div class="exercise">
+      <div class="exercise-label">Practice Exercise</div>
+      <p>Write a safe archive extractor: given a <code>*zip.Reader</code> and a destination dir, open an <code>os.Root</code> on the dir and create each entry through the root, so a malicious entry named <code>../../etc/cron.d/x</code> fails instead of escaping (the classic "zip slip"). Then create a symlink inside the root that points to <code>/etc</code> and confirm that opening a path <em>through</em> that symlink is blocked. Compare your code's safety to a <code>filepath.Join</code> + <code>strings.HasPrefix</code> guard.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>Pitfall:</strong> Treating <code>os.Root</code> as merely "cleaner <code>filepath.Join</code>" and still concatenating paths yourself. The whole point is to pass the <em>untrusted</em> component straight to <code>root.Open</code>/<code>root.Create</code>; if you pre-join with the real directory and call plain <code>os</code> functions, you reintroduce exactly the traversal hole you were trying to close.
+    </div>
+
+    <div class="connection">
+      <strong>Connections:</strong> Builds on the <code>os</code> &amp; <code>filepath</code> material from earlier guides and is the security-hardened counterpart to <code>io/fs</code>. It pairs naturally with archive handling and any handler that accepts a user-supplied filename.
+    </div>
+  </div>
+
+  <!-- New 2: weak Pointers -->
+  <div class="concept" id="weak_pointers">
+    <div class="concept-header">
+      <h3>weak Pointers &amp; the weak Package</h3>
+      <span class="topic-badge">Std Lib</span>
+    </div>
+    <p class="why-matters">Why it matters: a <code>weak.Pointer[T]</code> (Go 1.24) references an object <em>without</em> keeping it alive. The garbage collector may reclaim the target at any time, after which <code>Value()</code> returns <code>nil</code>. This is the building block for memory-sensitive caches, canonicalization (interning) maps, and associating side data with objects &mdash; structures that must not, by themselves, prevent collection.</p>
+
+    <h4>A weak reference goes nil after collection</h4>
+    <p><code>weak.Make(p)</code> wraps a <code>*T</code>. While a strong reference still exists, <code>Value()</code> returns the pointer; once the last strong reference is gone and the GC runs, it returns <code>nil</code>.</p>
+<pre>package main
+
+import (
+    "fmt"
+    "runtime"
+    "weak"
+)
+
+type Config struct{ Name string }
+
+func main() {
+    c := &amp;Config{Name: "prod"}
+    wp := weak.Make(c) // weak.Pointer[Config]
+
+    fmt.Println("alive:", wp.Value() != nil)
+    fmt.Println("name:", wp.Value().Name)
+
+    c = nil      // drop the only strong reference
+    runtime.GC() // make the object collectable now
+
+    fmt.Println("after GC, nil:", wp.Value() == nil)
+}</pre>
+    <div class="output-label">Output</div>
+    <div class="output">alive: true
+name: prod
+after GC, nil: true</div>
+
+    <h4>A cache that doesn't pin its entries</h4>
+    <p>Storing <code>weak.Pointer</code> values lets a cache hand back a live object on a hit, yet never keep an otherwise-unused object alive &mdash; bounded memory for free.</p>
+<pre>package main
+
+import (
+    "fmt"
+    "weak"
+)
+
+type Sprite struct{ Name string }
+
+// cache holds weak refs, so cached sprites can still be collected.
+var cache = map[string]weak.Pointer[Sprite]{}
+
+func get(name string) *Sprite {
+    if wp, ok := cache[name]; ok {
+        if s := wp.Value(); s != nil {
+            return s // hit, still alive
+        }
+    }
+    s := &amp;Sprite{Name: name} // (re)load
+    cache[name] = weak.Make(s)
+    return s
+}
+
+func main() {
+    a := get("hero")
+    b := get("hero") // served from the cache while a is still live
+    fmt.Println("same instance:", a == b)
+    fmt.Println("name:", a.Name)
+}</pre>
+    <div class="output-label">Output</div>
+    <div class="output">same instance: true
+name: hero</div>
+
+    <h4>Common Mistakes</h4>
+    <div class="do-dont">
+      <div class="dont-box">
+        <div class="label">Wrong</div>
+<pre>// Race: the object can be collected
+// between the check and the deref.
+if wp.Value() != nil {
+    use(wp.Value()) // may be nil now!
+}</pre>
+      </div>
+      <div class="do-box">
+        <div class="label">Right</div>
+<pre>// Capture once into a strong local,
+// then test and use that.
+if s := wp.Value(); s != nil {
+    use(s) // s keeps it alive here
+}</pre>
+      </div>
+    </div>
+
+    <h4>Key Rules</h4>
+    <ul class="rules-list">
+      <li><code>weak.Make(p)</code> builds a <code>weak.Pointer[T]</code>; <code>wp.Value()</code> returns a strong <code>*T</code> or <code>nil</code> if collected.</li>
+      <li>Always capture <code>Value()</code> into a local before testing/using it &mdash; the local is a strong reference that pins the object for that scope.</li>
+      <li>Weak pointers are comparable and hashable even after the target dies, so they work as map keys.</li>
+      <li>Pair with <code>runtime.AddCleanup</code> to run finalization logic (e.g. evict the dead map entry) when the target is reclaimed.</li>
+    </ul>
+
+    <div class="exercise">
+      <div class="exercise-label">Practice Exercise</div>
+      <p>Build a string interner: <code>map[string]weak.Pointer[string]</code> where <code>Intern(s)</code> returns a canonical <code>*string</code>, reusing the existing one on a hit and storing a fresh weak pointer otherwise. Use <code>runtime.AddCleanup</code> to delete the map entry once a canonical value is collected, then write a test that forces a GC and asserts the entry is gone. Explain why a plain <code>map[string]*string</code> would leak every interned string forever.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>Pitfall:</strong> Calling <code>wp.Value()</code> twice and assuming both calls return the same liveness. Between the two calls the GC can reclaim the object, so the second can be <code>nil</code> even though the first was not. Dereference only a single captured local, and never write logic that depends on a weak pointer staying alive across function calls.
+    </div>
+
+    <div class="connection">
+      <strong>Connections:</strong> Complements <a href="#sync_map">sync.Map</a> for building concurrent caches, and the bounded-memory idea contrasts with the <a href="#container_heap">container/heap</a> / LRU approach &mdash; weak pointers let the GC decide eviction, an LRU decides it explicitly.
+    </div>
+  </div>
+
+  <!-- New 3: testing/synctest -->
+  <div class="concept" id="testing_synctest">
+    <div class="concept-header">
+      <h3>testing/synctest: Deterministic Concurrency Tests</h3>
+      <span class="topic-badge">Std Lib</span>
+    </div>
+    <p class="why-matters">Why it matters: testing timeouts, tickers, and context deadlines normally means real <code>time.Sleep</code> calls &mdash; slow and flaky. <code>testing/synctest</code> (stable in Go 1.25) runs your test inside a <em>bubble</em> with a fake clock: time only advances when every goroutine in the bubble is blocked, so a one-hour timeout test finishes in microseconds and is fully deterministic.</p>
+
+    <h4>A timeout test that runs instantly</h4>
+    <p><code>synctest.Test(t, func)</code> starts the bubble. Inside it, <code>time.Sleep</code> advances the fake clock rather than waiting, and <code>synctest.Wait()</code> blocks until all other bubbled goroutines are durably parked.</p>
+<pre>package cache
+
+import (
+    "testing"
+    "testing/synctest"
+    "time"
+)
+
+// expireAfter closes the returned channel once d has elapsed.
+func expireAfter(d time.Duration) &lt;-chan struct{} {
+    ch := make(chan struct{})
+    go func() {
+        time.Sleep(d)
+        close(ch)
+    }()
+    return ch
+}
+
+func TestExpiry(t *testing.T) {
+    synctest.Test(t, func(t *testing.T) {
+        ch := expireAfter(time.Hour) // no real wait
+
+        select {
+        case &lt;-ch:
+            t.Fatal("expired too early")
+        default: // not yet
+        }
+
+        time.Sleep(time.Hour) // jumps the fake clock to the deadline
+        synctest.Wait()       // let the timer goroutine close ch
+
+        select {
+        case &lt;-ch: // expired exactly on schedule
+        default:
+            t.Fatal("should have expired")
+        }
+    })
+}</pre>
+    <div class="output-label">Output (go test)</div>
+    <div class="output">ok      example/cache   0.00s</div>
+
+    <h4>Deterministic context deadlines</h4>
+    <p>Because <code>context</code> timers also use the bubble's clock, you can assert deadline behavior without sleeping for real.</p>
+<pre>package worker
+
+import (
+    "context"
+    "testing"
+    "testing/synctest"
+    "time"
+)
+
+func TestContextTimeout(t *testing.T) {
+    synctest.Test(t, func(t *testing.T) {
+        ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+        defer cancel()
+
+        synctest.Wait()
+        if ctx.Err() != nil {
+            t.Fatal("cancelled too soon")
+        }
+
+        time.Sleep(5 * time.Second) // advance to the deadline
+        synctest.Wait()
+
+        if ctx.Err() != context.DeadlineExceeded {
+            t.Fatalf("want DeadlineExceeded, got %v", ctx.Err())
+        }
+    })
+}</pre>
+    <div class="output-label">Output (go test)</div>
+    <div class="output">ok      example/worker  0.00s</div>
+
+    <h4>Common Mistakes</h4>
+    <div class="do-dont">
+      <div class="dont-box">
+        <div class="label">Wrong</div>
+<pre>// Real sleeps: slow, and the margins
+// make the test flaky on a busy CI box.
+go worker()
+time.Sleep(2 * time.Second)
+checkResult(t)</pre>
+      </div>
+      <div class="do-box">
+        <div class="label">Right</div>
+<pre>synctest.Test(t, func(t *testing.T) {
+    go worker()
+    synctest.Wait() // block until worker parks
+    checkResult(t)  // deterministic
+})</pre>
+      </div>
+    </div>
+
+    <h4>Key Rules</h4>
+    <ul class="rules-list">
+      <li><code>synctest.Test(t, fn)</code> runs <code>fn</code> in a bubble; all goroutines it starts join the same bubble.</li>
+      <li>The fake clock advances only when <em>every</em> bubbled goroutine is durably blocked &mdash; so timers fire in deterministic order.</li>
+      <li><code>synctest.Wait()</code> blocks the caller until all other bubbled goroutines are parked; use it before assertions.</li>
+      <li>Stable in Go 1.25 (was <code>synctest.Run</code> behind <code>GOEXPERIMENT=synctest</code> in 1.24). It is part of the standard <code>go test</code>.</li>
+    </ul>
+
+    <div class="exercise">
+      <div class="exercise-label">Practice Exercise</div>
+      <p>Test a rate limiter that allows one event per second: inside a bubble, fire two events back-to-back, assert the second is rejected, then <code>time.Sleep(time.Second)</code> and assert it is now allowed &mdash; all in zero real time. Next, write a flaky-looking test for a <code>context.WithTimeout</code> worker the <em>old</em> way with real sleeps, then port it to <code>synctest</code> and measure the wall-clock difference. Explain what "durably blocked" means and why a goroutine doing real network I/O breaks the bubble's assumptions.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>Pitfall:</strong> Performing real, non-fake-clock blocking inside the bubble &mdash; e.g. a real network read or a blocking syscall. The fake clock only advances when all bubbled goroutines are blocked on bubble-aware operations (channels, mutexes, timers); a goroutine stuck in real I/O never counts as "durably blocked," so time never advances and the test deadlocks.
+    </div>
+
+    <div class="connection">
+      <strong>Connections:</strong> Pairs with the <a href="#sync_package">sync</a> primitives and context-based cancellation from the review section &mdash; synctest is how you test that goroutine choreography deterministically, replacing the brittle <code>time.Sleep</code> assertions of earlier testing guides.
+    </div>
+  </div>
+
+  <h3 style="font-size:18px;margin:28px 0 18px;color:var(--muted);">Section 2 &mdash; Concurrency &amp; Data Structures</h3>
+
+  <!-- New 4: sync.Map -->
+  <div class="concept" id="sync_map">
+    <div class="concept-header">
+      <h3>sync.Map: When (and When Not) to Use It</h3>
+      <span class="topic-badge">Concurrency</span>
+    </div>
+    <p class="why-matters">Why it matters: <code>sync.Map</code> is a concurrent map you use <em>without</em> your own mutex. It shines in exactly two access patterns: (1) a key is written once and read many times, or (2) goroutines operate on disjoint sets of keys. For general read/write workloads a plain <code>map</code> guarded by a <code>sync.Mutex</code> is faster &mdash; knowing which to reach for is the whole lesson.</p>
+
+    <h4>Atomic get-or-insert with LoadOrStore</h4>
+    <p>Methods take and return <code>any</code>. <code>LoadOrStore</code> inserts only if the key is absent and tells you which happened via <code>loaded</code>; <code>Range</code> walks the map (returning <code>false</code> stops early).</p>
+<pre>package main
+
+import (
+    "fmt"
+    "sync"
+)
+
+func main() {
+    var m sync.Map
+
+    actual, loaded := m.LoadOrStore("a", 1)
+    fmt.Println("first:", actual, loaded) // 1 false (we inserted)
+
+    actual, loaded = m.LoadOrStore("a", 99)
+    fmt.Println("second:", actual, loaded) // 1 true (already present)
+
+    m.Store("b", 2)
+    if v, ok := m.Load("b"); ok {
+        fmt.Println("b =", v)
+    }
+
+    total := 0
+    m.Range(func(key, value any) bool {
+        total += value.(int) // values are any: type-assert
+        return true          // return false to stop iterating
+    })
+    fmt.Println("total:", total)
+}</pre>
+    <div class="output-label">Output</div>
+    <div class="output">first: 1 false
+second: 1 true
+b = 2
+total: 3</div>
+
+    <h4>Atomic take-and-remove</h4>
+    <p><code>LoadAndDelete</code> removes a key and returns its old value in one atomic step &mdash; handy for "claim a job" style hand-offs.</p>
+<pre>package main
+
+import (
+    "fmt"
+    "sync"
+)
+
+func main() {
+    var seen sync.Map
+    seen.Store("job-1", "done")
+
+    if v, ok := seen.LoadAndDelete("job-1"); ok {
+        fmt.Println("took:", v)
+    }
+    _, ok := seen.Load("job-1")
+    fmt.Println("still there:", ok)
+}</pre>
+    <div class="output-label">Output</div>
+    <div class="output">took: done
+still there: false</div>
+
+    <h4>Common Mistakes</h4>
+    <div class="do-dont">
+      <div class="dont-box">
+        <div class="label">Wrong</div>
+<pre>// Reaching for sync.Map as a default
+// for a general high-write workload.
+var m sync.Map // slower than a guarded
+// plain map here, and untyped (any).</pre>
+      </div>
+      <div class="do-box">
+        <div class="label">Right</div>
+<pre>// Read-mostly or disjoint keys -> sync.Map.
+// Otherwise: a typed map + a mutex.
+var mu sync.Mutex
+m := map[string]int{}</pre>
+      </div>
+    </div>
+
+    <h4>Key Rules</h4>
+    <ul class="rules-list">
+      <li>Use it for read-mostly caches or when goroutines touch disjoint keys; otherwise prefer <code>map</code> + <code>sync.Mutex</code>.</li>
+      <li>Core API: <code>Load</code>, <code>Store</code>, <code>LoadOrStore</code>, <code>LoadAndDelete</code>, <code>Delete</code>, <code>Range</code>; atomic variants <code>Swap</code>, <code>CompareAndSwap</code>, <code>CompareAndDelete</code> (Go 1.20+).</li>
+      <li>Keys and values are <code>any</code> &mdash; you lose static typing and must type-assert on read.</li>
+      <li><code>Range</code> is a weakly-consistent snapshot: it need not reflect concurrent stores and may visit a key at most once.</li>
+    </ul>
+
+    <div class="exercise">
+      <div class="exercise-label">Practice Exercise</div>
+      <p>Build a concurrent memoizer for an expensive pure function using <code>LoadOrStore</code> to cache results, then run it from many goroutines under <code>-race</code> and confirm the function still computes each key only once (hint: store a <code>*sync.Once</code> or a future, not the raw value, to avoid duplicate computation on a miss). Then benchmark a 90%-read / 10%-write workload as <code>sync.Map</code> versus <code>map</code>+<code>RWMutex</code> and report where each wins.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>Pitfall:</strong> Assuming <code>LoadOrStore</code> prevents <em>duplicate work</em>. It only deduplicates the stored <em>value</em> &mdash; if you compute an expensive result and then call <code>LoadOrStore</code>, every racing goroutine still computes before one wins. To dedup the computation itself, store a once-guarded placeholder (or use <code>singleflight</code>).
+    </div>
+
+    <div class="connection">
+      <strong>Connections:</strong> Extends the <a href="#sync_package">sync</a> primitives from the review section and pairs with <a href="#weak_pointers">weak pointers</a> for caches whose entries shouldn't outlive their last user. For deduplicating concurrent <em>computation</em>, it connects to the singleflight pattern.
+    </div>
+  </div>
+
+  <!-- New 5: container/heap -->
+  <div class="concept" id="container_heap">
+    <div class="concept-header">
+      <h3>container/heap: Priority Queues</h3>
+      <span class="topic-badge">Data Structures</span>
+    </div>
+    <p class="why-matters">Why it matters: <code>container/heap</code> turns any slice type into a binary heap, giving you a priority queue with O(log n) push and pop. It's the backbone of Dijkstra, event simulators, task schedulers, and "top-K" problems &mdash; anywhere you repeatedly need the current minimum (or maximum) without sorting the whole collection each time.</p>
+
+    <h4>A minimal min-heap</h4>
+    <p>You implement <code>heap.Interface</code> (which embeds <code>sort.Interface</code> plus <code>Push</code>/<code>Pop</code>) on a slice type. <code>Less</code> decides the ordering: <code>&lt;</code> makes a min-heap. You then call the package functions <code>heap.Init</code>, <code>heap.Push</code>, <code>heap.Pop</code> &mdash; not the methods directly.</p>
+<pre>package main
+
+import (
+    "container/heap"
+    "fmt"
+)
+
+type IntHeap []int
+
+func (h IntHeap) Len() int           { return len(h) }
+func (h IntHeap) Less(i, j int) bool { return h[i] &lt; h[j] } // min-heap
+func (h IntHeap) Swap(i, j int)      { h[i], h[j] = h[j], h[i] }
+func (h *IntHeap) Push(x any)        { *h = append(*h, x.(int)) }
+func (h *IntHeap) Pop() any {
+    old := *h
+    n := len(old)
+    v := old[n-1]
+    *h = old[:n-1]
+    return v
+}
+
+func main() {
+    h := &amp;IntHeap{5, 2, 8, 1}
+    heap.Init(h)     // O(n) heapify
+    heap.Push(h, 3)  // O(log n)
+
+    for h.Len() &gt; 0 {
+        fmt.Print(heap.Pop(h), " ") // always the current minimum
+    }
+    fmt.Println()
+}</pre>
+    <div class="output-label">Output</div>
+    <div class="output">1 2 3 5 8 </div>
+
+    <h4>A priority queue of tasks</h4>
+    <p>Flip <code>Less</code> to <code>&gt;</code> for a max-priority queue. Storing structs lets each element carry a payload alongside its priority.</p>
+<pre>package main
+
+import (
+    "container/heap"
+    "fmt"
+)
+
+type Task struct {
+    name     string
+    priority int
+}
+
+type PQ []Task
+
+func (pq PQ) Len() int           { return len(pq) }
+func (pq PQ) Less(i, j int) bool { return pq[i].priority &gt; pq[j].priority } // max first
+func (pq PQ) Swap(i, j int)      { pq[i], pq[j] = pq[j], pq[i] }
+func (pq *PQ) Push(x any)        { *pq = append(*pq, x.(Task)) }
+func (pq *PQ) Pop() any {
+    old := *pq
+    n := len(old)
+    t := old[n-1]
+    *pq = old[:n-1]
+    return t
+}
+
+func main() {
+    pq := &amp;PQ{}
+    heap.Init(pq)
+    heap.Push(pq, Task{"email", 1})
+    heap.Push(pq, Task{"deploy", 5})
+    heap.Push(pq, Task{"lunch", 3})
+
+    for pq.Len() &gt; 0 {
+        t := heap.Pop(pq).(Task)
+        fmt.Printf("%s(%d) ", t.name, t.priority)
+    }
+    fmt.Println()
+}</pre>
+    <div class="output-label">Output</div>
+    <div class="output">deploy(5) lunch(3) email(1) </div>
+
+    <h4>Common Mistakes</h4>
+    <div class="do-dont">
+      <div class="dont-box">
+        <div class="label">Wrong</div>
+<pre>// Calling the methods directly skips
+// the sift-up/down: the heap invariant
+// is now broken.
+h.Push(3)
+v := h.Pop()</pre>
+      </div>
+      <div class="do-box">
+        <div class="label">Right</div>
+<pre>// The package functions maintain order.
+heap.Push(h, 3)
+v := heap.Pop(h)</pre>
+      </div>
+    </div>
+
+    <h4>Key Rules</h4>
+    <ul class="rules-list">
+      <li>Implement <code>Len</code>, <code>Less</code>, <code>Swap</code> (value receiver fine) and <code>Push</code>/<code>Pop</code> (pointer receiver, they resize the slice).</li>
+      <li>Call <code>heap.Init</code>, <code>heap.Push</code>, <code>heap.Pop</code>, <code>heap.Fix</code>, <code>heap.Remove</code> &mdash; never the bare methods, which don't re-heapify.</li>
+      <li><code>Less</code> with <code>&lt;</code> is a min-heap; with <code>&gt;</code> a max-heap. <code>heap.Pop</code> returns the root each time.</li>
+      <li>To change an element's priority in place, mutate it then call <code>heap.Fix(h, index)</code> &mdash; cheaper than remove + re-push.</li>
+    </ul>
+
+    <div class="exercise">
+      <div class="exercise-label">Practice Exercise</div>
+      <p>Implement Dijkstra's shortest path on a small weighted graph using a <code>container/heap</code> priority queue of <code>(node, dist)</code> items, and use <code>heap.Fix</code> to decrease a node's key when a shorter path is found. Then solve "k-th largest element" by maintaining a min-heap of size k. Finally, explain why <code>Push</code>/<code>Pop</code> operate on the slice's <em>tail</em> even though <code>heap.Pop</code> conceptually removes the <em>root</em> (hint: the package swaps root to the end first).</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>Pitfall:</strong> Defining <code>Push</code>/<code>Pop</code> on a value receiver. They must mutate the slice header (append / re-slice), which only a <em>pointer</em> receiver can do; with a value receiver your appends vanish and the heap silently loses elements. Always use <code>*T</code> for <code>Push</code> and <code>Pop</code>, and pass <code>&amp;h</code> to the <code>heap</code> functions.
+    </div>
+
+    <div class="connection">
+      <strong>Connections:</strong> The priority-ordering primitive complements the doubly linked list (<code>container/list</code>) from the previous guide &mdash; together they cover the "ordered by priority" and "ordered by recency/insertion" needs that a plain slice can't serve efficiently.
+    </div>
+  </div>
+
+</div><!-- end New Concepts section -->
+
+
+<!-- ============================================================ -->
+<!-- FOOTER -->
+<!-- ============================================================ -->
+<footer class="footer">
+  <h4>All Go Guides</h4>
+  <ul>
+    <li><a href="golang-guides/golang-guide-2026-07-09.html">Day 34 &mdash; 2026-07-09</a></li>
+    <li><a href="golang-guides/golang-guide-2026-07-08.html">Day 33 &mdash; 2026-07-08</a></li>
+    <li><a href="golang-guides/golang-guide-2026-07-07.html">Day 32 &mdash; 2026-07-07</a></li>
+    <li><a href="golang-guides/golang-guide-2026-07-06.html">Day 31 &mdash; 2026-07-06</a></li>
+    <li><a href="golang-guides/golang-guide-2026-07-05.html">Day 30 &mdash; 2026-07-05</a></li>
+    <li><a href="golang-guides/golang-guide-2026-07-04.html">Day 29 &mdash; 2026-07-04</a></li>
+    <li><a href="golang-guides/golang-guide-2026-07-03.html">Day 28 &mdash; 2026-07-03</a></li>
+    <li><a href="golang-guides/golang-guide-2026-07-02.html">Day 27 &mdash; 2026-07-02</a></li>
+    <li><a href="golang-guides/golang-guide-2026-07-01.html">Day 26 &mdash; 2026-07-01</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-30.html">Day 25 &mdash; 2026-06-30</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-29.html">Day 24 &mdash; 2026-06-29</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-28.html">Day 23 &mdash; 2026-06-28</a></li>
+    <li class="current">Day 22 &mdash; 2026-06-27 (current)</li>
+    <li><a href="golang-guides/golang-guide-2026-06-26.html">Day 21 &mdash; 2026-06-26</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-25.html">Day 20 &mdash; 2026-06-25</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-24.html">Day 19 &mdash; 2026-06-24</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-23.html">Day 18 &mdash; 2026-06-23</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-22.html">Day 17 &mdash; 2026-06-22</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-21.html">Day 16 &mdash; 2026-06-21</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-19.html">Day 15 &mdash; 2026-06-19</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-18.html">Day 14 &mdash; 2026-06-18</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-17.html">Day 13 &mdash; 2026-06-17</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-15.html">Day 12 &mdash; 2026-06-15</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-13.html">Day 11 &mdash; 2026-06-13</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-12.html">Day 10 &mdash; 2026-06-12</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-11.html">Day 9 &mdash; 2026-06-11</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-10.html">Day 8 &mdash; 2026-06-10</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-09.html">Day 7 &mdash; 2026-06-09</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-08.html">Day 6 &mdash; 2026-06-08</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-07.html">Day 5 &mdash; 2026-06-07</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-05.html">Day 4 &mdash; 2026-06-05</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-04.html">Day 3 &mdash; 2026-06-04</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-03.html">Day 2 &mdash; 2026-06-03</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-02.html">Day 1 &mdash; 2026-06-02</a></li>
+  </ul>
+
+  <h4 style="margin-top: 20px;">All Guides</h4>
+  <ul>
+    <li><a href="guide.html">LeetCode Study Guide</a></li>
+    <li><a href="lang-guide.html">Multi-Language Guide</a></li>
+    <li><a href="python-guide.html">Python Guide</a></li>
+    <li><a href="typescript-guide.html">TypeScript Guide</a></li>
+    <li><a href="javascript-guide.html">JavaScript Guide</a></li>
+    <li><a href="golang-guide.html">Go Guide (current)</a></li>
+    <li><a href="report.html">Performance Report</a></li>
+  </ul>
+</footer>
+
+</div><!-- end main -->
+
+<script>
+// ===== Theme Toggle =====
+(function() {
+  var KEY = 'lc-goguide-theme';
+  var toggle = document.getElementById('theme-toggle');
+  var html = document.documentElement;
+
+  function setTheme(theme) {
+    html.setAttribute('data-theme', theme);
+    localStorage.setItem(KEY, theme);
+    toggle.textContent = theme === 'dark' ? '☽' : '☀';
+  }
+
+  var saved = localStorage.getItem(KEY) || 'dark';
+  setTheme(saved);
+
+  toggle.addEventListener('click', function() {
+    setTheme(html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
+  });
+})();
+
+// ===== Mobile Sidebar Toggle =====
+(function() {
+  var btn = document.getElementById('sidebar-toggle');
+  var sidebar = document.getElementById('sidebar');
+
+  btn.addEventListener('click', function() {
+    sidebar.classList.toggle('open');
+  });
+
+  // Close sidebar when clicking a link (mobile)
+  sidebar.querySelectorAll('.sidebar-link').forEach(function(link) {
+    link.addEventListener('click', function() {
+      if (window.innerWidth <= 900) {
+        sidebar.classList.remove('open');
+      }
+    });
+  });
+})();
+
+// ===== Active Sidebar Link on Scroll =====
+(function() {
+  var links = document.querySelectorAll('.sidebar-link');
+  var sections = [];
+
+  links.forEach(function(link) {
+    var id = link.getAttribute('href').replace('#', '');
+    var el = document.getElementById(id);
+    if (el) sections.push({ id: id, el: el, link: link });
+  });
+
+  function onScroll() {
+    var scrollTop = window.scrollY + 120;
+    var current = null;
+
+    for (var i = sections.length - 1; i >= 0; i--) {
+      if (sections[i].el.offsetTop <= scrollTop) {
+        current = sections[i];
+        break;
+      }
+    }
+
+    links.forEach(function(l) { l.classList.remove('active'); });
+    if (current) current.link.classList.add('active');
+  }
+
+  window.addEventListener('scroll', onScroll);
+  onScroll();
+})();
+</script>
+</body>
+</html>

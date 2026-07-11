@@ -1,0 +1,1663 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Go Study Guide &mdash; Day 30 (2026-07-05)</title>
+<style>
+/* ===== CSS Variables ===== */
+:root {
+  --bg: #0d1117;
+  --surface1: #161b22;
+  --surface2: #1c2129;
+  --border: #30363d;
+  --text: #e6edf3;
+  --muted: #8b949e;
+  --accent: #58a6ff;
+  --accent-dim: #1f6feb33;
+  --green: #3fb950;
+  --green-dim: #23863633;
+  --yellow: #d29922;
+  --yellow-dim: #d2992233;
+  --red: #f85149;
+  --red-dim: #f8514933;
+  --purple: #bc8cff;
+  --purple-dim: #bc8cff22;
+  --orange: #f0883e;
+  --orange-dim: #f0883e22;
+  --code-bg: #0d1117;
+  --sidebar-w: 300px;
+  --font-mono: 'SF Mono', 'Cascadia Code', 'Fira Code', Consolas, monospace;
+  --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+  --radius: 8px;
+  --shadow: 0 1px 3px rgba(0,0,0,0.4);
+}
+
+[data-theme="light"] {
+  --bg: #ffffff;
+  --surface1: #f6f8fa;
+  --surface2: #f0f3f6;
+  --border: #d0d7de;
+  --text: #1f2328;
+  --muted: #656d76;
+  --accent: #0969da;
+  --accent-dim: #0969da1a;
+  --green: #1a7f37;
+  --green-dim: #1a7f3718;
+  --yellow: #9a6700;
+  --yellow-dim: #9a670018;
+  --red: #cf222e;
+  --red-dim: #cf222e18;
+  --purple: #8250df;
+  --purple-dim: #8250df18;
+  --orange: #bc4c00;
+  --orange-dim: #bc4c0018;
+  --code-bg: #f6f8fa;
+  --shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+/* ===== Reset & Base ===== */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: var(--font-sans);
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.7;
+  font-size: 16px;
+  transition: background 0.2s, color 0.2s;
+}
+
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+/* ===== Theme Toggle ===== */
+#theme-toggle {
+  position: fixed;
+  top: 16px;
+  right: 20px;
+  z-index: 1000;
+  background: var(--surface1);
+  border: 1px solid var(--border);
+  color: var(--text);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+  box-shadow: var(--shadow);
+}
+#theme-toggle:hover { background: var(--surface2); border-color: var(--accent); }
+
+/* ===== Sidebar ===== */
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: var(--sidebar-w);
+  height: 100vh;
+  background: var(--surface1);
+  border-right: 1px solid var(--border);
+  overflow-y: auto;
+  padding: 20px 0;
+  z-index: 100;
+  transition: transform 0.3s;
+}
+
+.sidebar-header {
+  padding: 0 20px 16px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 12px;
+}
+
+.sidebar-header h2 {
+  font-size: 16px;
+  color: var(--text);
+  font-weight: 700;
+}
+
+.sidebar-header .subtitle {
+  font-size: 12px;
+  color: var(--muted);
+  margin-top: 2px;
+}
+
+.sidebar-section {
+  margin-bottom: 8px;
+}
+
+.sidebar-section-title {
+  padding: 6px 20px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+}
+
+.sidebar-link {
+  display: block;
+  padding: 5px 20px 5px 28px;
+  font-size: 13px;
+  color: var(--muted);
+  text-decoration: none;
+  border-left: 2px solid transparent;
+  transition: all 0.15s;
+  line-height: 1.4;
+}
+
+.sidebar-link:hover {
+  color: var(--text);
+  background: var(--accent-dim);
+  border-left-color: var(--accent);
+  text-decoration: none;
+}
+
+.sidebar-link.active {
+  color: var(--accent);
+  border-left-color: var(--accent);
+  background: var(--accent-dim);
+}
+
+/* ===== Mobile sidebar toggle ===== */
+#sidebar-toggle {
+  display: none;
+  position: fixed;
+  top: 16px;
+  left: 16px;
+  z-index: 200;
+  background: var(--surface1);
+  border: 1px solid var(--border);
+  color: var(--text);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 20px;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--shadow);
+}
+
+/* ===== Main Content ===== */
+.main {
+  margin-left: var(--sidebar-w);
+  padding: 40px 48px 80px;
+  max-width: calc(860px + var(--sidebar-w) + 96px);
+}
+
+.page-title {
+  font-size: 32px;
+  font-weight: 800;
+  margin-bottom: 4px;
+  color: var(--text);
+}
+
+.page-subtitle {
+  font-size: 15px;
+  color: var(--muted);
+  margin-bottom: 36px;
+}
+
+/* ===== Sections ===== */
+.section {
+  margin-bottom: 48px;
+}
+
+.section-label {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  padding: 3px 10px;
+  border-radius: 4px;
+  margin-bottom: 12px;
+}
+
+.section-label.review { background: var(--yellow-dim); color: var(--yellow); }
+.section-label.new { background: var(--green-dim); color: var(--green); }
+
+.section-title {
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 24px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--border);
+}
+
+/* ===== How To Use ===== */
+.how-to-use {
+  background: var(--surface1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px 24px;
+  margin-bottom: 36px;
+}
+
+.how-to-use h3 {
+  font-size: 16px;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.how-to-use ul {
+  padding-left: 22px;
+  margin: 0;
+}
+
+.how-to-use li {
+  font-size: 14px;
+  color: var(--muted);
+  margin-bottom: 4px;
+}
+
+/* ===== Concept Cards ===== */
+.concept {
+  background: var(--surface1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 28px;
+  margin-bottom: 28px;
+  box-shadow: var(--shadow);
+}
+
+.concept-header {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  margin-bottom: 6px;
+  flex-wrap: wrap;
+}
+
+.concept h3 {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.concept-meta {
+  font-size: 12px;
+  color: var(--muted);
+  background: var(--surface2);
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
+.concept h4 {
+  font-size: 15px;
+  font-weight: 600;
+  margin: 20px 0 8px;
+  color: var(--text);
+}
+
+.concept p, .concept li {
+  color: var(--text);
+  line-height: 1.7;
+}
+
+.concept ul, .concept ol {
+  padding-left: 22px;
+  margin: 8px 0;
+}
+
+.concept li {
+  margin-bottom: 4px;
+}
+
+.concept .why-matters {
+  font-style: italic;
+  color: var(--muted);
+  margin: 6px 0 16px;
+  font-size: 15px;
+}
+
+/* ===== Code Blocks ===== */
+pre {
+  background: var(--code-bg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 16px 18px;
+  overflow-x: auto;
+  margin: 10px 0 14px;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--text);
+  position: relative;
+}
+
+pre::after {
+  content: 'Go';
+  position: absolute;
+  top: 6px;
+  right: 10px;
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  opacity: 0.6;
+}
+
+code {
+  font-family: var(--font-mono);
+  font-size: 0.9em;
+}
+
+:not(pre) > code {
+  background: var(--surface2);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.88em;
+}
+
+/* ===== Output Blocks ===== */
+.output {
+  background: var(--green-dim);
+  border: 1px solid var(--green);
+  border-radius: 6px;
+  padding: 12px 16px;
+  margin: 6px 0 14px;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--text);
+  white-space: pre-wrap;
+}
+
+.output::after { content: none; }
+
+.output-label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--green);
+  margin-bottom: 4px;
+}
+
+/* ===== Good/Bad Examples ===== */
+.do-dont {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin: 10px 0;
+}
+
+.do-box, .dont-box {
+  border-radius: 6px;
+  padding: 14px;
+  border: 1px solid;
+}
+
+.do-box {
+  background: var(--green-dim);
+  border-color: var(--green);
+}
+
+.dont-box {
+  background: var(--red-dim);
+  border-color: var(--red);
+}
+
+.do-box .label, .dont-box .label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 6px;
+}
+
+.do-box .label { color: var(--green); }
+.dont-box .label { color: var(--red); }
+
+.do-box pre, .dont-box pre {
+  margin: 0;
+  border: none;
+  background: transparent;
+  padding: 0;
+  font-size: 12.5px;
+}
+
+.do-box pre::after, .dont-box pre::after { content: none; }
+
+/* ===== Key Rules ===== */
+.rules-list {
+  list-style: none;
+  padding: 0;
+  margin: 8px 0;
+}
+
+.rules-list li {
+  padding: 6px 0 6px 24px;
+  position: relative;
+}
+
+.rules-list li::before {
+  content: "\2192";
+  position: absolute;
+  left: 2px;
+  color: var(--accent);
+  font-weight: 700;
+}
+
+/* ===== Exercises ===== */
+.exercise {
+  background: var(--purple-dim);
+  border: 1px solid var(--purple);
+  border-radius: 6px;
+  padding: 14px 18px;
+  margin: 8px 0;
+}
+
+.exercise .exercise-label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--purple);
+  margin-bottom: 4px;
+}
+
+/* ===== Pitfall ===== */
+.pitfall {
+  background: var(--red-dim);
+  border-left: 3px solid var(--red);
+  border-radius: 0 6px 6px 0;
+  padding: 10px 14px;
+  margin: 10px 0;
+  font-size: 14px;
+}
+
+.pitfall strong {
+  color: var(--red);
+}
+
+/* ===== Connection ===== */
+.connection {
+  background: var(--accent-dim);
+  border-left: 3px solid var(--accent);
+  border-radius: 0 6px 6px 0;
+  padding: 10px 14px;
+  margin: 10px 0;
+  font-size: 14px;
+  color: var(--muted);
+}
+
+/* ===== Review Cards ===== */
+.review-card {
+  background: var(--surface1);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--purple);
+  border-radius: var(--radius);
+  padding: 20px 24px;
+  margin-bottom: 16px;
+  box-shadow: var(--shadow);
+}
+
+.review-card .review-header {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  margin-bottom: 6px;
+  flex-wrap: wrap;
+}
+
+.review-card h3 {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.review-card .review-meta {
+  font-size: 12px;
+  color: var(--muted);
+  background: var(--surface2);
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
+.review-card h4 {
+  font-size: 14px;
+  font-weight: 600;
+  margin: 14px 0 6px;
+  color: var(--text);
+}
+
+.review-card p, .review-card li {
+  color: var(--text);
+  line-height: 1.6;
+  font-size: 14px;
+}
+
+.review-card pre {
+  font-size: 12.5px;
+  padding: 12px 14px;
+  margin: 6px 0 10px;
+}
+
+.review-card .pitfall {
+  font-size: 13px;
+  padding: 8px 12px;
+}
+
+/* ===== Topic Badge ===== */
+.topic-badge {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 2px 8px;
+  border-radius: 4px;
+  background: var(--accent-dim);
+  color: var(--accent);
+  margin-left: 4px;
+}
+
+/* ===== Footer ===== */
+.footer {
+  margin-top: 60px;
+  padding: 24px 0;
+  border-top: 1px solid var(--border);
+}
+
+.footer h4 {
+  font-size: 14px;
+  color: var(--muted);
+  margin-bottom: 10px;
+}
+
+.footer ul {
+  list-style: none;
+  padding: 0;
+}
+
+.footer li {
+  margin-bottom: 4px;
+  font-size: 14px;
+}
+
+.footer li a { color: var(--accent); }
+.footer .current { color: var(--green); font-weight: 600; }
+
+/* ===== Bash code blocks ===== */
+pre.bash::after {
+  content: 'Bash';
+}
+
+/* ===== Responsive ===== */
+@media (max-width: 900px) {
+  .sidebar {
+    transform: translateX(-100%);
+  }
+  .sidebar.open {
+    transform: translateX(0);
+    box-shadow: 4px 0 20px rgba(0,0,0,0.5);
+  }
+  #sidebar-toggle {
+    display: flex;
+  }
+  .main {
+    margin-left: 0;
+    padding: 60px 20px 60px;
+    max-width: 100%;
+  }
+  .do-dont {
+    grid-template-columns: 1fr;
+  }
+  #theme-toggle {
+    right: 14px;
+    top: 16px;
+  }
+}
+</style>
+</head>
+<body>
+
+<!-- Theme Toggle -->
+<button id="theme-toggle" aria-label="Toggle theme" title="Toggle light/dark theme">&#9789;</button>
+
+<!-- Mobile Sidebar Toggle -->
+<button id="sidebar-toggle" aria-label="Toggle sidebar">&#9776;</button>
+
+<!-- Sidebar -->
+<nav class="sidebar" id="sidebar">
+  <div class="sidebar-header">
+    <h2>Go Guide</h2>
+    <div class="subtitle">Day 30 &mdash; 2026-07-05</div>
+  </div>
+
+  <div class="sidebar-section">
+    <div class="sidebar-section-title">Review (6 concepts)</div>
+    <a href="#grpc_protobuf" class="sidebar-link">gRPC &amp; Protocol Buffers</a>
+    <a href="#module_management" class="sidebar-link">Module Management</a>
+    <a href="#cross_compilation" class="sidebar-link">Cross-Compilation &amp; Build Tags</a>
+    <a href="#websocket_go" class="sidebar-link">WebSocket in Go</a>
+    <a href="#profiling_pprof" class="sidebar-link">Profiling with pprof</a>
+    <a href="#otel_tracing" class="sidebar-link">OpenTelemetry &amp; Tracing</a>
+  </div>
+
+  <div class="sidebar-section">
+    <div class="sidebar-section-title">Cancellation, Pipes &amp; Timers (3)</div>
+    <a href="#context_cause" class="sidebar-link">context.WithCancelCause / Cause</a>
+    <a href="#io_pipe" class="sidebar-link">io.Pipe</a>
+    <a href="#timers_tickers" class="sidebar-link">time.Timer &amp; time.Ticker</a>
+  </div>
+
+  <div class="sidebar-section">
+    <div class="sidebar-section-title">Security Standard Library (2)</div>
+    <a href="#crypto_rand" class="sidebar-link">crypto/rand</a>
+    <a href="#crypto_subtle" class="sidebar-link">crypto/subtle</a>
+  </div>
+</nav>
+
+<!-- Main Content -->
+<div class="main">
+
+<h1 class="page-title">Go Daily Guide &mdash; 2026-07-05 (Day 30)</h1>
+<p class="page-subtitle">Day 30 &mdash; Sunday, July 5, 2026 &bull; 11 concepts (6 review + 5 new)</p>
+
+<!-- How to Use -->
+<div class="how-to-use">
+  <h3>How to Use This Guide</h3>
+  <ul>
+    <li>Start with the <strong>Review</strong> section &mdash; try to recall each concept before reading the refresher</li>
+    <li>Complete the challenge exercise for each review card without looking back at previous days</li>
+    <li>Then work through the <strong>New Concepts</strong> section, typing out every code example yourself</li>
+    <li>Pay special attention to the common mistakes sections (they highlight real Go gotchas)</li>
+    <li>Complete the exercises at the bottom of each concept without looking at solutions</li>
+    <li>Use <code>go run main.go</code> to test your code locally, or use the <a href="https://go.dev/play/" target="_blank">Go Playground</a></li>
+  </ul>
+</div>
+
+<!-- ============================================================ -->
+<!-- REVIEW SECTION -->
+<!-- ============================================================ -->
+<div class="section">
+  <span class="section-label review">Review</span>
+  <h2 class="section-title">Spaced Repetition Review &mdash; 6 Concepts</h2>
+
+  <!-- Review 1: gRPC & Protocol Buffers -->
+  <div class="review-card" id="grpc_protobuf">
+    <div class="review-header">
+      <h3>gRPC &amp; Protocol Buffers</h3>
+      <span class="review-meta">Advanced Networking &bull; due today &bull; rep 2</span>
+    </div>
+
+    <h4>Quick Reminder</h4>
+    <p>Protocol Buffers are a compact, schema-first binary serialization format: you declare messages and RPC services in a <code>.proto</code> file, then <code>protoc</code> (with <code>protoc-gen-go</code> and <code>protoc-gen-go-grpc</code>) generates Go structs plus strongly-typed client and server stubs. gRPC runs those services over HTTP/2 with four call styles &mdash; unary, server-streaming, client-streaming, and bidirectional. The server implements the generated interface; the client dials a <code>*grpc.ClientConn</code> and calls methods as if they were local.</p>
+
+    <h4>Key Pattern</h4>
+<pre>// greeter.proto
+syntax = "proto3";
+package greet;
+option go_package = "example.com/greet";
+
+message HelloRequest  { string name = 1; }
+message HelloReply    { string message = 1; }
+
+service Greeter {
+  rpc SayHello(HelloRequest) returns (HelloReply);
+}
+
+// generate:
+//   protoc --go_out=. --go-grpc_out=. greeter.proto</pre>
+<pre>// server.go &mdash; implement the generated interface
+type server struct {
+    greet.UnimplementedGreeterServer // forward compatibility
+}
+
+func (s *server) SayHello(ctx context.Context,
+    r *greet.HelloRequest) (*greet.HelloReply, error) {
+    return &amp;greet.HelloReply{Message: "hello, " + r.Name}, nil
+}
+
+func main() {
+    lis, _ := net.Listen("tcp", ":50051")
+    gs := grpc.NewServer()
+    greet.RegisterGreeterServer(gs, &amp;server{})
+    gs.Serve(lis)
+}</pre>
+
+    <div class="exercise">
+      <div class="exercise-label">Challenge Exercise</div>
+      <p>Extend the <code>Greeter</code> service with a <code>rpc SayHelloStream(HelloRequest) returns (stream HelloReply)</code> server-streaming method that emits five greetings, and write a client that ranges over the stream until <code>io.EOF</code>. Add a unary interceptor that logs each method name and latency with <code>slog</code>, and propagate a deadline with <code>context.WithTimeout</code> so a slow server returns <code>codes.DeadlineExceeded</code>. Finally, explain why embedding <code>UnimplementedGreeterServer</code> matters when you add a new RPC to the <code>.proto</code>.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>#1 Pitfall:</strong> Editing the generated <code>*.pb.go</code> files by hand &mdash; they are overwritten on every <code>protoc</code> run. Also, reusing field numbers or changing a field's type in the <code>.proto</code> breaks wire compatibility with already-deployed clients; only ever <em>add</em> new fields with fresh numbers and treat old ones as reserved.
+    </div>
+  </div>
+
+  <!-- Review 2: Module Management -->
+  <div class="review-card" id="module_management">
+    <div class="review-header">
+      <h3>Module Management: go.mod, Workspaces &amp; Versioning</h3>
+      <span class="review-meta">Production Go &bull; overdue (23d) &bull; rep 0</span>
+    </div>
+
+    <h4>Quick Reminder</h4>
+    <p>A module is a versioned collection of packages rooted at a <code>go.mod</code> file that names the module path and its dependency requirements. <code>go get</code> adds/updates requirements; <code>go mod tidy</code> prunes unused ones and fills in the <code>go.sum</code> checksums. Semantic Import Versioning means <code>v2+</code> majors carry the version in the import path (<code>.../v2</code>). For local multi-module development, a <code>go.work</code> file (Go 1.18+) stitches several modules together without editing each <code>go.mod</code>.</p>
+
+    <h4>Key Pattern</h4>
+<pre>// go.mod
+module example.com/app
+
+go 1.24
+
+require (
+    github.com/google/uuid v1.6.0
+    golang.org/x/sync v0.10.0
+)</pre>
+<pre class="bash"># everyday module commands
+go mod init example.com/app     # create go.mod
+go get github.com/google/uuid@latest
+go mod tidy                     # sync require + go.sum
+go list -m all                  # full dependency graph
+
+# a workspace spanning two local modules
+go work init ./app ./lib
+go work use ./newmod            # add another module</pre>
+
+    <div class="exercise">
+      <div class="exercise-label">Challenge Exercise</div>
+      <p>Create two local modules &mdash; a library and an app that imports it &mdash; and wire them together with a <code>go.work</code> file so edits to the library are picked up without publishing or a <code>replace</code> directive. Then bump the library to a breaking <code>v2</code>, update its module path to end in <code>/v2</code>, and fix the importing app. Explain the difference between a <code>replace</code> directive in <code>go.mod</code> (committed, affects everyone) and a <code>go.work</code> file (local, usually git-ignored), and when each is appropriate.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>#1 Pitfall:</strong> Committing a <code>go.work</code> file to a shared repo &mdash; it silently overrides everyone's module resolution and breaks CI that expects tagged versions. Keep <code>go.work</code> local (git-ignore it). Also, forgetting the <code>/v2</code> suffix on a major bump makes Go treat it as the <em>same</em> module, causing baffling "ambiguous import" errors.
+    </div>
+  </div>
+
+  <!-- Review 3: Cross-Compilation & Build Tags -->
+  <div class="review-card" id="cross_compilation">
+    <div class="review-header">
+      <h3>Cross-Compilation &amp; Build Tags</h3>
+      <span class="review-meta">Production Go &bull; overdue (23d) &bull; rep 0</span>
+    </div>
+
+    <h4>Quick Reminder</h4>
+    <p>Go cross-compiles from any host to any target by setting <code>GOOS</code> and <code>GOARCH</code> &mdash; no cross toolchain needed, as long as you stay pure-Go (<code>CGO_ENABLED=0</code>). Build <em>constraints</em> select which files compile for a target: a filename suffix like <code>_linux.go</code> / <code>_windows.go</code>, or a <code>//go:build</code> line at the top of a file. This is how you keep OS-specific code (syscalls, path handling) isolated and still ship a single cross-platform binary per target.</p>
+
+    <h4>Key Pattern</h4>
+<pre>//go:build linux || darwin
+
+package main
+
+// Compiled only on Linux/macOS. A matching
+// file with "//go:build windows" holds the
+// Windows implementation of the same funcs.</pre>
+<pre class="bash"># cross-compile a static Linux arm64 binary from any host
+CGO_ENABLED=0 GOOS=linux GOARCH=arm64 \
+    go build -o app-linux-arm64 .
+
+# list every supported target pair
+go tool dist list
+
+# build with a custom tag (go build -tags prod)
+#   //go:build prod</pre>
+
+    <div class="exercise">
+      <div class="exercise-label">Challenge Exercise</div>
+      <p>Write a <code>platform.go</code> pair using <code>//go:build</code> constraints so that <code>ConfigDir()</code> returns <code>%APPDATA%</code> on Windows and <code>$XDG_CONFIG_HOME</code> (falling back to <code>~/.config</code>) elsewhere, and confirm each file only compiles for its target with <code>go vet</code>. Then add a custom <code>debug</code> build tag that enables extra logging only when built with <code>-tags debug</code>. Finally, cross-compile the same program for <code>linux/amd64</code>, <code>darwin/arm64</code>, and <code>windows/amd64</code>, and explain why <code>CGO_ENABLED=0</code> is usually required for painless cross-builds.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>#1 Pitfall:</strong> Leaving <code>CGO_ENABLED=1</code> (the default when a C toolchain is present) while cross-compiling &mdash; the build then needs a target C cross-compiler and often fails or produces a dynamically-linked binary that won't run in a scratch container. Also, a malformed <code>//go:build</code> line (or the old <code>// +build</code> without a blank line after it) is silently ignored, so the file compiles everywhere unexpectedly.
+    </div>
+  </div>
+
+  <!-- Review 4: WebSocket in Go -->
+  <div class="review-card" id="websocket_go">
+    <div class="review-header">
+      <h3>WebSocket in Go</h3>
+      <span class="review-meta">Advanced Networking &bull; overdue (22d) &bull; rep 0</span>
+    </div>
+
+    <h4>Quick Reminder</h4>
+    <p>WebSockets upgrade a normal HTTP request into a persistent, full-duplex TCP connection so server and client can push messages at any time. The standard library has no WebSocket server, so you use a library such as <code>github.com/coder/websocket</code> (formerly nhooyr) or <code>gorilla/websocket</code>. The server calls <code>Accept</code> inside an <code>http.HandlerFunc</code> to complete the upgrade, then reads and writes typed messages (text/binary) on the resulting connection until either side closes it.</p>
+
+    <h4>Key Pattern</h4>
+<pre>import (
+    "context"
+    "net/http"
+    "time"
+
+    "github.com/coder/websocket"
+)
+
+func echo(w http.ResponseWriter, r *http.Request) {
+    c, err := websocket.Accept(w, r, nil) // upgrade
+    if err != nil {
+        return
+    }
+    defer c.Close(websocket.StatusInternalError, "bye")
+
+    ctx, cancel := context.WithTimeout(r.Context(), time.Minute)
+    defer cancel()
+
+    for {
+        typ, data, err := c.Read(ctx) // blocks for next frame
+        if err != nil {
+            return // client closed or timed out
+        }
+        c.Write(ctx, typ, data) // echo it back
+    }
+}</pre>
+
+    <div class="exercise">
+      <div class="exercise-label">Challenge Exercise</div>
+      <p>Build a broadcast chat hub: a central goroutine owns a <code>map[*websocket.Conn]struct{}</code> and fans each incoming message out to all connected clients over a buffered per-client send channel (so one slow reader can't stall everyone). Add a ping/keepalive using the library's ping helper and drop clients that don't pong within a deadline. Then handle graceful shutdown by closing every connection with <code>websocket.StatusGoingAway</code>. Explain why you must never write to the same connection from two goroutines concurrently.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>#1 Pitfall:</strong> Writing to a single WebSocket connection from multiple goroutines at once &mdash; frames interleave and corrupt the stream. Funnel all writes for a connection through one owner goroutine (or a send channel). Also, forgetting to enforce an origin check or a read deadline leaves you open to cross-site hijacking and slow-loris style resource exhaustion.
+    </div>
+  </div>
+
+  <!-- Review 5: Profiling with pprof -->
+  <div class="review-card" id="profiling_pprof">
+    <div class="review-header">
+      <h3>Profiling with pprof</h3>
+      <span class="review-meta">Observability &amp; Profiling &bull; overdue (22d) &bull; rep 0</span>
+    </div>
+
+    <h4>Quick Reminder</h4>
+    <p><code>pprof</code> collects and visualizes CPU, heap, goroutine, block, and mutex profiles. In a server, blank-import <code>net/http/pprof</code> to expose profiles at <code>/debug/pprof/</code>; for one-off analysis, add CPU/memory profile flags to <code>testing</code> benchmarks (<code>-cpuprofile</code>, <code>-memprofile</code>). Analyze with <code>go tool pprof</code> &mdash; use <code>top</code> to find the hottest functions, <code>list Func</code> for line-level cost, and <code>-http=:0</code> for an interactive flame graph in the browser.</p>
+
+    <h4>Key Pattern</h4>
+<pre>import _ "net/http/pprof" // registers /debug/pprof/ handlers
+
+func main() {
+    // profiles now live under http://localhost:6060/debug/pprof/
+    go http.ListenAndServe("localhost:6060", nil)
+    // ... rest of your server ...
+}</pre>
+<pre class="bash"># 30-second CPU profile from a running server, then flame graph
+go tool pprof -http=:0 \
+    http://localhost:6060/debug/pprof/profile?seconds=30
+
+# heap profile from a benchmark
+go test -bench=. -memprofile=mem.out
+go tool pprof -http=:0 mem.out
+#   (pprof) top10        # hottest allocators
+#   (pprof) list MyFunc  # line-by-line cost</pre>
+
+    <div class="exercise">
+      <div class="exercise-label">Challenge Exercise</div>
+      <p>Write a deliberately wasteful function (e.g. string concatenation in a loop plus needless allocations), expose <code>net/http/pprof</code>, and capture both a CPU and a heap profile under load generated with a simple driver goroutine. Use <code>go tool pprof</code>'s <code>top</code> and <code>list</code> to pinpoint the hot line, fix it (<code>strings.Builder</code>, preallocation), and confirm the profile improved. Then capture a goroutine profile while goroutines are blocked on a channel and explain how it reveals a leak. Note why block/mutex profiles require explicit <code>runtime.SetBlockProfileRate</code>/<code>SetMutexProfileFraction</code>.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>#1 Pitfall:</strong> Exposing <code>/debug/pprof/</code> on a public interface &mdash; profiles leak internal details and let anyone trigger expensive captures (a DoS vector). Bind it to <code>localhost</code> or an internal-only port. Also, profiling a workload that isn't representative (too short, no load) gives noise; profile under realistic traffic for long enough to gather meaningful samples.
+    </div>
+  </div>
+
+  <!-- Review 6: OpenTelemetry & Tracing -->
+  <div class="review-card" id="otel_tracing">
+    <div class="review-header">
+      <h3>OpenTelemetry &amp; Tracing</h3>
+      <span class="review-meta">Observability &amp; Profiling &bull; overdue (22d) &bull; rep 0</span>
+    </div>
+
+    <h4>Quick Reminder</h4>
+    <p>Distributed tracing follows one request across services as a <em>trace</em> made of nested <em>spans</em>. OpenTelemetry (OTel) is the vendor-neutral standard: you configure a <code>TracerProvider</code> with an exporter (OTLP to a collector, Jaeger, stdout for dev), get a <code>Tracer</code>, and wrap units of work with <code>tracer.Start(ctx, "name")</code>. The returned <code>context.Context</code> carries the active span, so propagating <code>ctx</code> down the call chain (and across HTTP/gRPC via propagators) is what stitches spans into one trace.</p>
+
+    <h4>Key Pattern</h4>
+<pre>import (
+    "context"
+    "go.opentelemetry.io/otel"
+    "go.opentelemetry.io/otel/attribute"
+)
+
+func handleOrder(ctx context.Context, id string) error {
+    tr := otel.Tracer("orders")
+    ctx, span := tr.Start(ctx, "handleOrder")
+    defer span.End() // always end the span
+
+    span.SetAttributes(attribute.String("order.id", id))
+
+    if err := charge(ctx, id); err != nil { // child span sees ctx
+        span.RecordError(err)
+        return err
+    }
+    return nil
+}</pre>
+
+    <div class="exercise">
+      <div class="exercise-label">Challenge Exercise</div>
+      <p>Set up a <code>TracerProvider</code> with the stdout exporter and instrument a two-function call chain so the second function's span nests under the first &mdash; prove nesting by passing <code>ctx</code> through. Add attributes and an event to a span, and record an error path with <code>span.RecordError</code> plus <code>span.SetStatus(codes.Error, ...)</code>. Then wrap an <code>http.Handler</code> with <code>otelhttp</code> and a client with the matching transport so the trace context propagates across a real HTTP call. Explain why forgetting <code>defer span.End()</code> leaks unfinished spans.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>#1 Pitfall:</strong> Not propagating <code>ctx</code> &mdash; if you call the next function with <code>context.Background()</code> instead of the span-carrying context, the child span starts a brand-new trace and the connection is lost. Also, forgetting <code>defer span.End()</code> means spans never flush; and creating a span per trivial call floods your backend, so span granularity should match meaningful units of work.
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- NEW CONCEPTS SECTION -->
+<!-- ============================================================ -->
+<div class="section">
+  <span class="section-label new">New</span>
+  <h2 class="section-title">New Concepts &mdash; 5 in 2 Sections</h2>
+
+  <h3 style="font-size:18px;margin:8px 0 18px;color:var(--muted);">Section 1 &mdash; Cancellation, Pipes &amp; Timers</h3>
+
+  <!-- New 1: context.WithCancelCause / Cause -->
+  <div class="concept" id="context_cause">
+    <div class="concept-header">
+      <h3>context.WithCancelCause &amp; context.Cause (Go 1.20)</h3>
+      <span class="topic-badge">Concurrency</span>
+    </div>
+    <p class="why-matters">Why it matters: plain <code>context.WithCancel</code> tells you a context was cancelled but not <em>why</em> &mdash; <code>ctx.Err()</code> only ever returns the generic <code>context.Canceled</code> or <code>context.DeadlineExceeded</code>. When a pipeline stage aborts, you usually want the real reason (which stage failed, with which error) to bubble up. <code>context.WithCancelCause</code> lets the canceller attach an explanatory error, and <code>context.Cause(ctx)</code> retrieves it &mdash; turning cancellation into a proper error channel.</p>
+
+    <h4>Cancelling with a cause</h4>
+    <p><code>context.WithCancelCause</code> returns a <code>CancelCauseFunc</code> that takes an <code>error</code>. After cancellation, <code>ctx.Err()</code> still reports <code>context.Canceled</code>, but <code>context.Cause(ctx)</code> returns the error you passed (or <code>ctx.Err()</code> if you passed <code>nil</code>).</p>
+<pre>package main
+
+import (
+    "context"
+    "errors"
+    "fmt"
+)
+
+var errQuotaExceeded = errors.New("quota exceeded")
+
+func main() {
+    ctx, cancel := context.WithCancelCause(context.Background())
+
+    // Some worker decides to abort with a specific reason.
+    cancel(errQuotaExceeded)
+
+    fmt.Println("Err:  ", ctx.Err())              // context canceled
+    fmt.Println("Cause:", context.Cause(ctx))     // quota exceeded
+    fmt.Println("match:", errors.Is(context.Cause(ctx), errQuotaExceeded))
+}</pre>
+    <div class="output-label">Output</div>
+    <div class="output">Err:   context canceled
+Cause: quota exceeded
+match: true</div>
+
+    <h4>Deadlines carry a cause too</h4>
+    <p><code>context.WithTimeoutCause</code> / <code>WithDeadlineCause</code> (Go 1.21) attach a cause that surfaces when the <em>timeout</em> fires, so you can distinguish "this specific operation's SLA" from a generic deadline.</p>
+<pre>package main
+
+import (
+    "context"
+    "errors"
+    "fmt"
+    "time"
+)
+
+var errSlowUpstream = errors.New("upstream SLA exceeded")
+
+func main() {
+    ctx, cancel := context.WithTimeoutCause(
+        context.Background(), 10*time.Millisecond, errSlowUpstream)
+    defer cancel()
+
+    <-ctx.Done()
+    fmt.Println("Err:  ", ctx.Err())            // context deadline exceeded
+    fmt.Println("Cause:", context.Cause(ctx))   // upstream SLA exceeded
+}</pre>
+    <div class="output-label">Output</div>
+    <div class="output">Err:   context deadline exceeded
+Cause: upstream SLA exceeded</div>
+
+    <h4>Common Mistakes</h4>
+    <div class="do-dont">
+      <div class="dont-box">
+        <div class="label">Wrong</div>
+<pre>// Smuggling the reason through a shared variable and
+// a plain WithCancel -- racy and easy to desync.
+var failReason error
+ctx, cancel := context.WithCancel(parent)
+failReason = errQuotaExceeded // data race vs. readers
+cancel()
+// downstream can only see context.Canceled, not why</pre>
+      </div>
+      <div class="do-box">
+        <div class="label">Right</div>
+<pre>ctx, cancel := context.WithCancelCause(parent)
+// The reason travels WITH the context, safely.
+cancel(errQuotaExceeded)
+
+// Anywhere downstream:
+if err := context.Cause(ctx); err != nil {
+    return fmt.Errorf("aborted: %w", err)
+}</pre>
+      </div>
+    </div>
+
+    <h4>Key Rules</h4>
+    <ul class="rules-list">
+      <li><code>ctx.Err()</code> is unchanged (still <code>Canceled</code>/<code>DeadlineExceeded</code>); the specific reason lives in <code>context.Cause(ctx)</code>.</li>
+      <li>Calling the <code>CancelCauseFunc</code> with <code>nil</code> makes the cause equal to <code>ctx.Err()</code>; only the <em>first</em> cancel's cause is recorded &mdash; later calls are no-ops.</li>
+      <li>If a parent context is cancelled first, <code>Cause</code> reports the <em>parent's</em> cause &mdash; causes propagate down the tree like cancellation itself.</li>
+      <li>You still must call the cancel function (defer it) to release resources, exactly as with <code>WithCancel</code>; the cause is an addition, not a replacement.</li>
+    </ul>
+
+    <div class="exercise">
+      <div class="exercise-label">Practice Exercise</div>
+      <p>Build a fan-out search across three mock backends where the first one to fail cancels the others with <code>WithCancelCause</code>, passing a sentinel error naming the failed backend; have the coordinator return <code>context.Cause(ctx)</code> wrapped with <code>%w</code>. Then convert a fixed-timeout HTTP call to <code>WithTimeoutCause</code> so a caller can tell an SLA breach from an ordinary deadline. Finally, demonstrate that once a context is cancelled, a second <code>cancel(differentErr)</code> does <em>not</em> change the recorded cause, and explain why that "first cause wins" rule matters.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>Pitfall:</strong> Branching on <code>ctx.Err()</code> and expecting your custom error &mdash; it will always be the generic <code>context.Canceled</code>/<code>DeadlineExceeded</code>. Read <code>context.Cause(ctx)</code> for the real reason. Also remember causes only exist if the context was created with a <code>*Cause</code> constructor; on a plain <code>WithCancel</code>, <code>context.Cause</code> just returns <code>ctx.Err()</code>.
+    </div>
+
+    <div class="connection">
+      <strong>Connections:</strong> Extends the Context package cancellation/deadline model and complements <code>context.AfterFunc</code>/<code>WithoutCancel</code> from yesterday; the cause makes cancellation compose with the <code>errors.Is</code>/<code>%w</code> wrapping conventions and is a natural fit for <code>errgroup</code>-style fan-out where the first error should stop the group.
+    </div>
+  </div>
+
+  <!-- New 2: io.Pipe -->
+  <div class="concept" id="io_pipe">
+    <div class="concept-header">
+      <h3>io.Pipe: An In-Memory Reader/Writer Bridge</h3>
+      <span class="topic-badge">Std Lib</span>
+    </div>
+    <p class="why-matters">Why it matters: sometimes you have a producer that writes to an <code>io.Writer</code> but a consumer that needs an <code>io.Reader</code> &mdash; for example, streaming a generated report as the body of an <code>http.Request</code> without first buffering the whole thing in memory. <code>io.Pipe</code> connects the two: bytes written to the <code>*io.PipeWriter</code> become readable on the <code>*io.PipeReader</code>, synchronously and without a temporary buffer. It's the idiomatic way to turn "push" code into a streamable "pull" source.</p>
+
+    <h4>Streaming producer to consumer</h4>
+    <p><code>io.Pipe</code> returns a connected reader/writer. Writes block until a reader consumes them (it's unbuffered), so the producer must run in its own goroutine. Close the writer to signal EOF.</p>
+<pre>package main
+
+import (
+    "fmt"
+    "io"
+    "strings"
+)
+
+func main() {
+    pr, pw := io.Pipe()
+
+    // Producer writes in a goroutine; Write blocks until Read.
+    go func() {
+        defer pw.Close() // Close -> reader sees io.EOF
+        for i := 1; i <= 3; i++ {
+            fmt.Fprintf(pw, "line %d\n", i)
+        }
+    }()
+
+    // Consumer pulls the stream as an io.Reader.
+    var sb strings.Builder
+    io.Copy(&amp;sb, pr)
+    fmt.Print(sb.String())
+}</pre>
+    <div class="output-label">Output</div>
+    <div class="output">line 1
+line 2
+line 3</div>
+
+    <h4>Propagating errors with CloseWithError</h4>
+    <p>If the producer fails mid-stream, <code>pw.CloseWithError(err)</code> makes the reader's next <code>Read</code> return that error instead of <code>io.EOF</code> &mdash; so failures surface on the consumer side.</p>
+<pre>package main
+
+import (
+    "errors"
+    "fmt"
+    "io"
+)
+
+func main() {
+    pr, pw := io.Pipe()
+    go func() {
+        pw.Write([]byte("partial data..."))
+        pw.CloseWithError(errors.New("source failed"))
+    }()
+
+    buf := make([]byte, 64)
+    for {
+        n, err := pr.Read(buf)
+        if n > 0 {
+            fmt.Printf("read: %q\n", buf[:n])
+        }
+        if err != nil {
+            fmt.Println("err:", err)
+            return
+        }
+    }
+}</pre>
+    <div class="output-label">Output</div>
+    <div class="output">read: "partial data..."
+err: source failed</div>
+
+    <h4>Common Mistakes</h4>
+    <div class="do-dont">
+      <div class="dont-box">
+        <div class="label">Wrong</div>
+<pre>pr, pw := io.Pipe()
+// Writing and reading in the SAME goroutine deadlocks:
+// Write blocks waiting for a Read that never runs.
+pw.Write([]byte("hi"))     // blocks forever
+io.ReadAll(pr)
+
+// Forgetting to Close the writer -> reader hangs on
+// the final Read, never getting io.EOF.</pre>
+      </div>
+      <div class="do-box">
+        <div class="label">Right</div>
+<pre>pr, pw := io.Pipe()
+go func() {
+    defer pw.Close()        // always close to signal EOF
+    json.NewEncoder(pw).Encode(bigStruct)
+}()
+// Reader side streams it, e.g. as a request body:
+http.Post(url, "application/json", pr)</pre>
+      </div>
+    </div>
+
+    <h4>Key Rules</h4>
+    <ul class="rules-list">
+      <li>An <code>io.Pipe</code> is <em>synchronous and unbuffered</em>: each <code>Write</code> blocks until one or more <code>Read</code>s consume all its bytes &mdash; so producer and consumer must run in different goroutines.</li>
+      <li>Close the writer (<code>pw.Close()</code>) to make the reader observe <code>io.EOF</code>; use <code>pw.CloseWithError(err)</code> to make it observe a specific error instead.</li>
+      <li>Closing the <em>reader</em> (<code>pr.Close()</code>) makes subsequent <code>Write</code>s fail with <code>io.ErrClosedPipe</code> &mdash; useful to signal the producer to stop.</li>
+      <li>It's safe for one reader and one writer concurrently; it is <em>not</em> a fan-out or a buffer &mdash; reach for <code>bytes.Buffer</code> or a channel if you need buffering or multiple consumers.</li>
+    </ul>
+
+    <div class="exercise">
+      <div class="exercise-label">Practice Exercise</div>
+      <p>Use <code>io.Pipe</code> to stream a large CSV you generate on the fly as the body of an <code>http.Post</code>, so the whole file is never held in memory at once; encode rows with <code>encoding/csv</code> writing into the pipe writer from a goroutine. Then add error propagation: if row generation fails, call <code>CloseWithError</code> and confirm the HTTP client's request fails cleanly. Finally, wire a <code>gzip.Writer</code> in front of the pipe writer to stream compressed output, and explain why doing the write in the same goroutine as the read would deadlock.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>Pitfall:</strong> Treating <code>io.Pipe</code> like a buffer and writing/reading from one goroutine &mdash; because writes block until read, you deadlock instantly. Always run the producer in a separate goroutine and always close the writer (with <code>Close</code> or <code>CloseWithError</code>) so the reader terminates; a forgotten close leaves the consumer blocked on a final <code>Read</code> forever.
+    </div>
+
+    <div class="connection">
+      <strong>Connections:</strong> Builds on the <code>io.Reader</code>/<code>io.Writer</code> interfaces and <code>io.Copy</code> from the io package day; it's the glue that lets streaming compression (<code>compress/gzip</code>), <code>encoding/json</code>/<code>csv</code> encoders, and <code>net/http</code> request bodies compose without intermediate buffers, and it pairs naturally with goroutines and channel-based coordination.
+    </div>
+  </div>
+
+  <!-- New 3: time.Timer & time.Ticker -->
+  <div class="concept" id="timers_tickers">
+    <div class="concept-header">
+      <h3>time.Timer &amp; time.Ticker: One-Shot vs Repeating</h3>
+      <span class="topic-badge">Std Lib</span>
+    </div>
+    <p class="why-matters">Why it matters: <code>time.Sleep</code> is fine for a blocking pause, but real concurrent code needs timers you can <code>select</code> on, stop, and reset: a per-request timeout, a heartbeat, a periodic flush. <code>time.Timer</code> fires once; <code>time.Ticker</code> fires repeatedly on a channel. Using them correctly &mdash; especially stopping a <code>Ticker</code> so it doesn't leak, and understanding <code>Reset</code> semantics &mdash; is a common source of subtle goroutine and resource leaks.</p>
+
+    <h4>Timer: fire once, and cancel if not needed</h4>
+    <p><code>time.NewTimer(d)</code> sends the current time on <code>timer.C</code> after <code>d</code>. <code>timer.Stop()</code> cancels it (returns <code>false</code> if it already fired). <code>time.AfterFunc(d, f)</code> is the callback form &mdash; it runs <code>f</code> in its own goroutine after <code>d</code>.</p>
+<pre>package main
+
+import (
+    "fmt"
+    "time"
+)
+
+func main() {
+    t := time.NewTimer(20 * time.Millisecond)
+
+    select {
+    case <-t.C:
+        fmt.Println("timer fired")
+    case <-time.After(5 * time.Millisecond):
+        // Beat the timer: stop it so it doesn't leak.
+        if t.Stop() {
+            fmt.Println("work finished early; timer stopped")
+        }
+    }
+
+    // AfterFunc: run a callback after a delay (own goroutine).
+    done := make(chan struct{})
+    time.AfterFunc(10*time.Millisecond, func() {
+        fmt.Println("deferred callback ran")
+        close(done)
+    })
+    <-done
+}</pre>
+    <div class="output-label">Output</div>
+    <div class="output">work finished early; timer stopped
+deferred callback ran</div>
+
+    <h4>Ticker: repeat until you stop it</h4>
+    <p><code>time.NewTicker(d)</code> ticks every <code>d</code> on <code>ticker.C</code>. You <strong>must</strong> call <code>ticker.Stop()</code> (usually deferred) &mdash; unlike a timer, a ticker keeps its goroutine and channel alive until stopped, so forgetting is a leak.</p>
+<pre>package main
+
+import (
+    "fmt"
+    "time"
+)
+
+func main() {
+    ticker := time.NewTicker(10 * time.Millisecond)
+    defer ticker.Stop() // REQUIRED: otherwise it leaks
+
+    ticks := 0
+    timeout := time.After(35 * time.Millisecond)
+    for {
+        select {
+        case <-ticker.C:
+            ticks++
+        case <-timeout:
+            fmt.Println("ticks observed:", ticks) // ~3
+            return
+        }
+    }
+}</pre>
+    <div class="output-label">Output</div>
+    <div class="output">ticks observed: 3</div>
+
+    <h4>Common Mistakes</h4>
+    <div class="do-dont">
+      <div class="dont-box">
+        <div class="label">Wrong</div>
+<pre>// Ticker leak: no Stop(), goroutine + channel live on.
+for range time.NewTicker(time.Second).C {
+    poll() // ticker can never be stopped -> leak
+}
+
+// Pre-Go-1.23: Reset on a timer whose value wasn't
+// drained could deliver a stale tick. Drain first.</pre>
+      </div>
+      <div class="do-box">
+        <div class="label">Right</div>
+<pre>ticker := time.NewTicker(time.Second)
+defer ticker.Stop()
+for {
+    select {
+    case <-ctx.Done():
+        return          // clean exit
+    case <-ticker.C:
+        poll()
+    }
+}</pre>
+      </div>
+    </div>
+
+    <h4>Key Rules</h4>
+    <ul class="rules-list">
+      <li>A <code>Ticker</code> must be stopped with <code>ticker.Stop()</code> or it leaks its goroutine and channel; a fired <code>Timer</code> doesn't need stopping, but stop an unfired one you no longer need.</li>
+      <li><code>Stop()</code> does <em>not</em> close or drain the channel; it just prevents future sends. A tick already sitting in <code>C</code> is still deliverable.</li>
+      <li>In Go 1.23+, unreferenced timers/tickers are GC-eligible even without <code>Stop</code>, and <code>Reset</code>/<code>Stop</code> no longer risk delivering a stale value &mdash; but calling <code>Stop</code> on tickers is still the clear, portable habit.</li>
+      <li><code>Reset(d)</code> reuses a timer; only call it on a stopped or expired timer to avoid ambiguity on older Go versions, and never share one <code>Timer</code> across goroutines without synchronization.</li>
+    </ul>
+
+    <div class="exercise">
+      <div class="exercise-label">Practice Exercise</div>
+      <p>Write a debouncer: given a stream of events on a channel, use a single <code>time.Timer</code> with <code>Reset</code> so a callback fires only once the events have been quiet for 100ms. Then build a periodic batch flusher with a <code>time.Ticker</code> that also flushes immediately when a buffer reaches capacity, exiting cleanly on <code>ctx.Done()</code> with a deferred <code>Stop</code>. Finally, demonstrate a ticker leak by starting one without <code>Stop</code> in a loop and observing goroutine growth via <code>runtime.NumGoroutine()</code>, then fix it.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>Pitfall:</strong> Ranging directly over <code>time.NewTicker(d).C</code> without keeping a reference to call <code>Stop()</code> &mdash; on pre-1.23 Go this leaks a goroutine per ticker for the life of the process. Also, assuming <code>Stop()</code> drains the channel: a value may already be buffered in <code>C</code>, so a subsequent read can still see one last tick. Keep the <code>*Ticker</code>/<code>*Timer</code> handle so you can control it.
+    </div>
+
+    <div class="connection">
+      <strong>Connections:</strong> Deepens the <code>time</code> package basics into concurrency territory, pairing with <code>select</code>, channels, and <code>context</code> cancellation from the concurrency days; <code>time.AfterFunc</code> mirrors <code>context.AfterFunc</code>, and these primitives underpin the rate limiting, retry-with-backoff, and graceful-shutdown patterns you've seen in production Go.
+    </div>
+  </div>
+
+  <h3 style="font-size:18px;margin:28px 0 18px;color:var(--muted);">Section 2 &mdash; Security Standard Library</h3>
+
+  <!-- New 4: crypto/rand -->
+  <div class="concept" id="crypto_rand">
+    <div class="concept-header">
+      <h3>crypto/rand: Cryptographically Secure Randomness</h3>
+      <span class="topic-badge">Security</span>
+    </div>
+    <p class="why-matters">Why it matters: anything security-sensitive &mdash; session tokens, API keys, password salts, nonces, CSRF tokens &mdash; must be unpredictable. <code>math/rand</code> (even <code>rand/v2</code>) is fast but <em>predictable</em>: given a couple of outputs an attacker can recover the seed and forecast the rest. <code>crypto/rand</code> reads from the operating system's CSPRNG (<code>/dev/urandom</code>, <code>getrandom(2)</code>, <code>CryptGenRandom</code>) and is the only correct source for secrets.</p>
+
+    <h4>Generating secure random bytes and tokens</h4>
+    <p><code>rand.Read</code> fills a byte slice from the OS CSPRNG. Encode the raw bytes (base64/hex) to get a URL-safe token. Aim for at least 16&ndash;32 bytes of entropy for tokens.</p>
+<pre>package main
+
+import (
+    "crypto/rand"
+    "encoding/base64"
+    "encoding/hex"
+    "fmt"
+)
+
+func main() {
+    // 32 bytes = 256 bits of entropy.
+    b := make([]byte, 32)
+    if _, err := rand.Read(b); err != nil {
+        panic(err) // extremely rare: OS entropy failure
+    }
+
+    token := base64.RawURLEncoding.EncodeToString(b)
+    fmt.Println("token len:", len(token)) // 43 chars
+    fmt.Println("hex len:  ", len(hex.EncodeToString(b))) // 64
+}</pre>
+    <div class="output-label">Output</div>
+    <div class="output">token len: 43
+hex len:   64</div>
+
+    <h4>Unbiased integers in a range</h4>
+    <p>For a secure integer in <code>[0, n)</code>, use <code>rand.Int(rand.Reader, big)</code> &mdash; it avoids the modulo bias you'd get from <code>b[0] % n</code>. Go 1.22+ also adds <code>crypto/rand.Text()</code> for a random alphanumeric string.</p>
+<pre>package main
+
+import (
+    "crypto/rand"
+    "fmt"
+    "math/big"
+)
+
+func main() {
+    // Secure, unbiased dice roll in [1, 6].
+    n, err := rand.Int(rand.Reader, big.NewInt(6))
+    if err != nil {
+        panic(err)
+    }
+    roll := n.Int64() + 1
+    fmt.Println("roll in range:", roll >= 1 &amp;&amp; roll <= 6) // true
+}</pre>
+    <div class="output-label">Output</div>
+    <div class="output">roll in range: true</div>
+
+    <h4>Common Mistakes</h4>
+    <div class="do-dont">
+      <div class="dont-box">
+        <div class="label">Wrong</div>
+<pre>import "math/rand/v2"
+
+// PREDICTABLE: never for secrets/tokens/salts.
+func token() string {
+    b := make([]byte, 16)
+    for i := range b {
+        b[i] = byte(rand.IntN(256)) // recoverable
+    }
+    return hex.EncodeToString(b)
+}
+
+// Modulo bias with raw bytes:
+digit := secureByte % 10 // skews toward low digits</pre>
+      </div>
+      <div class="do-box">
+        <div class="label">Right</div>
+<pre>import "crypto/rand"
+
+func token() string {
+    b := make([]byte, 16)
+    rand.Read(b) // OS CSPRNG, unpredictable
+    return hex.EncodeToString(b)
+}
+
+// Unbiased bounded int:
+n, _ := rand.Int(rand.Reader, big.NewInt(10))
+digit := n.Int64()</pre>
+      </div>
+    </div>
+
+    <h4>Key Rules</h4>
+    <ul class="rules-list">
+      <li>Use <code>crypto/rand</code> (not <code>math/rand</code>) for <em>anything</em> an attacker shouldn't predict: tokens, keys, salts, nonces, IVs, password-reset codes.</li>
+      <li><code>rand.Read</code> either fills the whole slice or returns an error &mdash; check it (a failure means the OS entropy source is broken, which is worth crashing over).</li>
+      <li>Encode raw bytes for transport with <code>base64.RawURLEncoding</code> (URL-safe, no padding) or <code>hex</code>; don't print raw bytes as a "string".</li>
+      <li>For bounded integers use <code>rand.Int(rand.Reader, max)</code> to avoid modulo bias; for random text, <code>crypto/rand.Text()</code> (Go 1.24) gives a ready-made secure string.</li>
+    </ul>
+
+    <div class="exercise">
+      <div class="exercise-label">Practice Exercise</div>
+      <p>Write a <code>SecureToken(nBytes int) (string, error)</code> that reads <code>nBytes</code> from <code>crypto/rand</code> and returns a <code>base64.RawURLEncoding</code> string, and a <code>SecureCode(n int)</code> that produces an <em>n</em>-digit numeric code with no modulo bias using <code>rand.Int</code>. Then generate a 16-byte salt and combine it with a password using <code>bcrypt</code> or <code>argon2</code>, and explain why the salt must be unique and unpredictable per user. Finally, contrast the throughput of <code>crypto/rand</code> vs <code>math/rand/v2</code> and state exactly when each is the correct choice.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>Pitfall:</strong> Reaching for <code>math/rand</code> because it's simpler or faster when generating something secret &mdash; predictable tokens are a classic, severe vulnerability (session hijacking, guessable reset links). Also, ignoring the error from <code>rand.Read</code>, or reducing secure bytes with <code>% n</code> and reintroducing bias. Use <code>crypto/rand</code> for secrets and its unbiased helpers for ranges.
+    </div>
+
+    <div class="connection">
+      <strong>Connections:</strong> The security counterpart to <code>math/rand/v2</code> (fast, seedable, non-secret) from the randomness day; feeds token generation that gets encoded with <code>encoding/base64</code>/<code>hex</code>, underpins TLS and the wider <code>crypto</code> packages, and pairs with <code>crypto/subtle</code> below for safely <em>comparing</em> the secrets you generate here.
+    </div>
+  </div>
+
+  <!-- New 5: crypto/subtle -->
+  <div class="concept" id="crypto_subtle">
+    <div class="concept-header">
+      <h3>crypto/subtle: Constant-Time Comparisons</h3>
+      <span class="topic-badge">Security</span>
+    </div>
+    <p class="why-matters">Why it matters: comparing secrets with <code>==</code> or <code>bytes.Equal</code> is a <em>timing side channel</em>. Those comparisons return as soon as the first differing byte is found, so an attacker measuring response time can recover a secret byte-by-byte (a classic attack against HMAC/API-key checks). <code>crypto/subtle.ConstantTimeCompare</code> always examines every byte, taking the same time regardless of where (or whether) the inputs differ &mdash; closing that leak.</p>
+
+    <h4>Comparing secrets without leaking timing</h4>
+    <p><code>subtle.ConstantTimeCompare(x, y)</code> returns <code>1</code> if the two equal-length byte slices are identical, <code>0</code> otherwise &mdash; in time independent of the contents. Use it for MAC tags, API keys, and password-hash outputs.</p>
+<pre>package main
+
+import (
+    "crypto/hmac"
+    "crypto/sha256"
+    "crypto/subtle"
+    "fmt"
+)
+
+func validMAC(msg, key, tag []byte) bool {
+    mac := hmac.New(sha256.New, key)
+    mac.Write(msg)
+    expected := mac.Sum(nil)
+    // Constant-time: no early-exit timing leak.
+    return subtle.ConstantTimeCompare(expected, tag) == 1
+}
+
+func main() {
+    key := []byte("secret-key")
+    msg := []byte("transfer $100")
+
+    mac := hmac.New(sha256.New, key)
+    mac.Write(msg)
+    good := mac.Sum(nil)
+
+    fmt.Println("valid:  ", validMAC(msg, key, good))
+    fmt.Println("forged: ", validMAC(msg, key, []byte("wrong-tag")))
+}</pre>
+    <div class="output-label">Output</div>
+    <div class="output">valid:   true
+forged:  false</div>
+
+    <h4>hmac.Equal &amp; other constant-time helpers</h4>
+    <p><code>hmac.Equal</code> wraps the same constant-time comparison for MAC tags. <code>subtle</code> also offers <code>ConstantTimeSelect</code>, <code>ConstantTimeByteEq</code>, and <code>ConstantTimeCopy</code> for branch-free conditional logic on secrets.</p>
+<pre>package main
+
+import (
+    "crypto/subtle"
+    "fmt"
+)
+
+func main() {
+    a := []byte("api-key-abc123")
+    b := []byte("api-key-abc123")
+    c := []byte("api-key-XXXXXX")
+
+    fmt.Println(subtle.ConstantTimeCompare(a, b) == 1) // true
+    fmt.Println(subtle.ConstantTimeCompare(a, c) == 1) // false
+
+    // Branch-free select: pick x if v==1, else y.
+    x, y := 10, 20
+    fmt.Println(subtle.ConstantTimeSelect(1, x, y)) // 10
+}</pre>
+    <div class="output-label">Output</div>
+    <div class="output">true
+false
+10</div>
+
+    <h4>Common Mistakes</h4>
+    <div class="do-dont">
+      <div class="dont-box">
+        <div class="label">Wrong</div>
+<pre>// Early-exit comparison leaks how many leading bytes
+// matched -> attacker recovers the token over time.
+func check(got, want string) bool {
+    return got == want        // timing side channel
+}
+
+func checkMAC(a, b []byte) bool {
+    return bytes.Equal(a, b)  // also early-exit
+}</pre>
+      </div>
+      <div class="do-box">
+        <div class="label">Right</div>
+<pre>func check(got, want []byte) bool {
+    // Constant-time regardless of contents.
+    return subtle.ConstantTimeCompare(got, want) == 1
+}
+
+// For MAC tags specifically:
+if hmac.Equal(expectedTag, providedTag) {
+    // authenticated
+}</pre>
+      </div>
+    </div>
+
+    <h4>Key Rules</h4>
+    <ul class="rules-list">
+      <li>Use <code>subtle.ConstantTimeCompare</code> (or <code>hmac.Equal</code>) for any secret comparison: API keys, MAC/HMAC tags, session tokens, hashed-password digests.</li>
+      <li>It returns <code>1</code>/<code>0</code> (an <code>int</code>), not a <code>bool</code> &mdash; compare <code>== 1</code>. Inputs of <em>different lengths</em> return <code>0</code> immediately (length itself isn't secret here).</li>
+      <li>Constant-time only matters against <em>remote</em> attackers when the value is secret; comparing two public strings can stay a normal <code>==</code>.</li>
+      <li>Don't roll your own crypto around it &mdash; use it to <em>compare</em>, but rely on <code>crypto/hmac</code>, <code>bcrypt</code>/<code>argon2</code>, and TLS for the actual primitives.</li>
+    </ul>
+
+    <div class="exercise">
+      <div class="exercise-label">Practice Exercise</div>
+      <p>Implement an API-key middleware that reads a bearer token from the <code>Authorization</code> header and compares it against the configured key using <code>subtle.ConstantTimeCompare</code>, returning 401 on mismatch. Then verify a webhook signature by computing an HMAC-SHA256 over the raw body and checking it with <code>hmac.Equal</code>. Write a micro-benchmark that times <code>==</code> vs <code>ConstantTimeCompare</code> on strings that differ at the first byte vs the last byte, and explain what the timing difference in the <code>==</code> case reveals to an attacker.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>Pitfall:</strong> Assuming a constant-time compare fixes everything while leaking length or short-circuiting elsewhere &mdash; e.g. checking <code>len(a) == len(b)</code> with an early return before comparing, or logging how far a match got. Also, remember <code>ConstantTimeCompare</code> returns an <code>int</code>; treating a nonzero-looking value as truthy without <code>== 1</code> is a bug. Use it strictly for the comparison, and keep the surrounding logic branch-free on secret data.
+    </div>
+
+    <div class="connection">
+      <strong>Connections:</strong> The natural partner to <code>crypto/rand</code> above (generate secrets securely, then compare them securely) and to <code>crypto/hmac</code>/<code>crypto/sha256</code>; the same timing-safety concern shows up in TLS certificate verification and in the auth middleware patterns from the production-Go and <code>net/http</code> days.
+    </div>
+  </div>
+
+</div><!-- end New Concepts section -->
+
+
+<!-- ============================================================ -->
+<!-- FOOTER -->
+<!-- ============================================================ -->
+<footer class="footer">
+  <h4>All Go Guides</h4>
+  <ul>
+    <li><a href="golang-guides/golang-guide-2026-07-09.html">Day 34 &mdash; 2026-07-09</a></li>
+    <li><a href="golang-guides/golang-guide-2026-07-08.html">Day 33 &mdash; 2026-07-08</a></li>
+    <li><a href="golang-guides/golang-guide-2026-07-07.html">Day 32 &mdash; 2026-07-07</a></li>
+    <li><a href="golang-guides/golang-guide-2026-07-06.html">Day 31 &mdash; 2026-07-06</a></li>
+    <li class="current">Day 30 &mdash; 2026-07-05 (current)</li>
+    <li><a href="golang-guides/golang-guide-2026-07-04.html">Day 29 &mdash; 2026-07-04</a></li>
+    <li><a href="golang-guides/golang-guide-2026-07-03.html">Day 28 &mdash; 2026-07-03</a></li>
+    <li><a href="golang-guides/golang-guide-2026-07-02.html">Day 27 &mdash; 2026-07-02</a></li>
+    <li><a href="golang-guides/golang-guide-2026-07-01.html">Day 26 &mdash; 2026-07-01</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-30.html">Day 25 &mdash; 2026-06-30</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-29.html">Day 24 &mdash; 2026-06-29</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-28.html">Day 23 &mdash; 2026-06-28</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-27.html">Day 22 &mdash; 2026-06-27</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-26.html">Day 21 &mdash; 2026-06-26</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-25.html">Day 20 &mdash; 2026-06-25</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-24.html">Day 19 &mdash; 2026-06-24</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-23.html">Day 18 &mdash; 2026-06-23</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-22.html">Day 17 &mdash; 2026-06-22</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-21.html">Day 16 &mdash; 2026-06-21</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-19.html">Day 15 &mdash; 2026-06-19</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-18.html">Day 14 &mdash; 2026-06-18</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-17.html">Day 13 &mdash; 2026-06-17</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-15.html">Day 12 &mdash; 2026-06-15</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-13.html">Day 11 &mdash; 2026-06-13</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-12.html">Day 10 &mdash; 2026-06-12</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-11.html">Day 9 &mdash; 2026-06-11</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-10.html">Day 8 &mdash; 2026-06-10</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-09.html">Day 7 &mdash; 2026-06-09</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-08.html">Day 6 &mdash; 2026-06-08</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-07.html">Day 5 &mdash; 2026-06-07</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-05.html">Day 4 &mdash; 2026-06-05</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-04.html">Day 3 &mdash; 2026-06-04</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-03.html">Day 2 &mdash; 2026-06-03</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-02.html">Day 1 &mdash; 2026-06-02</a></li>
+  </ul>
+
+  <h4 style="margin-top: 20px;">All Guides</h4>
+  <ul>
+    <li><a href="guide.html">LeetCode Study Guide</a></li>
+    <li><a href="lang-guide.html">Multi-Language Guide</a></li>
+    <li><a href="python-guide.html">Python Guide</a></li>
+    <li><a href="typescript-guide.html">TypeScript Guide</a></li>
+    <li><a href="javascript-guide.html">JavaScript Guide</a></li>
+    <li><a href="golang-guide.html">Go Guide (current)</a></li>
+    <li><a href="report.html">Performance Report</a></li>
+  </ul>
+</footer>
+
+</div><!-- end main -->
+
+<script>
+// ===== Theme Toggle =====
+(function() {
+  var KEY = 'lc-goguide-theme';
+  var toggle = document.getElementById('theme-toggle');
+  var html = document.documentElement;
+
+  function setTheme(theme) {
+    html.setAttribute('data-theme', theme);
+    localStorage.setItem(KEY, theme);
+    toggle.textContent = theme === 'dark' ? '☽' : '☀';
+  }
+
+  var saved = localStorage.getItem(KEY) || 'dark';
+  setTheme(saved);
+
+  toggle.addEventListener('click', function() {
+    setTheme(html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
+  });
+})();
+
+// ===== Mobile Sidebar Toggle =====
+(function() {
+  var btn = document.getElementById('sidebar-toggle');
+  var sidebar = document.getElementById('sidebar');
+
+  btn.addEventListener('click', function() {
+    sidebar.classList.toggle('open');
+  });
+
+  // Close sidebar when clicking a link (mobile)
+  sidebar.querySelectorAll('.sidebar-link').forEach(function(link) {
+    link.addEventListener('click', function() {
+      if (window.innerWidth <= 900) {
+        sidebar.classList.remove('open');
+      }
+    });
+  });
+})();
+
+// ===== Active Sidebar Link on Scroll =====
+(function() {
+  var links = document.querySelectorAll('.sidebar-link');
+  var sections = [];
+
+  links.forEach(function(link) {
+    var id = link.getAttribute('href').replace('#', '');
+    var el = document.getElementById(id);
+    if (el) sections.push({ id: id, el: el, link: link });
+  });
+
+  function onScroll() {
+    var scrollTop = window.scrollY + 120;
+    var current = null;
+
+    for (var i = sections.length - 1; i >= 0; i--) {
+      if (sections[i].el.offsetTop <= scrollTop) {
+        current = sections[i];
+        break;
+      }
+    }
+
+    links.forEach(function(l) { l.classList.remove('active'); });
+    if (current) current.link.classList.add('active');
+  }
+
+  window.addEventListener('scroll', onScroll);
+  onScroll();
+})();
+</script>
+</body>
+</html>

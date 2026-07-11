@@ -1,0 +1,1221 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TypeScript Daily Guide — 2026-06-23 (Day 20)</title>
+<style>
+:root {
+  --bg: #0d1117;
+  --surface: #161b22;
+  --surface2: #1c2129;
+  --border: #30363d;
+  --text: #e6edf3;
+  --text-muted: #8b949e;
+  --accent: #58a6ff;
+  --accent-bg: rgba(56,139,253,0.15);
+  --green: #3fb950;
+  --green-bg: rgba(63,185,80,0.08);
+  --red: #f85149;
+  --red-bg: rgba(248,81,73,0.08);
+  --yellow: #d29922;
+  --yellow-bg: rgba(210,153,34,0.1);
+  --orange: #db6d28;
+  --purple: #bc8cff;
+  --purple-bg: rgba(188,140,255,0.08);
+  --purple-border: rgba(188,140,255,0.2);
+  --link: #58a6ff;
+  --code-bg: #1c2129;
+  --output-bg: #0e1c0e;
+  --output-border: #1a3a1a;
+  --sidebar-bg: #161b22;
+  --sidebar-active: rgba(56,139,253,0.15);
+  --exercise-border: #30363d;
+}
+[data-theme="light"] {
+  --bg: #ffffff;
+  --surface: #f6f8fa;
+  --surface2: #eef1f5;
+  --border: #d0d7de;
+  --text: #1f2328;
+  --text-muted: #656d76;
+  --accent: #0969da;
+  --accent-bg: rgba(9,105,218,0.1);
+  --green: #1a7f37;
+  --green-bg: rgba(26,127,55,0.06);
+  --red: #cf222e;
+  --red-bg: rgba(207,34,46,0.06);
+  --yellow: #9a6700;
+  --yellow-bg: rgba(154,103,0,0.06);
+  --orange: #bc4c00;
+  --purple: #8250df;
+  --purple-bg: rgba(130,80,223,0.06);
+  --purple-border: rgba(130,80,223,0.15);
+  --link: #0969da;
+  --code-bg: #eef1f5;
+  --output-bg: #f0faf0;
+  --output-border: #c6e6c6;
+  --sidebar-bg: #f6f8fa;
+  --sidebar-active: rgba(9,105,218,0.1);
+  --exercise-border: #d0d7de;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;font-size:16px;line-height:1.7;color:var(--text);background:var(--bg);display:flex;min-height:100vh}
+a{color:var(--link);text-decoration:none}
+a:hover{text-decoration:underline}
+
+/* Sidebar */
+.sidebar{position:fixed;top:0;left:0;width:300px;height:100vh;background:var(--sidebar-bg);border-right:1px solid var(--border);overflow-y:auto;padding:20px 0;z-index:100}
+.sidebar-header{padding:16px 20px;border-bottom:1px solid var(--border);margin-bottom:12px}
+.sidebar-header h2{font-size:15px;font-weight:600;color:var(--text)}
+.sidebar-header .date{font-size:13px;color:var(--text-muted);margin-top:2px}
+.sidebar-section{padding:8px 20px 4px;font-size:12px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px}
+.sidebar-section.review-label{color:var(--purple)}
+.sidebar-nav{list-style:none;padding:0}
+.sidebar-nav li a{display:block;padding:6px 20px 6px 28px;font-size:14px;color:var(--text-muted);transition:all 0.15s}
+.sidebar-nav li a:hover,.sidebar-nav li a.active{color:var(--accent);background:var(--sidebar-active);text-decoration:none}
+.sidebar-nav li a .nav-id{font-size:11px;color:var(--text-muted);opacity:0.6;margin-left:6px}
+
+/* Main */
+.main{margin-left:300px;flex:1;padding:40px;max-width:1160px}
+.content{max-width:860px;margin:0 auto}
+
+/* Theme Toggle */
+.theme-toggle{position:fixed;top:16px;right:20px;z-index:200;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:8px 12px;cursor:pointer;color:var(--text);font-size:18px;line-height:1;transition:all 0.15s}
+.theme-toggle:hover{border-color:var(--accent)}
+
+/* Header */
+.guide-header{text-align:center;padding:32px 0 40px;border-bottom:1px solid var(--border);margin-bottom:40px}
+.guide-header h1{font-size:28px;font-weight:700;margin-bottom:8px}
+.guide-header .meta{font-size:15px;color:var(--text-muted)}
+.guide-header .meta span{margin:0 8px}
+.badge{display:inline-block;padding:2px 10px;border-radius:12px;font-size:13px;font-weight:500}
+.badge-blue{background:var(--accent-bg);color:var(--accent)}
+.badge-purple{background:var(--purple-bg);color:var(--purple)}
+
+/* How To Use */
+.how-to-use{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:24px 28px;margin-bottom:40px}
+.how-to-use h2{font-size:18px;margin-bottom:12px}
+.how-to-use ol{padding-left:24px}
+.how-to-use li{margin-bottom:6px;color:var(--text-muted)}
+
+/* Review Section */
+.review-section{margin-bottom:48px}
+.review-section-header{font-size:22px;font-weight:700;padding-bottom:12px;border-bottom:2px solid var(--purple);margin-bottom:28px;display:flex;align-items:center;gap:12px;color:var(--purple)}
+
+/* Review Card */
+.review-card{background:var(--purple-bg);border:1px solid var(--purple-border);border-left:4px solid var(--purple);border-radius:10px;padding:28px;margin-bottom:24px}
+.review-card .review-header{display:flex;align-items:center;gap:12px;margin-bottom:12px;flex-wrap:wrap}
+.review-card .review-title{font-size:18px;font-weight:700;color:var(--purple)}
+.review-card .review-meta{font-size:13px;color:var(--text-muted)}
+.review-card .review-reminder{color:var(--text-muted);font-style:italic;margin-bottom:16px;padding-left:14px;border-left:3px solid var(--purple)}
+.review-card .review-pattern{margin-bottom:16px}
+.review-card .review-pattern strong{display:block;margin-bottom:8px;font-size:14px;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px}
+.review-card .review-challenge{margin-bottom:12px}
+.review-card .review-challenge strong{display:block;margin-bottom:8px;font-size:14px;color:var(--yellow);text-transform:uppercase;letter-spacing:0.5px}
+.review-card .review-challenge p{line-height:1.6}
+.review-card .review-pitfall{background:var(--red-bg);border:1px solid rgba(248,81,73,0.15);border-radius:6px;padding:12px 16px;font-size:14px;line-height:1.6}
+.review-card .review-pitfall strong{color:var(--red);margin-right:4px}
+.review-card code{background:var(--code-bg);padding:2px 6px;border-radius:4px;font-family:'SF Mono','Fira Code','Consolas',monospace;font-size:13px}
+
+/* Topic Section */
+.topic-section{margin-bottom:48px}
+.topic-section-header{font-size:22px;font-weight:700;padding-bottom:12px;border-bottom:2px solid var(--accent);margin-bottom:28px;display:flex;align-items:center;gap:12px}
+.topic-section-header .section-num{background:var(--accent);color:#fff;width:32px;height:32px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:15px;font-weight:700;flex-shrink:0}
+
+/* Concept Card */
+.concept-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:28px;margin-bottom:32px}
+.concept-header{display:flex;align-items:center;gap:12px;margin-bottom:16px;flex-wrap:wrap}
+.concept-title{font-size:20px;font-weight:700}
+.ttag{display:inline-block;padding:2px 10px;border-radius:12px;font-size:12px;font-weight:500;background:var(--accent-bg);color:var(--accent)}
+
+.why-matters{color:var(--text-muted);font-style:italic;margin-bottom:20px;padding-left:14px;border-left:3px solid var(--accent)}
+.explanation{margin-bottom:20px;line-height:1.8}
+.explanation p{margin-bottom:12px}
+.explanation ul,.explanation ol{padding-left:24px;margin-bottom:12px}
+.explanation li{margin-bottom:4px}
+.explanation code{background:var(--code-bg);padding:2px 6px;border-radius:4px;font-family:'SF Mono','Fira Code','Consolas',monospace;font-size:14px}
+.step{display:flex;gap:12px;margin-bottom:10px;align-items:flex-start}
+.step-num{background:var(--accent-bg);color:var(--accent);width:24px;height:24px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;margin-top:3px}
+
+/* Code Examples */
+.code-example{margin-bottom:20px;border:1px solid var(--border);border-radius:8px;overflow:hidden}
+.lang-badge{background:var(--surface2);color:var(--text-muted);font-size:12px;font-weight:600;padding:6px 14px;border-bottom:1px solid var(--border);font-family:'SF Mono','Fira Code','Consolas',monospace}
+pre{margin:0;padding:16px;overflow-x:auto;background:var(--code-bg);font-family:'SF Mono','Fira Code','Consolas',monospace;font-size:13.5px;line-height:1.6;white-space:pre-wrap}
+pre code{background:none;padding:0;font-size:inherit}
+.output{background:var(--output-bg);border-top:1px solid var(--output-border);padding:12px 16px;font-family:'SF Mono','Fira Code','Consolas',monospace;font-size:13px;color:var(--green);white-space:pre-wrap}
+.output::before{content:"Output:";display:block;font-size:11px;font-weight:600;color:var(--text-muted);margin-bottom:4px;text-transform:uppercase;letter-spacing:0.5px}
+.type-result{background:var(--output-bg);border-top:1px solid var(--output-border);padding:12px 16px;font-family:'SF Mono','Fira Code','Consolas',monospace;font-size:13px;color:var(--green);white-space:pre-wrap}
+.type-result::before{content:"Type Result:";display:block;font-size:11px;font-weight:600;color:var(--text-muted);margin-bottom:4px;text-transform:uppercase;letter-spacing:0.5px}
+.type-error{background:var(--red-bg);border-top:1px solid rgba(248,81,73,0.2);padding:12px 16px;font-family:'SF Mono','Fira Code','Consolas',monospace;font-size:13px;color:var(--red);white-space:pre-wrap}
+.type-error::before{content:"Type Error:";display:block;font-size:11px;font-weight:600;color:var(--red);margin-bottom:4px;text-transform:uppercase;letter-spacing:0.5px}
+
+/* Callouts */
+.callout-warning{background:var(--yellow-bg);border:1px solid rgba(210,153,34,0.2);border-radius:8px;padding:20px;margin-bottom:20px}
+.callout-warning strong{color:var(--yellow);display:block;margin-bottom:12px;font-size:16px}
+.mistake,.correct{padding:10px 14px;border-radius:6px;margin-bottom:10px;font-size:14px;line-height:1.6}
+.mistake{background:var(--red-bg);border-left:3px solid var(--red)}
+.mistake code,.correct code{background:var(--code-bg);padding:2px 6px;border-radius:4px;font-family:'SF Mono','Fira Code','Consolas',monospace;font-size:13px}
+.correct{background:var(--green-bg);border-left:3px solid var(--green)}
+
+/* Key Rules */
+.key-rules{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:20px;margin-bottom:20px}
+.key-rules strong{display:block;margin-bottom:10px;font-size:16px}
+.key-rules ul{padding-left:20px}
+.key-rules li{margin-bottom:6px}
+.key-rules code{background:var(--code-bg);padding:2px 6px;border-radius:4px;font-family:'SF Mono','Fira Code','Consolas',monospace;font-size:13px}
+
+/* Exercises */
+.exercises{border:2px dashed var(--exercise-border);border-radius:8px;padding:20px;margin-bottom:20px;margin-left:12px}
+.exercises strong{display:block;margin-bottom:14px;font-size:16px;color:var(--purple)}
+.exercise{margin-bottom:14px;padding-left:38px;position:relative;line-height:1.6}
+.exercise:last-child{margin-bottom:0}
+.exercise-num{position:absolute;left:0;top:2px;background:var(--purple);color:#fff;width:24px;height:24px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:12px;font-weight:700}
+.exercise code{background:var(--code-bg);padding:2px 6px;border-radius:4px;font-family:'SF Mono','Fira Code','Consolas',monospace;font-size:13px}
+
+/* Connections */
+.connections{background:var(--accent-bg);border:1px solid rgba(56,139,253,0.2);border-radius:8px;padding:16px 20px;font-size:14px;color:var(--text-muted)}
+.connections strong{color:var(--accent);margin-right:6px}
+
+/* Cross-links */
+.cross-links{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:20px 24px;margin-bottom:40px;text-align:center}
+.cross-links a{margin:0 10px;font-weight:500}
+
+/* Footer */
+.guide-footer{border-top:1px solid var(--border);padding-top:32px;margin-top:48px}
+.guide-footer h2{font-size:18px;margin-bottom:16px}
+.guide-footer ul{list-style:none;padding:0}
+.guide-footer li{padding:6px 0}
+.guide-footer li a{font-weight:500}
+
+/* Responsive */
+@media(max-width:900px){
+  .sidebar{display:none}
+  .main{margin-left:0}
+  .theme-toggle{top:12px;right:12px}
+}
+</style>
+</head>
+<body>
+
+<!-- Theme Toggle -->
+<button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">&#x1F319;</button>
+
+<!-- Sidebar -->
+<nav class="sidebar">
+  <div class="sidebar-header">
+    <h2>TypeScript Daily Guide</h2>
+    <div class="date">2026-06-23 &mdash; Day 20</div>
+  </div>
+
+  <div class="sidebar-section review-label">Review (6 concepts)</div>
+  <ul class="sidebar-nav">
+    <li><a href="#review_tsconfig">tsconfig.json Deep Dive <span class="nav-id">R1</span></a></li>
+    <li><a href="#review_module_systems">Module Systems <span class="nav-id">R2</span></a></li>
+    <li><a href="#review_decorators">Decorators (TC39) <span class="nav-id">R3</span></a></li>
+    <li><a href="#review_declaration_files">Declaration Files <span class="nav-id">R4</span></a></li>
+    <li><a href="#review_namespaces">Namespaces vs Modules <span class="nav-id">R5</span></a></li>
+    <li><a href="#review_zod">Zod &amp; Runtime Validation <span class="nav-id">R6</span></a></li>
+  </ul>
+
+  <div class="sidebar-section">Database Typing</div>
+  <ul class="sidebar-nav">
+    <li><a href="#prisma">Prisma &mdash; Type-Safe DB Access <span class="nav-id">#1</span></a></li>
+    <li><a href="#drizzle">Drizzle ORM &mdash; SQL-First <span class="nav-id">#2</span></a></li>
+    <li><a href="#sql_builders">Type-Safe SQL Builders <span class="nav-id">#3</span></a></li>
+  </ul>
+
+  <div class="sidebar-section">Advanced Type Patterns</div>
+  <ul class="sidebar-nav">
+    <li><a href="#branded_types">Branded Types for Domains <span class="nav-id">#4</span></a></li>
+    <li><a href="#builder_pattern">Builder Pattern + Narrowing <span class="nav-id">#5</span></a></li>
+  </ul>
+</nav>
+
+<!-- Main Content -->
+<div class="main">
+<div class="content">
+
+<!-- Header -->
+<header class="guide-header">
+  <h1>TypeScript Daily Guide &mdash; Day 20</h1>
+  <div class="meta">
+    <span>2026-06-23</span>
+    <span>&middot;</span>
+    <span>Day 20 of 20</span>
+    <span>&middot;</span>
+    <span class="badge badge-purple">6 reviews</span>
+    <span class="badge badge-blue">5 new concepts</span>
+  </div>
+</header>
+
+<!-- How to Use -->
+<div class="how-to-use">
+  <h2>How to Use This Guide</h2>
+  <ol>
+    <li><strong>Review first</strong> &mdash; scan each purple review card; if the concept feels solid, move on; if fuzzy, re-read the code pattern</li>
+    <li><strong>Attempt the challenge exercise</strong> on any review card that felt shaky &mdash; this is your best reinforcement signal</li>
+    <li><strong>Work through new concepts</strong> top to bottom &mdash; each builds on the previous</li>
+    <li><strong>Type every code example</strong> yourself in a .ts file &mdash; hover over types in your editor to build intuition</li>
+    <li><strong>Do at least 2 exercises per concept</strong> before moving to the next one</li>
+  </ol>
+</div>
+
+<!-- Cross-links -->
+<div class="cross-links">
+  <a href="guide.html">LeetCode Guide</a>
+  <a href="lang-guide.html">Lang Guide</a>
+  <a href="python-guide.html">Python Guide</a>
+  <a href="golang-guide.html">Go Guide</a>
+  <a href="javascript-guide.html">JS Guide</a>
+  <a href="report.html">Report</a>
+</div>
+
+<!-- ============================================================ -->
+<!-- REVIEW SECTION                                                -->
+<!-- ============================================================ -->
+<div class="review-section">
+<div class="review-section-header">Review &mdash; 6 Concepts</div>
+
+<!-- R1: tsconfig.json Deep Dive -->
+<div class="review-card" id="review_tsconfig">
+  <div class="review-header">
+    <span class="review-title">R1. tsconfig.json Deep Dive</span>
+    <span class="badge badge-purple">Modules &amp; Project Structure</span>
+    <span class="review-meta">9 days overdue &middot; rep 2</span>
+  </div>
+  <div class="review-reminder"><code>strict</code> enables every strict-family check at once. <code>paths</code> needs <code>baseUrl</code> to resolve aliases. For modern bundler-based projects, prefer <code>moduleResolution: "bundler"</code>; for Node libraries use <code>NodeNext</code>.</div>
+
+  <div class="review-pattern">
+    <strong>Key Pattern</strong>
+    <div class="code-example">
+<pre><code>{
+  "compilerOptions": {
+    "strict": true,
+    "target": "ES2022",
+    "module": "Node16",
+    "moduleResolution": "Node16",
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"],
+      "@/components/*": ["./src/components/*"]
+    }
+  }
+}</code></pre>
+    </div>
+  </div>
+
+  <div class="review-challenge">
+    <strong>Challenge Exercise</strong>
+    <p>Configure a <code>tsconfig.json</code> that enables strict mode, defines a path alias for <code>@/components/*</code>, targets <code>ES2022</code>, and uses <code>Node16</code> module resolution. Verify that <code>import { Btn } from "@/components/Btn"</code> resolves.</p>
+  </div>
+
+  <div class="review-pitfall">
+    <strong>Pitfall:</strong> Setting <code>paths</code> without <code>baseUrl</code>. Path mappings are resolved <em>relative to</em> <code>baseUrl</code> &mdash; omit it and TypeScript has no anchor, so every alias fails to resolve.
+  </div>
+</div>
+
+<!-- R2: Module Systems -->
+<div class="review-card" id="review_module_systems">
+  <div class="review-header">
+    <span class="review-title">R2. Module Systems</span>
+    <span class="badge badge-purple">Modules &amp; Project Structure</span>
+    <span class="review-meta">9 days overdue &middot; rep 2</span>
+  </div>
+  <div class="review-reminder">ESM uses <code>import</code>/<code>export</code>; CJS uses <code>require</code>/<code>module.exports</code>. With <code>"module": "NodeNext"</code>, TypeScript respects file extensions and <code>package.json</code> <code>"type"</code> to decide ESM vs CJS per file.</div>
+
+  <div class="review-pattern">
+    <strong>Key Pattern</strong>
+    <div class="code-example">
+<pre><code>// Type-only re-export keeps types out of the runtime graph
+export { type MyType } from "./types.js";
+
+// Dynamic import returns a Promise of the module namespace
+const { parse } = await import("./parser.js");
+
+// In NodeNext, relative ESM imports MUST carry the .js extension
+import { helper } from "./util.js";   // resolves util.ts at build</code></pre>
+    </div>
+  </div>
+
+  <div class="review-challenge">
+    <strong>Challenge Exercise</strong>
+    <p>Convert a CJS module that uses <code>const x = require(path)</code> dynamically into ESM with <code>await import(path)</code>, preserving type safety on the imported namespace. Keep the function&rsquo;s return type fully typed.</p>
+  </div>
+
+  <div class="review-pitfall">
+    <strong>Pitfall:</strong> Omitting the <code>.js</code> extension in ESM imports under <code>NodeNext</code>. Even though the source file is <code>.ts</code>, the import specifier must reference the <em>emitted</em> <code>.js</code> path or Node throws <code>ERR_MODULE_NOT_FOUND</code> at runtime.
+  </div>
+</div>
+
+<!-- R3: Decorators (TC39) -->
+<div class="review-card" id="review_decorators">
+  <div class="review-header">
+    <span class="review-title">R3. Decorators (TC39)</span>
+    <span class="badge badge-purple">Functions &amp; Patterns</span>
+    <span class="review-meta">9 days overdue &middot; rep 2</span>
+  </div>
+  <div class="review-reminder">TC39 Stage 3 decorators receive a <code>context</code> object as the second parameter. There are class, method, field, getter/setter, and accessor decorators. The decorator&rsquo;s return value <em>replaces</em> the decorated element.</div>
+
+  <div class="review-pattern">
+    <strong>Key Pattern</strong>
+    <div class="code-example">
+<pre><code>function log(
+  target: Function,
+  context: ClassMethodDecoratorContext
+) {
+  return function (this: unknown, ...args: unknown[]) {
+    console.log(`calling ${String(context.name)}`);
+    return target.call(this, ...args);
+  };
+}
+
+class Service {
+  @log
+  fetch(id: number) { return `item ${id}`; }
+}</code></pre>
+<div class="output">calling fetch</div>
+    </div>
+  </div>
+
+  <div class="review-challenge">
+    <strong>Challenge Exercise</strong>
+    <p>Write a <code>@throttle(ms: number)</code> decorator <em>factory</em> that limits how often a method may run. Calls inside the window should be ignored (or return the cached last result). Use the <code>ClassMethodDecoratorContext</code> and return a replacement function.</p>
+  </div>
+
+  <div class="review-pitfall">
+    <strong>Pitfall:</strong> Confusing legacy <code>experimentalDecorators</code> (the old <code>(target, key, descriptor)</code> signature) with TC39 Stage 3 decorators (the <code>(value, context)</code> signature). The two are mutually exclusive &mdash; enabling <code>experimentalDecorators</code> opts you out of the standard ones.
+  </div>
+</div>
+
+<!-- R4: Declaration Files -->
+<div class="review-card" id="review_declaration_files">
+  <div class="review-header">
+    <span class="review-title">R4. Declaration Files</span>
+    <span class="badge badge-purple">Modules &amp; Project Structure</span>
+    <span class="review-meta">9 days overdue &middot; rep 2</span>
+  </div>
+  <div class="review-reminder"><code>.d.ts</code> files provide types for plain JS code with no runtime output. Use <code>declare module</code> for untyped packages, and pull community types from <code>@types/*</code> on DefinitelyTyped.</div>
+
+  <div class="review-pattern">
+    <strong>Key Pattern</strong>
+    <div class="code-example">
+<pre><code>// my-lib.d.ts &mdash; types for an untyped runtime package
+declare module "my-lib" {
+  export interface Data { id: number; label: string }
+  export function parse(s: string): Data;
+}</code></pre>
+    </div>
+  </div>
+
+  <div class="review-challenge">
+    <strong>Challenge Exercise</strong>
+    <p>Write a <code>.d.ts</code> file for an existing JS utility that exports <code>slugify(s: string): string</code>, <code>truncate(s: string, len: number): string</code>, and a <code>Config</code> interface. Verify your editor gives autocomplete on the imported functions.</p>
+  </div>
+
+  <div class="review-pitfall">
+    <strong>Pitfall:</strong> Declaring a module shape that conflicts with the library&rsquo;s actual runtime exports (e.g. typing a default export when the package only has named exports). The compiler trusts your declaration, so the mismatch only blows up at runtime.
+  </div>
+</div>
+
+<!-- R5: Namespaces vs Modules -->
+<div class="review-card" id="review_namespaces">
+  <div class="review-header">
+    <span class="review-title">R5. Namespaces vs Modules</span>
+    <span class="badge badge-purple">Modules &amp; Project Structure</span>
+    <span class="review-meta">7 days overdue &middot; rep 2</span>
+  </div>
+  <div class="review-reminder">Prefer ES modules over namespaces in modern code. Namespaces are still useful for two things: declaration merging (augmenting third-party types) and organizing types in global script contexts.</div>
+
+  <div class="review-pattern">
+    <strong>Key Pattern</strong>
+    <div class="code-example">
+<pre><code>// Augment a third-party global type via declaration merging
+declare namespace Express {
+  interface Request {
+    user?: { id: string; role: string };
+  }
+}</code></pre>
+    </div>
+  </div>
+
+  <div class="review-challenge">
+    <strong>Challenge Exercise</strong>
+    <p>Augment the Express <code>Request</code> type to add a custom <code>session</code> property of type <code>{ token: string; expiresAt: number }</code> using declaration merging. Confirm <code>req.session.token</code> type-checks inside a route handler.</p>
+  </div>
+
+  <div class="review-pitfall">
+    <strong>Pitfall:</strong> Using namespaces inside ES module files to &ldquo;group&rdquo; exports. In a module, a namespace compiles to an unnecessary wrapper object (an IIFE) and defeats tree-shaking. Just use named exports.
+  </div>
+</div>
+
+<!-- R6: Zod & Runtime Validation -->
+<div class="review-card" id="review_zod">
+  <div class="review-header">
+    <span class="review-title">R6. Zod &amp; Runtime Validation</span>
+    <span class="badge badge-purple">Runtime Patterns</span>
+    <span class="review-meta">6 days overdue &middot; rep 2</span>
+  </div>
+  <div class="review-reminder">A Zod schema is both a runtime validator and the single source of truth for a TypeScript type. Extract the static type with <code>z.infer&lt;typeof schema&gt;</code> so the type can never drift from the validation.</div>
+
+  <div class="review-pattern">
+    <strong>Key Pattern</strong>
+    <div class="code-example">
+<pre><code>import { z } from "zod";
+
+const UserSchema = z.object({
+  name: z.string(),
+  age: z.number().min(0),
+});
+
+type User = z.infer&lt;typeof UserSchema&gt;;
+// { name: string; age: number }</code></pre>
+<div class="type-result">{ name: string; age: number }</div>
+    </div>
+  </div>
+
+  <div class="review-challenge">
+    <strong>Challenge Exercise</strong>
+    <p>Create a Zod schema for an API response modeled as a discriminated union: <code>{ status: "ok", data: T }</code> | <code>{ status: "error", message: string }</code>. Use <code>z.discriminatedUnion("status", [...])</code> and infer the resulting TS type.</p>
+  </div>
+
+  <div class="review-pitfall">
+    <strong>Pitfall:</strong> Forgetting that <code>.parse()</code> <em>throws</em> on invalid input. For graceful error handling without <code>try/catch</code>, use <code>.safeParse()</code>, which returns <code>{ success: true, data }</code> or <code>{ success: false, error }</code>.
+  </div>
+</div>
+
+</div><!-- end review-section -->
+
+<!-- ============================================================ -->
+<!-- TOPIC SECTION 1: Database Typing                              -->
+<!-- ============================================================ -->
+<div class="topic-section">
+<div class="topic-section-header"><span class="section-num">1</span>Database Typing</div>
+
+<!-- Concept 1: Prisma -->
+<div class="concept-card" id="prisma">
+  <div class="concept-header">
+    <span class="concept-title">1. Prisma &mdash; Type-Safe Database Access</span>
+    <span class="ttag">Database Typing</span>
+  </div>
+
+  <div class="why-matters">Prisma generates TypeScript types directly from your database schema, so every query is fully type-checked at compile time with autocomplete on models, relations, and filters &mdash; no hand-written DTOs that drift out of sync.</div>
+
+  <div class="explanation">
+    <p>The Prisma workflow has three stages: you write a declarative <code>schema.prisma</code> file, run <code>prisma generate</code> to produce a typed client, then import and use that client. Every model becomes a TypeScript type, and every method (<code>findMany</code>, <code>create</code>, <code>update</code>, <code>delete</code>) is typed against it.</p>
+    <p>Because the client is <em>generated</em>, the types reflect your exact schema &mdash; including relations, optional fields, and enums. When you change the schema and re-generate, mismatched queries become compile errors.</p>
+    <div class="step"><span class="step-num">1</span><div>Define models and relations in <code>schema.prisma</code>.</div></div>
+    <div class="step"><span class="step-num">2</span><div>Run <code>prisma generate</code> to emit the typed <code>@prisma/client</code>.</div></div>
+    <div class="step"><span class="step-num">3</span><div>Import <code>PrismaClient</code> and write queries &mdash; results are typed automatically.</div></div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">Prisma &middot; example 1 of 4 &mdash; Schema definition</div>
+<pre><code>// schema.prisma
+model User {
+  id    Int     @id @default(autoincrement())
+  email String  @unique
+  name  String?
+  posts Post[]
+}
+
+model Post {
+  id       Int     @id @default(autoincrement())
+  title    String
+  likes    Int     @default(0)
+  author   User    @relation(fields: [authorId], references: [id])
+  authorId Int
+  comments Comment[]
+}
+
+model Comment {
+  id     Int    @id @default(autoincrement())
+  body   String
+  post   Post   @relation(fields: [postId], references: [id])
+  postId Int
+}</code></pre>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 2 of 4 &mdash; Basic CRUD with inferred types</div>
+<pre><code>import { PrismaClient } from "@prisma/client";
+
+const prisma = new PrismaClient();
+
+// create() returns a fully-typed User
+const user = await prisma.user.create({
+  data: { email: "ada@example.com", name: "Ada" },
+});
+// user: { id: number; email: string; name: string | null }
+
+// findMany() returns User[] &mdash; name is string | null (it is optional)
+const users = await prisma.user.findMany();
+
+// update() is typed against the model; unknown fields are errors
+const updated = await prisma.user.update({
+  where: { id: user.id },
+  data: { name: "Ada Lovelace" },
+});</code></pre>
+<div class="type-result">user: { id: number; email: string; name: string | null }</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 3 of 4 &mdash; Relations with include + filtered where</div>
+<pre><code>// include pulls in the relation AND widens the result type to match
+const usersWithPosts = await prisma.user.findMany({
+  where: {
+    posts: { some: { likes: { gte: 5 } } },  // users with a 5+ like post
+  },
+  include: {
+    posts: {
+      where: { likes: { gte: 5 } },
+      include: { comments: true },
+    },
+  },
+});
+
+// Type now includes posts, and each post includes comments:
+// (User & { posts: (Post & { comments: Comment[] })[] })[]
+for (const u of usersWithPosts) {
+  for (const p of u.posts) {
+    console.log(p.title, p.comments.length); // both typed
+  }
+}</code></pre>
+<div class="type-result">(User &amp; { posts: (Post &amp; { comments: Comment[] })[] })[]</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 4 of 4 &mdash; Type-safe transactions</div>
+<pre><code>// $transaction runs all operations atomically; the tuple is typed
+const [newUser, newPost] = await prisma.$transaction([
+  prisma.user.create({ data: { email: "grace@example.com" } }),
+  prisma.post.create({
+    data: { title: "Hello", author: { connect: { id: 1 } } },
+  }),
+]);
+// newUser: User, newPost: Post &mdash; positionally typed from the array
+
+// Interactive transactions get a scoped, typed client
+await prisma.$transaction(async (tx) =&gt; {
+  const u = await tx.user.findUniqueOrThrow({ where: { id: 1 } });
+  await tx.post.create({
+    data: { title: "Tx post", authorId: u.id },
+  });
+});</code></pre>
+  </div>
+
+  <div class="callout-warning">
+    <strong>Common Mistakes:</strong>
+    <div class="mistake">&#10060; Casting Prisma results to <code>any</code> to &ldquo;simplify&rdquo; dynamic <code>include</code> shapes: <code>const u = result as any</code>. You throw away every guarantee the generated client gave you.</div>
+    <div class="correct">&#9989; Use the generated payload helper for dynamic shapes: <code>type UserWithPosts = Prisma.UserGetPayload&lt;{ include: { posts: true } }&gt;</code>. It reconstructs the exact type for that <code>include</code>.</div>
+    <div class="mistake">&#10060; Forgetting to re-run <code>prisma generate</code> after editing the schema &mdash; the client types go stale and queries silently reference old fields.</div>
+    <div class="correct">&#9989; Wire <code>prisma generate</code> into a <code>postinstall</code> script and your build step so the client is always regenerated.</div>
+  </div>
+
+  <div class="key-rules">
+    <strong>Key Rules:</strong>
+    <ul>
+    <li><a href="typescript-guides/typescript-guide-2026-07-04.html">2026-07-04</a> (Day 31)</li>
+      <li>The schema is the source of truth; the client is generated from it. Never hand-edit generated types.</li>
+      <li><code>include</code> widens the result type to include relations; <code>select</code> narrows it to only chosen fields.</li>
+      <li>For dynamic or reusable query shapes, derive the type with <code>Prisma.ModelGetPayload&lt;...&gt;</code> instead of <code>any</code>.</li>
+      <li><code>$transaction</code> with an array is positionally typed; with a callback you get a scoped, typed <code>tx</code> client.</li>
+    </ul>
+  </div>
+
+  <div class="exercises">
+    <strong>Practice Exercises:</strong>
+    <div class="exercise"><span class="exercise-num">1</span>Define a Prisma schema for a blog with <code>User</code>, <code>Post</code>, and <code>Comment</code> models. <code>User</code> has many <code>Post</code>s; <code>Post</code> has many <code>Comment</code>s; give <code>Post</code> a <code>likes</code> field defaulting to <code>0</code>.</div>
+    <div class="exercise"><span class="exercise-num">2</span>Write a typed query for &ldquo;get all posts by a given user with 5 or more likes, including their comments.&rdquo; Hover over the result and confirm <code>comments</code> is typed as <code>Comment[]</code>.</div>
+    <div class="exercise"><span class="exercise-num">3</span>Define a reusable type alias <code>PostWithComments</code> using <code>Prisma.PostGetPayload&lt;{ include: { comments: true } }&gt;</code> and use it as the return type of a helper function.</div>
+  </div>
+
+  <div class="connections"><strong>Connections:</strong> Prisma&rsquo;s <code>GetPayload</code> helpers are conditional/mapped types under the hood &mdash; the same machinery as <em>Mapped Types</em> and <em>Branded Types</em> (Concept 4 below). Pairing Prisma reads with <em>Zod</em> (R6) at the API boundary gives you validation on the way in and type safety on the way out.</div>
+</div>
+
+<!-- Concept 2: Drizzle ORM -->
+<div class="concept-card" id="drizzle">
+  <div class="concept-header">
+    <span class="concept-title">2. Drizzle ORM &mdash; SQL-First Type Safety</span>
+    <span class="ttag">Database Typing</span>
+  </div>
+
+  <div class="why-matters">Drizzle gives you SQL-level control with full TypeScript inference and <em>no code generation step</em>. You define the schema in TypeScript, and types flow through every query automatically &mdash; what you write reads like SQL, but the compiler checks it.</div>
+
+  <div class="explanation">
+    <p>Where Prisma generates a client from a separate schema file, Drizzle defines tables directly in TypeScript using helpers like <code>pgTable</code>. The table object <em>is</em> the schema, and Drizzle derives query result types from it on the fly.</p>
+    <p>Two inference helpers do the heavy lifting: <code>InferSelectModel&lt;typeof table&gt;</code> gives you the row type returned by a <code>SELECT</code>, and <code>InferInsertModel&lt;typeof table&gt;</code> gives you the shape required by an <code>INSERT</code> (which differs &mdash; auto-generated columns become optional).</p>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 1 of 4 &mdash; Schema definition with pgTable</div>
+<pre><code>import { pgTable, serial, text, integer, timestamp } from "drizzle-orm/pg-core";
+
+export const products = pgTable("products", {
+  id: serial("id").primaryKey(),
+  name: text("name").notNull(),
+  priceCents: integer("price_cents").notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+export const orders = pgTable("orders", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull(),
+  total: integer("total").notNull(),
+});
+
+export const orderItems = pgTable("order_items", {
+  id: serial("id").primaryKey(),
+  orderId: integer("order_id").notNull(),
+  productId: integer("product_id").notNull(),
+  quantity: integer("quantity").notNull(),
+});</code></pre>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 2 of 4 &mdash; Inferring types from the schema</div>
+<pre><code>import { InferSelectModel, InferInsertModel } from "drizzle-orm";
+import { products } from "./schema";
+
+// Row type as returned by a SELECT
+type Product = InferSelectModel&lt;typeof products&gt;;
+// { id: number; name: string; priceCents: number; createdAt: Date }
+
+// Shape required to INSERT &mdash; id and createdAt are optional (defaulted)
+type NewProduct = InferInsertModel&lt;typeof products&gt;;
+// { id?: number; name: string; priceCents: number; createdAt?: Date }
+
+const draft: NewProduct = { name: "Mug", priceCents: 1200 }; // ok</code></pre>
+<div class="type-result">Product: { id: number; name: string; priceCents: number; createdAt: Date }
+NewProduct: { id?: number; name: string; priceCents: number; createdAt?: Date }</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 3 of 4 &mdash; Select with a join</div>
+<pre><code>import { eq } from "drizzle-orm";
+import { db } from "./db";
+import { orders, orderItems, products } from "./schema";
+
+// Join orders -&gt; order_items -&gt; products; result columns are inferred
+const rows = await db
+  .select({
+    orderId: orders.id,
+    productName: products.name,
+    quantity: orderItems.quantity,
+    lineTotal: products.priceCents,
+  })
+  .from(orders)
+  .innerJoin(orderItems, eq(orderItems.orderId, orders.id))
+  .innerJoin(products, eq(products.id, orderItems.productId));
+
+// rows: { orderId: number; productName: string;
+//         quantity: number; lineTotal: number }[]
+for (const r of rows) console.log(r.productName, r.quantity);</code></pre>
+<div class="type-result">{ orderId: number; productName: string; quantity: number; lineTotal: number }[]</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 4 of 4 &mdash; Conditional queries with where()</div>
+<pre><code>import { and, gte, eq, SQL } from "drizzle-orm";
+import { db } from "./db";
+import { products } from "./schema";
+
+interface ProductFilter {
+  minPrice?: number;
+  exactName?: string;
+}
+
+async function findProducts(filter: ProductFilter) {
+  const conditions: SQL[] = [];
+  if (filter.minPrice !== undefined)
+    conditions.push(gte(products.priceCents, filter.minPrice));
+  if (filter.exactName !== undefined)
+    conditions.push(eq(products.name, filter.exactName));
+
+  return db
+    .select()
+    .from(products)
+    .where(conditions.length ? and(...conditions) : undefined);
+}
+// return type inferred as Product[] from the schema</code></pre>
+  </div>
+
+  <div class="callout-warning">
+    <strong>Common Mistakes:</strong>
+    <div class="mistake">&#10060; Re-declaring row types by hand: <code>interface Product { id: number; name: string; /* ... */ }</code>. This duplicates the schema and silently drifts when you add a column.</div>
+    <div class="correct">&#9989; Derive every row/insert type from the table: <code>type Product = InferSelectModel&lt;typeof products&gt;</code>. One source of truth, zero drift.</div>
+    <div class="mistake">&#10060; Using <code>InferSelectModel</code> for inserts &mdash; it marks defaulted columns as required, so <code>db.insert()</code> rejects valid drafts.</div>
+    <div class="correct">&#9989; Use <code>InferInsertModel</code> for insert payloads; it makes auto-generated and defaulted columns optional.</div>
+  </div>
+
+  <div class="key-rules">
+    <strong>Key Rules:</strong>
+    <ul>
+      <li>The TypeScript table object is the schema &mdash; there is no separate generation step.</li>
+      <li><code>InferSelectModel</code> for read shapes, <code>InferInsertModel</code> for write shapes; they differ on defaulted columns.</li>
+      <li>Query result types are inferred from the <code>.select({...})</code> projection, so select exactly the columns you need.</li>
+      <li>Build dynamic <code>WHERE</code> clauses by collecting <code>SQL</code> conditions and combining with <code>and(...)</code>/<code>or(...)</code>.</li>
+    </ul>
+  </div>
+
+  <div class="exercises">
+    <strong>Practice Exercises:</strong>
+    <div class="exercise"><span class="exercise-num">1</span>Define a Drizzle schema for an e-commerce system with <code>products</code>, <code>orders</code>, and <code>order_items</code> tables. Give <code>order_items</code> foreign-key columns to both <code>orders</code> and <code>products</code>.</div>
+    <div class="exercise"><span class="exercise-num">2</span>Write a type-safe query joining <code>orders</code> with <code>products</code> through <code>order_items</code>, projecting order id, product name, and quantity. Confirm the inferred row type.</div>
+    <div class="exercise"><span class="exercise-num">3</span>Derive <code>NewOrder = InferInsertModel&lt;typeof orders&gt;</code> and write a typed <code>createOrder(draft: NewOrder)</code> helper. Verify the compiler rejects a draft missing <code>total</code>.</div>
+  </div>
+
+  <div class="connections"><strong>Connections:</strong> Drizzle&rsquo;s <code>InferSelectModel</code>/<code>InferInsertModel</code> are inference helpers built on the same conditional-type foundation as Prisma&rsquo;s <code>GetPayload</code> (Concept 1). The dynamic <code>where()</code> builder previews the <em>Builder Pattern with Type Narrowing</em> (Concept 5).</div>
+</div>
+
+<!-- Concept 3: Type-Safe SQL Builders -->
+<div class="concept-card" id="sql_builders">
+  <div class="concept-header">
+    <span class="concept-title">3. Type-Safe SQL Builders</span>
+    <span class="ttag">Database Typing</span>
+  </div>
+
+  <div class="why-matters">Sometimes you need raw SQL but still want safety from injection and type mismatches. Tagged-template libraries like <code>sql-template-tag</code> and codegen tools like <code>@pgtyped/query</code> bridge the gap between &ldquo;just write SQL&rdquo; and &ldquo;keep the types.&rdquo;</div>
+
+  <div class="explanation">
+    <p>There are two complementary approaches. <strong>Tagged template SQL</strong> (<code>sql-template-tag</code>) lets you write SQL with interpolated values that are automatically turned into bound parameters &mdash; never string-concatenated &mdash; which kills injection at the source.</p>
+    <p><strong>Codegen from SQL files</strong> (<code>@pgtyped/query</code>) reads your <code>.sql</code> files, runs them against a real database to learn their input and output column types, and generates typed query functions. You write plain SQL; the types come from the database itself.</p>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 1 of 3 &mdash; Tagged template SQL (parameterized)</div>
+<pre><code>import sql from "sql-template-tag";
+
+const userId = 42;
+const minLikes = 5;
+
+// Interpolated values become bound parameters, not string literals
+const query = sql`
+  SELECT id, title, likes
+  FROM posts
+  WHERE author_id = ${userId}
+    AND likes &gt;= ${minLikes}
+`;
+
+console.log(query.text);
+// "SELECT id, title, likes FROM posts
+//  WHERE author_id = $1 AND likes &gt;= $2"
+console.log(query.values); // [42, 5]
+
+// Pass to your driver: await pool.query(query.text, query.values)</code></pre>
+<div class="output">text:   SELECT ... WHERE author_id = $1 AND likes &gt;= $2
+values: [42, 5]</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 2 of 3 &mdash; A typed parameterized helper</div>
+<pre><code>import sql from "sql-template-tag";
+import { Pool } from "pg";
+
+const pool = new Pool();
+
+// Typed params in, typed rows out
+interface PostRow { id: number; title: string; likes: number }
+
+async function postsByAuthor(
+  authorId: number,
+  minLikes: number
+): Promise&lt;PostRow[]&gt; {
+  const q = sql`
+    SELECT id, title, likes FROM posts
+    WHERE author_id = ${authorId} AND likes &gt;= ${minLikes}
+  `;
+  const result = await pool.query&lt;PostRow&gt;(q.text, q.values);
+  return result.rows;
+}</code></pre>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">SQL + TypeScript &middot; example 3 of 3 &mdash; @pgtyped codegen flow</div>
+<pre><code>-- queries/posts.sql
+/* @name FindPostsByAuthor */
+SELECT id, title, likes
+FROM posts
+WHERE author_id = :authorId AND likes &gt;= :minLikes;</code></pre>
+<pre><code>// After running `pgtyped`, it generates posts.queries.ts with
+// fully-typed params and results derived from the live DB schema:
+import { FindPostsByAuthor } from "./posts.queries";
+
+const rows = await FindPostsByAuthor.run(
+  { authorId: 42, minLikes: 5 },  // params: typed
+  client
+);
+// rows: { id: number; title: string; likes: number }[]
+//        &mdash; inferred from the actual column types</code></pre>
+<div class="type-result">rows: { id: number; title: string; likes: number }[]</div>
+  </div>
+
+  <div class="callout-warning">
+    <strong>Common Mistakes:</strong>
+    <div class="mistake">&#10060; String interpolation directly into SQL: <code>`SELECT * FROM users WHERE id = ${id}`</code>. This is a textbook SQL-injection hole &mdash; the value is concatenated into the query string.</div>
+    <div class="correct">&#9989; Use parameterized queries with typed placeholders: <code>sql`... WHERE id = ${id}`</code> emits <code>$1</code> + a bound value, or use <code>:named</code> params with pgtyped.</div>
+    <div class="mistake">&#10060; Trusting hand-written row interfaces to match the query forever &mdash; rename a column in SQL and the interface lies.</div>
+    <div class="correct">&#9989; Let <code>@pgtyped</code> derive result types from the real database so a column rename is a compile error, not a runtime surprise.</div>
+  </div>
+
+  <div class="key-rules">
+    <strong>Key Rules:</strong>
+    <ul>
+      <li>Never interpolate untrusted (or any) values into a SQL string &mdash; always go through bound parameters.</li>
+      <li><code>sql-template-tag</code> gives you safe parameterization; you still annotate result types yourself.</li>
+      <li><code>@pgtyped</code> goes further: it infers <em>both</em> param and result types from the live schema via codegen.</li>
+      <li>Tagged templates are great for one-off dynamic queries; codegen shines for a stable set of named queries.</li>
+    </ul>
+  </div>
+
+  <div class="exercises">
+    <strong>Practice Exercises:</strong>
+    <div class="exercise"><span class="exercise-num">1</span>Create a type-safe query builder function that accepts a typed filter object <code>{ minLikes?: number; authorId?: number }</code> and assembles a parameterized <code>sql</code> query, returning a typed <code>PostRow[]</code>.</div>
+    <div class="exercise"><span class="exercise-num">2</span>Write a generic <code>findById&lt;T&gt;(table: string, id: number): Promise&lt;T | null&gt;</code> helper using <code>sql-template-tag</code>. Ensure the table name is passed safely (consider why interpolating identifiers is different from values).</div>
+    <div class="exercise"><span class="exercise-num">3</span>Set up a <code>@pgtyped</code> <code>.sql</code> file with a <code>:named</code> parameter, generate the typed query, and call it. Then rename a selected column and observe the compile error.</div>
+  </div>
+
+  <div class="connections"><strong>Connections:</strong> The injection-safety principle here is the same boundary-validation idea behind <em>Zod</em> (R6) and the CLI/env patterns from Day 19 &mdash; never trust raw strings. The generic <code>findById&lt;T&gt;</code> exercise leans on the <em>Generic Constraints</em> reviewed earlier in this series.</div>
+</div>
+
+</div><!-- end topic-section 1 -->
+
+<!-- ============================================================ -->
+<!-- TOPIC SECTION 2: Advanced TypeScript Patterns                 -->
+<!-- ============================================================ -->
+<div class="topic-section">
+<div class="topic-section-header"><span class="section-num">2</span>Advanced TypeScript Patterns</div>
+
+<!-- Concept 4: Branded Types -->
+<div class="concept-card" id="branded_types">
+  <div class="concept-header">
+    <span class="concept-title">4. Branded Types for Domain Modeling</span>
+    <span class="ttag">Advanced Type Patterns</span>
+  </div>
+
+  <div class="why-matters">TypeScript is <em>structurally</em> typed: a <code>UserId</code> and a <code>PostId</code> that are both <code>string</code> are interchangeable, so you can accidentally pass one where the other is expected. Branded types add nominal typing to catch these swaps at compile time.</div>
+
+  <div class="explanation">
+    <p>The trick is to intersect a primitive with a <em>phantom</em> brand property &mdash; a field that exists only in the type system and is never present at runtime. Two brands that look identical (<code>string</code>) become incompatible because their brand symbols differ.</p>
+    <p>You pair the branded type with a <strong>constructor function</strong> (often called a smart constructor) that validates the value and returns it &ldquo;cast&rdquo; to the branded type. This is the <em>only</em> place the cast happens, so validation can&rsquo;t be skipped.</p>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 1 of 4 &mdash; A basic brand with intersection</div>
+<pre><code>// A unique symbol makes the brand impossible to forge structurally
+type Brand&lt;T, B&gt; = T &amp; { readonly __brand: B };
+
+type UserId = Brand&lt;string, "UserId"&gt;;
+type PostId = Brand&lt;string, "PostId"&gt;;
+
+declare function getUser(id: UserId): void;
+
+const raw = "u_123";
+getUser(raw);             // ❌ Error: string is not assignable to UserId
+getUser(raw as UserId);   // ok (but unchecked &mdash; prefer a constructor)</code></pre>
+<div class="type-error">Argument of type 'string' is not assignable to parameter of type 'UserId'.</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 2 of 4 &mdash; Constructor functions that validate + brand</div>
+<pre><code>type UserId = string &amp; { readonly __brand: unique symbol };
+
+// Smart constructor: validation is the only path to a UserId
+function toUserId(value: string): UserId {
+  if (!/^u_[a-z0-9]+$/.test(value)) {
+    throw new Error(`Invalid UserId: ${value}`);
+  }
+  return value as UserId; // the single sanctioned cast
+}
+
+const id = toUserId("u_123"); // UserId
+// const bad = toUserId("nope"); // throws at runtime
+
+declare function loadProfile(id: UserId): void;
+loadProfile(id);              // ok
+loadProfile("u_123");         // ❌ raw string rejected at compile time</code></pre>
+<div class="type-error">Argument of type 'string' is not assignable to parameter of type 'UserId'.</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 3 of 4 &mdash; Branded types across an API layer</div>
+<pre><code>type Email = string &amp; { readonly __brand: "Email" };
+type UserId = string &amp; { readonly __brand: "UserId" };
+
+function toEmail(s: string): Email {
+  if (!s.includes("@")) throw new Error("bad email");
+  return s.toLowerCase() as Email;
+}
+
+interface CreateUser {
+  email: Email;     // can't be confused with name or any other string
+  invitedBy?: UserId;
+}
+
+// The brand documents intent AND enforces it: the only way to fill
+// `email` is to run it through toEmail(), so it's always validated.
+function createUser(input: CreateUser) { /* ... */ }
+createUser({ email: toEmail("ADA@EXAMPLE.COM") }); // stored lowercased</code></pre>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 4 of 4 &mdash; Combining brands with Zod</div>
+<pre><code>import { z } from "zod";
+
+type Email = string &amp; { readonly __brand: "Email" };
+
+// Zod validates at runtime AND brands the inferred type
+const EmailSchema = z
+  .string()
+  .email()
+  .transform((s) =&gt; s.toLowerCase() as Email);
+
+type ValidatedEmail = z.infer&lt;typeof EmailSchema&gt;; // Email
+
+const result = EmailSchema.safeParse("ADA@example.com");
+if (result.success) {
+  const email: Email = result.data; // branded + validated
+}</code></pre>
+<div class="type-result">ValidatedEmail = Email (string &amp; { __brand: "Email" })</div>
+  </div>
+
+  <div class="callout-warning">
+    <strong>Common Mistakes:</strong>
+    <div class="mistake">&#10060; Using plain <code>string</code> for IDs that must never mix: <code>function transfer(from: string, to: string)</code> &mdash; nothing stops you swapping the arguments.</div>
+    <div class="correct">&#9989; Brand them: <code>type AccountId = string &amp; { readonly __brand: unique symbol }</code>, so <code>transfer(from: AccountId, to: AccountId)</code> rejects raw strings and mismatched brands.</div>
+    <div class="mistake">&#10060; Scattering <code>value as Branded</code> casts throughout the codebase &mdash; that defeats the purpose, since the brand no longer implies validation.</div>
+    <div class="correct">&#9989; Funnel every branded value through one smart constructor; the cast lives there and nowhere else.</div>
+  </div>
+
+  <div class="key-rules">
+    <strong>Key Rules:</strong>
+    <ul>
+      <li>A brand is a phantom property (<code>__brand</code>) that exists only at the type level &mdash; zero runtime cost.</li>
+      <li>Use <code>unique symbol</code> or a unique string literal so two brands can never be structurally equal.</li>
+      <li>Always create branded values through a validating constructor; that constructor holds the only sanctioned cast.</li>
+      <li>Brands compose with Zod: validate at runtime and brand the result so &ldquo;validated&rdquo; is encoded in the type.</li>
+    </ul>
+  </div>
+
+  <div class="exercises">
+    <strong>Practice Exercises:</strong>
+    <div class="exercise"><span class="exercise-num">1</span>Create branded <code>Email</code>, <code>Password</code>, and <code>HashedPassword</code> types, each with a constructor function. Make it a compile error to pass a <code>Password</code> where a <code>HashedPassword</code> is required.</div>
+    <div class="exercise"><span class="exercise-num">2</span>Build a function <code>linkPost(user: UserId, post: PostId)</code> using branded IDs. Confirm the compiler rejects both a raw string and a swapped <code>linkPost(postId, userId)</code> call.</div>
+    <div class="exercise"><span class="exercise-num">3</span>Write a Zod schema that validates and brands a <code>NonEmptyString</code>. Infer its type and use it as the type of a required <code>title</code> field.</div>
+  </div>
+
+  <div class="connections"><strong>Connections:</strong> Branded types are the compile-time twin of <em>Zod</em> runtime validation (R6) &mdash; combine them to encode &ldquo;validated&rdquo; into the type itself. The intersection-with-phantom-field trick is the same shape used by Prisma/Drizzle&rsquo;s internal type tagging (Concepts 1&ndash;2).</div>
+</div>
+
+<!-- Concept 5: Builder Pattern with Type Narrowing -->
+<div class="concept-card" id="builder_pattern">
+  <div class="concept-header">
+    <span class="concept-title">5. Builder Pattern with Type Narrowing</span>
+    <span class="ttag">Advanced Type Patterns</span>
+  </div>
+
+  <div class="why-matters">A builder that tracks <em>what has been set</em> at the type level can make &ldquo;you forgot a required field&rdquo; and &ldquo;you called <code>.build()</code> too early&rdquo; into compile errors instead of runtime bugs. The type narrows with each <code>.set()</code> call.</div>
+
+  <div class="explanation">
+    <p>A naive builder returns <code>this</code> from every method and exposes <code>.build()</code> unconditionally &mdash; so nothing stops you from building an incomplete object. The type-safe version threads a generic type parameter that records which fields have been set; <code>.build()</code> is only callable once all required fields are present.</p>
+    <p>The mechanism: each setter returns a new builder type with the just-set key added to the &ldquo;set&rdquo; union. A conditional type then gates <code>.build()</code> &mdash; if any required key is still missing, <code>.build()</code> resolves to a function the compiler refuses to call.</p>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 1 of 3 &mdash; Naive builder (returns this)</div>
+<pre><code>// Works, but .build() is always available &mdash; no compile-time guard
+class RequestBuilder {
+  private url?: string;
+  private method = "GET";
+
+  setUrl(u: string): this { this.url = u; return this; }
+  setMethod(m: string): this { this.method = m; return this; }
+
+  build() {
+    if (!this.url) throw new Error("url is required"); // runtime only
+    return { url: this.url, method: this.method };
+  }
+}
+
+// Compiles fine, throws at runtime &mdash; the bug escaped the type system
+new RequestBuilder().setMethod("POST").build();</code></pre>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 2 of 3 &mdash; Step builder tracking set fields</div>
+<pre><code>// Track which keys have been set in a generic union
+class QueryBuilder&lt;Set extends string = never&gt; {
+  private parts: Record&lt;string, string&gt; = {};
+
+  select(cols: string): QueryBuilder&lt;Set | "select"&gt; {
+    this.parts.select = cols;
+    return this as QueryBuilder&lt;Set | "select"&gt;;
+  }
+
+  from(table: string): QueryBuilder&lt;Set | "from"&gt; {
+    this.parts.from = table;
+    return this as QueryBuilder&lt;Set | "from"&gt;;
+  }
+
+  where(cond: string): QueryBuilder&lt;Set | "where"&gt; {
+    this.parts.where = cond;
+    return this as QueryBuilder&lt;Set | "where"&gt;;
+  }
+
+  // .build() requires both "select" and "from" in the Set union
+  build(this: QueryBuilder&lt;"select" | "from" | Set&gt;): string {
+    const w = this.parts.where ? ` WHERE ${this.parts.where}` : "";
+    return `SELECT ${this.parts.select} FROM ${this.parts.from}${w}`;
+  }
+}</code></pre>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 3 of 3 &mdash; The guard in action</div>
+<pre><code>// ✅ All required steps present &mdash; build() is callable
+const ok = new QueryBuilder()
+  .select("id, name")
+  .from("users")
+  .where("active = true")
+  .build();
+// "SELECT id, name FROM users WHERE active = true"
+
+// ❌ Missing .from() &mdash; build() is not assignable
+const bad = new QueryBuilder()
+  .select("id")
+  .build();
+//        ~~~~~ The 'this' context is not assignable:
+//        'from' is missing from the Set union</code></pre>
+<div class="type-error">The 'this' context of type 'QueryBuilder&lt;"select"&gt;' is not assignable to method's 'this' of type 'QueryBuilder&lt;"select" | "from"&gt;'.</div>
+  </div>
+
+  <div class="callout-warning">
+    <strong>Common Mistakes:</strong>
+    <div class="mistake">&#10060; A builder whose setters return <code>any</code> or the same type regardless of state &mdash; the compiler can&rsquo;t tell a complete builder from an empty one.</div>
+    <div class="correct">&#9989; Narrow the generic parameter on each call (<code>QueryBuilder&lt;Set | "select"&gt;</code>) so the &ldquo;set&rdquo; union grows and gates <code>.build()</code>.</div>
+    <div class="mistake">&#10060; Guarding required fields only with a runtime <code>if (!this.url) throw</code> &mdash; the mistake still ships and only fails when that path runs.</div>
+    <div class="correct">&#9989; Encode the requirement in <code>build(this: ...)</code>&rsquo;s <code>this</code> type so an incomplete build is a compile error you can&rsquo;t ignore.</div>
+  </div>
+
+  <div class="key-rules">
+    <strong>Key Rules:</strong>
+    <ul>
+      <li>Carry a generic type parameter that accumulates the set of fields configured so far.</li>
+      <li>Each setter returns the builder with its key <em>added</em> to that union (<code>Set | "key"</code>).</li>
+      <li>Gate <code>.build()</code> with an explicit <code>this</code> parameter that requires all mandatory keys in the union.</li>
+      <li>Optional steps (<code>.where()</code>, <code>.orderBy()</code>) widen the union but are never required by <code>.build()</code>.</li>
+    </ul>
+  </div>
+
+  <div class="exercises">
+    <strong>Practice Exercises:</strong>
+    <div class="exercise"><span class="exercise-num">1</span>Create a <code>QueryBuilder</code> where <code>.select()</code> and <code>.from()</code> are required before <code>.build()</code> compiles. Verify that calling <code>.build()</code> after only <code>.select()</code> is a type error.</div>
+    <div class="exercise"><span class="exercise-num">2</span>Extend the builder with optional <code>.where()</code> and <code>.orderBy()</code> steps. Confirm they can be omitted, can appear in any order, and don&rsquo;t affect whether <code>.build()</code> is callable.</div>
+    <div class="exercise"><span class="exercise-num">3</span>Build an <code>HttpRequestBuilder</code> where <code>.url()</code> is required but <code>.method()</code>, <code>.header()</code>, and <code>.body()</code> are optional. Make <code>.body()</code> only available after <code>.method("POST")</code> (hint: narrow the method in the return type).</div>
+  </div>
+
+  <div class="connections"><strong>Connections:</strong> The type-state tracking here is the same generic-narrowing technique behind Drizzle&rsquo;s chained query API (Concept 2) and the <code>this</code>-returning fluent interfaces reviewed in earlier guides. Pair it with <em>Branded Types</em> (Concept 4) to make a builder that only accepts validated, branded inputs.</div>
+</div>
+
+</div><!-- end topic-section 2 -->
+
+<!-- Footer -->
+<footer class="guide-footer">
+  <h2>All Guides</h2>
+  <ul>
+    <li><a href="typescript-guides/typescript-guide-2026-07-09.html">2026-07-09</a> (Day 36)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-07-08.html">2026-07-08</a> (Day 35)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-07-07.html">2026-07-07</a> (Day 34)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-07-06.html">2026-07-06</a> (Day 33)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-07-05.html">2026-07-05</a> (Day 32)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-07-04.html">2026-07-04</a> (Day 31)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-07-03.html">2026-07-03</a> (Day 30)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-07-02.html">2026-07-02</a> (Day 29)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-07-01.html">2026-07-01</a> (Day 28)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-30.html">2026-06-30</a> (Day 27)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-29.html">2026-06-29</a> (Day 26)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-28.html">2026-06-28</a> (Day 25)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-27.html">2026-06-27</a> (Day 24)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-26.html">2026-06-26</a> (Day 23)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-25.html">2026-06-25</a> (Day 22)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-24.html">2026-06-24</a> (Day 21)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-23.html">2026-06-23</a> (Day 20)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-22.html">2026-06-22</a> (Day 19)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-21.html">2026-06-21</a> (Day 18)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-19.html">2026-06-19</a> (Day 17)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-18.html">2026-06-18</a> (Day 16)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-17.html">2026-06-17</a> (Day 15)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-15.html">2026-06-15</a> (Day 14)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-13.html">2026-06-13</a> (Day 13)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-12.html">2026-06-12</a> (Day 12)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-11.html">2026-06-11</a> (Day 11)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-10.html">2026-06-10</a> (Day 10)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-09.html">2026-06-09</a> (Day 9)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-08.html">2026-06-08</a> (Day 8)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-07.html">2026-06-07</a> (Day 7)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-05.html">2026-06-05</a> (Day 6)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-04.html">2026-06-04</a> (Day 5)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-03.html">2026-06-03</a> (Day 4)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-02.html">2026-06-02</a> (Day 3)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-01.html">2026-06-01</a> (Day 2)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-05-31.html">2026-05-31</a> (Day 1)</li>
+  </ul>
+</footer>
+
+</div><!-- end content -->
+</div><!-- end main -->
+
+<script>
+// Theme toggle
+(function() {
+  var toggle = document.getElementById('themeToggle');
+  var html = document.documentElement;
+  var STORAGE_KEY = 'lc-tsguide-theme';
+
+  function setTheme(theme) {
+    html.setAttribute('data-theme', theme);
+    toggle.textContent = theme === 'dark' ? '\u{1F319}' : '\u{2600}\u{FE0F}';
+    try { localStorage.setItem(STORAGE_KEY, theme); } catch(e) {}
+  }
+
+  try {
+    var saved = localStorage.getItem(STORAGE_KEY);
+    if (saved) setTheme(saved);
+  } catch(e) {}
+
+  toggle.addEventListener('click', function() {
+    var current = html.getAttribute('data-theme') || 'dark';
+    setTheme(current === 'dark' ? 'light' : 'dark');
+  });
+})();
+
+// Sidebar active link tracking
+(function() {
+  var links = document.querySelectorAll('.sidebar-nav a');
+  var sections = [];
+  links.forEach(function(link) {
+    var id = link.getAttribute('href').replace('#', '');
+    var el = document.getElementById(id);
+    if (el) sections.push({ link: link, el: el });
+  });
+
+  function updateActive() {
+    var current = null;
+    var scrollY = window.scrollY + 120;
+    for (var i = sections.length - 1; i >= 0; i--) {
+      if (sections[i].el.offsetTop <= scrollY) {
+        current = sections[i];
+        break;
+      }
+    }
+    links.forEach(function(l) { l.classList.remove('active'); });
+    if (current) current.link.classList.add('active');
+  }
+
+  window.addEventListener('scroll', updateActive);
+  updateActive();
+})();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,1194 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TypeScript Daily Guide — 2026-06-25 (Day 22)</title>
+<style>
+:root {
+  --bg: #0d1117;
+  --surface: #161b22;
+  --surface2: #1c2129;
+  --border: #30363d;
+  --text: #e6edf3;
+  --text-muted: #8b949e;
+  --accent: #58a6ff;
+  --accent-bg: rgba(56,139,253,0.15);
+  --green: #3fb950;
+  --green-bg: rgba(63,185,80,0.08);
+  --red: #f85149;
+  --red-bg: rgba(248,81,73,0.08);
+  --yellow: #d29922;
+  --yellow-bg: rgba(210,153,34,0.1);
+  --orange: #db6d28;
+  --purple: #bc8cff;
+  --purple-bg: rgba(188,140,255,0.08);
+  --purple-border: rgba(188,140,255,0.2);
+  --link: #58a6ff;
+  --code-bg: #1c2129;
+  --output-bg: #0e1c0e;
+  --output-border: #1a3a1a;
+  --sidebar-bg: #161b22;
+  --sidebar-active: rgba(56,139,253,0.15);
+  --exercise-border: #30363d;
+}
+[data-theme="light"] {
+  --bg: #ffffff;
+  --surface: #f6f8fa;
+  --surface2: #eef1f5;
+  --border: #d0d7de;
+  --text: #1f2328;
+  --text-muted: #656d76;
+  --accent: #0969da;
+  --accent-bg: rgba(9,105,218,0.1);
+  --green: #1a7f37;
+  --green-bg: rgba(26,127,55,0.06);
+  --red: #cf222e;
+  --red-bg: rgba(207,34,46,0.06);
+  --yellow: #9a6700;
+  --yellow-bg: rgba(154,103,0,0.06);
+  --orange: #bc4c00;
+  --purple: #8250df;
+  --purple-bg: rgba(130,80,223,0.06);
+  --purple-border: rgba(130,80,223,0.15);
+  --link: #0969da;
+  --code-bg: #eef1f5;
+  --output-bg: #f0faf0;
+  --output-border: #c6e6c6;
+  --sidebar-bg: #f6f8fa;
+  --sidebar-active: rgba(9,105,218,0.1);
+  --exercise-border: #d0d7de;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;font-size:16px;line-height:1.7;color:var(--text);background:var(--bg);display:flex;min-height:100vh}
+a{color:var(--link);text-decoration:none}
+a:hover{text-decoration:underline}
+
+/* Sidebar */
+.sidebar{position:fixed;top:0;left:0;width:300px;height:100vh;background:var(--sidebar-bg);border-right:1px solid var(--border);overflow-y:auto;padding:20px 0;z-index:100}
+.sidebar-header{padding:16px 20px;border-bottom:1px solid var(--border);margin-bottom:12px}
+.sidebar-header h2{font-size:15px;font-weight:600;color:var(--text)}
+.sidebar-header .date{font-size:13px;color:var(--text-muted);margin-top:2px}
+.sidebar-section{padding:8px 20px 4px;font-size:12px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px}
+.sidebar-section.review-label{color:var(--purple)}
+.sidebar-nav{list-style:none;padding:0}
+.sidebar-nav li a{display:block;padding:6px 20px 6px 28px;font-size:14px;color:var(--text-muted);transition:all 0.15s}
+.sidebar-nav li a:hover,.sidebar-nav li a.active{color:var(--accent);background:var(--sidebar-active);text-decoration:none}
+.sidebar-nav li a .nav-id{font-size:11px;color:var(--text-muted);opacity:0.6;margin-left:6px}
+
+/* Main */
+.main{margin-left:300px;flex:1;padding:40px;max-width:1160px}
+.content{max-width:860px;margin:0 auto}
+
+/* Theme Toggle */
+.theme-toggle{position:fixed;top:16px;right:20px;z-index:200;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:8px 12px;cursor:pointer;color:var(--text);font-size:18px;line-height:1;transition:all 0.15s}
+.theme-toggle:hover{border-color:var(--accent)}
+
+/* Header */
+.guide-header{text-align:center;padding:32px 0 40px;border-bottom:1px solid var(--border);margin-bottom:40px}
+.guide-header h1{font-size:28px;font-weight:700;margin-bottom:8px}
+.guide-header .meta{font-size:15px;color:var(--text-muted)}
+.guide-header .meta span{margin:0 8px}
+.badge{display:inline-block;padding:2px 10px;border-radius:12px;font-size:13px;font-weight:500}
+.badge-blue{background:var(--accent-bg);color:var(--accent)}
+.badge-purple{background:var(--purple-bg);color:var(--purple)}
+
+/* How To Use */
+.how-to-use{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:24px 28px;margin-bottom:40px}
+.how-to-use h2{font-size:18px;margin-bottom:12px}
+.how-to-use ol{padding-left:24px}
+.how-to-use li{margin-bottom:6px;color:var(--text-muted)}
+
+/* Review Section */
+.review-section{margin-bottom:48px}
+.review-section-header{font-size:22px;font-weight:700;padding-bottom:12px;border-bottom:2px solid var(--purple);margin-bottom:28px;display:flex;align-items:center;gap:12px;color:var(--purple)}
+
+/* Review Card */
+.review-card{background:var(--purple-bg);border:1px solid var(--purple-border);border-left:4px solid var(--purple);border-radius:10px;padding:28px;margin-bottom:24px}
+.review-card .review-header{display:flex;align-items:center;gap:12px;margin-bottom:12px;flex-wrap:wrap}
+.review-card .review-title{font-size:18px;font-weight:700;color:var(--purple)}
+.review-card .review-meta{font-size:13px;color:var(--text-muted)}
+.review-card .review-reminder{color:var(--text-muted);font-style:italic;margin-bottom:16px;padding-left:14px;border-left:3px solid var(--purple)}
+.review-card .review-pattern{margin-bottom:16px}
+.review-card .review-pattern strong{display:block;margin-bottom:8px;font-size:14px;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px}
+.review-card .review-challenge{margin-bottom:12px}
+.review-card .review-challenge strong{display:block;margin-bottom:8px;font-size:14px;color:var(--yellow);text-transform:uppercase;letter-spacing:0.5px}
+.review-card .review-challenge p{line-height:1.6}
+.review-card .review-pitfall{background:var(--red-bg);border:1px solid rgba(248,81,73,0.15);border-radius:6px;padding:12px 16px;font-size:14px;line-height:1.6}
+.review-card .review-pitfall strong{color:var(--red);margin-right:4px}
+.review-card code{background:var(--code-bg);padding:2px 6px;border-radius:4px;font-family:'SF Mono','Fira Code','Consolas',monospace;font-size:13px}
+
+/* Topic Section */
+.topic-section{margin-bottom:48px}
+.topic-section-header{font-size:22px;font-weight:700;padding-bottom:12px;border-bottom:2px solid var(--accent);margin-bottom:28px;display:flex;align-items:center;gap:12px}
+.topic-section-header .section-num{background:var(--accent);color:#fff;width:32px;height:32px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:15px;font-weight:700;flex-shrink:0}
+
+/* Concept Card */
+.concept-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:28px;margin-bottom:32px}
+.concept-header{display:flex;align-items:center;gap:12px;margin-bottom:16px;flex-wrap:wrap}
+.concept-title{font-size:20px;font-weight:700}
+.ttag{display:inline-block;padding:2px 10px;border-radius:12px;font-size:12px;font-weight:500;background:var(--accent-bg);color:var(--accent)}
+
+.why-matters{color:var(--text-muted);font-style:italic;margin-bottom:20px;padding-left:14px;border-left:3px solid var(--accent)}
+.explanation{margin-bottom:20px;line-height:1.8}
+.explanation p{margin-bottom:12px}
+.explanation ul,.explanation ol{padding-left:24px;margin-bottom:12px}
+.explanation li{margin-bottom:4px}
+.explanation code{background:var(--code-bg);padding:2px 6px;border-radius:4px;font-family:'SF Mono','Fira Code','Consolas',monospace;font-size:14px}
+.step{display:flex;gap:12px;margin-bottom:10px;align-items:flex-start}
+.step-num{background:var(--accent-bg);color:var(--accent);width:24px;height:24px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;margin-top:3px}
+
+/* Code Examples */
+.code-example{margin-bottom:20px;border:1px solid var(--border);border-radius:8px;overflow:hidden}
+.lang-badge{background:var(--surface2);color:var(--text-muted);font-size:12px;font-weight:600;padding:6px 14px;border-bottom:1px solid var(--border);font-family:'SF Mono','Fira Code','Consolas',monospace}
+pre{margin:0;padding:16px;overflow-x:auto;background:var(--code-bg);font-family:'SF Mono','Fira Code','Consolas',monospace;font-size:13.5px;line-height:1.6;white-space:pre-wrap}
+pre code{background:none;padding:0;font-size:inherit}
+.output{background:var(--output-bg);border-top:1px solid var(--output-border);padding:12px 16px;font-family:'SF Mono','Fira Code','Consolas',monospace;font-size:13px;color:var(--green);white-space:pre-wrap}
+.output::before{content:"Output:";display:block;font-size:11px;font-weight:600;color:var(--text-muted);margin-bottom:4px;text-transform:uppercase;letter-spacing:0.5px}
+.type-result{background:var(--output-bg);border-top:1px solid var(--output-border);padding:12px 16px;font-family:'SF Mono','Fira Code','Consolas',monospace;font-size:13px;color:var(--green);white-space:pre-wrap}
+.type-result::before{content:"Type Result:";display:block;font-size:11px;font-weight:600;color:var(--text-muted);margin-bottom:4px;text-transform:uppercase;letter-spacing:0.5px}
+.type-error{background:var(--red-bg);border-top:1px solid rgba(248,81,73,0.2);padding:12px 16px;font-family:'SF Mono','Fira Code','Consolas',monospace;font-size:13px;color:var(--red);white-space:pre-wrap}
+.type-error::before{content:"Type Error:";display:block;font-size:11px;font-weight:600;color:var(--red);margin-bottom:4px;text-transform:uppercase;letter-spacing:0.5px}
+
+/* Callouts */
+.callout-warning{background:var(--yellow-bg);border:1px solid rgba(210,153,34,0.2);border-radius:8px;padding:20px;margin-bottom:20px}
+.callout-warning strong{color:var(--yellow);display:block;margin-bottom:12px;font-size:16px}
+.mistake,.correct{padding:10px 14px;border-radius:6px;margin-bottom:10px;font-size:14px;line-height:1.6}
+.mistake{background:var(--red-bg);border-left:3px solid var(--red)}
+.mistake code,.correct code{background:var(--code-bg);padding:2px 6px;border-radius:4px;font-family:'SF Mono','Fira Code','Consolas',monospace;font-size:13px}
+.correct{background:var(--green-bg);border-left:3px solid var(--green)}
+
+/* Key Rules */
+.key-rules{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:20px;margin-bottom:20px}
+.key-rules strong{display:block;margin-bottom:10px;font-size:16px}
+.key-rules ul{padding-left:20px}
+.key-rules li{margin-bottom:6px}
+.key-rules code{background:var(--code-bg);padding:2px 6px;border-radius:4px;font-family:'SF Mono','Fira Code','Consolas',monospace;font-size:13px}
+
+/* Exercises */
+.exercises{border:2px dashed var(--exercise-border);border-radius:8px;padding:20px;margin-bottom:20px;margin-left:12px}
+.exercises strong{display:block;margin-bottom:14px;font-size:16px;color:var(--purple)}
+.exercise{margin-bottom:14px;padding-left:38px;position:relative;line-height:1.6}
+.exercise:last-child{margin-bottom:0}
+.exercise-num{position:absolute;left:0;top:2px;background:var(--purple);color:#fff;width:24px;height:24px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:12px;font-weight:700}
+.exercise code{background:var(--code-bg);padding:2px 6px;border-radius:4px;font-family:'SF Mono','Fira Code','Consolas',monospace;font-size:13px}
+
+/* Connections */
+.connections{background:var(--accent-bg);border:1px solid rgba(56,139,253,0.2);border-radius:8px;padding:16px 20px;font-size:14px;color:var(--text-muted)}
+.connections strong{color:var(--accent);margin-right:6px}
+
+/* Cross-links */
+.cross-links{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:20px 24px;margin-bottom:40px;text-align:center}
+.cross-links a{margin:0 10px;font-weight:500}
+
+/* Footer */
+.guide-footer{border-top:1px solid var(--border);padding-top:32px;margin-top:48px}
+.guide-footer h2{font-size:18px;margin-bottom:16px}
+.guide-footer ul{list-style:none;padding:0}
+.guide-footer li{padding:6px 0}
+.guide-footer li a{font-weight:500}
+
+/* Responsive */
+@media(max-width:900px){
+  .sidebar{display:none}
+  .main{margin-left:0}
+  .theme-toggle{top:12px;right:12px}
+}
+</style>
+</head>
+<body>
+
+<!-- Theme Toggle -->
+<button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">&#x1F319;</button>
+
+<!-- Sidebar -->
+<nav class="sidebar">
+  <div class="sidebar-header">
+    <h2>TypeScript Daily Guide</h2>
+    <div class="date">2026-06-25 &mdash; Day 22</div>
+  </div>
+
+  <div class="sidebar-section review-label">Review (6 concepts)</div>
+  <ul class="sidebar-nav">
+    <li><a href="#review_api_client">Type-Safe API Client <span class="nav-id">R1</span></a></li>
+    <li><a href="#review_compiler_api">TypeScript Compiler API <span class="nav-id">R2</span></a></li>
+    <li><a href="#review_di">Type-Safe Dependency Injection <span class="nav-id">R3</span></a></li>
+    <li><a href="#review_routing">Type-Safe Routing <span class="nav-id">R4</span></a></li>
+    <li><a href="#review_effect">Effect Pattern &amp; FP Errors <span class="nav-id">R5</span></a></li>
+    <li><a href="#review_generic_components">React Generic Components <span class="nav-id">R6</span></a></li>
+  </ul>
+
+  <div class="sidebar-section">Typed Object Modeling</div>
+  <ul class="sidebar-nav">
+    <li><a href="#deep_paths">Deep Property Paths <span class="nav-id">#1</span></a></li>
+    <li><a href="#keys_by_value">Key Selection by Value <span class="nav-id">#2</span></a></li>
+    <li><a href="#json_type">The Recursive JSON Type <span class="nav-id">#3</span></a></li>
+  </ul>
+
+  <div class="sidebar-section">Function Signature Recipes</div>
+  <ul class="sidebar-nav">
+    <li><a href="#sig_preserving">Signature-Preserving Wrappers <span class="nav-id">#4</span></a></li>
+    <li><a href="#labeled_tuples">Labeled Tuples &amp; Variadics <span class="nav-id">#5</span></a></li>
+  </ul>
+</nav>
+
+<!-- Main Content -->
+<div class="main">
+<div class="content">
+
+<!-- Header -->
+<header class="guide-header">
+  <h1>TypeScript Daily Guide &mdash; Day 22</h1>
+  <div class="meta">
+    <span>2026-06-25</span>
+    <span>&middot;</span>
+    <span>Day 22 of 22</span>
+    <span>&middot;</span>
+    <span class="badge badge-purple">6 reviews</span>
+    <span class="badge badge-blue">5 new concepts</span>
+  </div>
+</header>
+
+<!-- How to Use -->
+<div class="how-to-use">
+  <h2>How to Use This Guide</h2>
+  <ol>
+    <li><strong>Review first</strong> &mdash; scan each purple review card; if the concept feels solid, move on; if fuzzy, re-read the code pattern</li>
+    <li><strong>Attempt the challenge exercise</strong> on any review card that felt shaky &mdash; this is your best reinforcement signal</li>
+    <li><strong>Work through new concepts</strong> top to bottom &mdash; each builds on the previous</li>
+    <li><strong>Type every code example</strong> yourself in a .ts file &mdash; hover over types in your editor to build intuition</li>
+    <li><strong>Do at least 2 exercises per concept</strong> before moving to the next one</li>
+  </ol>
+</div>
+
+<!-- Cross-links -->
+<div class="cross-links">
+  <a href="guide.html">LeetCode Guide</a>
+  <a href="lang-guide.html">Lang Guide</a>
+  <a href="python-guide.html">Python Guide</a>
+  <a href="golang-guide.html">Go Guide</a>
+  <a href="javascript-guide.html">JS Guide</a>
+  <a href="report.html">Report</a>
+</div>
+
+<!-- ============================================================ -->
+<!-- REVIEW SECTION                                                -->
+<!-- ============================================================ -->
+<div class="review-section">
+<div class="review-section-header">Review &mdash; 6 Concepts</div>
+
+<!-- R1: Type-Safe API Client -->
+<div class="review-card" id="review_api_client">
+  <div class="review-header">
+    <span class="review-title">R1. Type-Safe API Client Patterns</span>
+    <span class="badge badge-purple">Patterns</span>
+    <span class="review-meta">overdue &middot; rep 0 &rarr; 1</span>
+  </div>
+  <div class="review-reminder">A type-safe client centralizes the <em>contract</em> &mdash; an endpoint map keyed by route, each value carrying its request and response shapes &mdash; so every call site infers the right body and return type from the route string alone. The boundary still validates at runtime (the bytes are external), but the call ergonomics are fully typed and refactor-safe.</div>
+
+  <div class="review-pattern">
+    <strong>Key Pattern</strong>
+    <div class="code-example">
+<pre><code>interface Endpoints {
+  "GET /users/:id": { params: { id: string }; response: User };
+  "POST /users":    { body: { name: string }; response: User };
+}
+
+async function call&lt;K extends keyof Endpoints&gt;(
+  key: K,
+  init: Omit&lt;Endpoints[K], "response"&gt;,
+): Promise&lt;Endpoints[K]["response"]&gt; {
+  /* build url + fetch + validate */
+  return undefined as never;
+}
+
+const u = await call("POST /users", { body: { name: "Ada" } }); // u: User</code></pre>
+<div class="type-result">route string drives both the request shape and the response type</div>
+    </div>
+  </div>
+
+  <div class="review-challenge">
+    <strong>Challenge Exercise</strong>
+    <p>Extend <code>Endpoints</code> with <code>"GET /users"</code> returning <code>User[]</code> and no body. Make <code>call</code> reject a <code>body</code> for GET routes at compile time (hint: a conditional on whether the entry has a <code>body</code> key). Confirm <code>call("GET /users", {})</code> is typed and <code>call("GET /users", { body: {} })</code> errors.</p>
+  </div>
+
+  <div class="review-pitfall">
+    <strong>Pitfall:</strong> Typing the client so that the <em>response</em> is asserted (<code>as User</code>) instead of validated. The endpoint map gives compile-time safety only; the server can still return the wrong shape. Parse the response with a per-route schema (Zod) and treat a mismatch as an error, not a cast.
+  </div>
+</div>
+
+<!-- R2: TypeScript Compiler API -->
+<div class="review-card" id="review_compiler_api">
+  <div class="review-header">
+    <span class="review-title">R2. TypeScript Compiler API</span>
+    <span class="badge badge-purple">Tooling &amp; Compiler</span>
+    <span class="review-meta">overdue &middot; rep 0 &rarr; 1</span>
+  </div>
+  <div class="review-reminder">The <code>typescript</code> package is itself a library: <code>ts.createProgram</code> builds a typed view of your files, the <code>TypeChecker</code> answers questions about symbols and types, and you walk the AST with <code>ts.forEachChild</code>. This is the foundation under linters, codemods, and doc generators &mdash; anything that needs real type information, not just syntax.</div>
+
+  <div class="review-pattern">
+    <strong>Key Pattern</strong>
+    <div class="code-example">
+<pre><code>import ts from "typescript";
+
+const program = ts.createProgram(["src/index.ts"], {
+  target: ts.ScriptTarget.ES2022,
+});
+const checker = program.getTypeChecker();
+
+for (const sf of program.getSourceFiles()) {
+  if (sf.isDeclarationFile) continue;
+  ts.forEachChild(sf, function visit(node) {
+    if (ts.isFunctionDeclaration(node) &amp;&amp; node.name) {
+      const sym = checker.getSymbolAtLocation(node.name);
+      const type = checker.getTypeOfSymbolAtLocation(sym!, node.name);
+      console.log(node.name.text, checker.typeToString(type));
+    }
+    ts.forEachChild(node, visit);
+  });
+}</code></pre>
+<div class="output">greet (name: string) =&gt; string</div>
+    </div>
+  </div>
+
+  <div class="review-challenge">
+    <strong>Challenge Exercise</strong>
+    <p>Write a script that prints every exported function&rsquo;s name and parameter types from a file. Use <code>checker.getSymbolAtLocation</code> + <code>getSignaturesOfType</code> to read each signature, and filter to symbols whose flags include <code>ts.SymbolFlags.Function</code>. Bonus: emit the result as a small <code>.d.ts</code>-style summary.</p>
+  </div>
+
+  <div class="review-pitfall">
+    <strong>Pitfall:</strong> Reading types off the AST node directly instead of going through the <code>TypeChecker</code>. The raw AST only has syntax &mdash; inferred types, resolved imports, and symbol identity all live in the checker. Also: a <code>Program</code> is expensive to build; reuse it (or a <code>LanguageService</code>) rather than recreating it per file in a watch loop.
+  </div>
+</div>
+
+<!-- R3: Type-Safe Dependency Injection -->
+<div class="review-card" id="review_di">
+  <div class="review-header">
+    <span class="review-title">R3. Type-Safe Dependency Injection</span>
+    <span class="badge badge-purple">Architecture</span>
+    <span class="review-meta">overdue &middot; rep 0 &rarr; 1</span>
+  </div>
+  <div class="review-reminder">You can get compile-time-safe DI without decorators or <code>reflect-metadata</code>: model the container as a <em>token &rarr; type</em> map, and have <code>resolve(token)</code> return the mapped type. Tokens are typically <code>unique symbol</code>s or branded keys so two services with the same shape stay distinct.</div>
+
+  <div class="review-pattern">
+    <strong>Key Pattern</strong>
+    <div class="code-example">
+<pre><code>interface Services {
+  logger: { log(msg: string): void };
+  clock:  { now(): number };
+}
+
+class Container {
+  private reg = new Map&lt;keyof Services, unknown&gt;();
+  register&lt;K extends keyof Services&gt;(k: K, v: Services[K]) { this.reg.set(k, v); }
+  resolve&lt;K extends keyof Services&gt;(k: K): Services[K] {
+    const v = this.reg.get(k);
+    if (!v) throw new Error(`Unregistered: ${String(k)}`);
+    return v as Services[K];
+  }
+}
+
+const c = new Container();
+c.register("clock", { now: () =&gt; Date.now() });
+const t = c.resolve("clock").now();   // t: number, fully typed</code></pre>
+<div class="type-result">resolve("clock") =&gt; { now(): number }</div>
+    </div>
+  </div>
+
+  <div class="review-challenge">
+    <strong>Challenge Exercise</strong>
+    <p>Add a <code>factory</code> registration so a service can be built lazily from other resolved services (<code>register("a", (c) =&gt; new A(c.resolve("logger")))</code>). Keep the factory&rsquo;s container parameter typed against <code>Services</code>, and ensure a cycle (<code>a</code> needs <code>b</code>, <code>b</code> needs <code>a</code>) is detected at runtime with a clear error.</p>
+  </div>
+
+  <div class="review-pitfall">
+    <strong>Pitfall:</strong> Leaning on decorator-based DI (<code>@Injectable</code> + <code>reflect-metadata</code>) when a typed token map would do. The metadata approach needs <code>emitDecoratorMetadata</code>, ties you to legacy decorators, and erases to runtime strings that the compiler can&rsquo;t check. The map-based container keeps everything in the type system with zero runtime reflection.
+  </div>
+</div>
+
+<!-- R4: Type-Safe Routing -->
+<div class="review-card" id="review_routing">
+  <div class="review-header">
+    <span class="review-title">R4. Type-Safe Routing Patterns</span>
+    <span class="badge badge-purple">Application Patterns</span>
+    <span class="review-meta">overdue &middot; rep 0 &rarr; 1</span>
+  </div>
+  <div class="review-reminder">Template-literal types let a route <em>pattern</em> string drive its params type: <code>"/user/:id/post/:slug"</code> can be parsed at the type level into <code>{ id: string; slug: string }</code>. That makes <code>navigate</code> / <code>link</code> helpers reject missing or misspelled params before runtime.</div>
+
+  <div class="review-pattern">
+    <strong>Key Pattern</strong>
+    <div class="code-example">
+<pre><code>type PathParams&lt;S extends string&gt; =
+  S extends `${string}:${infer P}/${infer Rest}`
+    ? { [K in P | keyof PathParams&lt;`/${Rest}`&gt;]: string }
+    : S extends `${string}:${infer P}`
+      ? { [K in P]: string }
+      : {};
+
+type P = PathParams&lt;"/user/:id/post/:slug"&gt;;
+// { id: string; slug: string }
+
+function link&lt;S extends string&gt;(pattern: S, params: PathParams&lt;S&gt;): string {
+  return pattern.replace(/:([^/]+)/g, (_, k) =&gt; String((params as never)[k]));
+}
+link("/user/:id/post/:slug", { id: "1", slug: "hi" });   // ok</code></pre>
+<div class="type-result">P = { id: string; slug: string }</div>
+    </div>
+  </div>
+
+  <div class="review-challenge">
+    <strong>Challenge Exercise</strong>
+    <p>Extend <code>PathParams</code> to support optional segments (<code>:id?</code>) by making those keys optional in the result, and typed query params via a <code>?a&amp;b</code> suffix. Confirm <code>link("/post/:id?")</code> accepts both <code>{}</code> and <code>{ id: "1" }</code>, while a required <code>:id</code> still demands the key.</p>
+  </div>
+
+  <div class="review-pitfall">
+    <strong>Pitfall:</strong> Letting params widen to <code>Record&lt;string, string&gt;</code> so any key compiles. The whole point is that <code>:slug</code> typed as <code>:slog</code> at a call site fails. Keep the pattern as a <code>const</code> / literal type parameter through the helper, otherwise the template-literal inference never fires and you lose the per-route key checking.
+  </div>
+</div>
+
+<!-- R5: Effect Pattern -->
+<div class="review-card" id="review_effect">
+  <div class="review-header">
+    <span class="review-title">R5. Effect Pattern &amp; Functional Error Handling</span>
+    <span class="badge badge-purple">Functional Patterns</span>
+    <span class="review-meta">overdue &middot; rep 0 &rarr; 1</span>
+  </div>
+  <div class="review-reminder">Instead of throwing, you return a <code>Result</code> (a.k.a. <code>Either</code>): a discriminated union of <code>{ ok: true; value }</code> and <code>{ ok: false; error }</code>. Errors become part of the type signature &mdash; the caller <em>must</em> narrow on <code>ok</code> before touching <code>value</code>, so no failure path is silently skipped.</div>
+
+  <div class="review-pattern">
+    <strong>Key Pattern</strong>
+    <div class="code-example">
+<pre><code>type Result&lt;T, E = Error&gt; =
+  | { ok: true;  value: T }
+  | { ok: false; error: E };
+
+const ok  = &lt;T&gt;(value: T): Result&lt;T, never&gt; =&gt; ({ ok: true, value });
+const err = &lt;E&gt;(error: E): Result&lt;never, E&gt; =&gt; ({ ok: false, error });
+
+function parsePort(s: string): Result&lt;number, "NaN" | "range"&gt; {
+  const n = Number(s);
+  if (Number.isNaN(n)) return err("NaN");
+  if (n &lt; 0 || n &gt; 65535) return err("range");
+  return ok(n);
+}
+
+const r = parsePort("8080");
+if (r.ok) console.log(r.value + 1);   // value: number, narrowed
+else console.error(r.error);          // error: "NaN" | "range"</code></pre>
+<div class="type-result">value is only reachable inside the `r.ok` branch</div>
+    </div>
+  </div>
+
+  <div class="review-challenge">
+    <strong>Challenge Exercise</strong>
+    <p>Write <code>map</code> and <code>flatMap</code> (a.k.a. <code>andThen</code>) over <code>Result</code> so you can chain fallible steps without nested <code>if</code>s, short-circuiting on the first error. Then write <code>all(results: Result&lt;T, E&gt;[]): Result&lt;T[], E&gt;</code> that collects values or returns the first error. Keep the error channel&rsquo;s union type accumulating correctly.</p>
+  </div>
+
+  <div class="review-pitfall">
+    <strong>Pitfall:</strong> Reintroducing exceptions in the middle of a <code>Result</code> pipeline (a helper that throws). Once you commit to <code>Result</code>, a stray <code>throw</code> bypasses the typed error channel and the caller&rsquo;s exhaustive handling. Wrap any throwing boundary (JSON.parse, fetch) in a <code>tryCatch</code> that converts the throw into an <code>err(...)</code>.
+  </div>
+</div>
+
+<!-- R6: React Generic Components -->
+<div class="review-card" id="review_generic_components">
+  <div class="review-header">
+    <span class="review-title">R6. React + TypeScript: Generic Components</span>
+    <span class="badge badge-purple">React + TypeScript</span>
+    <span class="review-meta">overdue &middot; rep 1 &rarr; 2</span>
+  </div>
+  <div class="review-reminder">A generic component threads a type parameter from its props (e.g. the item type of a <code>List&lt;T&gt;</code>) into its callbacks so <code>renderItem</code> receives a fully typed <code>T</code>. The catch is the function-component form: an arrow with <code>React.FC</code> can&rsquo;t be generic, so you write a generic <em>function declaration</em> (or a generic arrow assigned without <code>FC</code>).</div>
+
+  <div class="review-pattern">
+    <strong>Key Pattern</strong>
+    <div class="code-example">
+<pre><code>interface ListProps&lt;T&gt; {
+  items: T[];
+  renderItem: (item: T, index: number) =&gt; React.ReactNode;
+  keyOf: (item: T) =&gt; React.Key;
+}
+
+function List&lt;T&gt;({ items, renderItem, keyOf }: ListProps&lt;T&gt;) {
+  return &lt;ul&gt;{items.map((it, i) =&gt; (
+    &lt;li key={keyOf(it)}&gt;{renderItem(it, i)}&lt;/li&gt;
+  ))}&lt;/ul&gt;;
+}
+
+// T inferred as User from `items`; `u` is User inside renderItem
+&lt;List items={users} keyOf={(u) =&gt; u.id} renderItem={(u) =&gt; u.name} /&gt;;</code></pre>
+<div class="type-result">T inferred from items; renderItem param typed as User</div>
+    </div>
+  </div>
+
+  <div class="review-challenge">
+    <strong>Challenge Exercise</strong>
+    <p>Build a generic <code>&lt;Select&lt;T&gt;&gt;</code> whose <code>options: T[]</code>, <code>value: T</code>, and <code>onChange: (next: T) =&gt; void</code> all share <code>T</code>, plus a <code>getLabel: (t: T) =&gt; string</code>. Make it work with <code>forwardRef</code> (which loses generics by default) by typing the wrapped component manually so <code>T</code> still infers from <code>options</code>.</p>
+  </div>
+
+  <div class="review-pitfall">
+    <strong>Pitfall:</strong> Annotating the component as <code>const List: React.FC&lt;ListProps&lt;T&gt;&gt;</code> &mdash; <code>T</code> isn&rsquo;t in scope there and <code>FC</code> isn&rsquo;t generic, so you end up hard-coding <code>T</code> or falling back to <code>any</code>. Use a generic function declaration; if you need <code>forwardRef</code>/<code>memo</code>, cast the wrapper to a generic call signature so inference is preserved.
+  </div>
+</div>
+
+</div><!-- end review-section -->
+
+<!-- ============================================================ -->
+<!-- TOPIC SECTION 1: Typed Object Modeling                        -->
+<!-- ============================================================ -->
+<div class="topic-section">
+<div class="topic-section-header"><span class="section-num">1</span>Typed Object Modeling</div>
+
+<!-- Concept 1: Deep Property Paths -->
+<div class="concept-card" id="deep_paths">
+  <div class="concept-header">
+    <span class="concept-title">1. Type-Safe Deep Property Paths</span>
+    <span class="ttag">Type-Level</span>
+  </div>
+
+  <div class="why-matters">Any library that takes a dotted path &mdash; form libraries (<code>"address.city"</code>), i18n keys, lodash <code>get</code>/<code>set</code>, ORM selectors &mdash; lives or dies on whether that string is checked. Build <code>Paths&lt;T&gt;</code> and <code>PathValue&lt;T, P&gt;</code> once and a typo in a nested key becomes a compile error instead of an <code>undefined</code> at runtime.</div>
+
+  <div class="explanation">
+    <p>The idea: recursively walk <code>keyof T</code>, and for each key whose value is an object, emit both the key itself and the key joined with the paths of its child via a template literal (<code>`${K}.${ChildPath}`</code>). The companion <code>PathValue&lt;T, P&gt;</code> splits the path back apart with <code>infer</code> and indexes into <code>T</code> step by step, so a valid path resolves to the type sitting at its end.</p>
+    <p>The two pieces are duals: <code>Paths</code> produces the set of legal strings; <code>PathValue</code> maps a legal string to the type it points at. A typed <code>get(obj, path)</code> then constrains <code>path</code> to <code>Paths&lt;T&gt;</code> and returns <code>PathValue&lt;T, path&gt;</code> &mdash; full autocomplete on the dotted string, exact return type at the leaf.</p>
+    <div class="step"><span class="step-num">1</span><div>Recurse over <code>keyof T</code>; for object values, union the key with <code>`${K}.${child}`</code>.</div></div>
+    <div class="step"><span class="step-num">2</span><div><code>PathValue</code> splits on <code>.</code> with <code>infer Head</code>/<code>infer Rest</code> and indexes recursively.</div></div>
+    <div class="step"><span class="step-num">3</span><div>Constrain the runtime <code>get</code>&rsquo;s <code>path</code> to <code>Paths&lt;T&gt;</code> and return <code>PathValue&lt;T, P&gt;</code>.</div></div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 1 of 4 &mdash; generating the path union</div>
+<pre><code>type Paths&lt;T&gt; = T extends object
+  ? {
+      [K in keyof T &amp; string]:
+        T[K] extends object ? K | `${K}.${Paths&lt;T[K]&gt;}` : K;
+    }[keyof T &amp; string]
+  : never;
+
+type Data = { user: { name: string; address: { city: string } }; id: number };
+type P = Paths&lt;Data&gt;;
+// "user" | "id" | "user.name" | "user.address" | "user.address.city"</code></pre>
+<div class="type-result">P includes every nested dotted path of Data</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 2 of 4 &mdash; resolving the value at a path</div>
+<pre><code>type PathValue&lt;T, P extends string&gt; =
+  P extends `${infer Head}.${infer Rest}`
+    ? Head extends keyof T ? PathValue&lt;T[Head], Rest&gt; : never
+    : P extends keyof T ? T[P] : never;
+
+type V1 = PathValue&lt;Data, "user.address.city"&gt;;   // string
+type V2 = PathValue&lt;Data, "id"&gt;;                   // number
+type V3 = PathValue&lt;Data, "user.address"&gt;;         // { city: string }</code></pre>
+<div class="type-result">V1 = string; V2 = number; V3 = { city: string }</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 3 of 4 &mdash; a typed get(obj, path)</div>
+<pre><code>function get&lt;T, P extends Paths&lt;T&gt;&gt;(obj: T, path: P): PathValue&lt;T, P&gt; {
+  return (path as string)
+    .split(".")
+    .reduce&lt;unknown&gt;((acc, k) =&gt; (acc as Record&lt;string, unknown&gt;)[k], obj) as PathValue&lt;T, P&gt;;
+}
+
+const d: Data = { user: { name: "Ada", address: { city: "London" } }, id: 1 };
+const city = get(d, "user.address.city");   // city: string
+// get(d, "user.adress.city");               // Error: not a valid path</code></pre>
+<div class="type-result">city: string; an invalid path is a compile error</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 4 of 4 &mdash; guarding arrays and depth</div>
+<pre><code>// arrays would otherwise spray "0" | "1" | "length" | "map" ... into Paths
+type SafePaths&lt;T&gt; = T extends readonly unknown[]
+  ? never                                  // stop at arrays (or handle [number])
+  : T extends object
+    ? { [K in keyof T &amp; string]:
+          T[K] extends object &amp; { length?: never }
+            ? K | `${K}.${SafePaths&lt;T[K]&gt;}`
+            : K;
+      }[keyof T &amp; string]
+    : never;
+
+type Cfg = { db: { host: string }; tags: string[] };
+type CP = SafePaths&lt;Cfg&gt;;   // "db" | "tags" | "db.host"</code></pre>
+<div class="type-result">CP = "db" | "tags" | "db.host" (no array index noise)</div>
+  </div>
+
+  <div class="callout-warning">
+    <strong>Common Mistakes:</strong>
+    <div class="mistake">&#10060; Recursing into arrays naively, so <code>string[]</code> contributes <code>"tags.0" | "tags.length" | "tags.map"</code> &hellip; flooding the union with array internals.</div>
+    <div class="correct">&#9989; Special-case arrays first &mdash; stop, or deliberately emit a <code>`${K}.${number}`</code> index path if you actually want element access.</div>
+    <div class="mistake">&#10060; Letting <code>path</code> widen to <code>string</code> in <code>get</code>, which disables both autocomplete and the leaf return type.</div>
+    <div class="correct">&#9989; Constrain <code>P extends Paths&lt;T&gt;</code> so the literal is preserved and <code>PathValue&lt;T, P&gt;</code> can resolve the exact leaf.</div>
+  </div>
+
+  <div class="key-rules">
+    <strong>Key Rules:</strong>
+    <ul>
+    <li><a href="typescript-guides/typescript-guide-2026-07-04.html">2026-07-04</a> (Day 31)</li>
+      <li><code>Paths&lt;T&gt;</code> = union of <code>K</code> and <code>`${K}.${Paths&lt;child&gt;}`</code> for each object key.</li>
+      <li><code>PathValue&lt;T, P&gt;</code> splits on <code>.</code> with <code>infer</code> and indexes recursively to the leaf.</li>
+      <li>Guard arrays (and other built-ins) so their members don&rsquo;t pollute the path union.</li>
+      <li>Deeply nested shapes can approach the instantiation-depth cap &mdash; keep object depth reasonable.</li>
+    </ul>
+  </div>
+
+  <div class="exercises">
+    <strong>Practice Exercises:</strong>
+    <div class="exercise"><span class="exercise-num">1</span>Write a typed <code>set&lt;T, P extends Paths&lt;T&gt;&gt;(obj: T, path: P, value: PathValue&lt;T, P&gt;): void</code> (mutating) and confirm the value type is checked against the leaf.</div>
+    <div class="exercise"><span class="exercise-num">2</span>Add array support: extend <code>Paths</code> to emit <code>`${K}.${number}`</code> for array properties and have <code>PathValue</code> resolve element types.</div>
+    <div class="exercise"><span class="exercise-num">3</span>Write <code>LeafPaths&lt;T&gt;</code> that emits <em>only</em> paths ending at primitives (no intermediate object paths like <code>"user.address"</code>).</div>
+  </div>
+
+  <div class="connections"><strong>Connections:</strong> This is template-literal <code>infer</code> (R4 routing, and <em>infer &hellip; extends</em> from Day 23) applied to objects, and it leans on <em>keyof &amp; Indexed Access Types</em>. The array guard echoes the recursion guards in <em>DeepPartial / DeepReadonly</em>.</div>
+</div>
+
+<!-- Concept 2: Key Selection by Value -->
+<div class="concept-card" id="keys_by_value">
+  <div class="concept-header">
+    <span class="concept-title">2. Key Selection by Value Type</span>
+    <span class="ttag">Type-Level</span>
+  </div>
+
+  <div class="why-matters">Often you want &ldquo;all the keys whose value is a function&rdquo; (to build a method map), or &ldquo;all the <code>string</code> fields&rdquo; (to build a search index). <code>Pick</code>/<code>Omit</code> select by <em>key name</em>; selecting by <em>value type</em> is a distinct, extremely reusable tool that underlies event maps, ORMs, and form schemas.</div>
+
+  <div class="explanation">
+    <p>The core trick is a key-remapping mapped type with <code>as</code>: map over <code>keyof T</code>, and for each key conditionally remap it to <code>K</code> if its value matches the target type, or to <code>never</code> otherwise. Keys mapped to <code>never</code> are dropped from the result, so <code>keyof</code> of that object yields exactly the matching keys.</p>
+    <p>From <code>KeysMatching&lt;T, V&gt;</code> you build <code>PickByValue</code> (<code>Pick&lt;T, KeysMatching&lt;T, V&gt;&gt;</code>) and its inverse <code>OmitByValue</code>. Watch the matching direction: <code>T[K] extends V</code> is assignability, so <code>KeysMatching&lt;T, string&gt;</code> also catches string-literal fields, and a field typed <code>any</code> matches everything &mdash; use a stricter equality check when that bites.</p>
+    <div class="step"><span class="step-num">1</span><div>Map <code>K in keyof T</code>, remapping with <code>as [T[K]] extends [V] ? K : never</code>.</div></div>
+    <div class="step"><span class="step-num">2</span><div><code>never</code>-remapped keys vanish; <code>keyof</code> the result is the matching key set.</div></div>
+    <div class="step"><span class="step-num">3</span><div>Compose into <code>PickByValue</code> / <code>OmitByValue</code> via <code>Pick</code>/<code>Omit</code>.</div></div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 1 of 4 &mdash; keys whose value matches a type</div>
+<pre><code>type KeysMatching&lt;T, V&gt; = {
+  [K in keyof T]-?: [T[K]] extends [V] ? K : never;
+}[keyof T];
+
+interface Model {
+  id: number;
+  name: string;
+  active: boolean;
+  tags: string[];
+}
+
+type StringKeys = KeysMatching&lt;Model, string&gt;;   // "name"
+type NumberKeys = KeysMatching&lt;Model, number&gt;;   // "id"</code></pre>
+<div class="type-result">StringKeys = "name"; NumberKeys = "id"</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 2 of 4 &mdash; PickByValue / OmitByValue</div>
+<pre><code>type PickByValue&lt;T, V&gt; = Pick&lt;T, KeysMatching&lt;T, V&gt;&gt;;
+type OmitByValue&lt;T, V&gt; = Omit&lt;T, KeysMatching&lt;T, V&gt;&gt;;
+
+type OnlyPrimitives = PickByValue&lt;Model, string | number | boolean&gt;;
+// { id: number; name: string; active: boolean }
+
+type NoArrays = OmitByValue&lt;Model, unknown[]&gt;;
+// { id: number; name: string; active: boolean }</code></pre>
+<div class="type-result">PickByValue keeps matching fields; OmitByValue drops them</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 3 of 4 &mdash; extracting a method map</div>
+<pre><code>type Fn = (...args: any[]) =&gt; any;
+
+class Widget {
+  width = 0;
+  label = "";
+  resize(w: number) { this.width = w; }
+  render() { return this.label; }
+}
+
+type Methods = PickByValue&lt;Widget, Fn&gt;;
+// { resize: (w: number) =&gt; void; render: () =&gt; string }
+type MethodNames = KeysMatching&lt;Widget, Fn&gt;;   // "resize" | "render"</code></pre>
+<div class="type-result">Methods = { resize; render }; MethodNames = "resize" | "render"</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 4 of 4 &mdash; assignability vs exact match</div>
+<pre><code>interface Mixed { a: string; b: "x" | "y"; c: any }
+
+// assignability: "x" | "y" IS a string, so b matches too; any matches all
+type Loose = KeysMatching&lt;Mixed, string&gt;;   // "a" | "b" | "c"
+
+// exact equality via mutual extends keeps only true `string` fields
+type Eq&lt;A, B&gt; = [A] extends [B] ? ([B] extends [A] ? true : false) : false;
+type ExactString = {
+  [K in keyof Mixed]-?: Eq&lt;Mixed[K], string&gt; extends true ? K : never;
+}[keyof Mixed];                              // "a"</code></pre>
+<div class="type-result">Loose = "a" | "b" | "c"; ExactString = "a"</div>
+  </div>
+
+  <div class="callout-warning">
+    <strong>Common Mistakes:</strong>
+    <div class="mistake">&#10060; Forgetting the <code>-?</code> modifier, so optional properties leave a stray <code>undefined</code> in the remapped union and matching gets confused.</div>
+    <div class="correct">&#9989; Add <code>-?</code> in the mapped type to strip optionality before the conditional, then re-derive keys cleanly.</div>
+    <div class="mistake">&#10060; Assuming <code>KeysMatching&lt;T, string&gt;</code> returns only fields typed exactly <code>string</code> &mdash; literals and <code>any</code> slip through via assignability.</div>
+    <div class="correct">&#9989; Use a mutual-<code>extends</code> equality check when you need exact value-type matching rather than assignability.</div>
+  </div>
+
+  <div class="key-rules">
+    <strong>Key Rules:</strong>
+    <ul>
+      <li>Key-remap with <code>as ... ? K : never</code>; <code>never</code> keys drop out of the result.</li>
+      <li><code>KeysMatching</code> + <code>Pick</code>/<code>Omit</code> gives <code>PickByValue</code>/<code>OmitByValue</code>.</li>
+      <li>Default matching is assignability (<code>extends</code>); switch to mutual-<code>extends</code> for exactness.</li>
+      <li>Wrap both sides in tuples (<code>[T[K]] extends [V]</code>) to avoid accidental distribution over unions.</li>
+    </ul>
+  </div>
+
+  <div class="exercises">
+    <strong>Practice Exercises:</strong>
+    <div class="exercise"><span class="exercise-num">1</span>Write <code>RequiredKeys&lt;T&gt;</code> and <code>OptionalKeys&lt;T&gt;</code> that select keys by their <em>modifier</em> (hint: compare <code>{} extends Pick&lt;T, K&gt;</code>).</div>
+    <div class="exercise"><span class="exercise-num">2</span>Build <code>FunctionProperties&lt;T&gt;</code> and a runtime <code>bindAll(obj)</code> whose return type is <code>PickByValue&lt;T, Fn&gt;</code> with every method bound to <code>obj</code>.</div>
+    <div class="exercise"><span class="exercise-num">3</span>Write <code>NullableKeys&lt;T&gt;</code> selecting keys whose value includes <code>null</code> or <code>undefined</code>, and confirm it ignores non-nullable fields.</div>
+  </div>
+
+  <div class="connections"><strong>Connections:</strong> This is key remapping (<em>Mapped Type Key Remapping</em>, <em>Mapped Type Modifiers</em>) used as a filter, and the equality check reuses the non-distributive tuple-wrap trick from <em>Distributive Conditional Types</em>. <code>PickByValue&lt;T, Fn&gt;</code> feeds directly into the method-binding helpers of Concept 4.</div>
+</div>
+
+<!-- Concept 3: The Recursive JSON Type -->
+<div class="concept-card" id="json_type">
+  <div class="concept-header">
+    <span class="concept-title">3. The Recursive JSON Type &amp; Typed Parse Boundary</span>
+    <span class="ttag">Runtime Safety</span>
+  </div>
+
+  <div class="why-matters">Almost every app crosses the JSON boundary &mdash; <code>fetch</code>, files, message queues &mdash; and <code>JSON.parse</code> hands you <code>any</code>, the type system&rsquo;s off-switch. A precise recursive <code>Json</code> type plus a validating parse step replaces that <code>any</code> with a value the compiler actually understands, so the boundary is the <em>only</em> place you reason about untrusted shape.</div>
+
+  <div class="explanation">
+    <p>JSON has exactly five primitive forms plus arrays and objects, and it is recursive: arrays and objects contain more JSON. That maps to a small mutually-recursive type &mdash; <code>JsonPrimitive</code>, <code>JsonArray = JsonValue[]</code>, and <code>JsonObject = { [k: string]: JsonValue }</code>. Typing a parse function&rsquo;s return as <code>JsonValue</code> (instead of <code>any</code>) forces you to <em>narrow</em> before using the data, which is exactly the discipline you want at a trust boundary.</p>
+    <p>The companion idea is <code>Jsonify&lt;T&gt;</code>: a serialize step doesn&rsquo;t round-trip everything. <code>Date</code> becomes a <code>string</code>, <code>undefined</code> properties and methods disappear, <code>Map</code>/<code>Set</code> become <code>{}</code>. Modeling that at the type level stops you from assuming a parsed payload still has the <code>Date</code> or method it had before <code>JSON.stringify</code>.</p>
+    <div class="step"><span class="step-num">1</span><div>Define <code>JsonValue</code> as primitives &cup; <code>JsonValue[]</code> &cup; <code>{ [k: string]: JsonValue }</code>.</div></div>
+    <div class="step"><span class="step-num">2</span><div>Type the parse boundary as <code>JsonValue</code> (or validate to a known schema), never <code>any</code>.</div></div>
+    <div class="step"><span class="step-num">3</span><div>Use <code>Jsonify&lt;T&gt;</code> to model what actually survives <code>stringify</code> &rarr; <code>parse</code>.</div></div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 1 of 4 &mdash; the recursive JSON value type</div>
+<pre><code>type JsonPrimitive = string | number | boolean | null;
+type JsonArray = JsonValue[];
+type JsonObject = { [key: string]: JsonValue };
+type JsonValue = JsonPrimitive | JsonArray | JsonObject;
+
+const config: JsonValue = {
+  name: "app",
+  retries: 3,
+  flags: [true, false],
+  nested: { enabled: null },
+};   // ok &mdash; every leaf is JSON-legal
+// const bad: JsonValue = { when: new Date() };   // Error: Date not assignable</code></pre>
+<div class="type-result">JsonValue admits only JSON-serializable shapes</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 2 of 4 &mdash; a parse boundary that returns JsonValue, not any</div>
+<pre><code>function parseJson(text: string): JsonValue {
+  return JSON.parse(text);   // widened from any to JsonValue at the boundary
+}
+
+const data = parseJson('{"id":1,"tags":["a"]}');
+// data.id;                  // Error: Property 'id' does not exist on JsonValue
+if (typeof data === "object" &amp;&amp; data !== null &amp;&amp; !Array.isArray(data)) {
+  const id = data.id;        // JsonValue &mdash; still must narrow further
+}</code></pre>
+<div class="type-result">forced narrowing instead of an `any` free-for-all</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 3 of 4 &mdash; validate to a real type with a guard</div>
+<pre><code>interface User { id: number; name: string }
+
+function isUser(v: JsonValue): v is JsonObject &amp; { id: number; name: string } {
+  return (
+    typeof v === "object" &amp;&amp; v !== null &amp;&amp; !Array.isArray(v) &amp;&amp;
+    typeof v.id === "number" &amp;&amp; typeof v.name === "string"
+  );
+}
+
+const v = parseJson('{"id":1,"name":"Ada"}');
+const user: User | null = isUser(v) ? { id: v.id, name: v.name } : null;</code></pre>
+<div class="type-result">user: User | null &mdash; shape verified at the boundary</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 4 of 4 &mdash; Jsonify: what survives a round-trip</div>
+<pre><code>type Jsonify&lt;T&gt; =
+  T extends JsonPrimitive ? T
+  : T extends Date ? string                       // Date =&gt; ISO string
+  : T extends (...a: any[]) =&gt; any ? never        // functions dropped
+  : T extends readonly (infer E)[] ? Jsonify&lt;E&gt;[]
+  : T extends object ? { [K in keyof T]: Jsonify&lt;T[K]&gt; }
+  : never;
+
+type Raw = { id: number; created: Date; greet: () =&gt; void };
+type Wire = Jsonify&lt;Raw&gt;;
+// { id: number; created: string; greet: never }  &mdash; greet effectively gone</code></pre>
+<div class="type-result">created becomes string; the method does not survive</div>
+  </div>
+
+  <div class="callout-warning">
+    <strong>Common Mistakes:</strong>
+    <div class="mistake">&#10060; Typing <code>JSON.parse</code>&rsquo;s result as your domain type (<code>as User</code>) and trusting it &mdash; the bytes are external, so the cast can be wrong and the bug surfaces deep in the UI.</div>
+    <div class="correct">&#9989; Return <code>JsonValue</code> (or validate with a guard/Zod) so a wrong shape is caught at the boundary, not three components later.</div>
+    <div class="mistake">&#10060; Assuming a parsed payload still has the <code>Date</code> objects or methods it had before serializing &mdash; <code>JSON.stringify</code> silently dropped them.</div>
+    <div class="correct">&#9989; Model the wire shape with <code>Jsonify&lt;T&gt;</code> so the compiler knows <code>created</code> is a <code>string</code>, not a <code>Date</code>.</div>
+  </div>
+
+  <div class="key-rules">
+    <strong>Key Rules:</strong>
+    <ul>
+      <li><code>JsonValue</code> is mutually recursive: primitives, <code>JsonValue[]</code>, and string-keyed <code>JsonValue</code> records.</li>
+      <li>Type parse boundaries as <code>JsonValue</code> (not <code>any</code>) so callers must narrow.</li>
+      <li>Validate to domain types with a type guard or schema before using the data.</li>
+      <li><code>Jsonify&lt;T&gt;</code> models the lossy <code>stringify</code> &rarr; <code>parse</code> round-trip (Date&rarr;string, methods/undefined dropped).</li>
+    </ul>
+  </div>
+
+  <div class="exercises">
+    <strong>Practice Exercises:</strong>
+    <div class="exercise"><span class="exercise-num">1</span>Write <code>safeParseJson(text): Result&lt;JsonValue, "syntax"&gt;</code> (reuse the <code>Result</code> type from R5) that turns a thrown <code>SyntaxError</code> into an error value.</div>
+    <div class="exercise"><span class="exercise-num">2</span>Extend <code>Jsonify</code> to map <code>undefined</code>-valued <em>optional</em> properties to absent keys and <code>bigint</code> to a compile error (it can&rsquo;t serialize).</div>
+    <div class="exercise"><span class="exercise-num">3</span>Write a generic <code>fetchJson&lt;T&gt;(url, guard: (v: JsonValue) =&gt; v is T): Promise&lt;T&gt;</code> that validates the response and rejects on a failed guard.</div>
+  </div>
+
+  <div class="connections"><strong>Connections:</strong> Validate-at-the-boundary is the same stance as <em>Zod &amp; Runtime Validation</em>, <em>Type-Safe localStorage</em> (Day 21), and <em>Type-Safe API Client</em> (R1). <code>Jsonify</code> reuses the conditional + <code>infer</code> recursion patterns from <em>DeepReadonly</em>, and the guard ties into <em>Type Predicates</em>.</div>
+</div>
+
+</div><!-- end topic-section 1 -->
+
+<!-- ============================================================ -->
+<!-- TOPIC SECTION 2: Function Signature Recipes                   -->
+<!-- ============================================================ -->
+<div class="topic-section">
+<div class="topic-section-header"><span class="section-num">2</span>Function Signature Recipes</div>
+
+<!-- Concept 4: Signature-Preserving Wrappers -->
+<div class="concept-card" id="sig_preserving">
+  <div class="concept-header">
+    <span class="concept-title">4. Signature-Preserving Higher-Order Wrappers</span>
+    <span class="ttag">Functions</span>
+  </div>
+
+  <div class="why-matters">Wrappers like <code>memoize</code>, <code>once</code>, <code>debounce</code>, and <code>logged</code> are everywhere, and the lazy way to type them (<code>fn: Function</code> or <code>(...a: any[]) =&gt; any</code>) throws away the very signature callers depend on. Preserving the exact parameter and return types &mdash; via a generic constrained to the function type &mdash; is what keeps a wrapped function a drop-in replacement.</div>
+
+  <div class="explanation">
+    <p>The pattern is a single generic <code>F extends (...args: any[]) =&gt; any</code>, then express the returned function&rsquo;s signature with <code>Parameters&lt;F&gt;</code> and <code>ReturnType&lt;F&gt;</code> (and <code>ThisParameterType&lt;F&gt;</code> when <code>this</code> matters). Constraining the parameter as <code>F</code> &mdash; rather than spelling out <code>(...args: A) =&gt; R</code> with two parameters &mdash; lets the wrapped function preserve overloads and parameter <em>names</em> for tooltips.</p>
+    <p>When the wrapper changes the shape (e.g. <code>debounce</code> returns <code>void</code> because the result is deferred, or <code>memoize</code> requires the args to be usable as a cache key) you encode that in the return signature while still deriving from <code>F</code>. The discipline: derive everything you can from one function type parameter, and only diverge where the runtime behavior genuinely differs.</p>
+    <div class="step"><span class="step-num">1</span><div>Take one generic <code>F extends (...args: any[]) =&gt; any</code> for the wrapped function.</div></div>
+    <div class="step"><span class="step-num">2</span><div>Build the result type from <code>Parameters&lt;F&gt;</code> / <code>ReturnType&lt;F&gt;</code> / <code>ThisParameterType&lt;F&gt;</code>.</div></div>
+    <div class="step"><span class="step-num">3</span><div>Diverge only where behavior differs (debounce &rarr; <code>void</code> return; memoize &rarr; key constraint).</div></div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 1 of 4 &mdash; once: same signature, computed once</div>
+<pre><code>function once&lt;F extends (...args: any[]) =&gt; any&gt;(fn: F): F {
+  let called = false;
+  let result: ReturnType&lt;F&gt;;
+  return function (this: unknown, ...args: Parameters&lt;F&gt;): ReturnType&lt;F&gt; {
+    if (!called) { called = true; result = fn.apply(this, args); }
+    return result;
+  } as F;
+}
+
+const init = once((port: number) =&gt; ({ port, started: true }));
+const a = init(3000);   // { port: number; started: boolean } &mdash; exact signature kept</code></pre>
+<div class="type-result">init keeps the (port: number) =&gt; {...} signature</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 2 of 4 &mdash; memoize with a typed cache key</div>
+<pre><code>function memoize&lt;A extends unknown[], R&gt;(
+  fn: (...args: A) =&gt; R,
+  keyOf: (...args: A) =&gt; string = (...a) =&gt; JSON.stringify(a),
+): (...args: A) =&gt; R {
+  const cache = new Map&lt;string, R&gt;();
+  return (...args: A): R =&gt; {
+    const k = keyOf(...args);
+    if (!cache.has(k)) cache.set(k, fn(...args));
+    return cache.get(k)!;
+  };
+}
+
+const slow = (n: number) =&gt; n * n;
+const fast = memoize(slow);
+fast(9);   // 81, computed once; fast still (n: number) =&gt; number</code></pre>
+<div class="type-result">fast: (n: number) =&gt; number; args and return inferred from fn</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 3 of 4 &mdash; debounce returns void (result is deferred)</div>
+<pre><code>function debounce&lt;F extends (...args: any[]) =&gt; void&gt;(
+  fn: F,
+  ms: number,
+): (...args: Parameters&lt;F&gt;) =&gt; void {
+  let t: ReturnType&lt;typeof setTimeout&gt; | undefined;
+  return (...args: Parameters&lt;F&gt;): void =&gt; {
+    clearTimeout(t);
+    t = setTimeout(() =&gt; fn(...args), ms);
+  };
+}
+
+const onResize = debounce((w: number, h: number) =&gt; { /* ... */ }, 200);
+onResize(800, 600);     // args type-checked; return is void, not the inner result</code></pre>
+<div class="type-result">onResize: (w: number, h: number) =&gt; void</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 4 of 4 &mdash; preserving `this` with ThisParameterType</div>
+<pre><code>function logged&lt;F extends (...args: any[]) =&gt; any&gt;(fn: F, label: string): F {
+  return function (this: ThisParameterType&lt;F&gt;, ...args: Parameters&lt;F&gt;) {
+    console.log(`[${label}]`, args);
+    return fn.apply(this, args) as ReturnType&lt;F&gt;;
+  } as F;
+}
+
+const obj = {
+  factor: 2,
+  scale: logged(function (this: { factor: number }, n: number) {
+    return n * this.factor;
+  }, "scale"),
+};
+obj.scale(10);   // logs then returns 20; `this` stays typed as { factor: number }</code></pre>
+<div class="output">[scale] [ 10 ]</div>
+  </div>
+
+  <div class="callout-warning">
+    <strong>Common Mistakes:</strong>
+    <div class="mistake">&#10060; Typing the parameter as <code>Function</code> or <code>(...a: any[]) =&gt; any</code> and returning the same &mdash; callers lose all argument and return-type checking on the wrapped function.</div>
+    <div class="correct">&#9989; Use a generic <code>F extends (...args: any[]) =&gt; any</code> and rebuild the signature from <code>Parameters&lt;F&gt;</code>/<code>ReturnType&lt;F&gt;</code>.</div>
+    <div class="mistake">&#10060; Dropping <code>this</code> when wrapping a method, so <code>fn.apply(this, args)</code> is untyped and methods relying on <code>this</code> break.</div>
+    <div class="correct">&#9989; Thread <code>ThisParameterType&lt;F&gt;</code> through the returned function so the receiver type is preserved.</div>
+  </div>
+
+  <div class="key-rules">
+    <strong>Key Rules:</strong>
+    <ul>
+      <li>One generic <code>F extends (...args: any[]) =&gt; any</code> captures the whole signature to preserve.</li>
+      <li><code>Parameters&lt;F&gt;</code>, <code>ReturnType&lt;F&gt;</code>, <code>ThisParameterType&lt;F&gt;</code> rebuild it precisely.</li>
+      <li>The <code>as F</code> cast on the returned closure is the idiomatic escape when the body can&rsquo;t prove the shape.</li>
+      <li>Diverge from <code>F</code> only where the wrapper genuinely changes behavior (debounce &rarr; <code>void</code>).</li>
+    </ul>
+  </div>
+
+  <div class="exercises">
+    <strong>Practice Exercises:</strong>
+    <div class="exercise"><span class="exercise-num">1</span>Write <code>throttle&lt;F&gt;(fn, ms)</code> preserving <code>Parameters&lt;F&gt;</code> and returning <code>void</code>; add a typed <code>cancel()</code> method on the returned function.</div>
+    <div class="exercise"><span class="exercise-num">2</span>Write <code>retry&lt;F extends (...a: any[]) =&gt; Promise&lt;any&gt;&gt;(fn, n)</code> that preserves the async signature and resolves to <code>Awaited&lt;ReturnType&lt;F&gt;&gt;</code>.</div>
+    <div class="exercise"><span class="exercise-num">3</span>Write <code>withCache</code> that adds a <code>.clear()</code> method to a memoized function, typed as an intersection of the call signature and <code>{ clear(): void }</code>.</div>
+  </div>
+
+  <div class="connections"><strong>Connections:</strong> This is the runtime-facing side of <em>Utility Types</em> (<code>Parameters</code>/<code>ReturnType</code>) and <em>this Types</em>; the async variants pull in <em>Recursive Awaited&lt;T&gt;</em> (Day 23). The <code>memoize</code> key constraint connects to <em>Type-Safe Configuration</em> and the method extraction of Concept 2.</div>
+</div>
+
+<!-- Concept 5: Labeled Tuples & Variadics -->
+<div class="concept-card" id="labeled_tuples">
+  <div class="concept-header">
+    <span class="concept-title">5. Labeled Tuple Elements &amp; Variadic Parameter Lists</span>
+    <span class="ttag">Functions</span>
+  </div>
+
+  <div class="why-matters">Function parameter lists <em>are</em> tuples to TypeScript, and since 4.0 those tuples can have <em>labels</em> and a rest element anywhere. That unlocks readable tooltips (<code>(start: number, ...rest: number[])</code>), spreading typed argument tuples into calls, and helpers like <code>partial</code> / <code>bind</code> that slice off leading arguments while keeping the rest exactly typed.</div>
+
+  <div class="explanation">
+    <p>A labeled tuple (<code>[name: string, age: number]</code>) carries names purely for display &mdash; they show up in <code>Parameters&lt;F&gt;</code> tooltips and error messages, making generic plumbing far more legible. Functionally, the label is invisible; structurally the tuple is identical to its unlabeled form.</p>
+    <p>The powerful part is the <em>variadic</em> tuple: a rest element (<code>[head: A, ...tail: B[]]</code>) lets you model &ldquo;a fixed prefix then any number of the rest,&rdquo; and you can spread one tuple type into another. Combined with <code>Parameters&lt;F&gt;</code>, this is how you type partial application: capture some leading args as a tuple, infer the remaining args as <code>...rest</code>, and produce a new function whose parameters are exactly that remainder.</p>
+    <div class="step"><span class="step-num">1</span><div>Parameter lists are tuples; add labels (<code>[x: number]</code>) for readable signatures.</div></div>
+    <div class="step"><span class="step-num">2</span><div>A rest element (<code>[a: A, ...b: B[]]</code>) models a fixed prefix plus variadic tail.</div></div>
+    <div class="step"><span class="step-num">3</span><div>Spread/infer tuples to slice leading args &mdash; the basis of typed <code>partial</code>/<code>bind</code>.</div></div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 1 of 4 &mdash; labels are for humans, structure is the tuple</div>
+<pre><code>type Args = [first: string, second: number, ...rest: boolean[]];
+
+function f(...args: Args): void { /* ... */ }
+f("a", 1);            // ok
+f("a", 1, true, false);   // ok &mdash; rest soaks up the booleans
+// f(1, "a");          // Error: types in the wrong positions
+
+type Names = Parameters&lt;typeof f&gt;;
+// [first: string, second: number, ...rest: boolean[]]  &mdash; labels shown in tooltips</code></pre>
+<div class="type-result">labels surface in Parameters tooltips; checking is positional</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 2 of 4 &mdash; spreading a typed arg tuple into a call</div>
+<pre><code>function makeUser(name: string, age: number, admin: boolean) {
+  return { name, age, admin };
+}
+
+type MakeUserArgs = Parameters&lt;typeof makeUser&gt;;   // [string, number, boolean]
+const args: MakeUserArgs = ["Ada", 36, true];
+
+const u = makeUser(...args);   // spread is type-checked against the tuple
+// const bad: MakeUserArgs = ["Ada", 36];   // Error: missing boolean element</code></pre>
+<div class="type-result">a tuple typed as Parameters spreads safely into the call</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 3 of 4 &mdash; typed partial application</div>
+<pre><code>function partial&lt;Bound extends unknown[], Rest extends unknown[], R&gt;(
+  fn: (...args: [...Bound, ...Rest]) =&gt; R,
+  ...bound: Bound
+): (...rest: Rest) =&gt; R {
+  return (...rest: Rest) =&gt; fn(...bound, ...rest);
+}
+
+const greet = (greeting: string, name: string) =&gt; `${greeting}, ${name}!`;
+const hi = partial(greet, "Hi");   // (name: string) =&gt; string
+hi("Ada");                         // "Hi, Ada!"  &mdash; remaining arg fully typed</code></pre>
+<div class="output">Hi, Ada!</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 4 of 4 &mdash; head/tail and prepending an argument</div>
+<pre><code>type Head&lt;T extends unknown[]&gt; = T extends [infer H, ...unknown[]] ? H : never;
+type Tail&lt;T extends unknown[]&gt; = T extends [unknown, ...infer R] ? R : [];
+
+type A = Head&lt;[string, number, boolean]&gt;;   // string
+type B = Tail&lt;[string, number, boolean]&gt;;   // [number, boolean]
+
+// inject a context argument as the new first parameter of any handler
+type WithCtx&lt;F extends (...a: any[]) =&gt; any, C&gt; =
+  (ctx: C, ...args: Parameters&lt;F&gt;) =&gt; ReturnType&lt;F&gt;;
+
+type Handler = (id: string) =&gt; void;
+type CtxHandler = WithCtx&lt;Handler, { db: unknown }&gt;;
+// (ctx: { db: unknown }, id: string) =&gt; void</code></pre>
+<div class="type-result">A = string; B = [number, boolean]; CtxHandler prepends ctx</div>
+  </div>
+
+  <div class="callout-warning">
+    <strong>Common Mistakes:</strong>
+    <div class="mistake">&#10060; Expecting tuple <em>labels</em> to be enforced by callers &mdash; <code>f("a", 1)</code> never names arguments; labels only improve tooltips and messages.</div>
+    <div class="correct">&#9989; Treat labels as documentation; rely on element <em>positions</em> and types for actual checking.</div>
+    <div class="mistake">&#10060; Hand-spelling <code>bind</code>/<code>partial</code> with two unrelated parameters, losing the link between bound args and the remaining ones.</div>
+    <div class="correct">&#9989; Model the original parameters as <code>[...Bound, ...Rest]</code> so inferring <code>Bound</code> leaves <code>Rest</code> as the exact remaining tuple.</div>
+  </div>
+
+  <div class="key-rules">
+    <strong>Key Rules:</strong>
+    <ul>
+      <li>Parameter lists are tuples; labels (<code>[x: T]</code>) are display-only, positions do the checking.</li>
+      <li>A rest element can sit anywhere: <code>[a: A, ...b: B[]]</code> models prefix + variadic tail.</li>
+      <li>Spreading a <code>Parameters&lt;F&gt;</code>-typed tuple into a call is type-checked element by element.</li>
+      <li><code>[...Bound, ...Rest]</code> inference is the backbone of typed <code>partial</code>/<code>bind</code>/context-injection.</li>
+    </ul>
+  </div>
+
+  <div class="exercises">
+    <strong>Practice Exercises:</strong>
+    <div class="exercise"><span class="exercise-num">1</span>Write <code>curry2</code> for two-arg functions using labeled tuples, and a generic <code>flip&lt;F&gt;</code> that swaps the first two parameters&rsquo; types.</div>
+    <div class="exercise"><span class="exercise-num">2</span>Type a <code>pipe(...fns)</code> where each function&rsquo;s return tuple feeds the next&rsquo;s single parameter; start with a fixed arity of three, then generalize.</div>
+    <div class="exercise"><span class="exercise-num">3</span>Write <code>Last&lt;T extends unknown[]&gt;</code> and <code>Init&lt;T&gt;</code> (everything but the last) using a trailing rest infer, and verify on <code>[1, 2, 3]</code>.</div>
+  </div>
+
+  <div class="connections"><strong>Connections:</strong> Variadic tuple spreads here are the same machinery as <em>Variadic Tuple Types</em> and the tuple-length arithmetic of Day 23; <code>Parameters&lt;F&gt;</code> and the wrapper return shapes tie straight back to Concept 4. Context injection (<code>WithCtx</code>) is the typed form of middleware parameter threading.</div>
+</div>
+
+</div><!-- end topic-section 2 -->
+
+<!-- Footer -->
+<footer class="guide-footer">
+  <h2>All Guides</h2>
+  <ul>
+    <li><a href="typescript-guides/typescript-guide-2026-07-09.html">2026-07-09</a> (Day 36)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-07-08.html">2026-07-08</a> (Day 35)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-07-07.html">2026-07-07</a> (Day 34)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-07-06.html">2026-07-06</a> (Day 33)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-07-05.html">2026-07-05</a> (Day 32)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-07-04.html">2026-07-04</a> (Day 31)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-07-03.html">2026-07-03</a> (Day 30)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-07-02.html">2026-07-02</a> (Day 29)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-07-01.html">2026-07-01</a> (Day 28)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-30.html">2026-06-30</a> (Day 27)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-29.html">2026-06-29</a> (Day 26)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-28.html">2026-06-28</a> (Day 25)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-27.html">2026-06-27</a> (Day 24)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-26.html">2026-06-26</a> (Day 23)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-25.html">2026-06-25</a> (Day 22)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-24.html">2026-06-24</a> (Day 21)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-23.html">2026-06-23</a> (Day 20)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-22.html">2026-06-22</a> (Day 19)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-21.html">2026-06-21</a> (Day 18)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-19.html">2026-06-19</a> (Day 17)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-18.html">2026-06-18</a> (Day 16)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-17.html">2026-06-17</a> (Day 15)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-15.html">2026-06-15</a> (Day 14)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-13.html">2026-06-13</a> (Day 13)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-12.html">2026-06-12</a> (Day 12)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-11.html">2026-06-11</a> (Day 11)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-10.html">2026-06-10</a> (Day 10)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-09.html">2026-06-09</a> (Day 9)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-08.html">2026-06-08</a> (Day 8)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-07.html">2026-06-07</a> (Day 7)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-05.html">2026-06-05</a> (Day 6)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-04.html">2026-06-04</a> (Day 5)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-03.html">2026-06-03</a> (Day 4)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-02.html">2026-06-02</a> (Day 3)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-01.html">2026-06-01</a> (Day 2)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-05-31.html">2026-05-31</a> (Day 1)</li>
+  </ul>
+</footer>
+
+</div><!-- end content -->
+</div><!-- end main -->
+
+<script>
+// Theme toggle
+(function() {
+  var toggle = document.getElementById('themeToggle');
+  var html = document.documentElement;
+  var STORAGE_KEY = 'lc-tsguide-theme';
+
+  function setTheme(theme) {
+    html.setAttribute('data-theme', theme);
+    toggle.textContent = theme === 'dark' ? '\u{1F319}' : '\u{2600}\u{FE0F}';
+    try { localStorage.setItem(STORAGE_KEY, theme); } catch(e) {}
+  }
+
+  try {
+    var saved = localStorage.getItem(STORAGE_KEY);
+    if (saved) setTheme(saved);
+  } catch(e) {}
+
+  toggle.addEventListener('click', function() {
+    var current = html.getAttribute('data-theme') || 'dark';
+    setTheme(current === 'dark' ? 'light' : 'dark');
+  });
+})();
+
+// Sidebar active link tracking
+(function() {
+  var links = document.querySelectorAll('.sidebar-nav a');
+  var sections = [];
+  links.forEach(function(link) {
+    var id = link.getAttribute('href').replace('#', '');
+    var el = document.getElementById(id);
+    if (el) sections.push({ link: link, el: el });
+  });
+
+  function updateActive() {
+    var current = null;
+    var scrollY = window.scrollY + 120;
+    for (var i = sections.length - 1; i >= 0; i--) {
+      if (sections[i].el.offsetTop <= scrollY) {
+        current = sections[i];
+        break;
+      }
+    }
+    links.forEach(function(l) { l.classList.remove('active'); });
+    if (current) current.link.classList.add('active');
+  }
+
+  window.addEventListener('scroll', updateActive);
+  updateActive();
+})();
+</script>
+
+</body>
+</html>

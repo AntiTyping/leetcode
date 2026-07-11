@@ -1,0 +1,1063 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JavaScript Daily Guide — 2026-06-28 (Day 17)</title>
+<style>
+:root {
+  --bg: #0d1117;
+  --surface: #161b22;
+  --surface2: #1c2128;
+  --border: #30363d;
+  --text: #e6edf3;
+  --text-dim: #9da7b3;
+  --accent: #58a6ff;
+  --blue-tint-bg: rgba(56,139,253,0.12);
+  --blue-tint-border: rgba(56,139,253,0.4);
+  --purple-tint-bg: rgba(163,113,247,0.10);
+  --purple-tint-border: rgba(163,113,247,0.4);
+  --warn-bg: rgba(187,128,9,0.12);
+  --warn-border: rgba(187,128,9,0.4);
+  --green: #3fb950;
+  --red: #f85149;
+  --output-bg: #0a0e13;
+}
+[data-theme="light"] {
+  --bg: #ffffff;
+  --surface: #f6f8fa;
+  --surface2: #eef1f4;
+  --border: #d0d7de;
+  --text: #1f2328;
+  --text-dim: #57606a;
+  --accent: #0969da;
+  --blue-tint-bg: rgba(9,105,218,0.08);
+  --blue-tint-border: rgba(9,105,218,0.3);
+  --purple-tint-bg: rgba(130,80,223,0.07);
+  --purple-tint-border: rgba(130,80,223,0.3);
+  --warn-bg: rgba(154,103,0,0.08);
+  --warn-border: rgba(154,103,0,0.3);
+  --green: #1a7f37;
+  --red: #cf222e;
+  --output-bg: #f0f3f6;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+  font-size: 16px;
+  line-height: 1.7;
+  background: var(--bg);
+  color: var(--text);
+}
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+code, pre { font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace; }
+
+/* Sidebar */
+.sidebar {
+  position: fixed;
+  top: 0; left: 0; bottom: 0;
+  width: 300px;
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+  overflow-y: auto;
+  padding: 20px 16px;
+}
+.sidebar h3 {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-dim);
+  margin: 18px 0 8px;
+}
+.sidebar h3:first-child { margin-top: 0; }
+.sidebar a {
+  display: block;
+  padding: 4px 8px;
+  border-radius: 6px;
+  color: var(--text);
+  font-size: 14px;
+}
+.sidebar a:hover { background: var(--surface2); text-decoration: none; }
+.sidebar .review-link { color: #d2a8ff; }
+
+.content {
+  margin-left: 300px;
+  padding: 32px 40px 80px;
+}
+.inner { max-width: 860px; margin: 0 auto; }
+
+/* Header */
+header.main-header { margin-bottom: 24px; }
+header.main-header h1 { font-size: 30px; margin: 0 0 4px; }
+.date { color: var(--text-dim); font-size: 15px; }
+.count-badge {
+  display: inline-block;
+  margin-top: 10px;
+  background: var(--blue-tint-bg);
+  border: 1px solid var(--blue-tint-border);
+  border-radius: 20px;
+  padding: 3px 14px;
+  font-size: 13px;
+  color: var(--accent);
+}
+
+.theme-toggle {
+  position: fixed;
+  top: 16px; right: 20px;
+  z-index: 10;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  color: var(--text);
+  border-radius: 8px;
+  padding: 7px 12px;
+  cursor: pointer;
+  font-size: 13px;
+}
+
+.howto {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 14px 20px;
+  margin-bottom: 28px;
+}
+.howto strong { color: var(--accent); }
+.howto ol { margin: 8px 0 0; padding-left: 20px; }
+
+h2.section-title {
+  font-size: 22px;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 6px;
+  margin-top: 44px;
+}
+.section-sub { color: var(--text-dim); font-size: 14px; margin-top: -6px; }
+
+/* Concept cards */
+.concept-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 22px 24px;
+  margin: 22px 0;
+}
+.review-card {
+  background: var(--purple-tint-bg);
+  border-color: var(--purple-tint-border);
+}
+.concept-header { display: flex; align-items: center; flex-wrap: wrap; gap: 10px; margin-bottom: 8px; }
+.concept-title { font-size: 20px; font-weight: 700; }
+.ttag {
+  background: var(--blue-tint-bg);
+  border: 1px solid var(--blue-tint-border);
+  color: var(--accent);
+  border-radius: 20px;
+  padding: 1px 11px;
+  font-size: 12px;
+  font-weight: 600;
+}
+.days-since {
+  margin-left: auto;
+  font-size: 12px;
+  color: var(--text-dim);
+  font-style: italic;
+}
+.why-matters {
+  background: var(--blue-tint-bg);
+  border-left: 3px solid var(--accent);
+  padding: 8px 14px;
+  border-radius: 0 6px 6px 0;
+  margin: 12px 0;
+  font-size: 15px;
+}
+.explanation { margin: 14px 0; }
+.explanation p { margin: 10px 0; }
+.step {
+  display: inline-block;
+  background: var(--accent);
+  color: var(--bg);
+  font-weight: 700;
+  font-size: 12px;
+  width: 20px; height: 20px;
+  line-height: 20px;
+  text-align: center;
+  border-radius: 50%;
+  margin-right: 6px;
+}
+
+.code-example, .key-pattern { margin: 16px 0; }
+.lang-badge {
+  display: inline-block;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-bottom: none;
+  border-radius: 6px 6px 0 0;
+  padding: 2px 12px;
+  font-size: 11px;
+  color: var(--text-dim);
+  font-weight: 600;
+}
+pre {
+  margin: 0;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 0 8px 8px 8px;
+  padding: 14px 16px;
+  overflow-x: auto;
+  font-size: 13.5px;
+  line-height: 1.55;
+}
+.output {
+  background: var(--output-bg);
+  border: 1px solid var(--border);
+  border-top: none;
+  border-radius: 0 0 8px 8px;
+  padding: 10px 16px;
+  font-family: ui-monospace, monospace;
+  font-size: 13px;
+  color: var(--text-dim);
+  white-space: pre-wrap;
+}
+.output::before {
+  content: "output";
+  display: block;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-dim);
+  opacity: 0.7;
+  margin-bottom: 4px;
+}
+
+.callout-warning {
+  background: var(--warn-bg);
+  border: 1px solid var(--warn-border);
+  border-radius: 8px;
+  padding: 12px 16px;
+  margin: 16px 0;
+}
+.mistake { color: var(--red); margin: 8px 0; font-family: ui-monospace, monospace; font-size: 13px; white-space: pre-wrap; }
+.correct { color: var(--green); margin: 8px 0; font-family: ui-monospace, monospace; font-size: 13px; white-space: pre-wrap; }
+
+.key-rules {
+  background: var(--surface2);
+  border-radius: 8px;
+  padding: 10px 16px;
+  margin: 16px 0;
+}
+.key-rules ul { margin: 6px 0; padding-left: 20px; }
+
+.exercises { margin: 16px 0; }
+.exercise {
+  border: 1px dashed var(--blue-tint-border);
+  border-radius: 8px;
+  padding: 10px 14px 10px 44px;
+  margin: 10px 0 10px 8px;
+  position: relative;
+  background: var(--blue-tint-bg);
+}
+.exercises { counter-reset: ex; }
+.exercise::before {
+  counter-increment: ex;
+  content: counter(ex);
+  position: absolute;
+  left: 12px; top: 10px;
+  background: var(--accent);
+  color: var(--bg);
+  width: 22px; height: 22px;
+  line-height: 22px;
+  text-align: center;
+  border-radius: 50%;
+  font-weight: 700;
+  font-size: 12px;
+}
+.connections {
+  font-size: 14px;
+  color: var(--text-dim);
+  border-top: 1px solid var(--border);
+  padding-top: 10px;
+  margin-top: 16px;
+}
+.connections strong { color: var(--text); }
+.reminder { margin: 10px 0; font-size: 15px; }
+
+footer.guide-footer {
+  margin-left: 300px;
+  padding: 30px 40px 60px;
+  border-top: 1px solid var(--border);
+  color: var(--text-dim);
+}
+footer.guide-footer ul { list-style: none; padding: 0; columns: 2; }
+footer.guide-footer li { margin: 3px 0; }
+.cross-links { margin-top: 20px; }
+.cross-links a { margin-right: 16px; }
+
+@media (max-width: 900px) {
+  .sidebar { display: none; }
+  .content, footer.guide-footer { margin-left: 0; }
+  .content { padding: 24px 18px 60px; }
+}
+</style>
+</head>
+<body data-theme="dark">
+
+<button class="theme-toggle" onclick="toggleTheme()">☀ / ☾ Theme</button>
+
+<!-- ===================== SIDEBAR ===================== -->
+<nav class="sidebar">
+  <h3>Review (Due Today)</h3>
+  <a class="review-link" href="#r-destructuring">Destructuring Advanced</a>
+  <a class="review-link" href="#r-spread">Spread &amp; Rest</a>
+  <a class="review-link" href="#r-abort">AbortController</a>
+  <a class="review-link" href="#r-intl">Intl API</a>
+  <a class="review-link" href="#r-promise">Promise Internals</a>
+  <a class="review-link" href="#r-asyncawait">async/await Patterns</a>
+
+  <h3>ES2025 Additions</h3>
+  <a href="#promise-try">Promise.try</a>
+  <a href="#regexp-escape">RegExp.escape</a>
+  <a href="#uint8-base64">Uint8Array Base64 &amp; Hex</a>
+  <a href="#import-attrs">Import Attributes</a>
+
+  <h3>Internationalization</h3>
+  <a href="#segmenter">Intl.Segmenter</a>
+</nav>
+
+<div class="content">
+<div class="inner">
+
+<header class="main-header">
+  <h1>JavaScript Daily Guide</h1>
+  <div class="date">June 28, 2026 &mdash; Day 17</div>
+  <span class="count-badge">11 concepts &middot; 6 review + 5 new</span>
+</header>
+
+<div class="howto">
+  <strong>How to use this guide</strong>
+  <ol>
+    <li>Start with the <em>Review</em> section. For each card, read the reminder, then attempt the challenge from memory before peeking.</li>
+    <li>For new concepts, read the explanation and run every example yourself (Node 24+ or a current Chrome/Safari console — these are the newest ES2025 features).</li>
+    <li>Study the <em>Common Mistakes</em> — anti-patterns stick better than rules.</li>
+    <li>Attempt the practice exercises <strong>without</strong> looking back at the examples. Solutions are intentionally omitted.</li>
+  </ol>
+</div>
+
+<!-- ===================== REVIEW SECTION ===================== -->
+<h2 class="section-title">🔁 Review Section</h2>
+<p class="section-sub">Six destructuring and async concepts are due for retrieval practice today. Recall first, verify second.</p>
+
+<div class="concept-card review-card" id="r-destructuring">
+  <div class="concept-header">
+    <span class="concept-title">Destructuring Advanced</span>
+    <span class="ttag">Functions &amp; Iteration</span>
+    <span class="days-since">11 days since review</span>
+  </div>
+  <div class="reminder">Destructuring binds by <em>shape</em>. You can nest, supply defaults (applied only when the value is <code>undefined</code>), rename to a new binding, pull a rest of the remaining keys, and even use <em>computed</em> keys. Defaults can reference earlier bindings in the same pattern.</div>
+  <div class="key-pattern">
+    <div class="lang-badge">JavaScript</div>
+<pre><code>const config = { db: { host: 'localhost' }, retries: 0 };
+
+// nested + rename + default (default fires only on undefined, NOT on 0):
+const { db: { host, port = 5432 }, retries = 3, mode = 'dev' } = config;
+console.log(host, port, retries, mode);   // localhost 5432 0 dev
+
+// rest gathers the leftover own-enumerable keys:
+const { db: _db, ...rest } = config;
+console.log(rest);                        // { retries: 0 }
+
+// computed key + default referencing an earlier binding:
+const key = 'x';
+const { [key]: x = 1, y = x * 10 } = { x: 4 };
+console.log(x, y);                        // 4 40</code></pre>
+  </div>
+  <div class="exercises">
+    <strong>Challenge:</strong>
+    <div class="exercise">Write <code>parseArgs(argv, defaults)</code> that destructures a settings object out of <code>argv</code>, applying <code>defaults</code> only for missing keys, renaming <code>o</code>→<code>output</code> and <code>v</code>→<code>verbose</code>, and collecting any unknown flags into a <code>rest</code> object. It must preserve a passed <code>verbose: false</code> and a passed <code>count: 0</code> rather than overriding them with defaults.</div>
+  </div>
+  <div class="callout-warning">
+    <strong>#1 Pitfall:</strong> Assuming defaults apply to any falsy value — they apply <em>only</em> to <code>undefined</code>. A stored <code>null</code>, <code>0</code>, <code>''</code>, or <code>false</code> is kept as-is. Also, destructuring a <code>null</code>/<code>undefined</code> source (<code>const { a } = null</code>) throws a TypeError — guard with <code>= {}</code> on the parameter.
+  </div>
+</div>
+
+<div class="concept-card review-card" id="r-spread">
+  <div class="concept-header">
+    <span class="concept-title">Spread &amp; Rest</span>
+    <span class="ttag">Functions &amp; Iteration</span>
+    <span class="days-since">11 days since review</span>
+  </div>
+  <div class="reminder"><code>...</code> is <em>spread</em> when it expands (in an array/object literal or a call) and <em>rest</em> when it collects (in a parameter list or destructuring pattern). Object spread copies own-enumerable properties; later keys win. Both spreads are <strong>shallow</strong> — nested objects are shared by reference.</div>
+  <div class="key-pattern">
+    <div class="lang-badge">JavaScript</div>
+<pre><code>const base = { a: 1, nested: { k: 1 } };
+const merged = { ...base, b: 2, a: 9 };    // later 'a' overrides earlier
+console.log(merged);                       // { a: 9, nested: { k: 1 }, b: 2 }
+
+merged.nested.k = 99;                       // shallow copy: shared reference!
+console.log(base.nested.k);                // 99  (mutated the original)
+
+function sum(...nums) {                      // rest: gather args into an array
+  return nums.reduce((a, b) => a + b, 0);
+}
+console.log(sum(...[1, 2, 3], 4));         // spread into call -> 10</code></pre>
+  </div>
+  <div class="exercises">
+    <strong>Challenge:</strong>
+    <div class="exercise">Write <code>deepMerge(a, b)</code> that recursively merges two plain-object trees (arrays replaced, not concatenated; scalars from <code>b</code> win) and returns a <em>new</em> object without mutating either input — proving you understand why a single spread is not enough for nested data.</div>
+  </div>
+  <div class="callout-warning">
+    <strong>#1 Pitfall:</strong> Believing <code>{ ...obj }</code> or <code>[...arr]</code> gives you a deep copy. It copies only the top level; nested objects/arrays are still shared. Mutating <code>copy.nested</code> mutates the original. For a true deep clone use <code>structuredClone(obj)</code>.
+  </div>
+</div>
+
+<div class="concept-card review-card" id="r-abort">
+  <div class="concept-header">
+    <span class="concept-title">AbortController &amp; AbortSignal</span>
+    <span class="ttag">Async Mastery</span>
+    <span class="days-since">11 days since review</span>
+  </div>
+  <div class="reminder">An <code>AbortController</code> owns a <code>signal</code> you pass into cancelable operations; calling <code>controller.abort(reason)</code> flips the signal to aborted and fires its <code>'abort'</code> event. Built-ins like <code>fetch</code> reject with an <code>AbortError</code>. <code>AbortSignal.timeout(ms)</code> and <code>AbortSignal.any([...])</code> compose signals.</div>
+  <div class="key-pattern">
+    <div class="lang-badge">JavaScript</div>
+<pre><code>const ac = new AbortController();
+const timer = setTimeout(() => ac.abort(new Error('too slow')), 100);
+
+try {
+  // combine a manual controller with a hard timeout:
+  const res = await fetch('/api/data', {
+    signal: AbortSignal.any([ac.signal, AbortSignal.timeout(5000)]),
+  });
+  clearTimeout(timer);
+  console.log(await res.json());
+} catch (err) {
+  if (err.name === 'AbortError') console.log('cancelled:', ac.signal.reason);
+  else throw err;
+}</code></pre>
+  </div>
+  <div class="exercises">
+    <strong>Challenge:</strong>
+    <div class="exercise">Write <code>abortable(work, signal)</code> where <code>work</code> is a long loop; it should check <code>signal.aborted</code> each iteration and reject with <code>signal.reason</code> as soon as it's set, and also attach an <code>'abort'</code> listener (using <code>{ once: true }</code>) so a mid-iteration abort rejects promptly. Ensure the listener is removed on normal completion to avoid a leak.</div>
+  </div>
+  <div class="callout-warning">
+    <strong>#1 Pitfall:</strong> Reusing one <code>AbortController</code> for multiple sequential operations. Once aborted, a signal stays aborted forever — a fresh operation started with it rejects immediately. Create a new controller per cancelable unit of work, and always check <code>err.name === 'AbortError'</code> so you don't treat cancellation as a real failure.
+  </div>
+</div>
+
+<div class="concept-card review-card" id="r-intl">
+  <div class="concept-header">
+    <span class="concept-title">Intl API</span>
+    <span class="ttag">Functions &amp; Iteration</span>
+    <span class="days-since">9 days since review</span>
+  </div>
+  <div class="reminder">The <code>Intl</code> namespace does locale-aware formatting: <code>NumberFormat</code> (currency, units, compact), <code>DateTimeFormat</code>, <code>Collator</code> (correct sorting), <code>RelativeTimeFormat</code>, and <code>PluralRules</code>. Create the formatter once and reuse it — construction is the expensive part.</div>
+  <div class="key-pattern">
+    <div class="lang-badge">JavaScript</div>
+<pre><code>const money = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' });
+console.log(money.format(1234.5));        // $1,234.50
+
+const rel = new Intl.RelativeTimeFormat('en', { numeric: 'auto' });
+console.log(rel.format(-1, 'day'));       // yesterday
+console.log(rel.format(3, 'hour'));       // in 3 hours
+
+// locale-correct sorting (Collator), not code-unit order:
+const words = ['zebra', 'apple', 'Ähre', 'ábaco'];
+console.log(words.sort(new Intl.Collator('de').compare));
+// [ 'ábaco', 'Ähre', 'apple', 'zebra' ]</code></pre>
+  </div>
+  <div class="exercises">
+    <strong>Challenge:</strong>
+    <div class="exercise">Write <code>formatList(items, locale)</code> using <code>Intl.ListFormat</code> to render <code>['A','B','C']</code> as <code>"A, B, and C"</code> (en) and pick the correct conjunction for another locale. Then add a pluralized count prefix using <code>Intl.PluralRules</code> so 1 item reads "1 item" and 3 read "3 items" — driven by the locale's plural categories, not a hand-written <code>=== 1</code> check.</div>
+  </div>
+  <div class="callout-warning">
+    <strong>#1 Pitfall:</strong> Re-creating an <code>Intl</code> formatter inside a hot loop or on every render. Construction resolves locale data and is comparatively slow; the <code>.format</code> call is cheap. Build the formatter once (module scope or memoized) and reuse it.
+  </div>
+</div>
+
+<div class="concept-card review-card" id="r-promise">
+  <div class="concept-header">
+    <span class="concept-title">Promise Internals</span>
+    <span class="ttag">Async Mastery</span>
+    <span class="days-since">9 days since review</span>
+  </div>
+  <div class="reminder">A promise is a state machine: <em>pending</em> → <em>fulfilled</em> or <em>rejected</em>, settling exactly once. <code>.then</code> returns a <em>new</em> promise, enabling chains; a returned promise is adopted (flattened). The combinators differ: <code>all</code> (fail-fast), <code>allSettled</code> (never rejects), <code>race</code> (first to settle), <code>any</code> (first to fulfill).</div>
+  <div class="key-pattern">
+    <div class="lang-badge">JavaScript</div>
+<pre><code>const tasks = [
+  Promise.resolve(1),
+  Promise.reject(new Error('boom')),
+  Promise.resolve(3),
+];
+
+console.log(await Promise.allSettled(tasks));
+// [ {status:'fulfilled', value:1},
+//   {status:'rejected', reason:Error: boom},
+//   {status:'fulfilled', value:3} ]
+
+// any() resolves with the first FULFILLED, ignoring rejections
+// (rejects with AggregateError only if ALL reject):
+console.log(await Promise.any(tasks));      // 1
+
+// chaining: each then returns a new promise; a returned promise is awaited
+console.log(await Promise.resolve(2).then(x => Promise.resolve(x * 10)));  // 20</code></pre>
+  </div>
+  <div class="exercises">
+    <strong>Challenge:</strong>
+    <div class="exercise">Implement <code>promiseAllLimit(tasks, limit)</code> that runs at most <code>limit</code> of the async <code>tasks</code> (functions returning promises) concurrently, resolves with the results <em>in the original order</em>, and rejects on the first failure like <code>Promise.all</code>. Do it without <code>await</code>ing tasks sequentially — keep the pool saturated.</div>
+  </div>
+  <div class="callout-warning">
+    <strong>#1 Pitfall:</strong> Confusing <code>Promise.all</code> (rejects the moment any input rejects, losing the other results) with <code>Promise.allSettled</code> (waits for all, never rejects). Also: an unhandled rejection in a combinator's input still fires <code>unhandledrejection</code> unless the input promise is observed — attach handlers or use <code>allSettled</code>.
+  </div>
+</div>
+
+<div class="concept-card review-card" id="r-asyncawait">
+  <div class="concept-header">
+    <span class="concept-title">async/await Patterns</span>
+    <span class="ttag">Async Mastery</span>
+    <span class="days-since">9 days since review</span>
+  </div>
+  <div class="reminder"><code>await</code> pauses the async function until the awaited value settles, unwrapping it (or throwing on rejection, catchable with <code>try/catch</code>). Awaiting <em>sequentially</em> serializes independent work needlessly; start the promises first, then await, to run them concurrently.</div>
+  <div class="key-pattern">
+    <div class="lang-badge">JavaScript</div>
+<pre><code>// ❌ SEQUENTIAL: b doesn't start until a finishes (total = tA + tB)
+async function slow() {
+  const a = await fetchA();
+  const b = await fetchB();
+  return [a, b];
+}
+
+// ✅ CONCURRENT: both start now, then await both (total = max(tA, tB))
+async function fast() {
+  const pA = fetchA(), pB = fetchB();      // kick off immediately
+  return [await pA, await pB];
+  // or: return Promise.all([fetchA(), fetchB()]);
+}
+
+// per-item error isolation with allSettled:
+async function fetchAll(urls) {
+  const results = await Promise.allSettled(urls.map(u => fetch(u)));
+  return results.filter(r => r.status === 'fulfilled').map(r => r.value);
+}</code></pre>
+  </div>
+  <div class="exercises">
+    <strong>Challenge:</strong>
+    <div class="exercise">Write <code>retry(fn, { attempts, baseDelay })</code> that calls the async <code>fn</code>, and on rejection retries up to <code>attempts</code> times with exponential backoff (<code>baseDelay * 2**n</code>) plus jitter, rethrowing the last error if all attempts fail. Make it accept an optional <code>signal</code> so an abort stops further retries immediately.</div>
+  </div>
+  <div class="callout-warning">
+    <strong>#1 Pitfall:</strong> <code>await</code>ing inside a <code>for</code>/<code>forEach</code> loop when the iterations are independent — this serializes them. Note <code>array.forEach(async ...)</code> doesn't await at all (it ignores the returned promises), so errors go unhandled. Use <code>for...of</code> + <code>await</code> for true sequencing, or <code>Promise.all(map(...))</code> for concurrency.
+  </div>
+</div>
+
+<!-- ===================== NEW: SECTION 1 ===================== -->
+<h2 class="section-title">🆕 ES2025 Additions</h2>
+<p class="section-sub">Four freshly-standardized features (Node 24+ / current browsers) that close long-standing gaps: safe promise starts, literal-string regex building, and binary/JSON I/O.</p>
+
+<!-- PROMISE.TRY -->
+<div class="concept-card" id="promise-try">
+  <div class="concept-header">
+    <span class="concept-title"><code>Promise.try</code></span>
+    <span class="ttag">Async Mastery</span>
+  </div>
+  <p class="why-matters">When you call a function that <em>might</em> be sync or async — and might throw synchronously before it ever returns a promise — that synchronous throw escapes your <code>.catch</code>/<code>await</code> chain. <code>Promise.try(fn)</code> runs <code>fn</code> and funnels <em>both</em> a synchronous throw and an async rejection into one rejected promise, unifying your error handling.</p>
+
+  <div class="explanation">
+    <p><span class="step">1</span><strong>The problem it solves.</strong> A function that validates its input synchronously can throw before returning. Wrapping the call in <code>Promise.try</code> turns that throw into a rejection you can <code>.catch</code>.</p>
+  </div>
+  <div class="code-example">
+    <div class="lang-badge">JavaScript</div>
+<pre><code>function parse(input) {
+  if (typeof input !== 'string') throw new TypeError('need a string'); // SYNC throw
+  return JSON.parse(input);                                            // may also throw
+}
+
+// ❌ the sync throw is NOT caught by .catch — it explodes at the call site:
+// parse(42).catch(...)   // Uncaught TypeError
+
+// ✅ Promise.try captures sync throws AND async rejections uniformly:
+Promise.try(parse, '{"ok":true}')
+  .then((v) => console.log('ok', v))
+  .catch((e) => console.log('caught', e.message));
+
+Promise.try(parse, 42)
+  .then((v) => console.log('ok', v))
+  .catch((e) => console.log('caught', e.message));</code></pre>
+    <div class="output">ok { ok: true }
+caught need a string</div>
+  </div>
+
+  <div class="explanation">
+    <p><span class="step">2</span><strong>It forwards arguments.</strong> <code>Promise.try(fn, a, b, c)</code> calls <code>fn(a, b, c)</code> — no need for an extra arrow wrapper, and no accidental closure captures.</p>
+  </div>
+  <div class="code-example">
+    <div class="lang-badge">JavaScript</div>
+<pre><code>const compute = (x, y) => x / y;
+
+const result = await Promise.try(compute, 10, 2);   // args passed straight through
+console.log(result);                                 // 5
+
+// works whether the function is sync or async — the caller stays uniform:
+const asyncCompute = async (x, y) => x + y;
+console.log(await Promise.try(asyncCompute, 3, 4));  // 7</code></pre>
+    <div class="output">5
+7</div>
+  </div>
+
+  <div class="explanation">
+    <p><span class="step">3</span><strong>Uniform handling of unknown callbacks.</strong> Ideal for plugin systems / middleware where a user-supplied handler could be either sync or async — you don't know which, and you want one error path.</p>
+  </div>
+  <div class="code-example">
+    <div class="lang-badge">JavaScript</div>
+<pre><code>async function runHandler(handler, req) {
+  // handler might return a value, a promise, or throw synchronously:
+  return Promise.try(handler, req)
+    .catch((err) => ({ error: err.message }));   // one place to normalize failures
+}
+
+console.log(await runHandler(() => 'sync-ok', {}));            // sync-ok
+console.log(await runHandler(async () => 'async-ok', {}));     // async-ok
+console.log(await runHandler(() => { throw new Error('x'); })); // { error: 'x' }</code></pre>
+    <div class="output">sync-ok
+async-ok
+{ error: 'x' }</div>
+  </div>
+
+  <div class="callout-warning">
+    <strong>Common Mistakes:</strong>
+    <div class="mistake">❌ Calling the function first, then wrapping — the sync throw already escaped:
+   Promise.resolve(parse(42))   // parse(42) throws BEFORE resolve runs
+   Promise.try(parse(42))       // same bug: you invoked parse, passed its result</div>
+    <div class="correct">✅ Pass the function and its args to Promise.try; let IT do the call:
+   Promise.try(parse, 42)       // parse is invoked inside the try, throw -> rejection</div>
+  </div>
+
+  <div class="key-rules">
+    <strong>Key Rules:</strong>
+    <ul>
+      <li>Pass a <em>reference</em> plus arguments: <code>Promise.try(fn, ...args)</code>. Never <code>Promise.try(fn())</code> — that calls <code>fn</code> outside the guard.</li>
+      <li>Use it at boundaries where a callback's sync-vs-async nature is unknown, so a synchronous throw becomes a rejection instead of crashing the caller.</li>
+      <li>Inside your own <code>async function</code> you rarely need it — a <code>throw</code> there already becomes a rejection. It shines when invoking <em>external</em> functions.</li>
+    </ul>
+  </div>
+
+  <div class="exercises">
+    <strong>Practice Exercises:</strong>
+    <div class="exercise">Write <code>safeInvoke(fn, ...args)</code> that returns a <code>Promise</code> resolving to <code>{ ok: true, value }</code> or <code>{ ok: false, error }</code>, working correctly whether <code>fn</code> returns a value, returns a promise, or throws synchronously. Use <code>Promise.try</code>.</div>
+    <div class="exercise">Build a <code>pipeline(...steps)</code> runner where each step may be sync or async and may throw synchronously. Run them in order, feeding each result to the next, and reject the whole pipeline on the first failure — using <code>Promise.try</code> so a step's sync throw is handled just like a rejection.</div>
+    <div class="exercise">Show, with a small demo, why <code>Promise.resolve().then(() => risky())</code> and <code>Promise.try(risky)</code> behave the same for error capture but differ in microtask timing — log a marker before each to observe that <code>.then</code> defers to a later microtask while <code>Promise.try</code> invokes <code>risky</code> synchronously.</div>
+  </div>
+
+  <div class="connections">
+    <strong>Connections:</strong> This completes the <a href="#r-promise">Promise</a> combinator family and pairs with <a href="#with-resolvers">Promise.withResolvers</a> for building robust wrappers. The sync-throw-vs-rejection distinction is the same hazard you manage with <a href="#r-asyncawait">try/catch in async functions</a>.
+  </div>
+</div>
+
+<!-- REGEXP.ESCAPE -->
+<div class="concept-card" id="regexp-escape">
+  <div class="concept-header">
+    <span class="concept-title"><code>RegExp.escape</code></span>
+    <span class="ttag">Data &amp; Collections</span>
+  </div>
+  <p class="why-matters">Building a regex from user input (a search box, a config value) has always been a footgun: characters like <code>.</code>, <code>*</code>, or <code>(</code> are interpreted as regex syntax, changing the meaning or throwing. For years everyone copy-pasted the same hand-rolled escape function. ES2025's <code>RegExp.escape</code> is the standard, correct one.</p>
+
+  <div class="explanation">
+    <p><span class="step">1</span><strong>Escape a literal string for embedding in a pattern.</strong> Every regex metacharacter is backslash-escaped so the result matches the input literally.</p>
+  </div>
+  <div class="code-example">
+    <div class="lang-badge">JavaScript</div>
+<pre><code>console.log(RegExp.escape('$5.00 (USD)'));   // \$5\.00\x20\(USD\)
+console.log(RegExp.escape('a+b?'));          // a\+b\?  ... see rule below
+
+// Safe "find literal substring" — user input can't inject regex syntax:
+function highlight(text, query) {
+  const re = new RegExp(RegExp.escape(query), 'gi');
+  return text.replace(re, (m) => `[${m}]`);
+}
+console.log(highlight('cost is $5.00 today', '$5.00'));  // cost is [$5.00] today</code></pre>
+    <div class="output">\$5\.00\x20\(USD\)
+\x61\+b\?
+cost is [$5.00] today</div>
+  </div>
+
+  <div class="explanation">
+    <p><span class="step">2</span><strong>The leading-character rule.</strong> To guarantee the result is safe in <em>every</em> position (even right after another token), <code>RegExp.escape</code> hex-escapes the <strong>first</strong> code point when it's an ASCII letter or digit — that's why <code>'a+b?'</code> above starts with <code>\x61</code> (the code for <code>a</code>) rather than a bare <code>a</code>. Spaces are also encoded (<code>\x20</code>) so escaped strings survive the <code>x</code> (extended) flag.</p>
+  </div>
+  <div class="code-example">
+    <div class="lang-badge">JavaScript</div>
+<pre><code>console.log(RegExp.escape('hello'));   // \x68ello   (first char h -> \x68)
+console.log(RegExp.escape('.hello'));  // \.hello    (first char '.' isn't alnum)
+
+// It always round-trips to a literal match, regardless of the hex escaping:
+const q = 'C++';
+console.log(new RegExp(RegExp.escape(q)).test('I love C++'));   // true</code></pre>
+    <div class="output">\x68ello
+\.hello
+true</div>
+  </div>
+
+  <div class="callout-warning">
+    <strong>Common Mistakes:</strong>
+    <div class="mistake">❌ Interpolating raw user input into a RegExp:
+   new RegExp(userInput)           // 'a.*' matches too much; '(' throws SyntaxError
+   new RegExp(userInput + '$')     // metacharacters change the meaning entirely</div>
+    <div class="correct">✅ Escape first, then build the pattern:
+   new RegExp(RegExp.escape(userInput) + '$')  // matches the literal string, anchored</div>
+  </div>
+
+  <div class="key-rules">
+    <strong>Key Rules:</strong>
+    <ul>
+      <li>Use it whenever a <em>runtime</em> string must be matched literally inside a constructed <code>RegExp</code> — search, replace-all-of-a-word, splitting on a user-chosen delimiter.</li>
+      <li>The output is meant to be <em>embedded in a pattern</em>, not read by humans; the <code>\x</code> escaping of the first alnum char is intentional and harmless.</li>
+      <li>You don't need it for regex <em>literals</em> you write by hand — only for patterns assembled from dynamic strings.</li>
+    </ul>
+  </div>
+
+  <div class="exercises">
+    <strong>Practice Exercises:</strong>
+    <div class="exercise">Write <code>countOccurrences(haystack, needle)</code> that counts non-overlapping literal occurrences of <code>needle</code> (which may contain regex metacharacters like <code>.</code> or <code>*</code>) using a global <code>RegExp</code> built with <code>RegExp.escape</code>. Verify <code>countOccurrences('a.b.c', '.')</code> is <code>2</code>.</div>
+    <div class="exercise">Implement <code>replaceAllLiteral(text, find, replaceWith)</code> using a <code>RegExp.escape</code>-built global regex (do NOT use <code>String.prototype.replaceAll</code> with a string arg). Confirm it treats <code>find = '(x)'</code> as the literal three characters.</div>
+    <div class="exercise">Given a list of forbidden words that may include punctuation, build a single alternation regex (<code>word1|word2|...</code>) by escaping each word with <code>RegExp.escape</code> and joining with <code>|</code>, then test that it flags exact literal matches without regex injection.</div>
+  </div>
+
+  <div class="connections">
+    <strong>Connections:</strong> This is the safe-construction counterpart to the <a href="#">advanced RegExp</a> features (named groups, lookarounds) you studied — those describe patterns you author; <code>RegExp.escape</code> protects patterns you assemble from data. It shares the "escape the interpolation, not the template" philosophy with <a href="#r-intl">tagged-template</a> HTML/SQL builders.
+  </div>
+</div>
+
+<!-- UINT8ARRAY BASE64/HEX -->
+<div class="concept-card" id="uint8-base64">
+  <div class="concept-header">
+    <span class="concept-title">Uint8Array Base64 &amp; Hex</span>
+    <span class="ttag">Data &amp; Collections</span>
+  </div>
+  <p class="why-matters">Converting bytes to/from Base64 or hex was awkward: <code>btoa</code>/<code>atob</code> work on binary <em>strings</em> (and mishandle non-Latin1), and hex needed manual <code>map(...toString(16))</code> loops. ES2025 adds native, correct methods directly on <code>Uint8Array</code>, so encoding binary for JSON, data URLs, or tokens is a one-liner.</p>
+
+  <div class="explanation">
+    <p><span class="step">1</span><strong>Bytes → string and back.</strong> Instance methods <code>.toBase64()</code> / <code>.toHex()</code> encode; static <code>Uint8Array.fromBase64()</code> / <code>fromHex()</code> decode into a fresh array.</p>
+  </div>
+  <div class="code-example">
+    <div class="lang-badge">JavaScript</div>
+<pre><code>const bytes = new Uint8Array([72, 105]);      // 'H', 'i'
+
+console.log(bytes.toBase64());                // 'SGk='
+console.log(bytes.toHex());                   // '4869'
+
+console.log(Uint8Array.fromBase64('SGk='));   // Uint8Array(2) [ 72, 105 ]
+console.log(Uint8Array.fromHex('4869'));      // Uint8Array(2) [ 72, 105 ]</code></pre>
+    <div class="output">SGk=
+4869
+Uint8Array(2) [ 72, 105 ]
+Uint8Array(2) [ 72, 105 ]</div>
+  </div>
+
+  <div class="explanation">
+    <p><span class="step">2</span><strong>Options: URL-safe alphabet &amp; padding.</strong> <code>toBase64</code> accepts <code>{ alphabet: 'base64url', omitPadding: true }</code> — exactly what you want for URL/JWT-style tokens (uses <code>-</code>/<code>_</code> instead of <code>+</code>/<code>/</code> and drops <code>=</code>).</p>
+  </div>
+  <div class="code-example">
+    <div class="lang-badge">JavaScript</div>
+<pre><code>const data = new Uint8Array([251, 255, 191]);
+
+console.log(data.toBase64());                              // '+/+/'
+console.log(data.toBase64({ alphabet: 'base64url' }));     // '-_-_'
+console.log(data.toBase64({ alphabet: 'base64url', omitPadding: true }));  // '-_-_'
+
+// decode must know the alphabet it was encoded with:
+const url = data.toBase64({ alphabet: 'base64url' });
+console.log(Uint8Array.fromBase64(url, { alphabet: 'base64url' }));   // [251,255,191]</code></pre>
+    <div class="output">+/+/
+-_-_
+-_-_
+Uint8Array(3) [ 251, 255, 191 ]</div>
+  </div>
+
+  <div class="explanation">
+    <p><span class="step">3</span><strong>Round-tripping text.</strong> Pair with <code>TextEncoder</code>/<code>TextDecoder</code> to Base64-encode arbitrary Unicode safely — no more <code>btoa</code> Latin1 breakage on emoji or accents.</p>
+  </div>
+  <div class="code-example">
+    <div class="lang-badge">JavaScript</div>
+<pre><code>const text = 'café ☕';
+const encoded = new TextEncoder().encode(text).toBase64();
+console.log(encoded);                                  // 'Y2Fmw6kg4piV'
+
+const decoded = new TextDecoder().decode(Uint8Array.fromBase64(encoded));
+console.log(decoded);                                  // 'café ☕'
+console.log(decoded === text);                         // true</code></pre>
+    <div class="output">Y2Fmw6kg4piV
+café ☕
+true</div>
+  </div>
+
+  <div class="callout-warning">
+    <strong>Common Mistakes:</strong>
+    <div class="mistake">❌ Using btoa/atob for binary or Unicode:
+   btoa('café')                 // InvalidCharacterError (non-Latin1)
+   btoa(String.fromCharCode(...bytes))  // fragile, corrupts high bytes</div>
+    <div class="correct">✅ Encode text to bytes first, then use the typed-array methods:
+   new TextEncoder().encode('café').toBase64()   // correct for any Unicode</div>
+  </div>
+
+  <div class="key-rules">
+    <strong>Key Rules:</strong>
+    <ul>
+      <li><code>.toBase64()</code>/<code>.toHex()</code> are <em>instance</em> methods; <code>fromBase64()</code>/<code>fromHex()</code> are <em>static</em> and return a new <code>Uint8Array</code>.</li>
+      <li>For URLs/tokens use <code>{ alphabet: 'base64url' }</code> on both encode and decode — the alphabets are not interchangeable.</li>
+      <li>These operate on <em>bytes</em>. For text, go through <code>TextEncoder</code>/<code>TextDecoder</code> so multi-byte characters survive.</li>
+    </ul>
+  </div>
+
+  <div class="exercises">
+    <strong>Practice Exercises:</strong>
+    <div class="exercise">Write <code>toDataURL(bytes, mime)</code> that returns <code>data:&lt;mime&gt;;base64,&lt;...&gt;</code> using <code>toBase64()</code>, and <code>fromDataURL(url)</code> that parses it back to a <code>{ mime, bytes }</code> pair with <code>fromBase64</code>.</div>
+    <div class="exercise">Implement <code>hmacToHex(keyBytes, msgBytes)</code>-style formatting: given a <code>Uint8Array</code> digest, produce a lowercase hex string with <code>toHex()</code>, and a verifier that compares two hex strings for equality. Confirm <code>fromHex(toHex(x))</code> round-trips.</div>
+    <div class="exercise">Build a minimal URL-safe token codec: <code>encodeToken(obj)</code> JSON-stringifies, encodes to <code>base64url</code> without padding, and <code>decodeToken(str)</code> reverses it. Verify a token with emoji in it round-trips exactly.</div>
+  </div>
+
+  <div class="connections">
+    <strong>Connections:</strong> These methods build on <a href="#">typed arrays &amp; ArrayBuffer</a> and complement <a href="#">Web Crypto</a> / node:crypto, which produce raw byte digests you then hex- or base64-encode. The Unicode-safe encoding path is the same reason <code>TextEncoder</code> exists instead of <code>btoa</code>.
+  </div>
+</div>
+
+<!-- IMPORT ATTRIBUTES -->
+<div class="concept-card" id="import-attrs">
+  <div class="concept-header">
+    <span class="concept-title">Import Attributes</span>
+    <span class="ttag">Modules &amp; Patterns</span>
+  </div>
+  <p class="why-matters">JavaScript modules can now import non-JS resources — most importantly JSON — with an inline attribute that tells the host how to interpret the file. The <code>with { type: 'json' }</code> syntax is a security feature too: it forces the runtime to treat the resource as data, never executing it as a module.</p>
+
+  <div class="explanation">
+    <p><span class="step">1</span><strong>Static JSON import.</strong> Append <code>with { type: 'json' }</code> to a normal import. The default export is the parsed object.</p>
+  </div>
+  <div class="code-example">
+    <div class="lang-badge">JavaScript</div>
+<pre><code>// config.json  ->  { "name": "app", "version": 3 }
+import config from './config.json' with { type: 'json' };
+
+console.log(config.name, config.version);   // app 3
+// Note: JSON modules have ONLY a default export — no named imports.</code></pre>
+    <div class="output">app 3</div>
+  </div>
+
+  <div class="explanation">
+    <p><span class="step">2</span><strong>Dynamic import with attributes.</strong> The <code>import()</code> function takes a second options argument carrying a <code>with</code> object — handy for loading config lazily or conditionally.</p>
+  </div>
+  <div class="code-example">
+    <div class="lang-badge">JavaScript</div>
+<pre><code>async function loadLocale(lang) {
+  const mod = await import(`./locales/${lang}.json`, {
+    with: { type: 'json' },
+  });
+  return mod.default;                        // the parsed JSON object
+}
+
+const en = await loadLocale('en');
+console.log(en.greeting);                    // e.g. 'Hello'</code></pre>
+    <div class="output">Hello</div>
+  </div>
+
+  <div class="explanation">
+    <p><span class="step">3</span><strong>Why the attribute is required (not optional).</strong> Hosts must know a resource is JSON <em>before</em> fetching, so a server that mislabels a <code>.json</code> URL as JavaScript can't get it executed. Omitting the attribute on a JSON module is an error — this is the evolution of the earlier <code>assert { type: 'json' }</code> syntax, which is now deprecated in favor of <code>with</code>.</p>
+  </div>
+  <div class="code-example">
+    <div class="lang-badge">JavaScript</div>
+<pre><code>// ❌ old, deprecated keyword:
+// import data from './data.json' assert { type: 'json' };
+
+// ✅ current standard keyword:
+import data from './data.json' with { type: 'json' };
+console.log(Array.isArray(data) || typeof data);   // 'object' (or true for arrays)</code></pre>
+    <div class="output">object</div>
+  </div>
+
+  <div class="callout-warning">
+    <strong>Common Mistakes:</strong>
+    <div class="mistake">❌ Importing JSON without the attribute, or expecting named exports:
+   import config from './config.json';              // TypeError: needs type attribute
+   import { version } from './config.json' with { type: 'json' }; // no named exports</div>
+    <div class="correct">✅ Use the attribute and take the default, then destructure in code:
+   import config from './config.json' with { type: 'json' };
+   const { version } = config;</div>
+  </div>
+
+  <div class="key-rules">
+    <strong>Key Rules:</strong>
+    <ul>
+      <li>Syntax is <code>with { type: 'json' }</code> for static imports and <code>{ with: { type: 'json' } }</code> as the 2nd arg to dynamic <code>import()</code>.</li>
+      <li>JSON modules expose a <strong>default export only</strong> (the parsed value); there are no named exports.</li>
+      <li>Prefer <code>with</code> over the deprecated <code>assert</code> keyword. Attributes are validated before execution, which is what makes them a safe way to load data resources.</li>
+    </ul>
+  </div>
+
+  <div class="exercises">
+    <strong>Practice Exercises:</strong>
+    <div class="exercise">Create a <code>package.json</code>-style file and statically import it with <code>with { type: 'json' }</code>; log its <code>name</code> and the number of <code>dependencies</code> keys using <code>Object.keys(...).length</code>.</div>
+    <div class="exercise">Write <code>loadConfig(env)</code> that dynamically imports <code>./config.&lt;env&gt;.json</code> with the import-attributes options object, falling back to <code>./config.default.json</code> if the first import rejects. Return the merged object.</div>
+    <div class="exercise">Explain in a short comment block why <code>with { type: 'json' }</code> is a security boundary: contrast what could happen if a mislabeled endpoint returned executable JS versus data, and why the runtime refuses to run a JSON module as code.</div>
+  </div>
+
+  <div class="connections">
+    <strong>Connections:</strong> Import attributes extend <a href="#">ES modules deep dive</a> (static vs dynamic <code>import()</code>, <code>import.meta</code>) to non-JS resources and feed naturally into <a href="#">module patterns</a> like lazy locale/config loading. The default-only shape mirrors how bundlers have long exposed JSON.
+  </div>
+</div>
+
+<!-- ===================== NEW: SECTION 2 ===================== -->
+<h2 class="section-title">🆕 Internationalization</h2>
+<p class="section-sub">Correctly counting and splitting human text — where "length" and "split on spaces" quietly break.</p>
+
+<!-- INTL.SEGMENTER -->
+<div class="concept-card" id="segmenter">
+  <div class="concept-header">
+    <span class="concept-title"><code>Intl.Segmenter</code></span>
+    <span class="ttag">Internationalization</span>
+  </div>
+  <p class="why-matters"><code>string.length</code> counts UTF-16 code units, and <code>[...string]</code> counts code points — neither matches what a human calls a "character." An emoji flag or a family emoji is one <em>grapheme</em> made of several code points. <code>Intl.Segmenter</code> splits text into locale-correct graphemes, words, or sentences — the right tool for cursor movement, truncation, and word counting.</p>
+
+  <div class="explanation">
+    <p><span class="step">1</span><strong>Grapheme segmentation = real "characters."</strong> Create a segmenter with <code>granularity: 'grapheme'</code> and iterate the result; each entry is a <code>{ segment, index, input }</code> object.</p>
+  </div>
+  <div class="code-example">
+    <div class="lang-badge">JavaScript</div>
+<pre><code>const flag = '🇺🇸';
+console.log(flag.length);          // 4  (two surrogate pairs)
+console.log([...flag].length);     // 2  (two regional-indicator code points)
+
+const seg = new Intl.Segmenter('en', { granularity: 'grapheme' });
+console.log([...seg.segment(flag)].length);   // 1  (one visible character)
+
+const family = '👨‍👩‍👧';
+console.log([...family].length);              // 5  (code points incl. ZWJ)
+console.log([...seg.segment(family)].length); // 1  (one grapheme cluster)</code></pre>
+    <div class="output">4
+2
+1
+5
+1</div>
+  </div>
+
+  <div class="explanation">
+    <p><span class="step">2</span><strong>Word segmentation with <code>isWordLike</code>.</strong> With <code>granularity: 'word'</code>, each segment is flagged <code>isWordLike</code> (letters/numbers) vs. not (spaces, punctuation) — so counting real words is a filter, not a fragile <code>split(/\s+/)</code>.</p>
+  </div>
+  <div class="code-example">
+    <div class="lang-badge">JavaScript</div>
+<pre><code>const words = new Intl.Segmenter('en', { granularity: 'word' });
+const text = "Don't stop—now!";
+
+const wordList = [...words.segment(text)]
+  .filter((s) => s.isWordLike)
+  .map((s) => s.segment);
+
+console.log(wordList);            // [ "Don't", 'stop', 'now' ]
+console.log(wordList.length);    // 3   (apostrophe kept, em-dash/! excluded)</code></pre>
+    <div class="output">[ "Don't", 'stop', 'now' ]
+3</div>
+  </div>
+
+  <div class="explanation">
+    <p><span class="step">3</span><strong>Locale awareness.</strong> Languages without spaces (Japanese, Chinese, Thai) can't be word-split by whitespace at all. A locale-aware segmenter uses the language's rules; sentence granularity likewise respects locale punctuation.</p>
+  </div>
+  <div class="code-example">
+    <div class="lang-badge">JavaScript</div>
+<pre><code>// Japanese has no spaces between words — split() is useless here:
+const ja = new Intl.Segmenter('ja', { granularity: 'word' });
+const parts = [...ja.segment('私は学生です')]
+  .filter((s) => s.isWordLike)
+  .map((s) => s.segment);
+console.log(parts);       // e.g. [ '私', 'は', '学生', 'です' ]  (dictionary-based)
+
+const sentences = new Intl.Segmenter('en', { granularity: 'sentence' });
+console.log([...sentences.segment('Hi there. How are you?')].length);  // 2</code></pre>
+    <div class="output">[ '私', 'は', '学生', 'です' ]
+2</div>
+  </div>
+
+  <div class="callout-warning">
+    <strong>Common Mistakes:</strong>
+    <div class="mistake">❌ Using .length or .slice for user-visible characters:
+   '🇺🇸'.length            // 4, not 1
+   name.slice(0, 5)        // can cut through a surrogate pair -> '�' mojibake
+   text.split(/\s+/)       // wrong word count; breaks for CJK, keeps punctuation</div>
+    <div class="correct">✅ Segment by grapheme/word for anything human-facing:
+   [...new Intl.Segmenter('en',{granularity:'grapheme'}).segment(name)]
+   [...seg.segment(text)].filter(s => s.isWordLike).length   // real word count</div>
+  </div>
+
+  <div class="key-rules">
+    <strong>Key Rules:</strong>
+    <ul>
+      <li><code>granularity</code> is <code>'grapheme'</code> (visible characters), <code>'word'</code>, or <code>'sentence'</code>. Iterate <code>segment(str)</code> to get <code>{ segment, index, isWordLike }</code> entries.</li>
+      <li>Use grapheme segmentation for length limits, truncation, and cursor/backspace logic; word segmentation (with <code>isWordLike</code>) for word counts and search.</li>
+      <li>Always pass a locale — word/sentence boundaries and CJK handling depend on it. Construct the segmenter once and reuse it, like other <code>Intl</code> objects.</li>
+    </ul>
+  </div>
+
+  <div class="exercises">
+    <strong>Practice Exercises:</strong>
+    <div class="exercise">Write <code>graphemeLength(str)</code> and <code>truncateGraphemes(str, n)</code> that count and cut by visible characters. Verify <code>truncateGraphemes('a👩‍👧b', 2)</code> keeps the full family emoji as one character (result <code>'a👩‍👧'</code>), never a broken half.</div>
+    <div class="exercise">Implement <code>wordCount(text, locale)</code> using a word-granularity segmenter and the <code>isWordLike</code> flag. Compare its result against <code>text.split(/\s+/).length</code> on a string with punctuation and an em-dash to show where <code>split</code> is wrong.</div>
+    <div class="exercise">Write <code>reverseGraphemes(str)</code> that reverses a string by grapheme (so flags and emoji stay intact), and demonstrate that a naive <code>[...str].reverse().join('')</code> corrupts a flag emoji while your version does not.</div>
+  </div>
+
+  <div class="connections">
+    <strong>Connections:</strong> <code>Intl.Segmenter</code> completes the <a href="#r-intl">Intl</a> family you reviewed today (formatting → now segmentation). It builds on the UTF-16 vs. code-point vs. grapheme distinction underlying strings and <a href="#">advanced RegExp</a> Unicode mode, and the "construct once, reuse" rule is shared with every other <code>Intl</code> object.
+  </div>
+</div>
+
+</div><!-- /inner -->
+</div><!-- /content -->
+
+<!-- ===================== FOOTER ===================== -->
+<footer class="guide-footer">
+  <h2>All Guides</h2>
+      <ul>
+    <li><a href="javascript-guides/javascript-guide-2026-07-09.html">2026-07-09</a> (Day 28)</li>
+    <li><a href="javascript-guides/javascript-guide-2026-07-08.html">2026-07-08</a> (current &mdash; Day 27)</li>
+    <li><a href="javascript-guides/javascript-guide-2026-07-07.html">2026-07-07</a> (Day 26)</li>
+    <li><a href="javascript-guides/javascript-guide-2026-07-06.html">2026-07-06</a> (Day 25)</li>
+    <li><a href="javascript-guides/javascript-guide-2026-07-05.html">2026-07-05</a> (Day 24)</li>
+    <li><a href="javascript-guides/javascript-guide-2026-07-04.html">2026-07-04</a> (Day 23)</li>
+    <li><a href="javascript-guides/javascript-guide-2026-07-03.html">2026-07-03</a> (Day 22)</li>
+    <li><a href="javascript-guides/javascript-guide-2026-07-02.html">2026-07-02</a> (Day 21)</li>
+    <li><a href="javascript-guides/javascript-guide-2026-07-01.html">2026-07-01</a> (Day 20)</li>
+    <li><a href="javascript-guides/javascript-guide-2026-06-30.html">2026-06-30</a> (Day 19)</li>
+    <li><a href="javascript-guides/javascript-guide-2026-06-29.html">2026-06-29</a> (Day 18)</li>
+    <li><a href="javascript-guides/javascript-guide-2026-06-28.html">2026-06-28</a> (Day 17)</li>
+    <li><a href="javascript-guides/javascript-guide-2026-06-27.html">2026-06-27</a> (Day 16)</li>
+    <li><a href="javascript-guides/javascript-guide-2026-06-26.html">2026-06-26</a> (Day 15)</li>
+    <li><a href="javascript-guides/javascript-guide-2026-06-25.html">2026-06-25</a> (Day 14)</li>
+    <li><a href="javascript-guides/javascript-guide-2026-06-24.html">2026-06-24</a> (Day 13)</li>
+    <li><a href="javascript-guides/javascript-guide-2026-06-23.html">2026-06-23</a> (Day 12)</li>
+    <li><a href="javascript-guides/javascript-guide-2026-06-22.html">2026-06-22</a> (Day 11)</li>
+    <li><a href="javascript-guides/javascript-guide-2026-06-19.html">2026-06-19</a> (Day 10)</li>
+    <li><a href="javascript-guides/javascript-guide-2026-06-18.html">2026-06-18</a> (Day 9)</li>
+    <li><a href="javascript-guides/javascript-guide-2026-06-17.html">2026-06-17</a> (Day 8)</li>
+    <li><a href="javascript-guides/javascript-guide-2026-06-15.html">2026-06-15</a> (Day 7)</li>
+    <li><a href="javascript-guides/javascript-guide-2026-06-13.html">2026-06-13</a> (Day 6)</li>
+    <li><a href="javascript-guides/javascript-guide-2026-06-12.html">2026-06-12</a> (Day 5)</li>
+    <li><a href="javascript-guides/javascript-guide-2026-06-11.html">2026-06-11</a> (Day 4)</li>
+    <li><a href="javascript-guides/javascript-guide-2026-06-10.html">2026-06-10</a> (Day 3)</li>
+    <li><a href="javascript-guides/javascript-guide-2026-06-09.html">2026-06-09</a> (Day 2)</li>
+    <li><a href="javascript-guides/javascript-guide-2026-06-08.html">2026-06-08</a> (Day 1)</li>
+  </ul>
+
+  <div class="cross-links">
+    <strong>Other Guides</strong>
+    <a href="guide.html">LeetCode Guide</a>
+    <a href="lang-guide.html">Multi-Language</a>
+    <a href="python-guide.html">Python</a>
+    <a href="typescript-guide.html">TypeScript</a>
+  </div>
+</footer>
+
+<script>
+function toggleTheme() {
+  const b = document.body;
+  const next = b.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+  b.setAttribute('data-theme', next);
+  localStorage.setItem('lc-jsguide-theme', next);
+}
+(function () {
+  const saved = localStorage.getItem('lc-jsguide-theme') || 'dark';
+  document.body.setAttribute('data-theme', saved);
+})();
+</script>
+</body>
+</html>

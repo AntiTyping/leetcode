@@ -1,0 +1,1704 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Go Study Guide &mdash; Day 29 (2026-07-04)</title>
+<style>
+/* ===== CSS Variables ===== */
+:root {
+  --bg: #0d1117;
+  --surface1: #161b22;
+  --surface2: #1c2129;
+  --border: #30363d;
+  --text: #e6edf3;
+  --muted: #8b949e;
+  --accent: #58a6ff;
+  --accent-dim: #1f6feb33;
+  --green: #3fb950;
+  --green-dim: #23863633;
+  --yellow: #d29922;
+  --yellow-dim: #d2992233;
+  --red: #f85149;
+  --red-dim: #f8514933;
+  --purple: #bc8cff;
+  --purple-dim: #bc8cff22;
+  --orange: #f0883e;
+  --orange-dim: #f0883e22;
+  --code-bg: #0d1117;
+  --sidebar-w: 300px;
+  --font-mono: 'SF Mono', 'Cascadia Code', 'Fira Code', Consolas, monospace;
+  --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+  --radius: 8px;
+  --shadow: 0 1px 3px rgba(0,0,0,0.4);
+}
+
+[data-theme="light"] {
+  --bg: #ffffff;
+  --surface1: #f6f8fa;
+  --surface2: #f0f3f6;
+  --border: #d0d7de;
+  --text: #1f2328;
+  --muted: #656d76;
+  --accent: #0969da;
+  --accent-dim: #0969da1a;
+  --green: #1a7f37;
+  --green-dim: #1a7f3718;
+  --yellow: #9a6700;
+  --yellow-dim: #9a670018;
+  --red: #cf222e;
+  --red-dim: #cf222e18;
+  --purple: #8250df;
+  --purple-dim: #8250df18;
+  --orange: #bc4c00;
+  --orange-dim: #bc4c0018;
+  --code-bg: #f6f8fa;
+  --shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+/* ===== Reset & Base ===== */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: var(--font-sans);
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.7;
+  font-size: 16px;
+  transition: background 0.2s, color 0.2s;
+}
+
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+/* ===== Theme Toggle ===== */
+#theme-toggle {
+  position: fixed;
+  top: 16px;
+  right: 20px;
+  z-index: 1000;
+  background: var(--surface1);
+  border: 1px solid var(--border);
+  color: var(--text);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+  box-shadow: var(--shadow);
+}
+#theme-toggle:hover { background: var(--surface2); border-color: var(--accent); }
+
+/* ===== Sidebar ===== */
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: var(--sidebar-w);
+  height: 100vh;
+  background: var(--surface1);
+  border-right: 1px solid var(--border);
+  overflow-y: auto;
+  padding: 20px 0;
+  z-index: 100;
+  transition: transform 0.3s;
+}
+
+.sidebar-header {
+  padding: 0 20px 16px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 12px;
+}
+
+.sidebar-header h2 {
+  font-size: 16px;
+  color: var(--text);
+  font-weight: 700;
+}
+
+.sidebar-header .subtitle {
+  font-size: 12px;
+  color: var(--muted);
+  margin-top: 2px;
+}
+
+.sidebar-section {
+  margin-bottom: 8px;
+}
+
+.sidebar-section-title {
+  padding: 6px 20px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+}
+
+.sidebar-link {
+  display: block;
+  padding: 5px 20px 5px 28px;
+  font-size: 13px;
+  color: var(--muted);
+  text-decoration: none;
+  border-left: 2px solid transparent;
+  transition: all 0.15s;
+  line-height: 1.4;
+}
+
+.sidebar-link:hover {
+  color: var(--text);
+  background: var(--accent-dim);
+  border-left-color: var(--accent);
+  text-decoration: none;
+}
+
+.sidebar-link.active {
+  color: var(--accent);
+  border-left-color: var(--accent);
+  background: var(--accent-dim);
+}
+
+/* ===== Mobile sidebar toggle ===== */
+#sidebar-toggle {
+  display: none;
+  position: fixed;
+  top: 16px;
+  left: 16px;
+  z-index: 200;
+  background: var(--surface1);
+  border: 1px solid var(--border);
+  color: var(--text);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 20px;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--shadow);
+}
+
+/* ===== Main Content ===== */
+.main {
+  margin-left: var(--sidebar-w);
+  padding: 40px 48px 80px;
+  max-width: calc(860px + var(--sidebar-w) + 96px);
+}
+
+.page-title {
+  font-size: 32px;
+  font-weight: 800;
+  margin-bottom: 4px;
+  color: var(--text);
+}
+
+.page-subtitle {
+  font-size: 15px;
+  color: var(--muted);
+  margin-bottom: 36px;
+}
+
+/* ===== Sections ===== */
+.section {
+  margin-bottom: 48px;
+}
+
+.section-label {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  padding: 3px 10px;
+  border-radius: 4px;
+  margin-bottom: 12px;
+}
+
+.section-label.review { background: var(--yellow-dim); color: var(--yellow); }
+.section-label.new { background: var(--green-dim); color: var(--green); }
+
+.section-title {
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 24px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--border);
+}
+
+/* ===== How To Use ===== */
+.how-to-use {
+  background: var(--surface1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px 24px;
+  margin-bottom: 36px;
+}
+
+.how-to-use h3 {
+  font-size: 16px;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.how-to-use ul {
+  padding-left: 22px;
+  margin: 0;
+}
+
+.how-to-use li {
+  font-size: 14px;
+  color: var(--muted);
+  margin-bottom: 4px;
+}
+
+/* ===== Concept Cards ===== */
+.concept {
+  background: var(--surface1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 28px;
+  margin-bottom: 28px;
+  box-shadow: var(--shadow);
+}
+
+.concept-header {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  margin-bottom: 6px;
+  flex-wrap: wrap;
+}
+
+.concept h3 {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.concept-meta {
+  font-size: 12px;
+  color: var(--muted);
+  background: var(--surface2);
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
+.concept h4 {
+  font-size: 15px;
+  font-weight: 600;
+  margin: 20px 0 8px;
+  color: var(--text);
+}
+
+.concept p, .concept li {
+  color: var(--text);
+  line-height: 1.7;
+}
+
+.concept ul, .concept ol {
+  padding-left: 22px;
+  margin: 8px 0;
+}
+
+.concept li {
+  margin-bottom: 4px;
+}
+
+.concept .why-matters {
+  font-style: italic;
+  color: var(--muted);
+  margin: 6px 0 16px;
+  font-size: 15px;
+}
+
+/* ===== Code Blocks ===== */
+pre {
+  background: var(--code-bg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 16px 18px;
+  overflow-x: auto;
+  margin: 10px 0 14px;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--text);
+  position: relative;
+}
+
+pre::after {
+  content: 'Go';
+  position: absolute;
+  top: 6px;
+  right: 10px;
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  opacity: 0.6;
+}
+
+code {
+  font-family: var(--font-mono);
+  font-size: 0.9em;
+}
+
+:not(pre) > code {
+  background: var(--surface2);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.88em;
+}
+
+/* ===== Output Blocks ===== */
+.output {
+  background: var(--green-dim);
+  border: 1px solid var(--green);
+  border-radius: 6px;
+  padding: 12px 16px;
+  margin: 6px 0 14px;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--text);
+  white-space: pre-wrap;
+}
+
+.output::after { content: none; }
+
+.output-label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--green);
+  margin-bottom: 4px;
+}
+
+/* ===== Good/Bad Examples ===== */
+.do-dont {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin: 10px 0;
+}
+
+.do-box, .dont-box {
+  border-radius: 6px;
+  padding: 14px;
+  border: 1px solid;
+}
+
+.do-box {
+  background: var(--green-dim);
+  border-color: var(--green);
+}
+
+.dont-box {
+  background: var(--red-dim);
+  border-color: var(--red);
+}
+
+.do-box .label, .dont-box .label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 6px;
+}
+
+.do-box .label { color: var(--green); }
+.dont-box .label { color: var(--red); }
+
+.do-box pre, .dont-box pre {
+  margin: 0;
+  border: none;
+  background: transparent;
+  padding: 0;
+  font-size: 12.5px;
+}
+
+.do-box pre::after, .dont-box pre::after { content: none; }
+
+/* ===== Key Rules ===== */
+.rules-list {
+  list-style: none;
+  padding: 0;
+  margin: 8px 0;
+}
+
+.rules-list li {
+  padding: 6px 0 6px 24px;
+  position: relative;
+}
+
+.rules-list li::before {
+  content: "\2192";
+  position: absolute;
+  left: 2px;
+  color: var(--accent);
+  font-weight: 700;
+}
+
+/* ===== Exercises ===== */
+.exercise {
+  background: var(--purple-dim);
+  border: 1px solid var(--purple);
+  border-radius: 6px;
+  padding: 14px 18px;
+  margin: 8px 0;
+}
+
+.exercise .exercise-label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--purple);
+  margin-bottom: 4px;
+}
+
+/* ===== Pitfall ===== */
+.pitfall {
+  background: var(--red-dim);
+  border-left: 3px solid var(--red);
+  border-radius: 0 6px 6px 0;
+  padding: 10px 14px;
+  margin: 10px 0;
+  font-size: 14px;
+}
+
+.pitfall strong {
+  color: var(--red);
+}
+
+/* ===== Connection ===== */
+.connection {
+  background: var(--accent-dim);
+  border-left: 3px solid var(--accent);
+  border-radius: 0 6px 6px 0;
+  padding: 10px 14px;
+  margin: 10px 0;
+  font-size: 14px;
+  color: var(--muted);
+}
+
+/* ===== Review Cards ===== */
+.review-card {
+  background: var(--surface1);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--purple);
+  border-radius: var(--radius);
+  padding: 20px 24px;
+  margin-bottom: 16px;
+  box-shadow: var(--shadow);
+}
+
+.review-card .review-header {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  margin-bottom: 6px;
+  flex-wrap: wrap;
+}
+
+.review-card h3 {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.review-card .review-meta {
+  font-size: 12px;
+  color: var(--muted);
+  background: var(--surface2);
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
+.review-card h4 {
+  font-size: 14px;
+  font-weight: 600;
+  margin: 14px 0 6px;
+  color: var(--text);
+}
+
+.review-card p, .review-card li {
+  color: var(--text);
+  line-height: 1.6;
+  font-size: 14px;
+}
+
+.review-card pre {
+  font-size: 12.5px;
+  padding: 12px 14px;
+  margin: 6px 0 10px;
+}
+
+.review-card .pitfall {
+  font-size: 13px;
+  padding: 8px 12px;
+}
+
+/* ===== Topic Badge ===== */
+.topic-badge {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 2px 8px;
+  border-radius: 4px;
+  background: var(--accent-dim);
+  color: var(--accent);
+  margin-left: 4px;
+}
+
+/* ===== Footer ===== */
+.footer {
+  margin-top: 60px;
+  padding: 24px 0;
+  border-top: 1px solid var(--border);
+}
+
+.footer h4 {
+  font-size: 14px;
+  color: var(--muted);
+  margin-bottom: 10px;
+}
+
+.footer ul {
+  list-style: none;
+  padding: 0;
+}
+
+.footer li {
+  margin-bottom: 4px;
+  font-size: 14px;
+}
+
+.footer li a { color: var(--accent); }
+.footer .current { color: var(--green); font-weight: 600; }
+
+/* ===== Bash code blocks ===== */
+pre.bash::after {
+  content: 'Bash';
+}
+
+/* ===== Responsive ===== */
+@media (max-width: 900px) {
+  .sidebar {
+    transform: translateX(-100%);
+  }
+  .sidebar.open {
+    transform: translateX(0);
+    box-shadow: 4px 0 20px rgba(0,0,0,0.5);
+  }
+  #sidebar-toggle {
+    display: flex;
+  }
+  .main {
+    margin-left: 0;
+    padding: 60px 20px 60px;
+    max-width: 100%;
+  }
+  .do-dont {
+    grid-template-columns: 1fr;
+  }
+  #theme-toggle {
+    right: 14px;
+    top: 16px;
+  }
+}
+</style>
+</head>
+<body>
+
+<!-- Theme Toggle -->
+<button id="theme-toggle" aria-label="Toggle theme" title="Toggle light/dark theme">&#9789;</button>
+
+<!-- Mobile Sidebar Toggle -->
+<button id="sidebar-toggle" aria-label="Toggle sidebar">&#9776;</button>
+
+<!-- Sidebar -->
+<nav class="sidebar" id="sidebar">
+  <div class="sidebar-header">
+    <h2>Go Guide</h2>
+    <div class="subtitle">Day 29 &mdash; 2026-07-04</div>
+  </div>
+
+  <div class="sidebar-section">
+    <div class="sidebar-section-title">Review (6 concepts)</div>
+    <a href="#tcp_servers" class="sidebar-link">TCP Servers</a>
+    <a href="#configuration" class="sidebar-link">Configuration &amp; envconfig</a>
+    <a href="#structured_logging" class="sidebar-link">Structured Logging (slog)</a>
+    <a href="#memory_management" class="sidebar-link">Memory Management</a>
+    <a href="#slog_structured" class="sidebar-link">slog: Attrs &amp; Groups</a>
+    <a href="#sync_pool" class="sidebar-link">sync.Pool</a>
+  </div>
+
+  <div class="sidebar-section">
+    <div class="sidebar-section-title">Context &amp; Lifecycle (2)</div>
+    <a href="#context_afterfunc" class="sidebar-link">context.AfterFunc / WithoutCancel</a>
+    <a href="#signal_notifycontext" class="sidebar-link">signal.NotifyContext</a>
+  </div>
+
+  <div class="sidebar-section">
+    <div class="sidebar-section-title">Runtime Introspection &amp; Text (3)</div>
+    <a href="#expvar_package" class="sidebar-link">expvar</a>
+    <a href="#runtime_metrics" class="sidebar-link">runtime/metrics</a>
+    <a href="#text_scanner" class="sidebar-link">text/scanner</a>
+  </div>
+</nav>
+
+<!-- Main Content -->
+<div class="main">
+
+<h1 class="page-title">Go Daily Guide &mdash; 2026-07-04 (Day 29)</h1>
+<p class="page-subtitle">Day 29 &mdash; Saturday, July 4, 2026 &bull; 11 concepts (6 review + 5 new)</p>
+
+<!-- How to Use -->
+<div class="how-to-use">
+  <h3>How to Use This Guide</h3>
+  <ul>
+    <li>Start with the <strong>Review</strong> section &mdash; try to recall each concept before reading the refresher</li>
+    <li>Complete the challenge exercise for each review card without looking back at previous days</li>
+    <li>Then work through the <strong>New Concepts</strong> section, typing out every code example yourself</li>
+    <li>Pay special attention to the common mistakes sections (they highlight real Go gotchas)</li>
+    <li>Complete the exercises at the bottom of each concept without looking at solutions</li>
+    <li>Use <code>go run main.go</code> to test your code locally, or use the <a href="https://go.dev/play/" target="_blank">Go Playground</a></li>
+  </ul>
+</div>
+
+<!-- ============================================================ -->
+<!-- REVIEW SECTION -->
+<!-- ============================================================ -->
+<div class="section">
+  <span class="section-label review">Review</span>
+  <h2 class="section-title">Spaced Repetition Review &mdash; 6 Concepts</h2>
+
+  <!-- Review 1: TCP Servers -->
+  <div class="review-card" id="tcp_servers">
+    <div class="review-header">
+      <h3>TCP Servers</h3>
+      <span class="review-meta">I/O &amp; Networking &bull; overdue (13d) &bull; rep 1</span>
+    </div>
+
+    <h4>Quick Reminder</h4>
+    <p>A raw TCP server listens with <code>net.Listen("tcp", addr)</code>, then loops on <code>ln.Accept()</code>, handing each <code>net.Conn</code> to its own goroutine. A <code>net.Conn</code> is both an <code>io.Reader</code> and <code>io.Writer</code>, so <code>bufio</code>, <code>io.Copy</code>, and encoders all compose with it. Set deadlines (<code>SetReadDeadline</code>) to avoid stuck connections, and close the listener to unblock <code>Accept</code> during graceful shutdown.</p>
+
+    <h4>Key Pattern</h4>
+<pre>package main
+
+import (
+    "bufio"
+    "fmt"
+    "net"
+    "strings"
+)
+
+func main() {
+    ln, err := net.Listen("tcp", "127.0.0.1:0") // :0 = any free port
+    if err != nil {
+        panic(err)
+    }
+    defer ln.Close()
+
+    for {
+        conn, err := ln.Accept()
+        if err != nil {
+            return // listener closed
+        }
+        go handle(conn) // one goroutine per connection
+    }
+}
+
+func handle(conn net.Conn) {
+    defer conn.Close()
+    sc := bufio.NewScanner(conn)
+    for sc.Scan() { // read line by line
+        line := sc.Text()
+        fmt.Fprintf(conn, "echo: %s\n", strings.ToUpper(line))
+    }
+}</pre>
+
+    <div class="exercise">
+      <div class="exercise-label">Challenge Exercise</div>
+      <p>Build a line-based chat broadcast server: keep a <code>map[net.Conn]struct{}</code> guarded by a <code>sync.Mutex</code>, and when any client sends a line, fan it out to every other connection. Add a per-connection read deadline that drops idle clients after 30s, and implement graceful shutdown: on <code>SIGINT</code> close the listener, then close all live connections. Explain why writing to a slow client can block the broadcast loop and how a per-connection buffered send channel fixes it.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>#1 Pitfall:</strong> Forgetting <code>defer conn.Close()</code> in the handler (leaking file descriptors), or blocking the accept loop with per-connection work instead of launching a goroutine. Also, a shared <code>net.Conn</code> is <em>not</em> safe for concurrent writes from multiple goroutines &mdash; serialize writes through a single owner goroutine or a mutex.
+    </div>
+  </div>
+
+  <!-- Review 2: Configuration -->
+  <div class="review-card" id="configuration">
+    <div class="review-header">
+      <h3>Configuration: Environment Variables &amp; envconfig</h3>
+      <span class="review-meta">Production Go &bull; overdue (13d) &bull; rep 1</span>
+    </div>
+
+    <h4>Quick Reminder</h4>
+    <p>12-factor apps read config from the environment, not baked-in files. <code>os.Getenv</code> returns <code>""</code> for a missing key; <code>os.LookupEnv</code> distinguishes "unset" from "empty". Libraries like <code>kelseyhightower/envconfig</code> map env vars onto a struct via tags, with defaults, required fields, and type parsing (durations, ints, bools) for free. Load config once at startup into an immutable struct and pass it down &mdash; don't call <code>os.Getenv</code> scattered through the codebase.</p>
+
+    <h4>Key Pattern</h4>
+<pre>package main
+
+import (
+    "fmt"
+    "time"
+
+    "github.com/kelseyhightower/envconfig"
+)
+
+type Config struct {
+    Port     int           `envconfig:"PORT" default:"8080"`
+    LogLevel string        `envconfig:"LOG_LEVEL" default:"info"`
+    Timeout  time.Duration `envconfig:"TIMEOUT" default:"5s"`
+    DBURL    string        `envconfig:"DB_URL" required:"true"`
+}
+
+func main() {
+    var cfg Config
+    // Reads APP_PORT, APP_LOG_LEVEL, ... (prefix "APP").
+    if err := envconfig.Process("APP", &amp;cfg); err != nil {
+        panic(err) // e.g. required DB_URL missing
+    }
+    fmt.Printf("%+v\n", cfg)
+}</pre>
+
+    <div class="exercise">
+      <div class="exercise-label">Challenge Exercise</div>
+      <p>Without any third-party library, write a <code>Load() (Config, error)</code> that reads <code>PORT</code> (int, default 8080), <code>DEBUG</code> (bool), and <code>TIMEOUT</code> (a <code>time.Duration</code> parsed with <code>time.ParseDuration</code>), returning a clear error naming the offending variable on a parse failure. Make missing-but-defaulted fields succeed while a required <code>DATABASE_URL</code> errors when unset (use <code>os.LookupEnv</code>). Then explain why loading config into one immutable struct at startup beats calling <code>os.Getenv</code> throughout the code, especially for testability.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>#1 Pitfall:</strong> Using <code>os.Getenv</code> and treating <code>""</code> as "unset" &mdash; an explicitly empty value is indistinguishable, so a deliberately blank setting silently falls back to a default. Use <code>os.LookupEnv</code> when the distinction matters. Also avoid re-reading env vars at request time; parse once at boot so a misconfiguration fails fast rather than mid-flight.
+    </div>
+  </div>
+
+  <!-- Review 3: Structured Logging -->
+  <div class="review-card" id="structured_logging">
+    <div class="review-header">
+      <h3>Structured Logging with log/slog</h3>
+      <span class="review-meta">Production Go &bull; overdue (12d) &bull; rep 1</span>
+    </div>
+
+    <h4>Quick Reminder</h4>
+    <p><code>log/slog</code> (Go 1.21) is the standard structured logger: log <em>key/value attributes</em>, not formatted strings, so machines can parse them. A <code>*slog.Logger</code> writes through a <code>slog.Handler</code> &mdash; <code>slog.NewJSONHandler</code> for production, <code>slog.NewTextHandler</code> for humans. Handlers carry a level threshold (via <code>slog.HandlerOptions{Level: ...}</code>). Set a process-wide default with <code>slog.SetDefault</code> so the top-level <code>slog.Info</code> helpers use it.</p>
+
+    <h4>Key Pattern</h4>
+<pre>package main
+
+import (
+    "log/slog"
+    "os"
+)
+
+func main() {
+    // JSON handler at Info level, to stderr.
+    h := slog.NewJSONHandler(os.Stderr, &amp;slog.HandlerOptions{
+        Level: slog.LevelInfo,
+    })
+    logger := slog.New(h)
+    slog.SetDefault(logger) // package-level slog.* now use it
+
+    slog.Info("server started",
+        "port", 8080,
+        "env", "prod",
+    )
+    slog.Debug("not shown") // below threshold
+    slog.Error("db failed", "err", "timeout", "retry", 3)
+}</pre>
+    <div class="output-label">Output (stderr, JSON)</div>
+    <div class="output">{"time":"2026-07-04T09:00:00Z","level":"INFO","msg":"server started","port":8080,"env":"prod"}
+{"time":"2026-07-04T09:00:00Z","level":"ERROR","msg":"db failed","err":"timeout","retry":3}</div>
+
+    <div class="exercise">
+      <div class="exercise-label">Challenge Exercise</div>
+      <p>Configure a logger whose level is driven by a <code>LOG_LEVEL</code> env var (map <code>debug/info/warn/error</code> to the <code>slog.Level</code> constants) using a <code>*slog.LevelVar</code> so you can change it at runtime. Log the same event through both a JSON and a Text handler and compare the output. Then write a helper that logs the duration of an operation as a <code>time.Duration</code> attribute, and explain why passing key/value pairs beats <code>fmt.Sprintf</code> into a single message string for downstream log processors.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>#1 Pitfall:</strong> Passing an odd number of loose arguments (<code>slog.Info("msg", "key")</code> with no value) &mdash; slog logs a <code>!BADKEY</code> entry rather than failing. Prefer the typed <code>slog.Int</code>/<code>slog.String</code>/<code>slog.Any</code> attribute constructors in hot or important paths to keep pairs balanced and avoid per-call allocation of the interface slice.
+    </div>
+  </div>
+
+  <!-- Review 4: Memory Management -->
+  <div class="review-card" id="memory_management">
+    <div class="review-header">
+      <h3>Memory Management: Escape Analysis &amp; sync.Pool</h3>
+      <span class="review-meta">Production Go &bull; overdue (12d) &bull; rep 1</span>
+    </div>
+
+    <h4>Quick Reminder</h4>
+    <p>The Go compiler decides via <em>escape analysis</em> whether a value can live on the cheap, per-goroutine <strong>stack</strong> or must be heap-allocated (adding GC pressure). A value "escapes" when its lifetime outlives the function &mdash; returned by pointer, stored in an interface, captured by a closure, or sent on a channel. Inspect decisions with <code>go build -gcflags=-m</code>. When you can't avoid heap churn in a hot path, <code>sync.Pool</code> recycles objects across calls.</p>
+
+    <h4>Key Pattern</h4>
+<pre>package main
+
+import "fmt"
+
+// x does NOT escape: value copied out, stays on stack.
+func stackAlloc() int {
+    x := 42
+    return x
+}
+
+// p ESCAPES: address returned, must live on the heap.
+func heapAlloc() *int {
+    p := new(int)
+    *p = 42
+    return p
+}
+
+func main() {
+    fmt.Println(stackAlloc(), *heapAlloc())
+}
+// $ go build -gcflags='-m' main.go
+//   ./main.go:12:10: new(int) escapes to heap
+</pre>
+
+    <div class="exercise">
+      <div class="exercise-label">Challenge Exercise</div>
+      <p>Write two versions of a function that builds a 1&nbsp;KB byte buffer per call: one that allocates a fresh <code>make([]byte, 1024)</code> each time, and one that borrows from a <code>sync.Pool</code> and <code>Put</code>s it back (resetting length with <code>buf[:0]</code>). Benchmark both with <code>-benchmem</code> and report <code>allocs/op</code>. Run <code>go build -gcflags=-m</code> on a function that returns a pointer versus a value and explain each escape decision. Finally, describe one case where a closure capturing a large struct forces a heap allocation you didn't expect.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>#1 Pitfall:</strong> Reaching for <code>sync.Pool</code> everywhere &mdash; it only helps for short-lived, frequently-allocated objects in a genuine hot path, and pooled items can be reclaimed by the GC at any time (never assume something is still there). Micro-optimizing before profiling with <code>-gcflags=-m</code> and <code>-benchmem</code> usually costs readability for no measurable win.
+    </div>
+  </div>
+
+  <!-- Review 5: slog Attrs & Groups -->
+  <div class="review-card" id="slog_structured">
+    <div class="review-header">
+      <h3>Structured Logging: Attrs, With &amp; Groups</h3>
+      <span class="review-meta">Production Go &bull; overdue (11d) &bull; rep 1</span>
+    </div>
+
+    <h4>Quick Reminder</h4>
+    <p>Beyond basic <code>slog</code> setup, the power is in <em>contextual</em> logging: <code>logger.With("request_id", id)</code> returns a child logger that stamps that attribute on every subsequent line. <code>slog.Group</code> nests related attributes under one key. Use <code>logger.InfoContext(ctx, ...)</code> so a custom handler can pull values (like a trace ID) out of the <code>context.Context</code>. Typed constructors (<code>slog.String</code>, <code>slog.Int</code>, <code>slog.Duration</code>) avoid the loose key/value slice.</p>
+
+    <h4>Key Pattern</h4>
+<pre>package main
+
+import (
+    "log/slog"
+    "os"
+)
+
+func main() {
+    base := slog.New(slog.NewJSONHandler(os.Stdout, nil))
+
+    // Child logger carries request_id on every line.
+    reqLog := base.With("request_id", "abc-123")
+
+    reqLog.Info("handling",
+        slog.Group("http",
+            slog.String("method", "GET"),
+            slog.Int("status", 200),
+        ),
+    )
+}</pre>
+    <div class="output-label">Output</div>
+    <div class="output">{"time":"...","level":"INFO","msg":"handling","request_id":"abc-123","http":{"method":"GET","status":200}}</div>
+
+    <div class="exercise">
+      <div class="exercise-label">Challenge Exercise</div>
+      <p>Write a middleware that generates a request ID, stores it in the request <code>context.Context</code>, and derives a per-request logger with <code>base.With("request_id", id)</code> that handlers pull from the context. Implement a custom <code>slog.Handler</code> (wrapping <code>NewJSONHandler</code>) whose <code>Handle</code> reads a trace ID out of the context and adds it as an attribute automatically. Then use the <code>ReplaceAttr</code> option to redact a <code>password</code> field, and explain how <code>WithAttrs</code>/<code>WithGroup</code> let a handler pre-format shared attributes once.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>#1 Pitfall:</strong> Rebuilding the same attributes on every log call instead of creating a <code>With</code>-derived logger once and reusing it &mdash; you repeat work and risk inconsistent keys. Also, plain <code>Info</code> ignores any context values; use the <code>*Context</code> variants (<code>InfoContext</code>) when a handler needs to enrich lines from the <code>context.Context</code>.
+    </div>
+  </div>
+
+  <!-- Review 6: sync.Pool -->
+  <div class="review-card" id="sync_pool">
+    <div class="review-header">
+      <h3>sync.Pool &amp; Reducing Allocations</h3>
+      <span class="review-meta">Memory &amp; Performance &bull; overdue (11d) &bull; rep 1</span>
+    </div>
+
+    <h4>Quick Reminder</h4>
+    <p><code>sync.Pool</code> is a free list of reusable, temporary objects that cuts allocation and GC pressure in hot paths. <code>Get</code> returns a pooled object (calling <code>New</code> if the pool is empty); <code>Put</code> returns it for reuse. Objects may be dropped by the GC between cycles, so a pool is a <em>cache, not a guarantee</em>. The canonical use is pooling <code>*bytes.Buffer</code> or <code>[]byte</code> scratch space; always <strong>reset</strong> a borrowed object before use.</p>
+
+    <h4>Key Pattern</h4>
+<pre>package main
+
+import (
+    "bytes"
+    "fmt"
+    "sync"
+)
+
+var bufPool = sync.Pool{
+    New: func() any { return new(bytes.Buffer) },
+}
+
+func render(name string) string {
+    b := bufPool.Get().(*bytes.Buffer)
+    b.Reset()                 // MUST reset borrowed state
+    defer bufPool.Put(b)      // return it for reuse
+
+    fmt.Fprintf(b, "hello, %s!", name)
+    return b.String()         // copy out before Put reclaims it
+}
+
+func main() {
+    fmt.Println(render("gopher"))
+    fmt.Println(render("world"))
+}</pre>
+    <div class="output-label">Output</div>
+    <div class="output">hello, gopher!
+hello, world!</div>
+
+    <div class="exercise">
+      <div class="exercise-label">Challenge Exercise</div>
+      <p>Pool <code>[]byte</code> scratch buffers for a function that hex-encodes messages: <code>Get</code> a buffer, grow it if too small, use it, then <code>Put</code> it back after copying the result out. Benchmark with <code>-benchmem</code> to show <code>allocs/op</code> dropping versus a fresh <code>make</code> each call. Then demonstrate the classic bug: return a slice that still points into a pooled buffer, <code>Put</code> the buffer, and show the data getting corrupted when the buffer is reused. Explain why you must copy any data you keep beyond the <code>Put</code>.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>#1 Pitfall:</strong> Retaining a reference to a pooled object (or a slice into it) after <code>Put</code> &mdash; the next <code>Get</code> may hand that same object to another goroutine, causing data races and corruption. Also, forgetting to <code>Reset</code> a borrowed <code>bytes.Buffer</code> leaks stale bytes from the previous user into your new output.
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- NEW CONCEPTS SECTION -->
+<!-- ============================================================ -->
+<div class="section">
+  <span class="section-label new">New</span>
+  <h2 class="section-title">New Concepts &mdash; 5 in 2 Sections</h2>
+
+  <h3 style="font-size:18px;margin:8px 0 18px;color:var(--muted);">Section 1 &mdash; Context &amp; Lifecycle Management (Go 1.21+)</h3>
+
+  <!-- New 1: context.AfterFunc / WithoutCancel -->
+  <div class="concept" id="context_afterfunc">
+    <div class="concept-header">
+      <h3>context.AfterFunc &amp; context.WithoutCancel (Go 1.21)</h3>
+      <span class="topic-badge">Concurrency</span>
+    </div>
+    <p class="why-matters">Why it matters: a huge amount of concurrency glue is "run this cleanup when the context is cancelled" or "start a background task that must <em>outlive</em> the request that spawned it". Before Go 1.21 you wrote a <code>select { case &lt;-ctx.Done(): ... }</code> goroutine by hand, and detaching from a parent's cancellation meant a bare <code>context.Background()</code> that lost the parent's <em>values</em>. <code>context.AfterFunc</code> and <code>context.WithoutCancel</code> package both patterns correctly.</p>
+
+    <h4>AfterFunc: run a callback when a context ends</h4>
+    <p><code>context.AfterFunc(ctx, f)</code> schedules <code>f</code> to run in its own goroutine after <code>ctx</code> is cancelled <em>or</em> times out. It returns a <code>stop</code> function; calling it cancels the registration if <code>f</code> hasn't started yet (returning <code>true</code> if it prevented the call).</p>
+<pre>package main
+
+import (
+    "context"
+    "fmt"
+    "time"
+)
+
+func main() {
+    ctx, cancel := context.WithCancel(context.Background())
+
+    // f runs once, in its own goroutine, after ctx ends.
+    stop := context.AfterFunc(ctx, func() {
+        fmt.Println("cleanup: context ended")
+    })
+
+    time.Sleep(10 * time.Millisecond)
+    cancel()                       // triggers the AfterFunc
+    time.Sleep(10 * time.Millisecond)
+
+    // Stop reports whether it prevented f from running.
+    fmt.Println("stopped in time?", stop()) // false: already ran
+}</pre>
+    <div class="output-label">Output</div>
+    <div class="output">cleanup: context ended
+stopped in time? false</div>
+
+    <h4>WithoutCancel: keep the values, drop the cancellation</h4>
+    <p><code>context.WithoutCancel(ctx)</code> returns a context that carries all of <code>ctx</code>'s values but is <em>never</em> cancelled by it. Perfect for a fire-and-forget task (audit log, metrics flush) that must finish even after the originating request returns.</p>
+<pre>package main
+
+import (
+    "context"
+    "fmt"
+)
+
+type ctxKey string
+
+func main() {
+    parent := context.WithValue(context.Background(), ctxKey("user"), "alice")
+    parent, cancel := context.WithCancel(parent)
+
+    // Detached: still sees "user", ignores parent cancellation.
+    bg := context.WithoutCancel(parent)
+
+    cancel() // parent is now done...
+    fmt.Println("parent err:", parent.Err())        // context canceled
+    fmt.Println("detached err:", bg.Err())          // <nil>
+    fmt.Println("value survives:", bg.Value(ctxKey("user"))) // alice
+}</pre>
+    <div class="output-label">Output</div>
+    <div class="output">parent err: context canceled
+detached err: <nil>
+value survives: alice</div>
+
+    <h4>Common Mistakes</h4>
+    <div class="do-dont">
+      <div class="dont-box">
+        <div class="label">Wrong</div>
+<pre>// Hand-rolled goroutine that leaks if you forget cleanup,
+// and races on shared state.
+go func() {
+    <-ctx.Done()
+    doCleanup() // no way to cancel this registration
+}()
+
+// Detaching by losing the parent's values entirely:
+bg := context.Background() // trace IDs, user, all GONE</pre>
+      </div>
+      <div class="do-box">
+        <div class="label">Right</div>
+<pre>// One call; returns a stop() to unregister.
+stop := context.AfterFunc(ctx, doCleanup)
+defer stop() // cancel if no longer needed
+
+// Detach cancellation but KEEP request-scoped values.
+bg := context.WithoutCancel(ctx)
+go flushMetrics(bg) // survives request return</pre>
+      </div>
+    </div>
+
+    <h4>Key Rules</h4>
+    <ul class="rules-list">
+      <li><code>context.AfterFunc(ctx, f)</code> calls <code>f</code> exactly once in a new goroutine after <code>ctx</code> is done; if <code>ctx</code> is already done it runs <em>immediately</em> (still in a goroutine).</li>
+      <li>The returned <code>stop</code> unregisters <code>f</code>; it returns <code>true</code> only if it stopped <code>f</code> before it started. Call it to avoid a lingering registration.</li>
+      <li><code>context.WithoutCancel(ctx)</code> keeps <code>ctx</code>'s <em>values</em> but never inherits its cancellation or deadline &mdash; give the detached task its own timeout if it needs one.</li>
+      <li><code>f</code> in <code>AfterFunc</code> runs concurrently: it must be goroutine-safe, and it should be short (offload heavy work rather than blocking the scheduler goroutine).</li>
+    </ul>
+
+    <div class="exercise">
+      <div class="exercise-label">Practice Exercise</div>
+      <p>Use <code>context.AfterFunc</code> to implement a "connection reaper": given a per-request <code>ctx</code>, register a callback that closes a <code>net.Conn</code> when the request is cancelled, and verify calling <code>stop()</code> before cancellation prevents the close. Then build a request handler that, on success, kicks off an audit-log write on a <code>context.WithoutCancel(ctx)</code> so it completes even after the HTTP response is sent &mdash; but give that detached context its own <code>WithTimeout</code>. Finally, compare <code>AfterFunc</code> with a manual <code>select { case &lt;-ctx.Done(): }</code> goroutine and explain what the <code>stop</code> function buys you.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>Pitfall:</strong> Assuming <code>WithoutCancel</code> also strips the deadline "for safety" while forgetting the task now has <em>no</em> timeout at all &mdash; a detached goroutine with no deadline can run forever and leak. Always wrap a detached context in a fresh <code>WithTimeout</code>. And remember the <code>AfterFunc</code> callback runs in its own goroutine even when the context is already cancelled, so it can race with code that assumed cleanup happens synchronously.
+    </div>
+
+    <div class="connection">
+      <strong>Connections:</strong> Builds directly on the Context package (cancellation, deadlines, values) from the concurrency days and pairs with <code>signal.NotifyContext</code> below for shutdown flows; the detach pattern is the correct replacement for the <code>context.Background()</code> hack often seen in fire-and-forget tasks and graceful-shutdown drains.
+    </div>
+  </div>
+
+  <!-- New 2: signal.NotifyContext -->
+  <div class="concept" id="signal_notifycontext">
+    <div class="concept-header">
+      <h3>signal.NotifyContext: Graceful Signal Handling</h3>
+      <span class="topic-badge">Std Lib</span>
+    </div>
+    <p class="why-matters">Why it matters: every long-running server needs to shut down cleanly on <code>SIGINT</code> (Ctrl-C) or <code>SIGTERM</code> (from Kubernetes / systemd) &mdash; drain in-flight requests, flush buffers, close the DB. The old recipe wired a <code>chan os.Signal</code> to <code>signal.Notify</code> and blocked on it. <code>signal.NotifyContext</code> (Go 1.16) collapses that into a <em>context that cancels when a signal arrives</em>, so the same <code>ctx.Done()</code> your handlers already watch drives shutdown.</p>
+
+    <h4>The canonical shutdown skeleton</h4>
+    <p><code>signal.NotifyContext(parent, sigs...)</code> returns a derived <code>ctx</code> plus a <code>stop</code> function. The context is cancelled on the first matching signal; <code>stop</code> unregisters the handler (restoring default behavior, e.g. so a second Ctrl-C force-quits).</p>
+<pre>package main
+
+import (
+    "context"
+    "fmt"
+    "os"
+    "os/signal"
+    "syscall"
+    "time"
+)
+
+func main() {
+    // ctx cancels on SIGINT or SIGTERM.
+    ctx, stop := signal.NotifyContext(context.Background(),
+        syscall.SIGINT, syscall.SIGTERM)
+    defer stop()
+
+    fmt.Println("running; press Ctrl-C to stop")
+
+    select {
+    case <-ctx.Done():
+        fmt.Println("\nsignal received, shutting down")
+    case <-time.After(2 * time.Second):
+        fmt.Println("finished normally")
+    }
+}</pre>
+    <div class="output-label">Output (no signal within 2s)</div>
+    <div class="output">running; press Ctrl-C to stop
+finished normally</div>
+
+    <h4>Driving an HTTP server's graceful shutdown</h4>
+    <p>Pair it with <code>http.Server.Shutdown</code>: serve in a goroutine, block on <code>ctx.Done()</code>, then give in-flight requests a bounded grace period to finish.</p>
+<pre>package main
+
+import (
+    "context"
+    "errors"
+    "log"
+    "net/http"
+    "os/signal"
+    "syscall"
+    "time"
+)
+
+func main() {
+    ctx, stop := signal.NotifyContext(context.Background(),
+        syscall.SIGINT, syscall.SIGTERM)
+    defer stop()
+
+    srv := &amp;http.Server{Addr: ":8080"}
+
+    go func() {
+        if err := srv.ListenAndServe(); err != nil &amp;&amp;
+            !errors.Is(err, http.ErrServerClosed) {
+            log.Fatal(err)
+        }
+    }()
+
+    <-ctx.Done() // wait for signal
+    stop()       // restore default: 2nd Ctrl-C force-quits
+
+    shutdownCtx, cancel := context.WithTimeout(
+        context.Background(), 10*time.Second)
+    defer cancel()
+    if err := srv.Shutdown(shutdownCtx); err != nil {
+        log.Printf("forced shutdown: %v", err)
+    }
+    log.Println("bye")
+}</pre>
+
+    <h4>Common Mistakes</h4>
+    <div class="do-dont">
+      <div class="dont-box">
+        <div class="label">Wrong</div>
+<pre>// Manual channel plumbing, easy to leak, and no way
+// for downstream code to observe cancellation.
+sig := make(chan os.Signal, 1)
+signal.Notify(sig, syscall.SIGINT)
+<-sig
+os.Exit(0) // slams the door: no draining, no cleanup</pre>
+      </div>
+      <div class="do-box">
+        <div class="label">Right</div>
+<pre>ctx, stop := signal.NotifyContext(context.Background(),
+    syscall.SIGINT, syscall.SIGTERM)
+defer stop()
+
+<-ctx.Done()
+// graceful: drain with a bounded shutdown context
+srv.Shutdown(shutdownCtx)</pre>
+      </div>
+    </div>
+
+    <h4>Key Rules</h4>
+    <ul class="rules-list">
+      <li><code>signal.NotifyContext(parent, sigs...)</code> returns a context cancelled on the first listed signal &mdash; watch <code>ctx.Done()</code> like any other cancellation.</li>
+      <li>Always <code>defer stop()</code> (or call it explicitly): it releases the signal handler and restores default OS behavior, so a <em>second</em> signal can force-terminate a hung shutdown.</li>
+      <li>Use a <em>separate</em>, fresh <code>context.WithTimeout</code> for the actual drain (<code>srv.Shutdown</code>) &mdash; the signal context is already cancelled, so reusing it would abort shutdown instantly.</li>
+      <li>Prefer <code>SIGTERM</code> handling for containers (that's what orchestrators send); <code>SIGKILL</code> cannot be caught &mdash; nothing you write runs on a kill -9.</li>
+    </ul>
+
+    <div class="exercise">
+      <div class="exercise-label">Practice Exercise</div>
+      <p>Write a worker that pulls jobs from a channel and processes them; on <code>SIGINT</code>/<code>SIGTERM</code>, stop accepting new jobs but finish the current one before exiting, using <code>signal.NotifyContext</code> and a <code>sync.WaitGroup</code>. Add the "second signal force-quits" behavior by calling <code>stop()</code> after the first signal. Then wrap an <code>http.Server</code> with a 10-second <code>Shutdown</code> grace window and prove that an in-flight slow request completes while new connections are refused. Explain why you must build the shutdown context from <code>context.Background()</code> rather than the already-cancelled signal context.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>Pitfall:</strong> Passing the (already cancelled) signal <code>ctx</code> into <code>srv.Shutdown(ctx)</code> &mdash; shutdown then returns immediately with a deadline-exceeded error and drops in-flight requests. Build a <em>new</em> timeout context for draining. Also, forgetting <code>defer stop()</code> leaves the signal handler installed, so a stuck graceful shutdown can't be interrupted by an impatient second Ctrl-C.
+    </div>
+
+    <div class="connection">
+      <strong>Connections:</strong> The lifecycle bookend to <code>context.AfterFunc</code>/<code>WithoutCancel</code> above and a direct upgrade to the Graceful Shutdown production pattern; the drain step reuses <code>context.WithTimeout</code>, and the detached-task idea from <code>WithoutCancel</code> is how you let post-shutdown flushes complete.
+    </div>
+  </div>
+
+  <h3 style="font-size:18px;margin:28px 0 18px;color:var(--muted);">Section 2 &mdash; Runtime Introspection &amp; Text Tokenizing</h3>
+
+  <!-- New 3: expvar -->
+  <div class="concept" id="expvar_package">
+    <div class="concept-header">
+      <h3>expvar: Exposing Runtime Variables</h3>
+      <span class="topic-badge">Std Lib</span>
+    </div>
+    <p class="why-matters">Why it matters: sometimes you want to expose a few operational counters (requests served, cache hits, queue depth) over HTTP without pulling in a full metrics stack. The standard <code>expvar</code> package publishes named variables as JSON at <code>/debug/vars</code> &mdash; zero dependencies, goroutine-safe counters, and it auto-registers Go's memory stats. It's the quickest way to make a service introspectable in a pinch.</p>
+
+    <h4>Publishing and updating counters</h4>
+    <p>Importing <code>expvar</code> registers an HTTP handler at <code>/debug/vars</code> on the default mux. <code>expvar.NewInt</code>/<code>NewMap</code>/<code>NewFloat</code> create published, atomic variables; mutate them with <code>Add</code>/<code>Set</code>.</p>
+<pre>package main
+
+import (
+    "expvar"
+    "fmt"
+    "net/http"
+    "net/http/httptest"
+)
+
+// Registered under these names in /debug/vars.
+var (
+    hits   = expvar.NewInt("cache_hits")
+    byPath = expvar.NewMap("requests_by_path")
+)
+
+func main() {
+    hits.Add(1)
+    hits.Add(1)                 // atomic, goroutine-safe
+    byPath.Add("/home", 1)
+    byPath.Add("/home", 1)
+    byPath.Add("/api", 1)
+
+    // expvar's handler is on http.DefaultServeMux at /debug/vars.
+    req := httptest.NewRequest("GET", "/debug/vars", nil)
+    rec := httptest.NewRecorder()
+    http.DefaultServeMux.ServeHTTP(rec, req)
+
+    fmt.Println(hits.Value())          // 2
+    fmt.Println(byPath.Get("/home"))   // 2
+}</pre>
+    <div class="output-label">Output</div>
+    <div class="output">2
+2</div>
+
+    <h4>Publishing computed values with Func</h4>
+    <p><code>expvar.Publish(name, expvar.Func(f))</code> exposes a value computed on each scrape &mdash; ideal for gauges like goroutine count or queue length that you don't want to track incrementally.</p>
+<pre>package main
+
+import (
+    "expvar"
+    "fmt"
+    "runtime"
+)
+
+func main() {
+    // Evaluated fresh every time /debug/vars is read.
+    expvar.Publish("goroutines", expvar.Func(func() any {
+        return runtime.NumGoroutine()
+    }))
+
+    // Read it back through the exported Var.
+    v := expvar.Get("goroutines")
+    fmt.Println(v.String() != "") // true: JSON-encoded int
+}</pre>
+    <div class="output-label">Output</div>
+    <div class="output">true</div>
+
+    <h4>Common Mistakes</h4>
+    <div class="do-dont">
+      <div class="dont-box">
+        <div class="label">Wrong</div>
+<pre>// Registering the same name twice PANICS at startup.
+var a = expvar.NewInt("hits")
+var b = expvar.NewInt("hits") // panic: reuse of "hits"
+
+// A plain int64 counter you mutate with ++ is NOT
+// goroutine-safe and won't appear in /debug/vars.
+var count int64
+count++ // data race under concurrency</pre>
+      </div>
+      <div class="do-box">
+        <div class="label">Right</div>
+<pre>// One published var per name; share it.
+var hits = expvar.NewInt("hits")
+hits.Add(1) // atomic
+
+// For a derived/read-only value, publish a Func.
+expvar.Publish("queue_depth", expvar.Func(func() any {
+    return q.Len()
+}))</pre>
+      </div>
+    </div>
+
+    <h4>Key Rules</h4>
+    <ul class="rules-list">
+      <li>Blank-importing or using <code>expvar</code> auto-registers <code>/debug/vars</code> on <code>http.DefaultServeMux</code> and publishes <code>memstats</code> + <code>cmdline</code> for free.</li>
+      <li><code>NewInt</code>/<code>NewFloat</code>/<code>NewString</code>/<code>NewMap</code> return goroutine-safe published vars; names must be <em>unique</em> or registration panics.</li>
+      <li>Use <code>expvar.Func</code> for values computed at scrape time (gauges); use counters (<code>Add</code>) for values you increment as events happen.</li>
+      <li>It's a lightweight introspection tool, not a full metrics system &mdash; there's no histograms, labels, or aggregation; reach for Prometheus/OpenTelemetry when you need those.</li>
+    </ul>
+
+    <div class="exercise">
+      <div class="exercise-label">Practice Exercise</div>
+      <p>Instrument a tiny HTTP server: publish a <code>requests_total</code> <code>*expvar.Int</code> incremented in a middleware, and a <code>requests_by_status</code> <code>*expvar.Map</code> keyed by status code. Add an <code>expvar.Func</code> gauge for <code>runtime.NumGoroutine()</code>. Hit a few endpoints, then <code>curl /debug/vars</code> and confirm your counters and Go's <code>memstats</code> both appear as JSON. Finally, discuss why exposing <code>/debug/vars</code> publicly is a mild information-disclosure risk and how you'd gate it behind auth or a private port.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>Pitfall:</strong> Registering a name more than once (or importing two packages that both register the same name) &mdash; <code>expvar</code> panics at init, taking down the whole binary. Also, mounting the default mux (which now carries <code>/debug/vars</code>) on a public interface leaks internal counters and memory stats; keep debug endpoints on a separate, internal listener.
+    </div>
+
+    <div class="connection">
+      <strong>Connections:</strong> A companion to <code>net/http/pprof</code> (both live under <code>/debug/</code> on the default mux) and a stepping stone toward the OpenTelemetry metrics you saw in the observability days; the <code>Func</code> gauge pattern reads the same runtime data that <code>runtime/metrics</code> below exposes far more richly.
+    </div>
+  </div>
+
+  <!-- New 4: runtime/metrics -->
+  <div class="concept" id="runtime_metrics">
+    <div class="concept-header">
+      <h3>runtime/metrics: The Stable Metrics Interface</h3>
+      <span class="topic-badge">Std Lib</span>
+    </div>
+    <p class="why-matters">Why it matters: <code>runtime.ReadMemStats</code> is the old way to inspect the GC and heap, but it stops the world and its fields are frozen for compatibility. <code>runtime/metrics</code> (Go 1.16+) is the <em>modern, stable, low-overhead</em> replacement: a self-describing catalog of metrics (GC pauses, heap size, goroutine count, scheduler latency) addressed by string names like <code>/gc/heap/allocs:bytes</code>. It's what production dashboards and the Go team recommend for observability.</p>
+
+    <h4>Reading specific metrics by name</h4>
+    <p>You build a <code>[]metrics.Sample</code> with the names you want, then call <code>metrics.Read</code> to fill in their values. Each value has a <code>Kind</code> (Uint64, Float64, Float64Histogram) you switch on.</p>
+<pre>package main
+
+import (
+    "fmt"
+    "runtime/metrics"
+)
+
+func main() {
+    // Ask for two well-known metrics by name.
+    samples := []metrics.Sample{
+        {Name: "/memory/classes/heap/objects:bytes"},
+        {Name: "/sched/goroutines:goroutines"},
+    }
+    metrics.Read(samples) // fills in .Value
+
+    for _, s := range samples {
+        switch s.Value.Kind() {
+        case metrics.KindUint64:
+            fmt.Printf("%s = %d\n", s.Name, s.Value.Uint64())
+        case metrics.KindFloat64:
+            fmt.Printf("%s = %f\n", s.Name, s.Value.Float64())
+        }
+    }
+}</pre>
+    <div class="output-label">Output (values vary)</div>
+    <div class="output">/memory/classes/heap/objects:bytes = 195840
+/sched/goroutines:goroutines = 1</div>
+
+    <h4>Discovering the catalog &amp; reading a histogram</h4>
+    <p><code>metrics.All()</code> returns every supported metric with a description &mdash; the interface is self-documenting. Latency/pause metrics come back as <code>*metrics.Float64Histogram</code> (buckets + counts).</p>
+<pre>package main
+
+import (
+    "fmt"
+    "runtime/metrics"
+)
+
+func main() {
+    all := metrics.All() // catalog of supported metrics
+    fmt.Println("total metrics:", len(all) > 0) // true
+
+    s := []metrics.Sample{{Name: "/gc/pauses:seconds"}}
+    metrics.Read(s)
+    if s[0].Value.Kind() == metrics.KindFloat64Histogram {
+        h := s[0].Value.Float64Histogram()
+        var total uint64
+        for _, c := range h.Counts {
+            total += c // number of recorded GC pauses
+        }
+        fmt.Println("have pause histogram:", len(h.Buckets) > 0)
+        fmt.Println("counts collected:", total >= 0)
+    }
+}</pre>
+    <div class="output-label">Output</div>
+    <div class="output">total metrics: true
+have pause histogram: true
+counts collected: true</div>
+
+    <h4>Common Mistakes</h4>
+    <div class="do-dont">
+      <div class="dont-box">
+        <div class="label">Wrong</div>
+<pre>// Typo / unsupported name -> value Kind is KindBad,
+// silently ignored if you don't check.
+s := []metrics.Sample{{Name: "/memory/heap:bytes"}}
+metrics.Read(s)
+v := s[0].Value.Uint64() // panics: wrong Kind (KindBad)
+
+// Calling runtime.ReadMemStats in a hot loop:
+// it stops the world every call.
+runtime.ReadMemStats(&m) // expensive, per request</pre>
+      </div>
+      <div class="do-box">
+        <div class="label">Right</div>
+<pre>// Verify the metric exists / check its Kind first.
+s := []metrics.Sample{{Name: "/memory/classes/heap/objects:bytes"}}
+metrics.Read(s)
+if s[0].Value.Kind() == metrics.KindUint64 {
+    use(s[0].Value.Uint64())
+}
+// Sample periodically (e.g. every 10s), reuse the slice.</pre>
+      </div>
+    </div>
+
+    <h4>Key Rules</h4>
+    <ul class="rules-list">
+      <li>Metric names are stable strings with a <code>:unit</code> suffix (e.g. <code>/gc/heap/allocs:bytes</code>); discover them via <code>metrics.All()</code>, which also carries human descriptions.</li>
+      <li>Always switch on <code>Value.Kind()</code> (<code>KindUint64</code>, <code>KindFloat64</code>, <code>KindFloat64Histogram</code>, <code>KindBad</code>) before reading &mdash; the wrong accessor panics.</li>
+      <li>Prefer <code>runtime/metrics</code> over <code>runtime.ReadMemStats</code>: it's lower overhead, doesn't stop the world for most metrics, and won't freeze its schema.</li>
+      <li>Build the <code>[]metrics.Sample</code> once and reuse it across periodic reads; sample on an interval, not per request.</li>
+    </ul>
+
+    <div class="exercise">
+      <div class="exercise-label">Practice Exercise</div>
+      <p>Write a background goroutine that samples <code>/memory/classes/heap/objects:bytes</code>, <code>/sched/goroutines:goroutines</code>, and <code>/gc/heap/allocs:bytes</code> every few seconds and logs them with <code>slog</code>. Then enumerate <code>metrics.All()</code> and print each metric's name, kind, and description to build a reference of what your Go version exposes. Extract the p99 from the <code>/gc/pauses:seconds</code> histogram by walking its buckets and cumulative counts. Finally, compare a metric read against <code>runtime.ReadMemStats</code> and explain why the latter's stop-the-world cost makes it unsuitable for continuous scraping.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>Pitfall:</strong> Reading a sample with the wrong typed accessor &mdash; a mistyped or unsupported name yields <code>KindBad</code>, and calling <code>.Uint64()</code>/<code>.Float64()</code> on it panics. Always branch on <code>Value.Kind()</code>. Also don't assume a metric exists on every Go version; the catalog grows over time, so validate names against <code>metrics.All()</code> rather than hard-coding and hoping.
+    </div>
+
+    <div class="connection">
+      <strong>Connections:</strong> The rich counterpart to the <code>expvar</code> gauges above and the runtime data behind <code>pprof</code>; feed these samples into your OpenTelemetry/Prometheus exporters, and use the heap/alloc metrics alongside the escape-analysis and <code>sync.Pool</code> techniques from today's memory-management review to confirm optimizations actually reduced allocations.
+    </div>
+  </div>
+
+  <!-- New 5: text/scanner -->
+  <div class="concept" id="text_scanner">
+    <div class="concept-header">
+      <h3>text/scanner: Tokenizing Source-Like Text</h3>
+      <span class="topic-badge">Std Lib</span>
+    </div>
+    <p class="why-matters">Why it matters: when you need to tokenize input that looks like a programming language or config DSL &mdash; identifiers, numbers, quoted strings, comments &mdash; hand-rolling a lexer is fiddly and <code>bufio.Scanner</code> only splits on lines/words. <code>text/scanner</code> is a ready-made tokenizer with Go-like lexical rules: it recognizes idents, ints, floats, chars, strings, and comments, tracks line/column positions, and lets you tune what counts as a token via a bitmask.</p>
+
+    <h4>Scanning tokens with positions</h4>
+    <p>Initialize a <code>scanner.Scanner</code> from an <code>io.Reader</code>, then loop calling <code>Scan()</code> until <code>scanner.EOF</code>. <code>TokenText()</code> returns the current token's text; the scanner carries its <code>Position</code> (line/column).</p>
+<pre>package main
+
+import (
+    "fmt"
+    "strings"
+    "text/scanner"
+)
+
+func main() {
+    const src = `x = 42 + foo("hi")`
+    var s scanner.Scanner
+    s.Init(strings.NewReader(src))
+    s.Filename = "example"
+
+    for tok := s.Scan(); tok != scanner.EOF; tok = s.Scan() {
+        fmt.Printf("%s: %q (%s)\n",
+            s.Position, s.TokenText(), scanner.TokenString(tok))
+    }
+}</pre>
+    <div class="output-label">Output</div>
+    <div class="output">example:1:1: "x" (Ident)
+example:1:3: "=" ("=")
+example:1:5: "42" (Int)
+example:1:8: "+" ("+")
+example:1:10: "foo" (Ident)
+example:1:13: "(" ("(")
+example:1:14: "\"hi\"" (String)
+example:1:18: ")" (")")</div>
+
+    <h4>Tuning the token modes</h4>
+    <p>The <code>Mode</code> bitmask selects which token classes to recognize; <code>Whitespace</code> controls which bytes are skipped. Here we scan only identifiers and integers and treat everything else as single runes.</p>
+<pre>package main
+
+import (
+    "fmt"
+    "strings"
+    "text/scanner"
+)
+
+func main() {
+    var s scanner.Scanner
+    s.Init(strings.NewReader("width: 100 height: 250"))
+    // Recognize idents and ints only.
+    s.Mode = scanner.ScanIdents | scanner.ScanInts
+
+    var idents, ints int
+    for tok := s.Scan(); tok != scanner.EOF; tok = s.Scan() {
+        switch tok {
+        case scanner.Ident:
+            idents++
+        case scanner.Int:
+            ints++
+        }
+    }
+    fmt.Printf("idents=%d ints=%d\n", idents, ints)
+}</pre>
+    <div class="output-label">Output</div>
+    <div class="output">idents=2 ints=2</div>
+
+    <h4>Common Mistakes</h4>
+    <div class="do-dont">
+      <div class="dont-box">
+        <div class="label">Wrong</div>
+<pre>// Forgetting to Init -> zero scanner reads from nil,
+// Scan returns EOF immediately (silent no-op).
+var s scanner.Scanner
+for s.Scan() != scanner.EOF { /* never runs */ }
+
+// Assuming text/scanner parses YOUR grammar. It only
+// TOKENIZES with Go-like rules; nesting/precedence is
+// still your job.</pre>
+      </div>
+      <div class="do-box">
+        <div class="label">Right</div>
+<pre>var s scanner.Scanner
+s.Init(strings.NewReader(src)) // always Init first
+// Optional: custom error hook instead of stderr.
+s.Error = func(_ *scanner.Scanner, msg string) {
+    fmt.Println("lex error:", msg)
+}
+for tok := s.Scan(); tok != scanner.EOF; tok = s.Scan() {
+    // build your parser on top of these tokens
+}</pre>
+      </div>
+    </div>
+
+    <h4>Key Rules</h4>
+    <ul class="rules-list">
+      <li>Always call <code>s.Init(reader)</code> before scanning; the zero <code>Scanner</code> has no source and returns <code>EOF</code> immediately.</li>
+      <li>Loop <code>for tok := s.Scan(); tok != scanner.EOF; tok = s.Scan()</code>; read the token via <code>s.TokenText()</code> and its location via <code>s.Position</code>.</li>
+      <li>Control recognition with the <code>Mode</code> bitmask (<code>ScanIdents</code>, <code>ScanInts</code>, <code>ScanFloats</code>, <code>ScanStrings</code>, <code>ScanComments</code>, &hellip;) and skipped bytes with <code>Whitespace</code>.</li>
+      <li>It's a <em>tokenizer</em>, not a parser: it hands you a token stream with Go-like lexical rules; grammar, precedence, and semantics are up to you (or use <code>go/scanner</code> for real Go source).</li>
+    </ul>
+
+    <div class="exercise">
+      <div class="exercise-label">Practice Exercise</div>
+      <p>Write a tiny calculator lexer with <code>text/scanner</code> that tokenizes <code>"3 + 4 * (2 - 1)"</code> into numbers and operators, then feed the token stream into a recursive-descent parser that respects precedence and evaluates the result. Use <code>s.Position</code> to report a helpful "unexpected token at line:col" error for malformed input like <code>"3 + * 4"</code>. Then switch the <code>Mode</code> to also capture <code>ScanComments</code> and skip <code>#</code>-style comments. Finally, contrast <code>text/scanner</code> with <code>go/scanner</code> and <code>bufio.Scanner</code>, explaining when each is the right tool.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>Pitfall:</strong> Expecting <code>text/scanner</code> to understand a non-Go grammar &mdash; it applies Go-like lexical conventions (e.g. how it treats <code>//</code> comments, numeric literals, and string escapes), so a DSL with different rules may tokenize surprisingly. Configure <code>Mode</code> deliberately, and for input that isn't remotely Go-like, a custom <code>bufio.Scanner</code> split function or a hand-written lexer may be clearer than fighting the defaults.
+    </div>
+
+    <div class="connection">
+      <strong>Connections:</strong> Shares the <code>io.Reader</code> source model with <code>bufio.Scanner</code> (line/word splitting) and the UTF-8 rune handling from the <code>unicode/utf8</code> concept; it's the informal cousin of <code>go/scanner</code>+<code>go/ast</code> used for parsing actual Go source, and its position tracking mirrors what <code>regexp</code> and CSV parsing give you for error reporting.
+    </div>
+  </div>
+
+</div><!-- end New Concepts section -->
+
+
+<!-- ============================================================ -->
+<!-- FOOTER -->
+<!-- ============================================================ -->
+<footer class="footer">
+  <h4>All Go Guides</h4>
+  <ul>
+    <li><a href="golang-guides/golang-guide-2026-07-09.html">Day 34 &mdash; 2026-07-09</a></li>
+    <li><a href="golang-guides/golang-guide-2026-07-08.html">Day 33 &mdash; 2026-07-08</a></li>
+    <li><a href="golang-guides/golang-guide-2026-07-07.html">Day 32 &mdash; 2026-07-07</a></li>
+    <li><a href="golang-guides/golang-guide-2026-07-06.html">Day 31 &mdash; 2026-07-06</a></li>
+    <li><a href="golang-guides/golang-guide-2026-07-05.html">Day 30 &mdash; 2026-07-05</a></li>
+    <li class="current">Day 29 &mdash; 2026-07-04 (current)</li>
+    <li><a href="golang-guides/golang-guide-2026-07-03.html">Day 28 &mdash; 2026-07-03</a></li>
+    <li><a href="golang-guides/golang-guide-2026-07-02.html">Day 27 &mdash; 2026-07-02</a></li>
+    <li><a href="golang-guides/golang-guide-2026-07-01.html">Day 26 &mdash; 2026-07-01</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-30.html">Day 25 &mdash; 2026-06-30</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-29.html">Day 24 &mdash; 2026-06-29</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-28.html">Day 23 &mdash; 2026-06-28</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-27.html">Day 22 &mdash; 2026-06-27</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-26.html">Day 21 &mdash; 2026-06-26</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-25.html">Day 20 &mdash; 2026-06-25</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-24.html">Day 19 &mdash; 2026-06-24</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-23.html">Day 18 &mdash; 2026-06-23</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-22.html">Day 17 &mdash; 2026-06-22</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-21.html">Day 16 &mdash; 2026-06-21</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-19.html">Day 15 &mdash; 2026-06-19</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-18.html">Day 14 &mdash; 2026-06-18</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-17.html">Day 13 &mdash; 2026-06-17</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-15.html">Day 12 &mdash; 2026-06-15</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-13.html">Day 11 &mdash; 2026-06-13</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-12.html">Day 10 &mdash; 2026-06-12</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-11.html">Day 9 &mdash; 2026-06-11</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-10.html">Day 8 &mdash; 2026-06-10</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-09.html">Day 7 &mdash; 2026-06-09</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-08.html">Day 6 &mdash; 2026-06-08</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-07.html">Day 5 &mdash; 2026-06-07</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-05.html">Day 4 &mdash; 2026-06-05</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-04.html">Day 3 &mdash; 2026-06-04</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-03.html">Day 2 &mdash; 2026-06-03</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-02.html">Day 1 &mdash; 2026-06-02</a></li>
+  </ul>
+
+  <h4 style="margin-top: 20px;">All Guides</h4>
+  <ul>
+    <li><a href="guide.html">LeetCode Study Guide</a></li>
+    <li><a href="lang-guide.html">Multi-Language Guide</a></li>
+    <li><a href="python-guide.html">Python Guide</a></li>
+    <li><a href="typescript-guide.html">TypeScript Guide</a></li>
+    <li><a href="javascript-guide.html">JavaScript Guide</a></li>
+    <li><a href="golang-guide.html">Go Guide (current)</a></li>
+    <li><a href="report.html">Performance Report</a></li>
+  </ul>
+</footer>
+
+</div><!-- end main -->
+
+<script>
+// ===== Theme Toggle =====
+(function() {
+  var KEY = 'lc-goguide-theme';
+  var toggle = document.getElementById('theme-toggle');
+  var html = document.documentElement;
+
+  function setTheme(theme) {
+    html.setAttribute('data-theme', theme);
+    localStorage.setItem(KEY, theme);
+    toggle.textContent = theme === 'dark' ? '☽' : '☀';
+  }
+
+  var saved = localStorage.getItem(KEY) || 'dark';
+  setTheme(saved);
+
+  toggle.addEventListener('click', function() {
+    setTheme(html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
+  });
+})();
+
+// ===== Mobile Sidebar Toggle =====
+(function() {
+  var btn = document.getElementById('sidebar-toggle');
+  var sidebar = document.getElementById('sidebar');
+
+  btn.addEventListener('click', function() {
+    sidebar.classList.toggle('open');
+  });
+
+  // Close sidebar when clicking a link (mobile)
+  sidebar.querySelectorAll('.sidebar-link').forEach(function(link) {
+    link.addEventListener('click', function() {
+      if (window.innerWidth <= 900) {
+        sidebar.classList.remove('open');
+      }
+    });
+  });
+})();
+
+// ===== Active Sidebar Link on Scroll =====
+(function() {
+  var links = document.querySelectorAll('.sidebar-link');
+  var sections = [];
+
+  links.forEach(function(link) {
+    var id = link.getAttribute('href').replace('#', '');
+    var el = document.getElementById(id);
+    if (el) sections.push({ id: id, el: el, link: link });
+  });
+
+  function onScroll() {
+    var scrollTop = window.scrollY + 120;
+    var current = null;
+
+    for (var i = sections.length - 1; i >= 0; i--) {
+      if (sections[i].el.offsetTop <= scrollTop) {
+        current = sections[i];
+        break;
+      }
+    }
+
+    links.forEach(function(l) { l.classList.remove('active'); });
+    if (current) current.link.classList.add('active');
+  }
+
+  window.addEventListener('scroll', onScroll);
+  onScroll();
+})();
+</script>
+</body>
+</html>

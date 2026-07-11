@@ -1,0 +1,2046 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TypeScript Daily Guide — 2026-06-05 (Day 6)</title>
+<style>
+:root {
+  --bg: #0d1117;
+  --surface: #161b22;
+  --surface2: #1c2129;
+  --border: #30363d;
+  --text: #e6edf3;
+  --text-muted: #8b949e;
+  --accent: #58a6ff;
+  --accent-bg: rgba(56,139,253,0.15);
+  --green: #3fb950;
+  --green-bg: rgba(63,185,80,0.08);
+  --red: #f85149;
+  --red-bg: rgba(248,81,73,0.08);
+  --yellow: #d29922;
+  --yellow-bg: rgba(210,153,34,0.1);
+  --orange: #db6d28;
+  --purple: #bc8cff;
+  --purple-bg: rgba(188,140,255,0.08);
+  --purple-border: rgba(188,140,255,0.2);
+  --link: #58a6ff;
+  --code-bg: #1c2129;
+  --output-bg: #0e1c0e;
+  --output-border: #1a3a1a;
+  --sidebar-bg: #161b22;
+  --sidebar-active: rgba(56,139,253,0.15);
+  --exercise-border: #30363d;
+}
+[data-theme="light"] {
+  --bg: #ffffff;
+  --surface: #f6f8fa;
+  --surface2: #eef1f5;
+  --border: #d0d7de;
+  --text: #1f2328;
+  --text-muted: #656d76;
+  --accent: #0969da;
+  --accent-bg: rgba(9,105,218,0.1);
+  --green: #1a7f37;
+  --green-bg: rgba(26,127,55,0.06);
+  --red: #cf222e;
+  --red-bg: rgba(207,34,46,0.06);
+  --yellow: #9a6700;
+  --yellow-bg: rgba(154,103,0,0.06);
+  --orange: #bc4c00;
+  --purple: #8250df;
+  --purple-bg: rgba(130,80,223,0.06);
+  --purple-border: rgba(130,80,223,0.15);
+  --link: #0969da;
+  --code-bg: #eef1f5;
+  --output-bg: #f0faf0;
+  --output-border: #c6e6c6;
+  --sidebar-bg: #f6f8fa;
+  --sidebar-active: rgba(9,105,218,0.1);
+  --exercise-border: #d0d7de;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;font-size:16px;line-height:1.7;color:var(--text);background:var(--bg);display:flex;min-height:100vh}
+a{color:var(--link);text-decoration:none}
+a:hover{text-decoration:underline}
+
+/* Sidebar */
+.sidebar{position:fixed;top:0;left:0;width:300px;height:100vh;background:var(--sidebar-bg);border-right:1px solid var(--border);overflow-y:auto;padding:20px 0;z-index:100}
+.sidebar-header{padding:16px 20px;border-bottom:1px solid var(--border);margin-bottom:12px}
+.sidebar-header h2{font-size:15px;font-weight:600;color:var(--text)}
+.sidebar-header .date{font-size:13px;color:var(--text-muted);margin-top:2px}
+.sidebar-section{padding:8px 20px 4px;font-size:12px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px}
+.sidebar-section.review-label{color:var(--purple)}
+.sidebar-nav{list-style:none;padding:0}
+.sidebar-nav li a{display:block;padding:6px 20px 6px 28px;font-size:14px;color:var(--text-muted);transition:all 0.15s}
+.sidebar-nav li a:hover,.sidebar-nav li a.active{color:var(--accent);background:var(--sidebar-active);text-decoration:none}
+.sidebar-nav li a .nav-id{font-size:11px;color:var(--text-muted);opacity:0.6;margin-left:6px}
+
+/* Main */
+.main{margin-left:300px;flex:1;padding:40px;max-width:1160px}
+.content{max-width:860px;margin:0 auto}
+
+/* Theme Toggle */
+.theme-toggle{position:fixed;top:16px;right:20px;z-index:200;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:8px 12px;cursor:pointer;color:var(--text);font-size:18px;line-height:1;transition:all 0.15s}
+.theme-toggle:hover{border-color:var(--accent)}
+
+/* Header */
+.guide-header{text-align:center;padding:32px 0 40px;border-bottom:1px solid var(--border);margin-bottom:40px}
+.guide-header h1{font-size:28px;font-weight:700;margin-bottom:8px}
+.guide-header .meta{font-size:15px;color:var(--text-muted)}
+.guide-header .meta span{margin:0 8px}
+.badge{display:inline-block;padding:2px 10px;border-radius:12px;font-size:13px;font-weight:500}
+.badge-blue{background:var(--accent-bg);color:var(--accent)}
+.badge-purple{background:var(--purple-bg);color:var(--purple)}
+
+/* How To Use */
+.how-to-use{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:24px 28px;margin-bottom:40px}
+.how-to-use h2{font-size:18px;margin-bottom:12px}
+.how-to-use ol{padding-left:24px}
+.how-to-use li{margin-bottom:6px;color:var(--text-muted)}
+
+/* Review Section */
+.review-section{margin-bottom:48px}
+.review-section-header{font-size:22px;font-weight:700;padding-bottom:12px;border-bottom:2px solid var(--purple);margin-bottom:28px;display:flex;align-items:center;gap:12px;color:var(--purple)}
+
+/* Review Card */
+.review-card{background:var(--purple-bg);border:1px solid var(--purple-border);border-radius:10px;padding:28px;margin-bottom:24px}
+.review-card .review-header{display:flex;align-items:center;gap:12px;margin-bottom:12px;flex-wrap:wrap}
+.review-card .review-title{font-size:18px;font-weight:700;color:var(--purple)}
+.review-card .review-meta{font-size:13px;color:var(--text-muted)}
+.review-card .review-reminder{color:var(--text-muted);font-style:italic;margin-bottom:16px;padding-left:14px;border-left:3px solid var(--purple)}
+.review-card .review-pattern{margin-bottom:16px}
+.review-card .review-pattern strong{display:block;margin-bottom:8px;font-size:14px;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px}
+.review-card .review-challenge{margin-bottom:12px}
+.review-card .review-challenge strong{display:block;margin-bottom:8px;font-size:14px;color:var(--yellow);text-transform:uppercase;letter-spacing:0.5px}
+.review-card .review-challenge p{line-height:1.6}
+.review-card .review-pitfall{background:var(--red-bg);border:1px solid rgba(248,81,73,0.15);border-radius:6px;padding:12px 16px;font-size:14px;line-height:1.6}
+.review-card .review-pitfall strong{color:var(--red);margin-right:4px}
+.review-card code{background:var(--code-bg);padding:2px 6px;border-radius:4px;font-family:'SF Mono','Fira Code','Consolas',monospace;font-size:13px}
+
+/* Topic Section */
+.topic-section{margin-bottom:48px}
+.topic-section-header{font-size:22px;font-weight:700;padding-bottom:12px;border-bottom:2px solid var(--accent);margin-bottom:28px;display:flex;align-items:center;gap:12px}
+.topic-section-header .section-num{background:var(--accent);color:#fff;width:32px;height:32px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:15px;font-weight:700;flex-shrink:0}
+
+/* Concept Card */
+.concept-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:28px;margin-bottom:32px}
+.concept-header{display:flex;align-items:center;gap:12px;margin-bottom:16px;flex-wrap:wrap}
+.concept-title{font-size:20px;font-weight:700}
+.ttag{display:inline-block;padding:2px 10px;border-radius:12px;font-size:12px;font-weight:500;background:var(--accent-bg);color:var(--accent)}
+.why-matters{color:var(--text-muted);font-style:italic;margin-bottom:20px;padding-left:14px;border-left:3px solid var(--accent)}
+.explanation{margin-bottom:20px;line-height:1.8}
+.explanation p{margin-bottom:12px}
+.explanation ul,.explanation ol{padding-left:24px;margin-bottom:12px}
+.explanation li{margin-bottom:4px}
+.explanation code{background:var(--code-bg);padding:2px 6px;border-radius:4px;font-family:'SF Mono','Fira Code','Consolas',monospace;font-size:14px}
+
+/* Code Examples */
+.code-example{margin-bottom:20px;border:1px solid var(--border);border-radius:8px;overflow:hidden}
+.lang-badge{background:var(--surface2);color:var(--text-muted);font-size:12px;font-weight:600;padding:6px 14px;border-bottom:1px solid var(--border);font-family:'SF Mono','Fira Code','Consolas',monospace}
+pre{margin:0;padding:16px;overflow-x:auto;background:var(--code-bg);font-family:'SF Mono','Fira Code','Consolas',monospace;font-size:13.5px;line-height:1.6;white-space:pre-wrap}
+pre code{background:none;padding:0;font-size:inherit}
+.output{background:var(--output-bg);border-top:1px solid var(--output-border);padding:12px 16px;font-family:'SF Mono','Fira Code','Consolas',monospace;font-size:13px;color:var(--green);white-space:pre-wrap}
+.output::before{content:"Output:";display:block;font-size:11px;font-weight:600;color:var(--text-muted);margin-bottom:4px;text-transform:uppercase;letter-spacing:0.5px}
+.type-result{background:var(--output-bg);border-top:1px solid var(--output-border);padding:12px 16px;font-family:'SF Mono','Fira Code','Consolas',monospace;font-size:13px;color:var(--green);white-space:pre-wrap}
+.type-result::before{content:"Type Result:";display:block;font-size:11px;font-weight:600;color:var(--text-muted);margin-bottom:4px;text-transform:uppercase;letter-spacing:0.5px}
+.type-error{background:var(--red-bg);border-top:1px solid rgba(248,81,73,0.2);padding:12px 16px;font-family:'SF Mono','Fira Code','Consolas',monospace;font-size:13px;color:var(--red);white-space:pre-wrap}
+.type-error::before{content:"Type Error:";display:block;font-size:11px;font-weight:600;color:var(--red);margin-bottom:4px;text-transform:uppercase;letter-spacing:0.5px}
+
+/* Callouts */
+.callout-warning{background:var(--yellow-bg);border:1px solid rgba(210,153,34,0.2);border-radius:8px;padding:20px;margin-bottom:20px}
+.callout-warning strong{color:var(--yellow);display:block;margin-bottom:12px;font-size:16px}
+.mistake,.correct{padding:10px 14px;border-radius:6px;margin-bottom:10px;font-size:14px;line-height:1.6}
+.mistake{background:var(--red-bg);border-left:3px solid var(--red)}
+.mistake code,.correct code{background:var(--code-bg);padding:2px 6px;border-radius:4px;font-family:'SF Mono','Fira Code','Consolas',monospace;font-size:13px}
+.correct{background:var(--green-bg);border-left:3px solid var(--green)}
+
+/* Key Rules */
+.key-rules{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:20px;margin-bottom:20px}
+.key-rules strong{display:block;margin-bottom:10px;font-size:16px}
+.key-rules ul{padding-left:20px}
+.key-rules li{margin-bottom:6px}
+.key-rules code{background:var(--code-bg);padding:2px 6px;border-radius:4px;font-family:'SF Mono','Fira Code','Consolas',monospace;font-size:13px}
+
+/* Exercises */
+.exercises{border:2px dashed var(--exercise-border);border-radius:8px;padding:20px;margin-bottom:20px;margin-left:12px}
+.exercises strong{display:block;margin-bottom:14px;font-size:16px;color:var(--purple)}
+.exercise{margin-bottom:14px;padding-left:38px;position:relative;line-height:1.6}
+.exercise:last-child{margin-bottom:0}
+.exercise-num{position:absolute;left:0;top:2px;background:var(--purple);color:#fff;width:24px;height:24px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:12px;font-weight:700}
+.exercise code{background:var(--code-bg);padding:2px 6px;border-radius:4px;font-family:'SF Mono','Fira Code','Consolas',monospace;font-size:13px}
+
+/* Connections */
+.connections{background:var(--accent-bg);border:1px solid rgba(56,139,253,0.2);border-radius:8px;padding:16px 20px;font-size:14px;color:var(--text-muted)}
+.connections strong{color:var(--accent);margin-right:6px}
+
+/* Footer */
+.guide-footer{border-top:1px solid var(--border);padding-top:32px;margin-top:48px}
+.guide-footer h2{font-size:18px;margin-bottom:16px}
+.guide-footer ul{list-style:none;padding:0}
+.guide-footer li{padding:6px 0}
+.guide-footer li a{font-weight:500}
+
+/* Responsive */
+@media(max-width:900px){
+  .sidebar{display:none}
+  .main{margin-left:0}
+  .theme-toggle{top:12px;right:12px}
+}
+</style>
+</head>
+<body>
+
+<!-- Theme Toggle -->
+<button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">&#x1F319;</button>
+
+<!-- Sidebar -->
+<nav class="sidebar">
+  <div class="sidebar-header">
+    <h2>TypeScript Daily Guide</h2>
+    <div class="date">2026-06-05 &mdash; Day 6</div>
+  </div>
+
+  <div class="sidebar-section review-label">Review (6 concepts)</div>
+  <ul class="sidebar-nav">
+    <li><a href="#review_decorators_tc39">Decorators (TC39) <span class="nav-id">R1</span></a></li>
+    <li><a href="#review_module_systems">Module Systems <span class="nav-id">R2</span></a></li>
+    <li><a href="#review_declaration_files">Declaration Files <span class="nav-id">R3</span></a></li>
+    <li><a href="#review_tsconfig_deep_dive">tsconfig.json Deep Dive <span class="nav-id">R4</span></a></li>
+    <li><a href="#review_namespaces_vs_modules">Namespaces vs Modules <span class="nav-id">R5</span></a></li>
+    <li><a href="#review_function_overloads">Function Overloads <span class="nav-id">R6</span></a></li>
+  </ul>
+
+  <div class="sidebar-section">Runtime Patterns (Week 5 finish)</div>
+  <ul class="sidebar-nav">
+    <li><a href="#immutability_patterns">Immutability Patterns <span class="nav-id">#1</span></a></li>
+    <li><a href="#class_patterns">Class Patterns <span class="nav-id">#2</span></a></li>
+    <li><a href="#proxy_reflect_typing">Proxy &amp; Reflect Typing <span class="nav-id">#3</span></a></li>
+  </ul>
+
+  <div class="sidebar-section">Advanced Patterns &amp; Performance (Week 6)</div>
+  <ul class="sidebar-nav">
+    <li><a href="#type_level_programming">Type-Level Programming <span class="nav-id">#4</span></a></li>
+    <li><a href="#infer_mastery">infer Mastery <span class="nav-id">#5</span></a></li>
+  </ul>
+</nav>
+
+<!-- Main Content -->
+<div class="main">
+<div class="content">
+
+<!-- Header -->
+<header class="guide-header">
+  <h1>TypeScript Daily Guide &mdash; Day 6</h1>
+  <div class="meta">
+    <span>2026-06-05</span>
+    <span>&middot;</span>
+    <span>Day 6</span>
+    <span>&middot;</span>
+    <span class="badge badge-purple">6 reviews</span>
+    <span class="badge badge-blue">5 new concepts</span>
+  </div>
+</header>
+
+<!-- How to Use -->
+<div class="how-to-use">
+  <h2>How to Use This Guide</h2>
+  <ol>
+    <li><strong>Review first</strong> &mdash; scan each purple review card; if the concept feels solid, move on; if fuzzy, re-read the code pattern</li>
+    <li><strong>Attempt the challenge exercise</strong> on any review card that felt shaky &mdash; this is your best reinforcement signal</li>
+    <li><strong>Work through new concepts</strong> top to bottom &mdash; each builds on the previous</li>
+    <li><strong>Type every code example</strong> yourself in a .ts file &mdash; hover over types in your editor to build intuition</li>
+    <li><strong>Do at least 2 exercises per concept</strong> before moving to the next one</li>
+  </ol>
+</div>
+
+<!-- ============================================================ -->
+<!-- REVIEW SECTION                                                -->
+<!-- ============================================================ -->
+<div class="review-section">
+<div class="review-section-header">Review &mdash; 6 Concepts</div>
+
+<!-- R1: Decorators (TC39) -->
+<div class="review-card" id="review_decorators_tc39">
+  <div class="review-header">
+    <span class="review-title">R1. Decorators (TC39)</span>
+    <span class="badge badge-purple">Functions &amp; Patterns</span>
+    <span class="review-meta">rep 0 &middot; last reviewed 2026-06-03 &middot; 2 days ago</span>
+  </div>
+  <div class="review-reminder">TC39 stage-3 decorators (TS 5.0+) are functions that receive the decorated value and a context object. They can wrap classes, methods, accessors, and fields. Unlike legacy experimental decorators, they don't use <code>reflect-metadata</code> &mdash; context provides the metadata API directly via <code>context.metadata</code>.</div>
+
+  <div class="review-pattern">
+    <strong>Key Pattern</strong>
+    <div class="code-example">
+<pre><code>// TC39 method decorator: logs every call
+function logged&lt;This, Args extends any[], Return&gt;(
+  target: (this: This, ...args: Args) =&gt; Return,
+  context: ClassMethodDecoratorContext&lt;This, (this: This, ...args: Args) =&gt; Return&gt;
+) {
+  const name = String(context.name);
+  return function (this: This, ...args: Args): Return {
+    console.log(`Calling ${name} with`, args);
+    const result = target.call(this, ...args);
+    console.log(`${name} returned`, result);
+    return result;
+  };
+}
+
+class Calculator {
+  @logged
+  add(a: number, b: number): number {
+    return a + b;
+  }
+}
+
+new Calculator().add(2, 3);
+// Calling add with [2, 3]
+// add returned 5</code></pre>
+    </div>
+  </div>
+
+  <div class="review-challenge">
+    <strong>Challenge Exercise</strong>
+    <p>Write a <code>@throttle(ms: number)</code> decorator factory that prevents a method from being called more than once per <code>ms</code> milliseconds. The decorator should return the cached result for subsequent calls within the window. Type the decorator so it works on any method signature.</p>
+  </div>
+
+  <div class="review-pitfall">
+    <strong>#1 Pitfall:</strong> Confusing TC39 decorators with legacy experimental decorators. TC39 decorators receive <code>(target, context)</code> where <code>target</code> is the decorated value itself, not the class prototype. Legacy decorators receive <code>(target, propertyKey, descriptor)</code>. They are not interchangeable &mdash; check <code>"experimentalDecorators"</code> in your tsconfig.
+  </div>
+</div>
+
+<!-- R2: Module Systems -->
+<div class="review-card" id="review_module_systems">
+  <div class="review-header">
+    <span class="review-title">R2. Module Systems</span>
+    <span class="badge badge-purple">Modules &amp; Project Structure</span>
+    <span class="review-meta">rep 0 &middot; last reviewed 2026-06-03 &middot; 2 days ago</span>
+  </div>
+  <div class="review-reminder">ESM (<code>import</code>/<code>export</code>) is the standard; CJS (<code>require</code>/<code>module.exports</code>) is legacy Node.js. TypeScript's <code>"module"</code> setting controls emit format. Use <code>"moduleResolution": "bundler"</code> for modern bundlers or <code>"node16"</code> for Node.js. The <code>"type": "module"</code> field in <code>package.json</code> determines whether <code>.js</code> files are treated as ESM or CJS.</div>
+
+  <div class="review-pattern">
+    <strong>Key Pattern</strong>
+    <div class="code-example">
+<pre><code>// ESM: static imports (tree-shakeable, async-ready)
+import { readFile } from "node:fs/promises";
+import type { User } from "./types.js";  // type-only import (erased at runtime)
+
+export function loadUser(path: string): Promise&lt;User&gt; {
+  return readFile(path, "utf-8").then(JSON.parse);
+}
+
+// Dynamic import (code-splitting)
+async function loadChart() {
+  const { Chart } = await import("./chart.js");
+  return new Chart();
+}
+
+// CJS interop: default import from a CJS module
+import express from "express";  // works with esModuleInterop: true</code></pre>
+    </div>
+  </div>
+
+  <div class="review-challenge">
+    <strong>Challenge Exercise</strong>
+    <p>Create a small project with <code>"type": "module"</code> in package.json. Write an ESM file that dynamically imports a CJS dependency (e.g., <code>path</code>) and a local module. Configure <code>tsconfig.json</code> with <code>"module": "node16"</code> and <code>"moduleResolution": "node16"</code>. Verify that <code>.js</code> extensions are required in import paths and that <code>import type</code> is erased from the output.</p>
+  </div>
+
+  <div class="review-pitfall">
+    <strong>#1 Pitfall:</strong> Omitting the <code>.js</code> extension in import paths when targeting Node.js ESM. Node requires explicit extensions: <code>import { foo } from "./utils.js"</code> (not <code>"./utils"</code>). TypeScript uses <code>.js</code> even when the source file is <code>.ts</code> because imports refer to the output file.
+  </div>
+</div>
+
+<!-- R3: Declaration Files -->
+<div class="review-card" id="review_declaration_files">
+  <div class="review-header">
+    <span class="review-title">R3. Declaration Files</span>
+    <span class="badge badge-purple">Modules &amp; Project Structure</span>
+    <span class="review-meta">rep 0 &middot; last reviewed 2026-06-03 &middot; 2 days ago</span>
+  </div>
+  <div class="review-reminder">Declaration files (<code>.d.ts</code>) provide type information without runtime code. They describe the shape of JavaScript libraries so TypeScript can type-check against them. Use <code>declare module "name"</code> for ambient modules, <code>declare global</code> to extend global scope, and <code>@types/*</code> packages from DefinitelyTyped for community-maintained declarations.</div>
+
+  <div class="review-pattern">
+    <strong>Key Pattern</strong>
+    <div class="code-example">
+<pre><code>// Ambient declaration for a JS library without types
+// global.d.ts
+declare module "legacy-lib" {
+  export function doStuff(input: string): number;
+  export interface LegacyConfig {
+    verbose: boolean;
+    retries: number;
+  }
+}
+
+// Extending an existing module's types
+declare module "express" {
+  interface Request {
+    userId?: string;       // Add custom property to Express Request
+    sessionToken?: string;
+  }
+}
+
+// Extending the global scope
+declare global {
+  interface Window {
+    analytics: { track(event: string, data: unknown): void };
+  }
+}</code></pre>
+    </div>
+  </div>
+
+  <div class="review-challenge">
+    <strong>Challenge Exercise</strong>
+    <p>Write a <code>.d.ts</code> file that declares types for an imaginary analytics library with functions <code>init(apiKey: string): void</code>, <code>track(event: string, properties?: Record&lt;string, unknown&gt;): void</code>, and <code>identify(userId: string, traits?: { email?: string; name?: string }): void</code>. Then extend the global <code>Window</code> interface to include the library as <code>window.analytics</code>.</p>
+  </div>
+
+  <div class="review-pitfall">
+    <strong>#1 Pitfall:</strong> Forgetting that a <code>.d.ts</code> file with top-level <code>import</code> or <code>export</code> becomes a module, not an ambient declaration. If you need <code>declare global</code> inside a module-scoped <code>.d.ts</code>, you must wrap it in <code>declare global { ... }</code>. Without any imports/exports, the file is automatically ambient.
+  </div>
+</div>
+
+<!-- R4: tsconfig.json Deep Dive -->
+<div class="review-card" id="review_tsconfig_deep_dive">
+  <div class="review-header">
+    <span class="review-title">R4. tsconfig.json Deep Dive</span>
+    <span class="badge badge-purple">Modules &amp; Project Structure</span>
+    <span class="review-meta">rep 0 &middot; last reviewed 2026-06-03 &middot; 2 days ago</span>
+  </div>
+  <div class="review-reminder">The <code>strict</code> flag enables all strict-family checks (<code>strictNullChecks</code>, <code>noImplicitAny</code>, <code>strictFunctionTypes</code>, etc.). <code>"moduleResolution": "bundler"</code> for bundled apps, <code>"node16"</code> for Node.js libraries. <code>"target"</code> controls JS output level, <code>"lib"</code> controls available global types. Use <code>"paths"</code> for import aliases and <code>"baseUrl"</code> for non-relative module resolution.</div>
+
+  <div class="review-pattern">
+    <strong>Key Pattern</strong>
+    <div class="code-example">
+<pre><code>// Modern strict tsconfig for a Node.js project
+{
+  "compilerOptions": {
+    "strict": true,                    // All strict checks
+    "target": "ES2022",                // Node 18+ native features
+    "module": "node16",                // ESM + CJS interop for Node
+    "moduleResolution": "node16",      // Matches module setting
+    "esModuleInterop": true,           // import express from "express"
+    "skipLibCheck": true,              // Faster builds, skip .d.ts checks
+    "forceConsistentCasingInFileNames": true,
+    "outDir": "./dist",
+    "rootDir": "./src",
+    "declaration": true,
+    "paths": {
+      "@/*": ["./src/*"]               // Import alias: @/utils -> src/utils
+    }
+  },
+  "include": ["src"],
+  "exclude": ["node_modules", "dist"]
+}</code></pre>
+    </div>
+  </div>
+
+  <div class="review-challenge">
+    <strong>Challenge Exercise</strong>
+    <p>Start from an empty <code>tsconfig.json</code> with only <code>"strict": true</code>. Progressively add settings for a library that targets both Node.js and browsers: set <code>"target"</code>, <code>"module"</code>, <code>"moduleResolution"</code>, <code>"declaration"</code>, <code>"lib"</code> (include both <code>"ES2022"</code> and <code>"DOM"</code>), and <code>"paths"</code> for a <code>@/</code> alias. Verify each setting's effect by checking compiler output.</p>
+  </div>
+
+  <div class="review-pitfall">
+    <strong>#1 Pitfall:</strong> Mismatching <code>"module"</code> and <code>"moduleResolution"</code>. When <code>"module": "node16"</code>, you must use <code>"moduleResolution": "node16"</code>. Using <code>"moduleResolution": "node"</code> (the old algorithm) with modern module settings leads to incorrect resolution of <code>exports</code> fields in package.json.
+  </div>
+</div>
+
+<!-- R5: Namespaces vs Modules -->
+<div class="review-card" id="review_namespaces_vs_modules">
+  <div class="review-header">
+    <span class="review-title">R5. Namespaces vs Modules</span>
+    <span class="badge badge-purple">Modules &amp; Project Structure</span>
+    <span class="review-meta">rep 0 &middot; last reviewed 2026-06-03 &middot; 2 days ago</span>
+  </div>
+  <div class="review-reminder">Modules (ESM/CJS) are the standard for organizing TypeScript code &mdash; each file is a module. Namespaces (<code>namespace Foo { ... }</code>) are a legacy TypeScript-only feature for grouping code without a module system. Prefer modules for all new code. Namespaces still appear in <code>.d.ts</code> files and legacy codebases but should not be used in modern application code.</div>
+
+  <div class="review-pattern">
+    <strong>Key Pattern</strong>
+    <div class="code-example">
+<pre><code>// AVOID: Namespace (legacy pattern)
+namespace Validation {
+  export interface Validator {
+    validate(input: string): boolean;
+  }
+  export class EmailValidator implements Validator {
+    validate(input: string) { return input.includes("@"); }
+  }
+}
+
+// PREFER: ES Module (modern pattern)
+// validators.ts
+export interface Validator {
+  validate(input: string): boolean;
+}
+export class EmailValidator implements Validator {
+  validate(input: string) { return input.includes("@"); }
+}
+
+// Only valid use of namespaces: declaration merging
+// Extend a class or function with additional types
+class MyArray&lt;T&gt; { /* ... */ }
+namespace MyArray {
+  export type Callback&lt;T&gt; = (item: T, index: number) =&gt; void;
+}</code></pre>
+    </div>
+  </div>
+
+  <div class="review-challenge">
+    <strong>Challenge Exercise</strong>
+    <p>Take a legacy codebase snippet that uses <code>namespace Utils { export function ... }</code> across three files. Refactor it into ES modules with proper <code>import</code>/<code>export</code> statements. Verify that all cross-file references resolve correctly and that the namespace keyword is no longer needed.</p>
+  </div>
+
+  <div class="review-pitfall">
+    <strong>#1 Pitfall:</strong> Using namespaces in new code to avoid import statements. This creates global scope pollution and prevents tree-shaking. Each file should be its own module with explicit imports &mdash; the bundler handles combining them.
+  </div>
+</div>
+
+<!-- R6: Function Overloads -->
+<div class="review-card" id="review_function_overloads">
+  <div class="review-header">
+    <span class="review-title">R6. Function Overloads</span>
+    <span class="badge badge-purple">Functions &amp; Patterns</span>
+    <span class="review-meta">rep 1 &middot; last reviewed 2026-06-04 &middot; 1 day ago</span>
+  </div>
+  <div class="review-reminder">Overloads let a single function have multiple call signatures. Write each overload signature above the implementation signature. The implementation signature must be compatible with all overloads but is not directly callable &mdash; callers only see the overload signatures. Order overloads from most specific to most general.</div>
+
+  <div class="review-pattern">
+    <strong>Key Pattern</strong>
+    <div class="code-example">
+<pre><code>// Overload signatures (what callers see)
+function parseValue(input: string, type: "number"): number;
+function parseValue(input: string, type: "boolean"): boolean;
+function parseValue(input: string, type: "date"): Date;
+function parseValue(input: string, type: string): unknown;
+// Implementation signature (must satisfy all overloads)
+function parseValue(input: string, type: string): unknown {
+  switch (type) {
+    case "number":  return Number(input);
+    case "boolean": return input === "true";
+    case "date":    return new Date(input);
+    default:        return input;
+  }
+}
+
+const n = parseValue("42", "number");     // number
+const b = parseValue("true", "boolean");  // boolean
+const d = parseValue("2026-01-01", "date"); // Date</code></pre>
+    </div>
+  </div>
+
+  <div class="review-challenge">
+    <strong>Challenge Exercise</strong>
+    <p>Write an overloaded <code>flatten</code> function: when given <code>number[][]</code> it returns <code>number[]</code>; when given <code>string[][]</code> it returns <code>string[]</code>; when given a generic <code>T[][]</code> it returns <code>T[]</code>. Verify that the return type narrows correctly for each specific input type.</p>
+  </div>
+
+  <div class="review-pitfall">
+    <strong>#1 Pitfall:</strong> Ordering overloads from most general to most specific. TypeScript resolves overloads top-to-bottom and picks the first match. Putting <code>string</code> before a literal type like <code>"number"</code> means the literal overload is never reached.
+  </div>
+</div>
+
+</div><!-- end review-section -->
+
+<!-- ============================================================ -->
+<!-- NEW CONCEPTS: Week 5 Finish — Runtime Patterns                -->
+<!-- ============================================================ -->
+<div class="topic-section">
+<div class="topic-section-header">
+  <span class="section-num">5</span>
+  Week 5 Finish: Runtime Patterns
+</div>
+
+<!-- ============================================================ -->
+<!-- #1 Immutability Patterns                                      -->
+<!-- ============================================================ -->
+<div class="concept-card" id="immutability_patterns">
+  <div class="concept-header">
+    <span class="concept-title">1. Immutability Patterns</span>
+    <span class="ttag">Runtime Patterns</span>
+  </div>
+
+  <div class="why-matters">Mutable state is the #1 source of bugs in large codebases &mdash; functions silently modify objects, arrays grow extra elements, and config objects change between reads. TypeScript's <code>readonly</code> modifier and <code>as const</code> assertions catch mutation at compile time, long before it reaches production. Master these and you eliminate an entire class of bugs.</div>
+
+  <div class="explanation">
+    <p>TypeScript provides multiple layers of immutability, from shallow property protection to deep recursive freezing. The key is choosing the right level: <code>readonly</code> on individual properties, <code>Readonly&lt;T&gt;</code> for shallow object immutability, <code>ReadonlyArray&lt;T&gt;</code> for arrays, <code>as const</code> for deeply immutable literals, and custom <code>DeepReadonly&lt;T&gt;</code> for recursive protection.</p>
+    <ul>
+    <li><a href="typescript-guides/typescript-guide-2026-07-04.html">2026-07-04</a> (Day 31)</li>
+      <li><code>readonly</code> modifier &mdash; prevents reassignment of individual properties</li>
+      <li><code>Readonly&lt;T&gt;</code> &mdash; utility type that makes all properties of <code>T</code> readonly (shallow)</li>
+      <li><code>ReadonlyArray&lt;T&gt;</code> / <code>readonly T[]</code> &mdash; array without mutating methods (<code>push</code>, <code>pop</code>, <code>splice</code>, etc.)</li>
+      <li><code>as const</code> &mdash; infers the narrowest possible type with all properties <code>readonly</code> recursively</li>
+      <li><code>Object.freeze</code> &mdash; runtime shallow freeze; TypeScript types it as <code>Readonly&lt;T&gt;</code></li>
+      <li><code>DeepReadonly&lt;T&gt;</code> &mdash; recursive type for deep immutability (not built-in, must be defined)</li>
+    </ul>
+  </div>
+
+  <!-- readonly modifier -->
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &mdash; readonly Modifier on Properties</div>
+<pre><code>// readonly prevents reassignment after initialization
+interface User {
+  readonly id: string;
+  readonly email: string;
+  name: string;           // mutable
+}
+
+const user: User = { id: "u1", email: "alice@test.com", name: "Alice" };
+user.name = "Bob";        // OK: name is mutable
+// user.id = "u2";        // Error: Cannot assign to 'id' because it is a read-only property
+
+// readonly in class constructors (parameter properties)
+class Config {
+  constructor(
+    readonly host: string,
+    readonly port: number,
+    readonly debug: boolean = false
+  ) {}
+}
+
+const cfg = new Config("localhost", 3000);
+console.log(cfg.host);   // "localhost"
+// cfg.port = 8080;       // Error: Cannot assign to 'port' because it is a read-only property
+
+// readonly in function parameters prevents accidental mutation
+function processUsers(users: readonly User[]): string[] {
+  // users.push(newUser);  // Error: Property 'push' does not exist on type 'readonly User[]'
+  // users.sort();          // Error: Property 'sort' does not exist on type 'readonly User[]'
+  return users.map(u =&gt; u.name);  // OK: map returns a new array
+}</code></pre>
+  </div>
+
+  <!-- Readonly<T> and ReadonlyArray<T> -->
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &mdash; Readonly&lt;T&gt; and ReadonlyArray&lt;T&gt;</div>
+<pre><code>interface Settings {
+  theme: "dark" | "light";
+  language: string;
+  notifications: { email: boolean; push: boolean };
+}
+
+// Readonly&lt;T&gt; makes all top-level properties readonly (shallow!)
+type FrozenSettings = Readonly&lt;Settings&gt;;
+// {
+//   readonly theme: "dark" | "light";
+//   readonly language: string;
+//   readonly notifications: { email: boolean; push: boolean };  // still mutable inside!
+// }
+
+const settings: FrozenSettings = {
+  theme: "dark",
+  language: "en",
+  notifications: { email: true, push: false },
+};
+
+// settings.theme = "light";               // Error: readonly
+settings.notifications.email = false;       // OK! Readonly is shallow
+
+// ReadonlyArray&lt;T&gt; removes all mutating methods
+const ids: ReadonlyArray&lt;number&gt; = [1, 2, 3];
+// ids.push(4);      // Error: Property 'push' does not exist
+// ids[0] = 10;      // Error: Index signature in type 'readonly number[]' only permits reading
+const first = ids[0]; // OK: reading is fine
+
+// Shorthand syntax: readonly T[]
+function sum(numbers: readonly number[]): number {
+  return numbers.reduce((acc, n) =&gt; acc + n, 0);
+}
+
+// ReadonlyMap and ReadonlySet
+const cache: ReadonlyMap&lt;string, number&gt; = new Map([["a", 1], ["b", 2]]);
+const visited: ReadonlySet&lt;string&gt; = new Set(["home", "about"]);
+// cache.set("c", 3);    // Error: Property 'set' does not exist
+// visited.add("contact"); // Error: Property 'add' does not exist
+console.log(cache.get("a"), visited.has("home"));</code></pre>
+    <div class="output">1 true</div>
+  </div>
+
+  <!-- as const -->
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &mdash; as const for Deep Immutability</div>
+<pre><code>// Without as const: types are widened
+const colors = ["red", "green", "blue"];
+// type: string[]
+
+// With as const: types are narrowed and readonly all the way down
+const colors2 = ["red", "green", "blue"] as const;
+// type: readonly ["red", "green", "blue"]
+
+// as const on objects: all properties become readonly with literal types
+const config = {
+  api: {
+    baseUrl: "https://api.example.com",
+    timeout: 5000,
+  },
+  retries: 3,
+  features: ["auth", "logging"] as const,
+} as const;
+// type: {
+//   readonly api: { readonly baseUrl: "https://api.example.com"; readonly timeout: 5000 };
+//   readonly retries: 3;
+//   readonly features: readonly ["auth", "logging"];
+// }
+
+// config.retries = 5;             // Error: readonly
+// config.api.timeout = 3000;      // Error: readonly (deep!)
+// config.features.push("cache");  // Error: readonly tuple
+
+// Practical use: derive union types from const arrays
+const ROLES = ["admin", "editor", "viewer"] as const;
+type Role = typeof ROLES[number]; // "admin" | "editor" | "viewer"
+
+// Practical use: enum-like objects
+const HttpStatus = {
+  OK: 200,
+  NotFound: 404,
+  ServerError: 500,
+} as const;
+type StatusCode = typeof HttpStatus[keyof typeof HttpStatus]; // 200 | 404 | 500
+
+console.log(HttpStatus.OK);</code></pre>
+    <div class="output">200</div>
+  </div>
+
+  <!-- Object.freeze and DeepReadonly -->
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &mdash; Object.freeze and DeepReadonly&lt;T&gt;</div>
+<pre><code>// Object.freeze: runtime + compile-time protection (but shallow!)
+const frozen = Object.freeze({ name: "Alice", scores: [90, 85, 92] });
+// frozen.name = "Bob";    // Error: readonly at compile time + throws at runtime (strict mode)
+frozen.scores.push(100);   // No compile error! freeze is shallow. Mutates at runtime.
+
+// DeepReadonly: recursive type for full compile-time protection
+type DeepReadonly&lt;T&gt; =
+  T extends (infer U)[]
+    ? ReadonlyArray&lt;DeepReadonly&lt;U&gt;&gt;
+    : T extends object
+      ? { readonly [K in keyof T]: DeepReadonly&lt;T[K]&gt; }
+      : T;
+
+interface AppState {
+  user: { name: string; preferences: { theme: string; fontSize: number } };
+  items: { id: number; tags: string[] }[];
+}
+
+type ImmutableState = DeepReadonly&lt;AppState&gt;;
+
+const state: ImmutableState = {
+  user: { name: "Alice", preferences: { theme: "dark", fontSize: 14 } },
+  items: [{ id: 1, tags: ["important"] }],
+};
+
+// state.user.name = "Bob";                      // Error: readonly
+// state.user.preferences.theme = "light";       // Error: readonly (deep!)
+// state.items[0].tags.push("urgent");           // Error: readonly array (deep!)
+// state.items.push({ id: 2, tags: [] });        // Error: readonly array
+
+// When to use which:
+// readonly property    -> individual fields that shouldn't change
+// Readonly&lt;T&gt;          -> shallow freeze for function params, return types
+// as const             -> literal config objects, enum-like constants
+// DeepReadonly&lt;T&gt;      -> state management (Redux store, React context)
+// Object.freeze        -> runtime enforcement (defense against JS callers)</code></pre>
+  </div>
+
+  <!-- Readonly in function design -->
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &mdash; Readonly in Function Design</div>
+<pre><code>// Accept readonly, return mutable: maximum flexibility
+function sortedCopy(items: readonly number[]): number[] {
+  return [...items].sort((a, b) =&gt; a - b);  // spread creates a new mutable array
+}
+
+const original: readonly number[] = [3, 1, 4, 1, 5];
+const sorted = sortedCopy(original);  // [1, 1, 3, 4, 5]
+// original is unchanged
+
+// readonly arrays are assignable TO mutable (but not vice versa)
+const mutableArr: number[] = [1, 2, 3];
+const readonlyArr: readonly number[] = mutableArr;   // OK: mutable -> readonly
+// const backToMutable: number[] = readonlyArr;       // Error: readonly -> mutable
+
+// Pattern: config objects as readonly parameters
+interface DatabaseConfig {
+  host: string;
+  port: number;
+  credentials: { user: string; password: string };
+}
+
+function connect(config: Readonly&lt;DatabaseConfig&gt;): void {
+  // config.port = 5432;            // Error: can't modify
+  console.log(`Connecting to ${config.host}:${config.port}`);
+}
+
+const dbConfig = { host: "localhost", port: 5432, credentials: { user: "admin", password: "secret" } };
+connect(dbConfig);  // mutable object passed as readonly parameter: OK</code></pre>
+    <div class="output">Connecting to localhost:5432</div>
+  </div>
+
+  <div class="callout-warning">
+    <strong>Common Mistakes</strong>
+    <div class="mistake">&#10060; Assuming <code>Readonly&lt;T&gt;</code> protects nested objects:<br><code>const cfg: Readonly&lt;Config&gt; = ...; cfg.nested.value = "changed";</code> &mdash; compiles without error because <code>Readonly</code> is shallow</div>
+    <div class="correct">&#9989; Use <code>DeepReadonly&lt;T&gt;</code> or <code>as const</code> when you need deep immutability. <code>Readonly&lt;T&gt;</code> only protects top-level properties.</div>
+    <div class="mistake">&#10060; Using <code>Object.freeze</code> and assuming TypeScript catches all mutations:<br><code>Object.freeze</code> is shallow at both runtime and type level &mdash; nested objects are still mutable</div>
+    <div class="correct">&#9989; Combine <code>Object.freeze</code> with <code>DeepReadonly&lt;T&gt;</code> for compile-time safety, or use a deep-freeze library for runtime safety on nested data.</div>
+  </div>
+
+  <div class="key-rules">
+    <strong>Key Rules</strong>
+    <ul>
+      <li><code>readonly</code> is a compile-time-only concept &mdash; it prevents reassignment in TypeScript but has zero runtime effect (unlike <code>Object.freeze</code>)</li>
+      <li><code>Readonly&lt;T&gt;</code>, <code>ReadonlyArray&lt;T&gt;</code>, and <code>Object.freeze</code> are all <strong>shallow</strong> &mdash; use <code>as const</code> or <code>DeepReadonly&lt;T&gt;</code> for nested structures</li>
+      <li>Accept <code>readonly</code> parameters in functions and return mutable values &mdash; this gives callers maximum flexibility while protecting the input</li>
+    </ul>
+  </div>
+
+  <div class="exercises">
+    <strong>Exercises</strong>
+    <div class="exercise"><span class="exercise-num">1</span> Define a <code>DeepReadonly&lt;T&gt;</code> type that handles objects, arrays, Maps, and Sets. Test it with a nested <code>AppState</code> type that contains all four. Verify that mutations at every nesting level produce compile errors.</div>
+    <div class="exercise"><span class="exercise-num">2</span> Create a configuration system using <code>as const</code>: define a <code>const CONFIG = { ... } as const</code> with nested objects, arrays, and literal values. Derive union types for allowed values (e.g., <code>type Environment = typeof CONFIG.environments[number]</code>). Write a function that accepts only valid environment strings.</div>
+    <div class="exercise"><span class="exercise-num">3</span> Write a <code>freeze&lt;T extends object&gt;(obj: T): DeepReadonly&lt;T&gt;</code> function that recursively calls <code>Object.freeze</code> on all nested objects and arrays. Type the return as <code>DeepReadonly&lt;T&gt;</code> so both compile-time and runtime immutability are enforced. Test that mutating any nested property throws at runtime and fails at compile time.</div>
+  </div>
+
+  <div class="connections">
+    <strong>Connections:</strong> <code>as const</code> ties directly to <a href="typescript-guides/typescript-guide-2026-05-31.html">Literal Types &amp; const Assertions</a> from Day 1. The <code>DeepReadonly&lt;T&gt;</code> recursive type previews the recursive conditional types we'll cover in <a href="#type_level_programming">Type-Level Programming</a> later today. Immutability patterns are essential for state management in React (<code>useReducer</code>) and Redux, which use <a href="typescript-guides/typescript-guide-2026-06-04.html#discriminated_unions_practice">Discriminated Unions</a> from Day 5.
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- #2 Class Patterns                                             -->
+<!-- ============================================================ -->
+<div class="concept-card" id="class_patterns">
+  <div class="concept-header">
+    <span class="concept-title">2. Class Patterns</span>
+    <span class="ttag">Runtime Patterns</span>
+  </div>
+
+  <div class="why-matters">Classes are unavoidable in TypeScript &mdash; frameworks like Angular, NestJS, and TypeORM are built on them. Understanding abstract classes, private fields, static blocks, and mixins lets you model complex hierarchies correctly, while knowing when to choose plain objects keeps your code simple where classes add unnecessary ceremony.</div>
+
+  <div class="explanation">
+    <p>TypeScript classes add powerful typing on top of JavaScript classes. The key patterns are: <strong>abstract classes</strong> (partial implementations that enforce a contract on subclasses), <strong>private fields</strong> (true runtime encapsulation with <code>#</code> vs compile-time-only <code>private</code>), <strong>static blocks</strong> (class initialization logic), and <strong>mixins</strong> (composition over inheritance). Knowing when to use classes vs plain typed objects is the most important decision.</p>
+    <ul>
+      <li><code>abstract</code> classes &mdash; can't be instantiated, define abstract methods that subclasses must implement</li>
+      <li><code>#field</code> (ES private) &mdash; true runtime privacy, not accessible even via bracket notation</li>
+      <li><code>private field</code> (TS private) &mdash; compile-time only, accessible at runtime via bracket notation</li>
+      <li><code>static { ... }</code> blocks &mdash; run once when the class is defined, for complex initialization</li>
+      <li>Mixins &mdash; compose behaviors from multiple sources using <code>Constructor&lt;T&gt;</code> pattern</li>
+      <li><code>implements</code> vs <code>extends</code> &mdash; interface conformance vs inheritance chain</li>
+    </ul>
+  </div>
+
+  <!-- Abstract classes -->
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &mdash; Abstract Classes and Methods</div>
+<pre><code>// Abstract class: partial implementation + contract
+abstract class Shape {
+  constructor(public readonly color: string) {}
+
+  // Abstract methods: subclasses MUST implement these
+  abstract area(): number;
+  abstract perimeter(): number;
+
+  // Concrete methods: shared implementation
+  describe(): string {
+    return `${this.color} shape: area=${this.area().toFixed(2)}, perimeter=${this.perimeter().toFixed(2)}`;
+  }
+}
+
+// new Shape("red");  // Error: Cannot create an instance of an abstract class
+
+class Circle extends Shape {
+  constructor(color: string, public readonly radius: number) {
+    super(color);
+  }
+  area(): number { return Math.PI * this.radius ** 2; }
+  perimeter(): number { return 2 * Math.PI * this.radius; }
+}
+
+class Rectangle extends Shape {
+  constructor(color: string, public readonly width: number, public readonly height: number) {
+    super(color);
+  }
+  area(): number { return this.width * this.height; }
+  perimeter(): number { return 2 * (this.width + this.height); }
+}
+
+// Polymorphism: Shape[] accepts any subclass
+const shapes: Shape[] = [new Circle("red", 5), new Rectangle("blue", 4, 6)];
+shapes.forEach(s =&gt; console.log(s.describe()));</code></pre>
+    <div class="output">red shape: area=78.54, perimeter=31.42
+blue shape: area=24.00, perimeter=20.00</div>
+  </div>
+
+  <!-- Private fields: # vs private -->
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &mdash; Private Fields: # (Runtime) vs private (Compile-time)</div>
+<pre><code>class BankAccount {
+  // ES private field: true runtime encapsulation
+  #balance: number;
+
+  // TS private: compile-time only, accessible at runtime via bracket notation
+  private accountType: string;
+
+  constructor(initialBalance: number, type: string) {
+    this.#balance = initialBalance;
+    this.accountType = type;
+  }
+
+  deposit(amount: number): void {
+    if (amount &lt;= 0) throw new Error("Amount must be positive");
+    this.#balance += amount;
+  }
+
+  getBalance(): number {
+    return this.#balance;
+  }
+}
+
+const account = new BankAccount(1000, "savings");
+account.deposit(500);
+console.log(account.getBalance());   // 1500
+
+// account.#balance;                 // SyntaxError at runtime: private field
+// account.accountType;              // TS error, but works at runtime:
+// (account as any).accountType;     // "savings" (TS private leaks!)
+// (account as any)["#balance"];     // undefined (ES private is truly hidden)
+
+// When to use which:
+// #field  -> library APIs, security-sensitive data, anything exposed to JS callers
+// private -> application code where compile-time checks are sufficient</code></pre>
+    <div class="output">1500</div>
+  </div>
+
+  <!-- Static blocks and static members -->
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &mdash; Static Blocks and Members</div>
+<pre><code>class DatabasePool {
+  static #instance: DatabasePool | null = null;
+  static readonly MAX_CONNECTIONS = 10;
+  #connections: string[] = [];
+
+  // Static block: runs once when the class is loaded
+  static {
+    console.log("DatabasePool class initialized");
+    // Complex initialization: read env vars, validate config, etc.
+    if (!process.env.DATABASE_URL) {
+      console.warn("DATABASE_URL not set, using default");
+    }
+  }
+
+  private constructor() {}  // Prevent direct instantiation
+
+  static getInstance(): DatabasePool {
+    if (!DatabasePool.#instance) {
+      DatabasePool.#instance = new DatabasePool();
+    }
+    return DatabasePool.#instance;
+  }
+
+  connect(name: string): boolean {
+    if (this.#connections.length &gt;= DatabasePool.MAX_CONNECTIONS) return false;
+    this.#connections.push(name);
+    return true;
+  }
+
+  get connectionCount(): number {
+    return this.#connections.length;
+  }
+}
+
+const pool = DatabasePool.getInstance();
+pool.connect("conn-1");
+console.log(pool.connectionCount, DatabasePool.MAX_CONNECTIONS);</code></pre>
+    <div class="output">DatabasePool class initialized
+DATABASE_URL not set, using default
+1 10</div>
+  </div>
+
+  <!-- Mixins -->
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &mdash; Mixins: Composition over Inheritance</div>
+<pre><code>// The Constructor type: any class constructor
+type Constructor&lt;T = {}> = new (...args: any[]) =&gt; T;
+
+// Mixin 1: add timestamping behavior
+function Timestamped&lt;TBase extends Constructor&gt;(Base: TBase) {
+  return class extends Base {
+    createdAt = new Date();
+    updatedAt = new Date();
+
+    touch() {
+      this.updatedAt = new Date();
+    }
+  };
+}
+
+// Mixin 2: add soft-delete behavior
+function SoftDeletable&lt;TBase extends Constructor&gt;(Base: TBase) {
+  return class extends Base {
+    deletedAt: Date | null = null;
+
+    softDelete() {
+      this.deletedAt = new Date();
+    }
+
+    get isDeleted(): boolean {
+      return this.deletedAt !== null;
+    }
+  };
+}
+
+// Base entity
+class Entity {
+  constructor(public id: string) {}
+}
+
+// Compose multiple mixins
+const TimestampedDeletableEntity = SoftDeletable(Timestamped(Entity));
+
+class User extends TimestampedDeletableEntity {
+  constructor(id: string, public name: string) {
+    super(id);
+  }
+}
+
+const user = new User("u1", "Alice");
+user.touch();        // from Timestamped mixin
+user.softDelete();   // from SoftDeletable mixin
+console.log(user.id, user.name, user.isDeleted);</code></pre>
+    <div class="output">u1 Alice true</div>
+  </div>
+
+  <!-- implements vs extends, classes vs objects -->
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &mdash; implements vs extends, and When to Use Classes</div>
+<pre><code>// implements: promise to conform to an interface (no code inherited)
+interface Serializable {
+  serialize(): string;
+}
+
+interface Loggable {
+  log(message: string): void;
+}
+
+// A class can implement multiple interfaces
+class UserModel implements Serializable, Loggable {
+  constructor(public name: string, public email: string) {}
+
+  serialize(): string {
+    return JSON.stringify({ name: this.name, email: this.email });
+  }
+
+  log(message: string): void {
+    console.log(`[UserModel] ${message}`);
+  }
+}
+
+// extends: inherit implementation (single inheritance only)
+class AdminModel extends UserModel {
+  constructor(name: string, email: string, public permissions: string[]) {
+    super(name, email);
+  }
+}
+
+// WHEN TO USE CLASSES vs PLAIN OBJECTS:
+// Use classes when you need:
+// - instanceof checks at runtime
+// - Private state (#field)
+// - Abstract contracts for subclasses
+// - Framework requirements (Angular services, NestJS controllers)
+
+// Use plain objects + types when you need:
+// - Simple data transfer (DTOs, API responses)
+// - Functional composition
+// - Tree-shakeable code (classes aren't fully tree-shakeable)
+// - Serialization (JSON.parse returns plain objects, not class instances)
+
+// Plain object approach (often simpler):
+interface UserData {
+  name: string;
+  email: string;
+}
+function serializeUser(user: UserData): string {
+  return JSON.stringify(user);
+}
+
+const u = new UserModel("Alice", "alice@test.com");
+console.log(u.serialize());</code></pre>
+    <div class="output">{"name":"Alice","email":"alice@test.com"}</div>
+  </div>
+
+  <div class="callout-warning">
+    <strong>Common Mistakes</strong>
+    <div class="mistake">&#10060; Using <code>private</code> and expecting runtime encapsulation:<br><code>private secret = "123";</code> &mdash; accessible at runtime via <code>(obj as any).secret</code></div>
+    <div class="correct">&#9989; Use <code>#secret</code> for true runtime privacy. <code>private</code> is only a compile-time check and is completely erased in JavaScript output.</div>
+    <div class="mistake">&#10060; Creating deep inheritance hierarchies (3+ levels):<br><code>Base &rarr; Entity &rarr; User &rarr; Admin &rarr; SuperAdmin</code> &mdash; fragile, hard to test, tightly coupled</div>
+    <div class="correct">&#9989; Prefer composition via mixins or plain function composition. Limit inheritance to 1-2 levels. Use interfaces for polymorphism instead of deep class chains.</div>
+  </div>
+
+  <div class="key-rules">
+    <strong>Key Rules</strong>
+    <ul>
+      <li>Use <code>#field</code> for runtime privacy and <code>private field</code> only when compile-time checking is sufficient &mdash; <code>#</code> is truly hidden even from <code>(obj as any)</code></li>
+      <li>Prefer composition (mixins, interfaces) over deep inheritance &mdash; <code>implements</code> multiple interfaces, mix in behaviors, keep hierarchies shallow</li>
+      <li>Choose plain objects + types for data and classes for behavior with state &mdash; if there's no private state or polymorphism, a class adds unnecessary complexity</li>
+    </ul>
+  </div>
+
+  <div class="exercises">
+    <strong>Exercises</strong>
+    <div class="exercise"><span class="exercise-num">1</span> Create an <code>abstract class Collection&lt;T&gt;</code> with abstract methods <code>add(item: T): void</code>, <code>remove(id: string): boolean</code>, and <code>find(id: string): T | undefined</code>, plus a concrete <code>toArray(): T[]</code> method. Implement it with <code>ArrayCollection</code> (backed by an array) and <code>MapCollection</code> (backed by a Map). Test polymorphic behavior with <code>Collection&lt;User&gt;</code>.</div>
+    <div class="exercise"><span class="exercise-num">2</span> Write three mixins: <code>Validatable</code> (adds <code>validate(): boolean</code>), <code>Cacheable</code> (adds <code>cacheKey(): string</code> and <code>invalidate(): void</code>), and <code>Auditable</code> (adds <code>auditLog: string[]</code> and <code>recordAction(action: string): void</code>). Compose all three onto a base <code>Entity</code> class. Create an instance and call methods from each mixin.</div>
+    <div class="exercise"><span class="exercise-num">3</span> Refactor a class-heavy design into a plain-object approach: start with a <code>class ShoppingCart</code> with <code>#items</code>, <code>addItem()</code>, <code>removeItem()</code>, <code>total()</code>. Rewrite it using a <code>CartState</code> type and pure functions <code>addItem(cart, item)</code>, <code>removeItem(cart, id)</code>, <code>total(cart)</code>. Compare the two approaches for testability and serialization.</div>
+  </div>
+
+  <div class="connections">
+    <strong>Connections:</strong> Abstract classes enforce contracts similarly to interfaces but can include implementation &mdash; compare with <a href="typescript-guides/typescript-guide-2026-06-01.html">Interfaces vs Type Aliases</a> from Day 2. The mixin pattern uses <code>Constructor&lt;T&gt;</code> which is a generic constraint (<a href="typescript-guides/typescript-guide-2026-06-02.html">Generic Constraints</a>, Day 3). Private fields complement <a href="#immutability_patterns">Immutability Patterns</a> &mdash; <code>readonly</code> prevents reassignment while <code>#</code> prevents access entirely. TC39 <a href="#review_decorators_tc39">Decorators</a> from review are primarily used with classes.
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- #3 Proxy & Reflect Typing                                     -->
+<!-- ============================================================ -->
+<div class="concept-card" id="proxy_reflect_typing">
+  <div class="concept-header">
+    <span class="concept-title">3. Proxy &amp; Reflect Typing</span>
+    <span class="ttag">Runtime Patterns</span>
+  </div>
+
+  <div class="why-matters">Proxies intercept fundamental object operations (get, set, has, delete) at runtime, enabling patterns like validation layers, observable objects, lazy loading, and logging &mdash; all transparent to consumers. TypeScript provides <code>ProxyHandler&lt;T&gt;</code> to type each trap, but understanding its limitations is critical: proxies add dynamic behavior that the type system cannot fully track.</div>
+
+  <div class="explanation">
+    <p>A <code>Proxy</code> wraps a target object and intercepts operations via "traps" defined in a handler. TypeScript types the handler with <code>ProxyHandler&lt;T&gt;</code>, where each trap method receives typed arguments. The <code>Reflect</code> API provides the default behavior for each trap &mdash; call it when you want to perform the original operation after your custom logic.</p>
+    <ul>
+      <li><code>ProxyHandler&lt;T&gt;</code> &mdash; typed handler interface with optional trap methods</li>
+      <li><code>get</code> trap &mdash; intercepts property reads: <code>obj.prop</code>, <code>obj["prop"]</code></li>
+      <li><code>set</code> trap &mdash; intercepts property writes: <code>obj.prop = value</code></li>
+      <li><code>has</code> trap &mdash; intercepts <code>in</code> operator: <code>"prop" in obj</code></li>
+      <li><code>apply</code> trap &mdash; intercepts function calls (proxy must wrap a function)</li>
+      <li><code>Reflect.get</code>, <code>Reflect.set</code> &mdash; typed alternatives to bracket access, used inside traps for default behavior</li>
+    </ul>
+  </div>
+
+  <!-- Basic proxy with get/set traps -->
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &mdash; Typed Proxy with get and set Traps</div>
+<pre><code>interface User {
+  name: string;
+  email: string;
+  age: number;
+}
+
+// Create a logging proxy that tracks all reads and writes
+function createLoggingProxy&lt;T extends object&gt;(target: T): T {
+  const handler: ProxyHandler&lt;T&gt; = {
+    get(target, prop, receiver) {
+      console.log(`GET ${String(prop)}`);
+      return Reflect.get(target, prop, receiver);
+    },
+    set(target, prop, value, receiver) {
+      console.log(`SET ${String(prop)} = ${JSON.stringify(value)}`);
+      return Reflect.set(target, prop, value, receiver);
+    },
+  };
+
+  return new Proxy(target, handler);
+}
+
+const user = createLoggingProxy&lt;User&gt;({
+  name: "Alice",
+  email: "alice@test.com",
+  age: 30,
+});
+
+user.name;         // logs: GET name
+user.age = 31;     // logs: SET age = 31
+console.log(user.age);</code></pre>
+    <div class="output">GET name
+SET age = 31
+GET age
+31</div>
+  </div>
+
+  <!-- Validation proxy -->
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &mdash; Validation Proxy</div>
+<pre><code>interface Product {
+  name: string;
+  price: number;
+  quantity: number;
+}
+
+type Validator&lt;T&gt; = {
+  [K in keyof T]?: (value: T[K]) =&gt; boolean;
+};
+
+function createValidatedProxy&lt;T extends object&gt;(
+  target: T,
+  validators: Validator&lt;T&gt;
+): T {
+  const handler: ProxyHandler&lt;T&gt; = {
+    set(target, prop, value, receiver) {
+      const key = prop as keyof T;
+      const validate = validators[key];
+
+      if (validate &amp;&amp; !validate(value)) {
+        throw new Error(`Invalid value for ${String(prop)}: ${JSON.stringify(value)}`);
+      }
+
+      return Reflect.set(target, prop, value, receiver);
+    },
+  };
+
+  return new Proxy(target, handler);
+}
+
+const product = createValidatedProxy&lt;Product&gt;(
+  { name: "Widget", price: 9.99, quantity: 100 },
+  {
+    price: (v) =&gt; v &gt; 0,
+    quantity: (v) =&gt; Number.isInteger(v) &amp;&amp; v &gt;= 0,
+    name: (v) =&gt; v.length &gt; 0 &amp;&amp; v.length &lt;= 100,
+  }
+);
+
+product.price = 14.99;    // OK
+product.quantity = 50;     // OK
+console.log(product.price, product.quantity);
+
+try {
+  product.price = -5;     // Throws: Invalid value for price
+} catch (e) {
+  console.log((e as Error).message);
+}</code></pre>
+    <div class="output">14.99 50
+Invalid value for price: -5</div>
+  </div>
+
+  <!-- Observable proxy -->
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &mdash; Observable Proxy with Change Listeners</div>
+<pre><code>type ChangeListener&lt;T&gt; = (
+  prop: keyof T &amp; string,
+  oldValue: T[keyof T],
+  newValue: T[keyof T]
+) =&gt; void;
+
+function createObservable&lt;T extends object&gt;(
+  target: T,
+  onChange: ChangeListener&lt;T&gt;
+): T {
+  const handler: ProxyHandler&lt;T&gt; = {
+    set(target, prop, value, receiver) {
+      const key = prop as keyof T &amp; string;
+      const oldValue = Reflect.get(target, prop, receiver) as T[keyof T];
+      const result = Reflect.set(target, prop, value, receiver);
+      if (result &amp;&amp; oldValue !== value) {
+        onChange(key, oldValue, value as T[keyof T]);
+      }
+      return result;
+    },
+  };
+
+  return new Proxy(target, handler);
+}
+
+interface AppSettings {
+  theme: "dark" | "light";
+  fontSize: number;
+  language: string;
+}
+
+const settings = createObservable&lt;AppSettings&gt;(
+  { theme: "dark", fontSize: 14, language: "en" },
+  (prop, oldVal, newVal) =&gt; {
+    console.log(`${prop} changed: ${JSON.stringify(oldVal)} -> ${JSON.stringify(newVal)}`);
+  }
+);
+
+settings.theme = "light";
+settings.fontSize = 16;
+settings.language = "en";  // same value: no notification</code></pre>
+    <div class="output">theme changed: "dark" -> "light"
+fontSize changed: 14 -> 16</div>
+  </div>
+
+  <!-- Reflect API and apply trap -->
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &mdash; apply Trap and Reflect API</div>
+<pre><code>// apply trap: intercept function calls
+function createTimedFunction&lt;Args extends any[], R&gt;(
+  fn: (...args: Args) =&gt; R
+): (...args: Args) =&gt; R {
+  const handler: ProxyHandler&lt;(...args: Args) =&gt; R&gt; = {
+    apply(target, thisArg, argArray) {
+      const start = performance.now();
+      const result = Reflect.apply(target, thisArg, argArray);
+      const elapsed = (performance.now() - start).toFixed(2);
+      console.log(`${fn.name || "anonymous"} took ${elapsed}ms`);
+      return result;
+    },
+  };
+
+  return new Proxy(fn, handler);
+}
+
+function fibonacci(n: number): number {
+  if (n &lt;= 1) return n;
+  return fibonacci(n - 1) + fibonacci(n - 2);
+}
+
+const timedFib = createTimedFunction(fibonacci);
+const result = timedFib(30);
+console.log(`fib(30) = ${result}`);
+
+// Reflect provides typed alternatives to bracket access:
+const obj = { a: 1, b: "hello", c: true };
+const val = Reflect.get(obj, "a");       // typed as any (limitation)
+const exists = Reflect.has(obj, "b");    // boolean
+Reflect.set(obj, "a", 42);              // returns boolean
+console.log(Reflect.has(obj, "z"));</code></pre>
+    <div class="output">fibonacci took 7.32ms
+fib(30) = 832040
+false</div>
+  </div>
+
+  <!-- Limitations -->
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &mdash; Proxy Typing Limitations</div>
+<pre><code>// LIMITATION 1: TypeScript can't track dynamic proxy behavior
+// The proxy type is the same as the target type
+interface Config { host: string; port: number }
+
+const handler: ProxyHandler&lt;Config&gt; = {
+  get(target, prop) {
+    if (prop === "connectionString") {
+      return `${target.host}:${target.port}`;  // Dynamic property
+    }
+    return Reflect.get(target, prop);
+  },
+};
+
+const config = new Proxy({ host: "localhost", port: 3000 }, handler);
+// config.connectionString;  // Error: Property 'connectionString' does not exist
+// TypeScript doesn't know about the dynamic property!
+
+// Workaround: type assertion or a broader interface
+const connStr = (config as any).connectionString; // "localhost:3000" at runtime
+
+// LIMITATION 2: Reflect.get returns any, not the property type
+const val = Reflect.get({ name: "Alice", age: 30 }, "name");
+// val: any (not string!)
+
+// LIMITATION 3: Proxy doesn't intercept private fields (#field)
+// Private fields bypass the proxy entirely (they use internal slots)
+
+// BEST PRACTICE: Use proxies for:
+// - Validation layers (form data, API inputs)
+// - Observable state (reactive frameworks)
+// - Logging and debugging (development tools)
+// - Lazy loading (load data on first access)
+// Avoid proxies for:
+// - Performance-critical hot paths (each operation has overhead)
+// - Type-safe APIs (the type system can't fully represent proxy behavior)</code></pre>
+  </div>
+
+  <div class="callout-warning">
+    <strong>Common Mistakes</strong>
+    <div class="mistake">&#10060; Forgetting to call <code>Reflect.set()</code> and return its result in the <code>set</code> trap:<br><code>set(target, prop, value) { target[prop] = value; }</code> &mdash; must return <code>true</code>/<code>false</code></div>
+    <div class="correct">&#9989; Always use <code>return Reflect.set(target, prop, value, receiver)</code> in set traps. It handles the default behavior correctly and returns the required boolean. Direct assignment misses receiver handling.</div>
+    <div class="mistake">&#10060; Assuming proxies intercept private field access (<code>#field</code>):<br>ES private fields use internal slots, not property access, so the <code>get</code>/<code>set</code> traps never fire</div>
+    <div name="correct" class="correct">&#9989; Proxies only intercept operations that go through the normal property protocol. Private fields (<code>#field</code>) bypass the proxy entirely. Use public properties or accessor methods if you need proxy interception.</div>
+  </div>
+
+  <div class="key-rules">
+    <strong>Key Rules</strong>
+    <ul>
+      <li><code>ProxyHandler&lt;T&gt;</code> types the trap methods but the proxy's external type remains <code>T</code> &mdash; TypeScript cannot represent dynamic properties added by traps</li>
+      <li>Always use <code>Reflect.*</code> inside traps for default behavior instead of direct property access &mdash; it correctly handles the <code>receiver</code> parameter and prototype chains</li>
+      <li>Proxies add runtime overhead to every intercepted operation &mdash; use them for cross-cutting concerns (validation, logging, observation) not for high-frequency hot paths</li>
+    </ul>
+  </div>
+
+  <div class="exercises">
+    <strong>Exercises</strong>
+    <div class="exercise"><span class="exercise-num">1</span> Create a <code>createReadonlyProxy&lt;T extends object&gt;(target: T): Readonly&lt;T&gt;</code> function using a Proxy that throws on any <code>set</code>, <code>deleteProperty</code>, or <code>defineProperty</code> trap. Compare its behavior with <code>Object.freeze</code> &mdash; verify that the proxy version gives descriptive error messages while freeze silently fails in non-strict mode.</div>
+    <div class="exercise"><span class="exercise-num">2</span> Build a <code>createCachingProxy</code> that wraps an object where each property getter is an async function. The proxy should cache the result of the first call and return the cached value on subsequent accesses. Type it so the consumer sees <code>Promise&lt;T&gt;</code> for each property.</div>
+    <div class="exercise"><span class="exercise-num">3</span> Implement a "revocable" validated proxy using <code>Proxy.revocable()</code>. The proxy validates <code>set</code> operations against a schema (you can use simple type checks). After calling <code>revoke()</code>, any operation on the proxy should throw a <code>TypeError</code>. Test that revocation works and that TypeScript types are preserved before revocation.</div>
+  </div>
+
+  <div class="connections">
+    <strong>Connections:</strong> The validation proxy pattern is a runtime equivalent of <a href="#immutability_patterns">Immutability Patterns</a> &mdash; compile-time readonly prevents writes in TypeScript, while proxy validation prevents writes at runtime. The observable proxy underpins reactive state in Vue.js, connecting to <a href="typescript-guides/typescript-guide-2026-06-04.html#discriminated_unions_practice">Discriminated Unions</a> for state management. The <code>Validator&lt;T&gt;</code> mapped type uses the same <code>[K in keyof T]</code> pattern from <a href="typescript-guides/typescript-guide-2026-06-02.html">Mapped Types</a> (Day 3).
+  </div>
+</div>
+
+</div><!-- end topic-section (Week 5 finish) -->
+
+<!-- ============================================================ -->
+<!-- NEW CONCEPTS: Week 6 — Advanced Patterns & Performance         -->
+<!-- ============================================================ -->
+<div class="topic-section">
+<div class="topic-section-header">
+  <span class="section-num">6</span>
+  Week 6: Advanced Patterns &amp; Performance
+</div>
+
+<!-- ============================================================ -->
+<!-- #4 Type-Level Programming                                     -->
+<!-- ============================================================ -->
+<div class="concept-card" id="type_level_programming">
+  <div class="concept-header">
+    <span class="concept-title">4. Type-Level Programming</span>
+    <span class="ttag">Advanced Patterns &amp; Performance</span>
+  </div>
+
+  <div class="why-matters">TypeScript's type system is Turing-complete &mdash; you can compute at the type level. Recursive conditional types, variadic tuple manipulation, and template literal transformations let you encode complex invariants that the compiler enforces. This is the foundation of libraries like Zod, tRPC, and Prisma, which derive types from schemas at compile time.</div>
+
+  <div class="explanation">
+    <p>Type-level programming treats types as a functional programming language: you write "functions" (generic types) that take types as input and produce types as output. The building blocks are recursive conditional types, variadic tuple types, and template literal manipulation. While powerful, readability is the limiting factor &mdash; use these techniques when the safety payoff justifies the complexity.</p>
+    <ul>
+      <li>Recursive conditional types &mdash; a type that references itself (e.g., <code>DeepPartial&lt;T&gt;</code>)</li>
+      <li>Variadic tuple types &mdash; <code>[...T, ...U]</code> for concatenating and manipulating tuple types</li>
+      <li>Template literal type manipulation &mdash; <code>Split</code>, <code>Join</code>, <code>Replace</code> at the type level</li>
+      <li>Tuple manipulation utilities &mdash; <code>Head</code>, <code>Tail</code>, <code>Last</code>, <code>Length</code></li>
+      <li>Type-level arithmetic &mdash; counting with tuple length (limited but useful)</li>
+    </ul>
+  </div>
+
+  <!-- Recursive conditional types -->
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &mdash; Recursive Conditional Types</div>
+<pre><code>// DeepPartial: make all properties optional, recursively
+type DeepPartial&lt;T&gt; =
+  T extends object
+    ? { [K in keyof T]?: DeepPartial&lt;T[K]&gt; }
+    : T;
+
+interface Config {
+  server: {
+    host: string;
+    port: number;
+    ssl: { cert: string; key: string };
+  };
+  database: { url: string; pool: { min: number; max: number } };
+}
+
+type PartialConfig = DeepPartial&lt;Config&gt;;
+// All nested properties are optional:
+const update: PartialConfig = {
+  server: { ssl: { cert: "new-cert.pem" } },  // only cert, everything else omitted
+};
+
+// DeepRequired: opposite of DeepPartial
+type DeepRequired&lt;T&gt; =
+  T extends object
+    ? { [K in keyof T]-?: DeepRequired&lt;T[K]&gt; }
+    : T;
+
+// DeepNonNullable: remove null/undefined recursively
+type DeepNonNullable&lt;T&gt; =
+  T extends object
+    ? { [K in keyof T]: DeepNonNullable&lt;NonNullable&lt;T[K]&gt;&gt; }
+    : NonNullable&lt;T&gt;;
+
+// Flatten nested objects into dot-notation keys
+type FlattenKeys&lt;T, Prefix extends string = ""&gt; =
+  T extends object
+    ? {
+        [K in keyof T &amp; string]: T[K] extends object
+          ? FlattenKeys&lt;T[K], `${Prefix}${K}.`&gt;
+          : `${Prefix}${K}`;
+      }[keyof T &amp; string]
+    : never;
+
+type ConfigKeys = FlattenKeys&lt;Config&gt;;
+// "server.host" | "server.port" | "server.ssl.cert" | "server.ssl.key"
+// | "database.url" | "database.pool.min" | "database.pool.max"</code></pre>
+    <div class="type-result">DeepPartial&lt;Config&gt; = {
+  server?: { host?: string; port?: number; ssl?: { cert?: string; key?: string } };
+  database?: { url?: string; pool?: { min?: number; max?: number } };
+}</div>
+  </div>
+
+  <!-- Variadic tuple types -->
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &mdash; Variadic Tuple Types</div>
+<pre><code>// Concatenate two tuples
+type Concat&lt;A extends unknown[], B extends unknown[]&gt; = [...A, ...B];
+
+type AB = Concat&lt;[1, 2], [3, 4]&gt;;  // [1, 2, 3, 4]
+
+// Prepend an element to a tuple
+type Prepend&lt;T, Tuple extends unknown[]&gt; = [T, ...Tuple];
+type WithId = Prepend&lt;string, [number, boolean]&gt;;  // [string, number, boolean]
+
+// Append an element to a tuple
+type Append&lt;Tuple extends unknown[], T&gt; = [...Tuple, T];
+type WithTimestamp = Append&lt;[string, number], Date&gt;;  // [string, number, Date]
+
+// Head: first element of a tuple
+type Head&lt;T extends unknown[]&gt; = T extends [infer H, ...any[]] ? H : never;
+type First = Head&lt;[string, number, boolean]&gt;;  // string
+
+// Tail: everything except the first element
+type Tail&lt;T extends unknown[]&gt; = T extends [any, ...infer Rest] ? Rest : [];
+type Rest = Tail&lt;[string, number, boolean]&gt;;  // [number, boolean]
+
+// Last: last element of a tuple
+type Last&lt;T extends unknown[]&gt; = T extends [...any[], infer L] ? L : never;
+type End = Last&lt;[string, number, boolean]&gt;;  // boolean
+
+// Length: tuple length as a literal number
+type Length&lt;T extends unknown[]&gt; = T["length"];
+type Len = Length&lt;[string, number, boolean]&gt;;  // 3
+
+// Real-world: typed function composition
+type FirstArg&lt;F&gt; = F extends (arg: infer A, ...rest: any[]) =&gt; any ? A : never;
+type ReturnOf&lt;F&gt; = F extends (...args: any[]) =&gt; infer R ? R : never;
+
+// Spread in function parameters
+function concat&lt;A extends unknown[], B extends unknown[]&gt;(
+  a: [...A], b: [...B]
+): [...A, ...B] {
+  return [...a, ...b];
+}
+
+const result = concat([1, "two"] as [number, string], [true] as [boolean]);
+// result: [number, string, boolean]
+console.log(result);</code></pre>
+    <div class="output">[1, "two", true]</div>
+  </div>
+
+  <!-- Template literal type manipulation -->
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &mdash; Template Literal Type Manipulation</div>
+<pre><code>// Split a string type into a tuple of characters/segments
+type Split&lt;S extends string, D extends string&gt; =
+  S extends `${infer Head}${D}${infer Tail}`
+    ? [Head, ...Split&lt;Tail, D&gt;]
+    : S extends ""
+      ? []
+      : [S];
+
+type Parts = Split&lt;"hello-world-foo", "-"&gt;;  // ["hello", "world", "foo"]
+
+// Join a tuple of strings into a single string type
+type Join&lt;T extends string[], D extends string&gt; =
+  T extends []
+    ? ""
+    : T extends [infer Head extends string]
+      ? Head
+      : T extends [infer Head extends string, ...infer Tail extends string[]]
+        ? `${Head}${D}${Join&lt;Tail, D&gt;}`
+        : string;
+
+type Joined = Join&lt;["hello", "world"], "-"&gt;;  // "hello-world"
+
+// Replace in a string type
+type Replace&lt;
+  S extends string,
+  From extends string,
+  To extends string
+&gt; = S extends `${infer Before}${From}${infer After}`
+  ? `${Before}${To}${After}`
+  : S;
+
+type Fixed = Replace&lt;"hello world", " ", "-"&gt;;  // "hello-world"
+
+// CamelCase to kebab-case
+type CamelToKebab&lt;S extends string&gt; =
+  S extends `${infer Head}${infer Tail}`
+    ? Head extends Uppercase&lt;Head&gt;
+      ? `-${Lowercase&lt;Head&gt;}${CamelToKebab&lt;Tail&gt;}`
+      : `${Head}${CamelToKebab&lt;Tail&gt;}`
+    : S;
+
+type Kebab = CamelToKebab&lt;"backgroundColor"&gt;;  // "background-color"
+
+// Practical: typed event names from an object
+interface Events {
+  onClick: (x: number, y: number) =&gt; void;
+  onHover: (element: string) =&gt; void;
+  onScroll: (offset: number) =&gt; void;
+}
+
+type EventName&lt;K extends string&gt; = K extends `on${infer Name}` ? Uncapitalize&lt;Name&gt; : K;
+type AllEvents = EventName&lt;keyof Events &amp; string&gt;;  // "click" | "hover" | "scroll"</code></pre>
+    <div class="type-result">Split&lt;"hello-world-foo", "-"&gt; = ["hello", "world", "foo"]
+CamelToKebab&lt;"backgroundColor"&gt; = "background-color"
+AllEvents = "click" | "hover" | "scroll"</div>
+  </div>
+
+  <!-- Type-level arithmetic -->
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &mdash; Type-Level Arithmetic (Tuple Length Counting)</div>
+<pre><code>// Build a tuple of N elements (used for counting)
+type BuildTuple&lt;N extends number, T extends unknown[] = []&gt; =
+  T["length"] extends N ? T : BuildTuple&lt;N, [...T, unknown]&gt;;
+
+// Add two numbers at the type level
+type Add&lt;A extends number, B extends number&gt; =
+  [...BuildTuple&lt;A&gt;, ...BuildTuple&lt;B&gt;]["length"];
+
+type Sum = Add&lt;3, 4&gt;;  // 7
+
+// Subtract (A - B, only works when A >= B)
+type Subtract&lt;A extends number, B extends number&gt; =
+  BuildTuple&lt;A&gt; extends [...BuildTuple&lt;B&gt;, ...infer Rest]
+    ? Rest["length"]
+    : never;
+
+type Diff = Subtract&lt;10, 3&gt;;  // 7
+
+// Comparison
+type IsGreater&lt;A extends number, B extends number&gt; =
+  BuildTuple&lt;A&gt; extends [...BuildTuple&lt;B&gt;, infer _, ...infer __]
+    ? true
+    : false;
+
+type Check1 = IsGreater&lt;5, 3&gt;;  // true
+type Check2 = IsGreater&lt;2, 4&gt;;  // false
+
+// Practical: enforce maximum depth
+type MaxDepth = 5;
+type ValidateDepth&lt;N extends number&gt; =
+  IsGreater&lt;N, MaxDepth&gt; extends true
+    ? never
+    : N;
+
+// Note: This works for small numbers (roughly 0-999).
+// TypeScript has a recursion depth limit (~999 levels).
+// For larger numbers, use branded types instead of type-level arithmetic.</code></pre>
+    <div class="type-result">Add&lt;3, 4&gt; = 7
+Subtract&lt;10, 3&gt; = 7
+IsGreater&lt;5, 3&gt; = true</div>
+  </div>
+
+  <!-- Putting it all together -->
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &mdash; Practical: Typed Path Access</div>
+<pre><code>// Combine recursive types + template literals: type-safe deep property access
+type PathValue&lt;T, P extends string&gt; =
+  P extends `${infer Key}.${infer Rest}`
+    ? Key extends keyof T
+      ? PathValue&lt;T[Key], Rest&gt;
+      : never
+    : P extends keyof T
+      ? T[P]
+      : never;
+
+interface AppConfig {
+  server: { host: string; port: number };
+  database: { credentials: { user: string; password: string } };
+  features: { darkMode: boolean };
+}
+
+// Type-safe config access
+function getConfig&lt;P extends string&gt;(
+  config: AppConfig,
+  path: P
+): PathValue&lt;AppConfig, P&gt; {
+  return path.split(".").reduce((obj: any, key) =&gt; obj[key], config);
+}
+
+declare const config: AppConfig;
+
+const host = getConfig(config, "server.host");           // string
+const port = getConfig(config, "server.port");           // number
+const user = getConfig(config, "database.credentials.user"); // string
+const dark = getConfig(config, "features.darkMode");     // boolean
+// const bad = getConfig(config, "server.missing");      // never</code></pre>
+    <div class="type-result">PathValue&lt;AppConfig, "server.host"&gt; = string
+PathValue&lt;AppConfig, "database.credentials.user"&gt; = string
+PathValue&lt;AppConfig, "features.darkMode"&gt; = boolean</div>
+  </div>
+
+  <div class="callout-warning">
+    <strong>Common Mistakes</strong>
+    <div class="mistake">&#10060; Creating deeply recursive types without a base case:<br><code>type Loop&lt;T&gt; = Loop&lt;T[]&gt;</code> &mdash; causes "Type instantiation is excessively deep and possibly infinite"</div>
+    <div class="correct">&#9989; Every recursive type needs a termination condition. Use <code>T extends ... ? RecurseCase : BaseCase</code>. TypeScript limits recursion to about 999 levels.</div>
+    <div class="mistake">&#10060; Using type-level arithmetic for large numbers:<br><code>type Big = Add&lt;500, 600&gt;</code> &mdash; exceeds the recursion limit and fails silently</div>
+    <div class="correct">&#9989; Type-level arithmetic works reliably for numbers roughly 0-50. For larger ranges, use branded types or runtime validation instead of type-level computation.</div>
+  </div>
+
+  <div class="key-rules">
+    <strong>Key Rules</strong>
+    <ul>
+      <li>Recursive conditional types must always have a base case &mdash; TypeScript limits recursion depth to approximately 999 levels and will error on infinite types</li>
+      <li>Variadic tuple types (<code>[...T, ...U]</code>) enable type-safe function composition, tuple concatenation, and positional argument manipulation</li>
+      <li>Template literal types transform strings at the type level &mdash; use <code>${infer ...}</code> to split, match, and reconstruct string types for API design (routes, CSS properties, event names)</li>
+    </ul>
+  </div>
+
+  <div class="exercises">
+    <strong>Exercises</strong>
+    <div class="exercise"><span class="exercise-num">1</span> Implement a <code>type Reverse&lt;T extends unknown[]&gt;</code> that reverses a tuple type: <code>Reverse&lt;[1, 2, 3]&gt;</code> should be <code>[3, 2, 1]</code>. Then implement <code>type Zip&lt;A extends unknown[], B extends unknown[]&gt;</code> that pairs up elements: <code>Zip&lt;[1, 2], ["a", "b"]&gt;</code> should be <code>[[1, "a"], [2, "b"]]</code>.</div>
+    <div class="exercise"><span class="exercise-num">2</span> Write a <code>type ReplaceAll&lt;S extends string, From extends string, To extends string&gt;</code> that replaces all occurrences (not just the first). Test with <code>ReplaceAll&lt;"a-b-c-d", "-", "."&gt;</code> which should produce <code>"a.b.c.d"</code>. Then write <code>type TrimLeft&lt;S extends string&gt;</code> that removes leading whitespace.</div>
+    <div class="exercise"><span class="exercise-num">3</span> Build a <code>type PathKeys&lt;T&gt;</code> that produces a union of all valid dot-separated paths through a nested object. For example, given <code>{ a: { b: { c: number }; d: string } }</code>, it should produce <code>"a" | "a.b" | "a.b.c" | "a.d"</code>. Test it with a complex nested interface and verify that invalid paths are rejected.</div>
+  </div>
+
+  <div class="connections">
+    <strong>Connections:</strong> Recursive types extend the <a href="typescript-guides/typescript-guide-2026-06-02.html">Conditional Types</a> pattern from Day 3. The <code>DeepReadonly&lt;T&gt;</code> type from <a href="#immutability_patterns">Immutability Patterns</a> earlier today is a recursive conditional type. Template literal manipulation builds on <a href="typescript-guides/typescript-guide-2026-05-31.html">Literal Types</a> from Day 1. The <code>infer</code> keyword used throughout is formalized next in <a href="#infer_mastery">infer Mastery</a>.
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- #5 infer Mastery                                              -->
+<!-- ============================================================ -->
+<div class="concept-card" id="infer_mastery">
+  <div class="concept-header">
+    <span class="concept-title">5. infer Mastery</span>
+    <span class="ttag">Advanced Patterns &amp; Performance</span>
+  </div>
+
+  <div class="why-matters"><code>infer</code> is the "pattern matching" of TypeScript's type system. It lets you extract types from inside other types &mdash; pulling the return type from a function, the element type from an array, the resolved type from a Promise, or any other structural position. Every advanced utility type (including TypeScript's built-in <code>ReturnType</code>, <code>Parameters</code>, and <code>Awaited</code>) is built on <code>infer</code>.</div>
+
+  <div class="explanation">
+    <p><code>infer</code> appears only inside the extends clause of a conditional type. It declares a type variable that TypeScript infers from the structural position. Think of it as a "capture group" in a regex &mdash; it matches a part of the type and binds it to a name you can use in the true branch of the conditional.</p>
+    <ul>
+      <li>Basic: <code>T extends Promise&lt;infer U&gt; ? U : never</code> &mdash; extracts the resolved type from a Promise</li>
+      <li>Function return: <code>T extends (...args: any[]) =&gt; infer R ? R : never</code></li>
+      <li>Function parameters: <code>T extends (...args: infer P) =&gt; any ? P : never</code></li>
+      <li>Array element: <code>T extends (infer U)[] ? U : never</code></li>
+      <li>Nested infer: extract types from deeply nested structures</li>
+      <li>Multiple <code>infer</code> in the same conditional type</li>
+      <li><code>infer</code> with constraints: <code>infer U extends string</code> (TS 4.7+)</li>
+    </ul>
+  </div>
+
+  <!-- Basic infer patterns -->
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &mdash; Basic infer Patterns</div>
+<pre><code>// Extract the resolved type from a Promise
+type UnwrapPromise&lt;T&gt; = T extends Promise&lt;infer U&gt; ? U : T;
+
+type A = UnwrapPromise&lt;Promise&lt;string&gt;&gt;;   // string
+type B = UnwrapPromise&lt;Promise&lt;number[]&gt;&gt;; // number[]
+type C = UnwrapPromise&lt;string&gt;;             // string (not a Promise, returns as-is)
+
+// Deep unwrap: handle nested Promises
+type DeepUnwrap&lt;T&gt; = T extends Promise&lt;infer U&gt; ? DeepUnwrap&lt;U&gt; : T;
+
+type D = DeepUnwrap&lt;Promise&lt;Promise&lt;Promise&lt;boolean&gt;&gt;&gt;&gt;; // boolean
+
+// Extract array element type
+type ElementOf&lt;T&gt; = T extends (infer U)[] ? U : never;
+
+type E = ElementOf&lt;string[]&gt;;       // string
+type F = ElementOf&lt;[number, string, boolean]&gt;; // number | string | boolean (union of all tuple elements)
+
+// Extract function return type (how ReturnType&lt;T&gt; works)
+type MyReturnType&lt;T&gt; = T extends (...args: any[]) =&gt; infer R ? R : never;
+
+type G = MyReturnType&lt;() =&gt; string&gt;;           // string
+type H = MyReturnType&lt;(x: number) =&gt; boolean&gt;; // boolean
+
+// Extract function parameters (how Parameters&lt;T&gt; works)
+type MyParameters&lt;T&gt; = T extends (...args: infer P) =&gt; any ? P : never;
+
+type I = MyParameters&lt;(a: string, b: number) =&gt; void&gt;; // [a: string, b: number]</code></pre>
+    <div class="type-result">UnwrapPromise&lt;Promise&lt;string&gt;&gt; = string
+DeepUnwrap&lt;Promise&lt;Promise&lt;Promise&lt;boolean&gt;&gt;&gt;&gt; = boolean
+ElementOf&lt;string[]&gt; = string
+MyReturnType&lt;() =&gt; string&gt; = string</div>
+  </div>
+
+  <!-- Nested and multiple infer -->
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &mdash; Nested and Multiple infer</div>
+<pre><code>// Multiple infer in the same conditional
+type FunctionParts&lt;T&gt; =
+  T extends (...args: infer Args) =&gt; infer Return
+    ? { args: Args; return: Return }
+    : never;
+
+type Parts = FunctionParts&lt;(name: string, age: number) =&gt; boolean&gt;;
+// { args: [name: string, age: number]; return: boolean }
+
+// Extract from nested generics
+type InnerType&lt;T&gt; =
+  T extends Map&lt;infer K, infer V&gt;
+    ? { key: K; value: V }
+    : T extends Set&lt;infer U&gt;
+      ? { element: U }
+      : T extends Promise&lt;infer P&gt;
+        ? { resolved: P }
+        : never;
+
+type MapInfo = InnerType&lt;Map&lt;string, number&gt;&gt;;   // { key: string; value: number }
+type SetInfo = InnerType&lt;Set&lt;boolean&gt;&gt;;           // { element: boolean }
+type PromInfo = InnerType&lt;Promise&lt;Date&gt;&gt;;         // { resolved: Date }
+
+// Extract from deeply nested structures
+type ExtractEventPayload&lt;T&gt; =
+  T extends { type: string; payload: infer P }
+    ? P
+    : never;
+
+type Events =
+  | { type: "click"; payload: { x: number; y: number } }
+  | { type: "key"; payload: { key: string; code: number } }
+  | { type: "scroll"; payload: { offset: number } };
+
+type AllPayloads = ExtractEventPayload&lt;Events&gt;;
+// { x: number; y: number } | { key: string; code: number } | { offset: number }
+// (distributes over the union automatically)</code></pre>
+    <div class="type-result">FunctionParts&lt;(name: string, age: number) =&gt; boolean&gt; = { args: [string, number]; return: boolean }
+InnerType&lt;Map&lt;string, number&gt;&gt; = { key: string; value: number }</div>
+  </div>
+
+  <!-- infer with constraints -->
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &mdash; infer with Constraints (TS 4.7+)</div>
+<pre><code>// Without constraint: infer captures any type
+type GetId&lt;T&gt; = T extends { id: infer Id } ? Id : never;
+type AnyId = GetId&lt;{ id: 42 }&gt;;  // 42 (literal number)
+
+// With constraint: restrict what infer can match
+type GetStringId&lt;T&gt; = T extends { id: infer Id extends string } ? Id : never;
+
+type Good = GetStringId&lt;{ id: "abc" }&gt;;   // "abc"
+type Bad = GetStringId&lt;{ id: 42 }&gt;;       // never (42 is not a string)
+
+// Practical: extract string keys only
+type StringKeys&lt;T&gt; =
+  T extends Record&lt;infer K extends string, any&gt; ? K : never;
+
+type Keys = StringKeys&lt;{ name: string; age: number; 0: boolean }&gt;;
+// "name" | "age" (excludes numeric key 0)
+
+// Practical: extract specific function signatures
+type AsyncFunction = (...args: any[]) =&gt; Promise&lt;any&gt;;
+
+type ExtractAsyncReturn&lt;T&gt; =
+  T extends (...args: any[]) =&gt; Promise&lt;infer R extends object&gt;
+    ? R
+    : never;
+
+type Result1 = ExtractAsyncReturn&lt;() =&gt; Promise&lt;{ name: string }&gt;&gt;;  // { name: string }
+type Result2 = ExtractAsyncReturn&lt;() =&gt; Promise&lt;string&gt;&gt;;            // never (string is not object)
+
+// Constrained infer in template literals
+type ExtractDigits&lt;S extends string&gt; =
+  S extends `${infer _}${infer D extends `${number}`}${infer Rest}`
+    ? D | ExtractDigits&lt;`${_}${Rest}`&gt;
+    : never;</code></pre>
+    <div class="type-result">GetStringId&lt;{ id: "abc" }&gt; = "abc"
+GetStringId&lt;{ id: 42 }&gt; = never
+StringKeys&lt;{ name: string; age: number; 0: boolean }&gt; = "name" | "age"</div>
+  </div>
+
+  <!-- Infer in tuple patterns -->
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &mdash; infer in Tuple Patterns</div>
+<pre><code>// First and rest of a tuple
+type Head&lt;T extends unknown[]&gt; =
+  T extends [infer H, ...infer _] ? H : never;
+
+type Tail&lt;T extends unknown[]&gt; =
+  T extends [infer _, ...infer Rest] ? Rest : [];
+
+type Last&lt;T extends unknown[]&gt; =
+  T extends [...infer _, infer L] ? L : never;
+
+type Init&lt;T extends unknown[]&gt; =
+  T extends [...infer Front, infer _] ? Front : [];
+
+type H = Head&lt;[1, 2, 3]&gt;;    // 1
+type T = Tail&lt;[1, 2, 3]&gt;;    // [2, 3]
+type L = Last&lt;[1, 2, 3]&gt;;    // 3
+type I = Init&lt;[1, 2, 3]&gt;;    // [1, 2]
+
+// Practical: type-safe curry
+type Curry&lt;Args extends unknown[], Return&gt; =
+  Args extends [infer First, ...infer Rest]
+    ? Rest extends []
+      ? (arg: First) =&gt; Return
+      : (arg: First) =&gt; Curry&lt;Rest, Return&gt;
+    : Return;
+
+type CurriedAdd = Curry&lt;[number, number, number], number&gt;;
+// (arg: number) => (arg: number) => (arg: number) => number
+
+// Practical: extract constructor parameter types
+type ConstructorArgs&lt;T&gt; =
+  T extends new (...args: infer A) =&gt; any ? A : never;
+
+class MyClass {
+  constructor(public name: string, public age: number) {}
+}
+
+type Args = ConstructorArgs&lt;typeof MyClass&gt;;  // [name: string, age: number]</code></pre>
+    <div class="type-result">Head&lt;[1, 2, 3]&gt; = 1
+Tail&lt;[1, 2, 3]&gt; = [2, 3]
+Last&lt;[1, 2, 3]&gt; = 3
+CurriedAdd = (arg: number) =&gt; (arg: number) =&gt; (arg: number) =&gt; number</div>
+  </div>
+
+  <!-- Rebuilding built-in utility types -->
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &mdash; Rebuilding Built-in Utility Types with infer</div>
+<pre><code>// How TypeScript's built-in types work under the hood:
+
+// ReturnType&lt;T&gt;
+type MyReturnType&lt;T extends (...args: any) =&gt; any&gt; =
+  T extends (...args: any) =&gt; infer R ? R : any;
+
+// Parameters&lt;T&gt;
+type MyParameters&lt;T extends (...args: any) =&gt; any&gt; =
+  T extends (...args: infer P) =&gt; any ? P : never;
+
+// ConstructorParameters&lt;T&gt;
+type MyConstructorParameters&lt;T extends abstract new (...args: any) =&gt; any&gt; =
+  T extends abstract new (...args: infer P) =&gt; any ? P : never;
+
+// InstanceType&lt;T&gt;
+type MyInstanceType&lt;T extends abstract new (...args: any) =&gt; any&gt; =
+  T extends abstract new (...args: any) =&gt; infer R ? R : any;
+
+// Awaited&lt;T&gt; (simplified)
+type MyAwaited&lt;T&gt; =
+  T extends null | undefined ? T :
+  T extends object &amp; { then(fn: infer F): any } ?
+    F extends (value: infer V, ...args: any) =&gt; any ?
+      MyAwaited&lt;V&gt; : never :
+  T;
+
+// Test them:
+type R1 = MyReturnType&lt;typeof Math.random&gt;;        // number
+type R2 = MyParameters&lt;typeof parseInt&gt;;            // [string: string, radix?: number]
+type R3 = MyInstanceType&lt;typeof Date&gt;;              // Date
+type R4 = MyAwaited&lt;Promise&lt;Promise&lt;string&gt;&gt;&gt;;     // string</code></pre>
+    <div class="type-result">MyReturnType&lt;typeof Math.random&gt; = number
+MyInstanceType&lt;typeof Date&gt; = Date
+MyAwaited&lt;Promise&lt;Promise&lt;string&gt;&gt;&gt; = string</div>
+  </div>
+
+  <div class="callout-warning">
+    <strong>Common Mistakes</strong>
+    <div class="mistake">&#10060; Using <code>infer</code> outside a conditional type's extends clause:<br><code>type Bad = infer U;</code> &mdash; SyntaxError: <code>infer</code> only works after <code>extends</code></div>
+    <div class="correct">&#9989; <code>infer</code> must appear inside the condition: <code>type Good&lt;T&gt; = T extends X&lt;infer U&gt; ? U : never</code>. The inferred variable <code>U</code> is only available in the true branch.</div>
+    <div class="mistake">&#10060; Forgetting that <code>infer</code> in union positions produces a union, while in intersection positions it produces an intersection:<br>In <code>T extends { a: infer U } | { b: infer U }</code>, <code>U</code> becomes the union of both</div>
+    <div class="correct">&#9989; Be deliberate about co-variant (union) vs contra-variant (intersection) positions. Function parameters are contra-variant: <code>T extends ((x: infer U) =&gt; void) | ((x: infer U) =&gt; void)</code> gives <code>U</code> as an intersection.</div>
+  </div>
+
+  <div class="key-rules">
+    <strong>Key Rules</strong>
+    <ul>
+      <li><code>infer</code> is pattern matching for types &mdash; it captures whatever type appears in a specific structural position inside the <code>extends</code> clause of a conditional type</li>
+      <li>Use <code>infer U extends Constraint</code> (TS 4.7+) to narrow what <code>infer</code> can capture &mdash; the result is <code>never</code> when the captured type doesn't satisfy the constraint</li>
+      <li>Variance matters: <code>infer</code> in covariant positions (return types, property values) yields unions; in contravariant positions (function parameters) it yields intersections</li>
+    </ul>
+  </div>
+
+  <div class="exercises">
+    <strong>Exercises</strong>
+    <div class="exercise"><span class="exercise-num">1</span> Write <code>type EventHandler&lt;T&gt;</code> that extracts the event payload from a handler function type. Given <code>(event: { type: "click"; x: number; y: number }) =&gt; void</code>, it should produce <code>{ type: "click"; x: number; y: number }</code>. Then write <code>type EventType&lt;T&gt;</code> that extracts just the <code>type</code> property from the event. Chain them: given a handler, extract the event type string.</div>
+    <div class="exercise"><span class="exercise-num">2</span> Implement <code>type DeepAwaited&lt;T&gt;</code> that recursively unwraps not just Promises but also objects containing Promises: <code>{ a: Promise&lt;string&gt;; b: { c: Promise&lt;number&gt; } }</code> should become <code>{ a: string; b: { c: number } }</code>. Use <code>infer</code> with a conditional check for <code>Promise&lt;infer U&gt;</code> at each property.</div>
+    <div class="exercise"><span class="exercise-num">3</span> Build a <code>type ParseRoute&lt;S extends string&gt;</code> that extracts dynamic segments from a URL pattern. Given <code>"/users/:userId/posts/:postId"</code>, it should produce <code>{ userId: string; postId: string }</code>. Use template literal types with <code>infer</code> to match the <code>:paramName</code> segments and recursively build the result object.</div>
+  </div>
+
+  <div class="connections">
+    <strong>Connections:</strong> <code>infer</code> is the engine behind every pattern in <a href="#type_level_programming">Type-Level Programming</a> (previous concept) &mdash; recursive types use <code>infer</code> to decompose structures. The built-in <code>ReturnType</code> and <code>Parameters</code> utility types from <a href="typescript-guides/typescript-guide-2026-06-01.html">Utility Types</a> (Day 2) are implemented with <code>infer</code>. Zod's <code>z.infer&lt;typeof schema&gt;</code> from <a href="typescript-guides/typescript-guide-2026-06-04.html#zod_validation">Day 5</a> uses exactly this pattern. The constrained <code>infer U extends string</code> syntax pairs with <a href="typescript-guides/typescript-guide-2026-06-02.html">Generic Constraints</a> from Day 3.
+  </div>
+</div>
+
+</div><!-- end topic-section (Week 6) -->
+
+<!-- Footer -->
+<footer class="guide-footer">
+  <h2>All Guides</h2>
+  <ul>
+    <li><a href="typescript-guides/typescript-guide-2026-07-09.html">2026-07-09</a> (Day 36)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-07-08.html">2026-07-08</a> (Day 35)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-07-07.html">2026-07-07</a> (Day 34)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-07-06.html">2026-07-06</a> (Day 33)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-07-05.html">2026-07-05</a> (Day 32)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-07-04.html">2026-07-04</a> (Day 31)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-07-03.html">2026-07-03</a> (Day 30)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-07-02.html">2026-07-02</a> (Day 29)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-07-01.html">2026-07-01</a> (Day 28)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-30.html">2026-06-30</a> (Day 27)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-29.html">2026-06-29</a> (Day 26)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-28.html">2026-06-28</a> (Day 25)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-27.html">2026-06-27</a> (Day 24)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-26.html">2026-06-26</a> (Day 23)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-25.html">2026-06-25</a> (Day 22)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-24.html">2026-06-24</a> (Day 21)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-23.html">2026-06-23</a> (Day 20)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-22.html">2026-06-22</a> (Day 19)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-21.html">2026-06-21</a> (Day 18)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-19.html">2026-06-19</a> (Day 17)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-18.html">2026-06-18</a> (Day 16)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-17.html">2026-06-17</a> (Day 15)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-15.html">2026-06-15</a> (Day 14)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-13.html">2026-06-13</a> (Day 13)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-12.html">2026-06-12</a> (Day 12)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-11.html">2026-06-11</a> (Day 11)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-10.html">2026-06-10</a> (Day 10)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-09.html">2026-06-09</a> (Day 9)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-08.html">2026-06-08</a> (Day 8)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-07.html">2026-06-07</a> (Day 7)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-05.html">2026-06-05</a> (Day 6)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-04.html">2026-06-04</a> (Day 5)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-03.html">2026-06-03</a> (Day 4)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-02.html">2026-06-02</a> (Day 3)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-01.html">2026-06-01</a> (Day 2)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-05-31.html">2026-05-31</a> (Day 1)</li>
+  </ul>
+</footer>
+
+</div><!-- end content -->
+</div><!-- end main -->
+
+<script>
+// Theme toggle
+(function() {
+  var toggle = document.getElementById('themeToggle');
+  var html = document.documentElement;
+  var STORAGE_KEY = 'lc-tsguide-theme';
+
+  function setTheme(theme) {
+    html.setAttribute('data-theme', theme);
+    toggle.textContent = theme === 'dark' ? '\u{1F319}' : '\u{2600}\u{FE0F}';
+    try { localStorage.setItem(STORAGE_KEY, theme); } catch(e) {}
+  }
+
+  // Load saved theme
+  try {
+    var saved = localStorage.getItem(STORAGE_KEY);
+    if (saved) setTheme(saved);
+  } catch(e) {}
+
+  toggle.addEventListener('click', function() {
+    var current = html.getAttribute('data-theme') || 'dark';
+    setTheme;
+  });
+})();
+
+// Sidebar active link tracking
+(function() {
+  var links = document.querySelectorAll('.sidebar-nav a');
+  var sections = [];
+  links.forEach(function(link) {
+    var id = link.getAttribute('href').replace('#', '');
+    var el = document.getElementById(id);
+    if (el) sections.push({ link: link, el: el });
+  });
+
+  function updateActive() {
+    var current = null;
+    var scrollY = window.scrollY + 120;
+    for (var i = sections.length - 1; i >= 0; i--) {
+      if (sections[i].el.offsetTop <= scrollY) {
+        current = sections[i];
+        break;
+      }
+    }
+    links.forEach(function(l) { l.classList.remove('active'); });
+    if  current.link.classList.add('active');
+  }
+
+  window.addEventListener('scroll', updateActive);
+  updateActive();
+})();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,1164 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TypeScript Daily Guide — 2026-07-08 (Day 35)</title>
+<style>
+:root {
+  --bg: #0d1117;
+  --surface: #161b22;
+  --surface2: #1c2129;
+  --border: #30363d;
+  --text: #e6edf3;
+  --text-muted: #8b949e;
+  --accent: #58a6ff;
+  --accent-bg: rgba(56,139,253,0.15);
+  --green: #3fb950;
+  --green-bg: rgba(63,185,80,0.08);
+  --red: #f85149;
+  --red-bg: rgba(248,81,73,0.08);
+  --yellow: #d29922;
+  --yellow-bg: rgba(210,153,34,0.1);
+  --orange: #db6d28;
+  --purple: #bc8cff;
+  --purple-bg: rgba(188,140,255,0.08);
+  --purple-border: rgba(188,140,255,0.2);
+  --link: #58a6ff;
+  --code-bg: #1c2129;
+  --output-bg: #0e1c0e;
+  --output-border: #1a3a1a;
+  --sidebar-bg: #161b22;
+  --sidebar-active: rgba(56,139,253,0.15);
+  --exercise-border: #30363d;
+}
+[data-theme="light"] {
+  --bg: #ffffff;
+  --surface: #f6f8fa;
+  --surface2: #eef1f5;
+  --border: #d0d7de;
+  --text: #1f2328;
+  --text-muted: #656d76;
+  --accent: #0969da;
+  --accent-bg: rgba(9,105,218,0.1);
+  --green: #1a7f37;
+  --green-bg: rgba(26,127,55,0.06);
+  --red: #cf222e;
+  --red-bg: rgba(207,34,46,0.06);
+  --yellow: #9a6700;
+  --yellow-bg: rgba(154,103,0,0.06);
+  --orange: #bc4c00;
+  --purple: #8250df;
+  --purple-bg: rgba(130,80,223,0.06);
+  --purple-border: rgba(130,80,223,0.15);
+  --link: #0969da;
+  --code-bg: #eef1f5;
+  --output-bg: #f0faf0;
+  --output-border: #c6e6c6;
+  --sidebar-bg: #f6f8fa;
+  --sidebar-active: rgba(9,105,218,0.1);
+  --exercise-border: #d0d7de;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;font-size:16px;line-height:1.7;color:var(--text);background:var(--bg);display:flex;min-height:100vh}
+a{color:var(--link);text-decoration:none}
+a:hover{text-decoration:underline}
+
+/* Sidebar */
+.sidebar{position:fixed;top:0;left:0;width:300px;height:100vh;background:var(--sidebar-bg);border-right:1px solid var(--border);overflow-y:auto;padding:20px 0;z-index:100}
+.sidebar-header{padding:16px 20px;border-bottom:1px solid var(--border);margin-bottom:12px}
+.sidebar-header h2{font-size:15px;font-weight:600;color:var(--text)}
+.sidebar-header .date{font-size:13px;color:var(--text-muted);margin-top:2px}
+.sidebar-section{padding:8px 20px 4px;font-size:12px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px}
+.sidebar-section.review-label{color:var(--purple)}
+.sidebar-nav{list-style:none;padding:0}
+.sidebar-nav li a{display:block;padding:6px 20px 6px 28px;font-size:14px;color:var(--text-muted);transition:all 0.15s}
+.sidebar-nav li a:hover,.sidebar-nav li a.active{color:var(--accent);background:var(--sidebar-active);text-decoration:none}
+.sidebar-nav li a .nav-id{font-size:11px;color:var(--text-muted);opacity:0.6;margin-left:6px}
+
+/* Main */
+.main{margin-left:300px;flex:1;padding:40px;max-width:1160px}
+.content{max-width:860px;margin:0 auto}
+
+/* Theme Toggle */
+.theme-toggle{position:fixed;top:16px;right:20px;z-index:200;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:8px 12px;cursor:pointer;color:var(--text);font-size:18px;line-height:1;transition:all 0.15s}
+.theme-toggle:hover{border-color:var(--accent)}
+
+/* Header */
+.guide-header{text-align:center;padding:32px 0 40px;border-bottom:1px solid var(--border);margin-bottom:40px}
+.guide-header h1{font-size:28px;font-weight:700;margin-bottom:8px}
+.guide-header .meta{font-size:15px;color:var(--text-muted)}
+.guide-header .meta span{margin:0 8px}
+.badge{display:inline-block;padding:2px 10px;border-radius:12px;font-size:13px;font-weight:500}
+.badge-blue{background:var(--accent-bg);color:var(--accent)}
+.badge-purple{background:var(--purple-bg);color:var(--purple)}
+
+/* How To Use */
+.how-to-use{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:24px 28px;margin-bottom:40px}
+.how-to-use h2{font-size:18px;margin-bottom:12px}
+.how-to-use ol{padding-left:24px}
+.how-to-use li{margin-bottom:6px;color:var(--text-muted)}
+
+/* Review Section */
+.review-section{margin-bottom:48px}
+.review-section-header{font-size:22px;font-weight:700;padding-bottom:12px;border-bottom:2px solid var(--purple);margin-bottom:28px;display:flex;align-items:center;gap:12px;color:var(--purple)}
+
+/* Review Card */
+.review-card{background:var(--purple-bg);border:1px solid var(--purple-border);border-left:4px solid var(--purple);border-radius:10px;padding:28px;margin-bottom:24px}
+.review-card .review-header{display:flex;align-items:center;gap:12px;margin-bottom:12px;flex-wrap:wrap}
+.review-card .review-title{font-size:18px;font-weight:700;color:var(--purple)}
+.review-card .review-meta{font-size:13px;color:var(--text-muted)}
+.review-card .review-reminder{color:var(--text-muted);font-style:italic;margin-bottom:16px;padding-left:14px;border-left:3px solid var(--purple)}
+.review-card .review-pattern{margin-bottom:16px}
+.review-card .review-pattern strong{display:block;margin-bottom:8px;font-size:14px;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px}
+.review-card .review-challenge{margin-bottom:12px}
+.review-card .review-challenge strong{display:block;margin-bottom:8px;font-size:14px;color:var(--yellow);text-transform:uppercase;letter-spacing:0.5px}
+.review-card .review-challenge p{line-height:1.6}
+.review-card .review-pitfall{background:var(--red-bg);border:1px solid rgba(248,81,73,0.15);border-radius:6px;padding:12px 16px;font-size:14px;line-height:1.6}
+.review-card .review-pitfall strong{color:var(--red);margin-right:4px}
+.review-card code{background:var(--code-bg);padding:2px 6px;border-radius:4px;font-family:'SF Mono','Fira Code','Consolas',monospace;font-size:13px}
+
+/* Topic Section */
+.topic-section{margin-bottom:48px}
+.topic-section-header{font-size:22px;font-weight:700;padding-bottom:12px;border-bottom:2px solid var(--accent);margin-bottom:28px;display:flex;align-items:center;gap:12px}
+.topic-section-header .section-num{background:var(--accent);color:#fff;width:32px;height:32px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:15px;font-weight:700;flex-shrink:0}
+
+/* Concept Card */
+.concept-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:28px;margin-bottom:32px}
+.concept-header{display:flex;align-items:center;gap:12px;margin-bottom:16px;flex-wrap:wrap}
+.concept-title{font-size:20px;font-weight:700}
+.ttag{display:inline-block;padding:2px 10px;border-radius:12px;font-size:12px;font-weight:500;background:var(--accent-bg);color:var(--accent)}
+
+.why-matters{color:var(--text-muted);font-style:italic;margin-bottom:20px;padding-left:14px;border-left:3px solid var(--accent)}
+.explanation{margin-bottom:20px;line-height:1.8}
+.explanation p{margin-bottom:12px}
+.explanation ul,.explanation ol{padding-left:24px;margin-bottom:12px}
+.explanation li{margin-bottom:4px}
+.explanation code{background:var(--code-bg);padding:2px 6px;border-radius:4px;font-family:'SF Mono','Fira Code','Consolas',monospace;font-size:14px}
+.step{display:flex;gap:12px;margin-bottom:10px;align-items:flex-start}
+.step-num{background:var(--accent-bg);color:var(--accent);width:24px;height:24px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;margin-top:3px}
+
+/* Code Examples */
+.code-example{margin-bottom:20px;border:1px solid var(--border);border-radius:8px;overflow:hidden}
+.lang-badge{background:var(--surface2);color:var(--text-muted);font-size:12px;font-weight:600;padding:6px 14px;border-bottom:1px solid var(--border);font-family:'SF Mono','Fira Code','Consolas',monospace}
+pre{margin:0;padding:16px;overflow-x:auto;background:var(--code-bg);font-family:'SF Mono','Fira Code','Consolas',monospace;font-size:13.5px;line-height:1.6;white-space:pre-wrap}
+pre code{background:none;padding:0;font-size:inherit}
+.output{background:var(--output-bg);border-top:1px solid var(--output-border);padding:12px 16px;font-family:'SF Mono','Fira Code','Consolas',monospace;font-size:13px;color:var(--green);white-space:pre-wrap}
+.output::before{content:"Output:";display:block;font-size:11px;font-weight:600;color:var(--text-muted);margin-bottom:4px;text-transform:uppercase;letter-spacing:0.5px}
+.type-result{background:var(--output-bg);border-top:1px solid var(--output-border);padding:12px 16px;font-family:'SF Mono','Fira Code','Consolas',monospace;font-size:13px;color:var(--green);white-space:pre-wrap}
+.type-result::before{content:"Type Result:";display:block;font-size:11px;font-weight:600;color:var(--text-muted);margin-bottom:4px;text-transform:uppercase;letter-spacing:0.5px}
+.type-error{background:var(--red-bg);border-top:1px solid rgba(248,81,73,0.2);padding:12px 16px;font-family:'SF Mono','Fira Code','Consolas',monospace;font-size:13px;color:var(--red);white-space:pre-wrap}
+.type-error::before{content:"Type Error:";display:block;font-size:11px;font-weight:600;color:var(--red);margin-bottom:4px;text-transform:uppercase;letter-spacing:0.5px}
+
+/* Callouts */
+.callout-warning{background:var(--yellow-bg);border:1px solid rgba(210,153,34,0.2);border-radius:8px;padding:20px;margin-bottom:20px}
+.callout-warning strong{color:var(--yellow);display:block;margin-bottom:12px;font-size:16px}
+.mistake,.correct{padding:10px 14px;border-radius:6px;margin-bottom:10px;font-size:14px;line-height:1.6}
+.mistake{background:var(--red-bg);border-left:3px solid var(--red)}
+.mistake code,.correct code{background:var(--code-bg);padding:2px 6px;border-radius:4px;font-family:'SF Mono','Fira Code','Consolas',monospace;font-size:13px}
+.correct{background:var(--green-bg);border-left:3px solid var(--green)}
+
+/* Key Rules */
+.key-rules{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:20px;margin-bottom:20px}
+.key-rules strong{display:block;margin-bottom:10px;font-size:16px}
+.key-rules ul{padding-left:20px}
+.key-rules li{margin-bottom:6px}
+.key-rules code{background:var(--code-bg);padding:2px 6px;border-radius:4px;font-family:'SF Mono','Fira Code','Consolas',monospace;font-size:13px}
+
+/* Exercises */
+.exercises{border:2px dashed var(--exercise-border);border-radius:8px;padding:20px;margin-bottom:20px;margin-left:12px}
+.exercises strong{display:block;margin-bottom:14px;font-size:16px;color:var(--purple)}
+.exercise{margin-bottom:14px;padding-left:38px;position:relative;line-height:1.6}
+.exercise:last-child{margin-bottom:0}
+.exercise-num{position:absolute;left:0;top:2px;background:var(--purple);color:#fff;width:24px;height:24px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:12px;font-weight:700}
+.exercise code{background:var(--code-bg);padding:2px 6px;border-radius:4px;font-family:'SF Mono','Fira Code','Consolas',monospace;font-size:13px}
+
+/* Connections */
+.connections{background:var(--accent-bg);border:1px solid rgba(56,139,253,0.2);border-radius:8px;padding:16px 20px;font-size:14px;color:var(--text-muted)}
+.connections strong{color:var(--accent);margin-right:6px}
+
+/* Cross-links */
+.cross-links{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:20px 24px;margin-bottom:40px;text-align:center}
+.cross-links a{margin:0 10px;font-weight:500}
+
+/* Footer */
+.guide-footer{border-top:1px solid var(--border);padding-top:32px;margin-top:48px}
+.guide-footer h2{font-size:18px;margin-bottom:16px}
+.guide-footer ul{list-style:none;padding:0}
+.guide-footer li{padding:6px 0}
+.guide-footer li a{font-weight:500}
+
+/* Responsive */
+@media(max-width:900px){
+  .sidebar{display:none}
+  .main{margin-left:0}
+  .theme-toggle{top:12px;right:12px}
+}
+</style>
+</head>
+<body>
+
+<!-- Theme Toggle -->
+<button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">&#x1F319;</button>
+
+<!-- Sidebar -->
+<nav class="sidebar">
+  <div class="sidebar-header">
+    <h2>TypeScript Daily Guide</h2>
+    <div class="date">2026-07-08 &mdash; Day 35</div>
+  </div>
+
+  <div class="sidebar-section review-label">Review (6 concepts)</div>
+  <ul class="sidebar-nav">
+    <li><a href="#review_decorators">Decorators (TC39) <span class="nav-id">R1</span></a></li>
+    <li><a href="#review_modules">Module Systems <span class="nav-id">R2</span></a></li>
+    <li><a href="#review_declfiles">Declaration Files <span class="nav-id">R3</span></a></li>
+    <li><a href="#review_tsconfig">tsconfig.json Deep Dive <span class="nav-id">R4</span></a></li>
+    <li><a href="#review_namespaces">Namespaces vs Modules <span class="nav-id">R5</span></a></li>
+    <li><a href="#review_zod">Zod &amp; Runtime Validation <span class="nav-id">R6</span></a></li>
+  </ul>
+
+  <div class="sidebar-section">Reliable Message Processing</div>
+  <ul class="sidebar-nav">
+    <li><a href="#idempotent_consumers">Idempotent Consumers &amp; Exactly-Once <span class="nav-id">#1</span></a></li>
+    <li><a href="#dead_letter">Dead Letter Queues &amp; Poison Messages <span class="nav-id">#2</span></a></li>
+    <li><a href="#distributed_locks">Distributed Locks &amp; Leader Election <span class="nav-id">#3</span></a></li>
+  </ul>
+
+  <div class="sidebar-section">Contract Evolution &amp; Testing</div>
+  <ul class="sidebar-nav">
+    <li><a href="#schema_versioning">Event Schema Versioning &amp; Upcasting <span class="nav-id">#4</span></a></li>
+    <li><a href="#contract_testing">Consumer-Driven Contract Testing <span class="nav-id">#5</span></a></li>
+  </ul>
+</nav>
+
+<!-- Main Content -->
+<div class="main">
+<div class="content">
+
+<!-- Header -->
+<header class="guide-header">
+  <h1>TypeScript Daily Guide &mdash; Day 35</h1>
+  <div class="meta">
+    <span>2026-07-08</span>
+    <span>&middot;</span>
+    <span>Day 35 of 35</span>
+    <span>&middot;</span>
+    <span class="badge badge-purple">6 reviews</span>
+    <span class="badge badge-blue">5 new concepts</span>
+  </div>
+</header>
+
+<!-- How to Use -->
+<div class="how-to-use">
+  <h2>How to Use This Guide</h2>
+  <ol>
+    <li><strong>Review first</strong> &mdash; scan each purple review card; if the concept feels solid, move on; if fuzzy, re-read the code pattern</li>
+    <li><strong>Attempt the challenge exercise</strong> on any review card that felt shaky &mdash; this is your best reinforcement signal</li>
+    <li><strong>Work through new concepts</strong> top to bottom &mdash; each builds on the previous</li>
+    <li><strong>Type every code example</strong> yourself and run it with <code>node</code>/<code>tsx</code> &mdash; hover over inferred types in your editor to build intuition</li>
+    <li><strong>Do at least 2 exercises per concept</strong> before moving to the next one</li>
+  </ol>
+</div>
+
+<!-- Cross-links -->
+<div class="cross-links">
+  <a href="guide.html">LeetCode Guide</a>
+  <a href="lang-guide.html">Lang Guide</a>
+  <a href="python-guide.html">Python Guide</a>
+  <a href="golang-guide.html">Go Guide</a>
+  <a href="javascript-guide.html">JS Guide</a>
+  <a href="report.html">Report</a>
+</div>
+
+<!-- ============================================================ -->
+<!-- REVIEW SECTION                                                -->
+<!-- ============================================================ -->
+<div class="review-section">
+<div class="review-section-header">Review &mdash; 6 Concepts</div>
+
+<!-- R1: Decorators (TC39) -->
+<div class="review-card" id="review_decorators">
+  <div class="review-header">
+    <span class="review-title">R1. Decorators (TC39)</span>
+    <span class="badge badge-purple">Functions &amp; Patterns</span>
+    <span class="review-meta">15 days since review &middot; rep 3 &rarr; 4</span>
+  </div>
+  <div class="review-reminder">The Stage-3 (TC39) decorators shipped in TS 5.0 are <em>not</em> the old <code>experimentalDecorators</code> ones. A decorator is a function <code>(value, context) =&gt; newValueOrVoid</code>; the <code>context</code> carries <code>kind</code>, <code>name</code>, <code>addInitializer</code>, and typed access helpers. You return a replacement (or nothing) &mdash; no <code>reflect-metadata</code>, no parameter decorators.</div>
+
+  <div class="review-pattern">
+    <strong>Key Pattern</strong>
+    <div class="code-example">
+<pre><code>function logged&lt;This, Args extends unknown[], R&gt;(
+  target: (this: This, ...args: Args) =&gt; R,
+  ctx: ClassMethodDecoratorContext&lt;This, (this: This, ...args: Args) =&gt; R&gt;,
+) {
+  const name = String(ctx.name);
+  return function (this: This, ...args: Args): R {
+    console.log(`&rarr; ${name}(${args.join(",")})`);
+    return target.call(this, ...args);
+  };
+}
+
+class Calc {
+  @logged add(a: number, b: number) { return a + b; }
+}
+new Calc().add(2, 3);   // logs "&rarr; add(2,3)" then returns 5</code></pre>
+<div class="type-result">the replacement method keeps the original this/args/return types via generics</div>
+    </div>
+  </div>
+
+  <div class="review-challenge">
+    <strong>Challenge Exercise</strong>
+    <p>Write a <code>@bound</code> method decorator that uses <code>ctx.addInitializer</code> to bind the method to the instance, and a <code>@memoize</code> that caches by first argument. Then explain why the new decorators can&rsquo;t decorate constructor parameters, and how <code>accessor</code> fields interact with <code>ClassAccessorDecoratorContext</code>.</p>
+  </div>
+
+  <div class="review-pitfall">
+    <strong>Pitfall:</strong> Assuming <code>emitDecoratorMetadata</code> / <code>reflect-metadata</code> works with Stage-3 decorators &mdash; it does not. That reflection-based DI style belongs to the legacy <code>experimentalDecorators</code> mode; the two systems are mutually exclusive and shouldn&rsquo;t be mixed in one project.
+  </div>
+</div>
+
+<!-- R2: Module Systems -->
+<div class="review-card" id="review_modules">
+  <div class="review-header">
+    <span class="review-title">R2. Module Systems</span>
+    <span class="badge badge-purple">Modules &amp; Project Structure</span>
+    <span class="review-meta">15 days since review &middot; rep 3 &rarr; 4</span>
+  </div>
+  <div class="review-reminder">ESM and CommonJS differ in resolution, timing, and interop. Under <code>"module": "nodenext"</code>, the nearest <code>package.json</code> <code>"type"</code> field decides how each <code>.ts</code> compiles, relative ESM imports need explicit extensions, and <code>import type</code> keeps types from leaking into emitted JS. <code>verbatimModuleSyntax</code> makes what you write match what is emitted.</div>
+
+  <div class="review-pattern">
+    <strong>Key Pattern</strong>
+    <div class="code-example">
+<pre><code>// package.json: { "type": "module" }
+// under nodenext, relative ESM imports carry the .js extension
+import { parse } from "./parser.js";   // resolves parser.ts at build
+import type { Config } from "./config.js";  // type-only: erased from emit
+
+export const VERSION = "1.0.0";
+
+// verbatimModuleSyntax on => `import type` MUST be used for types,
+// and `import { x }` is emitted verbatim (no elision surprises)</code></pre>
+<div class="type-result">nodenext ties module kind to package.json "type"; type-only imports are erased</div>
+    </div>
+  </div>
+
+  <div class="review-challenge">
+    <strong>Challenge Exercise</strong>
+    <p>Set up a package that ships both ESM and CJS via the <code>"exports"</code> map with <code>import</code>/<code>require</code>/<code>types</code> conditions. Then explain why a default CJS import (<code>import fs from "fs"</code>) needs <code>esModuleInterop</code>, and what <code>__esModule</code> markers do at runtime.</p>
+  </div>
+
+  <div class="review-pitfall">
+    <strong>Pitfall:</strong> Omitting the <code>.js</code> extension on relative imports under <code>nodenext</code> &mdash; it type-checks in some configs but fails at runtime in native ESM. Also: mixing <code>require()</code> and <code>import</code> in the same graph without an interop story yields <code>undefined</code> default exports.
+  </div>
+</div>
+
+<!-- R3: Declaration Files -->
+<div class="review-card" id="review_declfiles">
+  <div class="review-header">
+    <span class="review-title">R3. Declaration Files</span>
+    <span class="badge badge-purple">Modules &amp; Project Structure</span>
+    <span class="review-meta">15 days since review &middot; rep 3 &rarr; 4</span>
+  </div>
+  <div class="review-reminder"><code>.d.ts</code> files describe shapes without implementation. <code>declare module "x"</code> types an untyped package; <code>declare global</code> augments global scope; ambient declarations (<code>declare const</code>) describe things provided at runtime. Ship your own types by pointing <code>"types"</code> at a generated <code>.d.ts</code> and enabling <code>declaration</code>.</div>
+
+  <div class="review-pattern">
+    <strong>Key Pattern</strong>
+    <div class="code-example">
+<pre><code>// types/legacy-lib.d.ts — type an untyped dependency
+declare module "legacy-lib" {
+  export interface Options { retries?: number }
+  export function connect(url: string, opts?: Options): Promise&lt;void&gt;;
+}
+
+// augment the global scope
+declare global {
+  interface Window { __APP_VERSION__: string }
+}
+export {};   // makes this file a module so `declare global` is allowed</code></pre>
+<div class="type-result">declare module types a package; declare global needs the file to be a module</div>
+    </div>
+  </div>
+
+  <div class="review-challenge">
+    <strong>Challenge Exercise</strong>
+    <p>Write a <code>.d.ts</code> that adds a typed property to Express&rsquo;s <code>Request</code> via module augmentation, and a wildcard <code>declare module "*.svg"</code> for asset imports. Then explain the difference between a <em>script</em> and a <em>module</em> <code>.d.ts</code> (top-level <code>import</code>/<code>export</code>) and why it changes whether declarations are global.</p>
+  </div>
+
+  <div class="review-pitfall">
+    <strong>Pitfall:</strong> Adding a top-level <code>import</code> to an ambient <code>.d.ts</code> meant to be global &mdash; it silently becomes a module and your global declarations stop applying. Use <code>declare global { ... }</code> with an <code>export {}</code>, or keep the file import-free.
+  </div>
+</div>
+
+<!-- R4: tsconfig.json Deep Dive -->
+<div class="review-card" id="review_tsconfig">
+  <div class="review-header">
+    <span class="review-title">R4. tsconfig.json Deep Dive</span>
+    <span class="badge badge-purple">Modules &amp; Project Structure</span>
+    <span class="review-meta">15 days since review &middot; rep 3 &rarr; 4</span>
+  </div>
+  <div class="review-reminder"><code>strict</code> is a bundle (<code>strictNullChecks</code>, <code>noImplicitAny</code>, &hellip;). <code>moduleResolution</code> and <code>module</code> should usually both be <code>nodenext</code> for Node. <code>paths</code>+<code>baseUrl</code> give import aliases (but the bundler must mirror them). Separate the <em>type-check</em> config from the <em>emit</em> config, and prefer <code>tsc --noEmit</code> for checking when a bundler emits.</div>
+
+  <div class="review-pattern">
+    <strong>Key Pattern</strong>
+    <div class="code-example">
+<pre><code>{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "nodenext",
+    "moduleResolution": "nodenext",
+    "strict": true,
+    "noUncheckedIndexedAccess": true,   // arr[i] is T | undefined
+    "verbatimModuleSyntax": true,
+    "paths": { "@app/*": ["./src/*"] },
+    "declaration": true,
+    "noEmit": true                       // bundler emits; tsc only checks
+  },
+  "include": ["src"]
+}</code></pre>
+<div class="type-result">strict + noUncheckedIndexedAccess catch the bugs; paths need bundler mirroring</div>
+    </div>
+  </div>
+
+  <div class="review-challenge">
+    <strong>Challenge Exercise</strong>
+    <p>Explain what each of <code>noUncheckedIndexedAccess</code>, <code>exactOptionalPropertyTypes</code>, and <code>useUnknownInCatchVariables</code> changes, with a one-line example each. Then set up a project that extends a shared <code>tsconfig.base.json</code> and overrides <code>outDir</code>/<code>rootDir</code> per package.</p>
+  </div>
+
+  <div class="review-pitfall">
+    <strong>Pitfall:</strong> Setting <code>paths</code> in tsconfig but forgetting the runtime/bundler doesn&rsquo;t know them &mdash; types resolve, imports crash at run. Aliases must be mirrored in the bundler (or <code>tsc-alias</code>/<code>tsconfig-paths</code>). And <code>strict: false</code> hides real null bugs; turn it on from day one.
+  </div>
+</div>
+
+<!-- R5: Namespaces vs Modules -->
+<div class="review-card" id="review_namespaces">
+  <div class="review-header">
+    <span class="review-title">R5. Namespaces vs Modules</span>
+    <span class="badge badge-purple">Modules &amp; Project Structure</span>
+    <span class="review-meta">15 days since review &middot; rep 3 &rarr; 4</span>
+  </div>
+  <div class="review-reminder">ES modules (files with <code>import</code>/<code>export</code>) are the standard for organizing code. <code>namespace</code> (the old <code>internal module</code>) is largely legacy &mdash; useful mainly for grouping types in a <code>.d.ts</code> or merging with a function/class via declaration merging. Don&rsquo;t reach for <code>namespace</code> to structure app code.</div>
+
+  <div class="review-pattern">
+    <strong>Key Pattern</strong>
+    <div class="code-example">
+<pre><code>// Legitimate namespace use: group related types + merge onto a function
+function createStore() { /* ... */ }
+namespace createStore {
+  export interface Options { persist?: boolean }
+  export type State = Record&lt;string, unknown&gt;;
+}
+
+const opts: createStore.Options = { persist: true };   // merged type access
+
+// For app code, prefer modules:
+// store.ts  ->  export function createStore() {}
+//               export interface Options {}</code></pre>
+<div class="type-result">namespace merges types onto a value; modules are the default for real code</div>
+    </div>
+  </div>
+
+  <div class="review-challenge">
+    <strong>Challenge Exercise</strong>
+    <p>Take a file that uses nested <code>namespace</code>s and refactor it into ES modules with barrel <code>index.ts</code> re-exports. Then describe one case where a <code>namespace</code> in a <code>.d.ts</code> is still the right tool (e.g. typing a UMD global like <code>d3.select</code>).</p>
+  </div>
+
+  <div class="review-pitfall">
+    <strong>Pitfall:</strong> Using <code>namespace</code> to avoid imports in application code &mdash; you lose tree-shaking, get implicit global-ish coupling, and fight the module system. Reserve namespaces for declaration merging and ambient UMD typings; use modules everywhere else.
+  </div>
+</div>
+
+<!-- R6: Zod & Runtime Validation -->
+<div class="review-card" id="review_zod">
+  <div class="review-header">
+    <span class="review-title">R6. Zod &amp; Runtime Validation</span>
+    <span class="badge badge-purple">Runtime Patterns</span>
+    <span class="review-meta">15 days since review &middot; rep 3 &rarr; 4</span>
+  </div>
+  <div class="review-reminder">Types vanish at runtime, so external data (HTTP bodies, env, JSON) must be <em>validated</em>, not asserted. Zod defines a schema once, gives a runtime parser <em>and</em> a static type via <code>z.infer</code>, so the validator and the type can never drift. <code>parse</code> throws; <code>safeParse</code> returns a discriminated result.</div>
+
+  <div class="review-pattern">
+    <strong>Key Pattern</strong>
+    <div class="code-example">
+<pre><code>import { z } from "zod";
+
+const User = z.object({
+  id: z.string().uuid(),
+  age: z.number().int().nonnegative(),
+  role: z.enum(["admin", "user"]),
+});
+type User = z.infer&lt;typeof User&gt;;   // { id: string; age: number; role: "admin" | "user" }
+
+const res = User.safeParse(await req.json());
+if (!res.success) return reply.code(400).send(res.error.flatten());
+res.data;   // fully typed User — proven at runtime</code></pre>
+<div class="type-result">one schema yields both a runtime guard and the static type via z.infer</div>
+    </div>
+  </div>
+
+  <div class="review-challenge">
+    <strong>Challenge Exercise</strong>
+    <p>Model an API response with a <code>z.discriminatedUnion("status", [...])</code> and write a typed <code>fetchJson&lt;S extends z.ZodType&gt;(url, schema): Promise&lt;z.infer&lt;S&gt;&gt;</code> helper. Then use <code>.transform()</code> to coerce a date string into a <code>Date</code> and explain how input vs output types diverge (<code>z.input</code> vs <code>z.output</code>).</p>
+  </div>
+
+  <div class="review-pitfall">
+    <strong>Pitfall:</strong> Casting untrusted data with <code>as User</code> instead of parsing it &mdash; the cast is a lie the compiler believes, and a missing field surfaces as a crash deep in business logic. Validate at the boundary; let the proven type flow inward.
+  </div>
+</div>
+
+</div><!-- end review-section -->
+
+<!-- ============================================================ -->
+<!-- TOPIC SECTION 1: Reliable Message Processing                  -->
+<!-- ============================================================ -->
+<div class="topic-section">
+<div class="topic-section-header"><span class="section-num">1</span>Reliable Message Processing</div>
+
+<!-- Concept 1: Idempotent Consumers & Exactly-Once -->
+<div class="concept-card" id="idempotent_consumers">
+  <div class="concept-header">
+    <span class="concept-title">1. Idempotent Consumers &amp; Exactly-Once Processing</span>
+    <span class="ttag">Node.js + TypeScript</span>
+  </div>
+
+  <div class="why-matters">Every real broker delivers <em>at-least-once</em>: the same message can arrive twice (a redelivery after a crash, a retried publish from an outbox). True &ldquo;exactly-once&rdquo; delivery doesn&rsquo;t exist across a network &mdash; but you can get exactly-once <em>effect</em> by making the consumer idempotent: record each processed message id and skip duplicates. Typing the dedup store and the message envelope makes &ldquo;did we handle this already?&rdquo; a checked question rather than a hope.</div>
+
+  <div class="explanation">
+    <p>The recipe has three typed pieces. First, every message carries a stable <strong>id</strong> in a typed <code>Envelope&lt;T&gt;</code> &mdash; the id is the deduplication key, and it must be assigned by the producer, not generated on receipt. Second, a <strong><code>ProcessedStore</code></strong> interface records which ids are done; a generic keeps the key type honest. Third, the handler runs inside a check-set boundary: mark-processed and the side effect should commit together (same DB transaction, Concept from 07-06) so a crash can&rsquo;t leave one without the other.</p>
+    <p>Two dedup styles: <em>optimistic</em> (try to insert the id with a unique constraint; a conflict means &ldquo;already handled&rdquo;) or <em>look-then-act</em> (SELECT, branch). The optimistic insert is race-safe under concurrency; the look-then-act is not unless it holds a lock. Prefer the unique-constraint insert.</p>
+    <div class="step"><span class="step-num">1</span><div>Give every message a producer-assigned id in a typed envelope.</div></div>
+    <div class="step"><span class="step-num">2</span><div>Record processed ids in a typed store; a duplicate id short-circuits.</div></div>
+    <div class="step"><span class="step-num">3</span><div>Commit the effect and the &ldquo;processed&rdquo; marker atomically.</div></div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 1 of 4 &mdash; a typed envelope and dedup store</div>
+<pre><code>interface Envelope&lt;T&gt; {
+  id: string;            // stable, producer-assigned — the dedup key
+  occurredAt: string;
+  data: T;
+}
+
+interface ProcessedStore {
+  // returns true if newly marked, false if the id was already present
+  markIfNew(id: string): Promise&lt;boolean&gt;;
+}</code></pre>
+<div class="type-result">the id lives on the envelope; markIfNew returns whether this is a first sighting</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 2 of 4 &mdash; a generic idempotent handler wrapper</div>
+<pre><code>function idempotent&lt;T&gt;(
+  store: ProcessedStore,
+  handle: (data: T) =&gt; Promise&lt;void&gt;,
+): (msg: Envelope&lt;T&gt;) =&gt; Promise&lt;void&gt; {
+  return async (msg) =&gt; {
+    const isNew = await store.markIfNew(msg.id);
+    if (!isNew) return;               // duplicate: acknowledge and skip
+    await handle(msg.data);
+  };
+}
+
+const onOrder = idempotent&lt;{ orderId: string }&gt;(store, async ({ orderId }) =&gt; {
+  await chargeCustomer(orderId);      // runs at most once per message id
+});</code></pre>
+<div class="type-result">the wrapper preserves T from store to handler; duplicates never re-run the effect</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 3 of 4 &mdash; race-safe markIfNew via a unique constraint</div>
+<pre><code>// CREATE TABLE processed (id TEXT PRIMARY KEY, at TIMESTAMPTZ DEFAULT now());
+class SqlProcessedStore implements ProcessedStore {
+  constructor(private db: Db) {}
+  async markIfNew(id: string): Promise&lt;boolean&gt; {
+    const r = await this.db.query(
+      "INSERT INTO processed(id) VALUES ($1) ON CONFLICT DO NOTHING", [id]);
+    return r.rowCount === 1;          // 1 = inserted (new); 0 = conflict (dup)
+  }
+}</code></pre>
+<div class="type-result">the DB's unique index is the concurrency guard — two workers can't both "win"</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 4 of 4 &mdash; atomic effect + marker in one transaction</div>
+<pre><code>async function handleAtomically&lt;T&gt;(
+  db: Db, msg: Envelope&lt;T&gt;, effect: (tx: Tx, data: T) =&gt; Promise&lt;void&gt;,
+): Promise&lt;void&gt; {
+  await db.transaction(async (tx) =&gt; {
+    const r = await tx.query(
+      "INSERT INTO processed(id) VALUES ($1) ON CONFLICT DO NOTHING", [msg.id]);
+    if (r.rowCount === 0) return;     // already processed — tx is a no-op
+    await effect(tx, msg.data);       // effect + marker commit together
+  });
+}</code></pre>
+<div class="type-result">the marker and the side effect share a transaction: no half-done processing</div>
+  </div>
+
+  <div class="callout-warning">
+    <strong>Common Mistakes:</strong>
+    <div class="mistake">&#10060; Generating the dedup id when the message is <em>received</em> &mdash; a redelivery gets a new id and is treated as fresh, defeating the whole scheme.</div>
+    <div class="correct">&#9989; Assign the id at the producer (or derive it from stable business keys) so redeliveries share it.</div>
+    <div class="mistake">&#10060; Marking processed <em>after</em> the effect in a separate step &mdash; a crash in between double-charges on redelivery.</div>
+    <div class="correct">&#9989; Commit the &ldquo;processed&rdquo; row and the effect in one transaction so they succeed or fail together.</div>
+  </div>
+
+  <div class="key-rules">
+    <strong>Key Rules:</strong>
+    <ul>
+      <li>Brokers are at-least-once; achieve exactly-once <em>effect</em> with an idempotent consumer, not a magic flag.</li>
+      <li>Deduplicate on a stable, producer-assigned message id carried in a typed envelope.</li>
+      <li>Use a unique-constraint insert (<code>ON CONFLICT DO NOTHING</code>) so concurrent workers can&rsquo;t both process.</li>
+      <li>Commit the side effect and the processed-marker atomically; otherwise a crash re-runs the effect.</li>
+    </ul>
+  </div>
+
+  <div class="exercises">
+    <strong>Practice Exercises:</strong>
+    <div class="exercise"><span class="exercise-num">1</span>Add a TTL to the processed store (drop ids older than N days) and reason about the redelivery window you can safely forget.</div>
+    <div class="exercise"><span class="exercise-num">2</span>Implement a Redis <code>ProcessedStore</code> using <code>SET id 1 NX</code> and compare its guarantees with the SQL unique-constraint version.</div>
+    <div class="exercise"><span class="exercise-num">3</span>Extend <code>Envelope&lt;T&gt;</code> with an <code>attempt</code> counter and log when a message is processed on a redelivery (attempt &gt; 1) vs skipped as a duplicate.</div>
+  </div>
+
+  <div class="connections"><strong>Connections:</strong> This is the consumer half of the outbox pattern (07-07): the outbox guarantees at-least-once <em>delivery</em>, and idempotent consumers turn that into exactly-once <em>effect</em>. The atomic marker+effect reuses <code>withTransaction</code>/<code>Tx</code> from 07-06&rsquo;s data-integrity day, and the typed <code>Envelope&lt;T&gt;</code> is the same shape threaded through typed message queues.</div>
+</div>
+
+<!-- Concept 2: Dead Letter Queues -->
+<div class="concept-card" id="dead_letter">
+  <div class="concept-header">
+    <span class="concept-title">2. Dead Letter Queues &amp; Poison Messages</span>
+    <span class="ttag">Node.js + TypeScript</span>
+  </div>
+
+  <div class="why-matters">Some messages will never succeed &mdash; malformed payloads, a referenced record that was deleted, a bug that throws every time. Retrying such a <em>poison message</em> forever blocks the queue and burns resources. A <strong>dead letter queue</strong> (DLQ) is where you divert a message after N failed attempts, preserving it (with the failure reason) for inspection and replay instead of dropping it. Typing the DLQ envelope keeps the original message shape and the error metadata inspectable.</div>
+
+  <div class="explanation">
+    <p>The consumer tracks an <strong>attempt count</strong> per message. On failure it decides: retry (attempt &lt; max, usually with backoff from 07-04) or dead-letter (attempt &ge; max). Dead-lettering wraps the original message in a typed <code>DeadLetter&lt;T&gt;</code> envelope capturing the reason, the failing stage, and the attempt count, then writes it to a separate queue/table. The main queue moves on.</p>
+    <p>Crucially, distinguish <em>transient</em> failures (network blip &mdash; worth retrying) from <em>permanent</em> ones (schema validation error &mdash; dead-letter immediately; retrying can&rsquo;t help). Model that decision in the type: a handler can throw a tagged <code>PermanentError</code> vs a <code>TransientError</code>, and the dispatcher routes accordingly. A DLQ is only useful if someone can replay from it after a fix, so keep the payload intact.</p>
+    <div class="step"><span class="step-num">1</span><div>Count attempts; retry transient failures with backoff up to a max.</div></div>
+    <div class="step"><span class="step-num">2</span><div>On permanent failure or exhausted retries, wrap in a typed <code>DeadLetter&lt;T&gt;</code>.</div></div>
+    <div class="step"><span class="step-num">3</span><div>Persist to the DLQ with reason + payload so it can be inspected and replayed.</div></div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 1 of 4 &mdash; tagged failure kinds + DLQ envelope</div>
+<pre><code>class TransientError extends Error { readonly kind = "transient" as const; }
+class PermanentError extends Error { readonly kind = "permanent" as const; }
+
+interface DeadLetter&lt;T&gt; {
+  original: T;              // the untouched payload — replayable after a fix
+  reason: string;
+  failedStage: string;
+  attempts: number;
+  deadLetteredAt: string;
+}</code></pre>
+<div class="type-result">the DLQ preserves the original T plus why/where/how-many-times it failed</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 2 of 4 &mdash; classify failures to decide retry vs dead-letter</div>
+<pre><code>function isRetryable(err: unknown): boolean {
+  // permanent errors are never retried; unknown/transient errors are
+  if (err instanceof PermanentError) return false;
+  if (err instanceof TransientError) return true;
+  return true;   // default: treat unclassified errors as transient
+}
+
+// a validation failure is permanent — retrying the same bytes can't help
+function validateOrThrow&lt;T&gt;(parse: () =&gt; T): T {
+  try { return parse(); }
+  catch (e) { throw new PermanentError(`bad payload: ${(e as Error).message}`); }
+}</code></pre>
+<div class="type-result">the error's tag drives routing: permanent =&gt; straight to DLQ, transient =&gt; retry</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 3 of 4 &mdash; a consumer with bounded retries + DLQ</div>
+<pre><code>interface Dlq&lt;T&gt; { send(letter: DeadLetter&lt;T&gt;): Promise&lt;void&gt;; }
+
+async function consume&lt;T&gt;(
+  msg: Envelope&lt;T&gt;, maxAttempts: number,
+  handle: (data: T) =&gt; Promise&lt;void&gt;, dlq: Dlq&lt;T&gt;,
+): Promise&lt;void&gt; {
+  try {
+    await handle(msg.data);
+  } catch (err) {
+    const attempts = (msg.attempt ?? 1);
+    if (isRetryable(err) &amp;&amp; attempts &lt; maxAttempts) {
+      throw err;                       // nack -> broker redelivers (backoff)
+    }
+    await dlq.send({
+      original: msg.data, reason: (err as Error).message,
+      failedStage: "handle", attempts, deadLetteredAt: new Date().toISOString(),
+    });                                // give up cleanly, keep the payload
+  }
+}</code></pre>
+<div class="type-result">retry while transient and under the cap; otherwise dead-letter with full context</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 4 of 4 &mdash; replaying from the DLQ after a fix</div>
+<pre><code>async function replay&lt;T&gt;(
+  dlqRows: DeadLetter&lt;T&gt;[], reprocess: (data: T) =&gt; Promise&lt;void&gt;,
+): Promise&lt;{ ok: number; stillFailing: DeadLetter&lt;T&gt;[] }&gt; {
+  let ok = 0; const stillFailing: DeadLetter&lt;T&gt;[] = [];
+  for (const row of dlqRows) {
+    try { await reprocess(row.original); ok++; }
+    catch { stillFailing.push(row); }  // the fix didn't cover this one
+  }
+  return { ok, stillFailing };
+}</code></pre>
+<div class="type-result">because `original` kept the payload, a deployed fix can drain the DLQ</div>
+  </div>
+
+  <div class="callout-warning">
+    <strong>Common Mistakes:</strong>
+    <div class="mistake">&#10060; Retrying a malformed message forever &mdash; it can never succeed, so it blocks the queue and floods logs (a &ldquo;poison pill&rdquo;).</div>
+    <div class="correct">&#9989; Classify permanent failures (validation) and dead-letter them immediately; only retry transient ones.</div>
+    <div class="mistake">&#10060; Dropping a message after max retries with just a log line &mdash; the data and the reason are gone forever.</div>
+    <div class="correct">&#9989; Divert to a typed DLQ that keeps the original payload + reason so it can be inspected and replayed.</div>
+  </div>
+
+  <div class="key-rules">
+    <strong>Key Rules:</strong>
+    <ul>
+      <li>Bound retries with a max-attempt count; never retry a permanent (e.g. validation) failure.</li>
+      <li>Model failure kind in the type (<code>TransientError</code> vs <code>PermanentError</code>) and route on it.</li>
+      <li>Dead-letter into a typed <code>DeadLetter&lt;T&gt;</code> that preserves the original payload and the reason.</li>
+      <li>A DLQ is only worthwhile if you can replay from it &mdash; keep the payload intact and build a drain tool.</li>
+    </ul>
+  </div>
+
+  <div class="exercises">
+    <strong>Practice Exercises:</strong>
+    <div class="exercise"><span class="exercise-num">1</span>Add exponential backoff with jitter (from 07-04) between retries and record each attempt&rsquo;s delay in the envelope.</div>
+    <div class="exercise"><span class="exercise-num">2</span>Type a metrics counter (<code>{ retried; deadLettered; replayed }</code>) and emit it from <code>consume</code>/<code>replay</code> for a DLQ dashboard.</div>
+    <div class="exercise"><span class="exercise-num">3</span>Add a <code>schemaVersion</code> to <code>DeadLetter&lt;T&gt;</code> so replays can upcast old payloads (ties into Concept 4) before reprocessing.</div>
+  </div>
+
+  <div class="connections"><strong>Connections:</strong> The retry/backoff logic reuses 07-04&rsquo;s typed retries &amp; circuit breakers, and the tagged <code>PermanentError</code>/<code>TransientError</code> is discriminated-union error handling. Permanent failures are usually Zod validation errors at the boundary (R6). Replaying old dead letters is exactly why event schema versioning (Concept 4) matters.</div>
+</div>
+
+<!-- Concept 3: Distributed Locks & Leader Election -->
+<div class="concept-card" id="distributed_locks">
+  <div class="concept-header">
+    <span class="concept-title">3. Distributed Locks &amp; Leader Election</span>
+    <span class="ttag">Node.js + TypeScript</span>
+  </div>
+
+  <div class="why-matters">When several instances of your service run, some work must happen <em>once</em> across the whole cluster: a nightly job, a cron tick, the outbox relay from 07-07. A <strong>distributed lock</strong> lets exactly one instance hold a named resource at a time; <strong>leader election</strong> is the same idea applied to &ldquo;who runs the singleton work.&rdquo; Typing the lock as a resource you acquire and must release &mdash; ideally via <code>using</code> (Symbol.dispose) &mdash; makes &ldquo;forgot to unlock&rdquo; a compile-time-visible concern rather than a production deadlock.</div>
+
+  <div class="explanation">
+    <p>A correct lock has three properties: <em>mutual exclusion</em> (one holder), a <em>TTL</em> (auto-expire so a crashed holder doesn&rsquo;t deadlock the cluster forever), and a <em>fencing token</em> (a monotonically increasing number proving you still hold it, so a slow holder whose TTL expired can&rsquo;t stomp the new one). In Redis the acquire is <code>SET key owner NX PX ttl</code>; release must be a compare-and-delete (only delete if <em>you</em> own it), which requires a small Lua script to be atomic.</p>
+    <p>The TS win is modeling the lock as a <strong>disposable handle</strong>. With <code>await using lock = await mutex.acquire(...)</code>, the lock releases automatically at scope exit &mdash; even on throw &mdash; because the handle implements <code>[Symbol.asyncDispose]</code>. A branded <code>FencingToken</code> ensures the number you pass to a write really came from a lock acquisition.</p>
+    <div class="step"><span class="step-num">1</span><div>Acquire with <code>SET NX PX</code> (owner + TTL); returns a handle or null.</div></div>
+    <div class="step"><span class="step-num">2</span><div>Do the singleton work; carry the fencing token to guarded writes.</div></div>
+    <div class="step"><span class="step-num">3</span><div>Release via compare-and-delete &mdash; automatically through <code>await using</code>.</div></div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 1 of 4 &mdash; a disposable, fenced lock handle</div>
+<pre><code>declare const fence: unique symbol;
+type FencingToken = number &amp; { readonly [fence]: true };
+
+interface LockHandle extends AsyncDisposable {
+  readonly resource: string;
+  readonly token: FencingToken;      // proves ongoing ownership to writers
+}
+
+interface Mutex {
+  // returns null if someone else holds the lock
+  acquire(resource: string, ttlMs: number): Promise&lt;LockHandle | null&gt;;
+}</code></pre>
+<div class="type-result">the handle is AsyncDisposable — `await using` releases it at scope exit</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 2 of 4 &mdash; Redis acquire (SET NX PX) + atomic release</div>
+<pre><code>const RELEASE = `if redis.call("get", KEYS[1]) == ARGV[1]
+                 then return redis.call("del", KEYS[1]) else return 0 end`;
+
+class RedisMutex implements Mutex {
+  constructor(private redis: Redis) {}
+  async acquire(resource: string, ttlMs: number): Promise&lt;LockHandle | null&gt; {
+    const owner = crypto.randomUUID();
+    const ok = await this.redis.set(resource, owner, "PX", ttlMs, "NX");
+    if (ok !== "OK") return null;                    // someone else holds it
+    const token = Date.now() as FencingToken;        // monotonic-ish fence
+    return {
+      resource, token,
+      [Symbol.asyncDispose]: async () =&gt; {
+        await this.redis.eval(RELEASE, 1, resource, owner);  // delete iff mine
+      },
+    };
+  }
+}</code></pre>
+<div class="type-result">NX gives mutual exclusion, PX gives a TTL, compare-and-delete avoids releasing another owner's lock</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 3 of 4 &mdash; run singleton work with automatic release</div>
+<pre><code>async function runExclusive(mutex: Mutex, resource: string, work: () =&gt; Promise&lt;void&gt;) {
+  await using lock = await mutex.acquire(resource, 30_000);
+  if (!lock) return;                 // another instance is already running it
+  await work();                      // lock auto-releases at scope end, even on throw
+}
+
+// only one instance across the cluster actually runs the relay tick
+await runExclusive(mutex, "outbox-relay", () =&gt; relayOnce(broker));</code></pre>
+<div class="type-result">`await using` disposes the lock on every exit path — no leaked locks on error</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 4 of 4 &mdash; fencing tokens stop a stale holder from writing</div>
+<pre><code>// a write guarded by the highest fencing token seen wins;
+// a paused holder whose TTL expired carries a stale (smaller) token and is rejected
+async function guardedWrite(db: Db, token: FencingToken, value: string) {
+  await db.query(
+    `UPDATE resource SET value = $1, fence = $2 WHERE fence &lt; $2`,
+    [value, token],
+  );   // no-op if a newer holder already advanced the fence
+}</code></pre>
+<div class="type-result">the branded token can only come from acquire(); stale writes are filtered by fence &lt; token</div>
+  </div>
+
+  <div class="callout-warning">
+    <strong>Common Mistakes:</strong>
+    <div class="mistake">&#10060; A lock with no TTL &mdash; if the holder crashes, the resource is locked forever and the cluster stalls.</div>
+    <div class="correct">&#9989; Always set an expiry (<code>PX</code>); a crashed holder&rsquo;s lock auto-releases so work can resume.</div>
+    <div class="mistake">&#10060; Releasing with a plain <code>DEL</code> &mdash; you might delete a lock a <em>different</em> instance now holds after your TTL lapsed.</div>
+    <div class="correct">&#9989; Compare-and-delete (Lua) so you only release your own lock; use fencing tokens for stale-holder writes.</div>
+  </div>
+
+  <div class="key-rules">
+    <strong>Key Rules:</strong>
+    <ul>
+      <li>A distributed lock needs mutual exclusion, a TTL (crash safety), and ideally a fencing token.</li>
+      <li>Acquire with <code>SET NX PX</code>; release with an atomic compare-and-delete, never a bare <code>DEL</code>.</li>
+      <li>Model the lock as an <code>AsyncDisposable</code> handle and take it with <code>await using</code> for leak-free release.</li>
+      <li>For correctness under pauses/GC, guard critical writes with a monotonic fencing token.</li>
+    </ul>
+  </div>
+
+  <div class="exercises">
+    <strong>Practice Exercises:</strong>
+    <div class="exercise"><span class="exercise-num">1</span>Add lock <em>renewal</em>: a background timer that extends the TTL (<code>PEXPIRE</code>) while work runs, and cancel it on dispose.</div>
+    <div class="exercise"><span class="exercise-num">2</span>Turn the mutex into leader election: the current leader renews a lock; followers poll and take over when it expires.</div>
+    <div class="exercise"><span class="exercise-num">3</span>Explain why single-Redis locks aren&rsquo;t perfectly safe under failover, and sketch what Redlock adds (and its criticisms).</div>
+  </div>
+
+  <div class="connections"><strong>Connections:</strong> The <code>await using</code> / <code>AsyncDisposable</code> handle is the explicit-resource-management feature (TS 5.2) applied to a lock, and the branded <code>FencingToken</code> reuses branded-types (R4 from 07-07). Leader election is what makes the outbox relay (07-07) and cron ticks run exactly once across instances &mdash; complementing the idempotent consumers of Concept 1.</div>
+</div>
+
+</div><!-- end topic-section 1 -->
+
+<!-- ============================================================ -->
+<!-- TOPIC SECTION 2: Contract Evolution & Testing                 -->
+<!-- ============================================================ -->
+<div class="topic-section">
+<div class="topic-section-header"><span class="section-num">2</span>Contract Evolution &amp; Testing</div>
+
+<!-- Concept 4: Event Schema Versioning & Upcasting -->
+<div class="concept-card" id="schema_versioning">
+  <div class="concept-header">
+    <span class="concept-title">4. Event Schema Versioning &amp; Upcasting</span>
+    <span class="ttag">TypeScript</span>
+  </div>
+
+  <div class="why-matters">Events and messages are <em>persisted</em> &mdash; an event stored last year must still be readable by today&rsquo;s code. You can&rsquo;t edit history (07-07), so schemas must <em>evolve</em>: add fields, rename, restructure, all while old versions linger in the log and the DLQ. The type-safe answer is a <strong>versioned discriminated union</strong> plus <strong>upcasters</strong> &mdash; pure functions that migrate <code>vN</code> to <code>vN+1</code> &mdash; so the rest of your code only ever sees the latest shape, and the compiler proves every version is handled.</div>
+
+  <div class="explanation">
+    <p>Tag each event with both a <code>type</code> and a <code>v</code> (version). The stored form is a union over all versions; the <em>current</em> form is the newest. An <strong>upcaster chain</strong> <code>v1 &rarr; v2 &rarr; v3</code> lifts any old event to current: each step is a total function typed <code>(old: Vn) =&gt; Vn+1</code>. Reading becomes: parse the stored bytes (Zod), match the version, run it through the remaining upcasters. Because the union is exhaustive, forgetting to upcast a version is a compile error via the <code>never</code> guard.</p>
+    <p>Golden rules of evolution: prefer <em>additive, optional</em> changes (backward compatible); when you must break, bump the version and write an upcaster rather than mutating old records. Keep upcasters pure and append-only &mdash; they&rsquo;re the migration history of your event log.</p>
+    <div class="step"><span class="step-num">1</span><div>Tag events with <code>type</code> + <code>v</code>; the stored type is a union of all versions.</div></div>
+    <div class="step"><span class="step-num">2</span><div>Write pure upcasters <code>Vn &rarr; Vn+1</code>; chain them to reach current.</div></div>
+    <div class="step"><span class="step-num">3</span><div>Consumers only see the latest shape; a <code>never</code> guard enforces coverage.</div></div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 1 of 4 &mdash; versioned event shapes</div>
+<pre><code>interface UserRegisteredV1 { type: "UserRegistered"; v: 1; name: string }
+// v2 splits `name` into first/last — a breaking change
+interface UserRegisteredV2 { type: "UserRegistered"; v: 2; firstName: string; lastName: string }
+// v3 adds an optional email — additive, backward compatible
+interface UserRegisteredV3 { type: "UserRegistered"; v: 3; firstName: string; lastName: string; email?: string }
+
+type StoredUserRegistered = UserRegisteredV1 | UserRegisteredV2 | UserRegisteredV3;
+type CurrentUserRegistered = UserRegisteredV3;   // what app code consumes</code></pre>
+<div class="type-result">the stored union spans every version ever written; `v` is the discriminant</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 2 of 4 &mdash; pure, total upcasters</div>
+<pre><code>const up1to2 = (e: UserRegisteredV1): UserRegisteredV2 =&gt; {
+  const [firstName, ...rest] = e.name.split(" ");
+  return { type: "UserRegistered", v: 2, firstName, lastName: rest.join(" ") };
+};
+const up2to3 = (e: UserRegisteredV2): UserRegisteredV3 =&gt; ({ ...e, v: 3 });</code></pre>
+<div class="type-result">each upcaster is a typed Vn -&gt; Vn+1 step; TS checks the shapes at each hop</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 3 of 4 &mdash; exhaustive upcast to current</div>
+<pre><code>function toCurrent(e: StoredUserRegistered): CurrentUserRegistered {
+  switch (e.v) {
+    case 1: return up2to3(up1to2(e));
+    case 2: return up2to3(e);
+    case 3: return e;
+    default:
+      const _exhaustive: never = e;   // a new version without a case won't compile
+      return _exhaustive;
+  }
+}</code></pre>
+<div class="type-result">adding UserRegisteredV4 to the union breaks this switch until you handle it</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 4 of 4 &mdash; parse stored bytes, then upcast</div>
+<pre><code>import { z } from "zod";
+const StoredSchema = z.discriminatedUnion("v", [
+  z.object({ type: z.literal("UserRegistered"), v: z.literal(1), name: z.string() }),
+  z.object({ type: z.literal("UserRegistered"), v: z.literal(2), firstName: z.string(), lastName: z.string() }),
+  z.object({ type: z.literal("UserRegistered"), v: z.literal(3), firstName: z.string(), lastName: z.string(), email: z.string().optional() }),
+]);
+
+function readEvent(json: string): CurrentUserRegistered {
+  const stored = StoredSchema.parse(JSON.parse(json)) as StoredUserRegistered;
+  return toCurrent(stored);          // validated at the boundary, then upcast
+}</code></pre>
+<div class="type-result">Zod restores the union at runtime; upcasters lift it to the one shape app code knows</div>
+  </div>
+
+  <div class="callout-warning">
+    <strong>Common Mistakes:</strong>
+    <div class="mistake">&#10060; Mutating old stored events in place to &ldquo;migrate&rdquo; them &mdash; you rewrite history, break auditability, and risk a half-finished migration.</div>
+    <div class="correct">&#9989; Leave old events untouched; bump the version and add a pure upcaster that lifts them on read.</div>
+    <div class="mistake">&#10060; A silent <code>default</code> in the version switch &mdash; an unhandled old version slips through as an unmigrated shape.</div>
+    <div class="correct">&#9989; Guard the default with <code>const _: never = e</code> so every version must have an upcast path.</div>
+  </div>
+
+  <div class="key-rules">
+    <strong>Key Rules:</strong>
+    <ul>
+      <li>Version every persisted event (<code>v</code>); the stored type is a union of all versions, current is the newest.</li>
+      <li>Prefer additive, optional changes; when you must break, bump the version and write an upcaster.</li>
+      <li>Upcasters are pure, total <code>Vn &rarr; Vn+1</code> functions; chain them and enforce coverage with <code>never</code>.</li>
+      <li>Validate stored bytes with a discriminated Zod schema before upcasting &mdash; the log is a trust boundary.</li>
+    </ul>
+  </div>
+
+  <div class="exercises">
+    <strong>Practice Exercises:</strong>
+    <div class="exercise"><span class="exercise-num">1</span>Add <code>UserRegisteredV4</code> (email becomes required) and watch the <code>never</code> guard force you to add the upcaster.</div>
+    <div class="exercise"><span class="exercise-num">2</span>Write a generic <code>Upcaster&lt;A, B&gt;</code> registry and a <code>chain(...)</code> that composes steps with types checked at each link.</div>
+    <div class="exercise"><span class="exercise-num">3</span>Wire this into the DLQ replay (Concept 2): upcast <code>DeadLetter.original</code> to current before reprocessing.</div>
+  </div>
+
+  <div class="connections"><strong>Connections:</strong> Versioned events are discriminated unions with an exhaustive <code>never</code> guard &mdash; the same machinery as event sourcing&rsquo;s reducer (07-07) and Zod round-tripping (R6). Upcasting is what lets you replay old DLQ messages (Concept 2) and rebuild event-sourced state after a schema change, and it&rsquo;s the producer-side promise a consumer contract test (Concept 5) verifies you haven&rsquo;t broken.</div>
+</div>
+
+<!-- Concept 5: Consumer-Driven Contract Testing -->
+<div class="concept-card" id="contract_testing">
+  <div class="concept-header">
+    <span class="concept-title">5. Consumer-Driven Contract Testing</span>
+    <span class="ttag">TypeScript</span>
+  </div>
+
+  <div class="why-matters">Types guarantee agreement <em>within</em> one codebase, but two independently deployed services can&rsquo;t share a compiler. When the API team renames a field, the frontend&rsquo;s types still compile &mdash; against a now-wrong local interface &mdash; and it breaks in production. <strong>Consumer-driven contract testing</strong> (e.g. Pact) closes that gap: the consumer declares exactly what it needs as an executable contract, the provider is verified against it in CI, and a mismatch fails the build <em>before</em> deploy. TypeScript keeps the contract, the mock, and the real client all typed against one shared shape.</div>
+
+  <div class="explanation">
+    <p>The flow: the <strong>consumer</strong> writes a test describing a request and the minimal response it depends on &mdash; that produces a <em>pact</em> (a JSON contract) and runs the consumer against a mock provider that honors it. The <strong>provider</strong> then replays every interaction against the real service in its own CI; if the response no longer matches, the provider&rsquo;s build fails. The contract is <em>consumer-driven</em>: it captures only the fields consumers actually use, so the provider is free to add fields but not remove/rename used ones.</p>
+    <p>The TS discipline is to derive one type from the contract (often via a Zod schema shared between consumer test and runtime client) so the mock, the assertion, and the production fetch can&rsquo;t drift. This complements &mdash; not replaces &mdash; schema versioning (Concept 4): versioning lets the provider evolve safely; contract tests <em>prove</em> a given change didn&rsquo;t break a real consumer.</p>
+    <div class="step"><span class="step-num">1</span><div>Consumer declares the request + needed response fields as a contract.</div></div>
+    <div class="step"><span class="step-num">2</span><div>Consumer runs against a mock honoring the contract; a pact file is emitted.</div></div>
+    <div class="step"><span class="step-num">3</span><div>Provider CI verifies the real service still satisfies every interaction.</div></div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 1 of 4 &mdash; one shared, typed contract shape</div>
+<pre><code>import { z } from "zod";
+
+// the consumer depends only on these fields — the contract's surface
+const UserResponse = z.object({
+  id: z.string(),
+  displayName: z.string(),      // consumer reads this; provider must keep it
+});
+type UserResponse = z.infer&lt;typeof UserResponse&gt;;
+
+interface Contract {
+  request: { method: "GET"; path: `/users/${string}` };
+  response: { status: 200; body: UserResponse };
+}</code></pre>
+<div class="type-result">one Zod schema is the single source of truth for mock, assertion, and client</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 2 of 4 &mdash; consumer test against a mock provider</div>
+<pre><code>// pseudo-Pact: the consumer describes what it needs, gets a mock URL back
+await provider
+  .given("user 42 exists")
+  .uponReceiving("a request for user 42")
+  .withRequest({ method: "GET", path: "/users/42" })
+  .willRespondWith({ status: 200, body: { id: "42", displayName: "Ada" } });
+
+await provider.executeTest(async (mockUrl) =&gt; {
+  const user = await getUser(mockUrl, "42");   // real consumer client code
+  expect(UserResponse.parse(user)).toEqual({ id: "42", displayName: "Ada" });
+});   // running this emits a pact file the provider must honor</code></pre>
+<div class="type-result">the consumer's own client runs against the mock; success produces the contract</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 3 of 4 &mdash; the production client shares the type</div>
+<pre><code>async function getUser(baseUrl: string, id: string): Promise&lt;UserResponse&gt; {
+  const res = await fetch(`${baseUrl}/users/${id}`);
+  return UserResponse.parse(await res.json());   // same schema as the test
+}
+// because getUser is used in both the pact test and production,
+// the mock and the real call can never disagree on the shape</code></pre>
+<div class="type-result">reusing getUser + UserResponse means the tested path IS the shipped path</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 4 of 4 &mdash; provider-side verification in CI</div>
+<pre><code>// provider CI: replay each recorded interaction against the REAL service
+// (pseudo-code for @pact-foundation/pact verifier)
+await new Verifier({
+  provider: "user-service",
+  providerBaseUrl: "http://localhost:3000",
+  pactUrls: ["./pacts/web-user-service.json"],
+  stateHandlers: { "user 42 exists": async () =&gt; { await seedUser("42", "Ada"); } },
+}).verifyProvider();
+// if the provider renamed displayName -> name, this FAILS before deploy</code></pre>
+<div class="type-result">the provider build breaks the moment it stops satisfying a real consumer's contract</div>
+  </div>
+
+  <div class="callout-warning">
+    <strong>Common Mistakes:</strong>
+    <div class="mistake">&#10060; Trusting a hand-written local interface for a remote API &mdash; it compiles happily while the real response has drifted, breaking only in prod.</div>
+    <div class="correct">&#9989; Verify the real provider against a consumer-driven contract in CI so drift fails the build, not production.</div>
+    <div class="mistake">&#10060; Putting every provider field in the contract &mdash; now harmless additive changes break the consumer test needlessly.</div>
+    <div class="correct">&#9989; Capture only the fields the consumer actually uses; let the provider add fields freely (tolerant reader).</div>
+  </div>
+
+  <div class="key-rules">
+    <strong>Key Rules:</strong>
+    <ul>
+      <li>Cross-service agreement needs a runtime contract; a shared compiler doesn&rsquo;t span deploy boundaries.</li>
+      <li>The consumer drives the contract &mdash; capture only fields it uses so providers can evolve additively.</li>
+      <li>Verify the <em>real</em> provider against the pact in its CI; a mismatch must fail before deploy.</li>
+      <li>Derive one type (a Zod schema) for the mock, the assertion, and the production client so they can&rsquo;t drift.</li>
+    </ul>
+  </div>
+
+  <div class="exercises">
+    <strong>Practice Exercises:</strong>
+    <div class="exercise"><span class="exercise-num">1</span>Add a second interaction (404 for a missing user) and a matching provider state handler; assert the typed error path.</div>
+    <div class="exercise"><span class="exercise-num">2</span>Use Pact matchers (<code>like</code>, <code>eachLike</code>) so the contract checks <em>shape</em> not exact values, and keep the TS type aligned.</div>
+    <div class="exercise"><span class="exercise-num">3</span>Combine with Concept 4: bump the provider to a new response version and show the contract test catches a removed field a consumer still needs.</div>
+  </div>
+
+  <div class="connections"><strong>Connections:</strong> Contract testing is the cross-service complement to in-repo type testing (tsd/expect-type): types cover one codebase, pacts cover the wire between two. The shared Zod schema is R6 applied as the single source of truth, and it enforces the &ldquo;don&rsquo;t break used fields&rdquo; promise that schema versioning (Concept 4) lets a provider keep while still evolving.</div>
+</div>
+
+</div><!-- end topic-section 2 -->
+
+<!-- Footer -->
+<footer class="guide-footer">
+  <h2>All Guides</h2>
+  <ul>
+    <li><a href="typescript-guides/typescript-guide-2026-07-09.html">2026-07-09</a> (Day 36)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-07-08.html">2026-07-08</a> (Day 35)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-07-07.html">2026-07-07</a> (Day 34)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-07-06.html">2026-07-06</a> (Day 33)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-07-05.html">2026-07-05</a> (Day 32)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-07-04.html">2026-07-04</a> (Day 31)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-07-03.html">2026-07-03</a> (Day 30)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-07-02.html">2026-07-02</a> (Day 29)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-07-01.html">2026-07-01</a> (Day 28)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-30.html">2026-06-30</a> (Day 27)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-29.html">2026-06-29</a> (Day 26)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-28.html">2026-06-28</a> (Day 25)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-27.html">2026-06-27</a> (Day 24)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-26.html">2026-06-26</a> (Day 23)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-25.html">2026-06-25</a> (Day 22)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-24.html">2026-06-24</a> (Day 21)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-23.html">2026-06-23</a> (Day 20)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-22.html">2026-06-22</a> (Day 19)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-21.html">2026-06-21</a> (Day 18)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-19.html">2026-06-19</a> (Day 17)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-18.html">2026-06-18</a> (Day 16)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-17.html">2026-06-17</a> (Day 15)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-15.html">2026-06-15</a> (Day 14)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-13.html">2026-06-13</a> (Day 13)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-12.html">2026-06-12</a> (Day 12)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-11.html">2026-06-11</a> (Day 11)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-10.html">2026-06-10</a> (Day 10)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-09.html">2026-06-09</a> (Day 9)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-08.html">2026-06-08</a> (Day 8)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-07.html">2026-06-07</a> (Day 7)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-05.html">2026-06-05</a> (Day 6)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-04.html">2026-06-04</a> (Day 5)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-03.html">2026-06-03</a> (Day 4)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-02.html">2026-06-02</a> (Day 3)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-01.html">2026-06-01</a> (Day 2)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-05-31.html">2026-05-31</a> (Day 1)</li>
+  </ul>
+</footer>
+
+</div><!-- end content -->
+</div><!-- end main -->
+
+<script>
+// Theme toggle
+(function() {
+  var toggle = document.getElementById('themeToggle');
+  var html = document.documentElement;
+  var STORAGE_KEY = 'lc-tsguide-theme';
+
+  function setTheme(theme) {
+    html.setAttribute('data-theme', theme);
+    toggle.textContent = theme === 'dark' ? '\u{1F319}' : '\u{2600}\u{FE0F}';
+    try { localStorage.setItem(STORAGE_KEY, theme); } catch(e) {}
+  }
+
+  try {
+    var saved = localStorage.getItem(STORAGE_KEY);
+    if (saved) setTheme(saved);
+  } catch(e) {}
+
+  toggle.addEventListener('click', function() {
+    var current = html.getAttribute('data-theme') || 'dark';
+    setTheme(current === 'dark' ? 'light' : 'dark');
+  });
+})();
+
+// Sidebar active link tracking
+(function() {
+  var links = document.querySelectorAll('.sidebar-nav a');
+  var sections = [];
+  links.forEach(function(link) {
+    var id = link.getAttribute('href').replace('#', '');
+    var el = document.getElementById(id);
+    if (el) sections.push({ link: link, el: el });
+  });
+
+  function updateActive() {
+    var current = null;
+    var scrollY = window.scrollY + 120;
+    for (var i = sections.length - 1; i >= 0; i--) {
+      if (sections[i].el.offsetTop <= scrollY) {
+        current = sections[i];
+        break;
+      }
+    }
+    links.forEach(function(l) { l.classList.remove('active'); });
+    if (current) current.link.classList.add('active');
+  }
+
+  window.addEventListener('scroll', updateActive);
+  updateActive();
+})();
+</script>
+
+</body>
+</html>

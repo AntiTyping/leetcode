@@ -1,0 +1,1630 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TypeScript Daily Guide — 2026-06-03 (Day 4)</title>
+<style>
+:root {
+  --bg: #0d1117;
+  --surface: #161b22;
+  --surface2: #1c2129;
+  --border: #30363d;
+  --text: #e6edf3;
+  --text-muted: #8b949e;
+  --accent: #58a6ff;
+  --accent-bg: rgba(56,139,253,0.15);
+  --green: #3fb950;
+  --green-bg: rgba(63,185,80,0.08);
+  --red: #f85149;
+  --red-bg: rgba(248,81,73,0.08);
+  --yellow: #d29922;
+  --yellow-bg: rgba(210,153,34,0.1);
+  --orange: #db6d28;
+  --purple: #bc8cff;
+  --purple-bg: rgba(188,140,255,0.08);
+  --purple-border: rgba(188,140,255,0.2);
+  --link: #58a6ff;
+  --code-bg: #1c2129;
+  --output-bg: #0e1c0e;
+  --output-border: #1a3a1a;
+  --sidebar-bg: #161b22;
+  --sidebar-active: rgba(56,139,253,0.15);
+  --exercise-border: #30363d;
+}
+[data-theme="light"] {
+  --bg: #ffffff;
+  --surface: #f6f8fa;
+  --surface2: #eef1f5;
+  --border: #d0d7de;
+  --text: #1f2328;
+  --text-muted: #656d76;
+  --accent: #0969da;
+  --accent-bg: rgba(9,105,218,0.1);
+  --green: #1a7f37;
+  --green-bg: rgba(26,127,55,0.06);
+  --red: #cf222e;
+  --red-bg: rgba(207,34,46,0.06);
+  --yellow: #9a6700;
+  --yellow-bg: rgba(154,103,0,0.06);
+  --orange: #bc4c00;
+  --purple: #8250df;
+  --purple-bg: rgba(130,80,223,0.06);
+  --purple-border: rgba(130,80,223,0.15);
+  --link: #0969da;
+  --code-bg: #eef1f5;
+  --output-bg: #f0faf0;
+  --output-border: #c6e6c6;
+  --sidebar-bg: #f6f8fa;
+  --sidebar-active: rgba(9,105,218,0.1);
+  --exercise-border: #d0d7de;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;font-size:16px;line-height:1.7;color:var(--text);background:var(--bg);display:flex;min-height:100vh}
+a{color:var(--link);text-decoration:none}
+a:hover{text-decoration:underline}
+
+/* Sidebar */
+.sidebar{position:fixed;top:0;left:0;width:300px;height:100vh;background:var(--sidebar-bg);border-right:1px solid var(--border);overflow-y:auto;padding:20px 0;z-index:100}
+.sidebar-header{padding:16px 20px;border-bottom:1px solid var(--border);margin-bottom:12px}
+.sidebar-header h2{font-size:15px;font-weight:600;color:var(--text)}
+.sidebar-header .date{font-size:13px;color:var(--text-muted);margin-top:2px}
+.sidebar-section{padding:8px 20px 4px;font-size:12px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px}
+.sidebar-section.review-label{color:var(--purple)}
+.sidebar-nav{list-style:none;padding:0}
+.sidebar-nav li a{display:block;padding:6px 20px 6px 28px;font-size:14px;color:var(--text-muted);transition:all 0.15s}
+.sidebar-nav li a:hover,.sidebar-nav li a.active{color:var(--accent);background:var(--sidebar-active);text-decoration:none}
+.sidebar-nav li a .nav-id{font-size:11px;color:var(--text-muted);opacity:0.6;margin-left:6px}
+
+/* Main */
+.main{margin-left:300px;flex:1;padding:40px;max-width:1160px}
+.content{max-width:860px;margin:0 auto}
+
+/* Theme Toggle */
+.theme-toggle{position:fixed;top:16px;right:20px;z-index:200;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:8px 12px;cursor:pointer;color:var(--text);font-size:18px;line-height:1;transition:all 0.15s}
+.theme-toggle:hover{border-color:var(--accent)}
+
+/* Header */
+.guide-header{text-align:center;padding:32px 0 40px;border-bottom:1px solid var(--border);margin-bottom:40px}
+.guide-header h1{font-size:28px;font-weight:700;margin-bottom:8px}
+.guide-header .meta{font-size:15px;color:var(--text-muted)}
+.guide-header .meta span{margin:0 8px}
+.badge{display:inline-block;padding:2px 10px;border-radius:12px;font-size:13px;font-weight:500}
+.badge-blue{background:var(--accent-bg);color:var(--accent)}
+.badge-purple{background:var(--purple-bg);color:var(--purple)}
+
+/* How To Use */
+.how-to-use{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:24px 28px;margin-bottom:40px}
+.how-to-use h2{font-size:18px;margin-bottom:12px}
+.how-to-use ol{padding-left:24px}
+.how-to-use li{margin-bottom:6px;color:var(--text-muted)}
+
+/* Review Section */
+.review-section{margin-bottom:48px}
+.review-section-header{font-size:22px;font-weight:700;padding-bottom:12px;border-bottom:2px solid var(--purple);margin-bottom:28px;display:flex;align-items:center;gap:12px;color:var(--purple)}
+
+/* Review Card */
+.review-card{background:var(--purple-bg);border:1px solid var(--purple-border);border-radius:10px;padding:28px;margin-bottom:24px}
+.review-card .review-header{display:flex;align-items:center;gap:12px;margin-bottom:12px;flex-wrap:wrap}
+.review-card .review-title{font-size:18px;font-weight:700;color:var(--purple)}
+.review-card .review-meta{font-size:13px;color:var(--text-muted)}
+.review-card .review-reminder{color:var(--text-muted);font-style:italic;margin-bottom:16px;padding-left:14px;border-left:3px solid var(--purple)}
+.review-card .review-pattern{margin-bottom:16px}
+.review-card .review-pattern strong{display:block;margin-bottom:8px;font-size:14px;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px}
+.review-card .review-challenge{margin-bottom:12px}
+.review-card .review-challenge strong{display:block;margin-bottom:8px;font-size:14px;color:var(--yellow);text-transform:uppercase;letter-spacing:0.5px}
+.review-card .review-challenge p{line-height:1.6}
+.review-card .review-pitfall{background:var(--red-bg);border:1px solid rgba(248,81,73,0.15);border-radius:6px;padding:12px 16px;font-size:14px;line-height:1.6}
+.review-card .review-pitfall strong{color:var(--red);margin-right:4px}
+.review-card code{background:var(--code-bg);padding:2px 6px;border-radius:4px;font-family:'SF Mono','Fira Code','Consolas',monospace;font-size:13px}
+
+/* Topic Section */
+.topic-section{margin-bottom:48px}
+.topic-section-header{font-size:22px;font-weight:700;padding-bottom:12px;border-bottom:2px solid var(--accent);margin-bottom:28px;display:flex;align-items:center;gap:12px}
+.topic-section-header .section-num{background:var(--accent);color:#fff;width:32px;height:32px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:15px;font-weight:700;flex-shrink:0}
+
+/* Concept Card */
+.concept-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:28px;margin-bottom:32px}
+.concept-header{display:flex;align-items:center;gap:12px;margin-bottom:16px;flex-wrap:wrap}
+.concept-title{font-size:20px;font-weight:700}
+.ttag{display:inline-block;padding:2px 10px;border-radius:12px;font-size:12px;font-weight:500;background:var(--accent-bg);color:var(--accent)}
+.why-matters{color:var(--text-muted);font-style:italic;margin-bottom:20px;padding-left:14px;border-left:3px solid var(--accent)}
+.explanation{margin-bottom:20px;line-height:1.8}
+.explanation p{margin-bottom:12px}
+.explanation ul,.explanation ol{padding-left:24px;margin-bottom:12px}
+.explanation li{margin-bottom:4px}
+.explanation code{background:var(--code-bg);padding:2px 6px;border-radius:4px;font-family:'SF Mono','Fira Code','Consolas',monospace;font-size:14px}
+
+/* Code Examples */
+.code-example{margin-bottom:20px;border:1px solid var(--border);border-radius:8px;overflow:hidden}
+.lang-badge{background:var(--surface2);color:var(--text-muted);font-size:12px;font-weight:600;padding:6px 14px;border-bottom:1px solid var(--border);font-family:'SF Mono','Fira Code','Consolas',monospace}
+pre{margin:0;padding:16px;overflow-x:auto;background:var(--code-bg);font-family:'SF Mono','Fira Code','Consolas',monospace;font-size:13.5px;line-height:1.6;white-space:pre-wrap}
+pre code{background:none;padding:0;font-size:inherit}
+.output{background:var(--output-bg);border-top:1px solid var(--output-border);padding:12px 16px;font-family:'SF Mono','Fira Code','Consolas',monospace;font-size:13px;color:var(--green);white-space:pre-wrap}
+.output::before{content:"Output:";display:block;font-size:11px;font-weight:600;color:var(--text-muted);margin-bottom:4px;text-transform:uppercase;letter-spacing:0.5px}
+.type-result{background:var(--output-bg);border-top:1px solid var(--output-border);padding:12px 16px;font-family:'SF Mono','Fira Code','Consolas',monospace;font-size:13px;color:var(--green);white-space:pre-wrap}
+.type-result::before{content:"Type Result:";display:block;font-size:11px;font-weight:600;color:var(--text-muted);margin-bottom:4px;text-transform:uppercase;letter-spacing:0.5px}
+.type-error{background:var(--red-bg);border-top:1px solid rgba(248,81,73,0.2);padding:12px 16px;font-family:'SF Mono','Fira Code','Consolas',monospace;font-size:13px;color:var(--red);white-space:pre-wrap}
+.type-error::before{content:"Type Error:";display:block;font-size:11px;font-weight:600;color:var(--red);margin-bottom:4px;text-transform:uppercase;letter-spacing:0.5px}
+
+/* Callouts */
+.callout-warning{background:var(--yellow-bg);border:1px solid rgba(210,153,34,0.2);border-radius:8px;padding:20px;margin-bottom:20px}
+.callout-warning strong{color:var(--yellow);display:block;margin-bottom:12px;font-size:16px}
+.mistake,.correct{padding:10px 14px;border-radius:6px;margin-bottom:10px;font-size:14px;line-height:1.6}
+.mistake{background:var(--red-bg);border-left:3px solid var(--red)}
+.mistake code,.correct code{background:var(--code-bg);padding:2px 6px;border-radius:4px;font-family:'SF Mono','Fira Code','Consolas',monospace;font-size:13px}
+.correct{background:var(--green-bg);border-left:3px solid var(--green)}
+
+/* Key Rules */
+.key-rules{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:20px;margin-bottom:20px}
+.key-rules strong{display:block;margin-bottom:10px;font-size:16px}
+.key-rules ul{padding-left:20px}
+.key-rules li{margin-bottom:6px}
+.key-rules code{background:var(--code-bg);padding:2px 6px;border-radius:4px;font-family:'SF Mono','Fira Code','Consolas',monospace;font-size:13px}
+
+/* Exercises */
+.exercises{border:2px dashed var(--exercise-border);border-radius:8px;padding:20px;margin-bottom:20px;margin-left:12px}
+.exercises strong{display:block;margin-bottom:14px;font-size:16px;color:var(--purple)}
+.exercise{margin-bottom:14px;padding-left:38px;position:relative;line-height:1.6}
+.exercise:last-child{margin-bottom:0}
+.exercise-num{position:absolute;left:0;top:2px;background:var(--purple);color:#fff;width:24px;height:24px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:12px;font-weight:700}
+.exercise code{background:var(--code-bg);padding:2px 6px;border-radius:4px;font-family:'SF Mono','Fira Code','Consolas',monospace;font-size:13px}
+
+/* Connections */
+.connections{background:var(--accent-bg);border:1px solid rgba(56,139,253,0.2);border-radius:8px;padding:16px 20px;font-size:14px;color:var(--text-muted)}
+.connections strong{color:var(--accent);margin-right:6px}
+
+/* Footer */
+.guide-footer{border-top:1px solid var(--border);padding-top:32px;margin-top:48px}
+.guide-footer h2{font-size:18px;margin-bottom:16px}
+.guide-footer ul{list-style:none;padding:0}
+.guide-footer li{padding:6px 0}
+.guide-footer li a{font-weight:500}
+
+/* Responsive */
+@media(max-width:900px){
+  .sidebar{display:none}
+  .main{margin-left:0}
+  .theme-toggle{top:12px;right:12px}
+}
+</style>
+</head>
+<body>
+
+<!-- Theme Toggle -->
+<button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">&#x1F319;</button>
+
+<!-- Sidebar -->
+<nav class="sidebar">
+  <div class="sidebar-header">
+    <h2>TypeScript Daily Guide</h2>
+    <div class="date">2026-06-03 &mdash; Day 4</div>
+  </div>
+
+  <div class="sidebar-section review-label">Review (6 concepts)</div>
+  <ul class="sidebar-nav">
+    <li><a href="#review_never_exhaustiveness">never &amp; Exhaustiveness <span class="nav-id">R1</span></a></li>
+    <li><a href="#review_conditional_types">Conditional Types <span class="nav-id">R2</span></a></li>
+    <li><a href="#review_mapped_types">Mapped Types <span class="nav-id">R3</span></a></li>
+    <li><a href="#review_keyof_indexed">keyof &amp; Indexed Access <span class="nav-id">R4</span></a></li>
+    <li><a href="#review_type_predicates">Type Predicates <span class="nav-id">R5</span></a></li>
+    <li><a href="#review_satisfies">satisfies Operator <span class="nav-id">R6</span></a></li>
+  </ul>
+
+  <div class="sidebar-section">Functions &amp; Patterns (Week 3 finish)</div>
+  <ul class="sidebar-nav">
+    <li><a href="#decorators_tc39">Decorators (TC39) <span class="nav-id">#1</span></a></li>
+  </ul>
+
+  <div class="sidebar-section">Modules &amp; Project Structure (Week 4)</div>
+  <ul class="sidebar-nav">
+    <li><a href="#module_systems">Module Systems <span class="nav-id">#2</span></a></li>
+    <li><a href="#declaration_files">Declaration Files <span class="nav-id">#3</span></a></li>
+    <li><a href="#tsconfig_deep_dive">tsconfig.json Deep Dive <span class="nav-id">#4</span></a></li>
+    <li><a href="#namespaces_vs_modules">Namespaces vs Modules <span class="nav-id">#5</span></a></li>
+  </ul>
+</nav>
+
+<!-- Main Content -->
+<div class="main">
+<div class="content">
+
+<!-- Header -->
+<header class="guide-header">
+  <h1>TypeScript Daily Guide &mdash; Day 4</h1>
+  <div class="meta">
+    <span>2026-06-03</span>
+    <span>&middot;</span>
+    <span>Day 4</span>
+    <span>&middot;</span>
+    <span class="badge badge-purple">6 reviews</span>
+    <span class="badge badge-blue">5 new concepts</span>
+  </div>
+</header>
+
+<!-- How to Use -->
+<div class="how-to-use">
+  <h2>How to Use This Guide</h2>
+  <ol>
+    <li><strong>Review first</strong> &mdash; scan each purple review card; if the concept feels solid, move on; if fuzzy, re-read the code pattern</li>
+    <li><strong>Attempt the challenge exercise</strong> on any review card that felt shaky &mdash; this is your best reinforcement signal</li>
+    <li><strong>Work through new concepts</strong> top to bottom &mdash; each builds on the previous</li>
+    <li><strong>Type every code example</strong> yourself in a .ts file &mdash; hover over types in your editor to build intuition</li>
+    <li><strong>Do at least 2 exercises per concept</strong> before moving to the next one</li>
+  </ol>
+</div>
+
+<!-- ============================================================ -->
+<!-- REVIEW SECTION                                                -->
+<!-- ============================================================ -->
+<div class="review-section">
+<div class="review-section-header">Review &mdash; 6 Concepts</div>
+
+<!-- R1: never & Exhaustiveness -->
+<div class="review-card" id="review_never_exhaustiveness">
+  <div class="review-header">
+    <span class="review-title">R1. never &amp; Exhaustiveness</span>
+    <span class="badge badge-purple">Advanced Type System</span>
+    <span class="review-meta">rep 0 &middot; last reviewed 2026-06-01 &middot; 2 days ago</span>
+  </div>
+  <div class="review-reminder">The <code>never</code> type represents values that can never occur &mdash; bottom of the type hierarchy. Use it for exhaustiveness checking in switch/if-else chains: assign the narrowed value to <code>never</code>, and the compiler errors if you miss a case.</div>
+
+  <div class="review-pattern">
+    <strong>Key Pattern</strong>
+    <div class="code-example">
+<pre><code>type Shape = { kind: "circle"; r: number } | { kind: "square"; s: number };
+
+function area(shape: Shape): number {
+  switch (shape.kind) {
+    case "circle": return Math.PI * shape.r ** 2;
+    case "square": return shape.s ** 2;
+    default: {
+      const _exhaustive: never = shape; // Error if a case is missing
+      return _exhaustive;
+    }
+  }
+}</code></pre>
+    </div>
+  </div>
+
+  <div class="review-challenge">
+    <strong>Challenge Exercise</strong>
+    <p>Add a <code>"triangle"</code> variant (with <code>base</code> and <code>height</code>) to the <code>Shape</code> union. Without touching the switch body, confirm the compiler flags the exhaustiveness error. Then fix it. Next, write a <code>assertNever(x: never): never</code> helper that throws, and use it instead of the inline assignment.</p>
+  </div>
+
+  <div class="review-pitfall">
+    <strong>#1 Pitfall:</strong> Forgetting the <code>default</code> exhaustiveness guard entirely. Without it, adding a new variant to the union compiles silently and falls through to <code>undefined</code> at runtime. Always include the <code>never</code> check.
+  </div>
+</div>
+
+<!-- R2: Conditional Types -->
+<div class="review-card" id="review_conditional_types">
+  <div class="review-header">
+    <span class="review-title">R2. Conditional Types</span>
+    <span class="badge badge-purple">Advanced Type System</span>
+    <span class="review-meta">rep 1 &middot; last reviewed 2026-06-02 &middot; 1 day ago</span>
+  </div>
+  <div class="review-reminder"><code>T extends U ? X : Y</code> &mdash; type-level if/else. Distributive over unions when T is a naked type parameter. Use <code>infer</code> to extract types from complex structures. Wrap in <code>[T] extends [U]</code> to prevent distribution.</div>
+
+  <div class="review-pattern">
+    <strong>Key Pattern</strong>
+    <div class="code-example">
+<pre><code>// Distributive conditional + infer
+type Flatten&lt;T&gt; = T extends Array&lt;infer U&gt; ? U : T;
+
+type A = Flatten&lt;string[]&gt;;        // string
+type B = Flatten&lt;number&gt;;          // number
+type C = Flatten&lt;string[] | number&gt;; // string | number (distributes!)</code></pre>
+    </div>
+  </div>
+
+  <div class="review-challenge">
+    <strong>Challenge Exercise</strong>
+    <p>Write <code>type DeepFlatten&lt;T&gt;</code> that recursively unwraps nested arrays: <code>DeepFlatten&lt;number[][][]&gt;</code> should yield <code>number</code>. Hint: make the conditional type recursive with <code>infer</code>.</p>
+  </div>
+
+  <div class="review-pitfall">
+    <strong>#1 Pitfall:</strong> Forgetting distributive behavior &mdash; <code>IsString&lt;string | number&gt;</code> evaluates to <code>true | false</code>, not <code>false</code>. Wrap in <code>[T] extends [string]</code> to prevent distribution.
+  </div>
+</div>
+
+<!-- R3: Mapped Types -->
+<div class="review-card" id="review_mapped_types">
+  <div class="review-header">
+    <span class="review-title">R3. Mapped Types</span>
+    <span class="badge badge-purple">Advanced Type System</span>
+    <span class="review-meta">rep 1 &middot; last reviewed 2026-06-02 &middot; 1 day ago</span>
+  </div>
+  <div class="review-reminder">Transform all properties: <code>{ [K in keyof T]: NewType }</code>. Use <code>as</code> for key remapping and template literal types for new key names. Add/remove <code>readonly</code> and <code>?</code> with <code>+</code>/<code>-</code> modifiers.</div>
+
+  <div class="review-pattern">
+    <strong>Key Pattern</strong>
+    <div class="code-example">
+<pre><code>// Filter keys: remove properties that aren't strings
+type StringKeysOnly&lt;T&gt; = {
+  [K in keyof T as T[K] extends string ? K : never]: T[K]
+};
+
+interface Mixed { name: string; age: number; email: string }
+type OnlyStrings = StringKeysOnly&lt;Mixed&gt;;
+// { name: string; email: string }</code></pre>
+    </div>
+  </div>
+
+  <div class="review-challenge">
+    <strong>Challenge Exercise</strong>
+    <p>Write <code>type EventMap&lt;T&gt;</code> that takes an interface and produces event handler types: <code>EventMap&lt;{ name: string; age: number }&gt;</code> should become <code>{ onNameChange: (value: string) =&gt; void; onAgeChange: (value: number) =&gt; void }</code>. Use <code>as</code> key remapping with template literals.</p>
+  </div>
+
+  <div class="review-pitfall">
+    <strong>#1 Pitfall:</strong> Forgetting <code>string &amp; K</code> when using template literals with keyof &mdash; <code>keyof</code> includes <code>number | symbol</code>, but template literals only work with <code>string</code>. Without the intersection, you get a type error.
+  </div>
+</div>
+
+<!-- R4: keyof & Indexed Access Types -->
+<div class="review-card" id="review_keyof_indexed">
+  <div class="review-header">
+    <span class="review-title">R4. keyof &amp; Indexed Access Types</span>
+    <span class="badge badge-purple">Advanced Type System</span>
+    <span class="review-meta">rep 1 &middot; last reviewed 2026-06-02 &middot; 1 day ago</span>
+  </div>
+  <div class="review-reminder"><code>keyof T</code> gets union of property names. <code>T[K]</code> accesses the type at key K. Combine them in generics for type-safe property access: <code>&lt;T, K extends keyof T&gt;(obj: T, key: K): T[K]</code>.</div>
+
+  <div class="review-pattern">
+    <strong>Key Pattern</strong>
+    <div class="code-example">
+<pre><code>// Indexed access with union keys
+interface Config {
+  host: string;
+  port: number;
+  debug: boolean;
+}
+
+type ConfigValues = Config[keyof Config]; // string | number | boolean
+type NetworkConfig = Config["host" | "port"]; // string | number</code></pre>
+    </div>
+  </div>
+
+  <div class="review-challenge">
+    <strong>Challenge Exercise</strong>
+    <p>Write a <code>type PathValue&lt;T, P&gt;</code> that resolves nested indexed access: <code>PathValue&lt;{ a: { b: { c: number } } }, ["a", "b", "c"]&gt;</code> should yield <code>number</code>. Use recursive conditional types with <code>infer</code> to walk the tuple path.</p>
+  </div>
+
+  <div class="review-pitfall">
+    <strong>#1 Pitfall:</strong> <code>keyof</code> returns <code>string | number | symbol</code>. If you use the result with <code>Object.keys()</code> (which returns <code>string[]</code>), you need <code>keyof T &amp; string</code> to avoid type mismatches.
+  </div>
+</div>
+
+<!-- R5: Type Predicates & Assertion Functions -->
+<div class="review-card" id="review_type_predicates">
+  <div class="review-header">
+    <span class="review-title">R5. Type Predicates &amp; Assertion Functions</span>
+    <span class="badge badge-purple">Advanced Type System</span>
+    <span class="review-meta">rep 1 &middot; last reviewed 2026-06-02 &middot; 1 day ago</span>
+  </div>
+  <div class="review-reminder"><code>param is Type</code> for custom type guards; <code>asserts param is Type</code> for assertion functions that throw on failure. Both narrow types in subsequent code. The compiler trusts your predicate unconditionally.</div>
+
+  <div class="review-pattern">
+    <strong>Key Pattern</strong>
+    <div class="code-example">
+<pre><code>// Discriminated union guard
+interface Dog { kind: "dog"; bark(): void }
+interface Cat { kind: "cat"; purr(): void }
+type Pet = Dog | Cat;
+
+function isDog(pet: Pet): pet is Dog {
+  return pet.kind === "dog";
+}
+
+const pets: Pet[] = [/* ... */];
+const dogs: Dog[] = pets.filter(isDog); // correctly typed as Dog[]</code></pre>
+    </div>
+  </div>
+
+  <div class="review-challenge">
+    <strong>Challenge Exercise</strong>
+    <p>Write an assertion function <code>assertDefined&lt;T&gt;(val: T | undefined, msg: string): asserts val is T</code>. Use it to access a <code>Map.get()</code> result without optional chaining. Then write a type guard <code>hasProperty&lt;K extends string&gt;(obj: unknown, key: K): obj is Record&lt;K, unknown&gt;</code> that safely checks for a property on an unknown value.</p>
+  </div>
+
+  <div class="review-pitfall">
+    <strong>#1 Pitfall:</strong> The compiler trusts your predicate unconditionally. A wrong guard like <code>function isString(x: unknown): x is string { return true; }</code> silently lies to the type checker, causing runtime crashes.
+  </div>
+</div>
+
+<!-- R6: satisfies Operator -->
+<div class="review-card" id="review_satisfies">
+  <div class="review-header">
+    <span class="review-title">R6. satisfies Operator</span>
+    <span class="badge badge-purple">Advanced Type System</span>
+    <span class="review-meta">rep 1 &middot; last reviewed 2026-06-02 &middot; 1 day ago</span>
+  </div>
+  <div class="review-reminder"><code>expr satisfies Type</code> validates type compatibility without widening. The inferred type stays narrow (literal types, specific methods), while ensuring conformance to a broader type. Contrast with <code>as</code> (overrides type, unsafe) and <code>: Type</code> (widens type).</div>
+
+  <div class="review-pattern">
+    <strong>Key Pattern</strong>
+    <div class="code-example">
+<pre><code>type Color = { r: number; g: number; b: number };
+type Palette = Record&lt;string, Color&gt;;
+
+const palette = {
+  red:   { r: 255, g: 0, b: 0 },
+  green: { r: 0, g: 128, b: 0 },
+} satisfies Palette;
+
+// palette.red is still { r: number; g: number; b: number }
+// palette.blue would be a compile error (key doesn't exist)
+// With `: Palette`, palette.blue would be allowed (any string key)</code></pre>
+    </div>
+  </div>
+
+  <div class="review-challenge">
+    <strong>Challenge Exercise</strong>
+    <p>Define a type <code>FormConfig = { label: string; required: boolean; validate?: (v: string) =&gt; boolean }</code>. Create a <code>const forms</code> object with three fields using <code>satisfies Record&lt;string, FormConfig&gt;</code>. Verify that (a) accessing a nonexistent key errors, (b) each field retains its specific literal types, and (c) adding a misspelled property inside a field also errors.</p>
+  </div>
+
+  <div class="review-pitfall">
+    <strong>#1 Pitfall:</strong> Confusing <code>satisfies</code> with <code>: Type</code> annotation. <code>: Palette</code> widens the type so <code>palette.anyKey</code> compiles (returns <code>Color | undefined</code>). <code>satisfies Palette</code> keeps the literal keys so only declared keys are valid.
+  </div>
+</div>
+
+</div><!-- end review-section -->
+
+<!-- ============================================================ -->
+<!-- NEW CONCEPTS: Week 3 Finish                                   -->
+<!-- ============================================================ -->
+<div class="topic-section">
+<div class="topic-section-header">
+  <span class="section-num">3</span>
+  Week 3 Finish: Functions &amp; Patterns
+</div>
+
+<!-- ============================================================ -->
+<!-- #1 Decorators (TC39)                                          -->
+<!-- ============================================================ -->
+<div class="concept-card" id="decorators_tc39">
+  <div class="concept-header">
+    <span class="concept-title">1. Decorators (TC39)</span>
+    <span class="ttag">Functions &amp; Patterns</span>
+  </div>
+
+  <div class="why-matters">TC39 Stage 3 decorators are the new standard for adding metadata and behavior to classes and their members &mdash; frameworks like Angular, Ember, and Lit already use them. Understanding the difference between legacy <code>experimentalDecorators</code> and the new standard is critical for modern TypeScript projects.</div>
+
+  <div class="explanation">
+    <p>Decorators are functions that modify or annotate classes, methods, accessors, and fields at definition time. The TC39 proposal (supported in TypeScript 5.0+) uses a new API with a <strong>context object</strong> instead of the legacy property descriptor approach.</p>
+    <ul>
+    <li><a href="typescript-guides/typescript-guide-2026-07-04.html">2026-07-04</a> (Day 31)</li>
+      <li><strong>Class decorators</strong> receive the class constructor and can return a replacement class</li>
+      <li><strong>Method decorators</strong> receive the original method and a context object with metadata</li>
+      <li><strong>Field decorators</strong> receive <code>undefined</code> (the field value isn't available at decoration time) and a context</li>
+      <li><strong>Decorator factories</strong> are functions that return a decorator, enabling parameterization</li>
+      <li>TC39 decorators do NOT require <code>"experimentalDecorators": true</code> &mdash; they work natively in TS 5.0+</li>
+    </ul>
+  </div>
+
+  <!-- Class decorator: sealed -->
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &mdash; Class Decorator (Seal the Class)</div>
+<pre><code>// A class decorator receives the class itself and an optional context
+function sealed(target: Function, _context: ClassDecoratorContext) {
+  Object.seal(target);
+  Object.seal(target.prototype);
+}
+
+@sealed
+class BankAccount {
+  owner: string;
+  balance: number;
+
+  constructor(owner: string, balance: number) {
+    this.owner = owner;
+    this.balance = balance;
+  }
+
+  deposit(amount: number) {
+    this.balance += amount;
+  }
+}
+
+// Object.seal prevents adding new properties to the class or prototype
+const acct = new BankAccount("Alice", 100);
+acct.deposit(50); // works
+// (acct as any).newProp = "x"; // throws in strict mode (sealed)</code></pre>
+    <div class="output">// No runtime output &mdash; but BankAccount and its prototype are now sealed</div>
+  </div>
+
+  <!-- Method decorator: logging -->
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &mdash; Method Decorator (Logging)</div>
+<pre><code>function logged(
+  originalMethod: Function,
+  context: ClassMethodDecoratorContext
+) {
+  const methodName = String(context.name);
+
+  function replacementMethod(this: any, ...args: any[]) {
+    console.log(`Calling ${methodName} with`, args);
+    const result = originalMethod.call(this, ...args);
+    console.log(`${methodName} returned`, result);
+    return result;
+  }
+
+  return replacementMethod;
+}
+
+class Calculator {
+  @logged
+  add(a: number, b: number): number {
+    return a + b;
+  }
+
+  @logged
+  multiply(a: number, b: number): number {
+    return a * b;
+  }
+}
+
+const calc = new Calculator();
+calc.add(2, 3);
+calc.multiply(4, 5);</code></pre>
+    <div class="output">Calling add with [2, 3]
+add returned 5
+Calling multiply with [4, 5]
+multiply returned 20</div>
+  </div>
+
+  <!-- Decorator factory: with parameters -->
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &mdash; Decorator Factory (Parameterized)</div>
+<pre><code>// A decorator factory is a function that RETURNS a decorator
+function minLength(min: number) {
+  return function (
+    target: undefined,    // field decorators receive undefined
+    context: ClassFieldDecoratorContext
+  ) {
+    return function (this: any, initialValue: string): string {
+      if (initialValue.length &lt; min) {
+        throw new Error(
+          `${String(context.name)} must be at least ${min} characters`
+        );
+      }
+      return initialValue;
+    };
+  };
+}
+
+function maxValue(max: number) {
+  return function (
+    target: undefined,
+    context: ClassFieldDecoratorContext
+  ) {
+    return function (this: any, initialValue: number): number {
+      if (initialValue &gt; max) {
+        throw new Error(
+          `${String(context.name)} must be at most ${max}`
+        );
+      }
+      return initialValue;
+    };
+  };
+}
+
+class UserProfile {
+  @minLength(3)
+  username: string = "Alice";     // OK: length 5 &gt;= 3
+
+  @maxValue(150)
+  age: number = 30;               // OK: 30 &lt;= 150
+}
+
+const profile = new UserProfile();
+console.log(profile.username, profile.age);</code></pre>
+    <div class="output">Alice 30</div>
+  </div>
+
+  <!-- addInitializer pattern -->
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &mdash; addInitializer for Setup Logic</div>
+<pre><code>// context.addInitializer runs code when the class is instantiated
+function autobind(
+  originalMethod: Function,
+  context: ClassMethodDecoratorContext
+) {
+  const methodName = context.name;
+  context.addInitializer(function (this: any) {
+    // 'this' is the new instance being created
+    this[methodName] = this[methodName].bind(this);
+  });
+  return originalMethod;
+}
+
+class Button {
+  label = "Click me";
+
+  @autobind
+  handleClick() {
+    console.log(`Button: ${this.label}`);
+  }
+}
+
+const btn = new Button();
+const handler = btn.handleClick; // detached from object
+handler(); // "Button: Click me" &mdash; still works because of autobind</code></pre>
+    <div class="output">Button: Click me</div>
+  </div>
+
+  <!-- experimentalDecorators vs TC39 -->
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &mdash; Legacy vs TC39 Comparison</div>
+<pre><code>// LEGACY (experimentalDecorators: true) &mdash; DO NOT USE in new projects
+// function legacyLog(target: any, key: string, descriptor: PropertyDescriptor) {
+//   const original = descriptor.value;
+//   descriptor.value = function(...args: any[]) {
+//     console.log(`Called ${key}`);
+//     return original.apply(this, args);
+//   };
+// }
+
+// TC39 STANDARD (TypeScript 5.0+, no flag needed)
+function tc39Log(
+  originalMethod: Function,
+  context: ClassMethodDecoratorContext
+) {
+  return function (this: any, ...args: any[]) {
+    console.log(`Called ${String(context.name)}`);
+    return originalMethod.apply(this, args);
+  };
+}
+
+// Key differences:
+// 1. Legacy receives (target, key, descriptor) &mdash; TC39 receives (method, context)
+// 2. Legacy mutates descriptor.value &mdash; TC39 returns a replacement function
+// 3. TC39 context has .name, .kind, .static, .private, .addInitializer
+// 4. TC39 works without "experimentalDecorators" in tsconfig</code></pre>
+  </div>
+
+  <div class="callout-warning">
+    <strong>Common Mistakes</strong>
+    <div class="mistake">&#10060; Mixing legacy and TC39 decorators in the same project:<br><code>"experimentalDecorators": true</code> in tsconfig changes decorator semantics globally &mdash; TC39 decorators won't work correctly</div>
+    <div class="correct">&#9989; Choose one: either remove <code>experimentalDecorators</code> (for TC39) or keep it (for legacy Angular/NestJS projects). Don't mix.</div>
+    <div class="mistake">&#10060; Expecting field decorator to receive the field value as first arg:<br><code>function decorate(value: string, ctx: ClassFieldDecoratorContext) { ... }</code></div>
+    <div class="correct">&#9989; Field decorators receive <code>undefined</code> as first arg and return an initializer function:<br><code>function decorate(target: undefined, ctx: ClassFieldDecoratorContext) { return (initial) =&gt; initial; }</code></div>
+  </div>
+
+  <div class="key-rules">
+    <strong>Key Rules</strong>
+    <ul>
+      <li>TC39 decorators (TS 5.0+) use <code>(value, context)</code> &mdash; no property descriptors, no <code>experimentalDecorators</code> flag</li>
+      <li>Decorator factories are functions that return decorators &mdash; use them when you need parameters: <code>@minLength(3)</code></li>
+      <li><code>context.addInitializer</code> runs per-instance setup code &mdash; ideal for auto-binding, registration, or validation hooks</li>
+    </ul>
+  </div>
+
+  <div class="exercises">
+    <strong>Exercises</strong>
+    <div class="exercise"><span class="exercise-num">1</span> Write a <code>@deprecated(reason: string)</code> decorator factory for methods that logs a warning on first call (only once per method) and then delegates to the original method. Test it on a class with two deprecated methods.</div>
+    <div class="exercise"><span class="exercise-num">2</span> Write a <code>@memoize</code> method decorator that caches results based on JSON-stringified arguments. Use <code>context.addInitializer</code> to attach the cache to each instance. Verify that calling the method twice with the same args returns the cached result.</div>
+    <div class="exercise"><span class="exercise-num">3</span> Write a <code>@singleton</code> class decorator that ensures only one instance is ever created. The second call to <code>new</code> should return the existing instance. Return a replacement class from the decorator.</div>
+  </div>
+
+  <div class="connections">
+    <strong>Connections:</strong> Decorator factories use the same closure pattern as <a href="#review_conditional_types">Conditional Types</a> with <code>infer</code> &mdash; a function returning a function. The <code>autobind</code> pattern ties directly to Day 3's <code>this</code> types. Decorators will pair with <a href="#declaration_files">Declaration Files</a> when typing third-party decorator libraries.
+  </div>
+</div>
+
+</div><!-- end topic-section (Week 3 finish) -->
+
+<!-- ============================================================ -->
+<!-- NEW CONCEPTS: Week 4 — Modules & Project Structure            -->
+<!-- ============================================================ -->
+<div class="topic-section">
+<div class="topic-section-header">
+  <span class="section-num">4</span>
+  Week 4: Modules &amp; Project Structure
+</div>
+
+<!-- ============================================================ -->
+<!-- #2 Module Systems                                             -->
+<!-- ============================================================ -->
+<div class="concept-card" id="module_systems">
+  <div class="concept-header">
+    <span class="concept-title">2. Module Systems</span>
+    <span class="ttag">Modules &amp; Project Structure</span>
+  </div>
+
+  <div class="why-matters">Every TypeScript file with a top-level <code>import</code> or <code>export</code> is a module. Understanding ESM vs CJS, type-only imports, barrel files, and dynamic imports is essential for structuring any project larger than a single file.</div>
+
+  <div class="explanation">
+    <p>TypeScript supports multiple module systems, but <strong>ES Modules (ESM)</strong> are the modern standard. CJS (<code>require</code>/<code>module.exports</code>) is the Node.js legacy format. TypeScript compiles your code based on the <code>module</code> setting in tsconfig &mdash; but you always write ESM-style <code>import</code>/<code>export</code> in your source.</p>
+    <ul>
+      <li><strong>Named exports</strong>: <code>export function foo()</code>, <code>export const bar = 1</code></li>
+      <li><strong>Default exports</strong>: <code>export default class Foo</code> &mdash; one per module</li>
+      <li><strong>Re-exports</strong>: <code>export { foo } from "./module"</code> for barrel files</li>
+      <li><strong>Type-only imports</strong>: <code>import type { Foo } from "./module"</code> &mdash; erased at compile time</li>
+      <li><strong>Dynamic imports</strong>: <code>const mod = await import("./module")</code> &mdash; lazy loading / code splitting</li>
+    </ul>
+  </div>
+
+  <!-- Named vs default exports -->
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &mdash; Named Exports (Preferred)</div>
+<pre><code>// math.ts &mdash; named exports
+export function add(a: number, b: number): number {
+  return a + b;
+}
+
+export function multiply(a: number, b: number): number {
+  return a * b;
+}
+
+export const PI = 3.14159;
+
+// consumer.ts &mdash; named imports
+import { add, multiply, PI } from "./math";
+console.log(add(2, 3));      // 5
+console.log(multiply(4, PI)); // 12.56636
+
+// Rename on import
+import { add as sum } from "./math";
+console.log(sum(1, 2)); // 3
+
+// Import everything as namespace
+import * as MathUtils from "./math";
+console.log(MathUtils.add(1, 2)); // 3</code></pre>
+  </div>
+
+  <!-- Type-only imports/exports -->
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &mdash; Type-Only Imports and Exports</div>
+<pre><code>// types.ts
+export interface User {
+  id: string;
+  name: string;
+  email: string;
+}
+
+export type Role = "admin" | "editor" | "viewer";
+
+// Mixing value and type exports
+export class UserService {
+  getUser(id: string): User { /* ... */ }
+}
+
+// consumer.ts &mdash; type-only import (erased at compile time)
+import type { User, Role } from "./types";
+
+// Inline type imports (TS 4.5+)
+import { UserService, type User as UserType } from "./types";
+
+// type-only exports (from a barrel file)
+export type { User, Role } from "./types";
+export { UserService } from "./types";
+
+// Why it matters:
+// - type-only imports are completely removed from JS output
+// - Prevents importing values that only exist at the type level
+// - Required with "verbatimModuleSyntax": true in tsconfig
+// - Helps bundlers with tree-shaking</code></pre>
+  </div>
+
+  <!-- Barrel files -->
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &mdash; Barrel Files (index.ts)</div>
+<pre><code>// models/user.ts
+export interface User { id: string; name: string }
+
+// models/post.ts
+export interface Post { id: string; title: string; authorId: string }
+
+// models/index.ts &mdash; barrel file (re-exports everything)
+export type { User } from "./user";
+export type { Post } from "./post";
+
+// Now consumers import from the directory:
+import type { User, Post } from "./models";   // clean!
+// Instead of:
+// import type { User } from "./models/user";
+// import type { Post } from "./models/post";
+
+// WARNING: Barrel files can hurt tree-shaking and build performance
+// in large projects. If you import ONE thing from a barrel,
+// the bundler may load ALL re-exported modules.
+// Consider: import directly from the specific file in perf-sensitive code</code></pre>
+  </div>
+
+  <!-- Dynamic imports -->
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &mdash; Dynamic Imports (Code Splitting)</div>
+<pre><code>// Dynamic import returns Promise&lt;typeof module&gt;
+async function loadChart() {
+  // Only loaded when this function is called
+  const { Chart } = await import("./chart-library");
+  const chart = new Chart("canvas-id");
+  chart.render();
+}
+
+// Conditional loading based on environment
+async function getLogger() {
+  if (process.env.NODE_ENV === "development") {
+    const { DevLogger } = await import("./dev-logger");
+    return new DevLogger();
+  }
+  const { ProdLogger } = await import("./prod-logger");
+  return new ProdLogger();
+}
+
+// TypeScript infers the correct types from dynamic imports
+const mod = await import("./math");
+// typeof mod = { add: (a: number, b: number) =&gt; number; ... }</code></pre>
+  </div>
+
+  <!-- CJS interop -->
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &mdash; CJS Interop (Legacy)</div>
+<pre><code>// legacy-lib.js (CommonJS)
+// module.exports = { greet: function(name) { return "Hello " + name; } };
+
+// Importing CJS from ESM TypeScript
+import legacyLib from "./legacy-lib";   // default import for module.exports
+legacyLib.greet("Alice");
+
+// Or with esModuleInterop (recommended in tsconfig):
+import { greet } from "./legacy-lib";   // named import works too
+greet("Alice");
+
+// tsconfig setting that makes this work:
+// "esModuleInterop": true    &mdash; generates helper code for CJS/ESM compat
+// "allowSyntheticDefaultImports": true  &mdash; allows default import from CJS</code></pre>
+  </div>
+
+  <div class="callout-warning">
+    <strong>Common Mistakes</strong>
+    <div class="mistake">&#10060; Importing a type as a value (causes runtime errors in some setups):<br><code>import { User } from "./types";</code> &mdash; if User is only an interface, some bundlers try to import it at runtime</div>
+    <div class="correct">&#9989; Use type-only import for types and interfaces:<br><code>import type { User } from "./types";</code></div>
+    <div class="mistake">&#10060; Circular barrel imports: <code>a/index.ts</code> re-exports from <code>b/index.ts</code> which re-exports from <code>a/index.ts</code></div>
+    <div class="correct">&#9989; Import directly from the source file to break cycles, or restructure to eliminate circular dependencies</div>
+  </div>
+
+  <div class="key-rules">
+    <strong>Key Rules</strong>
+    <ul>
+      <li>Use <code>import type</code> for anything that's only needed at compile time (interfaces, type aliases) &mdash; it's erased from JS output</li>
+      <li>Prefer named exports over default exports &mdash; they enable better refactoring, auto-imports, and tree-shaking</li>
+      <li>Barrel files (<code>index.ts</code>) simplify imports but can degrade build performance &mdash; use judiciously in large monorepos</li>
+    </ul>
+  </div>
+
+  <div class="exercises">
+    <strong>Exercises</strong>
+    <div class="exercise"><span class="exercise-num">1</span> Create a mini project with 3 files: <code>models/user.ts</code> (exports <code>User</code> interface and <code>createUser</code> function), <code>models/index.ts</code> (barrel file that re-exports both &mdash; but <code>User</code> as type-only), and <code>app.ts</code> that imports from the barrel. Verify the compiled JS doesn't contain the <code>User</code> import.</div>
+    <div class="exercise"><span class="exercise-num">2</span> Write a <code>loadPlugin</code> function that dynamically imports one of three modules (<code>"chart"</code>, <code>"table"</code>, <code>"form"</code>) based on a string argument. Use a mapped type to ensure type safety: the return type should match the specific module's exports.</div>
+    <div class="exercise"><span class="exercise-num">3</span> Refactor a file that uses <code>import * as Utils from "./utils"</code> to use specific named imports. Then add <code>"verbatimModuleSyntax": true</code> to tsconfig and fix any errors that appear (hint: some value imports will need to become <code>import type</code>).</div>
+  </div>
+
+  <div class="connections">
+    <strong>Connections:</strong> Type-only imports connect to <a href="#declaration_files">Declaration Files</a> (next) &mdash; <code>.d.ts</code> files are pure type information. Barrel files interact with <a href="#tsconfig_deep_dive">tsconfig paths</a> for import aliases. Dynamic imports return <code>Promise&lt;typeof module&gt;</code>, linking back to Day 3's async patterns.
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- #3 Declaration Files                                          -->
+<!-- ============================================================ -->
+<div class="concept-card" id="declaration_files">
+  <div class="concept-header">
+    <span class="concept-title">3. Declaration Files</span>
+    <span class="ttag">Modules &amp; Project Structure</span>
+  </div>
+
+  <div class="why-matters">Declaration files (<code>.d.ts</code>) provide type information for JavaScript code that has no TypeScript source. They're how the ecosystem types npm packages, browser APIs, and your own legacy JS &mdash; without them, everything would be <code>any</code>.</div>
+
+  <div class="explanation">
+    <p>A <code>.d.ts</code> file contains only type declarations &mdash; no implementation. TypeScript uses these files to type-check code that references JavaScript libraries. Most popular npm packages either ship their own <code>.d.ts</code> files or have community-maintained types in <code>@types/*</code> on DefinitelyTyped.</p>
+    <ul>
+      <li><code>.d.ts</code> files are generated by <code>tsc --declaration</code> or written manually</li>
+      <li><code>declare</code> keyword tells TypeScript "this exists at runtime, trust me on the types"</li>
+      <li><code>declare module "x"</code> for typing or augmenting third-party modules</li>
+      <li><code>declare global</code> for extending global scope (Window, process, etc.)</li>
+      <li><code>@types/xxx</code> packages provide types for untyped npm packages</li>
+    </ul>
+  </div>
+
+  <!-- Basic .d.ts file -->
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &mdash; Writing a Basic .d.ts File</div>
+<pre><code>// legacy-utils.d.ts &mdash; types for an untyped JS library
+// (legacy-utils.js has no TypeScript source)
+
+declare function formatDate(date: Date, pattern: string): string;
+declare function parseDate(input: string): Date | null;
+
+declare const VERSION: string;
+
+declare class Logger {
+  constructor(prefix: string);
+  info(message: string): void;
+  warn(message: string): void;
+  error(message: string, error?: Error): void;
+}
+
+// Now you can use them in TypeScript:
+// import { formatDate, Logger } from "legacy-utils";
+// const log = new Logger("app");
+// log.info(formatDate(new Date(), "yyyy-MM-dd"));</code></pre>
+  </div>
+
+  <!-- declare module for third-party -->
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &mdash; Module Declaration (Typing an Untyped Package)</div>
+<pre><code>// types/untyped-csv-lib.d.ts
+declare module "untyped-csv-lib" {
+  export interface CsvOptions {
+    delimiter?: string;
+    headers?: boolean;
+    quote?: string;
+  }
+
+  export function parse(input: string, options?: CsvOptions): string[][];
+  export function stringify(data: string[][], options?: CsvOptions): string;
+
+  export default class CsvReader {
+    constructor(filePath: string);
+    read(): Promise&lt;string[][]&gt;;
+    stream(): AsyncIterable&lt;string[]&gt;;
+  }
+}
+
+// Now you can import it with full type safety:
+// import CsvReader, { parse, stringify } from "untyped-csv-lib";
+// const data = parse("a,b,c\n1,2,3", { headers: true });</code></pre>
+  </div>
+
+  <!-- declare global -->
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &mdash; Global Augmentation</div>
+<pre><code>// global.d.ts &mdash; extend the global scope
+export {}; // This file must be a module (has export)
+
+declare global {
+  // Add a property to Window
+  interface Window {
+    __APP_VERSION__: string;
+    analytics: {
+      track(event: string, data?: Record&lt;string, unknown&gt;): void;
+    };
+  }
+
+  // Add a global function
+  function sleep(ms: number): Promise&lt;void&gt;;
+
+  // Extend an existing global interface
+  interface Array&lt;T&gt; {
+    toShuffled(): T[];
+  }
+}
+
+// Now these work without import:
+// window.__APP_VERSION__ = "1.2.3";    // typed as string
+// window.analytics.track("page_view"); // fully typed
+// [1,2,3].toShuffled();                // method exists on all arrays</code></pre>
+  </div>
+
+  <!-- Module augmentation for third-party -->
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &mdash; Augmenting Third-Party Module Types</div>
+<pre><code>// express-augment.d.ts &mdash; add custom properties to Express Request
+import "express";
+
+declare module "express" {
+  interface Request {
+    userId?: string;
+    sessionToken?: string;
+    permissions?: string[];
+  }
+}
+
+// Now in your middleware:
+// app.use((req, res, next) =&gt; {
+//   req.userId = "user_123";       // no error, property exists
+//   req.permissions = ["read"];     // typed as string[]
+//   next();
+// });</code></pre>
+  </div>
+
+  <!-- Wildcard module declarations -->
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &mdash; Wildcard and Asset Module Declarations</div>
+<pre><code>// assets.d.ts &mdash; type non-code imports
+declare module "*.css" {
+  const styles: Record&lt;string, string&gt;;
+  export default styles;
+}
+
+declare module "*.svg" {
+  const content: string;
+  export default content;
+}
+
+declare module "*.png" {
+  const src: string;
+  export default src;
+}
+
+declare module "*.json" {
+  const value: Record&lt;string, unknown&gt;;
+  export default value;
+}
+
+// Now in your code:
+// import styles from "./app.css";      // Record&lt;string, string&gt;
+// import logo from "./logo.svg";       // string
+// import photo from "./photo.png";     // string</code></pre>
+  </div>
+
+  <div class="callout-warning">
+    <strong>Common Mistakes</strong>
+    <div class="mistake">&#10060; Forgetting <code>export {}</code> in a <code>declare global</code> file:<br>Without it, the file is a script (not a module), and <code>declare global</code> has no effect</div>
+    <div class="correct">&#9989; Always include <code>export {}</code> (or any import/export) to make the file a module:<br><code>export {}; declare global { ... }</code></div>
+    <div class="mistake">&#10060; Creating a <code>.d.ts</code> file with implementation code:<br><code>declare function add(a: number, b: number): number { return a + b; }</code></div>
+    <div class="correct">&#9989; Declarations only &mdash; no function bodies, no initializers:<br><code>declare function add(a: number, b: number): number;</code></div>
+  </div>
+
+  <div class="key-rules">
+    <strong>Key Rules</strong>
+    <ul>
+      <li><code>.d.ts</code> files contain only type information &mdash; no runtime code, no implementations, no side effects</li>
+      <li>Use <code>declare module "name"</code> for module-level augmentation and <code>declare global</code> for global scope extension</li>
+      <li>Install <code>@types/xxx</code> for community types; create custom <code>.d.ts</code> only when no <code>@types</code> package exists</li>
+    </ul>
+  </div>
+
+  <div class="exercises">
+    <strong>Exercises</strong>
+    <div class="exercise"><span class="exercise-num">1</span> Write a <code>.d.ts</code> file for an imaginary <code>color-utils</code> JS library with: a <code>Color</code> class (constructor takes r/g/b numbers, has <code>toHex(): string</code> and <code>lighten(amount: number): Color</code> methods), a <code>parse(hex: string): Color</code> function, and a <code>PALETTE</code> constant of type <code>Record&lt;string, Color&gt;</code>.</div>
+    <div class="exercise"><span class="exercise-num">2</span> Augment the global <code>Window</code> interface to add a <code>featureFlags</code> property of type <code>Record&lt;string, boolean&gt;</code>. Then augment Express's <code>Request</code> interface to add a typed <code>user</code> property with <code>id</code>, <code>email</code>, and <code>roles: string[]</code>.</div>
+    <div class="exercise"><span class="exercise-num">3</span> Create wildcard module declarations for <code>*.graphql</code> files (export a <code>DocumentNode</code> type) and <code>*.yaml</code> files (export a <code>Record&lt;string, unknown&gt;</code>). Verify that importing these file types provides correct types.</div>
+  </div>
+
+  <div class="connections">
+    <strong>Connections:</strong> Declaration files are the bridge between <a href="#module_systems">Module Systems</a> and untyped JavaScript. Module augmentation uses the same declaration merging that <a href="#namespaces_vs_modules">Namespaces</a> rely on. The <code>declare</code> keyword connects to <a href="#tsconfig_deep_dive">tsconfig</a> settings like <code>skipLibCheck</code> and <code>typeRoots</code>.
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- #4 tsconfig.json Deep Dive                                    -->
+<!-- ============================================================ -->
+<div class="concept-card" id="tsconfig_deep_dive">
+  <div class="concept-header">
+    <span class="concept-title">4. tsconfig.json Deep Dive</span>
+    <span class="ttag">Modules &amp; Project Structure</span>
+  </div>
+
+  <div class="why-matters">Every TypeScript project starts with tsconfig.json. Misconfigured settings cause mysterious type errors, missing types, and broken builds. Understanding the key options &mdash; especially <code>strict</code>, <code>module</code>, and <code>paths</code> &mdash; saves hours of debugging.</div>
+
+  <div class="explanation">
+    <p>The <code>tsconfig.json</code> file controls how TypeScript compiles your project. It specifies which files to include, what JavaScript version to target, how modules are resolved, and which type-checking rules to enforce. The <code>strict</code> flag alone enables 7+ individual checks.</p>
+    <ul>
+      <li><code>strict</code> enables: <code>strictNullChecks</code>, <code>noImplicitAny</code>, <code>strictFunctionTypes</code>, <code>strictBindCallApply</code>, <code>strictPropertyInitialization</code>, <code>noImplicitThis</code>, <code>useUnknownInCatchVariables</code>, <code>alwaysStrict</code></li>
+      <li><code>target</code> controls the output JS version; <code>module</code> controls the module system</li>
+      <li><code>moduleResolution</code> controls how TypeScript finds imported files</li>
+      <li><code>paths</code> and <code>baseUrl</code> enable import aliases like <code>@/components</code></li>
+    </ul>
+  </div>
+
+  <!-- Full tsconfig with annotations -->
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &mdash; Recommended Modern tsconfig.json</div>
+<pre><code>{
+  "compilerOptions": {
+    // === Type Checking (turn everything on) ===
+    "strict": true,                    // enables all strict checks
+    "noUncheckedIndexedAccess": true,  // obj[key] returns T | undefined
+    "noUnusedLocals": true,            // error on unused variables
+    "noUnusedParameters": true,        // error on unused function params
+    "noFallthroughCasesInSwitch": true, // error on switch fallthrough
+    "forceConsistentCasingInFileNames": true, // prevent casing issues
+
+    // === Module System ===
+    "module": "ESNext",                // output ESM
+    "moduleResolution": "bundler",     // modern bundler-style resolution
+    "esModuleInterop": true,           // CJS/ESM interop helpers
+    "verbatimModuleSyntax": true,      // enforce import type for types
+
+    // === Output ===
+    "target": "ES2022",                // output JS version
+    "lib": ["ES2022", "DOM", "DOM.Iterable"], // available APIs
+    "outDir": "./dist",                // compiled output directory
+    "declaration": true,               // generate .d.ts files
+    "declarationMap": true,            // sourcemaps for .d.ts
+    "sourceMap": true,                 // JS sourcemaps
+
+    // === Path Aliases ===
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"],              // @/components -&gt; ./src/components
+      "@lib/*": ["./src/lib/*"]        // @lib/utils -&gt; ./src/lib/utils
+    },
+
+    // === Performance ===
+    "skipLibCheck": true,              // skip type-checking .d.ts files
+    "incremental": true                // cache for faster rebuilds
+  },
+
+  "include": ["src/**/*.ts", "src/**/*.tsx"],
+  "exclude": ["node_modules", "dist", "**/*.test.ts"]
+}</code></pre>
+  </div>
+
+  <!-- What strict enables -->
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &mdash; What "strict" Catches</div>
+<pre><code>// === strictNullChecks ===
+function getLength(s: string | null): number {
+  // return s.length;         // Error: s might be null
+  return s?.length ?? 0;      // OK: handle null case
+}
+
+// === noImplicitAny ===
+// function process(data) { }  // Error: parameter 'data' implicitly has 'any'
+function process(data: unknown) { } // OK: explicit type
+
+// === strictFunctionTypes ===
+type Handler = (e: MouseEvent) =&gt; void;
+// const h: Handler = (e: Event) =&gt; {}; // Error: Event not assignable to MouseEvent
+const h: Handler = (e: MouseEvent) =&gt; {}; // OK
+
+// === strictPropertyInitialization ===
+class User {
+  // name: string;           // Error: not initialized in constructor
+  name: string;
+  constructor(name: string) {
+    this.name = name;        // OK: initialized
+  }
+}
+
+// === noUncheckedIndexedAccess (not part of strict, but recommended) ===
+const arr = [1, 2, 3];
+// const first: number = arr[0]; // Error: might be undefined
+const first: number | undefined = arr[0]; // OK</code></pre>
+  </div>
+
+  <!-- target vs module vs moduleResolution -->
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &mdash; target vs module vs moduleResolution</div>
+<pre><code>// "target" = what JS version to output
+// "target": "ES5"   -&gt; var, function, no class, no async/await
+// "target": "ES2015" -&gt; let/const, class, arrow functions, Promise
+// "target": "ES2022" -&gt; top-level await, private fields, Error.cause
+// "target": "ESNext" -&gt; latest features (moves with each TS release)
+
+// "module" = what module system to output
+// "module": "CommonJS"   -&gt; require(), module.exports
+// "module": "ESNext"     -&gt; import/export (static ESM)
+// "module": "NodeNext"   -&gt; Node's native ESM (respects package.json "type")
+
+// "moduleResolution" = how TS FINDS imported modules
+// "moduleResolution": "node"     -&gt; Classic Node.js resolution
+// "moduleResolution": "node16"   -&gt; Node 16+ with ESM support
+// "moduleResolution": "bundler"  -&gt; For Vite/webpack/esbuild (most flexible)
+
+// Common combinations:
+// Library (Node):    target=ES2022, module=NodeNext, moduleResolution=NodeNext
+// App (Vite/Next):   target=ES2022, module=ESNext,   moduleResolution=bundler
+// Legacy (Node CJS): target=ES2020, module=CommonJS, moduleResolution=node</code></pre>
+  </div>
+
+  <!-- paths and baseUrl -->
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &mdash; Path Aliases in Practice</div>
+<pre><code>// tsconfig.json paths:
+// "baseUrl": ".",
+// "paths": { "@/*": ["./src/*"] }
+
+// Before: deeply nested relative imports
+import { UserService } from "../../../services/user-service";
+import type { Config } from "../../../../config/types";
+
+// After: clean path aliases
+import { UserService } from "@/services/user-service";
+import type { Config } from "@/config/types";
+
+// IMPORTANT: tsconfig paths only affect TypeScript compilation.
+// Your bundler (Vite, webpack, etc.) needs its OWN alias config:
+//
+// vite.config.ts:
+//   resolve: { alias: { "@": path.resolve(__dirname, "src") } }
+//
+// jest.config.ts:
+//   moduleNameMapper: { "^@/(.*)$": "&lt;rootDir&gt;/src/$1" }
+//
+// This is the #1 source of "works in editor, breaks at runtime" issues.</code></pre>
+  </div>
+
+  <!-- noEmit for type checking only -->
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &mdash; noEmit (Type-Check Only)</div>
+<pre><code>// When your bundler (Vite, esbuild, SWC) handles compilation,
+// use TypeScript ONLY for type checking:
+
+{
+  "compilerOptions": {
+    "noEmit": true,           // don't generate any JS files
+    "strict": true,            // still enforces all type checks
+    "moduleResolution": "bundler",
+    // ... other options
+  }
+}
+
+// Run type checking:
+// npx tsc --noEmit          (check types, produce no output)
+// npx tsc --noEmit --watch  (continuous type checking)
+
+// Your bundler compiles TS to JS (faster than tsc):
+// vite build / esbuild / swc
+// TypeScript is just the type checker, not the compiler</code></pre>
+  </div>
+
+  <div class="callout-warning">
+    <strong>Common Mistakes</strong>
+    <div class="mistake">&#10060; Setting <code>"strict": false</code> to "fix" type errors:<br>This silences real bugs. Instead, fix the errors or use targeted <code>// @ts-expect-error</code></div>
+    <div class="correct">&#9989; Always use <code>"strict": true</code> and add <code>noUncheckedIndexedAccess</code>. Fix errors at their source, not by loosening the config.</div>
+    <div class="mistake">&#10060; Configuring <code>paths</code> in tsconfig but not in the bundler:<br>Editor shows no errors, but the build fails with "Cannot find module '@/...'"</div>
+    <div class="correct">&#9989; Mirror path aliases in both tsconfig (for type checking) and your bundler config (for resolution). Or use a plugin like <code>vite-tsconfig-paths</code>.</div>
+  </div>
+
+  <div class="key-rules">
+    <strong>Key Rules</strong>
+    <ul>
+      <li>Always start with <code>"strict": true</code> and <code>"noUncheckedIndexedAccess": true</code> &mdash; they catch real bugs</li>
+      <li><code>target</code> controls output JS syntax, <code>module</code> controls import/export style, <code>moduleResolution</code> controls file lookup</li>
+      <li>Path aliases require configuration in BOTH tsconfig and your bundler/test runner</li>
+    </ul>
+  </div>
+
+  <div class="exercises">
+    <strong>Exercises</strong>
+    <div class="exercise"><span class="exercise-num">1</span> Start with an empty <code>tsconfig.json</code> containing only <code>{}</code>. Add options one at a time: first <code>"strict": true</code>, then compile a file with <code>let x = null; console.log(x.toString())</code>. Observe how each strict sub-option affects the errors. Then enable <code>"noUncheckedIndexedAccess"</code> and try <code>const arr = [1,2,3]; const n: number = arr[0];</code>.</div>
+    <div class="exercise"><span class="exercise-num">2</span> Configure <code>paths</code> aliases for <code>@models/*</code>, <code>@services/*</code>, and <code>@utils/*</code> pointing to subdirectories in <code>src/</code>. Create stub files and verify that VS Code resolves the imports. Then set <code>"declaration": true</code> and inspect the generated <code>.d.ts</code> files.</div>
+    <div class="exercise"><span class="exercise-num">3</span> Create two tsconfig files: <code>tsconfig.json</code> (base config) and <code>tsconfig.build.json</code> that extends it with <code>"noEmit": false</code>, <code>"outDir": "dist"</code>, and excludes test files. Use <code>"extends": "./tsconfig.json"</code> for the build config. Run <code>tsc -p tsconfig.build.json</code>.</div>
+  </div>
+
+  <div class="connections">
+    <strong>Connections:</strong> <code>paths</code> aliases interact with <a href="#module_systems">Module Systems</a> and barrel files. <code>declaration: true</code> generates the <a href="#declaration_files">Declaration Files</a> we just covered. <code>skipLibCheck</code> skips <code>.d.ts</code> type checking &mdash; useful when <code>@types</code> packages conflict. <code>strict</code> mode makes <a href="#review_type_predicates">Type Predicates</a> and <a href="#review_never_exhaustiveness">never exhaustiveness</a> more valuable.
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- #5 Namespaces vs Modules                                      -->
+<!-- ============================================================ -->
+<div class="concept-card" id="namespaces_vs_modules">
+  <div class="concept-header">
+    <span class="concept-title">5. Namespaces vs Modules</span>
+    <span class="ttag">Modules &amp; Project Structure</span>
+  </div>
+
+  <div class="why-matters">Namespaces were TypeScript's original module system before ES modules existed. Understanding when to use namespaces vs modules &mdash; and the powerful concept of declaration merging &mdash; prevents architectural mistakes and unlocks advanced type augmentation patterns.</div>
+
+  <div class="explanation">
+    <p>Modern TypeScript should use <strong>ES modules</strong> for code organization. Namespaces (<code>namespace X {}</code>) are a legacy pattern from the pre-ESM era. However, namespaces still serve important roles in <strong>declaration merging</strong>, <strong>ambient declarations</strong>, and <strong>augmenting third-party types</strong>.</p>
+    <ul>
+      <li><strong>Modules</strong>: file-based, each file is a module, uses <code>import</code>/<code>export</code>, tree-shakeable</li>
+      <li><strong>Namespaces</strong>: logical grouping within or across files, uses <code>namespace X {}</code>, not tree-shakeable</li>
+      <li><strong>Declaration merging</strong>: TypeScript merges same-named interfaces, namespaces, and enums automatically</li>
+      <li><strong>Module augmentation</strong>: add new types to existing modules using <code>declare module</code></li>
+      <li>Namespaces compile to IIFEs &mdash; they're runtime objects, not just types</li>
+    </ul>
+  </div>
+
+  <!-- Namespaces: what they look like -->
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &mdash; Namespace Syntax (Legacy Pattern)</div>
+<pre><code>// Namespace groups related code under a single name
+namespace Validation {
+  export interface Result {
+    valid: boolean;
+    errors: string[];
+  }
+
+  export function isEmail(value: string): Result {
+    const valid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+    return {
+      valid,
+      errors: valid ? [] : ["Invalid email format"],
+    };
+  }
+
+  export function isMinLength(value: string, min: number): Result {
+    const valid = value.length &gt;= min;
+    return {
+      valid,
+      errors: valid ? [] : [`Must be at least ${min} characters`],
+    };
+  }
+}
+
+// Usage: access via namespace prefix
+const result = Validation.isEmail("test@example.com");
+console.log(result.valid);</code></pre>
+    <div class="output">true</div>
+  </div>
+
+  <!-- Why modules are better -->
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &mdash; Module Equivalent (Modern, Preferred)</div>
+<pre><code>// validation.ts &mdash; just use regular exports
+export interface Result {
+  valid: boolean;
+  errors: string[];
+}
+
+export function isEmail(value: string): Result {
+  const valid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+  return { valid, errors: valid ? [] : ["Invalid email format"] };
+}
+
+export function isMinLength(value: string, min: number): Result {
+  const valid = value.length &gt;= min;
+  return { valid, errors: valid ? [] : [`Must be at least ${min} chars`] };
+}
+
+// consumer.ts &mdash; import what you need
+import { isEmail, isMinLength } from "./validation";
+// OR: import * as Validation from "./validation";
+
+// Advantages over namespaces:
+// 1. Tree-shakeable (dead code elimination)
+// 2. Works with all bundlers and tools
+// 3. Standard JavaScript (not TS-specific syntax)
+// 4. Each file has its own scope (no global pollution)</code></pre>
+  </div>
+
+  <!-- Declaration merging: the killer feature -->
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &mdash; Declaration Merging (Interfaces)</div>
+<pre><code>// Interface declarations with the same name MERGE automatically
+interface Box {
+  width: number;
+  height: number;
+}
+
+interface Box {
+  depth: number;
+  color?: string;
+}
+
+// Merged result:
+// interface Box {
+//   width: number;
+//   height: number;
+//   depth: number;
+//   color?: string;
+// }
+
+const box: Box = {
+  width: 10,
+  height: 20,
+  depth: 5,
+  color: "red",
+};
+
+// This is how lib.dom.d.ts gradually builds up HTMLElement, Window, etc.
+// Each declaration adds more properties to the same interface.
+
+// NOTE: type aliases CANNOT merge &mdash; duplicate names cause an error:
+// type Point = { x: number };
+// type Point = { y: number }; // Error: Duplicate identifier 'Point'</code></pre>
+  </div>
+
+  <!-- Namespace + class/function/enum merging -->
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &mdash; Namespace Merging with Classes and Functions</div>
+<pre><code>// Namespace merges with a class to add static members
+class Album {
+  constructor(public title: string, public artist: string) {}
+}
+
+namespace Album {
+  export interface TrackInfo {
+    name: string;
+    duration: number;
+  }
+
+  export function create(title: string, artist: string): Album {
+    return new Album(title, artist);
+  }
+}
+
+// Album is both a class and has static-like namespace members
+const album = new Album("OK Computer", "Radiohead"); // class constructor
+const album2 = Album.create("Kid A", "Radiohead");   // namespace function
+const track: Album.TrackInfo = { name: "Airbag", duration: 284 }; // namespace type
+
+// Namespace merges with a function (adding properties)
+function buildUrl(base: string): string {
+  return `${buildUrl.prefix}${base}`;
+}
+
+namespace buildUrl {
+  export let prefix = "https://";
+  export function withQuery(base: string, params: Record&lt;string, string&gt;): string {
+    const qs = new URLSearchParams(params).toString();
+    return `${prefix}${base}?${qs}`;
+  }
+}
+
+console.log(buildUrl("example.com"));
+console.log(buildUrl.withQuery("api.example.com", { page: "1" }));</code></pre>
+    <div class="output">https://example.com
+https://api.example.com?page=1</div>
+  </div>
+
+  <!-- Global augmentation -->
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &mdash; When Namespaces Still Make Sense</div>
+<pre><code>// 1. Ambient declarations in .d.ts files (describing global JS)
+declare namespace NodeJS {
+  interface ProcessEnv {
+    NODE_ENV: "development" | "production" | "test";
+    PORT?: string;
+    DATABASE_URL: string;
+  }
+}
+
+// Now process.env.NODE_ENV is typed as a union, not just string
+// process.env.DATABASE_URL is required (no ?)
+
+// 2. Enum + namespace merging (adding utility methods to enums)
+enum Color {
+  Red = "RED",
+  Green = "GREEN",
+  Blue = "BLUE",
+}
+
+namespace Color {
+  export function parse(value: string): Color | undefined {
+    const upper = value.toUpperCase();
+    if (upper in Color) return upper as Color;
+    return undefined;
+  }
+
+  export function all(): Color[] {
+    return [Color.Red, Color.Green, Color.Blue];
+  }
+}
+
+const color = Color.parse("red"); // Color | undefined
+const allColors = Color.all();    // Color[]
+console.log(color, allColors);</code></pre>
+    <div class="output">RED ["RED", "GREEN", "BLUE"]</div>
+  </div>
+
+  <div class="callout-warning">
+    <strong>Common Mistakes</strong>
+    <div class="mistake">&#10060; Using namespaces for code organization in new projects:<br><code>namespace Models { export interface User { ... } }</code></div>
+    <div class="correct">&#9989; Use ES modules &mdash; put each model in its own file:<br><code>export interface User { ... }</code> in <code>models/user.ts</code></div>
+    <div class="mistake">&#10060; Mixing <code>namespace</code> with <code>import</code>/<code>export</code> in the same file:<br>A file with top-level import/export is a module; <code>namespace</code> inside it only affects that module's scope</div>
+    <div class="correct">&#9989; In modules, use <code>declare module</code> for augmentation instead of <code>namespace</code>. Reserve <code>namespace</code> for declaration merging and ambient <code>.d.ts</code> files.</div>
+  </div>
+
+  <div class="key-rules">
+    <strong>Key Rules</strong>
+    <ul>
+      <li>Use ES modules for all new code. Namespaces are legacy for code organization &mdash; modern tooling doesn't tree-shake them.</li>
+      <li>Declaration merging (interfaces, namespaces, enums) is how TypeScript's own <code>lib.d.ts</code> files work &mdash; and it's how you extend third-party types</li>
+      <li>Namespaces still shine for: ambient <code>.d.ts</code> declarations, merging with classes/functions/enums, and typing global variables like <code>process.env</code></li>
+    </ul>
+  </div>
+
+  <div class="exercises">
+    <strong>Exercises</strong>
+    <div class="exercise"><span class="exercise-num">1</span> Create an enum <code>HttpMethod</code> (<code>GET</code>, <code>POST</code>, <code>PUT</code>, <code>DELETE</code>) and merge a namespace with it that adds: <code>HttpMethod.isIdempotent(method: HttpMethod): boolean</code> (GET/PUT/DELETE are idempotent) and <code>HttpMethod.hasBod(method: HttpMethod): boolean</code> (POST/PUT have bodies). Test all combinations.</div>
+    <div class="exercise"><span class="exercise-num">2</span> Use interface declaration merging to extend <code>Array&lt;T&gt;</code> in a global <code>.d.ts</code> file with a <code>first(): T | undefined</code> method, then implement it on <code>Array.prototype</code> in a separate file. Verify that <code>[1,2,3].first()</code> works with correct types.</div>
+    <div class="exercise"><span class="exercise-num">3</span> Augment the <code>NodeJS.ProcessEnv</code> interface to add your project's environment variables (<code>API_KEY: string</code>, <code>DEBUG?: "true" | "false"</code>, <code>LOG_LEVEL: "info" | "warn" | "error"</code>). Verify that <code>process.env.API_KEY</code> is typed as <code>string</code> (not <code>string | undefined</code>).</div>
+  </div>
+
+  <div class="connections">
+    <strong>Connections:</strong> Declaration merging is the mechanism behind <a href="#declaration_files">module augmentation</a> with <code>declare module</code>. Interface merging explains why <a href="#review_conditional_types">interfaces and type aliases</a> behave differently (types can't merge). The <code>namespace + class</code> pattern is a TypeScript-specific way to achieve the companion object pattern from Scala/Kotlin.
+  </div>
+</div>
+
+</div><!-- end topic-section (Week 4) -->
+
+<!-- Footer -->
+<footer class="guide-footer">
+  <h2>All Guides</h2>
+  <ul>
+    <li><a href="typescript-guides/typescript-guide-2026-07-09.html">2026-07-09</a> (Day 36)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-07-08.html">2026-07-08</a> (Day 35)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-07-07.html">2026-07-07</a> (Day 34)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-07-06.html">2026-07-06</a> (Day 33)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-07-05.html">2026-07-05</a> (Day 32)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-07-04.html">2026-07-04</a> (Day 31)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-07-03.html">2026-07-03</a> (Day 30)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-07-02.html">2026-07-02</a> (Day 29)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-07-01.html">2026-07-01</a> (Day 28)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-30.html">2026-06-30</a> (Day 27)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-29.html">2026-06-29</a> (Day 26)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-28.html">2026-06-28</a> (Day 25)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-27.html">2026-06-27</a> (Day 24)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-26.html">2026-06-26</a> (Day 23)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-25.html">2026-06-25</a> (Day 22)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-24.html">2026-06-24</a> (Day 21)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-23.html">2026-06-23</a> (Day 20)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-22.html">2026-06-22</a> (Day 19)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-21.html">2026-06-21</a> (Day 18)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-19.html">2026-06-19</a> (Day 17)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-18.html">2026-06-18</a> (Day 16)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-17.html">2026-06-17</a> (Day 15)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-15.html">2026-06-15</a> (Day 14)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-13.html">2026-06-13</a> (Day 13)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-12.html">2026-06-12</a> (Day 12)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-11.html">2026-06-11</a> (Day 11)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-10.html">2026-06-10</a> (Day 10)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-09.html">2026-06-09</a> (Day 9)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-08.html">2026-06-08</a> (Day 8)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-07.html">2026-06-07</a> (Day 7)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-05.html">2026-06-05</a> (Day 6)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-04.html">2026-06-04</a> (Day 5)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-03.html">2026-06-03</a> (Day 4)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-02.html">2026-06-02</a> (Day 3)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-01.html">2026-06-01</a> (Day 2)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-05-31.html">2026-05-31</a> (Day 1)</li>
+  </ul>
+</footer>
+
+</div><!-- end content -->
+</div><!-- end main -->
+
+<script>
+// Theme toggle
+(function() {
+  var toggle = document.getElementById('themeToggle');
+  var html = document.documentElement;
+  var STORAGE_KEY = 'lc-tsguide-theme';
+
+  function setTheme(theme) {
+    html.setAttribute('data-theme', theme);
+    toggle.textContent = theme === 'dark' ? '\u{1F319}' : '\u{2600}\u{FE0F}';
+    try { localStorage.setItem(STORAGE_KEY, theme); } catch(e) {}
+  }
+
+  // Load saved theme
+  try {
+    var saved = localStorage.getItem(STORAGE_KEY);
+    if (saved) setTheme(saved);
+  } catch(e) {}
+
+  toggle.addEventListener('click', function() {
+    var current = html.getAttribute('data-theme') || 'dark';
+    setTheme;
+  });
+})();
+
+// Sidebar active link tracking
+(function() {
+  var links = document.querySelectorAll('.sidebar-nav a');
+  var sections = [];
+  links.forEach(function(link) {
+    var id = link.getAttribute('href').replace('#', '');
+    var el = document.getElementById(id);
+    if (el) sections.push({ link: link, el: el });
+  });
+
+  function updateActive() {
+    var current = null;
+    var scrollY = window.scrollY + 120;
+    for (var i = sections.length - 1; i >= 0; i--) {
+      if (sections[i].el.offsetTop <= scrollY) {
+        current = sections[i];
+        break;
+      }
+    }
+    links.forEach(function(l) { l.classList.remove('active'); });
+    if  current.link.classList.add('active');
+  }
+
+  window.addEventListener('scroll', updateActive);
+  updateActive();
+})();
+</script>
+
+</body>
+</html>

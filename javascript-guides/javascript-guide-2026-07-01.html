@@ -1,0 +1,1076 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JavaScript Daily Guide — 2026-07-01 (Day 20)</title>
+<style>
+:root {
+  --bg: #0d1117;
+  --surface: #161b22;
+  --surface2: #1c2128;
+  --border: #30363d;
+  --text: #e6edf3;
+  --text-dim: #9da7b3;
+  --accent: #58a6ff;
+  --blue-tint-bg: rgba(56,139,253,0.12);
+  --blue-tint-border: rgba(56,139,253,0.4);
+  --purple-tint-bg: rgba(163,113,247,0.10);
+  --purple-tint-border: rgba(163,113,247,0.4);
+  --warn-bg: rgba(187,128,9,0.12);
+  --warn-border: rgba(187,128,9,0.4);
+  --green: #3fb950;
+  --red: #f85149;
+  --output-bg: #0a0e13;
+}
+[data-theme="light"] {
+  --bg: #ffffff;
+  --surface: #f6f8fa;
+  --surface2: #eef1f4;
+  --border: #d0d7de;
+  --text: #1f2328;
+  --text-dim: #57606a;
+  --accent: #0969da;
+  --blue-tint-bg: rgba(9,105,218,0.08);
+  --blue-tint-border: rgba(9,105,218,0.3);
+  --purple-tint-bg: rgba(130,80,223,0.07);
+  --purple-tint-border: rgba(130,80,223,0.3);
+  --warn-bg: rgba(154,103,0,0.08);
+  --warn-border: rgba(154,103,0,0.3);
+  --green: #1a7f37;
+  --red: #cf222e;
+  --output-bg: #f0f3f6;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+  font-size: 16px;
+  line-height: 1.7;
+  background: var(--bg);
+  color: var(--text);
+}
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+code, pre { font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace; }
+
+/* Sidebar */
+.sidebar {
+  position: fixed;
+  top: 0; left: 0; bottom: 0;
+  width: 300px;
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+  overflow-y: auto;
+  padding: 20px 16px;
+}
+.sidebar h3 {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-dim);
+  margin: 18px 0 8px;
+}
+.sidebar h3:first-child { margin-top: 0; }
+.sidebar a {
+  display: block;
+  padding: 4px 8px;
+  border-radius: 6px;
+  color: var(--text);
+  font-size: 14px;
+}
+.sidebar a:hover { background: var(--surface2); text-decoration: none; }
+.sidebar .review-link { color: #d2a8ff; }
+
+.content {
+  margin-left: 300px;
+  padding: 32px 40px 80px;
+}
+.inner { max-width: 860px; margin: 0 auto; }
+
+/* Header */
+header.main-header { margin-bottom: 24px; }
+header.main-header h1 { font-size: 30px; margin: 0 0 4px; }
+.date { color: var(--text-dim); font-size: 15px; }
+.count-badge {
+  display: inline-block;
+  margin-top: 10px;
+  background: var(--blue-tint-bg);
+  border: 1px solid var(--blue-tint-border);
+  border-radius: 20px;
+  padding: 3px 14px;
+  font-size: 13px;
+  color: var(--accent);
+}
+
+.theme-toggle {
+  position: fixed;
+  top: 16px; right: 20px;
+  z-index: 10;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  color: var(--text);
+  border-radius: 8px;
+  padding: 7px 12px;
+  cursor: pointer;
+  font-size: 13px;
+}
+
+.howto {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 14px 20px;
+  margin-bottom: 28px;
+}
+.howto strong { color: var(--accent); }
+.howto ol { margin: 8px 0 0; padding-left: 20px; }
+
+h2.section-title {
+  font-size: 22px;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 6px;
+  margin-top: 44px;
+}
+.section-sub { color: var(--text-dim); font-size: 14px; margin-top: -6px; }
+
+/* Concept cards */
+.concept-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 22px 24px;
+  margin: 22px 0;
+}
+.review-card {
+  background: var(--purple-tint-bg);
+  border-color: var(--purple-tint-border);
+}
+.concept-header { display: flex; align-items: center; flex-wrap: wrap; gap: 10px; margin-bottom: 8px; }
+.concept-title { font-size: 20px; font-weight: 700; }
+.ttag {
+  background: var(--blue-tint-bg);
+  border: 1px solid var(--blue-tint-border);
+  color: var(--accent);
+  border-radius: 20px;
+  padding: 1px 11px;
+  font-size: 12px;
+  font-weight: 600;
+}
+.days-since {
+  margin-left: auto;
+  font-size: 12px;
+  color: var(--text-dim);
+  font-style: italic;
+}
+.why-matters {
+  background: var(--blue-tint-bg);
+  border-left: 3px solid var(--accent);
+  padding: 8px 14px;
+  border-radius: 0 6px 6px 0;
+  margin: 12px 0;
+  font-size: 15px;
+}
+.explanation { margin: 14px 0; }
+.explanation p { margin: 10px 0; }
+.step {
+  display: inline-block;
+  background: var(--accent);
+  color: var(--bg);
+  font-weight: 700;
+  font-size: 12px;
+  width: 20px; height: 20px;
+  line-height: 20px;
+  text-align: center;
+  border-radius: 50%;
+  margin-right: 6px;
+}
+
+.code-example, .key-pattern { margin: 16px 0; }
+.lang-badge {
+  display: inline-block;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-bottom: none;
+  border-radius: 6px 6px 0 0;
+  padding: 2px 12px;
+  font-size: 11px;
+  color: var(--text-dim);
+  font-weight: 600;
+}
+pre {
+  margin: 0;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 0 8px 8px 8px;
+  padding: 14px 16px;
+  overflow-x: auto;
+  font-size: 13.5px;
+  line-height: 1.55;
+}
+.output {
+  background: var(--output-bg);
+  border: 1px solid var(--border);
+  border-top: none;
+  border-radius: 0 0 8px 8px;
+  padding: 10px 16px;
+  font-family: ui-monospace, monospace;
+  font-size: 13px;
+  color: var(--text-dim);
+  white-space: pre-wrap;
+}
+.output::before {
+  content: "output";
+  display: block;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-dim);
+  opacity: 0.7;
+  margin-bottom: 4px;
+}
+
+.callout-warning {
+  background: var(--warn-bg);
+  border: 1px solid var(--warn-border);
+  border-radius: 8px;
+  padding: 12px 16px;
+  margin: 16px 0;
+}
+.mistake { color: var(--red); margin: 8px 0; font-family: ui-monospace, monospace; font-size: 13px; white-space: pre-wrap; }
+.correct { color: var(--green); margin: 8px 0; font-family: ui-monospace, monospace; font-size: 13px; white-space: pre-wrap; }
+
+.key-rules {
+  background: var(--surface2);
+  border-radius: 8px;
+  padding: 10px 16px;
+  margin: 16px 0;
+}
+.key-rules ul { margin: 6px 0; padding-left: 20px; }
+
+.exercises { margin: 16px 0; }
+.exercise {
+  border: 1px dashed var(--blue-tint-border);
+  border-radius: 8px;
+  padding: 10px 14px 10px 44px;
+  margin: 10px 0 10px 8px;
+  position: relative;
+  background: var(--blue-tint-bg);
+}
+.exercises { counter-reset: ex; }
+.exercise::before {
+  counter-increment: ex;
+  content: counter(ex);
+  position: absolute;
+  left: 12px; top: 10px;
+  background: var(--accent);
+  color: var(--bg);
+  width: 22px; height: 22px;
+  line-height: 22px;
+  text-align: center;
+  border-radius: 50%;
+  font-weight: 700;
+  font-size: 12px;
+}
+.connections {
+  font-size: 14px;
+  color: var(--text-dim);
+  border-top: 1px solid var(--border);
+  padding-top: 10px;
+  margin-top: 16px;
+}
+.connections strong { color: var(--text); }
+.reminder { margin: 10px 0; font-size: 15px; }
+
+footer.guide-footer {
+  margin-left: 300px;
+  padding: 30px 40px 60px;
+  border-top: 1px solid var(--border);
+  color: var(--text-dim);
+}
+footer.guide-footer ul { list-style: none; padding: 0; columns: 2; }
+footer.guide-footer li { margin: 3px 0; }
+.cross-links { margin-top: 20px; }
+.cross-links a { margin-right: 16px; }
+
+@media (max-width: 900px) {
+  .sidebar { display: none; }
+  .content, footer.guide-footer { margin-left: 0; }
+  .content { padding: 24px 18px 60px; }
+}
+</style>
+</head>
+<body data-theme="dark">
+
+<button class="theme-toggle" onclick="toggleTheme()">☀ / ☾ Theme</button>
+
+<!-- ===================== SIDEBAR ===================== -->
+<nav class="sidebar">
+  <h3>Review (Due Today)</h3>
+  <a class="review-link" href="#r-structured-clone">Structured Clone</a>
+  <a class="review-link" href="#r-json">JSON Advanced</a>
+  <a class="review-link" href="#r-error-handling">Error Handling Patterns</a>
+  <a class="review-link" href="#r-regexp">Regular Expressions Advanced</a>
+  <a class="review-link" href="#r-design-patterns">Design Patterns</a>
+  <a class="review-link" href="#r-functional">Functional Patterns</a>
+
+  <h3>Numbers, Strings &amp; Equality</h3>
+  <a href="#bigint">BigInt &amp; Numeric Separators</a>
+  <a href="#string-unicode">String Unicode &amp; Well-Formedness</a>
+  <a href="#object-is">Object.is &amp; Value Comparison</a>
+
+  <h3>Collections &amp; File Data</h3>
+  <a href="#array-flat">Array flat &amp; flatMap</a>
+  <a href="#blob-file">Blob, File &amp; FileReader</a>
+</nav>
+
+<div class="content">
+<div class="inner">
+
+<header class="main-header">
+  <h1>JavaScript Daily Guide</h1>
+  <div class="date">July 1, 2026 &mdash; Day 20</div>
+  <span class="count-badge">11 concepts &middot; 6 review + 5 new</span>
+</header>
+
+<div class="howto">
+  <strong>How to use this guide</strong>
+  <ol>
+    <li>Start with the <em>Review</em> section. For each card, read the reminder, then attempt the challenge from memory before peeking.</li>
+    <li>For new concepts, read the explanation and run every example yourself (Node 24+ or a current Chrome/Safari console — these include recent ES2022/ES2023/ES2024 features).</li>
+    <li>Study the <em>Common Mistakes</em> — anti-patterns stick better than rules.</li>
+    <li>Attempt the practice exercises <strong>without</strong> looking back at the examples. Solutions are intentionally omitted.</li>
+  </ol>
+</div>
+
+<!-- ===================== REVIEW SECTION ===================== -->
+<h2 class="section-title">🔁 Review Section</h2>
+<p class="section-sub">Six data-and-pattern concepts are due for retrieval practice today. Recall first, verify second.</p>
+
+<div class="concept-card review-card" id="r-structured-clone">
+  <div class="concept-header">
+    <span class="concept-title">Structured Clone</span>
+    <span class="ttag">Data &amp; Collections</span>
+    <span class="days-since">14 days since review</span>
+  </div>
+  <div class="reminder"><code>structuredClone(value)</code> makes a <em>deep</em> copy using the structured-clone algorithm — the same one <code>postMessage</code> and IndexedDB use. Unlike <code>JSON.parse(JSON.stringify(x))</code> it preserves <code>Map</code>, <code>Set</code>, <code>Date</code>, <code>RegExp</code>, typed arrays, and <strong>cyclic references</strong>. It cannot clone functions, DOM nodes, or class prototypes (you get a plain object), and throws <code>DataCloneError</code> on functions/symbols.</div>
+  <div class="key-pattern">
+    <div class="lang-badge">JavaScript</div>
+<pre><code>const original = { when: new Date(), tags: new Set(['a']), self: null };
+original.self = original;                    // cycle
+
+const copy = structuredClone(original);
+copy.tags.add('b');
+console.log(original.tags.has('b'));         // false — deep, independent
+console.log(copy.self === copy);             // true — cycle preserved
+
+// transfer (move, don't copy) an ArrayBuffer for zero-copy handoff:
+const buf = new ArrayBuffer(8);
+const moved = structuredClone(buf, { transfer: [buf] });
+console.log(buf.byteLength);                 // 0 — detached after transfer</code></pre>
+  </div>
+  <div class="exercises">
+    <strong>Challenge:</strong>
+    <div class="exercise">Build a nested object containing a <code>Map</code>, a <code>Date</code>, a typed array, and a self-reference, then deep-clone it two ways — <code>structuredClone</code> vs <code>JSON</code> round-trip — and enumerate every difference in the result (lost types, thrown cycle error, dropped <code>undefined</code>).</div>
+  </div>
+  <div class="callout-warning">
+    <strong>#1 Pitfall:</strong> Expecting functions, class instances, or DOM nodes to survive — functions throw <code>DataCloneError</code> and class instances come back as plain objects (prototype lost). Also, <code>structuredClone</code> is a deep clone; for a shallow copy use spread or <code>Object.assign</code>.
+  </div>
+</div>
+
+<div class="concept-card review-card" id="r-json">
+  <div class="concept-header">
+    <span class="concept-title">JSON Advanced</span>
+    <span class="ttag">Data &amp; Collections</span>
+    <span class="days-since">14 days since review</span>
+  </div>
+  <div class="reminder"><code>JSON.stringify</code> takes two optional args: a <em>replacer</em> (function or allow-list array) and a <em>space</em> for pretty-printing. <code>JSON.parse</code> takes a <em>reviver</em> to transform values on the way in. A value's <code>toJSON()</code> method is called automatically (that is how <code>Date</code> serializes). <code>undefined</code>, functions, and symbols are dropped from objects and become <code>null</code> in arrays.</div>
+  <div class="key-pattern">
+    <div class="lang-badge">JavaScript</div>
+<pre><code>const data = { pw: 'secret', name: 'Ada', created: new Date(0) };
+
+// replacer as allow-list + 2-space indent:
+console.log(JSON.stringify(data, ['name', 'created'], 2));
+
+// reviver: revive ISO strings back into Date objects
+const text = '{"created":"1970-01-01T00:00:00.000Z"}';
+const obj = JSON.parse(text, (k, v) =>
+  k === 'created' ? new Date(v) : v);
+console.log(obj.created instanceof Date);    // true</code></pre>
+  </div>
+  <div class="exercises">
+    <strong>Challenge:</strong>
+    <div class="exercise">Serialize an object holding a <code>Map</code> and a <code>BigInt</code> (which <code>JSON.stringify</code> can't handle natively) by writing a replacer that encodes them into tagged objects, and a matching reviver that reconstructs them — a mini custom-serialization round-trip.</div>
+  </div>
+  <div class="callout-warning">
+    <strong>#1 Pitfall:</strong> <code>JSON.stringify(BigInt(1))</code> throws a <code>TypeError</code>, and <code>undefined</code>/functions silently vanish (or become <code>null</code> inside arrays). Also, keys are visited depth-first and a <code>toJSON</code> method overrides the replacer's view of that value.
+  </div>
+</div>
+
+<div class="concept-card review-card" id="r-error-handling">
+  <div class="concept-header">
+    <span class="concept-title">Error Handling Patterns</span>
+    <span class="ttag">Modules &amp; Patterns</span>
+    <span class="days-since">14 days since review</span>
+  </div>
+  <div class="reminder">Prefer throwing <code>Error</code> subclasses (never strings) so stacks and <code>instanceof</code> work. Custom errors extend <code>Error</code> and set <code>this.name</code>. In async code, an unhandled rejection is the async analog of an uncaught throw. Centralize handling: let low-level code throw typed errors and let a boundary decide how to respond. Use <code>{ cause }</code> to wrap without losing the root.</div>
+  <div class="key-pattern">
+    <div class="lang-badge">JavaScript</div>
+<pre><code>class ValidationError extends Error {
+  constructor(message, field) {
+    super(message);
+    this.name = 'ValidationError';    // so instanceof + name are correct
+    this.field = field;
+  }
+}
+
+async function handler(req) {
+  try {
+    return await process(req);
+  } catch (e) {
+    if (e instanceof ValidationError) return { status: 400, field: e.field };
+    throw new Error('processing failed', { cause: e });   // wrap unknowns
+  }
+}</code></pre>
+  </div>
+  <div class="exercises">
+    <strong>Challenge:</strong>
+    <div class="exercise">Design a small error hierarchy (<code>AppError</code> → <code>NotFoundError</code>, <code>ValidationError</code>) and a single boundary function that maps each type to an HTTP status, wrapping anything unrecognized with <code>{ cause }</code>. Show that <code>instanceof AppError</code> still catches the subclasses.</div>
+  </div>
+  <div class="callout-warning">
+    <strong>#1 Pitfall:</strong> <code>throw 'oops'</code> — a thrown string has no stack and fails <code>instanceof</code>. Also, an <code>async</code> function that isn't awaited swallows its rejection (unhandled), and a bare <code>catch (e) {}</code> that discards the error hides real failures.
+  </div>
+</div>
+
+<div class="concept-card review-card" id="r-regexp">
+  <div class="concept-header">
+    <span class="concept-title">Regular Expressions Advanced</span>
+    <span class="ttag">Data &amp; Collections</span>
+    <span class="days-since">13 days since review</span>
+  </div>
+  <div class="reminder">Modern regex features: <strong>named groups</strong> <code>(?&lt;year&gt;\d{4})</code> read via <code>match.groups</code>; <strong>lookbehind</strong> <code>(?&lt;=\$)\d+</code> and negative <code>(?&lt;!…)</code>; the <code>s</code> (dotAll) and <code>u</code>/<code>v</code> (unicode) flags; and <code>String.prototype.matchAll</code> for every match with groups. The <code>g</code> flag makes a regex <em>stateful</em> via <code>lastIndex</code> — a classic bug source when reused.</div>
+  <div class="key-pattern">
+    <div class="lang-badge">JavaScript</div>
+<pre><code>const re = /(?&lt;y>\d{4})-(?&lt;m>\d{2})/g;
+const text = '2026-07 and 2025-01';
+
+for (const m of text.matchAll(re)) {
+  console.log(m.groups.y, m.groups.m);       // 2026 07 / 2025 01
+}
+
+// lookbehind: dollar amounts without capturing the $
+console.log('$42 and $9'.match(/(?&lt;=\$)\d+/g));   // ['42','9']</code></pre>
+  </div>
+  <div class="exercises">
+    <strong>Challenge:</strong>
+    <div class="exercise">Write a template interpolator that replaces <code>{{name}}</code> tokens using named groups and <code>replaceAll</code> with a replacer function, then explain the <code>lastIndex</code> pitfall by reusing one <code>/g</code> regex across two <code>.test()</code> calls and observing the alternating result.</div>
+  </div>
+  <div class="callout-warning">
+    <strong>#1 Pitfall:</strong> Reusing a <code>/g</code> (or <code>/y</code>) regex literal across calls — <code>lastIndex</code> persists, so <code>test()</code>/<code>exec()</code> alternate true/false. Also, building regexes from untrusted input invites ReDoS (catastrophic backtracking); escape or bound the input.
+  </div>
+</div>
+
+<div class="concept-card review-card" id="r-design-patterns">
+  <div class="concept-header">
+    <span class="concept-title">Design Patterns: Observer, Strategy, Command</span>
+    <span class="ttag">Modules &amp; Patterns</span>
+    <span class="days-since">13 days since review</span>
+  </div>
+  <div class="reminder"><strong>Observer</strong>: subjects notify a list of subscribers on change (the basis of event systems and reactivity). <strong>Strategy</strong>: swap an algorithm at runtime by passing a function/object — replaces sprawling <code>if/else</code> or <code>switch</code>. <strong>Command</strong>: encapsulate an action as an object with <code>execute()</code>/<code>undo()</code>, enabling queues, macros, and undo stacks. In JS, first-class functions make these lightweight.</div>
+  <div class="key-pattern">
+    <div class="lang-badge">JavaScript</div>
+<pre><code>// Strategy: pick behavior by key, no branching in the caller
+const shipping = {
+  standard: (w) => w * 1.0,
+  express:  (w) => w * 2.5,
+};
+const cost = (method, w) => shipping[method](w);
+
+// Command with undo:
+const history = [];
+function run(cmd) { cmd.execute(); history.push(cmd); }
+function undo() { history.pop()?.undo(); }</code></pre>
+  </div>
+  <div class="exercises">
+    <strong>Challenge:</strong>
+    <div class="exercise">Implement a tiny drawing app command stack: <code>AddShapeCommand</code> with <code>execute</code>/<code>undo</code>, a <code>run</code>/<code>undo</code> controller, and an Observer that redraws a status label whenever the stack changes. Show that undo restores exactly the previous state.</div>
+  </div>
+  <div class="callout-warning">
+    <strong>#1 Pitfall:</strong> Observer memory leaks — subscribers that never unsubscribe keep subjects (and their closures) alive; always return/expose an unsubscribe. Also, overusing patterns where a plain function or object literal would do adds ceremony without benefit.
+  </div>
+</div>
+
+<div class="concept-card review-card" id="r-functional">
+  <div class="concept-header">
+    <span class="concept-title">Functional Patterns: Compose, Pipe, Curry</span>
+    <span class="ttag">Modules &amp; Patterns</span>
+    <span class="days-since">13 days since review</span>
+  </div>
+  <div class="reminder"><strong>compose(f, g)(x) = f(g(x))</strong> (right-to-left); <strong>pipe</strong> is the same left-to-right and usually reads better. <strong>Curry</strong> turns <code>f(a, b, c)</code> into <code>f(a)(b)(c)</code>, enabling partial application and point-free style. These rely on pure, unary-ish functions; keep side effects at the edges so transformations compose predictably.</div>
+  <div class="key-pattern">
+    <div class="lang-badge">JavaScript</div>
+<pre><code>const pipe = (...fns) => (x) => fns.reduce((acc, f) => f(acc), x);
+const compose = (...fns) => (x) => fns.reduceRight((acc, f) => f(acc), x);
+
+const clean = pipe(
+  (s) => s.trim(),
+  (s) => s.toLowerCase(),
+  (s) => s.replaceAll(/\s+/g, '-'),
+);
+console.log(clean('  Hello  World '));       // 'hello-world'
+
+const add = (a) => (b) => a + b;             // curried
+console.log([1, 2, 3].map(add(10)));         // [11, 12, 13]</code></pre>
+  </div>
+  <div class="exercises">
+    <strong>Challenge:</strong>
+    <div class="exercise">Write a generic <code>curry(fn)</code> that supports both <code>f(1)(2)(3)</code> and <code>f(1, 2)(3)</code> by checking <code>fn.length</code>, then build a data-cleaning <code>pipe</code> of four small pure functions and prove <code>compose</code> of the reversed list produces the identical result.</div>
+  </div>
+  <div class="callout-warning">
+    <strong>#1 Pitfall:</strong> Composing functions with side effects or wrong arity — <code>reduce</code> passes a single accumulator, so multi-arg stages break. Also mind order: <code>compose</code> runs right-to-left, <code>pipe</code> left-to-right; swapping them silently reverses your transformation.
+  </div>
+</div>
+
+<!-- ===================== NEW: SECTION 1 ===================== -->
+<h2 class="section-title">🆕 Numbers, Strings &amp; Equality</h2>
+<p class="section-sub">Three foundations people think they know: exact big integers, Unicode-correct strings, and the equality that <code>===</code> gets subtly wrong.</p>
+
+<!-- BIGINT -->
+<div class="concept-card" id="bigint">
+  <div class="concept-header">
+    <span class="concept-title">BigInt &amp; Numeric Separators</span>
+    <span class="ttag">Core Language</span>
+  </div>
+  <p class="why-matters">JS numbers are IEEE-754 doubles, so integers above <code>2^53</code> silently lose precision — fatal for database IDs, timestamps in nanoseconds, or cryptographic values. <code>BigInt</code> is a separate primitive for arbitrary-precision integers, and numeric separators (<code>1_000_000</code>) make large literals readable without changing their value.</p>
+
+  <div class="explanation">
+    <p><span class="step">1</span><strong>Past <code>Number.MAX_SAFE_INTEGER</code>, doubles lie.</strong> Create a <code>BigInt</code> with the <code>n</code> suffix or <code>BigInt(x)</code>. It holds exact integers of any size.</p>
+  </div>
+  <div class="code-example">
+    <div class="lang-badge">JavaScript</div>
+<pre><code>console.log(Number.MAX_SAFE_INTEGER);        // 9007199254740991
+console.log(9007199254740993 === 9007199254740992);  // true (!) — precision lost
+
+const big = 9007199254740993n;               // trailing n = BigInt literal
+console.log(big + 2n);                        // 9007199254740995n — exact
+console.log(BigInt(Number.MAX_SAFE_INTEGER) + 2n);   // 9007199254740993n</code></pre>
+    <div class="output">9007199254740991
+true
+9007199254740995n
+9007199254740993n</div>
+  </div>
+
+  <div class="explanation">
+    <p><span class="step">2</span><strong>BigInt and Number don't mix in arithmetic.</strong> You cannot add a <code>BigInt</code> to a <code>Number</code> — convert explicitly. Division truncates toward zero (integer math, no fractions).</p>
+  </div>
+  <div class="code-example">
+    <div class="lang-badge">JavaScript</div>
+<pre><code>// console.log(1n + 1);        // TypeError: Cannot mix BigInt and other types
+console.log(1n + BigInt(1));   // 2n
+console.log(Number(10n) + 1);  // 11
+
+console.log(7n / 2n);          // 3n  — truncated, NOT 3.5
+console.log(typeof 10n);       // 'bigint'
+console.log(10n == 10);        // true  (loose) ...
+console.log(10n === 10);       // false (strict — different types)</code></pre>
+    <div class="output">2n
+11
+3n
+bigint
+true
+false</div>
+  </div>
+
+  <div class="explanation">
+    <p><span class="step">3</span><strong>Numeric separators improve any numeric literal.</strong> Underscores group digits in decimal, hex, binary, and <code>BigInt</code> literals; they are purely cosmetic and stripped by the parser.</p>
+  </div>
+  <div class="code-example">
+    <div class="lang-badge">JavaScript</div>
+<pre><code>const budget = 1_000_000;              // === 1000000
+const bytes  = 0xFF_FF_FF_FF;          // hex grouping
+const card   = 1234_5678_9012_3456n;   // BigInt with separators
+console.log(budget, bytes);            // 1000000 4294967295
+// invalid placements throw at parse time:
+// 1_000_  /  _1000  /  1__000  → SyntaxError</code></pre>
+    <div class="output">1000000 4294967295</div>
+  </div>
+
+  <div class="callout-warning">
+    <strong>Common Mistakes:</strong>
+    <div class="mistake">❌ Mixing types or JSON-serializing a BigInt:
+   1n + 1                     // TypeError: Cannot mix BigInt and other types
+   JSON.stringify({ id: 5n }) // TypeError: Do not know how to serialize a BigInt
+   BigInt(0.5)                // RangeError — not an integer</div>
+    <div class="correct">✅ Convert explicitly and serialize as a string:
+   1n + BigInt(1)                         // 2n
+   JSON.stringify({ id: String(5n) })     // {"id":"5"}
+   const back = BigInt("5")               // parse it back</div>
+  </div>
+
+  <div class="key-rules">
+    <strong>Key Rules:</strong>
+    <ul>
+      <li><code>BigInt</code> is a distinct primitive (<code>typeof x === 'bigint'</code>) for exact integers; write literals with an <code>n</code> suffix or <code>BigInt(value)</code>.</li>
+      <li>Never mix <code>BigInt</code> and <code>Number</code> in arithmetic or bitwise ops — convert one side; <code>/</code> truncates and there are no fractional BigInts.</li>
+      <li>Numeric separators (<code>_</code>) are legal <em>between</em> digits in any numeric literal and are ignored by the parser — no leading, trailing, or doubled underscores.</li>
+    </ul>
+  </div>
+
+  <div class="exercises">
+    <strong>Practice Exercises:</strong>
+    <div class="exercise">Compute <code>50!</code> (factorial) with <code>BigInt</code> and confirm the exact result differs from the <code>Number</code> version, which loses precision. Print both to show where they diverge.</div>
+    <div class="exercise">Write <code>safeParseId(str)</code> that returns a <code>BigInt</code> for a numeric string and safely JSON-round-trips it as a string, proving no precision is lost for a 19-digit ID.</div>
+    <div class="exercise">Implement a nanosecond timestamp counter using <code>BigInt</code> arithmetic, and demonstrate that the equivalent <code>Number</code> arithmetic collides two distinct timestamps above <code>2^53</code>.</div>
+  </div>
+
+  <div class="connections">
+    <strong>Connections:</strong> <code>BigInt</code> is why <a href="#r-json">JSON.stringify</a> throws and needs a replacer, and it interacts with <a href="#object-is">Object.is</a> and <code>===</code> type rules below. It also underpins <code>node:crypto</code> and Web Crypto big-number work you have seen.
+  </div>
+</div>
+
+<!-- STRING UNICODE -->
+<div class="concept-card" id="string-unicode">
+  <div class="concept-header">
+    <span class="concept-title">String Unicode: normalize, isWellFormed &amp; toWellFormed</span>
+    <span class="ttag">Data &amp; Collections</span>
+  </div>
+  <p class="why-matters">JS strings are sequences of UTF-16 code units, not characters — so <code>'é'</code> can be one code point or two, and <code>.length</code> counts units, not glyphs. Two visually identical strings can fail <code>===</code>. <code>normalize()</code> (ES6) fixes canonical mismatches, and <code>isWellFormed</code>/<code>toWellFormed</code> (ES2024) detect and repair lone surrogates before they corrupt output.</p>
+
+  <div class="explanation">
+    <p><span class="step">1</span><strong>Visually equal, byte-unequal.</strong> <code>'café'</code> can be composed (one <code>é</code>) or decomposed (<code>e</code> + combining accent). <code>normalize('NFC')</code> canonicalizes so comparisons and dedup work.</p>
+  </div>
+  <div class="code-example">
+    <div class="lang-badge">JavaScript</div>
+<pre><code>const composed   = 'café';        // é as one code point
+const decomposed = 'café';       // e + combining acute accent
+console.log(composed === decomposed);  // false
+console.log(composed.length, decomposed.length);   // 4 5
+
+console.log(composed.normalize('NFC') === decomposed.normalize('NFC')); // true</code></pre>
+    <div class="output">false
+4 5
+true</div>
+  </div>
+
+  <div class="explanation">
+    <p><span class="step">2</span><strong>Iterate by code point, not code unit.</strong> Bracket indexing and <code>.length</code> operate on UTF-16 units, splitting astral characters (emoji). Spread / <code>for…of</code> / <code>Intl.Segmenter</code> respect code points.</p>
+  </div>
+  <div class="code-example">
+    <div class="lang-badge">JavaScript</div>
+<pre><code>const s = '😀a';
+console.log(s.length);          // 3 — emoji is a surrogate PAIR (2 units)
+console.log(s[0]);              // '\uD83D' — half of the emoji (mojibake)
+console.log([...s]);            // ['😀', 'a'] — spread splits by code point
+console.log([...s].length);    // 2 — the real glyph count here
+console.log(s.codePointAt(0).toString(16));   // '1f600'</code></pre>
+    <div class="output">3
+'\uD83D'
+['😀', 'a']
+2
+'1f600'</div>
+  </div>
+
+  <div class="explanation">
+    <p><span class="step">3</span><strong><code>isWellFormed</code> / <code>toWellFormed</code> guard lone surrogates.</strong> Slicing a string mid-surrogate leaves an unpaired half that corrupts JSON, URLs, and <code>TextEncoder</code>. Check with <code>isWellFormed()</code>; repair (to U+FFFD ) with <code>toWellFormed()</code>.</p>
+  </div>
+  <div class="code-example">
+    <div class="lang-badge">JavaScript</div>
+<pre><code>const broken = '😀'.slice(0, 1);       // one lone high surrogate
+console.log(broken.isWellFormed());    // false
+console.log(broken.toWellFormed());    // '�' — replacement char
+console.log('hi'.isWellFormed());      // true
+
+// encodeURIComponent throws on lone surrogates — sanitize first:
+console.log(encodeURIComponent(broken.toWellFormed()));   // '%EF%BF%BD'</code></pre>
+    <div class="output">false
+'�'
+true
+'%EF%BF%BD'</div>
+  </div>
+
+  <div class="callout-warning">
+    <strong>Common Mistakes:</strong>
+    <div class="mistake">❌ Treating .length and s[i] as characters, and comparing un-normalized text:
+   'café'.length              // may be 4 or 5 depending on composition
+   userInput === stored       // fails on NFC/NFD mismatch
+   bigString.slice(0, 100)    // may cut an emoji in half → lone surrogate</div>
+    <div class="correct">✅ Normalize before comparing, iterate by code point, validate surrogates:
+   a.normalize('NFC') === b.normalize('NFC')
+   [...str]  or  Intl.Segmenter   // real characters
+   if (!s.isWellFormed()) s = s.toWellFormed()</div>
+  </div>
+
+  <div class="key-rules">
+    <strong>Key Rules:</strong>
+    <ul>
+      <li>Strings are UTF-16 code units; <code>.length</code> and index access count units, so astral chars (emoji, many CJK) span two — iterate with spread/<code>for…of</code> for code points.</li>
+      <li><code>normalize(form)</code> (<code>'NFC'</code> default is the usual choice) canonicalizes equivalent sequences so comparison, sorting, and dedup are reliable.</li>
+      <li><code>str.isWellFormed()</code> returns <code>false</code> when a lone surrogate exists; <code>str.toWellFormed()</code> replaces each with U+FFFD — do this before <code>encodeURIComponent</code>, JSON, or byte encoding.</li>
+    </ul>
+  </div>
+
+  <div class="exercises">
+    <strong>Practice Exercises:</strong>
+    <div class="exercise">Write <code>sameText(a, b)</code> that compares two strings for canonical equality using <code>normalize('NFC')</code>, and prove it returns <code>true</code> for composed vs decomposed <code>'ñ'</code> while <code>===</code> returns <code>false</code>.</div>
+    <div class="exercise">Implement <code>glyphLength(str)</code> that counts user-perceived characters (grapheme clusters) using <code>Intl.Segmenter</code>, and show it returns 1 for a flag emoji where <code>.length</code> returns 4.</div>
+    <div class="exercise">Write <code>safeTruncate(str, n)</code> that cuts a string to <code>n</code> UTF-16 units but never leaves a lone surrogate — verify the result with <code>isWellFormed()</code> and repair with <code>toWellFormed()</code> when needed.</div>
+  </div>
+
+  <div class="connections">
+    <strong>Connections:</strong> Well-formedness matters right before <a href="#blob-file">encoding text to bytes</a> and for <code>Intl.Segmenter</code> (grapheme counting). Canonicalization pairs with locale-aware <code>Intl.Collator</code> sorting from the Intl API you studied.
+  </div>
+</div>
+
+<!-- OBJECT.IS -->
+<div class="concept-card" id="object-is">
+  <div class="concept-header">
+    <span class="concept-title">Object.is &amp; Value Comparison</span>
+    <span class="ttag">Core Language</span>
+  </div>
+  <p class="why-matters">JavaScript has <em>four</em> equality algorithms, and the two you reach for — <code>==</code> and <code>===</code> — both get two edge cases wrong: they say <code>NaN !== NaN</code> and <code>-0 === +0</code>. <code>Object.is</code> implements <em>SameValue</em>, the semantics that <code>Map</code>/<code>Set</code> keys, <code>Array.includes</code>, and React's re-render checks actually use.</p>
+
+  <div class="explanation">
+    <p><span class="step">1</span><strong><code>Object.is</code> fixes the two <code>===</code> anomalies.</strong> It treats <code>NaN</code> as equal to itself and distinguishes <code>-0</code> from <code>+0</code> — otherwise it matches <code>===</code>.</p>
+  </div>
+  <div class="code-example">
+    <div class="lang-badge">JavaScript</div>
+<pre><code>console.log(NaN === NaN);          // false
+console.log(Object.is(NaN, NaN));  // true
+
+console.log(-0 === +0);            // true
+console.log(Object.is(-0, +0));    // false — distinguishes signed zero
+
+console.log(Object.is(1, 1));      // true
+console.log(Object.is({}, {}));    // false — different references</code></pre>
+    <div class="output">false
+true
+true
+false
+true
+false</div>
+  </div>
+
+  <div class="explanation">
+    <p><span class="step">2</span><strong>Collections use SameValueZero — a third algorithm.</strong> <code>Map</code>/<code>Set</code> keys and <code>Array.includes</code> treat <code>NaN</code> as equal (like <code>Object.is</code>) but <code>-0</code> and <code>+0</code> as the same (unlike <code>Object.is</code>). This is why <code>includes</code> can find <code>NaN</code> but <code>indexOf</code> cannot.</p>
+  </div>
+  <div class="code-example">
+    <div class="lang-badge">JavaScript</div>
+<pre><code>const arr = [NaN, -0];
+console.log(arr.indexOf(NaN));      // -1  (indexOf uses ===)
+console.log(arr.includes(NaN));     // true (includes uses SameValueZero)
+
+const set = new Set([NaN, NaN, 0, -0]);
+console.log(set.size);              // 2  — NaN deduped, -0 and +0 merged
+console.log(new Map().set(-0, 'x').get(+0));   // 'x' — keys use SameValueZero</code></pre>
+    <div class="output">-1
+true
+2
+x</div>
+  </div>
+
+  <div class="explanation">
+    <p><span class="step">3</span><strong>Pick the algorithm deliberately.</strong> Use <code>===</code> for everyday checks, <code>Object.is</code> when signed zero or <code>NaN</code> identity matters (e.g. change detection), and remember collections silently apply SameValueZero for you.</p>
+  </div>
+  <div class="code-example">
+    <div class="lang-badge">JavaScript</div>
+<pre><code>// change detection that must treat NaN→NaN as "no change":
+function changed(a, b) { return !Object.is(a, b); }
+console.log(changed(NaN, NaN));    // false — correctly "unchanged"
+console.log(changed(0, -0));       // true  — a real sign flip is a change
+
+// avoid == entirely — its coercions are the fourth (loose) algorithm:
+console.log(0 == '');              // true (!)   0 == false, '' == false ...
+console.log(Object.is(0, ''));     // false</code></pre>
+    <div class="output">false
+true
+true
+false</div>
+  </div>
+
+  <div class="callout-warning">
+    <strong>Common Mistakes:</strong>
+    <div class="mistake">❌ Using === for NaN identity or ignoring signed zero:
+   x === NaN                 // ALWAYS false — can never match
+   Object.is(-0, 0)          // false — surprising if you expected true
+   arr.indexOf(NaN)          // -1 — indexOf can't find NaN</div>
+    <div class="correct">✅ Match the algorithm to the need:
+   Number.isNaN(x)  ||  Object.is(x, NaN)   // detect NaN
+   arr.includes(NaN)                        // SameValueZero finds it
+   === for normal comparisons; avoid ==</div>
+  </div>
+
+  <div class="key-rules">
+    <strong>Key Rules:</strong>
+    <ul>
+      <li><code>Object.is</code> = SameValue: like <code>===</code> but <code>Object.is(NaN, NaN)</code> is <code>true</code> and <code>Object.is(-0, +0)</code> is <code>false</code>.</li>
+      <li>SameValueZero (used by <code>Map</code>/<code>Set</code> keys, <code>Array.includes</code>, <code>Array.from</code> dedup) equals <code>Object.is</code> except it treats <code>-0</code> and <code>+0</code> as the same.</li>
+      <li>Objects compare by reference under every algorithm — <code>Object.is</code> is <em>not</em> a deep or structural equality check.</li>
+    </ul>
+  </div>
+
+  <div class="exercises">
+    <strong>Practice Exercises:</strong>
+    <div class="exercise">Write a table that, for the inputs <code>(NaN, NaN)</code>, <code>(-0, +0)</code>, <code>(0, '')</code>, and <code>({}, {})</code>, prints the result of <code>==</code>, <code>===</code>, and <code>Object.is</code> side by side, and explain each divergence.</div>
+    <div class="exercise">Implement <code>dedupe(arr)</code> using a <code>Set</code> and confirm it collapses duplicate <code>NaN</code>s (which a naive <code>indexOf</code>-based dedupe cannot), then note how it treats <code>-0</code> vs <code>+0</code>.</div>
+    <div class="exercise">Build a shallow-equal helper <code>shallowEqual(a, b)</code> for flat objects that compares each value with <code>Object.is</code>, and show why using it for change detection avoids false "changed" on <code>NaN</code> fields.</div>
+  </div>
+
+  <div class="connections">
+    <strong>Connections:</strong> SameValueZero is the key-identity rule behind <a href="#r-structured-clone">Map &amp; Set</a> membership, and <code>Object.is</code> pairs with the <a href="#bigint">BigInt</a>/<code>Number</code> type distinctions above. Deep equality (beyond references) is what structured clone and JSON round-trips address.
+  </div>
+</div>
+
+<!-- ===================== NEW: SECTION 2 ===================== -->
+<h2 class="section-title">🆕 Collections &amp; File Data</h2>
+<p class="section-sub">Flattening nested arrays cleanly, and the browser's primitives for handling raw file and binary payloads.</p>
+
+<!-- ARRAY FLAT / FLATMAP -->
+<div class="concept-card" id="array-flat">
+  <div class="concept-header">
+    <span class="concept-title">Array flat &amp; flatMap</span>
+    <span class="ttag">Data &amp; Collections</span>
+  </div>
+  <p class="why-matters">Flattening nested arrays used to mean <code>[].concat(...arr)</code> (one level only) or a reduce/recursion hand-roll. ES2019's <code>flat(depth)</code> and <code>flatMap(fn)</code> do it declaratively — and <code>flatMap</code> is the idiomatic way to <em>map-and-filter</em> in a single pass, since returning <code>[]</code> drops an element.</p>
+
+  <div class="explanation">
+    <p><span class="step">1</span><strong><code>flat(depth = 1)</code> flattens nested arrays.</strong> Pass a depth, or <code>Infinity</code> to fully flatten. It also removes empty slots in sparse arrays.</p>
+  </div>
+  <div class="code-example">
+    <div class="lang-badge">JavaScript</div>
+<pre><code>console.log([1, [2, 3], [4, [5]]].flat());          // [1, 2, 3, 4, [5]]
+console.log([1, [2, [3, [4]]]].flat(2));            // [1, 2, 3, [4]]
+console.log([1, [2, [3, [4]]]].flat(Infinity));     // [1, 2, 3, 4]
+
+// flat drops holes in sparse arrays:
+console.log([1, , 3].flat());                        // [1, 3]</code></pre>
+    <div class="output">[1, 2, 3, 4, [5]]
+[1, 2, 3, [4]]
+[1, 2, 3, 4]
+[1, 3]</div>
+  </div>
+
+  <div class="explanation">
+    <p><span class="step">2</span><strong><code>flatMap</code> = <code>map</code> then <code>flat(1)</code>, more efficiently.</strong> The callback returns an array for each element, and the results are flattened one level. Return a multi-element array to expand, or <code>[]</code> to remove.</p>
+  </div>
+  <div class="code-example">
+    <div class="lang-badge">JavaScript</div>
+<pre><code>// expand: split each sentence into words
+console.log(['a b', 'c'].flatMap((s) => s.split(' ')));   // ['a','b','c']
+
+// map + filter in one pass: keep evens, doubled; drop odds with []
+console.log([1, 2, 3, 4].flatMap((n) => n % 2 ? [] : [n * 2]));   // [4, 8]
+
+// only ONE level of flattening — nested arrays survive:
+console.log([1, 2].flatMap((n) => [[n]]));                // [[1], [2]]</code></pre>
+    <div class="output">['a', 'b', 'c']
+[4, 8]
+[[1], [2]]</div>
+  </div>
+
+  <div class="explanation">
+    <p><span class="step">3</span><strong>Non-mutating and skips holes.</strong> Both return new arrays and leave the source untouched, and their callbacks skip empty slots — handy for building pairs, adjacency lists, or Cartesian-style expansions.</p>
+  </div>
+  <div class="code-example">
+    <div class="lang-badge">JavaScript</div>
+<pre><code>const nums = [1, 2, 3];
+// pair every element with a label (expand 1 → many):
+console.log(nums.flatMap((n) => [`${n}a`, `${n}b`]));
+//   ['1a','1b','2a','2b','3a','3b']
+
+const src = [1, 2];
+src.flatMap((n) => [n, n]);
+console.log(src);                     // [1, 2] — original unchanged</code></pre>
+    <div class="output">['1a', '1b', '2a', '2b', '3a', '3b']
+[1, 2]</div>
+  </div>
+
+  <div class="callout-warning">
+    <strong>Common Mistakes:</strong>
+    <div class="mistake">❌ Expecting deep flattening or chaining map().flat() needlessly:
+   [1,[2,[3]]].flat()          // only ONE level → [1, 2, [3]]
+   arr.map(fn).flat()          // two passes; flatMap does it in one
+   [1,2].flatMap(n => [[n]])   // still nested — flatMap flattens only depth 1</div>
+    <div class="correct">✅ Use the right depth and flatMap for map+filter:
+   nested.flat(Infinity)                 // fully flatten
+   arr.flatMap(fn)                       // single pass
+   arr.flatMap(x => cond(x) ? [x] : []) // filter + map together</div>
+  </div>
+
+  <div class="key-rules">
+    <strong>Key Rules:</strong>
+    <ul>
+      <li><code>flat(depth)</code> flattens <code>depth</code> levels (default 1, use <code>Infinity</code> for all) and removes holes; it returns a new array.</li>
+      <li><code>flatMap(fn)</code> equals <code>map(fn).flat(1)</code> — flattening exactly one level — so return <code>[]</code> to drop and a multi-element array to expand.</li>
+      <li>Both are non-mutating and skip empty slots in sparse arrays; neither flattens beyond their stated depth.</li>
+    </ul>
+  </div>
+
+  <div class="exercises">
+    <strong>Practice Exercises:</strong>
+    <div class="exercise">Write <code>flattenDeep(arr)</code> two ways — once with <code>flat(Infinity)</code> and once with a manual recursive reducer — and confirm they produce identical output on a 4-level-nested array.</div>
+    <div class="exercise">Use <code>flatMap</code> to implement <code>compactMap(arr, fn)</code> that maps each element but omits any for which <code>fn</code> returns <code>null</code>/<code>undefined</code>, in a single pass.</div>
+    <div class="exercise">Given an array of <code>{ name, tags }</code> objects, use <code>flatMap</code> to produce a flat, de-duplicated list of all tags, then explain why <code>map</code> alone would leave a nested array.</div>
+  </div>
+
+  <div class="connections">
+    <strong>Connections:</strong> <code>flatMap</code> is the eager array analog of the lazy <code>Iterator.prototype.flatMap</code> from Iterator Helpers, and its map+filter power complements <code>reduce</code> and the copying array methods (<code>toSorted</code>, <code>with</code>).
+  </div>
+</div>
+
+<!-- BLOB / FILE / FILEREADER -->
+<div class="concept-card" id="blob-file">
+  <div class="concept-header">
+    <span class="concept-title">Blob, File &amp; FileReader</span>
+    <span class="ttag">Browser APIs &amp; DOM</span>
+  </div>
+  <p class="why-matters">Any time you handle an upload, generate a download, or move binary data around the browser, you meet <code>Blob</code> (immutable raw bytes + a MIME type), <code>File</code> (a <code>Blob</code> with a name and modified time), and the ways to read them. Modern async <code>Blob</code> methods largely replace the old event-based <code>FileReader</code>, but you still meet both.</p>
+
+  <div class="explanation">
+    <p><span class="step">1</span><strong>A <code>Blob</code> is immutable bytes with a type; a <code>File</code> adds metadata.</strong> Build one from strings, <code>ArrayBuffer</code>s, or other blobs. <code>&lt;input type="file"&gt;</code> gives you <code>File</code> objects (which <em>are</em> Blobs).</p>
+  </div>
+  <div class="code-example">
+    <div class="lang-badge">JavaScript</div>
+<pre><code>const blob = new Blob(['hello, ', 'world'], { type: 'text/plain' });
+console.log(blob.size, blob.type);          // 12 'text/plain'
+
+const file = new File([blob], 'greeting.txt', { type: 'text/plain' });
+console.log(file.name, file instanceof Blob);   // 'greeting.txt' true
+
+// slice() is a cheap view — no copy — useful for chunked uploads:
+console.log(await blob.slice(0, 5).text());     // 'hello'</code></pre>
+    <div class="output">12 'text/plain'
+'greeting.txt' true
+'hello'</div>
+  </div>
+
+  <div class="explanation">
+    <p><span class="step">2</span><strong>Prefer the promise-based <code>Blob</code> reader methods.</strong> <code>blob.text()</code>, <code>blob.arrayBuffer()</code>, and <code>blob.bytes()</code> (returns a <code>Uint8Array</code>) are async and far cleaner than <code>FileReader</code>. Use <code>blob.stream()</code> for large data.</p>
+  </div>
+  <div class="code-example">
+    <div class="lang-badge">JavaScript</div>
+<pre><code>const b = new Blob([JSON.stringify({ ok: true })], { type: 'application/json' });
+
+const text = await b.text();
+console.log(JSON.parse(text).ok);           // true
+
+const buf = await b.arrayBuffer();
+console.log(new Uint8Array(buf)[0]);        // 123  → '{'  (byte value)
+
+// stream large blobs chunk by chunk:
+const reader = b.stream().getReader();
+const { value } = await reader.read();      // first Uint8Array chunk</code></pre>
+    <div class="output">true
+123</div>
+  </div>
+
+  <div class="explanation">
+    <p><span class="step">3</span><strong><code>FileReader</code> is the legacy event-based path — still needed for data URLs.</strong> <code>readAsDataURL</code> yields a <code>data:</code> URI (great for image previews) that the newer methods don't produce directly. For downloads/previews, prefer <code>URL.createObjectURL</code> and revoke it after.</p>
+  </div>
+  <div class="code-example">
+    <div class="lang-badge">JavaScript</div>
+<pre><code>// FileReader: callback/event based (older API)
+const fr = new FileReader();
+fr.onload = () => console.log(fr.result.slice(0, 30));  // 'data:text/plain;base64,aGVsbG8...'
+fr.readAsDataURL(new Blob(['hello'], { type: 'text/plain' }));
+
+// trigger a download without a server round-trip:
+const url = URL.createObjectURL(new Blob(['report'], { type: 'text/plain' }));
+const a = Object.assign(document.createElement('a'), { href: url, download: 'r.txt' });
+a.click();
+URL.revokeObjectURL(url);                   // free the memory when done</code></pre>
+    <div class="output">data:text/plain;base64,aGVsbG8=</div>
+  </div>
+
+  <div class="callout-warning">
+    <strong>Common Mistakes:</strong>
+    <div class="mistake">❌ Reaching for FileReader for everything, and leaking object URLs:
+   new FileReader() ... onload ...   // verbose when blob.text() would do
+   URL.createObjectURL(blob)         // never revoked → memory leak
+   blob.text = '...'                 // Blobs are IMMUTABLE — can't mutate</div>
+    <div class="correct">✅ Use async Blob methods; always revoke object URLs:
+   const s = await blob.text()                   // promise-based
+   const buf = await file.arrayBuffer()          // binary
+   const u = URL.createObjectURL(blob); ...; URL.revokeObjectURL(u)</div>
+  </div>
+
+  <div class="key-rules">
+    <strong>Key Rules:</strong>
+    <ul>
+      <li><code>Blob</code> is immutable raw bytes + a MIME <code>type</code>; <code>File</code> extends it with <code>name</code>/<code>lastModified</code>. <code>slice()</code> makes a cheap, copy-free view.</li>
+      <li>Prefer async <code>blob.text()</code>/<code>arrayBuffer()</code>/<code>bytes()</code>/<code>stream()</code> over <code>FileReader</code>; use <code>FileReader.readAsDataURL</code> only when you specifically need a <code>data:</code> URI.</li>
+      <li><code>URL.createObjectURL(blob)</code> creates a temporary URL you <em>must</em> <code>revokeObjectURL</code> to avoid leaks; object URLs are per-document.</li>
+    </ul>
+  </div>
+
+  <div class="exercises">
+    <strong>Practice Exercises:</strong>
+    <div class="exercise">Wire up an <code>&lt;input type="file"&gt;</code> that reads the selected image with <code>file.arrayBuffer()</code>, logs its byte length and MIME type, and shows a preview via <code>URL.createObjectURL</code> — remembering to revoke the URL on the image's <code>load</code>.</div>
+    <div class="exercise">Generate a CSV string in memory, wrap it in a <code>Blob</code> of type <code>text/csv</code>, and trigger a client-side download with a temporary <code>&lt;a download&gt;</code> — no server involved.</div>
+    <div class="exercise">Split a large <code>Blob</code> into 64KB chunks with <code>slice()</code> and read each chunk's bytes with <code>await chunk.arrayBuffer()</code>, reconstructing the original and verifying the byte length matches — the basis of resumable uploads.</div>
+  </div>
+
+  <div class="connections">
+    <strong>Connections:</strong> <code>Blob.arrayBuffer()</code> hands you the <a href="#r-structured-clone">typed-array/ArrayBuffer</a> world, and <code>blob.stream()</code> is a <code>ReadableStream</code> like the Streams API. Encoding a well-formed <a href="#string-unicode">string</a> to bytes (<code>TextEncoder</code>) is the counterpart of decoding a Blob back to text.
+  </div>
+</div>
+
+</div><!-- /inner -->
+</div><!-- /content -->
+
+<!-- ===================== FOOTER ===================== -->
+<footer class="guide-footer">
+  <h2>All Guides</h2>
+      <ul>
+    <li><a href="javascript-guides/javascript-guide-2026-07-09.html">2026-07-09</a> (Day 28)</li>
+    <li><a href="javascript-guides/javascript-guide-2026-07-08.html">2026-07-08</a> (current &mdash; Day 27)</li>
+    <li><a href="javascript-guides/javascript-guide-2026-07-07.html">2026-07-07</a> (Day 26)</li>
+    <li><a href="javascript-guides/javascript-guide-2026-07-06.html">2026-07-06</a> (Day 25)</li>
+    <li><a href="javascript-guides/javascript-guide-2026-07-05.html">2026-07-05</a> (Day 24)</li>
+    <li><a href="javascript-guides/javascript-guide-2026-07-04.html">2026-07-04</a> (Day 23)</li>
+    <li><a href="javascript-guides/javascript-guide-2026-07-03.html">2026-07-03</a> (Day 22)</li>
+    <li><a href="javascript-guides/javascript-guide-2026-07-02.html">2026-07-02</a> (Day 21)</li>
+    <li><a href="javascript-guides/javascript-guide-2026-07-01.html">2026-07-01</a> (Day 20)</li>
+    <li><a href="javascript-guides/javascript-guide-2026-06-30.html">2026-06-30</a> (Day 19)</li>
+    <li><a href="javascript-guides/javascript-guide-2026-06-29.html">2026-06-29</a> (Day 18)</li>
+    <li><a href="javascript-guides/javascript-guide-2026-06-28.html">2026-06-28</a> (Day 17)</li>
+    <li><a href="javascript-guides/javascript-guide-2026-06-27.html">2026-06-27</a> (Day 16)</li>
+    <li><a href="javascript-guides/javascript-guide-2026-06-26.html">2026-06-26</a> (Day 15)</li>
+    <li><a href="javascript-guides/javascript-guide-2026-06-25.html">2026-06-25</a> (Day 14)</li>
+    <li><a href="javascript-guides/javascript-guide-2026-06-24.html">2026-06-24</a> (Day 13)</li>
+    <li><a href="javascript-guides/javascript-guide-2026-06-23.html">2026-06-23</a> (Day 12)</li>
+    <li><a href="javascript-guides/javascript-guide-2026-06-22.html">2026-06-22</a> (Day 11)</li>
+    <li><a href="javascript-guides/javascript-guide-2026-06-19.html">2026-06-19</a> (Day 10)</li>
+    <li><a href="javascript-guides/javascript-guide-2026-06-18.html">2026-06-18</a> (Day 9)</li>
+    <li><a href="javascript-guides/javascript-guide-2026-06-17.html">2026-06-17</a> (Day 8)</li>
+    <li><a href="javascript-guides/javascript-guide-2026-06-15.html">2026-06-15</a> (Day 7)</li>
+    <li><a href="javascript-guides/javascript-guide-2026-06-13.html">2026-06-13</a> (Day 6)</li>
+    <li><a href="javascript-guides/javascript-guide-2026-06-12.html">2026-06-12</a> (Day 5)</li>
+    <li><a href="javascript-guides/javascript-guide-2026-06-11.html">2026-06-11</a> (Day 4)</li>
+    <li><a href="javascript-guides/javascript-guide-2026-06-10.html">2026-06-10</a> (Day 3)</li>
+    <li><a href="javascript-guides/javascript-guide-2026-06-09.html">2026-06-09</a> (Day 2)</li>
+    <li><a href="javascript-guides/javascript-guide-2026-06-08.html">2026-06-08</a> (Day 1)</li>
+  </ul>
+
+  <div class="cross-links">
+    <strong>Other Guides</strong>
+    <a href="guide.html">LeetCode Guide</a>
+    <a href="lang-guide.html">Multi-Language</a>
+    <a href="python-guide.html">Python</a>
+    <a href="typescript-guide.html">TypeScript</a>
+  </div>
+</footer>
+
+<script>
+function toggleTheme() {
+  const b = document.body;
+  const next = b.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+  b.setAttribute('data-theme', next);
+  localStorage.setItem('lc-jsguide-theme', next);
+}
+(function () {
+  const saved = localStorage.getItem('lc-jsguide-theme') || 'dark';
+  document.body.setAttribute('data-theme', saved);
+})();
+</script>
+</body>
+</html>

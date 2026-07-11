@@ -1,0 +1,1691 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Go Study Guide &mdash; Day 27 (2026-07-02)</title>
+<style>
+/* ===== CSS Variables ===== */
+:root {
+  --bg: #0d1117;
+  --surface1: #161b22;
+  --surface2: #1c2129;
+  --border: #30363d;
+  --text: #e6edf3;
+  --muted: #8b949e;
+  --accent: #58a6ff;
+  --accent-dim: #1f6feb33;
+  --green: #3fb950;
+  --green-dim: #23863633;
+  --yellow: #d29922;
+  --yellow-dim: #d2992233;
+  --red: #f85149;
+  --red-dim: #f8514933;
+  --purple: #bc8cff;
+  --purple-dim: #bc8cff22;
+  --orange: #f0883e;
+  --orange-dim: #f0883e22;
+  --code-bg: #0d1117;
+  --sidebar-w: 300px;
+  --font-mono: 'SF Mono', 'Cascadia Code', 'Fira Code', Consolas, monospace;
+  --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+  --radius: 8px;
+  --shadow: 0 1px 3px rgba(0,0,0,0.4);
+}
+
+[data-theme="light"] {
+  --bg: #ffffff;
+  --surface1: #f6f8fa;
+  --surface2: #f0f3f6;
+  --border: #d0d7de;
+  --text: #1f2328;
+  --muted: #656d76;
+  --accent: #0969da;
+  --accent-dim: #0969da1a;
+  --green: #1a7f37;
+  --green-dim: #1a7f3718;
+  --yellow: #9a6700;
+  --yellow-dim: #9a670018;
+  --red: #cf222e;
+  --red-dim: #cf222e18;
+  --purple: #8250df;
+  --purple-dim: #8250df18;
+  --orange: #bc4c00;
+  --orange-dim: #bc4c0018;
+  --code-bg: #f6f8fa;
+  --shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+/* ===== Reset & Base ===== */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: var(--font-sans);
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.7;
+  font-size: 16px;
+  transition: background 0.2s, color 0.2s;
+}
+
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+/* ===== Theme Toggle ===== */
+#theme-toggle {
+  position: fixed;
+  top: 16px;
+  right: 20px;
+  z-index: 1000;
+  background: var(--surface1);
+  border: 1px solid var(--border);
+  color: var(--text);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+  box-shadow: var(--shadow);
+}
+#theme-toggle:hover { background: var(--surface2); border-color: var(--accent); }
+
+/* ===== Sidebar ===== */
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: var(--sidebar-w);
+  height: 100vh;
+  background: var(--surface1);
+  border-right: 1px solid var(--border);
+  overflow-y: auto;
+  padding: 20px 0;
+  z-index: 100;
+  transition: transform 0.3s;
+}
+
+.sidebar-header {
+  padding: 0 20px 16px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 12px;
+}
+
+.sidebar-header h2 {
+  font-size: 16px;
+  color: var(--text);
+  font-weight: 700;
+}
+
+.sidebar-header .subtitle {
+  font-size: 12px;
+  color: var(--muted);
+  margin-top: 2px;
+}
+
+.sidebar-section {
+  margin-bottom: 8px;
+}
+
+.sidebar-section-title {
+  padding: 6px 20px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+}
+
+.sidebar-link {
+  display: block;
+  padding: 5px 20px 5px 28px;
+  font-size: 13px;
+  color: var(--muted);
+  text-decoration: none;
+  border-left: 2px solid transparent;
+  transition: all 0.15s;
+  line-height: 1.4;
+}
+
+.sidebar-link:hover {
+  color: var(--text);
+  background: var(--accent-dim);
+  border-left-color: var(--accent);
+  text-decoration: none;
+}
+
+.sidebar-link.active {
+  color: var(--accent);
+  border-left-color: var(--accent);
+  background: var(--accent-dim);
+}
+
+/* ===== Mobile sidebar toggle ===== */
+#sidebar-toggle {
+  display: none;
+  position: fixed;
+  top: 16px;
+  left: 16px;
+  z-index: 200;
+  background: var(--surface1);
+  border: 1px solid var(--border);
+  color: var(--text);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 20px;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--shadow);
+}
+
+/* ===== Main Content ===== */
+.main {
+  margin-left: var(--sidebar-w);
+  padding: 40px 48px 80px;
+  max-width: calc(860px + var(--sidebar-w) + 96px);
+}
+
+.page-title {
+  font-size: 32px;
+  font-weight: 800;
+  margin-bottom: 4px;
+  color: var(--text);
+}
+
+.page-subtitle {
+  font-size: 15px;
+  color: var(--muted);
+  margin-bottom: 36px;
+}
+
+/* ===== Sections ===== */
+.section {
+  margin-bottom: 48px;
+}
+
+.section-label {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  padding: 3px 10px;
+  border-radius: 4px;
+  margin-bottom: 12px;
+}
+
+.section-label.review { background: var(--yellow-dim); color: var(--yellow); }
+.section-label.new { background: var(--green-dim); color: var(--green); }
+
+.section-title {
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 24px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--border);
+}
+
+/* ===== How To Use ===== */
+.how-to-use {
+  background: var(--surface1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px 24px;
+  margin-bottom: 36px;
+}
+
+.how-to-use h3 {
+  font-size: 16px;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.how-to-use ul {
+  padding-left: 22px;
+  margin: 0;
+}
+
+.how-to-use li {
+  font-size: 14px;
+  color: var(--muted);
+  margin-bottom: 4px;
+}
+
+/* ===== Concept Cards ===== */
+.concept {
+  background: var(--surface1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 28px;
+  margin-bottom: 28px;
+  box-shadow: var(--shadow);
+}
+
+.concept-header {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  margin-bottom: 6px;
+  flex-wrap: wrap;
+}
+
+.concept h3 {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.concept-meta {
+  font-size: 12px;
+  color: var(--muted);
+  background: var(--surface2);
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
+.concept h4 {
+  font-size: 15px;
+  font-weight: 600;
+  margin: 20px 0 8px;
+  color: var(--text);
+}
+
+.concept p, .concept li {
+  color: var(--text);
+  line-height: 1.7;
+}
+
+.concept ul, .concept ol {
+  padding-left: 22px;
+  margin: 8px 0;
+}
+
+.concept li {
+  margin-bottom: 4px;
+}
+
+.concept .why-matters {
+  font-style: italic;
+  color: var(--muted);
+  margin: 6px 0 16px;
+  font-size: 15px;
+}
+
+/* ===== Code Blocks ===== */
+pre {
+  background: var(--code-bg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 16px 18px;
+  overflow-x: auto;
+  margin: 10px 0 14px;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--text);
+  position: relative;
+}
+
+pre::after {
+  content: 'Go';
+  position: absolute;
+  top: 6px;
+  right: 10px;
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  opacity: 0.6;
+}
+
+code {
+  font-family: var(--font-mono);
+  font-size: 0.9em;
+}
+
+:not(pre) > code {
+  background: var(--surface2);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.88em;
+}
+
+/* ===== Output Blocks ===== */
+.output {
+  background: var(--green-dim);
+  border: 1px solid var(--green);
+  border-radius: 6px;
+  padding: 12px 16px;
+  margin: 6px 0 14px;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--text);
+  white-space: pre-wrap;
+}
+
+.output::after { content: none; }
+
+.output-label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--green);
+  margin-bottom: 4px;
+}
+
+/* ===== Good/Bad Examples ===== */
+.do-dont {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin: 10px 0;
+}
+
+.do-box, .dont-box {
+  border-radius: 6px;
+  padding: 14px;
+  border: 1px solid;
+}
+
+.do-box {
+  background: var(--green-dim);
+  border-color: var(--green);
+}
+
+.dont-box {
+  background: var(--red-dim);
+  border-color: var(--red);
+}
+
+.do-box .label, .dont-box .label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 6px;
+}
+
+.do-box .label { color: var(--green); }
+.dont-box .label { color: var(--red); }
+
+.do-box pre, .dont-box pre {
+  margin: 0;
+  border: none;
+  background: transparent;
+  padding: 0;
+  font-size: 12.5px;
+}
+
+.do-box pre::after, .dont-box pre::after { content: none; }
+
+/* ===== Key Rules ===== */
+.rules-list {
+  list-style: none;
+  padding: 0;
+  margin: 8px 0;
+}
+
+.rules-list li {
+  padding: 6px 0 6px 24px;
+  position: relative;
+}
+
+.rules-list li::before {
+  content: "\2192";
+  position: absolute;
+  left: 2px;
+  color: var(--accent);
+  font-weight: 700;
+}
+
+/* ===== Exercises ===== */
+.exercise {
+  background: var(--purple-dim);
+  border: 1px solid var(--purple);
+  border-radius: 6px;
+  padding: 14px 18px;
+  margin: 8px 0;
+}
+
+.exercise .exercise-label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--purple);
+  margin-bottom: 4px;
+}
+
+/* ===== Pitfall ===== */
+.pitfall {
+  background: var(--red-dim);
+  border-left: 3px solid var(--red);
+  border-radius: 0 6px 6px 0;
+  padding: 10px 14px;
+  margin: 10px 0;
+  font-size: 14px;
+}
+
+.pitfall strong {
+  color: var(--red);
+}
+
+/* ===== Connection ===== */
+.connection {
+  background: var(--accent-dim);
+  border-left: 3px solid var(--accent);
+  border-radius: 0 6px 6px 0;
+  padding: 10px 14px;
+  margin: 10px 0;
+  font-size: 14px;
+  color: var(--muted);
+}
+
+/* ===== Review Cards ===== */
+.review-card {
+  background: var(--surface1);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--purple);
+  border-radius: var(--radius);
+  padding: 20px 24px;
+  margin-bottom: 16px;
+  box-shadow: var(--shadow);
+}
+
+.review-card .review-header {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  margin-bottom: 6px;
+  flex-wrap: wrap;
+}
+
+.review-card h3 {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.review-card .review-meta {
+  font-size: 12px;
+  color: var(--muted);
+  background: var(--surface2);
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
+.review-card h4 {
+  font-size: 14px;
+  font-weight: 600;
+  margin: 14px 0 6px;
+  color: var(--text);
+}
+
+.review-card p, .review-card li {
+  color: var(--text);
+  line-height: 1.6;
+  font-size: 14px;
+}
+
+.review-card pre {
+  font-size: 12.5px;
+  padding: 12px 14px;
+  margin: 6px 0 10px;
+}
+
+.review-card .pitfall {
+  font-size: 13px;
+  padding: 8px 12px;
+}
+
+/* ===== Topic Badge ===== */
+.topic-badge {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 2px 8px;
+  border-radius: 4px;
+  background: var(--accent-dim);
+  color: var(--accent);
+  margin-left: 4px;
+}
+
+/* ===== Footer ===== */
+.footer {
+  margin-top: 60px;
+  padding: 24px 0;
+  border-top: 1px solid var(--border);
+}
+
+.footer h4 {
+  font-size: 14px;
+  color: var(--muted);
+  margin-bottom: 10px;
+}
+
+.footer ul {
+  list-style: none;
+  padding: 0;
+}
+
+.footer li {
+  margin-bottom: 4px;
+  font-size: 14px;
+}
+
+.footer li a { color: var(--accent); }
+.footer .current { color: var(--green); font-weight: 600; }
+
+/* ===== Bash code blocks ===== */
+pre.bash::after {
+  content: 'Bash';
+}
+
+/* ===== Responsive ===== */
+@media (max-width: 900px) {
+  .sidebar {
+    transform: translateX(-100%);
+  }
+  .sidebar.open {
+    transform: translateX(0);
+    box-shadow: 4px 0 20px rgba(0,0,0,0.5);
+  }
+  #sidebar-toggle {
+    display: flex;
+  }
+  .main {
+    margin-left: 0;
+    padding: 60px 20px 60px;
+    max-width: 100%;
+  }
+  .do-dont {
+    grid-template-columns: 1fr;
+  }
+  #theme-toggle {
+    right: 14px;
+    top: 16px;
+  }
+}
+</style>
+</head>
+<body>
+
+<!-- Theme Toggle -->
+<button id="theme-toggle" aria-label="Toggle theme" title="Toggle light/dark theme">&#9789;</button>
+
+<!-- Mobile Sidebar Toggle -->
+<button id="sidebar-toggle" aria-label="Toggle sidebar">&#9776;</button>
+
+<!-- Sidebar -->
+<nav class="sidebar" id="sidebar">
+  <div class="sidebar-header">
+    <h2>Go Guide</h2>
+    <div class="subtitle">Day 27 &mdash; 2026-07-02</div>
+  </div>
+
+  <div class="sidebar-section">
+    <div class="sidebar-section-title">Review (6 concepts)</div>
+    <a href="#pointers" class="sidebar-link">Pointers</a>
+    <a href="#bufio" class="sidebar-link">bufio: Buffered I/O</a>
+    <a href="#maps_slices_packages" class="sidebar-link">maps &amp; slices Packages</a>
+    <a href="#slog_advanced" class="sidebar-link">Advanced slog: Custom Handlers</a>
+    <a href="#integration_testing" class="sidebar-link">Integration Testing Patterns</a>
+    <a href="#wire_di" class="sidebar-link">Dependency Injection with Wire</a>
+  </div>
+
+  <div class="sidebar-section">
+    <div class="sidebar-section-title">Compression &amp; Binary Encoding (3)</div>
+    <a href="#compress_gzip" class="sidebar-link">compress/gzip</a>
+    <a href="#archive_zip" class="sidebar-link">archive/zip</a>
+    <a href="#encoding_hex" class="sidebar-link">encoding/hex</a>
+  </div>
+
+  <div class="sidebar-section">
+    <div class="sidebar-section-title">Web Server Building Blocks (2)</div>
+    <a href="#mime_multipart" class="sidebar-link">mime/multipart</a>
+    <a href="#httputil_proxy" class="sidebar-link">net/http/httputil</a>
+  </div>
+</nav>
+
+<!-- Main Content -->
+<div class="main">
+
+<h1 class="page-title">Go Daily Guide &mdash; 2026-07-02 (Day 27)</h1>
+<p class="page-subtitle">Day 27 &mdash; Thursday, July 2, 2026 &bull; 11 concepts (6 review + 5 new)</p>
+
+<!-- How to Use -->
+<div class="how-to-use">
+  <h3>How to Use This Guide</h3>
+  <ul>
+    <li>Start with the <strong>Review</strong> section &mdash; try to recall each concept before reading the refresher</li>
+    <li>Complete the challenge exercise for each review card without looking back at previous days</li>
+    <li>Then work through the <strong>New Concepts</strong> section, typing out every code example yourself</li>
+    <li>Pay special attention to the common mistakes sections (they highlight real Go gotchas)</li>
+    <li>Complete the exercises at the bottom of each concept without looking at solutions</li>
+    <li>Use <code>go run main.go</code> to test your code locally, or use the <a href="https://go.dev/play/" target="_blank">Go Playground</a></li>
+  </ul>
+</div>
+
+<!-- ============================================================ -->
+<!-- REVIEW SECTION -->
+<!-- ============================================================ -->
+<div class="section">
+  <span class="section-label review">Review</span>
+  <h2 class="section-title">Spaced Repetition Review &mdash; 6 Concepts</h2>
+
+  <!-- Review 1: Pointers -->
+  <div class="review-card" id="pointers">
+    <div class="review-header">
+      <h3>Pointers</h3>
+      <span class="review-meta">Go Foundations &bull; due today &bull; rep 3</span>
+    </div>
+
+    <h4>Quick Reminder</h4>
+    <p>A pointer holds the address of a value. <code>&amp;x</code> takes an address, <code>*p</code> dereferences it, and a <code>nil</code> pointer dereference panics. You pass a pointer when a function must <em>mutate</em> the caller's value or when copying a large struct is wasteful. <code>new(T)</code> allocates a zeroed <code>T</code> and returns a <code>*T</code>; <code>&amp;T{...}</code> does the same with an initializer. Go has no pointer arithmetic (that lives in <code>unsafe</code>), and the compiler's escape analysis decides stack vs heap for you.</p>
+
+    <h4>Key Pattern</h4>
+<pre>package main
+
+import "fmt"
+
+type Counter struct{ n int }
+
+// Pointer receiver: mutation is visible to the caller.
+func (c *Counter) Inc() { c.n++ }
+
+func zero(p *int) { *p = 0 } // writes through the pointer
+
+func main() {
+    c := Counter{}
+    c.Inc() // Go auto-takes &amp;c because Inc has a pointer receiver
+    c.Inc()
+    fmt.Println(c.n) // 2
+
+    x := 42
+    zero(&amp;x)
+    fmt.Println(x) // 0
+
+    var p *int
+    fmt.Println(p == nil) // true (dereferencing p here would panic)
+}</pre>
+    <div class="output-label">Output</div>
+    <div class="output">2
+0
+true</div>
+
+    <div class="exercise">
+      <div class="exercise-label">Challenge Exercise</div>
+      <p>Write <code>swap(a, b *int)</code> that exchanges two ints through their pointers, and a <code>func appendID(s *[]int, id int)</code> that appends to a slice via a pointer so the caller sees the grown slice header. Then explain the difference between a method with a <em>value</em> receiver called on an addressable variable vs an unaddressable map element (<code>m["k"].Inc()</code> won't compile for a pointer-receiver method) and why. Finally, describe when returning <code>&amp;T{}</code> from a constructor is fine even though the local "escapes" the function.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>#1 Pitfall:</strong> Taking the address of a loop variable (pre-Go 1.22) or of a map element. <code>&amp;m[k]</code> does not compile because map entries are not addressable, and storing <code>&amp;v</code> for a shared loop variable captured every iteration's final value. Copy into a fresh variable first, or index a slice (which <em>is</em> addressable).
+    </div>
+  </div>
+
+  <!-- Review 2: bufio -->
+  <div class="review-card" id="bufio">
+    <div class="review-header">
+      <h3>bufio: Buffered I/O</h3>
+      <span class="review-meta">I/O &amp; Networking &bull; overdue &bull; rep 1</span>
+    </div>
+
+    <h4>Quick Reminder</h4>
+    <p><code>bufio</code> wraps a <code>Reader</code>/<code>Writer</code> with an in-memory buffer so you make far fewer syscalls. <code>bufio.Scanner</code> is the idiomatic line/word reader &mdash; it splits input with a configurable <code>SplitFunc</code> (<code>ScanLines</code> by default) and hands you one token at a time. A <code>bufio.Writer</code> batches small writes; you <em>must</em> <code>Flush()</code> before the program exits or the tail of your output is lost.</p>
+
+    <h4>Key Pattern</h4>
+<pre>package main
+
+import (
+    "bufio"
+    "fmt"
+    "strings"
+)
+
+func main() {
+    input := "alpha\nbravo\ncharlie"
+    sc := bufio.NewScanner(strings.NewReader(input))
+    sc.Split(bufio.ScanLines) // default; shown for clarity
+
+    n := 0
+    for sc.Scan() {
+        n++
+        fmt.Printf("%d: %s\n", n, sc.Text())
+    }
+    if err := sc.Err(); err != nil { // Scan() returns false on EOF or error
+        panic(err)
+    }
+}</pre>
+    <div class="output-label">Output</div>
+    <div class="output">1: alpha
+2: bravo
+3: charlie</div>
+
+    <div class="exercise">
+      <div class="exercise-label">Challenge Exercise</div>
+      <p>Read a large text stream line by line and count word frequencies, using <code>bufio.Scanner</code> with <code>sc.Split(bufio.ScanWords)</code>. Then feed it a single line longer than <code>bufio.MaxScanTokenSize</code> (64 KiB) and observe the <code>bufio.ErrTooLong</code> error; fix it by calling <code>sc.Buffer(make([]byte, 0, 1&lt;&lt;20), 1&lt;&lt;20)</code>. Finally, write the counts through a <code>bufio.Writer</code> and prove that omitting <code>Flush()</code> drops output.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>#1 Pitfall:</strong> Forgetting <code>bufio.Writer.Flush()</code> (ideally <code>defer w.Flush()</code>), or ignoring <code>scanner.Err()</code> after the loop. A <code>for sc.Scan()</code> loop ends on both EOF <em>and</em> error &mdash; without checking <code>Err()</code> you silently treat a read failure as a clean end of input.
+    </div>
+  </div>
+
+  <!-- Review 3: maps & slices packages -->
+  <div class="review-card" id="maps_slices_packages">
+    <div class="review-header">
+      <h3>maps &amp; slices Packages (Go 1.21+)</h3>
+      <span class="review-meta">Modern Std Lib &bull; overdue &bull; rep 1</span>
+    </div>
+
+    <h4>Quick Reminder</h4>
+    <p>The generic <code>slices</code> and <code>maps</code> packages replace the copy-pasted helpers everyone used to hand-roll. <code>slices.Sort</code>, <code>slices.Contains</code>, <code>slices.Index</code>, <code>slices.Equal</code>, <code>slices.Clone</code>, and <code>slices.BinarySearch</code> cover the common slice chores; <code>maps.Clone</code>, <code>maps.Equal</code>, and <code>maps.DeleteFunc</code> do the same for maps. In Go 1.23, <code>maps.Keys</code>/<code>maps.Values</code> return <em>iterators</em>, which you materialize with <code>slices.Sorted</code> or <code>slices.Collect</code>.</p>
+
+    <h4>Key Pattern</h4>
+<pre>package main
+
+import (
+    "fmt"
+    "maps"
+    "slices"
+)
+
+func main() {
+    xs := []int{3, 1, 2, 1}
+    slices.Sort(xs)
+    fmt.Println(xs)                       // [1 1 2 3]
+    fmt.Println(slices.Contains(xs, 2))   // true
+    fmt.Println(slices.Index(xs, 3))      // 3
+
+    m := map[string]int{"b": 2, "a": 1, "c": 3}
+    // maps.Keys returns an iterator (Go 1.23); sort it deterministically.
+    keys := slices.Sorted(maps.Keys(m))
+    fmt.Println(keys)                     // [a b c]
+
+    clone := maps.Clone(m)
+    fmt.Println(maps.Equal(m, clone))     // true
+}</pre>
+    <div class="output-label">Output</div>
+    <div class="output">[1 1 2 3]
+true
+3
+[a b c]
+true</div>
+
+    <div class="exercise">
+      <div class="exercise-label">Challenge Exercise</div>
+      <p>Given <code>map[string][]int</code>, produce a slice of <code>{key, sum}</code> pairs sorted by descending sum with ties broken alphabetically, using <code>slices.SortFunc</code> with a <code>cmp.Or</code>-style comparator. Then use <code>slices.CompactFunc</code> to dedupe adjacent equal entries and <code>maps.DeleteFunc</code> to drop empty slices from the map. Explain why <code>slices.Clone</code> is a <em>shallow</em> copy and what that means for a <code>[][]int</code>.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>#1 Pitfall:</strong> Assuming <code>maps.Keys(m)</code> still returns a ready-made slice like the old <code>golang.org/x/exp/maps</code> did. In the standard library it is an <code>iter.Seq[K]</code> &mdash; passing it where a <code>[]K</code> is expected fails to compile. Wrap it: <code>slices.Collect(maps.Keys(m))</code> or <code>slices.Sorted(maps.Keys(m))</code>.
+    </div>
+  </div>
+
+  <!-- Review 4: slog advanced -->
+  <div class="review-card" id="slog_advanced">
+    <div class="review-header">
+      <h3>Advanced slog: Custom Handlers &amp; Contextual Logging</h3>
+      <span class="review-meta">Modern Std Lib &bull; overdue &bull; rep 1</span>
+    </div>
+
+    <h4>Quick Reminder</h4>
+    <p><code>log/slog</code> separates the <em>frontend</em> (<code>Logger</code>, which builds records) from the <em>backend</em> (<code>Handler</code>, which formats and emits them). <code>logger.With(...)</code> returns a child logger that stamps every line with shared attributes; <code>WithGroup</code> namespaces them. For request-scoped context you attach attributes via a custom handler that reads from <code>context.Context</code> in its <code>Handle</code> method &mdash; so a trace ID rides along without threading it through every call.</p>
+
+    <h4>Key Pattern</h4>
+<pre>package main
+
+import (
+    "log/slog"
+    "os"
+)
+
+func main() {
+    // JSON backend; swap for slog.NewTextHandler without touching call sites.
+    h := slog.NewJSONHandler(os.Stdout, &amp;slog.HandlerOptions{
+        Level: slog.LevelInfo,
+    })
+    base := slog.New(h)
+
+    // Child logger carries shared attributes on every subsequent line.
+    reqLog := base.With("request_id", "abc123", slog.String("svc", "api"))
+    reqLog.Info("handling", "path", "/users", "method", "GET")
+    reqLog.Warn("slow query", "ms", 812)
+}</pre>
+    <div class="output-label">Output</div>
+    <div class="output">{"time":"...","level":"INFO","msg":"handling","request_id":"abc123","svc":"api","path":"/users","method":"GET"}
+{"time":"...","level":"WARN","msg":"slow query","request_id":"abc123","svc":"api","ms":812}</div>
+
+    <div class="exercise">
+      <div class="exercise-label">Challenge Exercise</div>
+      <p>Write a <code>ContextHandler</code> that wraps a <code>slog.Handler</code> and, in <code>Handle</code>, pulls a <code>traceID</code> out of the <code>context.Context</code> and adds it as an attribute before delegating. Implement all four methods (<code>Enabled</code>, <code>Handle</code>, <code>WithAttrs</code>, <code>WithGroup</code>) by forwarding to the wrapped handler. Then set it as the default with <code>slog.SetDefault</code> and show that <code>slog.InfoContext(ctx, "msg")</code> now stamps every line with the trace ID. Explain why implementing <code>WithAttrs</code>/<code>WithGroup</code> correctly matters for performance.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>#1 Pitfall:</strong> Using odd numbers of loose key/value args &mdash; <code>logger.Info("msg", "key")</code> with no value. slog emits a <code>!BADKEY</code> attribute instead of failing. Prefer the typed constructors (<code>slog.String</code>, <code>slog.Int</code>, <code>slog.Any</code>) in hot or critical paths to make the key/value pairing compiler-visible.
+    </div>
+  </div>
+
+  <!-- Review 5: integration testing -->
+  <div class="review-card" id="integration_testing">
+    <div class="review-header">
+      <h3>Integration Testing Patterns</h3>
+      <span class="review-meta">Production Testing &bull; overdue &bull; rep 1</span>
+    </div>
+
+    <h4>Quick Reminder</h4>
+    <p>Integration tests exercise real collaborators &mdash; an actual HTTP server, a real database, the wired-together stack &mdash; rather than mocks. Keep them separate from fast unit tests with a build tag (<code>//go:build integration</code>) or a <code>testing.Short()</code> guard so <code>go test -short</code> skips them. <code>httptest.NewServer</code> spins up a real server on a random port; <code>TestMain</code> sets up and tears down shared resources (a container, a temp DB) once for the whole package.</p>
+
+    <h4>Key Pattern</h4>
+<pre>//go:build integration
+
+package api
+
+import (
+    "io"
+    "net/http"
+    "net/http/httptest"
+    "testing"
+)
+
+func TestHealth_Integration(t *testing.T) {
+    if testing.Short() {
+        t.Skip("skipping integration test in -short mode")
+    }
+    srv := httptest.NewServer(Handler()) // the real mux
+    defer srv.Close()
+
+    resp, err := http.Get(srv.URL + "/health")
+    if err != nil {
+        t.Fatal(err)
+    }
+    defer resp.Body.Close()
+
+    body, _ := io.ReadAll(resp.Body)
+    if got := string(body); got != "ok" {
+        t.Fatalf("health = %q, want ok", got)
+    }
+}</pre>
+
+    <div class="exercise">
+      <div class="exercise-label">Challenge Exercise</div>
+      <p>Stand up an integration test for a small JSON API: use <code>TestMain</code> to start a real dependency once (e.g. a temp SQLite file or a testcontainers Postgres), run <code>httptest.NewServer</code> against your actual router, POST a record, then GET it back and assert the round-trip. Gate the whole file with <code>//go:build integration</code> and run it via <code>go test -tags=integration ./...</code>. Explain why you seed and truncate the database in <code>t.Cleanup</code> rather than sharing state across subtests.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>#1 Pitfall:</strong> Mixing slow, external-dependency integration tests into the default <code>go test</code> run so every commit pays the cost and flakes on a missing service. Isolate them behind a build tag or <code>testing.Short()</code>, and make setup fail loudly (skip with a clear message) when the dependency is unavailable rather than passing silently.
+    </div>
+  </div>
+
+  <!-- Review 6: wire DI -->
+  <div class="review-card" id="wire_di">
+    <div class="review-header">
+      <h3>Dependency Injection with Wire</h3>
+      <span class="review-meta">Production Architecture &bull; overdue &bull; rep 1</span>
+    </div>
+
+    <h4>Quick Reminder</h4>
+    <p>Google's <code>wire</code> is <em>compile-time</em> dependency injection: you declare <em>providers</em> (constructors) and Wire generates the boilerplate that calls them in the right order. Unlike reflection-based DI containers, there is no runtime magic &mdash; the generated <code>wire_gen.go</code> is plain Go you can read, and a missing dependency is a build error, not a 3am panic. You write an <em>injector</em> stub guarded by <code>//go:build wireinject</code>; running <code>wire</code> fills in the real body.</p>
+
+    <h4>Key Pattern</h4>
+<pre>//go:build wireinject
+
+package main
+
+import "github.com/google/wire"
+
+// Providers: ordinary constructors.
+func NewConfig() *Config              { return &amp;Config{} }
+func NewDB(c *Config) *DB             { return &amp;DB{cfg: c} }
+func NewServer(db *DB) *Server        { return &amp;Server{db: db} }
+
+// Injector stub: wire replaces the body in wire_gen.go.
+func InitServer() *Server {
+    wire.Build(NewConfig, NewDB, NewServer)
+    return nil // overwritten by generated code
+}</pre>
+
+    <div class="exercise">
+      <div class="exercise-label">Challenge Exercise</div>
+      <p>Model a service with four providers where <code>Server</code> needs a <code>*DB</code> and a <code>*Cache</code>, and <code>*DB</code> needs a <code>*Config</code>. Group the infrastructure providers into a <code>wire.NewSet</code> and reference the set from the injector. Introduce a provider that returns <code>(T, error)</code> and show how the generated injector propagates that error. Then explain why Wire's compile-time approach catches a missing binding that a reflection-based container would only surface at runtime.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>#1 Pitfall:</strong> Editing <code>wire_gen.go</code> by hand or forgetting to re-run <code>wire</code> after changing a provider signature. The generated file is derived state &mdash; your edits vanish on the next generation, and a stale <code>wire_gen.go</code> silently wires the old graph. Regenerate in CI and fail if the working tree changes.
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- NEW CONCEPTS SECTION -->
+<!-- ============================================================ -->
+<div class="section">
+  <span class="section-label new">New</span>
+  <h2 class="section-title">New Concepts &mdash; 5 in 2 Sections</h2>
+
+  <h3 style="font-size:18px;margin:8px 0 18px;color:var(--muted);">Section 1 &mdash; Compression &amp; Binary Encoding</h3>
+
+  <!-- New 1: compress/gzip -->
+  <div class="concept" id="compress_gzip">
+    <div class="concept-header">
+      <h3>compress/gzip &amp; compress/flate: Streaming Compression</h3>
+      <span class="topic-badge">Std Lib</span>
+    </div>
+    <p class="why-matters">Why it matters: gzip is everywhere &mdash; HTTP response bodies, log rotation, <code>.gz</code> data files, backups. <code>compress/gzip</code> gives you a <code>Writer</code> that implements <code>io.Writer</code> and a <code>Reader</code> that implements <code>io.Reader</code>, so compression composes with <em>any</em> stream via <code>io.Copy</code> &mdash; a file, a network socket, an HTTP body &mdash; without buffering the whole payload in memory. Under the hood it wraps <code>compress/flate</code> (raw DEFLATE) and adds a gzip header, checksum, and length trailer.</p>
+
+    <h4>Compress then decompress a stream</h4>
+    <p>A <code>gzip.Writer</code> is an <code>io.WriteCloser</code>: write your bytes, then <code>Close()</code> to flush the trailer. Reading back is symmetric with <code>gzip.NewReader</code>.</p>
+<pre>package main
+
+import (
+    "bytes"
+    "compress/gzip"
+    "fmt"
+    "io"
+)
+
+func main() {
+    payload := []byte("hello, hello, hello, gophers")
+
+    // --- compress into an in-memory buffer ---
+    var buf bytes.Buffer
+    zw := gzip.NewWriter(&amp;buf)
+    zw.Name = "greeting.txt" // optional header metadata
+    if _, err := zw.Write(payload); err != nil {
+        panic(err)
+    }
+    if err := zw.Close(); err != nil { // MUST close to flush the trailer
+        panic(err)
+    }
+
+    // --- decompress it again ---
+    zr, err := gzip.NewReader(&amp;buf)
+    if err != nil {
+        panic(err)
+    }
+    out, _ := io.ReadAll(zr)
+    zr.Close()
+
+    fmt.Println(zr.Name)              // greeting.txt
+    fmt.Println(len(out), "bytes")    // 28 bytes
+    fmt.Println(string(out))          // hello, hello, hello, gophers
+}</pre>
+    <div class="output-label">Output</div>
+    <div class="output">greeting.txt
+28 bytes
+hello, hello, hello, gophers</div>
+
+    <h4>Choosing a compression level</h4>
+    <p><code>gzip.NewWriterLevel</code> trades speed for ratio. The named constants make intent explicit; <code>BestSpeed</code> for hot paths, <code>BestCompression</code> for archival.</p>
+<pre>package main
+
+import (
+    "bytes"
+    "compress/gzip"
+    "fmt"
+    "strings"
+)
+
+func main() {
+    data := []byte(strings.Repeat("go ", 1000)) // very compressible
+
+    var buf bytes.Buffer
+    zw, _ := gzip.NewWriterLevel(&amp;buf, gzip.BestCompression)
+    zw.Write(data)
+    zw.Close()
+
+    fmt.Println("original:  ", len(data)) // 3000
+    fmt.Println("compressed:", buf.Len() &lt; len(data)) // true
+}</pre>
+    <div class="output-label">Output</div>
+    <div class="output">original:   3000
+compressed: true</div>
+
+    <h4>Common Mistakes</h4>
+    <div class="do-dont">
+      <div class="dont-box">
+        <div class="label">Wrong</div>
+<pre>// Never closed -> the gzip trailer (CRC + size)
+// is never written; readers see "unexpected EOF".
+zw := gzip.NewWriter(&amp;buf)
+zw.Write(payload)
+zw.Flush()          // flushes data, NOT the trailer
+send(buf.Bytes())   // truncated / corrupt stream</pre>
+      </div>
+      <div class="do-box">
+        <div class="label">Right</div>
+<pre>zw := gzip.NewWriter(&amp;buf)
+zw.Write(payload)
+if err := zw.Close(); err != nil { // writes the trailer
+    return err
+}
+send(buf.Bytes())</pre>
+      </div>
+    </div>
+
+    <h4>Key Rules</h4>
+    <ul class="rules-list">
+      <li><code>gzip.Writer</code> is an <code>io.WriteCloser</code> &mdash; you <em>must</em> <code>Close()</code> (not just <code>Flush()</code>) to emit the CRC-32 and length trailer, or the archive is corrupt.</li>
+      <li>Compression composes with streams: <code>io.Copy(gzip.NewWriter(dst), src)</code> compresses a file or socket without loading it all into memory.</li>
+      <li>Pick a level with <code>NewWriterLevel</code> (<code>BestSpeed</code> &hellip; <code>BestCompression</code>, or <code>DefaultCompression</code>); reuse a writer across payloads with <code>Reset(w)</code> to avoid re-allocating.</li>
+      <li>Use <code>compress/flate</code> for raw DEFLATE (no gzip header), <code>compress/zlib</code> for the zlib wrapper; gzip is the right choice for files and HTTP.</li>
+    </ul>
+
+    <div class="exercise">
+      <div class="exercise-label">Practice Exercise</div>
+      <p>Write <code>gzipFile(src, dst string) error</code> that streams a file through <code>gzip.NewWriter</code> with <code>io.Copy</code> (never reading the whole file into memory) and a matching <code>gunzipFile</code>. Then build an HTTP middleware that wraps the <code>ResponseWriter</code> in a <code>gzip.Writer</code> when the request's <code>Accept-Encoding</code> contains <code>gzip</code>, setting <code>Content-Encoding: gzip</code> and closing the writer in a deferred call. Explain why you must <em>not</em> also set <code>Content-Length</code> and why a <code>sync.Pool</code> of gzip writers helps under load.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>Pitfall:</strong> Treating <code>Flush()</code> as a substitute for <code>Close()</code>. <code>Flush</code> pushes buffered <em>data</em> to the underlying writer so a reader can see it, but only <code>Close</code> writes the gzip footer. A stream that is flushed but never closed decompresses with <code>ErrUnexpectedEOF</code> or a CRC error. Always <code>defer zw.Close()</code> and check its error.
+    </div>
+
+    <div class="connection">
+      <strong>Connections:</strong> Builds directly on the <code>io.Reader</code>/<code>io.Writer</code> composition from the <code>io</code> package day; pairs with <a href="#archive_zip">archive/zip</a> (which uses DEFLATE per-entry) and with <code>net/http</code> transparent compression, and benefits from the <code>sync.Pool</code> allocation-reduction pattern.
+    </div>
+  </div>
+
+  <!-- New 2: archive/zip -->
+  <div class="concept" id="archive_zip">
+    <div class="concept-header">
+      <h3>archive/zip: Reading &amp; Writing ZIP Archives</h3>
+      <span class="topic-badge">Std Lib</span>
+    </div>
+    <p class="why-matters">Why it matters: ZIP is the universal container &mdash; <code>.xlsx</code>/<code>.docx</code> office files, <code>.jar</code>/<code>.apk</code> bundles, plugin packages, and plain "download everything as a zip" endpoints are all ZIP archives. Unlike gzip (a single compressed stream), a ZIP holds <em>many named entries</em> with a central directory, so you can list and extract individual files without decompressing the whole thing. <code>archive/zip</code> reads and writes them with a small, stream-friendly API.</p>
+
+    <h4>Writing a multi-file archive</h4>
+    <p>A <code>zip.Writer</code> wraps any <code>io.Writer</code>. Each <code>Create</code> (or <code>CreateHeader</code>) returns an <code>io.Writer</code> for that entry's bytes; <code>Close</code> writes the central directory.</p>
+<pre>package main
+
+import (
+    "archive/zip"
+    "bytes"
+    "fmt"
+)
+
+func main() {
+    var buf bytes.Buffer
+    zw := zip.NewWriter(&amp;buf)
+
+    files := map[string]string{
+        "readme.txt":    "hello, gopher",
+        "data/nums.txt": "1,2,3",
+    }
+    for name, body := range files {
+        w, _ := zw.Create(name) // name may include a path
+        w.Write([]byte(body))
+    }
+    if err := zw.Close(); err != nil { // finalizes the central directory
+        panic(err)
+    }
+    fmt.Println("archive bytes:", buf.Len() &gt; 0) // true
+}</pre>
+    <div class="output-label">Output</div>
+    <div class="output">archive bytes: true</div>
+
+    <h4>Reading entries back out</h4>
+    <p><code>zip.NewReader</code> needs the data and its length. Iterate <code>r.File</code>; each entry's <code>Open()</code> returns an <code>io.ReadCloser</code> for that file's contents.</p>
+<pre>package main
+
+import (
+    "archive/zip"
+    "bytes"
+    "fmt"
+    "io"
+)
+
+func main() {
+    // Build a tiny archive in memory (as above).
+    var buf bytes.Buffer
+    zw := zip.NewWriter(&amp;buf)
+    w1, _ := zw.Create("readme.txt")
+    w1.Write([]byte("hello, gopher"))
+    w2, _ := zw.Create("data/nums.txt")
+    w2.Write([]byte("1,2,3"))
+    zw.Close()
+
+    // Now read it.
+    r, _ := zip.NewReader(bytes.NewReader(buf.Bytes()), int64(buf.Len()))
+    for _, f := range r.File {
+        fmt.Printf("%-14s %d bytes\n", f.Name, f.UncompressedSize64)
+    }
+
+    rc, _ := r.File[0].Open()
+    body, _ := io.ReadAll(rc)
+    rc.Close()
+    fmt.Println("--", r.File[0].Name, "--")
+    fmt.Println(string(body))
+}</pre>
+    <div class="output-label">Output</div>
+    <div class="output">readme.txt     13 bytes
+data/nums.txt  5 bytes
+-- readme.txt --
+hello, gopher</div>
+
+    <h4>Common Mistakes</h4>
+    <div class="do-dont">
+      <div class="dont-box">
+        <div class="label">Wrong</div>
+<pre>// Extracting entry names straight onto disk lets a
+// malicious "../../etc/passwd" escape the target dir.
+for _, f := range r.File {
+    dst := filepath.Join(outDir, f.Name)
+    os.MkdirAll(filepath.Dir(dst), 0o755)
+    // ... write to dst   // Zip Slip vulnerability
+}</pre>
+      </div>
+      <div class="do-box">
+        <div class="label">Right</div>
+<pre>for _, f := range r.File {
+    dst := filepath.Join(outDir, f.Name)
+    if !strings.HasPrefix(dst,
+        filepath.Clean(outDir)+string(os.PathSeparator)) {
+        return fmt.Errorf("unsafe path: %s", f.Name)
+    }
+    // ... safe to write to dst
+}</pre>
+      </div>
+    </div>
+
+    <h4>Key Rules</h4>
+    <ul class="rules-list">
+      <li>Writing: <code>Create(name)</code> returns an <code>io.Writer</code> per entry; call <code>zw.Close()</code> exactly once at the end to write the central directory (missing it yields an unreadable file).</li>
+      <li>Reading: <code>zip.NewReader(readerAt, size)</code> or <code>zip.OpenReader(path)</code>; iterate <code>r.File</code>, and <code>f.Open()</code> each entry &mdash; remember to close every <code>ReadCloser</code>.</li>
+      <li>Use <code>CreateHeader</code> with a <code>zip.FileHeader</code> to control the per-entry compression <code>Method</code> (<code>zip.Store</code> vs <code>zip.Deflate</code>), modification time, and mode.</li>
+      <li>Always validate extracted paths against your output root (the "Zip Slip" defense) before writing entries to disk.</li>
+    </ul>
+
+    <div class="exercise">
+      <div class="exercise-label">Practice Exercise</div>
+      <p>Write <code>zipDir(srcDir, zipPath string) error</code> that walks a directory with <code>filepath.WalkDir</code> and adds every regular file under a relative path, then an <code>unzip(zipPath, outDir string) error</code> that extracts it with a Zip Slip guard. Serve a zip over HTTP by streaming a <code>zip.NewWriter</code> straight into the <code>http.ResponseWriter</code> (setting <code>Content-Type: application/zip</code>). Explain why <code>zip.Store</code> is preferable for already-compressed inputs (JPEGs, other zips) and how the central directory lets a reader seek to one entry without scanning the whole file.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>Pitfall:</strong> "Zip Slip." A crafted archive with entry names like <code>../../../etc/cron.d/x</code> will, if you blindly <code>filepath.Join(outDir, f.Name)</code> and write, land files outside your target directory. Always <code>filepath.Clean</code> and confirm the destination stays under <code>outDir</code> before creating any file &mdash; and reject absolute paths.
+    </div>
+
+    <div class="connection">
+      <strong>Connections:</strong> Shares DEFLATE with <a href="#compress_gzip">compress/gzip</a> but adds a multi-entry directory; a <code>zip.Reader</code> also satisfies <code>fs.FS</code>, so it plugs into the <code>io/fs</code> abstraction from yesterday; path validation reuses the <code>filepath</code> and <code>os.Root</code> hardening ideas.
+    </div>
+  </div>
+
+  <!-- New 3: encoding/hex -->
+  <div class="concept" id="encoding_hex">
+    <div class="concept-header">
+      <h3>encoding/hex: Hexadecimal Encoding</h3>
+      <span class="topic-badge">Std Lib</span>
+    </div>
+    <p class="why-matters">Why it matters: hex is the lingua franca for showing raw bytes as text &mdash; hashes (<code>sha256</code> digests), HMAC signatures, request IDs, wire dumps, and debugging binary protocols. <code>encoding/hex</code> converts <code>[]byte</code>&harr;hex string in both directions, offers streaming <code>Encoder</code>/<code>Decoder</code> for large data, and gives you <code>hex.Dump</code> &mdash; the classic <code>hexdump -C</code> view &mdash; for inspecting buffers.</p>
+
+    <h4>Encode, decode, and dump</h4>
+    <p>Each byte becomes two lowercase hex digits, so the string length is always <code>2 &times; len(bytes)</code>. <code>DecodeString</code> reverses it and errors on odd length or non-hex characters.</p>
+<pre>package main
+
+import (
+    "encoding/hex"
+    "fmt"
+)
+
+func main() {
+    data := []byte("Go!")
+
+    enc := hex.EncodeToString(data)
+    fmt.Println(enc) // 476f21
+
+    back, err := hex.DecodeString(enc)
+    if err != nil {
+        panic(err)
+    }
+    fmt.Println(string(back)) // Go!
+
+    // Human-friendly canonical dump (offset | hex | ASCII).
+    fmt.Print(hex.Dump([]byte("Gopher")))
+}</pre>
+    <div class="output-label">Output</div>
+    <div class="output">476f21
+Go!
+00000000  47 6f 70 68 65 72                                 |Gopher|
+</div>
+
+    <h4>A real use: printing a hash digest</h4>
+    <p>Hash functions return raw <code>[]byte</code>; you almost always render them as hex before logging or comparing.</p>
+<pre>package main
+
+import (
+    "crypto/sha256"
+    "encoding/hex"
+    "fmt"
+)
+
+func main() {
+    sum := sha256.Sum256([]byte("go")) // [32]byte
+    fmt.Println(hex.EncodeToString(sum[:]))
+}</pre>
+    <div class="output-label">Output</div>
+    <div class="output">4cd0e21a9a0795a14ec9aa5f0e7d1abff0492565770e43eafdf1e3e8afed1f33</div>
+
+    <h4>Common Mistakes</h4>
+    <div class="do-dont">
+      <div class="dont-box">
+        <div class="label">Wrong</div>
+<pre>// %x on a [N]byte array formats the array, and
+// discarding the decode error hides bad input.
+sum := sha256.Sum256(data)
+s := fmt.Sprintf("%v", sum) // [251 53 ...] not hex!
+raw, _ := hex.DecodeString(userInput) // silent on error</pre>
+      </div>
+      <div class="do-box">
+        <div class="label">Right</div>
+<pre>sum := sha256.Sum256(data)
+s := hex.EncodeToString(sum[:]) // slice the array first
+raw, err := hex.DecodeString(userInput)
+if err != nil {
+    return fmt.Errorf("bad hex: %w", err)
+}</pre>
+      </div>
+    </div>
+
+    <h4>Key Rules</h4>
+    <ul class="rules-list">
+      <li><code>hex.EncodeToString(b)</code> / <code>hex.DecodeString(s)</code> are the everyday pair; output is lowercase and exactly twice the byte length.</li>
+      <li>Decoding fails on an odd-length string (<code>hex.ErrLength</code>) or any non-<code>[0-9a-fA-F]</code> byte &mdash; always check the error on untrusted input.</li>
+      <li>For streams use <code>hex.NewEncoder(w)</code>/<code>hex.NewDecoder(r)</code> so you never hold the whole hex string in memory; <code>hex.Dump</code> is for human debugging, not for wire format.</li>
+      <li>To render a fixed-size array (like a <code>[32]byte</code> digest), slice it first: <code>hex.EncodeToString(sum[:])</code>. <code>fmt.Sprintf("%x", b)</code> also works for a quick inline hex string.</li>
+    </ul>
+
+    <div class="exercise">
+      <div class="exercise-label">Practice Exercise</div>
+      <p>Write <code>fingerprint(r io.Reader) (string, error)</code> that streams data through a <code>sha256.New()</code> hash (via <code>io.Copy</code>) and returns the hex digest &mdash; without buffering the input. Then write a tiny <code>hexdump</code> CLI that reads stdin and prints <code>hex.Dump</code> output. Finally, compare <code>hex</code> against <code>encoding/base64</code>: encode the same 32-byte digest both ways and explain when you'd choose hex (readability, fixed 2&times; size, case-insensitive) versus base64 (33% smaller, URL-safe variant).</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>Pitfall:</strong> Formatting a byte array with <code>%v</code> or <code>Sprintf</code> without <code>%x</code> and getting a decimal slice like <code>[251 53 245 ...]</code> instead of a hex digest &mdash; then storing or comparing that. Use <code>hex.EncodeToString(sum[:])</code> (or <code>%x</code>) and remember a <code>[N]byte</code> array must be sliced to <code>[]byte</code> before most byte APIs accept it.
+    </div>
+
+    <div class="connection">
+      <strong>Connections:</strong> The text-rendering counterpart to <code>encoding/base64</code> and <code>encoding/gob</code>; pairs with the <code>crypto</code> hashing packages and with <code>hash/fnv</code>/<code>crc32</code> from earlier days, and its streaming encoder mirrors the <code>io</code>-composition pattern used by <a href="#compress_gzip">gzip</a>.
+    </div>
+  </div>
+
+  <h3 style="font-size:18px;margin:28px 0 18px;color:var(--muted);">Section 2 &mdash; Web Server Building Blocks</h3>
+
+  <!-- New 4: mime/multipart -->
+  <div class="concept" id="mime_multipart">
+    <div class="concept-header">
+      <h3>mime/multipart: File Uploads &amp; Form Data</h3>
+      <span class="topic-badge">Std Lib</span>
+    </div>
+    <p class="why-matters">Why it matters: HTML file uploads and many API clients send <code>multipart/form-data</code> &mdash; several named parts (form fields and files) packed into one body separated by a boundary string. <code>mime/multipart</code> both <em>writes</em> such bodies (for a client uploading a file) and <em>reads</em> them (for a server handling an upload). <code>net/http</code> builds on it: <code>r.FormFile</code> and <code>r.ParseMultipartForm</code> are thin wrappers over this package.</p>
+
+    <h4>Writing a multipart body</h4>
+    <p>A <code>multipart.Writer</code> generates the boundary and formats each part. Add plain fields with <code>WriteField</code> and file parts with <code>CreateFormFile</code>; <code>Close()</code> writes the terminating boundary. Grab <code>FormDataContentType()</code> for the request's <code>Content-Type</code> header.</p>
+<pre>package main
+
+import (
+    "bytes"
+    "fmt"
+    "io"
+    "mime/multipart"
+)
+
+func main() {
+    var body bytes.Buffer
+    w := multipart.NewWriter(&amp;body)
+
+    w.WriteField("user", "ada")             // a normal form field
+    fw, _ := w.CreateFormFile("doc", "hello.txt") // a file part
+    fw.Write([]byte("file body"))
+    w.Close()                               // MUST close to finish the body
+
+    // The matching header a client would send:
+    fmt.Println("Content-Type prefix:",
+        w.FormDataContentType()[:30]) // multipart/form-data; boundary=
+
+    // Read it back with the same boundary.
+    r := multipart.NewReader(&amp;body, w.Boundary())
+    for {
+        part, err := r.NextPart()
+        if err == io.EOF {
+            break
+        }
+        data, _ := io.ReadAll(part)
+        fmt.Printf("%s (file=%q): %s\n",
+            part.FormName(), part.FileName(), data)
+    }
+}</pre>
+    <div class="output-label">Output</div>
+    <div class="output">Content-Type prefix: multipart/form-data; boundary=
+user (file=""): ada
+doc (file="hello.txt"): file body</div>
+
+    <h4>Server side: handling an upload</h4>
+    <p>In an <code>http.Handler</code>, <code>ParseMultipartForm</code> buffers small parts in memory and spills large ones to temp files; <code>FormFile</code> hands you the file plus its header.</p>
+<pre>func upload(w http.ResponseWriter, r *http.Request) {
+    // Up to 10 MiB kept in memory; the rest spills to disk.
+    if err := r.ParseMultipartForm(10 &lt;&lt; 20); err != nil {
+        http.Error(w, err.Error(), http.StatusBadRequest)
+        return
+    }
+    file, header, err := r.FormFile("doc")
+    if err != nil {
+        http.Error(w, "missing file", http.StatusBadRequest)
+        return
+    }
+    defer file.Close()
+
+    fmt.Fprintf(w, "got %s (%d bytes), user=%s",
+        header.Filename, header.Size, r.FormValue("user"))
+}</pre>
+
+    <h4>Common Mistakes</h4>
+    <div class="do-dont">
+      <div class="dont-box">
+        <div class="label">Wrong</div>
+<pre>// Boundary set by hand / writer never closed ->
+// the server can't find the final boundary.
+w := multipart.NewWriter(&amp;body)
+w.CreateFormFile("doc", "a.txt")
+// forgot w.Close()
+req.Header.Set("Content-Type", "multipart/form-data")</pre>
+      </div>
+      <div class="do-box">
+        <div class="label">Right</div>
+<pre>w := multipart.NewWriter(&amp;body)
+fw, _ := w.CreateFormFile("doc", "a.txt")
+fw.Write(content)
+w.Close() // writes the closing boundary
+req.Header.Set("Content-Type", w.FormDataContentType())</pre>
+      </div>
+    </div>
+
+    <h4>Key Rules</h4>
+    <ul class="rules-list">
+      <li>Always <code>Close()</code> the <code>multipart.Writer</code> &mdash; it emits the closing boundary; an unclosed body is malformed and rejected by the receiver.</li>
+      <li>Set the request header from <code>w.FormDataContentType()</code>, never a hand-typed string &mdash; it carries the exact generated boundary.</li>
+      <li>On the server, bound memory with <code>ParseMultipartForm(maxMemory)</code> (larger parts stream to temp files) and always close the returned files; call <code>r.MultipartForm.RemoveAll()</code> to clean up temp files.</li>
+      <li>For huge uploads, read part-by-part with <code>r.MultipartReader()</code> instead of <code>ParseMultipartForm</code> so nothing large is buffered at once.</li>
+    </ul>
+
+    <div class="exercise">
+      <div class="exercise-label">Practice Exercise</div>
+      <p>Build a client function <code>postFile(url, field, filename string, data []byte) (*http.Response, error)</code> that constructs a multipart body, sets the content type from <code>FormDataContentType()</code>, and POSTs it. Then write the matching handler that saves the upload to a temp dir and returns its size, and test the pair with <code>httptest.NewServer</code>. Finally, switch the handler to a streaming <code>r.MultipartReader()</code> loop and explain how it caps memory for a multi-gigabyte upload compared with <code>ParseMultipartForm</code>.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>Pitfall:</strong> Reusing the same field/boundary by hand or forgetting <code>Close()</code>. Without the closing boundary the server's parser returns <code>io.ErrUnexpectedEOF</code> or "multipart: NextPart: EOF"; with a hand-written <code>Content-Type</code> the declared boundary won't match the body's actual boundary and <em>no</em> parts are found. Let the writer own the boundary end to end.
+    </div>
+
+    <div class="connection">
+      <strong>Connections:</strong> The machinery behind <code>net/http</code>'s <code>FormFile</code>/<code>ParseMultipartForm</code>; parts are <code>io.Reader</code>s so they compose with <a href="#compress_gzip">gzip</a> and <a href="#encoding_hex">hashing</a>, and testing the round-trip reuses the <code>httptest</code> patterns from the <a href="#integration_testing">integration testing</a> review.
+    </div>
+  </div>
+
+  <!-- New 5: net/http/httputil -->
+  <div class="concept" id="httputil_proxy">
+    <div class="concept-header">
+      <h3>net/http/httputil: Reverse Proxy &amp; Debug Dumps</h3>
+      <span class="topic-badge">Std Lib</span>
+    </div>
+    <p class="why-matters">Why it matters: you rarely need nginx to put a Go service behind a proxy &mdash; <code>httputil.ReverseProxy</code> is a production-grade reverse proxy in the standard library, powering API gateways, load balancers, and local dev routers in a few lines. The same package's <code>DumpRequest</code>/<code>DumpResponse</code> helpers serialize a request or response to bytes for logging and debugging. It's the "glue" layer on top of <code>net/http</code>.</p>
+
+    <h4>A one-host reverse proxy</h4>
+    <p><code>NewSingleHostReverseProxy(target)</code> returns an <code>http.Handler</code> that forwards every request to <code>target</code>, copying headers, streaming the body, and rewriting the <code>Host</code>. Mount it like any handler.</p>
+<pre>package main
+
+import (
+    "fmt"
+    "io"
+    "net/http"
+    "net/http/httptest"
+    "net/http/httputil"
+    "net/url"
+)
+
+func main() {
+    // A backend we'll proxy to.
+    backend := httptest.NewServer(http.HandlerFunc(
+        func(w http.ResponseWriter, r *http.Request) {
+            fmt.Fprintf(w, "backend saw %s", r.URL.Path)
+        }))
+    defer backend.Close()
+
+    target, _ := url.Parse(backend.URL)
+    proxy := httputil.NewSingleHostReverseProxy(target)
+
+    // The proxy is just an http.Handler.
+    front := httptest.NewServer(proxy)
+    defer front.Close()
+
+    resp, _ := http.Get(front.URL + "/api/health")
+    body, _ := io.ReadAll(resp.Body)
+    resp.Body.Close()
+    fmt.Println(string(body)) // backend saw /api/health
+}</pre>
+    <div class="output-label">Output</div>
+    <div class="output">backend saw /api/health</div>
+
+    <h4>Customizing: rewrite the request, modify the response</h4>
+    <p>Use <code>Rewrite</code> (Go 1.20+) to reshape the outbound request and <code>ModifyResponse</code> to touch what comes back &mdash; add headers, strip a path prefix, inject auth.</p>
+<pre>package main
+
+import (
+    "fmt"
+    "net/http"
+    "net/http/httptest"
+    "net/http/httputil"
+    "net/url"
+)
+
+func main() {
+    backend := httptest.NewServer(http.HandlerFunc(
+        func(w http.ResponseWriter, r *http.Request) {
+            w.Write([]byte("ok"))
+        }))
+    defer backend.Close()
+    target, _ := url.Parse(backend.URL)
+
+    proxy := httputil.NewSingleHostReverseProxy(target)
+    proxy.ModifyResponse = func(resp *http.Response) error {
+        resp.Header.Set("X-Proxied-By", "go-guide")
+        return nil
+    }
+
+    front := httptest.NewServer(proxy)
+    defer front.Close()
+
+    resp, _ := http.Get(front.URL)
+    resp.Body.Close()
+    fmt.Println(resp.Header.Get("X-Proxied-By")) // go-guide
+}</pre>
+    <div class="output-label">Output</div>
+    <div class="output">go-guide</div>
+
+    <h4>Common Mistakes</h4>
+    <div class="do-dont">
+      <div class="dont-box">
+        <div class="label">Wrong</div>
+<pre>// Sharing the default transport's problems, and
+// swallowing backend failures with no ErrorHandler:
+// a dead backend returns a bare 502 with no context.
+proxy := httputil.NewSingleHostReverseProxy(target)
+http.ListenAndServe(":8080", proxy) // no timeouts, no logging</pre>
+      </div>
+      <div class="do-box">
+        <div class="label">Right</div>
+<pre>proxy := httputil.NewSingleHostReverseProxy(target)
+proxy.ErrorHandler = func(w http.ResponseWriter,
+    r *http.Request, err error) {
+    log.Printf("proxy %s: %v", r.URL.Path, err)
+    http.Error(w, "upstream unavailable",
+        http.StatusBadGateway)
+}
+srv := &amp;http.Server{Addr: ":8080", Handler: proxy,
+    ReadHeaderTimeout: 5 * time.Second}</pre>
+      </div>
+    </div>
+
+    <h4>Key Rules</h4>
+    <ul class="rules-list">
+      <li><code>ReverseProxy</code> is an <code>http.Handler</code> &mdash; compose it with your mux and middleware; <code>NewSingleHostReverseProxy</code> is the quick path, a hand-built <code>&amp;ReverseProxy{Rewrite: ...}</code> gives full control.</li>
+      <li>Set <code>ErrorHandler</code> so a failing upstream produces a logged, well-formed 502 instead of a bare default; set <code>ModifyResponse</code> to rewrite headers/bodies on the way out.</li>
+      <li>Give the proxy a custom <code>Transport</code> with sane timeouts and connection pooling; the zero-value default has no request timeout.</li>
+      <li><code>httputil.DumpRequest</code>/<code>DumpRequestOut</code>/<code>DumpResponse</code> render messages to <code>[]byte</code> for logging &mdash; pass <code>body=false</code> to skip large payloads.</li>
+    </ul>
+
+    <div class="exercise">
+      <div class="exercise-label">Practice Exercise</div>
+      <p>Build a path-based router-proxy: requests to <code>/a/*</code> go to backend A and <code>/b/*</code> to backend B, each via its own <code>ReverseProxy</code>, using two <code>httptest</code> backends to verify routing. Add an <code>ErrorHandler</code> that returns 502 with a JSON body and a <code>ModifyResponse</code> that stamps a <code>X-Upstream</code> header. Then add request logging with <code>httputil.DumpRequest(r, false)</code>. Explain why you should give the proxy an explicit <code>http.Transport</code> with timeouts rather than relying on the default, and how <code>Rewrite</code> differs from the older <code>Director</code>.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>Pitfall:</strong> Running a <code>ReverseProxy</code> with the default (zero) <code>Transport</code> and no <code>ErrorHandler</code> in production. The default transport has no overall request timeout, so a slow or dead backend ties up goroutines and file descriptors, and without an <code>ErrorHandler</code> clients get an opaque 502. Always configure timeouts and a logging error handler for any internet-facing proxy.
+    </div>
+
+    <div class="connection">
+      <strong>Connections:</strong> Sits on top of the <code>net/http</code> <code>Handler</code>/<code>Transport</code> model and composes with the middleware-chain pattern; its debug dumps complement structured logging (see <a href="#slog_advanced">slog</a>), and testing it reuses the <code>httptest</code> approach from <a href="#integration_testing">integration testing</a>.
+    </div>
+  </div>
+
+</div><!-- end New Concepts section -->
+
+
+<!-- ============================================================ -->
+<!-- FOOTER -->
+<!-- ============================================================ -->
+<footer class="footer">
+  <h4>All Go Guides</h4>
+  <ul>
+    <li><a href="golang-guides/golang-guide-2026-07-09.html">Day 34 &mdash; 2026-07-09</a></li>
+    <li><a href="golang-guides/golang-guide-2026-07-08.html">Day 33 &mdash; 2026-07-08</a></li>
+    <li><a href="golang-guides/golang-guide-2026-07-07.html">Day 32 &mdash; 2026-07-07</a></li>
+    <li><a href="golang-guides/golang-guide-2026-07-06.html">Day 31 &mdash; 2026-07-06</a></li>
+    <li><a href="golang-guides/golang-guide-2026-07-05.html">Day 30 &mdash; 2026-07-05</a></li>
+    <li><a href="golang-guides/golang-guide-2026-07-04.html">Day 29 &mdash; 2026-07-04</a></li>
+    <li><a href="golang-guides/golang-guide-2026-07-03.html">Day 28 &mdash; 2026-07-03</a></li>
+    <li class="current">Day 27 &mdash; 2026-07-02 (current)</li>
+    <li><a href="golang-guides/golang-guide-2026-07-01.html">Day 26 &mdash; 2026-07-01</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-30.html">Day 25 &mdash; 2026-06-30</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-29.html">Day 24 &mdash; 2026-06-29</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-28.html">Day 23 &mdash; 2026-06-28</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-27.html">Day 22 &mdash; 2026-06-27</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-26.html">Day 21 &mdash; 2026-06-26</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-25.html">Day 20 &mdash; 2026-06-25</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-24.html">Day 19 &mdash; 2026-06-24</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-23.html">Day 18 &mdash; 2026-06-23</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-22.html">Day 17 &mdash; 2026-06-22</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-21.html">Day 16 &mdash; 2026-06-21</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-19.html">Day 15 &mdash; 2026-06-19</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-18.html">Day 14 &mdash; 2026-06-18</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-17.html">Day 13 &mdash; 2026-06-17</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-15.html">Day 12 &mdash; 2026-06-15</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-13.html">Day 11 &mdash; 2026-06-13</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-12.html">Day 10 &mdash; 2026-06-12</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-11.html">Day 9 &mdash; 2026-06-11</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-10.html">Day 8 &mdash; 2026-06-10</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-09.html">Day 7 &mdash; 2026-06-09</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-08.html">Day 6 &mdash; 2026-06-08</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-07.html">Day 5 &mdash; 2026-06-07</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-05.html">Day 4 &mdash; 2026-06-05</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-04.html">Day 3 &mdash; 2026-06-04</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-03.html">Day 2 &mdash; 2026-06-03</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-02.html">Day 1 &mdash; 2026-06-02</a></li>
+  </ul>
+
+  <h4 style="margin-top: 20px;">All Guides</h4>
+  <ul>
+    <li><a href="guide.html">LeetCode Study Guide</a></li>
+    <li><a href="lang-guide.html">Multi-Language Guide</a></li>
+    <li><a href="python-guide.html">Python Guide</a></li>
+    <li><a href="typescript-guide.html">TypeScript Guide</a></li>
+    <li><a href="javascript-guide.html">JavaScript Guide</a></li>
+    <li><a href="golang-guide.html">Go Guide (current)</a></li>
+    <li><a href="report.html">Performance Report</a></li>
+  </ul>
+</footer>
+
+</div><!-- end main -->
+
+<script>
+// ===== Theme Toggle =====
+(function() {
+  var KEY = 'lc-goguide-theme';
+  var toggle = document.getElementById('theme-toggle');
+  var html = document.documentElement;
+
+  function setTheme(theme) {
+    html.setAttribute('data-theme', theme);
+    localStorage.setItem(KEY, theme);
+    toggle.textContent = theme === 'dark' ? '☽' : '☀';
+  }
+
+  var saved = localStorage.getItem(KEY) || 'dark';
+  setTheme(saved);
+
+  toggle.addEventListener('click', function() {
+    setTheme(html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
+  });
+})();
+
+// ===== Mobile Sidebar Toggle =====
+(function() {
+  var btn = document.getElementById('sidebar-toggle');
+  var sidebar = document.getElementById('sidebar');
+
+  btn.addEventListener('click', function() {
+    sidebar.classList.toggle('open');
+  });
+
+  // Close sidebar when clicking a link (mobile)
+  sidebar.querySelectorAll('.sidebar-link').forEach(function(link) {
+    link.addEventListener('click', function() {
+      if (window.innerWidth <= 900) {
+        sidebar.classList.remove('open');
+      }
+    });
+  });
+})();
+
+// ===== Active Sidebar Link on Scroll =====
+(function() {
+  var links = document.querySelectorAll('.sidebar-link');
+  var sections = [];
+
+  links.forEach(function(link) {
+    var id = link.getAttribute('href').replace('#', '');
+    var el = document.getElementById(id);
+    if (el) sections.push({ id: id, el: el, link: link });
+  });
+
+  function onScroll() {
+    var scrollTop = window.scrollY + 120;
+    var current = null;
+
+    for (var i = sections.length - 1; i >= 0; i--) {
+      if (sections[i].el.offsetTop <= scrollTop) {
+        current = sections[i];
+        break;
+      }
+    }
+
+    links.forEach(function(l) { l.classList.remove('active'); });
+    if (current) current.link.classList.add('active');
+  }
+
+  window.addEventListener('scroll', onScroll);
+  onScroll();
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,1749 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TypeScript Daily Guide — 2026-05-31 (Day 1)</title>
+<style>
+:root {
+  --bg: #0d1117;
+  --surface: #161b22;
+  --surface2: #1c2129;
+  --border: #30363d;
+  --text: #e6edf3;
+  --text-muted: #8b949e;
+  --accent: #58a6ff;
+  --accent-bg: rgba(56,139,253,0.15);
+  --green: #3fb950;
+  --green-bg: rgba(63,185,80,0.08);
+  --red: #f85149;
+  --red-bg: rgba(248,81,73,0.08);
+  --yellow: #d29922;
+  --yellow-bg: rgba(210,153,34,0.1);
+  --orange: #db6d28;
+  --purple: #bc8cff;
+  --link: #58a6ff;
+  --code-bg: #1c2129;
+  --output-bg: #0e1c0e;
+  --output-border: #1a3a1a;
+  --sidebar-bg: #161b22;
+  --sidebar-active: rgba(56,139,253,0.15);
+  --exercise-border: #30363d;
+}
+[data-theme="light"] {
+  --bg: #ffffff;
+  --surface: #f6f8fa;
+  --surface2: #eef1f5;
+  --border: #d0d7de;
+  --text: #1f2328;
+  --text-muted: #656d76;
+  --accent: #0969da;
+  --accent-bg: rgba(9,105,218,0.1);
+  --green: #1a7f37;
+  --green-bg: rgba(26,127,55,0.06);
+  --red: #cf222e;
+  --red-bg: rgba(207,34,46,0.06);
+  --yellow: #9a6700;
+  --yellow-bg: rgba(154,103,0,0.06);
+  --orange: #bc4c00;
+  --purple: #8250df;
+  --link: #0969da;
+  --code-bg: #eef1f5;
+  --output-bg: #f0faf0;
+  --output-border: #c6e6c6;
+  --sidebar-bg: #f6f8fa;
+  --sidebar-active: rgba(9,105,218,0.1);
+  --exercise-border: #d0d7de;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;font-size:16px;line-height:1.7;color:var(--text);background:var(--bg);display:flex;min-height:100vh}
+a{color:var(--link);text-decoration:none}
+a:hover{text-decoration:underline}
+
+/* Sidebar */
+.sidebar{position:fixed;top:0;left:0;width:300px;height:100vh;background:var(--sidebar-bg);border-right:1px solid var(--border);overflow-y:auto;padding:20px 0;z-index:100}
+.sidebar-header{padding:16px 20px;border-bottom:1px solid var(--border);margin-bottom:12px}
+.sidebar-header h2{font-size:15px;font-weight:600;color:var(--text)}
+.sidebar-header .date{font-size:13px;color:var(--text-muted);margin-top:2px}
+.sidebar-section{padding:8px 20px 4px;font-size:12px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px}
+.sidebar-nav{list-style:none;padding:0}
+.sidebar-nav li a{display:block;padding:6px 20px 6px 28px;font-size:14px;color:var(--text-muted);transition:all 0.15s}
+.sidebar-nav li a:hover,.sidebar-nav li a.active{color:var(--accent);background:var(--sidebar-active);text-decoration:none}
+.sidebar-nav li a .nav-id{font-size:11px;color:var(--text-muted);opacity:0.6;margin-left:6px}
+
+/* Main */
+.main{margin-left:300px;flex:1;padding:40px;max-width:1160px}
+.content{max-width:860px;margin:0 auto}
+
+/* Theme Toggle */
+.theme-toggle{position:fixed;top:16px;right:20px;z-index:200;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:8px 12px;cursor:pointer;color:var(--text);font-size:18px;line-height:1;transition:all 0.15s}
+.theme-toggle:hover{border-color:var(--accent)}
+
+/* Header */
+.guide-header{text-align:center;padding:32px 0 40px;border-bottom:1px solid var(--border);margin-bottom:40px}
+.guide-header h1{font-size:28px;font-weight:700;margin-bottom:8px}
+.guide-header .meta{font-size:15px;color:var(--text-muted)}
+.guide-header .meta span{margin:0 8px}
+.badge{display:inline-block;padding:2px 10px;border-radius:12px;font-size:13px;font-weight:500}
+.badge-blue{background:var(--accent-bg);color:var(--accent)}
+
+/* How To Use */
+.how-to-use{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:24px 28px;margin-bottom:40px}
+.how-to-use h2{font-size:18px;margin-bottom:12px}
+.how-to-use ol{padding-left:24px}
+.how-to-use li{margin-bottom:6px;color:var(--text-muted)}
+
+/* Topic Section */
+.topic-section{margin-bottom:48px}
+.topic-section-header{font-size:22px;font-weight:700;padding-bottom:12px;border-bottom:2px solid var(--accent);margin-bottom:28px;display:flex;align-items:center;gap:12px}
+.topic-section-header .section-num{background:var(--accent);color:#fff;width:32px;height:32px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:15px;font-weight:700;flex-shrink:0}
+
+/* Concept Card */
+.concept-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:28px;margin-bottom:32px}
+.concept-header{display:flex;align-items:center;gap:12px;margin-bottom:16px;flex-wrap:wrap}
+.concept-title{font-size:20px;font-weight:700}
+.ttag{display:inline-block;padding:2px 10px;border-radius:12px;font-size:12px;font-weight:500;background:var(--accent-bg);color:var(--accent)}
+.why-matters{color:var(--text-muted);font-style:italic;margin-bottom:20px;padding-left:14px;border-left:3px solid var(--accent)}
+.explanation{margin-bottom:20px;line-height:1.8}
+.explanation p{margin-bottom:12px}
+.explanation ul,.explanation ol{padding-left:24px;margin-bottom:12px}
+.explanation li{margin-bottom:4px}
+.explanation code{background:var(--code-bg);padding:2px 6px;border-radius:4px;font-family:'SF Mono','Fira Code','Consolas',monospace;font-size:14px}
+
+/* Code Examples */
+.code-example{margin-bottom:20px;border:1px solid var(--border);border-radius:8px;overflow:hidden}
+.lang-badge{background:var(--surface2);color:var(--text-muted);font-size:12px;font-weight:600;padding:6px 14px;border-bottom:1px solid var(--border);font-family:'SF Mono','Fira Code','Consolas',monospace}
+pre{margin:0;padding:16px;overflow-x:auto;background:var(--code-bg);font-family:'SF Mono','Fira Code','Consolas',monospace;font-size:13.5px;line-height:1.6}
+pre code{background:none;padding:0;font-size:inherit}
+.output{background:var(--output-bg);border-top:1px solid var(--output-border);padding:12px 16px;font-family:'SF Mono','Fira Code','Consolas',monospace;font-size:13px;color:var(--green)}
+.output::before{content:"Output:";display:block;font-size:11px;font-weight:600;color:var(--text-muted);margin-bottom:4px;text-transform:uppercase;letter-spacing:0.5px}
+.type-error{background:var(--red-bg);border-top:1px solid rgba(248,81,73,0.2);padding:12px 16px;font-family:'SF Mono','Fira Code','Consolas',monospace;font-size:13px;color:var(--red)}
+.type-error::before{content:"Type Error:";display:block;font-size:11px;font-weight:600;color:var(--red);margin-bottom:4px;text-transform:uppercase;letter-spacing:0.5px}
+
+/* Callouts */
+.callout-warning{background:var(--yellow-bg);border:1px solid rgba(210,153,34,0.2);border-radius:8px;padding:20px;margin-bottom:20px}
+.callout-warning strong{color:var(--yellow);display:block;margin-bottom:12px;font-size:16px}
+.mistake,.correct{padding:10px 14px;border-radius:6px;margin-bottom:10px;font-size:14px;line-height:1.6}
+.mistake{background:var(--red-bg);border-left:3px solid var(--red)}
+.mistake code,.correct code{background:var(--code-bg);padding:2px 6px;border-radius:4px;font-family:'SF Mono','Fira Code','Consolas',monospace;font-size:13px}
+.correct{background:var(--green-bg);border-left:3px solid var(--green)}
+
+/* Key Rules */
+.key-rules{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:20px;margin-bottom:20px}
+.key-rules strong{display:block;margin-bottom:10px;font-size:16px}
+.key-rules ul{padding-left:20px}
+.key-rules li{margin-bottom:6px}
+.key-rules code{background:var(--code-bg);padding:2px 6px;border-radius:4px;font-family:'SF Mono','Fira Code','Consolas',monospace;font-size:13px}
+
+/* Exercises */
+.exercises{border:2px dashed var(--exercise-border);border-radius:8px;padding:20px;margin-bottom:20px;margin-left:12px}
+.exercises strong{display:block;margin-bottom:14px;font-size:16px;color:var(--purple)}
+.exercise{margin-bottom:14px;padding-left:38px;position:relative;line-height:1.6}
+.exercise:last-child{margin-bottom:0}
+.exercise-num{position:absolute;left:0;top:2px;background:var(--purple);color:#fff;width:24px;height:24px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:12px;font-weight:700}
+.exercise code{background:var(--code-bg);padding:2px 6px;border-radius:4px;font-family:'SF Mono','Fira Code','Consolas',monospace;font-size:13px}
+
+/* Connections */
+.connections{background:var(--accent-bg);border:1px solid rgba(56,139,253,0.2);border-radius:8px;padding:16px 20px;font-size:14px;color:var(--text-muted)}
+.connections strong{color:var(--accent);margin-right:6px}
+
+/* Footer */
+.guide-footer{border-top:1px solid var(--border);padding-top:32px;margin-top:48px}
+.guide-footer h2{font-size:18px;margin-bottom:16px}
+.guide-footer ul{list-style:none;padding:0}
+.guide-footer li{padding:6px 0}
+.guide-footer li a{font-weight:500}
+
+/* Responsive */
+@media(max-width:900px){
+  .sidebar{display:none}
+  .main{margin-left:0}
+  .theme-toggle{top:12px;right:12px}
+}
+</style>
+</head>
+<body>
+
+<!-- Theme Toggle -->
+<button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">🌙</button>
+
+<!-- Sidebar -->
+<nav class="sidebar">
+  <div class="sidebar-header">
+    <h2>TypeScript Daily Guide</h2>
+    <div class="date">2026-05-31 &mdash; Day 1</div>
+  </div>
+
+  <div class="sidebar-section">Section 1: Core Type System</div>
+  <ul class="sidebar-nav">
+    <li><a href="#type_annotations">Type Annotations <span class="nav-id">#1</span></a></li>
+    <li><a href="#union_narrowing">Union Types &amp; Narrowing <span class="nav-id">#2</span></a></li>
+    <li><a href="#literal_types_const">Literal Types &amp; const <span class="nav-id">#3</span></a></li>
+  </ul>
+
+  <div class="sidebar-section">Section 2: Structuring Types</div>
+  <ul class="sidebar-nav">
+    <li><a href="#interfaces_vs_types">Interfaces vs Type Aliases <span class="nav-id">#4</span></a></li>
+    <li><a href="#enums_basics">Enums <span class="nav-id">#5</span></a></li>
+  </ul>
+
+  <div class="sidebar-section">Section 3: Generic &amp; Utility Types</div>
+  <ul class="sidebar-nav">
+    <li><a href="#generics_basics">Generics Basics <span class="nav-id">#6</span></a></li>
+    <li><a href="#utility_types">Utility Types <span class="nav-id">#7</span></a></li>
+  </ul>
+</nav>
+
+<!-- Main Content -->
+<div class="main">
+<div class="content">
+
+<!-- Header -->
+<header class="guide-header">
+  <h1>TypeScript Daily Guide</h1>
+  <div class="meta">
+    <span>2026-05-31</span>
+    <span>&middot;</span>
+    <span>Day 1</span>
+    <span>&middot;</span>
+    <span class="badge badge-blue">7 new concepts</span>
+  </div>
+</header>
+
+<!-- How to Use -->
+<div class="how-to-use">
+  <h2>How to Use This Guide</h2>
+  <ol>
+    <li>Read each concept card from top to bottom &mdash; they build on each other.</li>
+    <li>Type out every code example yourself in a TypeScript playground or local <code>.ts</code> file. Do not copy-paste.</li>
+    <li>Study the Common Mistakes section carefully &mdash; these are real pitfalls you will encounter.</li>
+    <li>Attempt every Practice Exercise before moving on. No solutions are provided intentionally &mdash; struggle builds understanding.</li>
+    <li>Follow the Connections links to see how concepts relate to each other.</li>
+  </ol>
+</div>
+
+<!-- ============================================================ -->
+<!-- SECTION 1: Core Type System -->
+<!-- ============================================================ -->
+<div class="topic-section">
+<div class="topic-section-header">
+  <span class="section-num">1</span>
+  Core Type System
+</div>
+
+<!-- Concept 1: Type Annotations -->
+<div class="concept-card" id="type_annotations">
+  <div class="concept-header">
+    <span class="concept-title">Type Annotations</span>
+    <span class="ttag">Core Type System</span>
+  </div>
+
+  <p class="why-matters">Type annotations are the foundation of TypeScript. They tell the compiler (and other developers) exactly what shape your data takes, catching bugs at compile time instead of at runtime.</p>
+
+  <div class="explanation">
+    <p>TypeScript adds optional type annotations on top of JavaScript. You annotate variables, function parameters, and return values using a colon followed by the type. TypeScript has seven primitive types: <code>string</code>, <code>number</code>, <code>boolean</code>, <code>null</code>, <code>undefined</code>, <code>bigint</code>, and <code>symbol</code>.</p>
+    <p>Beyond primitives, you can annotate arrays, tuples (fixed-length arrays with specific types per position), objects, and function signatures. Two special types deserve attention: <code>any</code> disables type checking entirely, while <code>unknown</code> is the type-safe counterpart that forces you to narrow before use.</p>
+  </div>
+
+  <!-- Example 1: Primitives -->
+  <div class="code-example">
+    <div class="lang-badge">TypeScript</div>
+    <pre><code>// Primitive type annotations
+const name: string = "Alice";
+const age: number = 30;
+const isActive: boolean = true;
+const nothing: null = null;
+const notDefined: undefined = undefined;
+const bigNum: bigint = 9007199254740991n;
+const id: symbol = Symbol("id");
+
+// void — for functions that return nothing
+function logMessage(msg: string): void {
+  console.log(msg);
+}
+
+logMessage("Hello, TypeScript!");
+console.log(typeof name, typeof age, typeof isActive);</code></pre>
+    <div class="output">Hello, TypeScript!
+string number boolean</div>
+  </div>
+
+  <!-- Example 2: Arrays and Tuples -->
+  <div class="code-example">
+    <div class="lang-badge">TypeScript</div>
+    <pre><code>// Arrays — two equivalent syntaxes
+const scores: number[] = [95, 87, 92];
+const names: Array&lt;string&gt; = ["Alice", "Bob", "Charlie"];
+
+// Tuples — fixed length, specific types per position
+const person: [string, number] = ["Alice", 30];
+const rgb: [number, number, number] = [255, 128, 0];
+
+// Access tuple elements — types are known per index
+const personName: string = person[0];   // string
+const personAge: number = person[1];     // number
+
+console.log(scores);
+console.log(person);
+console.log(`Name: ${personName}, Age: ${personAge}`);</code></pre>
+    <div class="output">[ 95, 87, 92 ]
+[ 'Alice', 30 ]
+Name: Alice, Age: 30</div>
+  </div>
+
+  <!-- Example 3: Objects and Function Signatures -->
+  <div class="code-example">
+    <div class="lang-badge">TypeScript</div>
+    <pre><code>// Object type annotation
+const user: { name: string; age: number; email?: string } = {
+  name: "Alice",
+  age: 30,
+  // email is optional — no error if omitted
+};
+
+// Function signature type
+const greet: (name: string, formal: boolean) =&gt; string =
+  (name, formal) =&gt; {
+    return formal ? `Good day, ${name}.` : `Hey ${name}!`;
+  };
+
+console.log(user.name);
+console.log(greet("Bob", true));
+console.log(greet("Charlie", false));</code></pre>
+    <div class="output">Alice
+Good day, Bob.
+Hey Charlie!</div>
+  </div>
+
+  <!-- Example 4: any vs unknown -->
+  <div class="code-example">
+    <div class="lang-badge">TypeScript</div>
+    <pre><code>// any — disables ALL type checking (dangerous!)
+let dangerous: any = "hello";
+dangerous = 42;
+dangerous = { foo: "bar" };
+console.log(dangerous.foo);          // No error — even if wrong at runtime
+
+// unknown — type-safe alternative, MUST narrow before use
+let safe: unknown = "hello";
+
+// safe.toUpperCase();               // ERROR: Object is of type 'unknown'
+
+// Must narrow first:
+if (typeof safe === "string") {
+  console.log(safe.toUpperCase());   // OK — narrowed to string
+}
+
+// unknown accepts any value, but you can't use it without checking
+safe = 42;
+if (typeof safe === "number") {
+  console.log(safe.toFixed(2));      // OK — narrowed to number
+}</code></pre>
+    <div class="output">bar
+HELLO
+42.00</div>
+  </div>
+
+  <!-- Example 5: Function with return type -->
+  <div class="code-example">
+    <div class="lang-badge">TypeScript</div>
+    <pre><code>// Explicit return type annotation
+function add(a: number, b: number): number {
+  return a + b;
+}
+
+// TypeScript infers the return type, but explicit is clearer
+function divide(a: number, b: number): number | null {
+  if (b === 0) return null;
+  return a / b;
+}
+
+console.log(add(3, 4));
+console.log(divide(10, 3));
+console.log(divide(10, 0));</code></pre>
+    <div class="output">7
+3.3333333333333335
+null</div>
+  </div>
+
+  <div class="callout-warning">
+    <strong>Common Mistakes:</strong>
+    <div class="mistake">&#10060; Using <code>any</code> to silence errors: <code>const data: any = fetchData();</code> — you lose all type safety and might as well write JavaScript.</div>
+    <div class="correct">&#9989; Use <code>unknown</code> and narrow: <code>const data: unknown = fetchData(); if (typeof data === "string") { ... }</code></div>
+
+    <div class="mistake">&#10060; Confusing <code>number[]</code> with <code>[number]</code>. The first is an array of numbers (any length). The second is a tuple with exactly one number element.</div>
+    <div class="correct">&#9989; Use <code>number[]</code> for variable-length arrays: <code>const scores: number[] = [1, 2, 3]</code>. Use <code>[number]</code> only when you mean exactly one element.</div>
+
+    <div class="mistake">&#10060; Using uppercase type names: <code>const name: String = "hi";</code> — <code>String</code> is a wrapper object, not the primitive.</div>
+    <div class="correct">&#9989; Always use lowercase primitives: <code>string</code>, <code>number</code>, <code>boolean</code>. Never <code>String</code>, <code>Number</code>, <code>Boolean</code>.</div>
+  </div>
+
+  <div class="key-rules">
+    <strong>Key Rules:</strong>
+    <ul>
+    <li><a href="typescript-guides/typescript-guide-2026-07-04.html">2026-07-04</a> (Day 31)</li>
+      <li>Use lowercase for primitives (<code>string</code>, not <code>String</code>). The uppercase versions are JavaScript wrapper objects and almost never what you want.</li>
+      <li>Prefer <code>unknown</code> over <code>any</code> when the type is truly not known. <code>unknown</code> forces safe narrowing before use.</li>
+      <li>Use <code>?</code> for optional properties in objects (<code>email?: string</code>) instead of <code>email: string | undefined</code> when the property might not exist at all.</li>
+    </ul>
+  </div>
+
+  <div class="exercises">
+    <strong>Practice Exercises:</strong>
+    <div class="exercise"><span class="exercise-num">1</span> Declare a variable <code>config</code> of type <code>{ host: string; port: number; ssl: boolean; timeout?: number }</code>. Assign valid values. Try assigning a string to <code>port</code> and observe the error.</div>
+    <div class="exercise"><span class="exercise-num">2</span> Write a function <code>formatCoord</code> that takes a tuple <code>[number, number]</code> (latitude, longitude) and returns a string like <code>"(40.71, -74.01)"</code>. What happens if you pass a three-element tuple?</div>
+    <div class="exercise"><span class="exercise-num">3</span> Create a variable typed as <code>unknown</code>, assign an object <code>{ x: 10 }</code> to it, then write code to safely access <code>x</code> — the code must compile and produce <code>10</code> at runtime.</div>
+  </div>
+
+  <div class="connections">
+    <strong>Connections:</strong> Type annotations lay the groundwork for <a href="#union_narrowing">Union Types &amp; Narrowing</a> (combining types) and <a href="#interfaces_vs_types">Interfaces vs Type Aliases</a> (naming complex types). The <code>unknown</code> type connects directly to narrowing techniques.
+  </div>
+</div>
+
+<!-- Concept 2: Union Types & Narrowing -->
+<div class="concept-card" id="union_narrowing">
+  <div class="concept-header">
+    <span class="concept-title">Union Types &amp; Narrowing</span>
+    <span class="ttag">Core Type System</span>
+  </div>
+
+  <p class="why-matters">Real-world data is often one of several types. Union types model this precisely, and narrowing gives you the tools to handle each variant safely without casting.</p>
+
+  <div class="explanation">
+    <p>A union type uses the <code>|</code> operator to say a value can be one of several types. The challenge is: once you have a union, TypeScript only allows operations common to all members. You must <strong>narrow</strong> the type to a specific member before using member-specific operations.</p>
+    <p>TypeScript supports several narrowing mechanisms: <code>typeof</code> for primitives, <code>instanceof</code> for class instances, the <code>in</code> operator for property checks, and <strong>discriminated unions</strong> where a shared literal field (like <code>kind</code> or <code>type</code>) identifies each variant.</p>
+  </div>
+
+  <!-- Example 1: Basic union -->
+  <div class="code-example">
+    <div class="lang-badge">TypeScript</div>
+    <pre><code>// A value that can be a string or a number
+function formatId(id: string | number): string {
+  // Can't call .toUpperCase() here — might be a number!
+  // Must narrow first:
+  if (typeof id === "string") {
+    return id.toUpperCase();       // TypeScript knows: string
+  } else {
+    return `#${id.toString()}`;    // TypeScript knows: number
+  }
+}
+
+console.log(formatId("abc"));
+console.log(formatId(42));</code></pre>
+    <div class="output">ABC
+#42</div>
+  </div>
+
+  <!-- Example 2: typeof narrowing -->
+  <div class="code-example">
+    <div class="lang-badge">TypeScript</div>
+    <pre><code>// typeof narrowing with multiple types
+function describe(value: string | number | boolean | null): string {
+  if (value === null) {
+    return "nothing";
+  }
+  if (typeof value === "string") {
+    return `string of length ${value.length}`;
+  }
+  if (typeof value === "number") {
+    return `number: ${value.toFixed(2)}`;
+  }
+  // TypeScript knows only boolean remains
+  return value ? "truthy" : "falsy";
+}
+
+console.log(describe("hello"));
+console.log(describe(3.14159));
+console.log(describe(false));
+console.log(describe(null));</code></pre>
+    <div class="output">string of length 5
+number: 3.14
+falsy
+nothing</div>
+  </div>
+
+  <!-- Example 3: instanceof narrowing -->
+  <div class="code-example">
+    <div class="lang-badge">TypeScript</div>
+    <pre><code>// instanceof narrowing with classes
+class Dog {
+  bark() { return "Woof!"; }
+}
+class Cat {
+  meow() { return "Meow!"; }
+}
+
+function makeSound(animal: Dog | Cat): string {
+  if (animal instanceof Dog) {
+    return animal.bark();     // TypeScript knows: Dog
+  } else {
+    return animal.meow();     // TypeScript knows: Cat
+  }
+}
+
+console.log(makeSound(new Dog()));
+console.log(makeSound(new Cat()));</code></pre>
+    <div class="output">Woof!
+Meow!</div>
+  </div>
+
+  <!-- Example 4: in operator narrowing -->
+  <div class="code-example">
+    <div class="lang-badge">TypeScript</div>
+    <pre><code>// "in" operator narrowing — check if property exists
+type Fish = { swim: () =&gt; void; name: string };
+type Bird = { fly: () =&gt; void; name: string };
+
+function move(animal: Fish | Bird): string {
+  if ("swim" in animal) {
+    animal.swim();             // TypeScript knows: Fish
+    return `${animal.name} swims`;
+  } else {
+    animal.fly();              // TypeScript knows: Bird
+    return `${animal.name} flies`;
+  }
+}
+
+const nemo: Fish = { name: "Nemo", swim: () =&gt; {} };
+const tweety: Bird = { name: "Tweety", fly: () =&gt; {} };
+console.log(move(nemo));
+console.log(move(tweety));</code></pre>
+    <div class="output">Nemo swims
+Tweety flies</div>
+  </div>
+
+  <!-- Example 5: Discriminated unions -->
+  <div class="code-example">
+    <div class="lang-badge">TypeScript</div>
+    <pre><code>// Discriminated unions — the "kind" field discriminates
+type Circle = { kind: "circle"; radius: number };
+type Rectangle = { kind: "rectangle"; width: number; height: number };
+type Triangle = { kind: "triangle"; base: number; height: number };
+type Shape = Circle | Rectangle | Triangle;
+
+function area(shape: Shape): number {
+  switch (shape.kind) {
+    case "circle":
+      return Math.PI * shape.radius ** 2;
+    case "rectangle":
+      return shape.width * shape.height;
+    case "triangle":
+      return 0.5 * shape.base * shape.height;
+  }
+}
+
+console.log(area({ kind: "circle", radius: 5 }).toFixed(2));
+console.log(area({ kind: "rectangle", width: 4, height: 6 }));
+console.log(area({ kind: "triangle", base: 10, height: 3 }));</code></pre>
+    <div class="output">78.54
+24
+15</div>
+  </div>
+
+  <div class="callout-warning">
+    <strong>Common Mistakes:</strong>
+    <div class="mistake">&#10060; Trying to access type-specific properties without narrowing: <code>function f(x: string | number) { return x.length; }</code> — <code>number</code> has no <code>length</code>.</div>
+    <div class="correct">&#9989; Narrow first: <code>if (typeof x === "string") { return x.length; }</code></div>
+
+    <div class="mistake">&#10060; Using <code>typeof x === "object"</code> to check for objects without handling <code>null</code>: <code>typeof null === "object"</code> is <code>true</code> in JavaScript!</div>
+    <div class="correct">&#9989; Always check <code>null</code> first: <code>if (x !== null &amp;&amp; typeof x === "object") { ... }</code></div>
+
+    <div class="mistake">&#10060; Forgetting a case in a discriminated union switch, leading to unhandled variants at runtime.</div>
+    <div class="correct">&#9989; Add an exhaustiveness check with <code>default: const _exhaustive: never = shape; return _exhaustive;</code> — TypeScript will error if you miss a case.</div>
+  </div>
+
+  <div class="key-rules">
+    <strong>Key Rules:</strong>
+    <ul>
+      <li>TypeScript only allows operations common to all union members. You must narrow to use member-specific features.</li>
+      <li>Discriminated unions (with a shared <code>kind</code> or <code>type</code> literal field) are the most robust pattern for modeling variants — use them for state machines, API responses, and message types.</li>
+      <li>Use exhaustiveness checks (<code>never</code> in default) to catch missing cases at compile time when your union grows.</li>
+    </ul>
+  </div>
+
+  <div class="exercises">
+    <strong>Practice Exercises:</strong>
+    <div class="exercise"><span class="exercise-num">1</span> Write a function <code>stringify(value: string | number | boolean | null | undefined): string</code> that returns a human-readable string for each type. Use <code>typeof</code> narrowing and handle <code>null</code>/<code>undefined</code> with equality checks.</div>
+    <div class="exercise"><span class="exercise-num">2</span> Create a discriminated union <code>type Result = Success | Failure</code> where <code>Success</code> has <code>{ status: "ok"; data: string }</code> and <code>Failure</code> has <code>{ status: "error"; message: string }</code>. Write a function <code>handleResult(r: Result): string</code> with a switch and an exhaustiveness check.</div>
+    <div class="exercise"><span class="exercise-num">3</span> Define two types: <code>AdminUser</code> with a <code>permissions</code> array and <code>GuestUser</code> with a <code>visitCount</code> number. Write a function that uses the <code>in</code> operator to narrow between them and returns a different message for each.</div>
+  </div>
+
+  <div class="connections">
+    <strong>Connections:</strong> Union types build directly on <a href="#type_annotations">Type Annotations</a>. Discriminated unions pair perfectly with <a href="#literal_types_const">Literal Types</a> for the discriminant field. <a href="#generics_basics">Generics</a> let you create reusable unions like <code>Result&lt;T, E&gt;</code>.
+  </div>
+</div>
+
+<!-- Concept 3: Literal Types & const Assertions -->
+<div class="concept-card" id="literal_types_const">
+  <div class="concept-header">
+    <span class="concept-title">Literal Types &amp; const Assertions</span>
+    <span class="ttag">Core Type System</span>
+  </div>
+
+  <p class="why-matters">Literal types let you restrict values to exact strings, numbers, or booleans rather than broad categories. Combined with <code>as const</code>, they enable precise, immutable type definitions that catch invalid values at compile time.</p>
+
+  <div class="explanation">
+    <p>A <strong>literal type</strong> is a type that represents a single, specific value. Instead of <code>string</code>, you can say the type is exactly <code>"hello"</code>. This is most useful in unions: <code>"red" | "green" | "blue"</code> is a type that only accepts those three strings.</p>
+    <p><code>as const</code> is a <strong>const assertion</strong> that tells TypeScript to infer the narrowest possible type for a value, making it deeply readonly. Template literal types let you build string types from other string types using template syntax.</p>
+  </div>
+
+  <!-- Example 1: String and number literal types -->
+  <div class="code-example">
+    <div class="lang-badge">TypeScript</div>
+    <pre><code>// String literal types
+type Direction = "north" | "south" | "east" | "west";
+
+function move(direction: Direction, steps: number): string {
+  return `Moving ${steps} steps ${direction}`;
+}
+
+console.log(move("north", 3));
+// move("up", 5);  // Error: Argument of type '"up"' is not
+                    // assignable to parameter of type 'Direction'
+
+// Number literal types
+type DiceRoll = 1 | 2 | 3 | 4 | 5 | 6;
+const roll: DiceRoll = 4;      // OK
+// const bad: DiceRoll = 7;    // Error: Type '7' is not assignable to type 'DiceRoll'
+
+// Boolean literal type
+type True = true;
+const alwaysTrue: True = true;
+// const nope: True = false;   // Error
+
+console.log(`Roll: ${roll}`);</code></pre>
+    <div class="output">Moving 3 steps north
+Roll: 4</div>
+  </div>
+
+  <!-- Example 2: let vs const inference -->
+  <div class="code-example">
+    <div class="lang-badge">TypeScript</div>
+    <pre><code>// TypeScript infers literal types for const, broad types for let
+const greeting = "hello";      // Type: "hello" (literal)
+let message = "hello";         // Type: string (broad)
+
+const count = 42;              // Type: 42 (literal)
+let total = 42;                // Type: number (broad)
+
+// This matters when passing to functions expecting literals
+type Status = "active" | "inactive";
+
+function setStatus(status: Status): void {
+  console.log(`Status: ${status}`);
+}
+
+const s1 = "active";           // Type: "active" — OK
+setStatus(s1);                 // Works!
+
+let s2 = "active";             // Type: string — too broad
+// setStatus(s2);              // Error: Argument of type 'string' is not
+                               // assignable to parameter of type 'Status'
+setStatus(s2 as Status);       // Works with assertion (but fragile)</code></pre>
+    <div class="output">Status: active</div>
+  </div>
+
+  <!-- Example 3: as const -->
+  <div class="code-example">
+    <div class="lang-badge">TypeScript</div>
+    <pre><code>// as const makes values deeply readonly with literal types
+const config = {
+  endpoint: "https://api.example.com",
+  retries: 3,
+  methods: ["GET", "POST"],
+} as const;
+
+// Type is:
+// {
+//   readonly endpoint: "https://api.example.com";
+//   readonly retries: 3;
+//   readonly methods: readonly ["GET", "POST"];
+// }
+
+// config.retries = 5;         // Error: Cannot assign to 'retries'
+//                              // because it is a read-only property
+// config.methods.push("PUT");  // Error: Property 'push' does not exist
+//                              // on type 'readonly ["GET", "POST"]'
+
+console.log(config.endpoint);
+console.log(config.methods[0]);
+
+// as const with arrays creates readonly tuples
+const point = [10, 20] as const;   // Type: readonly [10, 20]
+// NOT number[] — it's exactly [10, 20]
+
+console.log(point);</code></pre>
+    <div class="output">https://api.example.com
+GET
+[ 10, 20 ]</div>
+  </div>
+
+  <!-- Example 4: Template literal types -->
+  <div class="code-example">
+    <div class="lang-badge">TypeScript</div>
+    <pre><code>// Template literal types — build string types from other types
+type Color = "red" | "blue" | "green";
+type Shade = "light" | "dark";
+type ColorVariant = `${Shade}-${Color}`;
+// Type: "light-red" | "light-blue" | "light-green"
+//     | "dark-red" | "dark-blue" | "dark-green"
+
+const variant1: ColorVariant = "dark-red";     // OK
+const variant2: ColorVariant = "light-blue";   // OK
+// const bad: ColorVariant = "medium-red";     // Error
+
+// Practical use: event handler names
+type EventName = "click" | "focus" | "blur";
+type Handler = `on${Capitalize&lt;EventName&gt;}`;
+// Type: "onClick" | "onFocus" | "onBlur"
+
+const handler: Handler = "onClick";
+console.log(variant1, variant2, handler);</code></pre>
+    <div class="output">dark-red light-blue onClick</div>
+  </div>
+
+  <!-- Example 5: String enums vs literal unions -->
+  <div class="code-example">
+    <div class="lang-badge">TypeScript</div>
+    <pre><code>// Literal union — lightweight, no runtime cost
+type LogLevel = "debug" | "info" | "warn" | "error";
+
+function log(level: LogLevel, message: string): void {
+  console.log(`[${level.toUpperCase()}] ${message}`);
+}
+
+log("info", "Server started");
+log("error", "Connection failed");
+
+// Extracting values from an as-const object
+const ROLES = {
+  ADMIN: "admin",
+  EDITOR: "editor",
+  VIEWER: "viewer",
+} as const;
+
+type Role = typeof ROLES[keyof typeof ROLES];
+// Type: "admin" | "editor" | "viewer"
+
+const myRole: Role = "admin";
+console.log(`Role: ${myRole}`);</code></pre>
+    <div class="output">[INFO] Server started
+[ERROR] Connection failed
+Role: admin</div>
+  </div>
+
+  <div class="callout-warning">
+    <strong>Common Mistakes:</strong>
+    <div class="mistake">&#10060; Using <code>let</code> for a value you'll pass to a function expecting a literal type: <code>let dir = "north"; move(dir);</code> fails because <code>dir</code> is typed as <code>string</code>.</div>
+    <div class="correct">&#9989; Use <code>const</code> for literal inference: <code>const dir = "north"; move(dir);</code> — type is <code>"north"</code>.</div>
+
+    <div class="mistake">&#10060; Forgetting that <code>as const</code> makes things <code>readonly</code>: attempting to <code>.push()</code> on a const-asserted array causes a compile error.</div>
+    <div class="correct">&#9989; If you need mutability, don't use <code>as const</code>. If you need immutability, embrace <code>readonly</code> types throughout your code.</div>
+  </div>
+
+  <div class="key-rules">
+    <strong>Key Rules:</strong>
+    <ul>
+      <li><code>const</code> declarations infer literal types automatically. <code>let</code> widens to the general type (<code>string</code>, <code>number</code>, etc.).</li>
+      <li><code>as const</code> creates deeply readonly structures with the narrowest literal types. Use it for configuration objects, lookup tables, and fixed data.</li>
+      <li>Prefer literal union types (<code>"a" | "b" | "c"</code>) over string enums for lightweight, tree-shakeable type constraints — see the <a href="#enums_basics">Enums</a> concept for the trade-offs.</li>
+    </ul>
+  </div>
+
+  <div class="exercises">
+    <strong>Practice Exercises:</strong>
+    <div class="exercise"><span class="exercise-num">1</span> Create a type <code>HttpMethod</code> as a literal union of <code>"GET" | "POST" | "PUT" | "DELETE" | "PATCH"</code>. Write a function <code>makeRequest(method: HttpMethod, url: string): string</code> that returns <code>"[METHOD] url"</code>. Verify that <code>"OPTIONS"</code> is rejected.</div>
+    <div class="exercise"><span class="exercise-num">2</span> Define a <code>const SIZES = { S: "small", M: "medium", L: "large", XL: "extra-large" } as const</code>. Derive a type <code>Size</code> that equals <code>"small" | "medium" | "large" | "extra-large"</code> using <code>typeof</code> and <code>keyof</code>.</div>
+    <div class="exercise"><span class="exercise-num">3</span> Create a template literal type <code>CssProperty</code> that combines <code>"margin" | "padding"</code> with <code>"Top" | "Right" | "Bottom" | "Left"</code> to produce all 8 combinations like <code>"marginTop"</code>, <code>"paddingLeft"</code>, etc.</div>
+  </div>
+
+  <div class="connections">
+    <strong>Connections:</strong> Literal types are the backbone of discriminated unions in <a href="#union_narrowing">Union Types &amp; Narrowing</a>. <code>as const</code> objects pair with <a href="#utility_types">Utility Types</a> like <code>Readonly&lt;T&gt;</code>. String enums vs literal unions is explored further in <a href="#enums_basics">Enums</a>.
+  </div>
+</div>
+
+</div><!-- end topic-section 1 -->
+
+<!-- ============================================================ -->
+<!-- SECTION 2: Structuring Types -->
+<!-- ============================================================ -->
+<div class="topic-section">
+<div class="topic-section-header">
+  <span class="section-num">2</span>
+  Structuring Types
+</div>
+
+<!-- Concept 4: Interfaces vs Type Aliases -->
+<div class="concept-card" id="interfaces_vs_types">
+  <div class="concept-header">
+    <span class="concept-title">Interfaces vs Type Aliases</span>
+    <span class="ttag">Structuring Types</span>
+  </div>
+
+  <p class="why-matters">Interfaces and type aliases are two ways to name complex types. Understanding when to use each helps you write consistent, extensible code and avoid confusing your team.</p>
+
+  <div class="explanation">
+    <p><strong>Interfaces</strong> describe the shape of objects and classes. They support <code>extends</code> for inheritance and <strong>declaration merging</strong> (defining the same interface twice merges the declarations). <strong>Type aliases</strong> can describe anything — unions, intersections, primitives, tuples, mapped types — and use the <code>=</code> sign.</p>
+    <p>The rule of thumb: use <code>interface</code> for object shapes and class contracts (especially in public APIs); use <code>type</code> for everything else (unions, intersections, mapped types, primitives).</p>
+  </div>
+
+  <!-- Example 1: Interface basics -->
+  <div class="code-example">
+    <div class="lang-badge">TypeScript</div>
+    <pre><code>// Interface — describes an object shape
+interface User {
+  id: number;
+  name: string;
+  email: string;
+  age?: number;               // optional property
+  readonly createdAt: Date;   // cannot be reassigned after creation
+}
+
+const user: User = {
+  id: 1,
+  name: "Alice",
+  email: "alice@example.com",
+  createdAt: new Date("2026-01-15"),
+};
+
+console.log(user.name);
+console.log(user.age);       // undefined — optional
+// user.createdAt = new Date(); // Error: Cannot assign to 'createdAt'</code></pre>
+    <div class="output">Alice
+undefined</div>
+  </div>
+
+  <!-- Example 2: Type alias basics -->
+  <div class="code-example">
+    <div class="lang-badge">TypeScript</div>
+    <pre><code>// Type alias — can represent anything
+type ID = string | number;
+type Pair = [string, number];
+type Callback = (error: Error | null, result: string) =&gt; void;
+
+// Type alias for object (looks similar to interface)
+type Point = {
+  x: number;
+  y: number;
+};
+
+// Intersection types — only possible with type aliases
+type Named = { name: string };
+type Aged = { age: number };
+type Person = Named &amp; Aged;
+
+const person: Person = { name: "Bob", age: 25 };
+console.log(person);
+
+const id: ID = "abc-123";
+const pair: Pair = ["hello", 42];
+console.log(id, pair);</code></pre>
+    <div class="output">{ name: 'Bob', age: 25 }
+abc-123 [ 'hello', 42 ]</div>
+  </div>
+
+  <!-- Example 3: Extending interfaces -->
+  <div class="code-example">
+    <div class="lang-badge">TypeScript</div>
+    <pre><code>// Extending interfaces — inheritance chain
+interface Animal {
+  name: string;
+  sound(): string;
+}
+
+interface Pet extends Animal {
+  owner: string;
+}
+
+interface Dog extends Pet {
+  breed: string;
+  fetch(): boolean;
+}
+
+const myDog: Dog = {
+  name: "Rex",
+  owner: "Alice",
+  breed: "Labrador",
+  sound: () =&gt; "Woof!",
+  fetch: () =&gt; true,
+};
+
+console.log(`${myDog.name} (${myDog.breed}) says ${myDog.sound()}`);
+console.log(`Owner: ${myDog.owner}, Fetches: ${myDog.fetch()}`);</code></pre>
+    <div class="output">Rex (Labrador) says Woof!
+Owner: Alice, Fetches: true</div>
+  </div>
+
+  <!-- Example 4: Declaration merging -->
+  <div class="code-example">
+    <div class="lang-badge">TypeScript</div>
+    <pre><code>// Declaration merging — unique to interfaces
+// Defining the same interface twice merges them
+interface Config {
+  host: string;
+  port: number;
+}
+
+interface Config {
+  ssl: boolean;           // Added to the existing Config
+  timeout?: number;
+}
+
+// Config now has ALL four properties
+const config: Config = {
+  host: "localhost",
+  port: 3000,
+  ssl: true,
+};
+
+console.log(config);
+
+// Type aliases CANNOT merge:
+// type Settings = { a: string };
+// type Settings = { b: number };  // Error: Duplicate identifier 'Settings'</code></pre>
+    <div class="output">{ host: 'localhost', port: 3000, ssl: true }</div>
+  </div>
+
+  <!-- Example 5: implements with classes -->
+  <div class="code-example">
+    <div class="lang-badge">TypeScript</div>
+    <pre><code>// implements — classes conforming to interfaces
+interface Serializable {
+  serialize(): string;
+}
+
+interface Loggable {
+  log(): void;
+}
+
+class Product implements Serializable, Loggable {
+  constructor(
+    public name: string,
+    public price: number
+  ) {}
+
+  serialize(): string {
+    return JSON.stringify({ name: this.name, price: this.price });
+  }
+
+  log(): void {
+    console.log(`Product: ${this.name} ($${this.price})`);
+  }
+}
+
+const item = new Product("Widget", 9.99);
+item.log();
+console.log(item.serialize());</code></pre>
+    <div class="output">Product: Widget ($9.99)
+{"name":"Widget","price":9.99}</div>
+  </div>
+
+  <div class="callout-warning">
+    <strong>Common Mistakes:</strong>
+    <div class="mistake">&#10060; Using <code>interface</code> for union types: <code>interface ID = string | number;</code> — interfaces cannot represent unions.</div>
+    <div class="correct">&#9989; Use <code>type</code> for unions: <code>type ID = string | number;</code></div>
+
+    <div class="mistake">&#10060; Relying on declaration merging accidentally — defining the same interface name in two files causes unexpected property additions.</div>
+    <div class="correct">&#9989; Use unique interface names. Reserve declaration merging for intentional augmentation (e.g., extending third-party library types).</div>
+
+    <div class="mistake">&#10060; Using <code>type</code> for class contracts: <code>class Foo implements MyType { ... }</code> works but <code>interface</code> communicates intent better and gets better error messages.</div>
+    <div class="correct">&#9989; Use <code>interface</code> for shapes that classes will implement. It signals "this is a contract."</div>
+  </div>
+
+  <div class="key-rules">
+    <strong>Key Rules:</strong>
+    <ul>
+      <li>Use <code>interface</code> for object shapes, class contracts, and public APIs (especially when declaration merging might be useful).</li>
+      <li>Use <code>type</code> for unions, intersections, mapped types, tuples, and aliases for primitives — things interfaces cannot express.</li>
+      <li>Both are structurally typed — an object matching the shape satisfies either, regardless of explicit <code>implements</code>. TypeScript is not nominally typed.</li>
+    </ul>
+  </div>
+
+  <div class="exercises">
+    <strong>Practice Exercises:</strong>
+    <div class="exercise"><span class="exercise-num">1</span> Create an <code>interface Vehicle</code> with <code>make</code>, <code>model</code>, <code>year</code>. Extend it into <code>ElectricVehicle</code> adding <code>batteryCapacity: number</code> and <code>range: number</code>. Create an object of type <code>ElectricVehicle</code>.</div>
+    <div class="exercise"><span class="exercise-num">2</span> Create a type alias <code>ApiResponse&lt;T&gt;</code> that is a union of <code>{ status: "success"; data: T }</code> and <code>{ status: "error"; message: string }</code>. Can you do this with an interface? Why or why not?</div>
+    <div class="exercise"><span class="exercise-num">3</span> Define an interface <code>Repository</code> with methods <code>findById(id: string): unknown</code> and <code>save(item: unknown): void</code>. Write a class <code>InMemoryRepository</code> that implements it using an internal <code>Map</code>.</div>
+  </div>
+
+  <div class="connections">
+    <strong>Connections:</strong> Interfaces and types are the building blocks for <a href="#generics_basics">Generics</a> (generic interfaces and type aliases). <a href="#utility_types">Utility Types</a> like <code>Partial&lt;T&gt;</code> and <code>Pick&lt;T, K&gt;</code> work with both. Declaration merging is used extensively in the <a href="#enums_basics">Enums</a> pattern of const objects.
+  </div>
+</div>
+
+<!-- Concept 5: Enums -->
+<div class="concept-card" id="enums_basics">
+  <div class="concept-header">
+    <span class="concept-title">Enums</span>
+    <span class="ttag">Structuring Types</span>
+  </div>
+
+  <p class="why-matters">Enums give names to sets of constants, making code more readable and maintainable. But TypeScript enums have quirks and overhead — knowing when to use them (and when not to) is essential.</p>
+
+  <div class="explanation">
+    <p>TypeScript provides <strong>numeric enums</strong> (auto-incrementing from 0), <strong>string enums</strong> (each member has an explicit string value), and <strong>const enums</strong> (inlined at compile time for zero runtime cost). Numeric enums support <strong>reverse mapping</strong> — you can look up the name from the value — but string enums do not.</p>
+    <p>Many TypeScript developers prefer <strong>literal union types</strong> over enums because they have no runtime footprint and work better with tree-shaking. Know both approaches and choose wisely.</p>
+  </div>
+
+  <!-- Example 1: Numeric enums -->
+  <div class="code-example">
+    <div class="lang-badge">TypeScript</div>
+    <pre><code>// Numeric enum — auto-increments from 0
+enum Direction {
+  North,     // 0
+  South,     // 1
+  East,      // 2
+  West,      // 3
+}
+
+console.log(Direction.North);     // 0
+console.log(Direction.West);      // 3
+
+// Custom starting value
+enum HttpStatus {
+  OK = 200,
+  Created = 201,
+  BadRequest = 400,
+  NotFound = 404,
+  ServerError = 500,
+}
+
+function isSuccess(status: HttpStatus): boolean {
+  return status &gt;= 200 &amp;&amp; status &lt; 300;
+}
+
+console.log(isSuccess(HttpStatus.OK));        // true
+console.log(isSuccess(HttpStatus.NotFound));  // false</code></pre>
+    <div class="output">0
+3
+true
+false</div>
+  </div>
+
+  <!-- Example 2: String enums -->
+  <div class="code-example">
+    <div class="lang-badge">TypeScript</div>
+    <pre><code>// String enum — each member has an explicit string value
+enum Color {
+  Red = "RED",
+  Green = "GREEN",
+  Blue = "BLUE",
+  Yellow = "YELLOW",
+}
+
+function paint(color: Color): string {
+  return `Painting with ${color}`;
+}
+
+console.log(paint(Color.Red));
+console.log(paint(Color.Blue));
+
+// String enums are readable in logs and debugging
+console.log(Color.Green);
+
+// Cannot pass a raw string — must use the enum member
+// paint("RED");  // Error: Argument of type '"RED"' is not
+//                // assignable to parameter of type 'Color'</code></pre>
+    <div class="output">Painting with RED
+Painting with BLUE
+GREEN</div>
+  </div>
+
+  <!-- Example 3: Reverse mapping -->
+  <div class="code-example">
+    <div class="lang-badge">TypeScript</div>
+    <pre><code>// Reverse mapping — numeric enums only
+enum Priority {
+  Low = 1,
+  Medium = 2,
+  High = 3,
+  Critical = 4,
+}
+
+// Forward: name → value
+console.log(Priority.High);       // 3
+
+// Reverse: value → name
+console.log(Priority[3]);         // "High"
+console.log(Priority[1]);         // "Low"
+
+// This works because numeric enums compile to:
+// Priority[Priority["Low"] = 1] = "Low";
+// ...creating a bidirectional mapping
+
+// String enums do NOT support reverse mapping
+// enum Color { Red = "RED" }
+// Color["RED"]  → undefined at runtime</code></pre>
+    <div class="output">3
+High
+Low</div>
+  </div>
+
+  <!-- Example 4: const enums -->
+  <div class="code-example">
+    <div class="lang-badge">TypeScript</div>
+    <pre><code>// const enum — inlined at compile time, no runtime object
+const enum Fruit {
+  Apple = "APPLE",
+  Banana = "BANANA",
+  Cherry = "CHERRY",
+}
+
+// At compile time, this:
+const myFruit = Fruit.Apple;
+// becomes: const myFruit = "APPLE";
+
+// No Fruit object exists at runtime — zero overhead
+console.log(myFruit);
+
+// Trade-off: you can't iterate over a const enum
+// Object.values(Fruit)  // Error: 'const' enums can only be
+//                       // used in property or index access
+
+// const enums are best for performance-critical code
+// where you just need named constants</code></pre>
+    <div class="output">APPLE</div>
+  </div>
+
+  <!-- Example 5: Enum alternatives -->
+  <div class="code-example">
+    <div class="lang-badge">TypeScript</div>
+    <pre><code>// Alternative: literal union types (often preferred)
+type LogLevel = "debug" | "info" | "warn" | "error";
+
+// Alternative: as-const object (when you need runtime values)
+const LOG_LEVELS = {
+  Debug: "debug",
+  Info: "info",
+  Warn: "warn",
+  Error: "error",
+} as const;
+
+type LogLevelValue = typeof LOG_LEVELS[keyof typeof LOG_LEVELS];
+// Type: "debug" | "info" | "warn" | "error"
+
+function logMsg(level: LogLevelValue, msg: string): void {
+  console.log(`[${level}] ${msg}`);
+}
+
+// Works with both the object and raw strings
+logMsg(LOG_LEVELS.Error, "Something broke");
+logMsg("info", "All good");
+
+// Benefits over enums:
+// - No runtime overhead (just strings)
+// - Tree-shakeable
+// - Works with raw string values
+// - No surprising behaviors</code></pre>
+    <div class="output">[error] Something broke
+[info] All good</div>
+  </div>
+
+  <div class="callout-warning">
+    <strong>Common Mistakes:</strong>
+    <div class="mistake">&#10060; Mixing string and numeric members in the same enum: <code>enum Mixed { A = 0, B = "hello" }</code> — this is technically allowed but causes confusion and inconsistent behavior.</div>
+    <div class="correct">&#9989; Stick to one type per enum. Use all-numeric or all-string members.</div>
+
+    <div class="mistake">&#10060; Assuming numeric enums are type-safe: <code>enum Dir { N, S } function f(d: Dir) {} f(999);</code> — TypeScript allows any number where a numeric enum is expected!</div>
+    <div class="correct">&#9989; Use string enums for actual type safety, or use literal union types instead.</div>
+
+    <div class="mistake">&#10060; Using <code>const enum</code> in libraries — consumers who use <code>--isolatedModules</code> or Babel can't inline const enums from external packages.</div>
+    <div class="correct">&#9989; Use regular enums or literal union types in library code. Reserve <code>const enum</code> for application code.</div>
+  </div>
+
+  <div class="key-rules">
+    <strong>Key Rules:</strong>
+    <ul>
+      <li>String enums provide actual type safety; numeric enums accept any number at the type level (a known TypeScript quirk).</li>
+      <li>Prefer literal union types (<code>"a" | "b"</code>) for simple cases — no runtime cost, full type safety, and better tree-shaking.</li>
+      <li>Use <code>as const</code> objects when you need both runtime values and type safety without enum overhead.</li>
+    </ul>
+  </div>
+
+  <div class="exercises">
+    <strong>Practice Exercises:</strong>
+    <div class="exercise"><span class="exercise-num">1</span> Create a string enum <code>Permission</code> with members <code>Read = "read"</code>, <code>Write = "write"</code>, <code>Execute = "execute"</code>, <code>Admin = "admin"</code>. Write a function <code>canAccess(userPerms: Permission[], required: Permission): boolean</code>.</div>
+    <div class="exercise"><span class="exercise-num">2</span> Create the same <code>Permission</code> concept using an <code>as const</code> object and a derived type. Compare the two approaches — which requires less code? Which has less runtime overhead?</div>
+    <div class="exercise"><span class="exercise-num">3</span> Create a numeric enum <code>FileMode</code> with <code>Read = 4</code>, <code>Write = 2</code>, <code>Execute = 1</code>. Write a function that takes a mode number and uses reverse mapping to print which permissions are set (hint: use bitwise AND).</div>
+  </div>
+
+  <div class="connections">
+    <strong>Connections:</strong> Enum alternatives use <a href="#literal_types_const">Literal Types &amp; const Assertions</a> extensively. Enums can be constrained with <a href="#generics_basics">Generics</a>. The <code>as const</code> object pattern combines with <a href="#utility_types">Utility Types</a> like <code>Record</code> and <code>Readonly</code>.
+  </div>
+</div>
+
+</div><!-- end topic-section 2 -->
+
+<!-- ============================================================ -->
+<!-- SECTION 3: Generic & Utility Types -->
+<!-- ============================================================ -->
+<div class="topic-section">
+<div class="topic-section-header">
+  <span class="section-num">3</span>
+  Generic &amp; Utility Types
+</div>
+
+<!-- Concept 6: Generics Basics -->
+<div class="concept-card" id="generics_basics">
+  <div class="concept-header">
+    <span class="concept-title">Generics Basics</span>
+    <span class="ttag">Generic &amp; Utility Types</span>
+  </div>
+
+  <p class="why-matters">Generics let you write functions, classes, and interfaces that work with any type while preserving type information. Without them, you'd either duplicate code for each type or lose type safety with <code>any</code>.</p>
+
+  <div class="explanation">
+    <p>A <strong>generic</strong> is a type parameter — a placeholder that gets filled in when the function or type is used. Think of generics as "type arguments" analogous to function arguments. The convention is to use single uppercase letters: <code>T</code> (Type), <code>K</code> (Key), <code>V</code> (Value), <code>E</code> (Element).</p>
+    <p>Generics can be <strong>constrained</strong> with <code>extends</code> to limit what types are acceptable, and they can have <strong>defaults</strong> just like function parameters.</p>
+  </div>
+
+  <!-- Example 1: Generic function -->
+  <div class="code-example">
+    <div class="lang-badge">TypeScript</div>
+    <pre><code>// Without generics — lose type information
+function identityAny(value: any): any {
+  return value;
+}
+const result1 = identityAny("hello");  // Type: any (lost!)
+
+// With generics — preserve type information
+function identity&lt;T&gt;(value: T): T {
+  return value;
+}
+
+const str = identity("hello");       // Type: string (preserved!)
+const num = identity(42);            // Type: number
+const arr = identity([1, 2, 3]);     // Type: number[]
+
+// Explicit type argument (usually optional)
+const explicit = identity&lt;string&gt;("world");
+
+console.log(str, num, arr, explicit);</code></pre>
+    <div class="output">hello 42 [ 1, 2, 3 ] world</div>
+  </div>
+
+  <!-- Example 2: Generic with multiple type parameters -->
+  <div class="code-example">
+    <div class="lang-badge">TypeScript</div>
+    <pre><code>// Multiple type parameters
+function makePair&lt;A, B&gt;(first: A, second: B): [A, B] {
+  return [first, second];
+}
+
+const pair1 = makePair("hello", 42);        // [string, number]
+const pair2 = makePair(true, [1, 2, 3]);    // [boolean, number[]]
+
+console.log(pair1);
+console.log(pair2);
+
+// Generic swap function
+function swap&lt;A, B&gt;(pair: [A, B]): [B, A] {
+  return [pair[1], pair[0]];
+}
+
+const swapped = swap(["hello", 42]);  // [number, string]
+console.log(swapped);</code></pre>
+    <div class="output">[ 'hello', 42 ]
+[ true, [ 1, 2, 3 ] ]
+[ 42, 'hello' ]</div>
+  </div>
+
+  <!-- Example 3: Generic constraints with extends -->
+  <div class="code-example">
+    <div class="lang-badge">TypeScript</div>
+    <pre><code>// Generic constraint — T must have a .length property
+interface HasLength {
+  length: number;
+}
+
+function logLength&lt;T extends HasLength&gt;(item: T): T {
+  console.log(`Length: ${item.length}`);
+  return item;
+}
+
+logLength("hello");          // string has .length
+logLength([1, 2, 3]);        // array has .length
+logLength({ length: 10 });   // object with .length
+
+// logLength(42);            // Error: number doesn't have .length
+
+// Constraint with keyof — K must be a key of T
+function getProperty&lt;T, K extends keyof T&gt;(obj: T, key: K): T[K] {
+  return obj[key];
+}
+
+const person = { name: "Alice", age: 30, active: true };
+const name = getProperty(person, "name");   // Type: string
+const age = getProperty(person, "age");     // Type: number
+// getProperty(person, "email");  // Error: "email" is not in keyof person
+
+console.log(name, age);</code></pre>
+    <div class="output">Length: 5
+Length: 3
+Length: 10
+Alice 30</div>
+  </div>
+
+  <!-- Example 4: Generic interfaces -->
+  <div class="code-example">
+    <div class="lang-badge">TypeScript</div>
+    <pre><code>// Generic interface
+interface ApiResponse&lt;T&gt; {
+  data: T;
+  status: number;
+  timestamp: Date;
+}
+
+interface User {
+  id: number;
+  name: string;
+}
+
+interface Product {
+  sku: string;
+  price: number;
+}
+
+// Same interface, different data types
+const userResponse: ApiResponse&lt;User&gt; = {
+  data: { id: 1, name: "Alice" },
+  status: 200,
+  timestamp: new Date(),
+};
+
+const productResponse: ApiResponse&lt;Product&gt; = {
+  data: { sku: "WDG-001", price: 29.99 },
+  status: 200,
+  timestamp: new Date(),
+};
+
+console.log(userResponse.data.name);
+console.log(productResponse.data.price);</code></pre>
+    <div class="output">Alice
+29.99</div>
+  </div>
+
+  <!-- Example 5: Default type parameters -->
+  <div class="code-example">
+    <div class="lang-badge">TypeScript</div>
+    <pre><code>// Default type parameters
+interface Container&lt;T = string&gt; {
+  value: T;
+  label: string;
+}
+
+// Uses default: T = string
+const textBox: Container = {
+  value: "Hello",
+  label: "greeting",
+};
+
+// Override the default
+const numberBox: Container&lt;number&gt; = {
+  value: 42,
+  label: "answer",
+};
+
+// Generic function with default
+function createArray&lt;T = number&gt;(length: number, fill: T): T[] {
+  return Array(length).fill(fill);
+}
+
+const nums = createArray(3, 0);          // number[] (default)
+const strs = createArray(3, "x");        // string[] (inferred)
+
+console.log(textBox, numberBox);
+console.log(nums, strs);</code></pre>
+    <div class="output">{ value: 'Hello', label: 'greeting' } { value: 42, label: 'answer' }
+[ 0, 0, 0 ] [ 'x', 'x', 'x' ]</div>
+  </div>
+
+  <div class="callout-warning">
+    <strong>Common Mistakes:</strong>
+    <div class="mistake">&#10060; Using <code>any</code> instead of generics: <code>function first(arr: any[]): any</code> — you lose the connection between input and output types.</div>
+    <div class="correct">&#9989; Use generics: <code>function first&lt;T&gt;(arr: T[]): T | undefined</code> — return type is tied to input type.</div>
+
+    <div class="mistake">&#10060; Over-constraining generics: <code>function log&lt;T extends string&gt;(x: T): void</code> when you don't actually need <code>T</code> — just use <code>string</code> directly.</div>
+    <div class="correct">&#9989; Only use generics when you need to preserve or relate type information. If you don't use <code>T</code> in the return type or elsewhere, you don't need a generic.</div>
+
+    <div class="mistake">&#10060; Forgetting that <code>T extends X</code> means "T is at least X", not "T is exactly X". <code>T extends { name: string }</code> accepts any object with a <code>name</code> property, plus any additional properties.</div>
+    <div class="correct">&#9989; Think of <code>extends</code> as "is assignable to" or "satisfies the shape of".</div>
+  </div>
+
+  <div class="key-rules">
+    <strong>Key Rules:</strong>
+    <ul>
+      <li>Use generics when you need to preserve the relationship between input and output types. If a type parameter appears only once, you probably don't need it.</li>
+      <li><code>extends</code> in generics means "must be assignable to" — it's a constraint, not exact equality.</li>
+      <li><code>keyof T</code> combined with generics creates type-safe property access patterns — this is one of TypeScript's most powerful features.</li>
+    </ul>
+  </div>
+
+  <div class="exercises">
+    <strong>Practice Exercises:</strong>
+    <div class="exercise"><span class="exercise-num">1</span> Write a generic function <code>last&lt;T&gt;(arr: T[]): T | undefined</code> that returns the last element of an array. Test it with <code>string[]</code>, <code>number[]</code>, and an empty array. Verify the return type is correctly inferred.</div>
+    <div class="exercise"><span class="exercise-num">2</span> Create a generic interface <code>Stack&lt;T&gt;</code> with methods <code>push(item: T): void</code>, <code>pop(): T | undefined</code>, and <code>peek(): T | undefined</code>. Implement it as a class <code>ArrayStack&lt;T&gt;</code> backed by a private array.</div>
+    <div class="exercise"><span class="exercise-num">3</span> Write a generic function <code>pluck&lt;T, K extends keyof T&gt;(items: T[], key: K): T[K][]</code> that extracts an array of values for a given key from an array of objects. For example, <code>pluck([{name:"A",age:1},{name:"B",age:2}], "name")</code> should return <code>["A","B"]</code> with type <code>string[]</code>.</div>
+  </div>
+
+  <div class="connections">
+    <strong>Connections:</strong> Generics power all <a href="#utility_types">Utility Types</a> — <code>Partial&lt;T&gt;</code>, <code>Pick&lt;T,K&gt;</code>, etc. are all generic types. They build on <a href="#interfaces_vs_types">Interfaces</a> (generic interfaces) and <a href="#union_narrowing">Union Types</a> (generic unions like <code>Result&lt;T, E&gt;</code>).
+  </div>
+</div>
+
+<!-- Concept 7: Utility Types -->
+<div class="concept-card" id="utility_types">
+  <div class="concept-header">
+    <span class="concept-title">Utility Types</span>
+    <span class="ttag">Generic &amp; Utility Types</span>
+  </div>
+
+  <p class="why-matters">TypeScript ships with built-in utility types that transform existing types into new ones. They save you from writing repetitive type definitions and encode common patterns like "make all fields optional" or "pick a subset of properties."</p>
+
+  <div class="explanation">
+    <p>Utility types are generic types provided by TypeScript's standard library. They take one or more type arguments and produce a new type. The most commonly used ones are <code>Partial&lt;T&gt;</code>, <code>Required&lt;T&gt;</code>, <code>Pick&lt;T, K&gt;</code>, <code>Omit&lt;T, K&gt;</code>, <code>Record&lt;K, V&gt;</code>, <code>Readonly&lt;T&gt;</code>, <code>ReturnType&lt;T&gt;</code>, and <code>Parameters&lt;T&gt;</code>.</p>
+    <p>Understanding these types is essential because they appear everywhere in real TypeScript codebases — in React component props, API layer types, state management, and library type definitions.</p>
+  </div>
+
+  <!-- Example 1: Partial and Required -->
+  <div class="code-example">
+    <div class="lang-badge">TypeScript</div>
+    <pre><code>// Partial&lt;T&gt; — makes ALL properties optional
+interface User {
+  id: number;
+  name: string;
+  email: string;
+  age: number;
+}
+
+// All fields become optional — great for update operations
+type UserUpdate = Partial&lt;User&gt;;
+// Equivalent to:
+// { id?: number; name?: string; email?: string; age?: number }
+
+function updateUser(id: number, changes: Partial&lt;User&gt;): void {
+  console.log(`Updating user ${id}:`, changes);
+}
+
+updateUser(1, { name: "Alice" });           // Just update name
+updateUser(2, { email: "b@b.com", age: 31 }); // Update two fields
+
+// Required&lt;T&gt; — makes ALL properties required (opposite of Partial)
+interface Config {
+  host?: string;
+  port?: number;
+  ssl?: boolean;
+}
+
+type StrictConfig = Required&lt;Config&gt;;
+// All fields are now required
+
+const config: StrictConfig = {
+  host: "localhost",
+  port: 3000,
+  ssl: true,     // Can't omit any field
+};
+console.log(config);</code></pre>
+    <div class="output">Updating user 1: { name: 'Alice' }
+Updating user 2: { email: 'b@b.com', age: 31 }
+{ host: 'localhost', port: 3000, ssl: true }</div>
+  </div>
+
+  <!-- Example 2: Pick and Omit -->
+  <div class="code-example">
+    <div class="lang-badge">TypeScript</div>
+    <pre><code>interface Product {
+  id: number;
+  name: string;
+  description: string;
+  price: number;
+  stock: number;
+  createdAt: Date;
+}
+
+// Pick&lt;T, K&gt; — select specific properties
+type ProductPreview = Pick&lt;Product, "id" | "name" | "price"&gt;;
+// { id: number; name: string; price: number }
+
+const preview: ProductPreview = {
+  id: 1,
+  name: "Widget",
+  price: 9.99,
+};
+
+// Omit&lt;T, K&gt; — exclude specific properties
+type ProductInput = Omit&lt;Product, "id" | "createdAt"&gt;;
+// { name: string; description: string; price: number; stock: number }
+
+const newProduct: ProductInput = {
+  name: "Gadget",
+  description: "A useful gadget",
+  price: 19.99,
+  stock: 100,
+};
+
+console.log(preview);
+console.log(newProduct);</code></pre>
+    <div class="output">{ id: 1, name: 'Widget', price: 9.99 }
+{ name: 'Gadget', description: 'A useful gadget', price: 19.99, stock: 100 }</div>
+  </div>
+
+  <!-- Example 3: Record -->
+  <div class="code-example">
+    <div class="lang-badge">TypeScript</div>
+    <pre><code>// Record&lt;K, V&gt; — create an object type with keys K and values V
+type Role = "admin" | "editor" | "viewer";
+
+interface RoleConfig {
+  canEdit: boolean;
+  canDelete: boolean;
+  canPublish: boolean;
+}
+
+// Every Role MUST have a RoleConfig entry
+const permissions: Record&lt;Role, RoleConfig&gt; = {
+  admin:  { canEdit: true,  canDelete: true,  canPublish: true },
+  editor: { canEdit: true,  canDelete: false, canPublish: true },
+  viewer: { canEdit: false, canDelete: false, canPublish: false },
+};
+
+console.log(permissions.admin);
+console.log(permissions.viewer);
+
+// Record is also great for dictionaries
+const scores: Record&lt;string, number&gt; = {};
+scores["Alice"] = 95;
+scores["Bob"] = 87;
+console.log(scores);</code></pre>
+    <div class="output">{ canEdit: true, canDelete: true, canPublish: true }
+{ canEdit: false, canDelete: false, canPublish: false }
+{ Alice: 95, Bob: 87 }</div>
+  </div>
+
+  <!-- Example 4: Readonly, ReturnType, Parameters -->
+  <div class="code-example">
+    <div class="lang-badge">TypeScript</div>
+    <pre><code>// Readonly&lt;T&gt; — all properties become readonly
+interface State {
+  count: number;
+  items: string[];
+}
+
+const state: Readonly&lt;State&gt; = {
+  count: 0,
+  items: ["a", "b"],
+};
+
+// state.count = 1;          // Error: Cannot assign to 'count'
+// NOTE: Readonly is shallow — state.items.push("c") still works!
+console.log(state);
+
+// ReturnType&lt;T&gt; — extract the return type of a function
+function createUser(name: string, age: number) {
+  return { id: Math.random(), name, age, createdAt: new Date() };
+}
+
+type NewUser = ReturnType&lt;typeof createUser&gt;;
+// { id: number; name: string; age: number; createdAt: Date }
+
+const user: NewUser = createUser("Alice", 30);
+console.log(user.name, user.age);
+
+// Parameters&lt;T&gt; — extract parameter types as a tuple
+type CreateUserParams = Parameters&lt;typeof createUser&gt;;
+// [name: string, age: number]
+
+const args: CreateUserParams = ["Bob", 25];
+const user2 = createUser(...args);
+console.log(user2.name, user2.age);</code></pre>
+    <div class="output">{ count: 0, items: [ 'a', 'b' ] }
+Alice 30
+Bob 25</div>
+  </div>
+
+  <!-- Example 5: Combining utility types -->
+  <div class="code-example">
+    <div class="lang-badge">TypeScript</div>
+    <pre><code>// Combining utility types for real-world patterns
+interface Entity {
+  id: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+interface UserProfile {
+  name: string;
+  email: string;
+  bio: string;
+  avatar: string;
+}
+
+// Full user: Entity fields + UserProfile
+type FullUser = Entity &amp; UserProfile;
+
+// For creation: no Entity fields, all profile fields required
+type CreateUser = Omit&lt;UserProfile, never&gt;;  // same as UserProfile
+
+// For updates: no Entity fields, all profile fields optional
+type UpdateUser = Partial&lt;UserProfile&gt;;
+
+// For display: only specific fields, all readonly
+type UserCard = Readonly&lt;Pick&lt;FullUser, "id" | "name" | "avatar"&gt;&gt;;
+
+const card: UserCard = {
+  id: "u-123",
+  name: "Alice",
+  avatar: "alice.png",
+};
+// card.name = "Bob";  // Error: Cannot assign to 'name'
+
+console.log(card);
+
+// Record + Pick pattern for lookup tables
+type UserLookup = Record&lt;string, Pick&lt;UserProfile, "name" | "email"&gt;&gt;;
+
+const lookup: UserLookup = {
+  "u-1": { name: "Alice", email: "alice@test.com" },
+  "u-2": { name: "Bob", email: "bob@test.com" },
+};
+console.log(lookup["u-1"]);</code></pre>
+    <div class="output">{ id: 'u-123', name: 'Alice', avatar: 'alice.png' }
+{ name: 'Alice', email: 'alice@test.com' }</div>
+  </div>
+
+  <div class="callout-warning">
+    <strong>Common Mistakes:</strong>
+    <div class="mistake">&#10060; Assuming <code>Readonly&lt;T&gt;</code> is deep: <code>const s: Readonly&lt;{items: string[]}&gt; = {items: []}; s.items.push("x");</code> — this compiles! <code>Readonly</code> is shallow.</div>
+    <div class="correct">&#9989; For deep readonly, use <code>as const</code> or a recursive <code>DeepReadonly</code> type. Be aware that <code>Readonly</code> only freezes the top level.</div>
+
+    <div class="mistake">&#10060; Using <code>Omit</code> with a key that doesn't exist: <code>Omit&lt;User, "foo"&gt;</code> — TypeScript won't warn you. You get back the full type unchanged, hiding a typo.</div>
+    <div class="correct">&#9989; Create a strict omit helper: <code>type StrictOmit&lt;T, K extends keyof T&gt; = Omit&lt;T, K&gt;</code> — this constrains K to actual keys of T.</div>
+
+    <div class="mistake">&#10060; Using <code>Record&lt;string, T&gt;</code> when you want a specific set of keys — it accepts ANY string key, not just the ones you intended.</div>
+    <div class="correct">&#9989; Use a literal union for keys: <code>Record&lt;"a" | "b" | "c", T&gt;</code> ensures exactly those keys exist.</div>
+  </div>
+
+  <div class="key-rules">
+    <strong>Key Rules:</strong>
+    <ul>
+      <li><code>Partial</code> and <code>Required</code> are inverses. <code>Pick</code> and <code>Omit</code> are complements. Know both directions for each pair.</li>
+      <li><code>ReturnType</code> and <code>Parameters</code> require <code>typeof</code> when used with named functions: <code>ReturnType&lt;typeof myFunc&gt;</code>, not <code>ReturnType&lt;myFunc&gt;</code>.</li>
+      <li>Combine utility types to derive exactly the shape you need from existing types. This keeps your types DRY and automatically updated when the source type changes.</li>
+    </ul>
+  </div>
+
+  <div class="exercises">
+    <strong>Practice Exercises:</strong>
+    <div class="exercise"><span class="exercise-num">1</span> Given <code>interface Todo { id: number; title: string; completed: boolean; dueDate: Date; tags: string[] }</code>, create: (a) <code>TodoPreview</code> with only <code>id</code>, <code>title</code>, <code>completed</code>; (b) <code>TodoCreate</code> without <code>id</code>; (c) <code>TodoUpdate</code> that's a <code>Partial</code> of <code>TodoCreate</code>.</div>
+    <div class="exercise"><span class="exercise-num">2</span> Create a <code>Record&lt;HttpMethod, HandlerConfig&gt;</code> where <code>HttpMethod</code> is <code>"GET" | "POST" | "PUT" | "DELETE"</code> and <code>HandlerConfig</code> has <code>{ auth: boolean; rateLimit: number }</code>. Verify that omitting any method causes a compile error.</div>
+    <div class="exercise"><span class="exercise-num">3</span> Write a function <code>freeze&lt;T extends object&gt;(obj: T): Readonly&lt;T&gt;</code> that wraps <code>Object.freeze</code>. Then demonstrate that the return type prevents property reassignment at the type level. Can you still mutate nested arrays? Why?</div>
+  </div>
+
+  <div class="connections">
+    <strong>Connections:</strong> Utility types are implemented using <a href="#generics_basics">Generics</a> — understanding generics helps you read their source definitions. They transform <a href="#interfaces_vs_types">Interfaces and Type Aliases</a> and work hand-in-hand with <a href="#literal_types_const">Literal Types</a> for keys in <code>Pick</code>, <code>Omit</code>, and <code>Record</code>.
+  </div>
+</div>
+
+</div><!-- end topic-section 3 -->
+
+<!-- Footer -->
+<footer class="guide-footer">
+  <h2>All Guides</h2>
+  <ul>
+    <li><a href="typescript-guides/typescript-guide-2026-07-09.html">2026-07-09</a> (Day 36)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-07-08.html">2026-07-08</a> (Day 35)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-07-07.html">2026-07-07</a> (Day 34)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-07-06.html">2026-07-06</a> (Day 33)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-07-05.html">2026-07-05</a> (Day 32)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-07-04.html">2026-07-04</a> (Day 31)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-07-03.html">2026-07-03</a> (Day 30)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-07-02.html">2026-07-02</a> (Day 29)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-07-01.html">2026-07-01</a> (Day 28)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-30.html">2026-06-30</a> (Day 27)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-29.html">2026-06-29</a> (Day 26)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-28.html">2026-06-28</a> (Day 25)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-27.html">2026-06-27</a> (Day 24)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-26.html">2026-06-26</a> (Day 23)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-25.html">2026-06-25</a> (Day 22)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-24.html">2026-06-24</a> (Day 21)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-23.html">2026-06-23</a> (Day 20)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-22.html">2026-06-22</a> (Day 19)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-21.html">2026-06-21</a> (Day 18)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-19.html">2026-06-19</a> (Day 17)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-18.html">2026-06-18</a> (Day 16)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-17.html">2026-06-17</a> (Day 15)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-15.html">2026-06-15</a> (Day 14)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-13.html">2026-06-13</a> (Day 13)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-12.html">2026-06-12</a> (Day 12)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-11.html">2026-06-11</a> (Day 11)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-10.html">2026-06-10</a> (Day 10)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-09.html">2026-06-09</a> (Day 9)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-08.html">2026-06-08</a> (Day 8)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-07.html">2026-06-07</a> (Day 7)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-05.html">2026-06-05</a> (Day 6)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-04.html">2026-06-04</a> (Day 5)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-03.html">2026-06-03</a> (Day 4)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-02.html">2026-06-02</a> (Day 3)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-01.html">2026-06-01</a> (Day 2)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-05-31.html">2026-05-31</a> (Day 1)</li>
+  </ul>
+</footer>
+
+</div><!-- end content -->
+</div><!-- end main -->
+
+<script>
+// Theme toggle
+(function() {
+  const toggle = document.getElementById('themeToggle');
+  const html = document.documentElement;
+  const STORAGE_KEY = 'lc-tsguide-theme';
+
+  function setTheme(theme) {
+    html.setAttribute('data-theme', theme);
+    toggle.textContent = theme === 'dark' ? '\u{1F319}' : '\u{2600}\u{FE0F}';
+    try { localStorage.setItem(STORAGE_KEY, theme); } catch(e) {}
+  }
+
+  // Load saved theme
+  try {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    if (saved) setTheme(saved);
+  } catch(e) {}
+
+  toggle.addEventListener('click', function() {
+    const current = html.getAttribute('data-theme') || 'dark';
+    setTheme;
+  });
+})();
+
+// Sidebar active link tracking
+(function() {
+  const links = document.querySelectorAll('.sidebar-nav a');
+  const sections = [];
+  links.forEach(function(link) {
+    const id = link.getAttribute('href').replace('#', '');
+    const el = document.getElementById(id);
+    if (el) sections.push({ link: link, el: el });
+  });
+
+  function updateActive() {
+    let current = null;
+    const scrollY = window.scrollY + 120;
+    for (let i = sections.length - 1; i >= 0; i--) {
+      if (sections[i].el.offsetTop <= scrollY) {
+        current = sections[i];
+        break;
+      }
+    }
+    links.forEach(function(l) { l.classList.remove('active'); });
+    if  current.link.classList.add('active');
+  }
+
+  window.addEventListener('scroll', updateActive);
+  updateActive();
+})();
+</script>
+
+</body>
+</html>

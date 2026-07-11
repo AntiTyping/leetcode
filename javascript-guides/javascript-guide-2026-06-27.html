@@ -1,0 +1,1092 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JavaScript Daily Guide — 2026-06-27 (Day 16)</title>
+<style>
+:root {
+  --bg: #0d1117;
+  --surface: #161b22;
+  --surface2: #1c2128;
+  --border: #30363d;
+  --text: #e6edf3;
+  --text-dim: #9da7b3;
+  --accent: #58a6ff;
+  --blue-tint-bg: rgba(56,139,253,0.12);
+  --blue-tint-border: rgba(56,139,253,0.4);
+  --purple-tint-bg: rgba(163,113,247,0.10);
+  --purple-tint-border: rgba(163,113,247,0.4);
+  --warn-bg: rgba(187,128,9,0.12);
+  --warn-border: rgba(187,128,9,0.4);
+  --green: #3fb950;
+  --red: #f85149;
+  --output-bg: #0a0e13;
+}
+[data-theme="light"] {
+  --bg: #ffffff;
+  --surface: #f6f8fa;
+  --surface2: #eef1f4;
+  --border: #d0d7de;
+  --text: #1f2328;
+  --text-dim: #57606a;
+  --accent: #0969da;
+  --blue-tint-bg: rgba(9,105,218,0.08);
+  --blue-tint-border: rgba(9,105,218,0.3);
+  --purple-tint-bg: rgba(130,80,223,0.07);
+  --purple-tint-border: rgba(130,80,223,0.3);
+  --warn-bg: rgba(154,103,0,0.08);
+  --warn-border: rgba(154,103,0,0.3);
+  --green: #1a7f37;
+  --red: #cf222e;
+  --output-bg: #f0f3f6;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+  font-size: 16px;
+  line-height: 1.7;
+  background: var(--bg);
+  color: var(--text);
+}
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+code, pre { font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace; }
+
+/* Sidebar */
+.sidebar {
+  position: fixed;
+  top: 0; left: 0; bottom: 0;
+  width: 300px;
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+  overflow-y: auto;
+  padding: 20px 16px;
+}
+.sidebar h3 {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-dim);
+  margin: 18px 0 8px;
+}
+.sidebar h3:first-child { margin-top: 0; }
+.sidebar a {
+  display: block;
+  padding: 4px 8px;
+  border-radius: 6px;
+  color: var(--text);
+  font-size: 14px;
+}
+.sidebar a:hover { background: var(--surface2); text-decoration: none; }
+.sidebar .review-link { color: #d2a8ff; }
+
+.content {
+  margin-left: 300px;
+  padding: 32px 40px 80px;
+}
+.inner { max-width: 860px; margin: 0 auto; }
+
+/* Header */
+header.main-header { margin-bottom: 24px; }
+header.main-header h1 { font-size: 30px; margin: 0 0 4px; }
+.date { color: var(--text-dim); font-size: 15px; }
+.count-badge {
+  display: inline-block;
+  margin-top: 10px;
+  background: var(--blue-tint-bg);
+  border: 1px solid var(--blue-tint-border);
+  border-radius: 20px;
+  padding: 3px 14px;
+  font-size: 13px;
+  color: var(--accent);
+}
+
+.theme-toggle {
+  position: fixed;
+  top: 16px; right: 20px;
+  z-index: 10;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  color: var(--text);
+  border-radius: 8px;
+  padding: 7px 12px;
+  cursor: pointer;
+  font-size: 13px;
+}
+
+.howto {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 14px 20px;
+  margin-bottom: 28px;
+}
+.howto strong { color: var(--accent); }
+.howto ol { margin: 8px 0 0; padding-left: 20px; }
+
+h2.section-title {
+  font-size: 22px;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 6px;
+  margin-top: 44px;
+}
+.section-sub { color: var(--text-dim); font-size: 14px; margin-top: -6px; }
+
+/* Concept cards */
+.concept-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 22px 24px;
+  margin: 22px 0;
+}
+.review-card {
+  background: var(--purple-tint-bg);
+  border-color: var(--purple-tint-border);
+}
+.concept-header { display: flex; align-items: center; flex-wrap: wrap; gap: 10px; margin-bottom: 8px; }
+.concept-title { font-size: 20px; font-weight: 700; }
+.ttag {
+  background: var(--blue-tint-bg);
+  border: 1px solid var(--blue-tint-border);
+  color: var(--accent);
+  border-radius: 20px;
+  padding: 1px 11px;
+  font-size: 12px;
+  font-weight: 600;
+}
+.days-since {
+  margin-left: auto;
+  font-size: 12px;
+  color: var(--text-dim);
+  font-style: italic;
+}
+.why-matters {
+  background: var(--blue-tint-bg);
+  border-left: 3px solid var(--accent);
+  padding: 8px 14px;
+  border-radius: 0 6px 6px 0;
+  margin: 12px 0;
+  font-size: 15px;
+}
+.explanation { margin: 14px 0; }
+.explanation p { margin: 10px 0; }
+.step {
+  display: inline-block;
+  background: var(--accent);
+  color: var(--bg);
+  font-weight: 700;
+  font-size: 12px;
+  width: 20px; height: 20px;
+  line-height: 20px;
+  text-align: center;
+  border-radius: 50%;
+  margin-right: 6px;
+}
+
+.code-example, .key-pattern { margin: 16px 0; }
+.lang-badge {
+  display: inline-block;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-bottom: none;
+  border-radius: 6px 6px 0 0;
+  padding: 2px 12px;
+  font-size: 11px;
+  color: var(--text-dim);
+  font-weight: 600;
+}
+pre {
+  margin: 0;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 0 8px 8px 8px;
+  padding: 14px 16px;
+  overflow-x: auto;
+  font-size: 13.5px;
+  line-height: 1.55;
+}
+.output {
+  background: var(--output-bg);
+  border: 1px solid var(--border);
+  border-top: none;
+  border-radius: 0 0 8px 8px;
+  padding: 10px 16px;
+  font-family: ui-monospace, monospace;
+  font-size: 13px;
+  color: var(--text-dim);
+  white-space: pre-wrap;
+}
+.output::before {
+  content: "output";
+  display: block;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-dim);
+  opacity: 0.7;
+  margin-bottom: 4px;
+}
+
+.callout-warning {
+  background: var(--warn-bg);
+  border: 1px solid var(--warn-border);
+  border-radius: 8px;
+  padding: 12px 16px;
+  margin: 16px 0;
+}
+.mistake { color: var(--red); margin: 8px 0; font-family: ui-monospace, monospace; font-size: 13px; white-space: pre-wrap; }
+.correct { color: var(--green); margin: 8px 0; font-family: ui-monospace, monospace; font-size: 13px; white-space: pre-wrap; }
+
+.key-rules {
+  background: var(--surface2);
+  border-radius: 8px;
+  padding: 10px 16px;
+  margin: 16px 0;
+}
+.key-rules ul { margin: 6px 0; padding-left: 20px; }
+
+.exercises { margin: 16px 0; }
+.exercise {
+  border: 1px dashed var(--blue-tint-border);
+  border-radius: 8px;
+  padding: 10px 14px 10px 44px;
+  margin: 10px 0 10px 8px;
+  position: relative;
+  background: var(--blue-tint-bg);
+}
+.exercises { counter-reset: ex; }
+.exercise::before {
+  counter-increment: ex;
+  content: counter(ex);
+  position: absolute;
+  left: 12px; top: 10px;
+  background: var(--accent);
+  color: var(--bg);
+  width: 22px; height: 22px;
+  line-height: 22px;
+  text-align: center;
+  border-radius: 50%;
+  font-weight: 700;
+  font-size: 12px;
+}
+.connections {
+  font-size: 14px;
+  color: var(--text-dim);
+  border-top: 1px solid var(--border);
+  padding-top: 10px;
+  margin-top: 16px;
+}
+.connections strong { color: var(--text); }
+.reminder { margin: 10px 0; font-size: 15px; }
+
+footer.guide-footer {
+  margin-left: 300px;
+  padding: 30px 40px 60px;
+  border-top: 1px solid var(--border);
+  color: var(--text-dim);
+}
+footer.guide-footer ul { list-style: none; padding: 0; columns: 2; }
+footer.guide-footer li { margin: 3px 0; }
+.cross-links { margin-top: 20px; }
+.cross-links a { margin-right: 16px; }
+
+@media (max-width: 900px) {
+  .sidebar { display: none; }
+  .content, footer.guide-footer { margin-left: 0; }
+  .content { padding: 24px 18px 60px; }
+}
+</style>
+</head>
+<body data-theme="dark">
+
+<button class="theme-toggle" onclick="toggleTheme()">☀ / ☾ Theme</button>
+
+<!-- ===================== SIDEBAR ===================== -->
+<nav class="sidebar">
+  <h3>Review (Due Today)</h3>
+  <a class="review-link" href="#r-descriptors">Property Descriptors</a>
+  <a class="review-link" href="#r-proxy">Proxy &amp; Reflect</a>
+  <a class="review-link" href="#r-weakref">WeakRef &amp; Finalization</a>
+  <a class="review-link" href="#r-optional">Optional Chaining &amp; ??</a>
+  <a class="review-link" href="#r-asyncgen">Async Generators</a>
+  <a class="review-link" href="#r-tagged">Tagged Templates</a>
+
+  <h3>Modern Iteration &amp; Collections</h3>
+  <a href="#iterator-helpers">Iterator Helpers</a>
+  <a href="#groupby">Object.groupBy &amp; Map.groupBy</a>
+  <a href="#from-async">Array.fromAsync</a>
+
+  <h3>Async Ergonomics</h3>
+  <a href="#with-resolvers">Promise.withResolvers</a>
+  <a href="#als">AsyncLocalStorage</a>
+</nav>
+
+<div class="content">
+<div class="inner">
+
+<header class="main-header">
+  <h1>JavaScript Daily Guide</h1>
+  <div class="date">June 27, 2026 &mdash; Day 16</div>
+  <span class="count-badge">11 concepts &middot; 6 review + 5 new</span>
+</header>
+
+<div class="howto">
+  <strong>How to use this guide</strong>
+  <ol>
+    <li>Start with the <em>Review</em> section. For each card, read the reminder, then attempt the challenge from memory before peeking.</li>
+    <li>For new concepts, read the explanation and run every example yourself (Node 22+ or a modern browser console).</li>
+    <li>Study the <em>Common Mistakes</em> — anti-patterns stick better than rules.</li>
+    <li>Attempt the practice exercises <strong>without</strong> looking back at the examples. Solutions are intentionally omitted.</li>
+  </ol>
+</div>
+
+<!-- ===================== REVIEW SECTION ===================== -->
+<h2 class="section-title">🔁 Review Section</h2>
+<p class="section-sub">Six meta-programming and iteration concepts are due for retrieval practice today. Recall first, verify second.</p>
+
+<div class="concept-card review-card" id="r-descriptors">
+  <div class="concept-header">
+    <span class="concept-title">Property Descriptors &amp; Object.defineProperty</span>
+    <span class="ttag">Meta-Programming</span>
+    <span class="days-since">11 days since review</span>
+  </div>
+  <div class="reminder">Every property has a descriptor: data properties carry <code>value</code> + <code>writable</code>, accessor properties carry <code>get</code>/<code>set</code>. All carry <code>enumerable</code> and <code>configurable</code>. Properties created by <code>defineProperty</code> default <em>every</em> flag to <code>false</code> — the opposite of a normal assignment.</div>
+  <div class="key-pattern">
+    <div class="lang-badge">JavaScript</div>
+<pre><code>const o = {};
+Object.defineProperty(o, 'id', { value: 42, enumerable: false });
+o.id = 99;                 // silently ignored (writable:false) in sloppy mode
+console.log(o.id, Object.keys(o));  // 42 []  (hidden from enumeration)
+
+let _t = 20;
+Object.defineProperty(o, 'celsius', {
+  get() { return _t; },
+  set(v) { _t = v; },
+  enumerable: true,
+});
+o.celsius = 100;
+console.log(o.celsius);    // 100
+console.log(Object.getOwnPropertyDescriptor(o, 'id'));</code></pre>
+  </div>
+  <div class="exercises">
+    <strong>Challenge:</strong>
+    <div class="exercise">Write <code>readonly(obj, key, value)</code> that defines a non-writable, non-configurable, enumerable property and returns <code>obj</code>. Then write <code>observable(obj, key)</code> that replaces an existing data property with an accessor that logs every read and write while preserving the current value — without losing the original enumerability.</div>
+  </div>
+  <div class="callout-warning">
+    <strong>#1 Pitfall:</strong> Assuming a plain assignment and <code>defineProperty</code> behave the same. Assignment creates a writable/enumerable/configurable property; <code>defineProperty</code> defaults all three to <code>false</code>. Forgetting to set <code>enumerable: true</code> makes the property invisible to <code>Object.keys</code>, spread, and <code>JSON.stringify</code>.
+  </div>
+</div>
+
+<div class="concept-card review-card" id="r-proxy">
+  <div class="concept-header">
+    <span class="concept-title">Proxy &amp; Reflect</span>
+    <span class="ttag">Meta-Programming</span>
+    <span class="days-since">10 days since review</span>
+  </div>
+  <div class="reminder">A <code>Proxy</code> wraps a target and intercepts fundamental operations via <em>traps</em> (<code>get</code>, <code>set</code>, <code>has</code>, <code>deleteProperty</code>, <code>apply</code>, ...). Inside a trap, forward the default behavior with the matching <code>Reflect</code> method so you don't reimplement it (and so <code>receiver</code>/getters work correctly).</div>
+  <div class="key-pattern">
+    <div class="lang-badge">JavaScript</div>
+<pre><code>const target = { a: 1 };
+const logged = new Proxy(target, {
+  get(t, key, recv) {
+    console.log('get', key);
+    return Reflect.get(t, key, recv);     // default behavior, preserves receiver
+  },
+  set(t, key, value, recv) {
+    if (typeof value !== 'number') throw new TypeError(key + ' must be a number');
+    return Reflect.set(t, key, value, recv);
+  },
+});
+logged.a;          // logs "get a" -> 1
+logged.a = 5;      // ok
+// logged.a = 'x'; // throws TypeError</code></pre>
+  </div>
+  <div class="exercises">
+    <strong>Challenge:</strong>
+    <div class="exercise">Build <code>withDefault(obj, factory)</code> returning a Proxy where reading a missing key lazily creates it via <code>factory(key)</code>, stores it, and returns it (a defaultdict). Then extend it so <code>'has'</code> and <code>Object.keys</code> still only report keys that were actually materialized.</div>
+  </div>
+  <div class="callout-warning">
+    <strong>#1 Pitfall:</strong> Returning the wrong invariant from a trap. The <code>set</code> trap <em>must</em> return a truthy value on success — returning <code>undefined</code> makes assignments throw in strict mode. Always <code>return Reflect.set(...)</code>, which yields the correct boolean.
+  </div>
+</div>
+
+<div class="concept-card review-card" id="r-weakref">
+  <div class="concept-header">
+    <span class="concept-title">WeakRef &amp; FinalizationRegistry</span>
+    <span class="ttag">Meta-Programming</span>
+    <span class="days-since">9 days since review</span>
+  </div>
+  <div class="reminder">A <code>WeakRef</code> holds an object without preventing its garbage collection; <code>.deref()</code> returns the object or <code>undefined</code> if it's been collected. A <code>FinalizationRegistry</code> fires a cleanup callback <em>sometime after</em> a registered object is collected. Both are best-effort and non-deterministic — never rely on timing.</div>
+  <div class="key-pattern">
+    <div class="lang-badge">JavaScript</div>
+<pre><code>let user = { id: 1 };
+const ref = new WeakRef(user);
+
+const registry = new FinalizationRegistry((heldValue) => {
+  console.log('collected:', heldValue);   // runs at some later GC, maybe never
+});
+registry.register(user, 'user#1');
+
+console.log(ref.deref()?.id);   // 1  (still alive)
+user = null;                    // now eligible for GC
+// later: ref.deref() -> undefined, registry callback may log "collected: user#1"</code></pre>
+  </div>
+  <div class="exercises">
+    <strong>Challenge:</strong>
+    <div class="exercise">Implement a <code>WeakCache</code> for expensive-to-compute objects keyed by string, where values are held via <code>WeakRef</code> so the GC can reclaim them under memory pressure. On a miss <em>or</em> a dead ref, recompute. Use a <code>FinalizationRegistry</code> to delete the stale map entry once its value is collected, so the map doesn't leak empty refs.</div>
+  </div>
+  <div class="callout-warning">
+    <strong>#1 Pitfall:</strong> Using <code>WeakRef</code>/<code>FinalizationRegistry</code> for program logic. Collection timing is unspecified — the callback may run late, in a batch, or never (e.g. on page unload). Use them only for caches and cleanup hints, never for correctness-critical resource release (use <code>using</code>/<code>try-finally</code> for that).
+  </div>
+</div>
+
+<div class="concept-card review-card" id="r-optional">
+  <div class="concept-header">
+    <span class="concept-title">Optional Chaining &amp; Nullish Coalescing</span>
+    <span class="ttag">Functions &amp; Iteration</span>
+    <span class="days-since">8 days since review</span>
+  </div>
+  <div class="reminder"><code>?.</code> short-circuits to <code>undefined</code> the moment the left side is <code>null</code>/<code>undefined</code> (works for property access, calls <code>?.()</code>, and indexing <code>?.[i]</code>). <code>??</code> falls back only on <code>null</code>/<code>undefined</code> — unlike <code>||</code>, it keeps falsy-but-valid values like <code>0</code> and <code>''</code>. <code>??=</code> assigns only when the target is nullish.</div>
+  <div class="key-pattern">
+    <div class="lang-badge">JavaScript</div>
+<pre><code>const cfg = { timeout: 0, retries: null };
+
+console.log(cfg.timeout || 3000);   // 3000  ❌ wrongly overrides a valid 0
+console.log(cfg.timeout ?? 3000);   // 0     ✅ keeps the explicit 0
+console.log(cfg.retries ?? 5);      // 5
+
+const user = { profile: null };
+console.log(user.profile?.name);            // undefined (no throw)
+console.log(user.getName?.());              // undefined (method may not exist)
+cfg.label ??= 'default';                    // sets only because label was missing</code></pre>
+  </div>
+  <div class="exercises">
+    <strong>Challenge:</strong>
+    <div class="exercise">Write <code>get(obj, path, fallback)</code> where <code>path</code> is a dotted string (e.g. <code>'a.b.c'</code>). Walk the path safely so a missing intermediate yields the <code>fallback</code> (using <code>??</code> semantics, so a stored <code>0</code>/<code>''</code>/<code>false</code> is returned as-is, not replaced). Bonus: support array indices like <code>'items.0.id'</code>.</div>
+  </div>
+  <div class="callout-warning">
+    <strong>#1 Pitfall:</strong> Combining <code>??</code> with <code>||</code>/<code>&amp;&amp;</code> in one expression without parentheses — it's a syntax error by design (<code>a ?? b || c</code> won't parse). Also: <code>?.</code> only guards the access immediately after it, so <code>a?.b.c</code> still throws if <code>a.b</code> is null. Chain every hop: <code>a?.b?.c</code>.
+  </div>
+</div>
+
+<div class="concept-card review-card" id="r-asyncgen">
+  <div class="concept-header">
+    <span class="concept-title">Async Generators &amp; for await...of</span>
+    <span class="ttag">Functions &amp; Iteration</span>
+    <span class="days-since">6 days since review</span>
+  </div>
+  <div class="reminder">An <code>async function*</code> can <code>await</code> between <code>yield</code>s and produces an <em>async iterable</em> (implements <code>Symbol.asyncIterator</code>). Consume it with <code>for await...of</code>, which awaits each value. Ideal for paginated APIs and streams where each item arrives asynchronously and you want lazy, backpressured consumption.</div>
+  <div class="key-pattern">
+    <div class="lang-badge">JavaScript</div>
+<pre><code>async function* pages(url) {
+  let next = url;
+  while (next) {
+    const res = await fetch(next);
+    const { items, nextUrl } = await res.json();
+    yield* items;            // delegate: yield each item
+    next = nextUrl;          // stop when the API returns no next page
+  }
+}
+
+for await (const item of pages('/api/items?page=1')) {
+  console.log(item.id);      // processes one at a time, fetching pages lazily
+  if (item.id === 'stop') break;   // break also closes the generator
+}</code></pre>
+  </div>
+  <div class="exercises">
+    <strong>Challenge:</strong>
+    <div class="exercise">Write an async generator <code>take(asyncIterable, n)</code> that yields at most the first <code>n</code> values from any async iterable and then stops (closing the source). Then write <code>merge(...asyncIterables)</code> that yields values from several async iterables as they arrive (not strictly in order), completing when all sources are exhausted.</div>
+  </div>
+  <div class="callout-warning">
+    <strong>#1 Pitfall:</strong> Reaching for <code>.forEach(async ...)</code> or <code>Promise.all(map(...))</code> when you actually want sequential, backpressured iteration. <code>for await...of</code> awaits each turn before requesting the next value; <code>Promise.all</code> launches everything at once and buffers all results in memory.
+  </div>
+</div>
+
+<div class="concept-card review-card" id="r-tagged">
+  <div class="concept-header">
+    <span class="concept-title">Tagged Template Literals</span>
+    <span class="ttag">Functions &amp; Iteration</span>
+    <span class="days-since">6 days since review</span>
+  </div>
+  <div class="reminder">A tag is a function called with the literal's static string parts (an array, with a <code>.raw</code> property) followed by each interpolated value as a separate argument. The tag decides how to combine them — the basis for safe HTML/SQL builders, i18n, styled-components, and DSLs.</div>
+  <div class="key-pattern">
+    <div class="lang-badge">JavaScript</div>
+<pre><code>function safe(strings, ...values) {
+  const esc = (s) => String(s).replace(/[&amp;<>"]/g,
+    c => ({ '&amp;': '&amp;amp;', '<': '&amp;lt;', '>': '&amp;gt;', '"': '&amp;quot;' }[c]));
+  return strings.reduce((out, str, i) =>
+    out + str + (i < values.length ? esc(values[i]) : ''), '');
+}
+
+const userInput = '<img src=x onerror=alert(1)>';
+console.log(safe`&lt;p&gt;Hello ${userInput}&lt;/p&gt;`);
+// &lt;p&gt;Hello &amp;lt;img src=x onerror=alert(1)&amp;gt;&lt;/p&gt;   (interpolation escaped, static parts not)
+
+console.log(String.raw`C:\new\tab`);   // C:\new\tab  (backslashes preserved)</code></pre>
+  </div>
+  <div class="exercises">
+    <strong>Challenge:</strong>
+    <div class="exercise">Write a <code>sql</code> tag that builds a parameterized query: it returns <code>{ text, values }</code> where <code>text</code> has the interpolations replaced by positional placeholders (<code>$1</code>, <code>$2</code>, ...) and <code>values</code> is the array of interpolated values in order — so user input is never concatenated into the SQL string.</div>
+  </div>
+  <div class="callout-warning">
+    <strong>#1 Pitfall:</strong> Escaping the whole assembled string instead of only the interpolated values, or forgetting that <code>strings.length === values.length + 1</code> (there's always one more static part than there are values). Off-by-one here drops your last literal segment.
+  </div>
+</div>
+
+<!-- ===================== NEW: SECTION 1 ===================== -->
+<h2 class="section-title">🆕 Modern Iteration &amp; Collections</h2>
+<p class="section-sub">ES2024/2025 additions that make working with iterators and grouping data ergonomic — no more lodash for these.</p>
+
+<!-- ITERATOR HELPERS -->
+<div class="concept-card" id="iterator-helpers">
+  <div class="concept-header">
+    <span class="concept-title">Iterator Helpers</span>
+    <span class="ttag">Functions &amp; Iteration</span>
+  </div>
+  <p class="why-matters">Until now, to <code>map</code>/<code>filter</code> a generator you had to spread it into an array first — eagerly materializing everything, which is impossible for infinite or huge sequences. Iterator helpers add lazy <code>.map</code>/<code>.filter</code>/<code>.take</code> directly on iterators, so you process items one at a time.</p>
+
+  <div class="explanation">
+    <p>Any iterator (including the one a generator returns) now has chainable methods on <code>Iterator.prototype</code>. They are <strong>lazy</strong>: nothing runs until you pull values, and only as many source items as needed are consumed.</p>
+    <p><span class="step">1</span><strong>Lazy chaining over an infinite source.</strong> <code>take</code> bounds an otherwise-endless generator; <code>toArray</code> is the terminal step that actually drains it.</p>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">JavaScript</div>
+<pre><code>function* naturals() { let n = 1; while (true) yield n++; }  // infinite
+
+const result = naturals()
+  .map(n => n * n)            // lazy
+  .filter(n => n % 2 === 1)   // lazy
+  .take(5)                    // stop after 5 — keeps the pipeline finite
+  .toArray();                 // terminal: pull values now
+
+console.log(result);          // [1, 9, 25, 49, 81]</code></pre>
+    <div class="output">[ 1, 9, 25, 49, 81 ]</div>
+  </div>
+
+  <div class="explanation">
+    <p><span class="step">2</span><strong>Terminal helpers.</strong> Besides <code>toArray</code>, there are short-circuiting reducers — <code>find</code>, <code>some</code>, <code>every</code>, <code>reduce</code>, and <code>forEach</code> — that consume only as far as they must.</p>
+  </div>
+  <div class="code-example">
+    <div class="lang-badge">JavaScript</div>
+<pre><code>const firstBig = naturals().map(n => n * n).find(n => n > 50);
+console.log(firstBig);        // 64  (stops at 8*8; never computes further)
+
+const sum = naturals().take(100).reduce((a, b) => a + b, 0);
+console.log(sum);             // 5050
+
+console.log(naturals().take(3).some(n => n > 2));  // true</code></pre>
+    <div class="output">64
+5050
+true</div>
+  </div>
+
+  <div class="explanation">
+    <p><span class="step">3</span><strong>Adapt any iterable with <code>Iterator.from()</code>.</strong> Wrap a built-in iterator (a <code>Set</code>, a <code>Map</code>'s entries, <code>matchAll</code> results) to get the helper methods, and use <code>drop</code> to skip a prefix.</p>
+  </div>
+  <div class="code-example">
+    <div class="lang-badge">JavaScript</div>
+<pre><code>const set = new Set([10, 20, 30, 40, 50]);
+
+const labels = Iterator.from(set)
+  .drop(1)                       // skip the first value
+  .map(n => `#${n}`)
+  .toArray();
+console.log(labels);             // [ '#20', '#30', '#40', '#50' ]
+
+// flatMap expands each item into 0+ items, still lazily:
+const pairs = Iterator.from([1, 2, 3]).flatMap(n => [n, -n]).toArray();
+console.log(pairs);              // [ 1, -1, 2, -2, 3, -3 ]</code></pre>
+    <div class="output">[ '#20', '#30', '#40', '#50' ]
+[ 1, -1, 2, -2, 3, -3 ]</div>
+  </div>
+
+  <div class="callout-warning">
+    <strong>Common Mistakes:</strong>
+    <div class="mistake">❌ Spreading an iterator to use array methods, breaking laziness:
+   [...naturals()].map(...).slice(0, 5);  // hangs forever — spread never ends</div>
+    <div class="correct">✅ Chain the helpers and bound the stream BEFORE materializing:
+   naturals().map(...).take(5).toArray();  // only 5 items are ever produced</div>
+  </div>
+
+  <div class="key-rules">
+    <strong>Key Rules:</strong>
+    <ul>
+      <li>Helpers are lazy and single-use: an iterator is consumed as you pull from it — you can't iterate the same one twice.</li>
+      <li>Always bound an infinite source with <code>take</code> (or a short-circuiting terminal like <code>find</code>) before a terminal that drains it.</li>
+      <li>Use <code>Iterator.from(x)</code> to give helper methods to a built-in iterator or a hand-written one; reach for them instead of spreading into an array when the sequence is large or unbounded.</li>
+    </ul>
+  </div>
+
+  <div class="exercises">
+    <strong>Practice Exercises:</strong>
+    <div class="exercise">Using a <code>naturals()</code> generator and iterator helpers only (no arrays until <code>toArray</code>), produce the first 10 numbers divisible by 3 or 5. Expected: <code>[3, 5, 6, 9, 10, 12, 15, 18, 20, 21]</code>.</div>
+    <div class="exercise">Write <code>zip(a, b)</code> as a generator, then use iterator helpers to take the first 5 zipped pairs of two infinite sequences (e.g. squares and cubes) and map them to their sums.</div>
+    <div class="exercise">Given a large <code>Map</code> of <code>userId → score</code>, use <code>Iterator.from(map)</code> with <code>filter</code> and <code>take</code> to return the first 3 <code>[id, score]</code> entries whose score exceeds 90 — without building an intermediate array of all entries.</div>
+  </div>
+
+  <div class="connections">
+    <strong>Connections:</strong> Helpers build directly on the iterator protocol behind <a href="#r-asyncgen">generators</a> and <code>Symbol.iterator</code>. The async sibling <a href="#from-async">Array.fromAsync</a> and async iterator helpers extend the same laziness to <code>for await</code>. Lazy <code>take</code>/<code>drop</code> are the eager <a href="#">functional pipe/compose</a> patterns made memory-efficient.
+  </div>
+</div>
+
+<!-- GROUPBY -->
+<div class="concept-card" id="groupby">
+  <div class="concept-header">
+    <span class="concept-title"><code>Object.groupBy</code> &amp; <code>Map.groupBy</code></span>
+    <span class="ttag">Data &amp; Collections</span>
+  </div>
+  <p class="why-matters">Bucketing a list by some key is one of the most common data tasks (group orders by status, log lines by level). ES2024 made it a one-liner, replacing the verbose <code>reduce</code>-into-an-object boilerplate that everyone wrote slightly differently.</p>
+
+  <div class="explanation">
+    <p><span class="step">1</span><strong><code>Object.groupBy</code>.</strong> Pass an iterable and a callback returning a key; you get back a <em>null-prototype</em> object whose values are arrays of the items that produced each key. Keys are coerced to strings (or symbols).</p>
+  </div>
+  <div class="code-example">
+    <div class="lang-badge">JavaScript</div>
+<pre><code>const items = [
+  { name: 'apple',  type: 'fruit' },
+  { name: 'carrot', type: 'veg' },
+  { name: 'pear',   type: 'fruit' },
+  { name: 'kale',   type: 'veg' },
+];
+
+const byType = Object.groupBy(items, (item) => item.type);
+console.log(byType.fruit.map(i => i.name));  // [ 'apple', 'pear' ]
+console.log(byType.veg.length);              // 2
+console.log(Object.getPrototypeOf(byType));  // null  (no inherited keys)</code></pre>
+    <div class="output">[ 'apple', 'pear' ]
+2
+null</div>
+  </div>
+
+  <div class="explanation">
+    <p><span class="step">2</span><strong><code>Map.groupBy</code> for non-string keys.</strong> When the grouping key is an object or you want to preserve key types/order, use <code>Map.groupBy</code> — it returns a <code>Map</code>, so keys keep their identity and you avoid string coercion.</p>
+  </div>
+  <div class="code-example">
+    <div class="lang-badge">JavaScript</div>
+<pre><code>const nums = [1, 2, 3, 4, 5, 6, 7];
+
+const parity = Map.groupBy(nums, (n) => n % 2 === 0 ? 'even' : 'odd');
+console.log(parity.get('even'));    // [ 2, 4, 6 ]
+console.log(parity.get('odd'));     // [ 1, 3, 5, 7 ]
+
+// group by a derived OBJECT key — only Map can do this safely:
+const teamA = { id: 'A' }, teamB = { id: 'B' };
+const players = [{ team: teamA }, { team: teamB }, { team: teamA }];
+const byTeam = Map.groupBy(players, (p) => p.team);
+console.log(byTeam.get(teamA).length);   // 2</code></pre>
+    <div class="output">[ 2, 4, 6 ]
+[ 1, 3, 5, 7 ]
+2</div>
+  </div>
+
+  <div class="explanation">
+    <p><span class="step">3</span><strong>The callback's index argument.</strong> Like array iterators, the grouping callback also receives the element's index, useful for positional bucketing.</p>
+  </div>
+  <div class="code-example">
+    <div class="lang-badge">JavaScript</div>
+<pre><code>const data = ['a', 'b', 'c', 'd', 'e'];
+const cols = Object.groupBy(data, (_, i) => `col${i % 3}`);
+console.log(cols);
+// [Object: null prototype] { col0: ['a','d'], col1: ['b','e'], col2: ['c'] }</code></pre>
+    <div class="output">[Object: null prototype] { col0: [ 'a', 'd' ], col1: [ 'b', 'e' ], col2: [ 'c' ] }</div>
+  </div>
+
+  <div class="callout-warning">
+    <strong>Common Mistakes:</strong>
+    <div class="mistake">❌ Treating Object.groupBy's result like a normal object:
+   const g = Object.groupBy(items, fn);
+   g.hasOwnProperty('fruit');   // TypeError — null prototype has no methods
+   for (const k in g) { ... }   // works, but g.toString etc. are gone</div>
+    <div class="correct">✅ Use static helpers / Object methods, or Map.groupBy:
+   Object.hasOwn(g, 'fruit');
+   Object.keys(g);              // safe
+   const m = Map.groupBy(items, fn);  m.has('fruit');</div>
+  </div>
+
+  <div class="key-rules">
+    <strong>Key Rules:</strong>
+    <ul>
+      <li><code>Object.groupBy</code> → null-prototype object, string/symbol keys; great for JSON-shaped output. <code>Map.groupBy</code> → <code>Map</code>, any key type, preserves insertion order.</li>
+      <li>The result's arrays are in source order; the callback gets <code>(element, index)</code>.</li>
+      <li>Reach for <code>Map.groupBy</code> whenever the key is an object/derived value, or when you need <code>.has</code>/<code>.size</code>/ordered iteration.</li>
+    </ul>
+  </div>
+
+  <div class="exercises">
+    <strong>Practice Exercises:</strong>
+    <div class="exercise">Given an array of transactions <code>{ amount, currency }</code>, use <code>Object.groupBy</code> to bucket by currency, then map each bucket to its total amount, producing <code>{ USD: 120, EUR: 80 }</code>.</div>
+    <div class="exercise">Use <code>Map.groupBy</code> to split an array of numbers into three buckets keyed by the functions <code>isNegative</code>/<code>isZero</code>/<code>isPositive</code> (the key is the predicate's name string). Confirm order is preserved within each bucket.</div>
+    <div class="exercise">Write your own <code>groupBy(iterable, keyFn)</code> polyfill that mimics <code>Object.groupBy</code> (null-prototype object, arrays in source order) using a single <code>reduce</code>, then verify it matches the native result on a sample input.</div>
+  </div>
+
+  <div class="connections">
+    <strong>Connections:</strong> <code>Map.groupBy</code> leans on <a href="#">Map &amp; Set</a> reference-equality keys. The null-prototype gotcha ties back to <a href="#">prototypes &amp; the prototype chain</a>. Grouping pairs naturally with <a href="#iterator-helpers">iterator helpers</a> — group, then lazily transform each bucket.
+  </div>
+</div>
+
+<!-- ARRAY.FROMASYNC -->
+<div class="concept-card" id="from-async">
+  <div class="concept-header">
+    <span class="concept-title"><code>Array.fromAsync</code></span>
+    <span class="ttag">Async Mastery</span>
+  </div>
+  <p class="why-matters">Collecting everything an async generator or stream produces into an array used to require a manual <code>for await</code> loop. <code>Array.fromAsync</code> is the async counterpart to <code>Array.from</code> — one call drains any async iterable, awaiting each value in sequence.</p>
+
+  <div class="explanation">
+    <p><span class="step">1</span><strong>Drain an async iterable.</strong> It returns a <em>Promise</em> of an array, so you <code>await</code> it. Each yielded value is awaited before the next is requested — sequential, not concurrent.</p>
+  </div>
+  <div class="code-example">
+    <div class="lang-badge">JavaScript</div>
+<pre><code>async function* stream() {
+  yield 1;
+  await new Promise(r => setTimeout(r, 10));
+  yield 2;
+  yield 3;
+}
+
+const all = await Array.fromAsync(stream());
+console.log(all);            // [ 1, 2, 3 ]</code></pre>
+    <div class="output">[ 1, 2, 3 ]</div>
+  </div>
+
+  <div class="explanation">
+    <p><span class="step">2</span><strong>Optional mapping function.</strong> Like <code>Array.from</code>, a second arg maps each item; if it returns a Promise, that's awaited too — handy for resolving each element through an async transform.</p>
+  </div>
+  <div class="code-example">
+    <div class="lang-badge">JavaScript</div>
+<pre><code>const ids = [1, 2, 3];
+async function fetchName(id) { return `user-${id}`; }   // pretend network
+
+const names = await Array.fromAsync(ids, (id) => fetchName(id));
+console.log(names);          // [ 'user-1', 'user-2', 'user-3' ]
+
+// also accepts a sync iterable of promises (awaits each, in order):
+const vals = await Array.fromAsync([Promise.resolve('a'), Promise.resolve('b')]);
+console.log(vals);           // [ 'a', 'b' ]</code></pre>
+    <div class="output">[ 'user-1', 'user-2', 'user-3' ]
+[ 'a', 'b' ]</div>
+  </div>
+
+  <div class="explanation">
+    <p><span class="step">3</span><strong>Sequential vs concurrent — choose deliberately.</strong> <code>fromAsync</code> awaits items <em>one at a time</em> (good for backpressure / rate limits). For maximum concurrency, map to promises and use <code>Promise.all</code> instead.</p>
+  </div>
+  <div class="code-example">
+    <div class="lang-badge">JavaScript</div>
+<pre><code>// SEQUENTIAL: each fetchName waits for the previous (gentle on the server):
+const seq = await Array.fromAsync(ids, fetchName);
+
+// CONCURRENT: all requests fire at once, then collect:
+const conc = await Promise.all(ids.map(fetchName));
+
+console.log(seq.length === conc.length);   // true (same result, different timing)</code></pre>
+    <div class="output">true</div>
+  </div>
+
+  <div class="callout-warning">
+    <strong>Common Mistakes:</strong>
+    <div class="mistake">❌ Expecting concurrency from Array.fromAsync:
+   // these run ONE AT A TIME — total time is the SUM of each delay
+   await Array.fromAsync(urls, fetchJson);</div>
+    <div class="correct">✅ For parallel I/O, map to promises and Promise.all:
+   await Promise.all(urls.map(fetchJson));
+   // use Array.fromAsync when you WANT sequential/backpressured consumption</div>
+  </div>
+
+  <div class="key-rules">
+    <strong>Key Rules:</strong>
+    <ul>
+      <li>Returns a <code>Promise&lt;Array&gt;</code> — always <code>await</code> it. Works on async iterables, sync iterables, and array-likes.</li>
+      <li>It is <strong>sequential</strong>: items (and the optional mapper's promises) are awaited in order. Use <code>Promise.all</code> when you want them concurrent.</li>
+      <li>Use it to materialize an <a href="#r-asyncgen">async generator</a>/stream into an array; avoid it for unbounded streams (it buffers everything).</li>
+    </ul>
+  </div>
+
+  <div class="exercises">
+    <strong>Practice Exercises:</strong>
+    <div class="exercise">Write an async generator that yields the numbers 1..n with a small delay between each, then use <code>Array.fromAsync</code> with a mapper to collect their squares. Confirm the result is <code>[1, 4, 9, ...]</code>.</div>
+    <div class="exercise">Given an array of URLs, write two collectors: <code>collectSequential(urls)</code> using <code>Array.fromAsync</code> and <code>collectConcurrent(urls)</code> using <code>Promise.all</code>. Add timing with <code>performance.now()</code> and observe the difference when each fetch takes ~50ms.</div>
+    <div class="exercise">Implement a <code>fromAsyncLimit(asyncIterable, mapper, limit)</code> that is like <code>Array.fromAsync</code> with a mapper but runs at most <code>limit</code> mappers concurrently (a bounded pool). Return the results in source order.</div>
+  </div>
+
+  <div class="connections">
+    <strong>Connections:</strong> This is the async twin of <a href="#iterator-helpers">iterator helpers</a> / <code>Array.from</code>, consuming the same async-iterator protocol as <a href="#r-asyncgen">async generators</a> and <code>for await...of</code>. The sequential-vs-concurrent tradeoff is the same one from <a href="#">Promise.all / async-await patterns</a>.
+  </div>
+</div>
+
+<!-- ===================== NEW: SECTION 2 ===================== -->
+<h2 class="section-title">🆕 Async Ergonomics</h2>
+<p class="section-sub">Two modern tools that remove long-standing async boilerplate: externally-resolvable promises, and implicit context that survives <code>await</code>.</p>
+
+<!-- PROMISE.WITHRESOLVERS -->
+<div class="concept-card" id="with-resolvers">
+  <div class="concept-header">
+    <span class="concept-title"><code>Promise.withResolvers</code></span>
+    <span class="ttag">Async Mastery</span>
+  </div>
+  <p class="why-matters">The classic "deferred" pattern — creating a promise and hoisting its <code>resolve</code>/<code>reject</code> out of the executor — appears constantly (event-to-promise bridges, queues, request maps). ES2024's <code>Promise.withResolvers</code> gives you all three in one destructure, no closure gymnastics.</p>
+
+  <div class="explanation">
+    <p><span class="step">1</span><strong>The old way vs the new way.</strong> Previously you declared <code>let resolve</code> outside, then captured it inside the executor. Now one call returns <code>{ promise, resolve, reject }</code>.</p>
+  </div>
+  <div class="code-example">
+    <div class="lang-badge">JavaScript</div>
+<pre><code>// OLD: leak resolve/reject out of the executor
+let resolveOld;
+const pOld = new Promise((res) => { resolveOld = res; });
+
+// NEW: one line
+const { promise, resolve, reject } = Promise.withResolvers();
+
+resolve(42);
+console.log(await promise);   // 42</code></pre>
+    <div class="output">42</div>
+  </div>
+
+  <div class="explanation">
+    <p><span class="step">2</span><strong>Bridge an event into a promise.</strong> Resolve from an event handler that fires later — a clean one-shot "wait for this event" helper.</p>
+  </div>
+  <div class="code-example">
+    <div class="lang-badge">JavaScript</div>
+<pre><code>function once(emitter, event) {
+  const { promise, resolve } = Promise.withResolvers();
+  emitter.once(event, resolve);     // resolve when the event fires
+  return promise;
+}
+
+// const data = await once(socket, 'data');   // awaits the next 'data' event
+
+// Timeout guard built the same way:
+function delay(ms) {
+  const { promise, resolve } = Promise.withResolvers();
+  setTimeout(resolve, ms);
+  return promise;
+}
+await delay(5);
+console.log('done waiting');</code></pre>
+    <div class="output">done waiting</div>
+  </div>
+
+  <div class="explanation">
+    <p><span class="step">3</span><strong>A signal/latch you resolve from anywhere.</strong> Hand <code>resolve</code> to one part of the code and <code>promise</code> to another — a tiny synchronization primitive.</p>
+  </div>
+  <div class="code-example">
+    <div class="lang-badge">JavaScript</div>
+<pre><code>function createLatch() {
+  const { promise, resolve } = Promise.withResolvers();
+  return { ready: promise, open: resolve };   // share each half separately
+}
+
+const latch = createLatch();
+setTimeout(() => latch.open('go!'), 10);      // released by some other code path
+
+console.log('waiting...');
+console.log(await latch.ready);               // 'go!'</code></pre>
+    <div class="output">waiting...
+go!</div>
+  </div>
+
+  <div class="callout-warning">
+    <strong>Common Mistakes:</strong>
+    <div class="mistake">❌ Doing real work inside a deferred and swallowing failures:
+   const { promise, resolve } = Promise.withResolvers();
+   doAsyncThing().then(resolve);   // if doAsyncThing rejects, promise hangs forever</div>
+    <div class="correct">✅ Wire up reject too, so failures propagate:
+   doAsyncThing().then(resolve, reject);
+   // and prefer plain async/await unless you genuinely need external control</div>
+  </div>
+
+  <div class="key-rules">
+    <strong>Key Rules:</strong>
+    <ul>
+      <li>Use it when something <em>outside</em> the promise's creation site decides when it settles (events, callbacks, cross-module signaling) — not for ordinary sequential async, where <code>async/await</code> is clearer.</li>
+      <li>Calling <code>resolve</code>/<code>reject</code> more than once is a no-op after the first — the promise is already settled.</li>
+      <li>Always provide a path to <code>reject</code> (e.g. a timeout or error handler), or a stuck producer leaves the consumer awaiting forever.</li>
+    </ul>
+  </div>
+
+  <div class="exercises">
+    <strong>Practice Exercises:</strong>
+    <div class="exercise">Implement <code>withTimeout(promise, ms)</code> using <code>Promise.withResolvers</code> for the timeout branch: it rejects with a <code>'timeout'</code> error if <code>ms</code> elapses first, otherwise resolves/rejects with the original promise's outcome. Clear the timer either way.</div>
+    <div class="exercise">Build a single-slot <code>Channel</code> with <code>send(value)</code> and <code>receive()</code>: <code>receive()</code> returns a promise that resolves with the next <code>send</code>ed value. Use <code>Promise.withResolvers</code> to park a waiting receiver until a value arrives.</div>
+    <div class="exercise">Write <code>nextEvent(target, eventName, { signal })</code> that resolves on the next matching event but rejects if an <code>AbortSignal</code> fires first — wiring both the event listener and the abort listener to the same deferred, and removing both listeners on settle.</div>
+  </div>
+
+  <div class="connections">
+    <strong>Connections:</strong> This is a formalization of the deferred you may have hand-rolled while studying <a href="#">Promise internals</a>. It pairs naturally with <a href="#">AbortController</a> (resolve on event, reject on abort) and is the building block for queues feeding <a href="#r-asyncgen">async generators</a>.
+  </div>
+</div>
+
+<!-- ASYNCLOCALSTORAGE -->
+<div class="concept-card" id="als">
+  <div class="concept-header">
+    <span class="concept-title">AsyncLocalStorage (async context)</span>
+    <span class="ttag">Node.js Runtime</span>
+  </div>
+  <p class="why-matters">In a server you often need request-scoped data (a request id, the current user, a trace span) available deep in the call tree — without threading it through every function signature. <code>AsyncLocalStorage</code> propagates a value through an entire async call chain implicitly, like thread-local storage for the event loop.</p>
+
+  <div class="explanation">
+    <p><span class="step">1</span><strong>run + getStore.</strong> <code>als.run(store, fn)</code> executes <code>fn</code> with <code>store</code> as the active context; anywhere inside (even after <code>await</code>s and in nested calls) <code>als.getStore()</code> returns that same store.</p>
+  </div>
+  <div class="code-example">
+    <div class="lang-badge">JavaScript</div>
+<pre><code>import { AsyncLocalStorage } from 'node:async_hooks';
+
+const als = new AsyncLocalStorage();
+
+function log(msg) {
+  const store = als.getStore();        // reads the ambient context
+  console.log(`[req ${store?.reqId}] ${msg}`);
+}
+
+async function handler() {
+  log('start');
+  await new Promise(r => setTimeout(r, 5));
+  log('after await');                  // context survives the await
+}
+
+als.run({ reqId: 'abc' }, handler);
+als.run({ reqId: 'xyz' }, handler);</code></pre>
+    <div class="output">[req abc] start
+[req xyz] start
+[req abc] after await
+[req xyz] after await</div>
+  </div>
+
+  <div class="explanation">
+    <p><span class="step">2</span><strong>Isolation between concurrent runs.</strong> Each <code>run</code> gets its own store; interleaved async operations never see each other's context. That's what makes it safe for concurrent requests on one event loop.</p>
+  </div>
+  <div class="code-example">
+    <div class="lang-badge">JavaScript</div>
+<pre><code>// Simulate two overlapping requests:
+function deep() {
+  return als.getStore().user;          // no parameter passing needed
+}
+async function request(user) {
+  return als.run({ user }, async () => {
+    await new Promise(r => setTimeout(r, Math.random() * 10));
+    return deep();                     // still sees THIS request's user
+  });
+}
+
+const [a, b] = await Promise.all([request('ada'), request('linus')]);
+console.log(a, b);                     // ada linus  (never crossed over)</code></pre>
+    <div class="output">ada linus</div>
+  </div>
+
+  <div class="explanation">
+    <p><span class="step">3</span><strong>Mutable per-request scratch space.</strong> The store is just an object (or a <code>Map</code>) — middleware can stash values into it that later layers read, without a global.</p>
+  </div>
+  <div class="code-example">
+    <div class="lang-badge">JavaScript</div>
+<pre><code>const ctx = new AsyncLocalStorage();
+
+function middleware(next) {
+  ctx.run(new Map([['startedAt', Date.now()]]), next);
+}
+
+function controller() {
+  const store = ctx.getStore();
+  store.set('userId', 7);              // add to the same per-request map
+  return `user ${store.get('userId')} in ` +
+         `${Date.now() - store.get('startedAt')}ms`;
+}
+
+middleware(() => console.log(controller()));</code></pre>
+    <div class="output">user 7 in 0ms</div>
+  </div>
+
+  <div class="callout-warning">
+    <strong>Common Mistakes:</strong>
+    <div class="mistake">❌ Reading getStore() outside any run() — or after detaching from the chain:
+   setInterval(() => als.getStore().reqId, 1000); // undefined: timer isn't in a run
+   const cb = als.getStore();  someEmitter.on('x', () => cb...) // may be stale/null</div>
+    <div class="correct">✅ Snapshot what you need while still inside run(), or re-enter context:
+   const reqId = als.getStore()?.reqId;          // capture the value now
+   // or use als.run(store, () => ...) to re-establish context for later callbacks</div>
+  </div>
+
+  <div class="key-rules">
+    <strong>Key Rules:</strong>
+    <ul>
+      <li><code>getStore()</code> returns the store of the nearest enclosing <code>run()</code>, or <code>undefined</code> outside one — always guard with <code>?.</code>.</li>
+      <li>Context follows the async chain (promises, <code>await</code>, timers scheduled inside <code>run</code>), but not work detached from it; capture values before leaving the chain.</li>
+      <li>Use it for cross-cutting concerns (request id, auth, tracing, transactions) — not as a general-purpose global; overusing it hides data flow.</li>
+    </ul>
+  </div>
+
+  <div class="exercises">
+    <strong>Practice Exercises:</strong>
+    <div class="exercise">Build a <code>withRequestId(fn)</code> wrapper that runs <code>fn</code> inside an <code>AsyncLocalStorage.run</code> with a fresh random request id, and a <code>logger.info(msg)</code> that prefixes every line with the current request id. Fire two concurrent calls and confirm logs don't cross over.</div>
+    <div class="exercise">Implement a tiny tracing helper: <code>trace(name, fn)</code> reads a per-request spans array from the store, pushes <code>{ name, start, end }</code> around <code>await fn()</code>, and returns the result. After a request completes, print the collected spans.</div>
+    <div class="exercise">Demonstrate the detachment pitfall: store a <code>reqId</code>, schedule a <code>setTimeout</code> callback that reads <code>getStore()</code> — first from <em>outside</em> any <code>run</code> (observe <code>undefined</code>), then fix it by scheduling the timer <em>inside</em> the <code>run</code> callback.</div>
+  </div>
+
+  <div class="connections">
+    <strong>Connections:</strong> This is the Node analogue of context propagation; it relies on the same async-task tracking as the <a href="#r-asyncgen">async</a> machinery and the <a href="#">Node event loop</a> phases you reviewed. Capturing a value before a callback detaches uses the <a href="#r-optional"><code>?.</code></a> guard from today's review.
+  </div>
+</div>
+
+</div><!-- /inner -->
+</div><!-- /content -->
+
+<!-- ===================== FOOTER ===================== -->
+<footer class="guide-footer">
+  <h2>All Guides</h2>
+      <ul>
+    <li><a href="javascript-guides/javascript-guide-2026-07-09.html">2026-07-09</a> (Day 28)</li>
+    <li><a href="javascript-guides/javascript-guide-2026-07-08.html">2026-07-08</a> (current &mdash; Day 27)</li>
+    <li><a href="javascript-guides/javascript-guide-2026-07-07.html">2026-07-07</a> (Day 26)</li>
+    <li><a href="javascript-guides/javascript-guide-2026-07-06.html">2026-07-06</a> (Day 25)</li>
+    <li><a href="javascript-guides/javascript-guide-2026-07-05.html">2026-07-05</a> (Day 24)</li>
+    <li><a href="javascript-guides/javascript-guide-2026-07-04.html">2026-07-04</a> (Day 23)</li>
+    <li><a href="javascript-guides/javascript-guide-2026-07-03.html">2026-07-03</a> (Day 22)</li>
+    <li><a href="javascript-guides/javascript-guide-2026-07-02.html">2026-07-02</a> (Day 21)</li>
+    <li><a href="javascript-guides/javascript-guide-2026-07-01.html">2026-07-01</a> (Day 20)</li>
+    <li><a href="javascript-guides/javascript-guide-2026-06-30.html">2026-06-30</a> (Day 19)</li>
+    <li><a href="javascript-guides/javascript-guide-2026-06-29.html">2026-06-29</a> (Day 18)</li>
+    <li><a href="javascript-guides/javascript-guide-2026-06-28.html">2026-06-28</a> (Day 17)</li>
+    <li><a href="javascript-guides/javascript-guide-2026-06-27.html">2026-06-27</a> (Day 16)</li>
+    <li><a href="javascript-guides/javascript-guide-2026-06-26.html">2026-06-26</a> (Day 15)</li>
+    <li><a href="javascript-guides/javascript-guide-2026-06-25.html">2026-06-25</a> (Day 14)</li>
+    <li><a href="javascript-guides/javascript-guide-2026-06-24.html">2026-06-24</a> (Day 13)</li>
+    <li><a href="javascript-guides/javascript-guide-2026-06-23.html">2026-06-23</a> (Day 12)</li>
+    <li><a href="javascript-guides/javascript-guide-2026-06-22.html">2026-06-22</a> (Day 11)</li>
+    <li><a href="javascript-guides/javascript-guide-2026-06-19.html">2026-06-19</a> (Day 10)</li>
+    <li><a href="javascript-guides/javascript-guide-2026-06-18.html">2026-06-18</a> (Day 9)</li>
+    <li><a href="javascript-guides/javascript-guide-2026-06-17.html">2026-06-17</a> (Day 8)</li>
+    <li><a href="javascript-guides/javascript-guide-2026-06-15.html">2026-06-15</a> (Day 7)</li>
+    <li><a href="javascript-guides/javascript-guide-2026-06-13.html">2026-06-13</a> (Day 6)</li>
+    <li><a href="javascript-guides/javascript-guide-2026-06-12.html">2026-06-12</a> (Day 5)</li>
+    <li><a href="javascript-guides/javascript-guide-2026-06-11.html">2026-06-11</a> (Day 4)</li>
+    <li><a href="javascript-guides/javascript-guide-2026-06-10.html">2026-06-10</a> (Day 3)</li>
+    <li><a href="javascript-guides/javascript-guide-2026-06-09.html">2026-06-09</a> (Day 2)</li>
+    <li><a href="javascript-guides/javascript-guide-2026-06-08.html">2026-06-08</a> (Day 1)</li>
+  </ul>
+
+  <div class="cross-links">
+    <strong>Other Guides</strong>
+    <a href="guide.html">LeetCode Guide</a>
+    <a href="lang-guide.html">Multi-Language</a>
+    <a href="python-guide.html">Python</a>
+    <a href="typescript-guide.html">TypeScript</a>
+  </div>
+</footer>
+
+<script>
+function toggleTheme() {
+  const b = document.body;
+  const next = b.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+  b.setAttribute('data-theme', next);
+  localStorage.setItem('lc-jsguide-theme', next);
+}
+(function () {
+  const saved = localStorage.getItem('lc-jsguide-theme') || 'dark';
+  document.body.setAttribute('data-theme', saved);
+})();
+</script>
+</body>
+</html>

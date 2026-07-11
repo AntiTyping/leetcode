@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LeetCode Recall Cheat Sheet</title>
+<style>
+:root {
+  --bg: #0d1117;
+  --surface: #161b22;
+  --border: #30363d;
+  --text: #e6edf3;
+  --text-muted: #8b949e;
+  --accent: #58a6ff;
+  --easy: #3fb950;
+  --medium: #d29922;
+  --hard: #f85149;
+  --pill-bg: #21262d;
+  --pill-text: #8b949e;
+  --input-bg: #0d1117;
+  --hover-bg: #1c2128;
+  --badge-bg: #1f2937;
+  --badge-text: #93c5fd;
+  --hint-bg: #1c2128;
+  --hint-border: #30363d;
+  --toggle-bg: #21262d;
+  --toggle-active-bg: #1f6feb;
+  --toggle-active-text: #ffffff;
+  --shadow: rgba(0,0,0,0.3);
+}
+[data-theme="light"] {
+  --bg: #ffffff;
+  --surface: #f6f8fa;
+  --border: #d0d7de;
+  --text: #1f2328;
+  --text-muted: #656d76;
+  --accent: #0969da;
+  --pill-bg: #ddf4ff;
+  --pill-text: #0969da;
+  --input-bg: #ffffff;
+  --hover-bg: #eaeef2;
+  --badge-bg: #dbeafe;
+  --badge-text: #1e40af;
+  --hint-bg: #f6f8fa;
+  --hint-border: #d0d7de;
+  --toggle-bg: #e1e4e8;
+  --toggle-active-bg: #0969da;
+  --toggle-active-text: #ffffff;
+  --shadow: rgba(0,0,0,0.1);
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+  font-size: 16px;
+  line-height: 1.5;
+  background: var(--bg);
+  color: var(--text);
+  transition: background 0.2s, color 0.2s;
+}
+.container { max-width: 860px; margin: 0 auto; padding: 24px 16px; }
+header { text-align: center; margin-bottom: 24px; }
+h1 { font-size: 1.75rem; font-weight: 700; margin-bottom: 4px; }
+.subtitle { color: var(--text-muted); font-size: 0.9rem; margin-bottom: 16px; }
+.stats-bar {
+  display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;
+  margin-bottom: 16px; font-size: 0.85rem; font-weight: 600;
+}
+.stat { padding: 4px 12px; border-radius: 12px; background: var(--surface); border: 1px solid var(--border); }
+.stat-total { color: var(--accent); }
+.stat-easy { color: var(--easy); }
+.stat-medium { color: var(--medium); }
+.stat-hard { color: var(--hard); }
+
+.controls { margin-bottom: 16px; }
+.search-sort-row {
+  display: flex; gap: 8px; margin-bottom: 12px; flex-wrap: wrap;
+}
+.search-input {
+  flex: 1; min-width: 200px; padding: 8px 12px; border-radius: 6px;
+  border: 1px solid var(--border); background: var(--input-bg); color: var(--text);
+  font-size: 0.9rem; outline: none; transition: border-color 0.2s;
+}
+.search-input:focus { border-color: var(--accent); }
+.sort-select {
+  padding: 8px 12px; border-radius: 6px; border: 1px solid var(--border);
+  background: var(--input-bg); color: var(--text); font-size: 0.9rem; cursor: pointer;
+}
+.toggle-row {
+  display: flex; gap: 8px; margin-bottom: 12px; align-items: center; flex-wrap: wrap;
+}
+.toggle-btn {
+  padding: 6px 14px; border-radius: 6px; border: 1px solid var(--border);
+  background: var(--toggle-bg); color: var(--text-muted); font-size: 0.8rem;
+  cursor: pointer; font-weight: 600; transition: all 0.2s;
+}
+.toggle-btn.active {
+  background: var(--toggle-active-bg); color: var(--toggle-active-text); border-color: var(--toggle-active-bg);
+}
+.theme-btn {
+  margin-left: auto; padding: 6px 14px; border-radius: 6px; border: 1px solid var(--border);
+  background: var(--toggle-bg); color: var(--text-muted); font-size: 0.8rem;
+  cursor: pointer; font-weight: 600; transition: all 0.2s;
+}
+.theme-btn:hover { background: var(--hover-bg); }
+
+.topic-pills {
+  display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 20px;
+}
+.topic-pill {
+  padding: 4px 10px; border-radius: 12px; border: 1px solid var(--border);
+  background: var(--surface); color: var(--text-muted); font-size: 0.75rem;
+  cursor: pointer; font-weight: 500; transition: all 0.2s;
+}
+.topic-pill.active {
+  background: var(--toggle-active-bg); color: var(--toggle-active-text); border-color: var(--toggle-active-bg);
+}
+.topic-pill:hover:not(.active) { background: var(--hover-bg); }
+
+.cards { display: flex; flex-direction: column; gap: 12px; }
+.card {
+  background: var(--surface); border: 1px solid var(--border); border-radius: 8px;
+  border-left: 4px solid var(--border); padding: 14px 16px;
+  transition: background 0.2s, border-color 0.2s;
+}
+.card:hover { background: var(--hover-bg); }
+.card.easy { border-left-color: var(--easy); }
+.card.medium { border-left-color: var(--medium); }
+.card.hard { border-left-color: var(--hard); }
+
+.card-header {
+  display: flex; align-items: center; gap: 8px; margin-bottom: 4px; flex-wrap: wrap;
+}
+.card-title { font-weight: 600; font-size: 0.95rem; }
+.diff-badge {
+  font-size: 0.7rem; font-weight: 600; padding: 2px 8px; border-radius: 10px;
+  text-transform: uppercase; letter-spacing: 0.03em;
+}
+.diff-badge.easy { background: rgba(63,185,80,0.15); color: var(--easy); }
+.diff-badge.medium { background: rgba(210,153,34,0.15); color: var(--medium); }
+.diff-badge.hard { background: rgba(248,81,73,0.15); color: var(--hard); }
+
+.card-desc { color: var(--text-muted); font-size: 0.85rem; margin-bottom: 8px; }
+
+.card-tags { display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 8px; }
+.tag {
+  font-size: 0.7rem; padding: 2px 8px; border-radius: 10px;
+  background: var(--pill-bg); color: var(--pill-text); font-weight: 500;
+}
+.card-tags.hidden { display: none; }
+
+.card-langs { display: flex; gap: 4px; margin-bottom: 8px; flex-wrap: wrap; }
+.lang-badge {
+  font-size: 0.65rem; font-weight: 700; padding: 2px 6px; border-radius: 4px;
+  background: var(--badge-bg); color: var(--badge-text); letter-spacing: 0.02em;
+}
+
+.hint-btn {
+  font-size: 0.75rem; padding: 4px 10px; border-radius: 4px; border: 1px solid var(--border);
+  background: var(--surface); color: var(--text-muted); cursor: pointer; font-weight: 500;
+  transition: all 0.2s;
+}
+.hint-btn:hover { background: var(--hover-bg); color: var(--text); }
+.hint-btn.hidden { display: none; }
+
+.hint-text {
+  margin-top: 8px; padding: 10px 12px; border-radius: 6px;
+  background: var(--hint-bg); border: 1px solid var(--hint-border);
+  font-size: 0.85rem; line-height: 1.5; color: var(--text);
+}
+.hint-text.hidden { display: none; }
+.hint-text code { background: var(--pill-bg); padding: 1px 5px; border-radius: 3px; font-size: 0.82rem; }
+
+.no-results {
+  text-align: center; color: var(--text-muted); padding: 40px 0; font-size: 0.95rem;
+  display: none;
+}
+.count-display {
+  text-align: center; color: var(--text-muted); font-size: 0.8rem; margin-bottom: 12px;
+}
+@media (max-width: 600px) {
+  .container { padding: 16px 10px; }
+  h1 { font-size: 1.4rem; }
+  .search-sort-row { flex-direction: column; }
+  .sort-select { width: 100%; }
+  .theme-btn { margin-left: 0; }
+}
+</style>
+</head>
+<body>
+<div class="container">
+  <header>
+    <h1>LeetCode Recall Cheat Sheet</h1>
+    <p class="subtitle" id="subtitle"></p>
+    <div class="stats-bar" id="statsBar"></div>
+  </header>
+
+  <div class="controls">
+    <div class="search-sort-row">
+      <input type="text" class="search-input" id="searchInput" placeholder="Search by number, title, or topic...">
+      <select class="sort-select" id="sortSelect">
+        <option value="random" selected>Random</option>
+        <option value="number">Sort by Number</option>
+        <option value="difficulty">Sort by Difficulty</option>
+        <option value="topic">Sort by Topic</option>
+      </select>
+    </div>
+    <div class="toggle-row">
+      <button class="toggle-btn active" id="labelsToggle">Labels</button>
+      <button class="toggle-btn" id="hintsToggle">Show Hints</button>
+      <button class="theme-btn" id="themeToggle">Toggle Theme</button>
+    </div>
+  </div>
+
+  <div class="topic-pills" id="topicPills"></div>
+  <div class="count-display" id="countDisplay">Showing 178 of 178 problems</div>
+  <div class="cards" id="cardsContainer"></div>
+  <div class="no-results" id="noResults">No problems match your search.</div>
+</div>
+
+<script>
+const PROBLEMS = [
+{n:1,t:"Two Sum",d:"E",topics:["hash-map","arrays"],langs:["Py"],desc:"Given an array and a target, return indices of two numbers that add up to the target.",hint:"<strong>Hash map of complement.</strong> Store {val: index}, check if <code>target - num</code> exists in one pass."},
+{n:2,t:"Add Two Numbers",d:"M",topics:["linked-list","math"],langs:["Py"],desc:"Add two numbers represented as reversed linked lists.",hint:"<strong>Digit-by-digit with carry.</strong> Traverse both lists simultaneously, track carry. Create new nodes for each sum digit."},
+{n:3,t:"Longest Substring Without Repeating Characters",d:"M",topics:["sliding-window","hash-map"],langs:["Py"],desc:"Find the length of the longest substring without repeating characters.",hint:"<strong>Sliding window with hash map.</strong> Expand right, when duplicate found move left past the previous occurrence. Map stores char→index."},
+{n:4,t:"Median of Two Sorted Arrays",d:"H",topics:["binary-search","arrays"],langs:["Py"],desc:"Find the median of two sorted arrays in O(log(m+n)).",hint:"<strong>Binary search on the shorter array.</strong> Partition both arrays so left halves combined equal right halves. Adjust partition using binary search."},
+{n:5,t:"Longest Palindromic Substring",d:"M",topics:["DP","two-pointers"],langs:["Py","Go"],desc:"Find the longest palindromic substring.",hint:"<strong>Expand around center.</strong> Try each index (and each pair) as center, expand outward while chars match. O(n²) time."},
+{n:6,t:"Zigzag Conversion",d:"M",topics:["string"],langs:["Py"],desc:"Write a string in a zigzag pattern across numRows then read row by row.",hint:"<strong>Simulate row traversal with direction flip.</strong> Append each char to its current row; flip direction at top and bottom rows. Concatenate rows."},
+{n:7,t:"Reverse Integer",d:"M",topics:["math"],langs:["Py"],desc:"Reverse the digits of a 32-bit signed integer, return 0 on overflow.",hint:"<strong>Pop digits with mod/divide, rebuild.</strong> <code>res = res*10 + n%10</code>. Check 32-bit overflow bounds before/after each step."},
+{n:8,t:"String to Integer (atoi)",d:"M",topics:["string"],langs:["Py"],desc:"Implement atoi: parse a string into a 32-bit signed integer.",hint:"<strong>Skip spaces, read sign, consume digits.</strong> Stop at first non-digit; clamp result to <code>[-2³¹, 2³¹-1]</code>."},
+{n:9,t:"Palindrome Number",d:"E",topics:["math"],langs:["Py"],desc:"Determine whether an integer is a palindrome without converting to string.",hint:"<strong>Reverse half the number.</strong> Compare first half with reversed second half. Negative numbers are never palindromes."},
+{n:11,t:"Container With Most Water",d:"M",topics:["two-pointers","arrays"],langs:["Py"],desc:"Find two lines that form a container holding the most water.",hint:"<strong>Two pointers from edges.</strong> Start at both ends, move the shorter line inward. Area = min(h[l],h[r]) × (r-l)."},
+{n:13,t:"Roman to Integer",d:"E",topics:["hash-map","string"],langs:["Py"],desc:"Convert a roman numeral string to an integer.",hint:"<strong>Subtraction rule.</strong> If current value &lt; next value, subtract it; otherwise add it. Map each roman char to its value."},
+{n:14,t:"Longest Common Prefix",d:"E",topics:["string"],langs:["Py"],desc:"Find the longest common prefix among an array of strings.",hint:"<strong>Vertical scan.</strong> Compare char at each index across all strings; stop at first mismatch or shortest-string end."},
+{n:15,t:"3Sum",d:"M",topics:["two-pointers","sorting"],langs:["Py"],desc:"Find all unique triplets that sum to zero.",hint:"<strong>Sort + two pointers.</strong> Fix one element, use two-pointer on the rest. Skip duplicates at all three positions."},
+{n:16,t:"3Sum Closest",d:"M",topics:["two-pointers","sorting"],langs:["Py"],desc:"Find the triplet whose sum is closest to a target.",hint:"<strong>Sort + two pointers.</strong> Fix one element, two-pointer the rest; track the sum with smallest <code>abs(sum - target)</code>."},
+{n:17,t:"Letter Combinations of a Phone Number",d:"M",topics:["backtracking"],langs:["Py"],desc:"Return all letter combinations that the number could represent.",hint:"<strong>Backtracking with digit-to-letters map.</strong> For each digit, try each letter and recurse on remaining digits."},
+{n:19,t:"Remove Nth Node From End of List",d:"M",topics:["linked-list","two-pointers"],langs:["Py"],desc:"Remove the nth node from the end of a linked list in one pass.",hint:"<strong>Two pointers with n-gap.</strong> Advance fast n steps ahead, then move both until fast hits end; slow is at node before target. Use a dummy head."},
+{n:20,t:"Valid Parentheses",d:"E",topics:["stack"],langs:["Py"],desc:"Determine if a string of brackets is valid.",hint:"<strong>Stack of opening brackets.</strong> Push opens, pop on close and verify match. Stack must be empty at end."},
+{n:21,t:"Merge Two Sorted Lists",d:"E",topics:["linked-list"],langs:["Py"],desc:"Merge two sorted linked lists into one sorted list.",hint:"<strong>Dummy head + compare.</strong> Use a dummy node, compare heads of both lists, link smaller one. Append remaining."},
+{n:22,t:"Generate Parentheses",d:"M",topics:["backtracking"],langs:["Py"],desc:"Generate all valid combinations of n pairs of parentheses.",hint:"<strong>Backtracking with open/close counts.</strong> Add '(' if open &lt; n, add ')' if close &lt; open."},
+{n:26,t:"Remove Duplicates from Sorted Array",d:"E",topics:["two-pointers"],langs:["Py","Go","TS","JS","Rs","Rb"],desc:"Remove duplicates in-place from a sorted array, return new length.",hint:"<strong>Slow/fast pointer.</strong> Slow marks the write position; advance fast, write when value differs from slow."},
+{n:27,t:"Remove Element",d:"E",topics:["two-pointers"],langs:["Py","Go","Rs"],desc:"Remove all instances of a value in-place.",hint:"<strong>Two pointers — overwrite.</strong> Read pointer skips target value, write pointer stores non-target values."},
+{n:28,t:"Find the Index of the First Occurrence",d:"E",topics:["string"],langs:["Py","Go","TS"],desc:"Find the first occurrence of a substring in a string.",hint:"<strong>Built-in or sliding window.</strong> Use <code>str.find()</code> / <code>strings.Index()</code> or check each window of length len(needle)."},
+{n:33,t:"Search in Rotated Sorted Array",d:"M",topics:["binary-search"],langs:["Py"],desc:"Search for a target in a rotated sorted array.",hint:"<strong>Modified binary search.</strong> Determine which half is sorted, check if target falls in that range, discard the other half."},
+{n:81,t:"Search in Rotated Sorted Array II",d:"M",topics:["binary-search"],langs:["Py"],desc:"Search for a target in a rotated sorted array that may contain duplicates.",hint:"<strong>Binary search with a duplicate guard.</strong> When <code>nums[l] == nums[m] == nums[r]</code>, shrink both ends by one; otherwise pick the sorted half like problem 33."},
+{n:83,t:"Remove Duplicates from Sorted List",d:"E",topics:["linked-list","two-pointers"],langs:["Py"],desc:"Remove duplicates from a sorted linked list so each value appears once.",hint:"<strong>Single pass, compare adjacent.</strong> Since sorted, walk with a prev pointer; when <code>curr.val == prev.val</code> skip curr by relinking, else advance prev."},
+{n:35,t:"Search Insert Position",d:"E",topics:["binary-search"],langs:["Py","Go"],desc:"Find index to insert a target in a sorted array.",hint:"<strong>Standard binary search.</strong> Return <code>lo</code> when loop ends — it's the insertion point."},
+{n:36,t:"Valid Sudoku",d:"M",topics:["hash-map","arrays"],langs:["Py"],desc:"Check if a 9×9 Sudoku board is valid (no repeats in rows, cols, boxes).",hint:"<strong>Three hash sets.</strong> Track seen digits per row, column, and 3×3 box. Box index = <code>(r//3)*3 + c//3</code>."},
+{n:39,t:"Combination Sum",d:"M",topics:["backtracking"],langs:["Py"],desc:"Find all unique combinations of candidates that sum to target (reuse allowed).",hint:"<strong>Backtracking with start index.</strong> Allow re-picking same index. Prune when remaining &lt; 0."},
+{n:42,t:"Trapping Rain Water",d:"H",topics:["two-pointers","stack","DP"],langs:["Py"],desc:"Compute how much rainwater is trapped between bars of given heights.",hint:"<strong>Two pointers tracking left/right max.</strong> Move the side with the smaller max inward; water at each bar = <code>maxSeen - height</code>."},
+{n:45,t:"Jump Game II",d:"M",topics:["greedy","DP"],langs:["Py"],desc:"Find minimum jumps to reach the end.",hint:"<strong>BFS-style greedy.</strong> Track farthest reachable in current \"level\". Increment jumps at each level boundary."},
+{n:46,t:"Permutations",d:"M",topics:["backtracking"],langs:["Py","Go"],desc:"Return all permutations of an array of distinct integers.",hint:"<strong>Backtracking with used set.</strong> Try each unused element, recurse, then backtrack by removing it."},
+{n:49,t:"Group Anagrams",d:"M",topics:["hash-map","sorting"],langs:["Py"],desc:"Group strings that are anagrams of each other.",hint:"<strong>Sorted string as key.</strong> Use <code>tuple(sorted(s))</code> or character count tuple as the dictionary key."},
+{n:53,t:"Maximum Subarray",d:"M",topics:["DP","arrays"],langs:["Py"],desc:"Find the contiguous subarray with the largest sum.",hint:"<strong>Kadane's algorithm.</strong> Track current sum; reset to current element when sum drops below it. Track global max."},
+{n:55,t:"Jump Game",d:"M",topics:["greedy","DP"],langs:["Py"],desc:"Determine if you can reach the last index.",hint:"<strong>Track farthest reachable.</strong> Iterate forward; if index &gt; farthest, unreachable. Update farthest = max(farthest, i + nums[i])."},
+{n:56,t:"Merge Intervals",d:"M",topics:["sorting","intervals"],langs:["Py"],desc:"Merge all overlapping intervals.",hint:"<strong>Sort by start, merge greedily.</strong> If current start ≤ prev end, extend prev end. Otherwise start new interval."},
+{n:57,t:"Insert Interval",d:"M",topics:["intervals"],langs:["Py"],desc:"Insert a new interval and merge if necessary.",hint:"<strong>Three passes: before, overlapping, after.</strong> Collect non-overlapping before, merge overlapping, append rest."},
+{n:62,t:"Unique Paths",d:"M",topics:["DP"],langs:["Py"],desc:"Count unique paths from top-left to bottom-right in a grid.",hint:"<strong>DP table.</strong> <code>dp[i][j] = dp[i-1][j] + dp[i][j-1]</code>. First row and column are all 1s."},
+{n:63,t:"Unique Paths II",d:"M",topics:["DP"],langs:["Py"],desc:"Unique paths with obstacles.",hint:"<strong>Same DP as #62 but set dp=0 on obstacles.</strong> Check obstacle before adding neighbors."},
+{n:64,t:"Minimum Path Sum",d:"M",topics:["DP"],langs:["Py"],desc:"Find the path from top-left to bottom-right with minimum sum.",hint:"<strong>DP grid.</strong> <code>dp[i][j] = grid[i][j] + min(dp[i-1][j], dp[i][j-1])</code>."},
+{n:70,t:"Climbing Stairs",d:"E",topics:["DP"],langs:["Py"],desc:"How many distinct ways to climb n stairs (1 or 2 steps)?",hint:"<strong>Fibonacci recurrence.</strong> <code>dp[i] = dp[i-1] + dp[i-2]</code>. Only need two variables."},
+{n:74,t:"Search a 2D Matrix",d:"M",topics:["binary-search","arrays"],langs:["Py"],desc:"Search a target in an m×n matrix where each row is sorted and each row's first value exceeds the previous row's last.",hint:"<strong>Two binary searches (or treat as one flat sorted array).</strong> Binary search the last column to find the candidate row, then binary search within that row."},
+{n:76,t:"Minimum Window Substring",d:"H",topics:["sliding-window","hash-map"],langs:["Py"],desc:"Find the minimum window in s containing all characters of t.",hint:"<strong>Sliding window with counter.</strong> Expand right to satisfy, shrink left to minimize. Track \"formed\" count of satisfied characters."},
+{n:77,t:"Combinations",d:"M",topics:["backtracking"],langs:["Py","Go"],desc:"Return all combinations of k numbers chosen from 1..n.",hint:"<strong>Backtracking with start index.</strong> Pick from start..n, recurse with start+1, prune when remaining slots &gt; available numbers."},
+{n:78,t:"Subsets",d:"M",topics:["backtracking"],langs:["Py"],desc:"Return all subsets (power set).",hint:"<strong>Backtracking: include or skip.</strong> At each index, either add element to current subset and recurse, or skip it."},
+{n:88,t:"Merge Sorted Array",d:"E",topics:["two-pointers"],langs:["Py"],desc:"Merge nums2 into nums1 (both sorted), nums1 has trailing zeros.",hint:"<strong>Three pointers from the end.</strong> Fill nums1 from the back, comparing largest remaining from each array."},
+{n:91,t:"Decode Ways",d:"M",topics:["DP"],langs:["Py"],desc:"Count ways to decode a digit string into letters (A=1..Z=26).",hint:"<strong>1D DP.</strong> <code>dp[i] += dp[i-1]</code> if valid single, <code>dp[i] += dp[i-2]</code> if valid double (10-26). Handle '0' carefully."},
+{n:94,t:"Binary Tree Inorder Traversal",d:"E",topics:["tree","DFS"],langs:["Py"],desc:"Return inorder traversal of a binary tree.",hint:"<strong>Recursive or stack-based.</strong> Inorder = left → root → right. Iterative: push all lefts, pop and process, move to right."},
+{n:97,t:"Interleaving String",d:"M",topics:["DP"],langs:["Py"],desc:"Check if s3 is an interleaving of s1 and s2.",hint:"<strong>2D DP.</strong> <code>dp[i][j]</code> = can form s3[0..i+j] using s1[0..i] and s2[0..j]. Check both last-char matches."},
+{n:102,t:"Binary Tree Level Order Traversal",d:"M",topics:["tree","BFS"],langs:["Py"],desc:"Return level-order traversal as list of lists.",hint:"<strong>BFS with queue.</strong> Process all nodes at current level (loop len(queue) times), collect values, enqueue children."},
+{n:104,t:"Maximum Depth of Binary Tree",d:"E",topics:["tree","DFS"],langs:["Py"],desc:"Find the maximum depth of a binary tree.",hint:"<strong>Recursive DFS.</strong> Return <code>1 + max(depth(left), depth(right))</code>. Base: null → 0."},
+{n:118,t:"Pascal's Triangle",d:"E",topics:["DP","arrays"],langs:["Py"],desc:"Generate the first n rows of Pascal's triangle.",hint:"<strong>Each row from previous.</strong> <code>row[j] = prev[j-1] + prev[j]</code>. Edges are always 1."},
+{n:119,t:"Pascal's Triangle II",d:"E",topics:["DP"],langs:["Py"],desc:"Return the k-th row of Pascal's triangle.",hint:"<strong>Single array, update in-place from right to left.</strong> Avoids overwriting values needed for current computation."},
+{n:121,t:"Best Time to Buy and Sell Stock",d:"E",topics:["DP","arrays"],langs:["Py"],desc:"Find max profit from one buy and one sell.",hint:"<strong>Track min price so far.</strong> At each price, profit = price - min_so_far. Update global max."},
+{n:125,t:"Valid Palindrome",d:"E",topics:["two-pointers","string"],langs:["Py","Go","TS"],desc:"Check if a string is a palindrome (alphanumeric only, case-insensitive).",hint:"<strong>Two pointers, skip non-alphanumeric.</strong> Compare lowercased chars from both ends, skip non-alnum."},
+{n:128,t:"Longest Consecutive Sequence",d:"M",topics:["hash-map","arrays"],langs:["Py"],desc:"Find the length of the longest consecutive sequence in O(n).",hint:"<strong>Hash set + sequence start detection.</strong> Only start counting from numbers where <code>num-1</code> is not in the set."},
+{n:139,t:"Word Break",d:"M",topics:["DP"],langs:["Py"],desc:"Check if a string can be segmented into dictionary words.",hint:"<strong>Bottom-up DP.</strong> <code>dp[i]</code> = can segment s[0..i]. Check all word-length windows ending at i."},
+{n:141,t:"Linked List Cycle",d:"E",topics:["linked-list","two-pointers"],langs:["Py"],desc:"Detect if a linked list has a cycle.",hint:"<strong>Floyd's tortoise and hare.</strong> Slow moves 1, fast moves 2. If they meet, there's a cycle."},
+{n:153,t:"Find Minimum in Rotated Sorted Array",d:"M",topics:["binary-search"],langs:["Py"],desc:"Find the minimum element in a rotated sorted array.",hint:"<strong>Binary search comparing mid to right.</strong> If <code>nums[mid] &gt; nums[right]</code>, min is in right half; else left half."},
+{n:160,t:"Intersection of Two Linked Lists",d:"E",topics:["linked-list"],langs:["Py","Go"],desc:"Find the node where two linked lists intersect.",hint:"<strong>Two pointers, swap heads.</strong> When one reaches null, redirect to the other list's head. They meet at intersection."},
+{n:167,t:"Two Sum II",d:"M",topics:["two-pointers"],langs:["Py"],desc:"Find two numbers in a sorted array that add to target.",hint:"<strong>Two pointers from edges.</strong> If sum &gt; target, move right left. If sum &lt; target, move left right."},
+{n:170,t:"Two Sum III - Data Structure Design",d:"M",topics:["hash-map","design"],langs:["Py","Go"],desc:"Design a data structure for add and find (two-sum query).",hint:"<strong>Hash map counter.</strong> Store number frequencies. For find, check if <code>target - num</code> exists (handle num == target-num)."},
+{n:188,t:"Best Time to Buy and Sell Stock IV",d:"H",topics:["DP"],langs:["Py"],desc:"Find max profit with at most k transactions.",hint:"<strong>3D DP (day, transactions, holding).</strong> State: <code>dp[i][j][0/1]</code>. Transition: buy, sell, or hold."},
+{n:191,t:"Number of 1 Bits",d:"E",topics:["bit-manipulation"],langs:["Py"],desc:"Count the number of 1 bits in an integer.",hint:"<strong>Brian Kernighan's trick.</strong> <code>n &amp;= (n-1)</code> clears the lowest set bit. Count iterations until n=0."},
+{n:198,t:"House Robber",d:"M",topics:["DP"],langs:["Py","Go"],desc:"Find max sum of non-adjacent elements.",hint:"<strong>DP with two variables.</strong> <code>dp[i] = max(dp[i-1], dp[i-2] + nums[i])</code>. Track prev1 and prev2."},
+{n:200,t:"Number of Islands",d:"M",topics:["DFS","graph"],langs:["Py"],desc:"Count the number of islands in a grid of '1's and '0's.",hint:"<strong>DFS/BFS flood fill.</strong> For each unvisited '1', increment count and mark all connected '1's as visited."},
+{n:202,t:"Happy Number",d:"E",topics:["hash-map","math"],langs:["Py"],desc:"Determine if a number is \"happy\" (sum of squares of digits eventually reaches 1).",hint:"<strong>Detect cycle with a set.</strong> Compute digit-square sum repeatedly; if seen before, not happy. Or use Floyd's cycle detection."},
+{n:206,t:"Reverse Linked List",d:"E",topics:["linked-list"],langs:["Py"],desc:"Reverse a singly linked list.",hint:"<strong>Three pointers: prev, curr, next.</strong> At each step, point curr.next to prev, advance all three."},
+{n:208,t:"Implement Trie",d:"M",topics:["trie"],langs:["Py"],desc:"Implement a prefix tree with insert, search, startsWith.",hint:"<strong>Nested dict or TrieNode.</strong> Each node has children map and is_end flag. Walk the tree character by character."},
+{n:209,t:"Minimum Size Subarray Sum",d:"M",topics:["sliding-window"],langs:["Py"],desc:"Find the minimal length subarray with sum ≥ target.",hint:"<strong>Sliding window.</strong> Expand right to meet target, shrink left to minimize length. Track min window size."},
+{n:215,t:"Kth Largest Element in an Array",d:"M",topics:["heap"],langs:["Py"],desc:"Find the kth largest element.",hint:"<strong>Min-heap of size k.</strong> Push elements; when heap exceeds k, pop minimum. Heap top is the answer."},
+{n:217,t:"Contains Duplicate",d:"E",topics:["hash-map","arrays"],langs:["Py","Go"],desc:"Check if any value appears at least twice in an array.",hint:"<strong>Hash set.</strong> Add each element; if already in set, return true."},
+{n:219,t:"Contains Duplicate II",d:"E",topics:["sliding-window","hash-map"],langs:["Py"],desc:"Check if duplicates exist within distance k.",hint:"<strong>Sliding window set.</strong> Maintain a set of size k. If element exists in set, return true. Remove oldest when window exceeds k."},
+{n:221,t:"Maximal Square",d:"M",topics:["DP"],langs:["Py"],desc:"Find the largest square containing only 1's in a binary matrix.",hint:"<strong>DP on side length.</strong> <code>dp[i][j] = min(dp[i-1][j], dp[i][j-1], dp[i-1][j-1]) + 1</code> when cell is '1'."},
+{n:234,t:"Palindrome Linked List",d:"E",topics:["linked-list","two-pointers"],langs:["Py"],desc:"Check if a linked list is a palindrome.",hint:"<strong>Find middle, reverse second half, compare.</strong> Use slow/fast to find middle, reverse in-place, then compare node by node."},
+{n:238,t:"Product of Array Except Self",d:"M",topics:["arrays","prefix-sum"],langs:["Py"],desc:"Return array where each element is the product of all others (no division).",hint:"<strong>Left and right prefix products.</strong> First pass: left products. Second pass (reverse): multiply by right products."},
+{n:242,t:"Valid Anagram",d:"E",topics:["hash-map","sorting"],langs:["Py","Go"],desc:"Check if two strings are anagrams.",hint:"<strong>Character frequency count.</strong> Count chars in both strings and compare. Or sort both and check equality."},
+{n:246,t:"Strobogrammatic Number",d:"E",topics:["string","hash-map"],langs:["Py","Go"],desc:"Check if a number looks the same when rotated 180°.",hint:"<strong>Two pointers with strobogrammatic pairs.</strong> Valid pairs: (0,0), (1,1), (6,9), (8,8), (9,6). Check from outside in."},
+{n:256,t:"Paint House",d:"M",topics:["DP"],langs:["Py"],desc:"Find minimum cost to paint n houses with 3 colors (no adjacent same).",hint:"<strong>DP: track min cost ending with each color.</strong> <code>dp[i][c] = cost[i][c] + min(dp[i-1][other colors])</code>."},
+{n:257,t:"Binary Tree Paths",d:"E",topics:["tree","DFS"],langs:["Py"],desc:"Return all root-to-leaf paths as strings.",hint:"<strong>DFS with path string.</strong> At each node append to path; at leaf, add to result. Backtrack naturally via recursion."},
+{n:265,t:"Paint House II",d:"H",topics:["DP"],langs:["Py"],desc:"Paint houses with k colors, minimize cost, no adjacent same.",hint:"<strong>Track top-2 minimums.</strong> For each house, pick the minimum from previous row unless same color — then use second minimum."},
+{n:268,t:"Missing Number",d:"E",topics:["bit-manipulation","math"],langs:["Py"],desc:"Find the missing number in [0, n].",hint:"<strong>XOR or sum formula.</strong> XOR all indices and values — missing number remains. Or <code>n*(n+1)/2 - sum(nums)</code>."},
+{n:271,t:"Encode and Decode Strings",d:"M",topics:["string","design"],langs:["Py"],desc:"Design an algorithm to encode a list of strings into a single string and decode it back.",hint:"<strong>Length-prefixed encoding.</strong> Encode as <code>len + '#' + string</code> for each. Decode by reading length, then extracting that many chars."},
+{n:276,t:"Paint Fence",d:"M",topics:["DP"],langs:["Py"],desc:"Count ways to paint n fence posts with k colors (max 2 consecutive same).",hint:"<strong>Track same/diff counts.</strong> same = diff_prev, diff = (same_prev + diff_prev) × (k-1). Total = same + diff."},
+{n:283,t:"Move Zeroes",d:"E",topics:["two-pointers","arrays"],langs:["Py"],desc:"Move all zeros to the end while maintaining order of non-zeros.",hint:"<strong>Slow/fast pointer.</strong> Write pointer stays at first zero position; swap non-zero elements forward."},
+{n:286,t:"Walls and Gates",d:"M",topics:["BFS","graph"],langs:["Py"],desc:"Fill each empty room with distance to its nearest gate.",hint:"<strong>Multi-source BFS from all gates.</strong> Start BFS simultaneously from all gates, expanding outward level by level."},
+{n:295,t:"Find Median from Data Stream",d:"H",topics:["heap","design"],langs:["Py"],desc:"Design a data structure that supports addNum and findMedian.",hint:"<strong>Two heaps: max-heap (left) + min-heap (right).</strong> Balance sizes. Median is top of larger heap or average of both tops."},
+{n:300,t:"Longest Increasing Subsequence",d:"M",topics:["DP"],langs:["Py"],desc:"Find the length of the longest strictly increasing subsequence.",hint:"<strong>DP: dp[i] = length of LIS ending at i.</strong> For each i, check all j &lt; i where <code>nums[j] &lt; nums[i]</code>. O(n²). Binary search variant is O(n log n)."},
+{n:303,t:"Range Sum Query - Immutable",d:"E",topics:["prefix-sum"],langs:["Py"],desc:"Answer multiple range sum queries efficiently.",hint:"<strong>Prefix sum array.</strong> <code>prefix[i] = sum(nums[0..i])</code>. Range sum = <code>prefix[j+1] - prefix[i]</code>."},
+{n:309,t:"Best Time to Buy and Sell Stock with Cooldown",d:"M",topics:["DP"],langs:["Py"],desc:"Max profit with cooldown after selling.",hint:"<strong>State machine DP.</strong> Three states: held, sold, rested. Transitions: held→sold, sold→rested, rested→held/rested."},
+{n:322,t:"Coin Change",d:"M",topics:["DP"],langs:["Py"],desc:"Find fewest coins to make a target amount.",hint:"<strong>Bottom-up DP.</strong> <code>dp[amount] = min(dp[amount - coin] + 1)</code> for each coin. Initialize dp[0]=0, rest=infinity."},
+{n:340,t:"Longest Substring with At Most K Distinct Characters",d:"M",topics:["sliding-window","hash-map"],langs:["Py"],desc:"Find the length of the longest substring containing at most k distinct characters.",hint:"<strong>Sliding window with count map.</strong> Expand right, add to counter; while distinct count &gt; k, shrink from left and drop chars hitting zero. Track max window size."},
+{n:344,t:"Reverse String",d:"E",topics:["two-pointers"],langs:["Py"],desc:"Reverse a string in-place.",hint:"<strong>Two pointers from edges.</strong> Swap <code>s[left]</code> and <code>s[right]</code>, move inward."},
+{n:345,t:"Reverse Vowels of a String",d:"E",topics:["two-pointers","string"],langs:["Py"],desc:"Reverse only the vowels in a string.",hint:"<strong>Two pointers, skip non-vowels.</strong> Left finds next vowel from start, right finds next vowel from end, swap."},
+{n:346,t:"Moving Average from Data Stream",d:"E",topics:["design","arrays"],langs:["Py"],desc:"Calculate the moving average of a stream of integers.",hint:"<strong>Circular buffer or deque.</strong> Maintain a window of size k, track running sum. Add new, subtract oldest when full."},
+{n:347,t:"Top K Frequent Elements",d:"M",topics:["hash-map","heap"],langs:["Py"],desc:"Return the k most frequent elements.",hint:"<strong>Bucket sort by frequency.</strong> Count frequencies, create buckets indexed by count, collect from highest bucket down."},
+{n:349,t:"Intersection of Two Arrays",d:"E",topics:["hash-map","arrays"],langs:["Py"],desc:"Find the intersection of two arrays (unique values).",hint:"<strong>Two sets.</strong> Convert both to sets, return intersection with <code>&amp;</code> operator."},
+{n:350,t:"Intersection of Two Arrays II",d:"E",topics:["hash-map"],langs:["Py"],desc:"Find the intersection including duplicates.",hint:"<strong>Counter/frequency map.</strong> Count elements in one array, iterate other array and decrement counts."},
+{n:383,t:"Ransom Note",d:"E",topics:["hash-map","string"],langs:["Py"],desc:"Check if the ransom note can be built from the letters in the magazine.",hint:"<strong>Character frequency count.</strong> Count letters in the magazine; for each letter in the note, ensure the magazine has enough."},
+{n:392,t:"Is Subsequence",d:"E",topics:["two-pointers","string"],langs:["Py"],desc:"Check if s is a subsequence of t.",hint:"<strong>Two pointers.</strong> Pointer on s advances only when chars match. If s pointer reaches end, it's a subsequence."},
+{n:408,t:"Valid Word Abbreviation",d:"E",topics:["string","two-pointers"],langs:["Py"],desc:"Check if an abbreviation is valid for a word.",hint:"<strong>Two pointers.</strong> Walk word and abbr simultaneously. When digit found in abbr, skip that many chars in word."},
+{n:409,t:"Longest Palindrome",d:"E",topics:["hash-map","string"],langs:["Py"],desc:"Find the longest palindrome that can be built from given characters.",hint:"<strong>Count even pairs.</strong> Sum all even counts + pairs from odd counts. Add 1 if any odd count exists (center char)."},
+{n:424,t:"Longest Repeating Character Replacement",d:"M",topics:["sliding-window"],langs:["Py"],desc:"Find longest substring where you can replace at most k characters to make all same.",hint:"<strong>Sliding window with max frequency.</strong> Window is valid when <code>window_len - max_freq ≤ k</code>. Expand right, shrink left when invalid."},
+{n:455,t:"Assign Cookies",d:"E",topics:["greedy","sorting"],langs:["Py"],desc:"Assign cookies to children to maximize satisfied children.",hint:"<strong>Sort both, greedy match.</strong> Sort children by greed and cookies by size. Give smallest sufficient cookie to least greedy child."},
+{n:485,t:"Max Consecutive Ones",d:"E",topics:["arrays"],langs:["Py"],desc:"Find the maximum number of consecutive 1s in a binary array.",hint:"<strong>Running counter.</strong> Increment on 1, reset to 0 on 0, track the max seen."},
+{n:487,t:"Max Consecutive Ones II",d:"M",topics:["sliding-window"],langs:["Py"],desc:"Max consecutive 1s if you can flip at most one 0.",hint:"<strong>Sliding window allowing one zero.</strong> Expand right; when the window holds &gt;1 zero, shrink left past a zero. Track widest window."},
+{n:496,t:"Next Greater Element I",d:"E",topics:["stack","hash-map"],langs:["Py"],desc:"For each element in nums1, find its next greater element in nums2.",hint:"<strong>Monotonic decreasing stack.</strong> Process nums2: pop smaller elements from stack (their next greater is current). Map results."},
+{n:502,t:"IPO",d:"H",topics:["heap","greedy"],langs:["Py"],desc:"Maximize capital after at most k projects.",hint:"<strong>Two heaps: min-heap by capital, max-heap by profit.</strong> Unlock projects by capital, pick the most profitable available."},
+{n:506,t:"Relative Ranks",d:"E",topics:["heap","sorting"],langs:["Py"],desc:"Assign ranks based on scores.",hint:"<strong>Sort indices by score descending.</strong> Map each position to its rank string (Gold/Silver/Bronze or number)."},
+{n:509,t:"Fibonacci Number",d:"E",topics:["DP"],langs:["Py"],desc:"Compute the n-th Fibonacci number.",hint:"<strong>Two variables.</strong> <code>a, b = b, a + b</code> in a loop. O(n) time, O(1) space."},
+{n:516,t:"Longest Palindromic Subsequence",d:"M",topics:["DP"],langs:["Py"],desc:"Find the length of the longest palindromic subsequence.",hint:"<strong>2D DP.</strong> <code>dp[i][j]</code> = LPS length for s[i..j]. If s[i]==s[j], <code>dp[i][j] = dp[i+1][j-1] + 2</code>."},
+{n:518,t:"Coin Change II",d:"M",topics:["DP"],langs:["Py"],desc:"Count the number of combinations that make up an amount.",hint:"<strong>Unbounded knapsack DP.</strong> Process coins in outer loop to avoid counting permutations. <code>dp[j] += dp[j - coin]</code>."},
+{n:523,t:"Continuous Subarray Sum",d:"M",topics:["prefix-sum","hash-map"],langs:["Py"],desc:"Check if a subarray of length ≥2 sums to a multiple of k.",hint:"<strong>Prefix sum mod k with hash map.</strong> If same remainder seen at index ≥2 apart, the subarray between them sums to multiple of k."},
+{n:525,t:"Contiguous Array",d:"M",topics:["prefix-sum","hash-map"],langs:["Py"],desc:"Find the longest subarray with equal number of 0s and 1s.",hint:"<strong>Transform 0→1, prefix sum.</strong> Same prefix sum at two indices means equal 0s and 1s between them. Map first occurrence."},
+{n:541,t:"Reverse String II",d:"E",topics:["string"],langs:["Py"],desc:"Reverse every other k-length segment.",hint:"<strong>Step by 2k, reverse first k.</strong> Iterate with step 2k, reverse chars in [i, i+k)."},
+{n:557,t:"Reverse Words in a String III",d:"E",topics:["string"],langs:["Py"],desc:"Reverse each word in a sentence.",hint:"<strong>Split, reverse each, join.</strong> <code>' '.join(word[::-1] for word in s.split())</code>."},
+{n:560,t:"Subarray Sum Equals K",d:"M",topics:["prefix-sum","hash-map"],langs:["Py"],desc:"Count subarrays that sum to k.",hint:"<strong>Prefix sum with hash map.</strong> Store prefix_sum frequencies. At each index, check if <code>prefix_sum - k</code> exists in the map."},
+{n:561,t:"Array Partition",d:"E",topics:["sorting","arrays"],langs:["Py"],desc:"Maximize sum of min(pair) values by pairing array elements.",hint:"<strong>Sort and sum even indices.</strong> After sorting, pairing adjacent elements maximizes the sum of minimums."},
+{n:594,t:"Longest Harmonious Subsequence",d:"E",topics:["hash-map"],langs:["Py"],desc:"Find longest subsequence where max - min = 1.",hint:"<strong>Counter.</strong> For each key in counter, check if key+1 exists; if so, sum their counts."},
+{n:605,t:"Can Place Flowers",d:"E",topics:["greedy","arrays"],langs:["Py"],desc:"Check if n flowers can be planted (no adjacent).",hint:"<strong>Greedy scan.</strong> Plant at each empty spot where both neighbors are also empty (or edge). Decrement n."},
+{n:643,t:"Maximum Average Subarray I",d:"E",topics:["sliding-window"],langs:["Py"],desc:"Find the max average of a contiguous subarray of length k.",hint:"<strong>Fixed sliding window.</strong> Compute initial window sum, slide by adding right and subtracting left."},
+{n:653,t:"Two Sum IV - Input is a BST",d:"E",topics:["tree","hash-map"],langs:["Py"],desc:"Find if two nodes in a BST sum to target.",hint:"<strong>DFS + hash set.</strong> Traverse tree, for each node check if <code>target - val</code> is in the set."},
+{n:680,t:"Valid Palindrome II",d:"E",topics:["two-pointers","string"],langs:["Py"],desc:"Check if a string can be a palindrome after deleting at most one character.",hint:"<strong>Two pointers + skip one.</strong> When mismatch found, try skipping left or right char. Check if either resulting substring is a palindrome."},
+{n:696,t:"Count Binary Substrings",d:"M",topics:["string","arrays"],langs:["Py"],desc:"Count substrings with equal consecutive 0s and 1s.",hint:"<strong>Group consecutive digits.</strong> Count group lengths, then sum <code>min(prev_group, curr_group)</code> for adjacent groups."},
+{n:703,t:"Kth Largest Element in a Stream",d:"E",topics:["heap"],langs:["Py"],desc:"Design a class that finds the kth largest in a stream.",hint:"<strong>Min-heap of size k.</strong> Keep only top k elements. Heap root is the kth largest."},
+{n:704,t:"Binary Search",d:"E",topics:["binary-search"],langs:["Py"],desc:"Find target in a sorted array.",hint:"<strong>Standard binary search.</strong> <code>lo, hi = 0, len-1</code>. Compare mid, adjust lo or hi."},
+{n:714,t:"Best Time to Buy and Sell Stock with Transaction Fee",d:"M",topics:["DP"],langs:["Py"],desc:"Max profit with transaction fee per trade.",hint:"<strong>State machine: cash vs hold.</strong> <code>cash = max(cash, hold + price - fee)</code>, <code>hold = max(hold, cash - price)</code>."},
+{n:718,t:"Maximum Length of Repeated Subarray",d:"M",topics:["DP"],langs:["Py"],desc:"Find the longest common subarray between two arrays.",hint:"<strong>2D DP.</strong> <code>dp[i][j] = dp[i-1][j-1] + 1</code> when <code>A[i] == B[j]</code>, else 0. Track maximum."},
+{n:726,t:"Number of Atoms",d:"H",topics:["stack","string"],langs:["Py"],desc:"Count atoms in a chemical formula with nested parentheses and multipliers.",hint:"<strong>Stack of counts for parentheses.</strong> Parse element+count; on '(' push a new layer, on ')' pop and multiply by the trailing number. Sort output."},
+{n:739,t:"Daily Temperatures",d:"M",topics:["stack"],langs:["Py"],desc:"For each day, how many days until a warmer temperature?",hint:"<strong>Monotonic decreasing stack.</strong> Push indices; when a warmer temp appears, pop and compute distance for each popped index."},
+{n:740,t:"Delete and Earn",d:"M",topics:["DP"],langs:["Py"],desc:"Pick numbers to maximize points (picking x deletes x-1 and x+1).",hint:"<strong>Transform to house robber.</strong> Count points per value, then apply house robber DP on the value range."},
+{n:744,t:"Find Smallest Letter Greater Than Target",d:"E",topics:["binary-search"],langs:["Py"],desc:"Find the smallest letter in a sorted array strictly greater than target (wrapping).",hint:"<strong>Binary search for upper bound.</strong> Find leftmost char &gt; target; wrap to <code>letters[0]</code> if none found."},
+{n:746,t:"Min Cost Climbing Stairs",d:"E",topics:["DP"],langs:["Py"],desc:"Find minimum cost to reach the top (start at step 0 or 1).",hint:"<strong>DP with two variables.</strong> <code>dp[i] = cost[i] + min(dp[i-1], dp[i-2])</code>. Answer is min of last two."},
+{n:771,t:"Jewels and Stones",d:"E",topics:["hash-map","string"],langs:["Py"],desc:"Count how many of your stones are also jewels.",hint:"<strong>Set of jewels.</strong> Put jewel chars in a set, then count stones that are in it."},
+{n:790,t:"Domino and Tromino Tiling",d:"M",topics:["DP"],langs:["Py"],desc:"Count ways to tile a 2×n board with dominoes and trominoes.",hint:"<strong>DP recurrence.</strong> <code>dp[n] = 2*dp[n-1] + dp[n-3]</code>. Base cases: dp[1]=1, dp[2]=2, dp[3]=5."},
+{n:796,t:"Rotate String",d:"E",topics:["string"],langs:["Py"],desc:"Check if s2 is a rotation of s1.",hint:"<strong>Concatenation trick.</strong> <code>s2 in (s1 + s1)</code> and lengths match."},
+{n:797,t:"All Paths From Source to Target",d:"M",topics:["DFS","graph","backtracking"],langs:["Py"],desc:"Find all paths from node 0 to node n-1 in a DAG.",hint:"<strong>DFS/backtracking.</strong> Explore each neighbor recursively, track current path. When reaching target, save a copy."},
+{n:821,t:"Shortest Distance to a Character",d:"E",topics:["arrays"],langs:["Py"],desc:"Find distance to nearest occurrence of a target char for each position.",hint:"<strong>Two passes.</strong> Left-to-right for distance from previous occurrence, right-to-left for next occurrence. Take minimum."},
+{n:832,t:"Flipping an Image",d:"E",topics:["arrays"],langs:["Py"],desc:"Flip an image horizontally then invert it.",hint:"<strong>Reverse each row, then flip bits.</strong> Or combine: swap and flip in one pass from both ends."},
+{n:844,t:"Backspace String Compare",d:"E",topics:["stack","string"],langs:["Py"],desc:"Compare two strings with '#' as backspace.",hint:"<strong>Stack simulation.</strong> Process each string: push chars, pop on '#'. Compare final stacks."},
+{n:876,t:"Middle of the Linked List",d:"E",topics:["linked-list","two-pointers"],langs:["Py"],desc:"Find the middle node of a linked list.",hint:"<strong>Slow and fast pointers.</strong> Slow moves 1, fast moves 2. When fast reaches end, slow is at middle."},
+{n:905,t:"Sort Array By Parity",d:"E",topics:["two-pointers","arrays"],langs:["Py"],desc:"Move all even integers before odd integers.",hint:"<strong>Two pointers.</strong> Swap even-at-right with odd-at-left, converge inward."},
+{n:917,t:"Reverse Only Letters",d:"E",topics:["two-pointers","string"],langs:["Py"],desc:"Reverse only the letters in a string, leaving non-letters in place.",hint:"<strong>Two pointers, skip non-letters.</strong> Left and right skip non-alpha chars, swap when both point to letters."},
+{n:918,t:"Maximum Sum Circular Subarray",d:"M",topics:["DP","arrays"],langs:["Py"],desc:"Find the max subarray sum in a circular array.",hint:"<strong>Kadane for max and min.</strong> Answer is max(max_subarray, total_sum - min_subarray). Handle all-negative edge case."},
+{n:922,t:"Sort Array By Parity II",d:"E",topics:["two-pointers","arrays"],langs:["Py"],desc:"Even indices hold even values, odd indices hold odd values.",hint:"<strong>Two pointers for even/odd positions.</strong> Scan for misplaced even and odd, swap them."},
+{n:925,t:"Long Pressed Name",d:"E",topics:["two-pointers","string"],langs:["Py"],desc:"Check if typed could be a long-pressed version of name.",hint:"<strong>Two pointers.</strong> Both advance when chars match. Typed pointer advances alone on repeated chars. Verify name pointer reaches end."},
+{n:931,t:"Minimum Falling Path Sum",d:"M",topics:["DP"],langs:["Py"],desc:"Find minimum falling path sum through a square matrix.",hint:"<strong>DP row by row.</strong> <code>dp[i][j] += min(dp[i-1][j-1], dp[i-1][j], dp[i-1][j+1])</code>. Handle boundaries."},
+{n:977,t:"Squares of a Sorted Array",d:"E",topics:["two-pointers","sorting"],langs:["Py"],desc:"Given a sorted array, return an array of the squares in sorted order.",hint:"<strong>Two pointers from edges.</strong> Largest squares are at the extremes. Compare absolute values from both ends, fill result array from the back (or merge from a split point)."},
+{n:983,t:"Minimum Cost For Tickets",d:"M",topics:["DP"],langs:["Py"],desc:"Find minimum cost for train tickets covering all travel days.",hint:"<strong>DP on days.</strong> For each travel day, try each ticket type: <code>dp[d] = min(dp[d-1]+c1, dp[d-7]+c7, dp[d-30]+c30)</code>. Non-travel days: dp[d]=dp[d-1]."},
+{n:1004,t:"Max Consecutive Ones III",d:"M",topics:["sliding-window"],langs:["Py"],desc:"Longest subarray of 1s after flipping at most k zeros.",hint:"<strong>Sliding window with a zero budget.</strong> Expand right; when zeros exceed k, shrink left past a zero. Answer is the max window width."},
+{n:1046,t:"Last Stone Weight",d:"E",topics:["heap"],langs:["Py"],desc:"Simulate smashing heaviest stones.",hint:"<strong>Max-heap.</strong> Pop two largest, push difference if non-zero. Return last stone or 0."},
+{n:1086,t:"High Five",d:"E",topics:["heap","sorting"],langs:["Py"],desc:"Find the top 5 average score for each student.",hint:"<strong>Hash map of heaps.</strong> Group scores by student, keep top 5 (min-heap of size 5), average them."},
+{n:1089,t:"Duplicate Zeros",d:"E",topics:["arrays","two-pointers"],langs:["Py"],desc:"Duplicate each zero in-place, shifting the rest right (fixed length).",hint:"<strong>Two-pass / write from the end.</strong> Count zeros to find the cutoff, then fill backward, writing each zero twice to avoid overwrites."},
+{n:1099,t:"Two Sum Less Than K",d:"E",topics:["two-pointers","sorting"],langs:["Py"],desc:"Find the largest sum of two numbers less than k.",hint:"<strong>Sort + two pointers.</strong> If sum &lt; k, update best and advance left. If sum ≥ k, move right."},
+{n:1133,t:"Largest Unique Number",d:"E",topics:["hash-map","arrays"],langs:["Py"],desc:"Return the largest integer that occurs exactly once, or -1 if none.",hint:"<strong>Frequency count.</strong> Count occurrences, then take the max value whose count is exactly 1."},
+{n:1137,t:"N-th Tribonacci Number",d:"E",topics:["DP"],langs:["Py"],desc:"Compute the n-th Tribonacci number (T(n) = T(n-1)+T(n-2)+T(n-3)).",hint:"<strong>Three variables.</strong> Same as Fibonacci but with three rolling state variables."},
+{n:1143,t:"Longest Common Subsequence",d:"M",topics:["DP"],langs:["Py"],desc:"Find the length of the longest common subsequence.",hint:"<strong>2D DP.</strong> If chars match: <code>dp[i][j] = dp[i-1][j-1] + 1</code>. Else: <code>max(dp[i-1][j], dp[i][j-1])</code>."},
+{n:1155,t:"Number of Dice Rolls With Target Sum",d:"M",topics:["DP"],langs:["Py"],desc:"Count ways to roll n dice to reach a target sum.",hint:"<strong>2D DP.</strong> <code>dp[i][j]</code> = ways to reach sum j with i dice. For each die, try faces 1..f."},
+{n:1176,t:"Diet Plan Performance",d:"E",topics:["sliding-window"],langs:["Py"],desc:"Rate a diet plan based on rolling k-day calorie sums.",hint:"<strong>Fixed sliding window.</strong> Compute window sum, compare to lower/upper thresholds, slide forward."},
+{n:1189,t:"Maximum Number of Balloons",d:"E",topics:["hash-map","string"],langs:["Py"],desc:"Find how many times \"balloon\" can be formed from a string's letters (each used once).",hint:"<strong>Count letters, bottleneck on the scarcest.</strong> Answer = min over each letter of \"balloon\", halving the counts of 'l' and 'o'."},
+{n:1220,t:"Count Vowels Permutation",d:"H",topics:["DP"],langs:["Py"],desc:"Count strings of length n where each vowel follows specific rules.",hint:"<strong>DP per vowel.</strong> Track count for each vowel ending. Apply transition rules each step. Sum all at end."},
+{n:1248,t:"Count Number of Nice Subarrays",d:"M",topics:["prefix-sum","hash-map","sliding-window"],langs:["Py"],desc:"Count subarrays that contain exactly k odd numbers.",hint:"<strong>Prefix count of odds + hash map.</strong> Track running count of odds; for each index add the frequency of <code>count - k</code> seen so far. Seed <code>{0: 1}</code>."},
+{n:1335,t:"Minimum Difficulty of a Job Schedule",d:"H",topics:["DP"],langs:["Py"],desc:"Split jobs into d days, minimizing sum of daily max difficulties.",hint:"<strong>2D DP (day, last job index).</strong> For each day partition point, track running max in each day's segment."},
+{n:1413,t:"Minimum Value to Get Positive Step by Step Sum",d:"E",topics:["prefix-sum","arrays"],langs:["Py"],desc:"Find the minimum positive start value so every running prefix sum stays ≥ 1.",hint:"<strong>Track the minimum prefix sum.</strong> Answer is <code>1 - min(prefix)</code> when that min is negative, else 1."},
+{n:1426,t:"Counting Elements",d:"E",topics:["hash-map","arrays"],langs:["Py"],desc:"Count elements x in the array such that x+1 is also present (counting duplicates).",hint:"<strong>Hash set of values.</strong> Build a set, then count each element whose <code>x + 1</code> is in the set."},
+{n:1473,t:"Paint House III",d:"H",topics:["DP"],langs:["Py"],desc:"Paint houses to form exactly target neighborhoods, minimize cost.",hint:"<strong>3D DP (house, neighborhoods, last color).</strong> Track neighborhood count; increment when color changes from previous house."},
+{n:1480,t:"Running Sum of 1d Array",d:"E",topics:["prefix-sum","arrays"],langs:["Py"],desc:"Return the running (prefix) sum of the array.",hint:"<strong>Prefix sum.</strong> <code>out[i] = out[i-1] + nums[i]</code> in one pass."},
+{n:1481,t:"Least Number of Unique Integers after K Removals",d:"M",topics:["hash-map","greedy"],langs:["Py"],desc:"Remove k elements to minimize unique count.",hint:"<strong>Count frequencies, remove rarest first.</strong> Sort frequencies ascending, greedily remove elements with smallest counts."},
+{n:1535,t:"Find the Winner of an Array Game",d:"M",topics:["arrays","greedy"],langs:["Py"],desc:"Find which element wins k consecutive rounds comparing the front two.",hint:"<strong>Single pass tracking current champion.</strong> The running max plays each next element; count consecutive wins. If k reached (or k ≥ n-1), the overall max wins."},
+{n:1652,t:"Defuse the Bomb",d:"E",topics:["sliding-window","arrays"],langs:["Py"],desc:"Replace each element with the sum of the next/previous k elements (circular).",hint:"<strong>Circular sliding window.</strong> Use modular arithmetic for circular indexing. Compute initial window, then slide."},
+{n:1668,t:"Maximum Repeating Substring",d:"E",topics:["string"],langs:["Py"],desc:"Find the max k such that word repeated k times is a substring of sequence.",hint:"<strong>Try each start, count consecutive repeats.</strong> At each index where word matches, keep advancing by len(word) while it still matches. Track the max run."},
+{n:1752,t:"Check if Array Is Sorted and Rotated",d:"E",topics:["arrays"],langs:["Py"],desc:"Check if the array was originally sorted then rotated.",hint:"<strong>Count inversions.</strong> Count positions where <code>nums[i] &gt; nums[i+1]</code> (including wrap-around). At most 1 inversion allowed."},
+{n:1763,t:"Longest Nice Substring",d:"E",topics:["string"],langs:["Py"],desc:"Find the longest substring where every letter appears in both cases.",hint:"<strong>Divide and conquer.</strong> Find a char without both cases, split there, recurse on both halves."},
+{n:1768,t:"Merge Strings Alternately",d:"E",topics:["string"],langs:["Go"],desc:"Merge two strings by alternating characters.",hint:"<strong>Two pointers or zip.</strong> Alternate chars from each string, append remaining from the longer one."},
+{n:1770,t:"Maximum Score from Performing Multiplication Operations",d:"H",topics:["DP"],langs:["Py"],desc:"Pick from either end of an array to maximize score with given multipliers.",hint:"<strong>2D DP on left picks and step.</strong> Right picks derived: <code>right = step - left</code>. Pick from left or right end at each step."},
+{n:1791,t:"Find Center of Star Graph",d:"E",topics:["graph"],langs:["Py"],desc:"Find the center node of a star graph.",hint:"<strong>Check first two edges.</strong> The center appears in both. Return the common node from the first two edges."},
+{n:1832,t:"Check if the Sentence Is Pangram",d:"E",topics:["hash-map","string"],langs:["Py","Go","Rb"],desc:"Check whether a sentence contains every letter of the alphabet at least once.",hint:"<strong>Set of letters.</strong> Build a set from the sentence and check <code>len(set(s)) == 26</code> (or use a 26-bit mask)."},
+{n:1876,t:"Substrings of Size Three with Distinct Characters",d:"E",topics:["sliding-window","string"],langs:["Py"],desc:"Count substrings of length 3 with all distinct characters.",hint:"<strong>Sliding window of size 3.</strong> Check if <code>len(set(window)) == 3</code> for each position."},
+{n:1941,t:"Check if All Characters Have Equal Number of Occurrences",d:"E",topics:["hash-map","string"],langs:["Py"],desc:"Return true if every character in the string occurs the same number of times.",hint:"<strong>Counter + single distinct count.</strong> Build frequencies, then check <code>len(set(counter.values())) == 1</code>."},
+{n:1984,t:"Minimum Difference Between Highest and Lowest of K Scores",d:"E",topics:["sliding-window","sorting"],langs:["Py"],desc:"Find the minimum difference in any window of k sorted scores.",hint:"<strong>Sort + fixed window.</strong> After sorting, slide a window of size k, track <code>min(nums[i+k-1] - nums[i])</code>."},
+{n:2090,t:"K Radius Subarray Averages",d:"M",topics:["prefix-sum","sliding-window"],langs:["Py"],desc:"For each index compute the average of its k-radius subarray, or -1 if out of bounds.",hint:"<strong>Prefix sums for O(1) window sums.</strong> For indices in <code>[k, n-1-k]</code>, average = <code>(psum[i+k] - psum[i-k-1]) / (2k+1)</code>; others stay -1."},
+{n:2126,t:"Destroying Asteroids",d:"M",topics:["sorting","greedy"],langs:["Py","Go","TS","JS","Rb"],desc:"Determine if a planet can survive all asteroids.",hint:"<strong>Sort asteroids, absorb greedily.</strong> Sort by mass, absorb from smallest. If planet mass &lt; asteroid, fail."},
+{n:2140,t:"Solving Questions With Brainpower",d:"M",topics:["DP"],langs:["Py"],desc:"Maximize points from questions where solving one skips the next few.",hint:"<strong>Reverse DP.</strong> <code>dp[i] = max(dp[i+1], points[i] + dp[i + brainpower[i] + 1])</code>. Process from end to start."},
+{n:2150,t:"Find All Lonely Numbers in the Array",d:"M",topics:["hash-map","arrays"],langs:["Py","Go","Rs","Rb"],desc:"Return numbers that appear exactly once and have no adjacent value (x-1 or x+1) in the array.",hint:"<strong>Counter + neighbor check.</strong> Count frequencies; a number is lonely if its count is 1 and neither <code>x-1</code> nor <code>x+1</code> is present."},
+{n:2225,t:"Find Players With Zero or One Losses",d:"M",topics:["hash-map","sorting"],langs:["Py"],desc:"From a list of matches, list players with no losses and players with exactly one loss.",hint:"<strong>Count losses per player.</strong> Tally wins and losses in hash maps; no-loss players are winners never in the loss map, one-loss players have loss count 1. Sort both lists."},
+{n:2248,t:"Intersection of Multiple Arrays",d:"E",topics:["hash-map","arrays"],langs:["Py"],desc:"Return the sorted list of integers present in every one of the given arrays.",hint:"<strong>Frequency count across arrays.</strong> Count each value with a Counter; keep values whose count equals the number of arrays. Sort the result."},
+{n:2260,t:"Minimum Consecutive Cards to Pick Up",d:"M",topics:["hash-map","sliding-window"],langs:["Py"],desc:"Find the shortest subarray containing a matching pair of cards, or -1.",hint:"<strong>Track last index of each value.</strong> When a value repeats, window length = <code>r - lastIndex + 1</code>; keep the minimum. Return -1 if no pair."},
+{n:2269,t:"Find the K-Beauty of a Number",d:"E",topics:["sliding-window","math"],langs:["Py"],desc:"Count substrings of length k that divide the original number.",hint:"<strong>Sliding window of digits.</strong> Extract each k-length substring, convert to int, check divisibility. Skip zeros."},
+{n:2270,t:"Number of Ways to Split Array",d:"M",topics:["prefix-sum","arrays"],langs:["Py"],desc:"Count valid split points where the left prefix sum ≥ the right suffix sum.",hint:"<strong>Prefix sums.</strong> For each split i, <code>left = psum[i]</code>, <code>right = total - left</code>; count positions where <code>left ≥ right</code>."},
+{n:2294,t:"Partition Array Such That Maximum Difference Is K",d:"M",topics:["sorting","greedy"],langs:["Py","Go","Rs"],desc:"Minimize partitions so max difference in each group ≤ k.",hint:"<strong>Sort and greedy partition.</strong> Start a group with smallest, extend while max - min ≤ k. Start new group when exceeded."},
+{n:2351,t:"First Letter to Appear Twice",d:"E",topics:["hash-map","string"],langs:["Py","Go","Rs"],desc:"Return the first character in the string that appears twice.",hint:"<strong>Seen set.</strong> Scan left to right; return the first char already in the set (or use a 26-bit seen mask)."},
+{n:2379,t:"Minimum Recolors to Get K Consecutive Black Blocks",d:"E",topics:["sliding-window"],langs:["Py"],desc:"Find minimum recolors needed for k consecutive black blocks.",hint:"<strong>Sliding window.</strong> Count white blocks in each window of size k. Minimum whites = answer."},
+{n:3032,t:"Count Numbers With Unique Digits II",d:"E",topics:["math"],langs:["Py"],desc:"Count integers in [a, b] whose digits are all distinct.",hint:"<strong>Check each number's digit uniqueness.</strong> A number has unique digits when <code>len(str(k)) == len(set(str(k)))</code>. Count those in range."},
+{n:3110,t:"Score of a String",d:"E",topics:["string"],langs:["Py"],desc:"Sum of absolute differences between adjacent character ASCII values.",hint:"<strong>Single pass.</strong> Iterate pairs: <code>sum(abs(ord(s[i]) - ord(s[i+1])))</code>."},
+{n:3364,t:"Minimum Positive Sum Subarray",d:"E",topics:["arrays","prefix-sum"],langs:["Py"],desc:"Find the minimum positive sum among all subarrays of length in [l, r].",hint:"<strong>Variable-size sliding window.</strong> Check all windows of length l to r, track minimum positive sum."},
+{n:3931,t:"Check Adjacent Digit Differences",d:"E",topics:["arrays"],langs:["Py"],desc:"Check if adjacent digits in a number all have the same absolute difference.",hint:"<strong>Single pass.</strong> Convert to string, check <code>abs(int(s[i]) - int(s[i+1]))</code> equals target for all pairs."},
+{n:3945,t:"Digit Frequency Score",d:"E",topics:["hash-map"],langs:["Py"],desc:"Sum frequency^frequency for each digit that appears.",hint:"<strong>Counter.</strong> Count digit frequencies, sum <code>freq ** freq</code> for each."},
+{n:3954,t:"Sum of Compatible Numbers in Range I",d:"E",topics:["bit-manipulation","math"],langs:["Py"],desc:"Sum all x where |n - x| ≤ k and n shares no set bits with x.",hint:"<strong>Brute-force the candidate range.</strong> Scan x in <code>[0, n+k]</code>, keep those with <code>abs(n-x) ≤ k</code> and <code>n &amp; x == 0</code> (disjoint bits). Sum them."}
+];
+
+const ALL_TOPICS = ["arrays","backtracking","BFS","binary-search","bit-manipulation","design","DFS","DP","graph","greedy","hash-map","heap","intervals","linked-list","math","prefix-sum","sliding-window","sorting","stack","string","tree","trie","two-pointers"];
+
+const DIFF_ORDER = {E: 0, M: 1, H: 2};
+const DIFF_LABEL = {E: "Easy", M: "Medium", H: "Hard"};
+const DIFF_CLASS = {E: "easy", M: "medium", H: "hard"};
+
+let showLabels = true;
+let showAllHints = false;
+let activeTopic = "All";
+let currentSort = "random";
+let searchQuery = "";
+let cardHintStates = {};
+
+function initTheme() {
+  const saved = localStorage.getItem("lc-cheatsheet-theme");
+  if (saved === "light") document.documentElement.setAttribute("data-theme", "light");
+}
+
+function toggleTheme() {
+  const current = document.documentElement.getAttribute("data-theme");
+  const next = current === "light" ? "dark" : "light";
+  if (next === "dark") document.documentElement.removeAttribute("data-theme");
+  else document.documentElement.setAttribute("data-theme", "light");
+  localStorage.setItem("lc-cheatsheet-theme", next);
+}
+
+function buildTopicPills() {
+  const container = document.getElementById("topicPills");
+  let html = '<span class="topic-pill active" data-topic="All">All</span>';
+  ALL_TOPICS.forEach(t => {
+    html += '<span class="topic-pill" data-topic="' + t + '">' + t + '</span>';
+  });
+  container.innerHTML = html;
+  container.addEventListener("click", function(e) {
+    const pill = e.target.closest(".topic-pill");
+    if (!pill) return;
+    activeTopic = pill.dataset.topic;
+    container.querySelectorAll(".topic-pill").forEach(p => p.classList.remove("active"));
+    pill.classList.add("active");
+    renderCards();
+  });
+}
+
+function getFiltered() {
+  let items = PROBLEMS.slice();
+  if (activeTopic !== "All") {
+    items = items.filter(p => p.topics.includes(activeTopic));
+  }
+  if (searchQuery) {
+    const q = searchQuery.toLowerCase();
+    items = items.filter(p => {
+      return String(p.n).includes(q) ||
+        p.t.toLowerCase().includes(q) ||
+        p.topics.some(t => t.toLowerCase().includes(q));
+    });
+  }
+  if (currentSort === "random") {
+    for (let i = items.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [items[i], items[j]] = [items[j], items[i]];
+    }
+  } else if (currentSort === "difficulty") {
+    items.sort((a, b) => DIFF_ORDER[a.d] - DIFF_ORDER[b.d] || a.n - b.n);
+  } else if (currentSort === "topic") {
+    items.sort((a, b) => {
+      const ta = a.topics[0] || "";
+      const tb = b.topics[0] || "";
+      return ta.localeCompare(tb) || a.n - b.n;
+    });
+  } else {
+    items.sort((a, b) => a.n - b.n);
+  }
+  return items;
+}
+
+function renderCards() {
+  const items = getFiltered();
+  const container = document.getElementById("cardsContainer");
+  const noResults = document.getElementById("noResults");
+  const countDisplay = document.getElementById("countDisplay");
+
+  if (items.length === 0) {
+    container.innerHTML = "";
+    noResults.style.display = "block";
+    countDisplay.textContent = "Showing 0 of " + PROBLEMS.length + " problems";
+    return;
+  }
+  noResults.style.display = "none";
+  countDisplay.textContent = "Showing " + items.length + " of " + PROBLEMS.length + " problems";
+
+  let html = "";
+  items.forEach(p => {
+    const dc = DIFF_CLASS[p.d];
+    const dl = DIFF_LABEL[p.d];
+    const tagsHidden = showLabels ? "" : " hidden";
+    const hintVisible = showAllHints || cardHintStates[p.n];
+    const hintBtnHidden = showAllHints ? " hidden" : "";
+    const hintTextHidden = hintVisible ? "" : " hidden";
+
+    html += '<div class="card ' + dc + '" data-num="' + p.n + '">';
+    html += '<div class="card-header">';
+    html += '<span class="card-title">' + p.n + '. ' + p.t + '</span>';
+    html += '<span class="diff-badge ' + dc + '">' + dl + '</span>';
+    html += '</div>';
+    html += '<div class="card-desc">' + p.desc + '</div>';
+    html += '<div class="card-tags' + tagsHidden + '">';
+    p.topics.forEach(t => { html += '<span class="tag">' + t + '</span>'; });
+    html += '</div>';
+    html += '<div class="card-langs">';
+    p.langs.forEach(l => { html += '<span class="lang-badge">' + l + '</span>'; });
+    html += '</div>';
+    html += '<button class="hint-btn' + hintBtnHidden + '" onclick="toggleCardHint(' + p.n + ')">show hint</button>';
+    html += '<div class="hint-text' + hintTextHidden + '">' + p.hint + '</div>';
+    html += '</div>';
+  });
+  container.innerHTML = html;
+}
+
+function toggleCardHint(num) {
+  cardHintStates[num] = !cardHintStates[num];
+  const card = document.querySelector('.card[data-num="' + num + '"]');
+  if (!card) return;
+  const hintText = card.querySelector(".hint-text");
+  const hintBtn = card.querySelector(".hint-btn");
+  if (cardHintStates[num]) {
+    hintText.classList.remove("hidden");
+    hintBtn.textContent = "hide hint";
+  } else {
+    hintText.classList.add("hidden");
+    hintBtn.textContent = "show hint";
+  }
+}
+
+function buildStats() {
+  const total = PROBLEMS.length;
+  const easy = PROBLEMS.filter(p => p.d === "E").length;
+  const med = PROBLEMS.filter(p => p.d === "M").length;
+  const hard = PROBLEMS.filter(p => p.d === "H").length;
+  document.getElementById("subtitle").innerHTML = total + " problems &mdash; quick hints to jog your memory &mdash; July 9, 2026";
+  document.getElementById("statsBar").innerHTML =
+    '<span class="stat stat-total">' + total + ' total</span>' +
+    '<span class="stat stat-easy">' + easy + ' Easy</span>' +
+    '<span class="stat stat-medium">' + med + ' Medium</span>' +
+    '<span class="stat stat-hard">' + hard + ' Hard</span>';
+}
+
+function init() {
+  initTheme();
+  buildStats();
+  buildTopicPills();
+
+  document.getElementById("themeToggle").addEventListener("click", toggleTheme);
+
+  document.getElementById("labelsToggle").addEventListener("click", function() {
+    showLabels = !showLabels;
+    this.classList.toggle("active", showLabels);
+    document.querySelectorAll(".card-tags").forEach(el => {
+      el.classList.toggle("hidden", !showLabels);
+    });
+  });
+
+  document.getElementById("hintsToggle").addEventListener("click", function() {
+    showAllHints = !showAllHints;
+    this.classList.toggle("active", showAllHints);
+    renderCards();
+  });
+
+  document.getElementById("searchInput").addEventListener("input", function() {
+    searchQuery = this.value.trim();
+    renderCards();
+  });
+
+  document.getElementById("sortSelect").addEventListener("change", function() {
+    currentSort = this.value;
+    renderCards();
+  });
+
+  renderCards();
+}
+
+init();
+</script>
+</body>
+</html>

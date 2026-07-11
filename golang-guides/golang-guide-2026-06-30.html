@@ -1,0 +1,1639 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Go Study Guide &mdash; Day 25 (2026-06-30)</title>
+<style>
+/* ===== CSS Variables ===== */
+:root {
+  --bg: #0d1117;
+  --surface1: #161b22;
+  --surface2: #1c2129;
+  --border: #30363d;
+  --text: #e6edf3;
+  --muted: #8b949e;
+  --accent: #58a6ff;
+  --accent-dim: #1f6feb33;
+  --green: #3fb950;
+  --green-dim: #23863633;
+  --yellow: #d29922;
+  --yellow-dim: #d2992233;
+  --red: #f85149;
+  --red-dim: #f8514933;
+  --purple: #bc8cff;
+  --purple-dim: #bc8cff22;
+  --orange: #f0883e;
+  --orange-dim: #f0883e22;
+  --code-bg: #0d1117;
+  --sidebar-w: 300px;
+  --font-mono: 'SF Mono', 'Cascadia Code', 'Fira Code', Consolas, monospace;
+  --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+  --radius: 8px;
+  --shadow: 0 1px 3px rgba(0,0,0,0.4);
+}
+
+[data-theme="light"] {
+  --bg: #ffffff;
+  --surface1: #f6f8fa;
+  --surface2: #f0f3f6;
+  --border: #d0d7de;
+  --text: #1f2328;
+  --muted: #656d76;
+  --accent: #0969da;
+  --accent-dim: #0969da1a;
+  --green: #1a7f37;
+  --green-dim: #1a7f3718;
+  --yellow: #9a6700;
+  --yellow-dim: #9a670018;
+  --red: #cf222e;
+  --red-dim: #cf222e18;
+  --purple: #8250df;
+  --purple-dim: #8250df18;
+  --orange: #bc4c00;
+  --orange-dim: #bc4c0018;
+  --code-bg: #f6f8fa;
+  --shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+/* ===== Reset & Base ===== */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: var(--font-sans);
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.7;
+  font-size: 16px;
+  transition: background 0.2s, color 0.2s;
+}
+
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+/* ===== Theme Toggle ===== */
+#theme-toggle {
+  position: fixed;
+  top: 16px;
+  right: 20px;
+  z-index: 1000;
+  background: var(--surface1);
+  border: 1px solid var(--border);
+  color: var(--text);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+  box-shadow: var(--shadow);
+}
+#theme-toggle:hover { background: var(--surface2); border-color: var(--accent); }
+
+/* ===== Sidebar ===== */
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: var(--sidebar-w);
+  height: 100vh;
+  background: var(--surface1);
+  border-right: 1px solid var(--border);
+  overflow-y: auto;
+  padding: 20px 0;
+  z-index: 100;
+  transition: transform 0.3s;
+}
+
+.sidebar-header {
+  padding: 0 20px 16px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 12px;
+}
+
+.sidebar-header h2 {
+  font-size: 16px;
+  color: var(--text);
+  font-weight: 700;
+}
+
+.sidebar-header .subtitle {
+  font-size: 12px;
+  color: var(--muted);
+  margin-top: 2px;
+}
+
+.sidebar-section {
+  margin-bottom: 8px;
+}
+
+.sidebar-section-title {
+  padding: 6px 20px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+}
+
+.sidebar-link {
+  display: block;
+  padding: 5px 20px 5px 28px;
+  font-size: 13px;
+  color: var(--muted);
+  text-decoration: none;
+  border-left: 2px solid transparent;
+  transition: all 0.15s;
+  line-height: 1.4;
+}
+
+.sidebar-link:hover {
+  color: var(--text);
+  background: var(--accent-dim);
+  border-left-color: var(--accent);
+  text-decoration: none;
+}
+
+.sidebar-link.active {
+  color: var(--accent);
+  border-left-color: var(--accent);
+  background: var(--accent-dim);
+}
+
+/* ===== Mobile sidebar toggle ===== */
+#sidebar-toggle {
+  display: none;
+  position: fixed;
+  top: 16px;
+  left: 16px;
+  z-index: 200;
+  background: var(--surface1);
+  border: 1px solid var(--border);
+  color: var(--text);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 20px;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--shadow);
+}
+
+/* ===== Main Content ===== */
+.main {
+  margin-left: var(--sidebar-w);
+  padding: 40px 48px 80px;
+  max-width: calc(860px + var(--sidebar-w) + 96px);
+}
+
+.page-title {
+  font-size: 32px;
+  font-weight: 800;
+  margin-bottom: 4px;
+  color: var(--text);
+}
+
+.page-subtitle {
+  font-size: 15px;
+  color: var(--muted);
+  margin-bottom: 36px;
+}
+
+/* ===== Sections ===== */
+.section {
+  margin-bottom: 48px;
+}
+
+.section-label {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  padding: 3px 10px;
+  border-radius: 4px;
+  margin-bottom: 12px;
+}
+
+.section-label.review { background: var(--yellow-dim); color: var(--yellow); }
+.section-label.new { background: var(--green-dim); color: var(--green); }
+
+.section-title {
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 24px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--border);
+}
+
+/* ===== How To Use ===== */
+.how-to-use {
+  background: var(--surface1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px 24px;
+  margin-bottom: 36px;
+}
+
+.how-to-use h3 {
+  font-size: 16px;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.how-to-use ul {
+  padding-left: 22px;
+  margin: 0;
+}
+
+.how-to-use li {
+  font-size: 14px;
+  color: var(--muted);
+  margin-bottom: 4px;
+}
+
+/* ===== Concept Cards ===== */
+.concept {
+  background: var(--surface1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 28px;
+  margin-bottom: 28px;
+  box-shadow: var(--shadow);
+}
+
+.concept-header {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  margin-bottom: 6px;
+  flex-wrap: wrap;
+}
+
+.concept h3 {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.concept-meta {
+  font-size: 12px;
+  color: var(--muted);
+  background: var(--surface2);
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
+.concept h4 {
+  font-size: 15px;
+  font-weight: 600;
+  margin: 20px 0 8px;
+  color: var(--text);
+}
+
+.concept p, .concept li {
+  color: var(--text);
+  line-height: 1.7;
+}
+
+.concept ul, .concept ol {
+  padding-left: 22px;
+  margin: 8px 0;
+}
+
+.concept li {
+  margin-bottom: 4px;
+}
+
+.concept .why-matters {
+  font-style: italic;
+  color: var(--muted);
+  margin: 6px 0 16px;
+  font-size: 15px;
+}
+
+/* ===== Code Blocks ===== */
+pre {
+  background: var(--code-bg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 16px 18px;
+  overflow-x: auto;
+  margin: 10px 0 14px;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--text);
+  position: relative;
+}
+
+pre::after {
+  content: 'Go';
+  position: absolute;
+  top: 6px;
+  right: 10px;
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  opacity: 0.6;
+}
+
+code {
+  font-family: var(--font-mono);
+  font-size: 0.9em;
+}
+
+:not(pre) > code {
+  background: var(--surface2);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.88em;
+}
+
+/* ===== Output Blocks ===== */
+.output {
+  background: var(--green-dim);
+  border: 1px solid var(--green);
+  border-radius: 6px;
+  padding: 12px 16px;
+  margin: 6px 0 14px;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--text);
+  white-space: pre-wrap;
+}
+
+.output::after { content: none; }
+
+.output-label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--green);
+  margin-bottom: 4px;
+}
+
+/* ===== Good/Bad Examples ===== */
+.do-dont {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin: 10px 0;
+}
+
+.do-box, .dont-box {
+  border-radius: 6px;
+  padding: 14px;
+  border: 1px solid;
+}
+
+.do-box {
+  background: var(--green-dim);
+  border-color: var(--green);
+}
+
+.dont-box {
+  background: var(--red-dim);
+  border-color: var(--red);
+}
+
+.do-box .label, .dont-box .label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 6px;
+}
+
+.do-box .label { color: var(--green); }
+.dont-box .label { color: var(--red); }
+
+.do-box pre, .dont-box pre {
+  margin: 0;
+  border: none;
+  background: transparent;
+  padding: 0;
+  font-size: 12.5px;
+}
+
+.do-box pre::after, .dont-box pre::after { content: none; }
+
+/* ===== Key Rules ===== */
+.rules-list {
+  list-style: none;
+  padding: 0;
+  margin: 8px 0;
+}
+
+.rules-list li {
+  padding: 6px 0 6px 24px;
+  position: relative;
+}
+
+.rules-list li::before {
+  content: "\2192";
+  position: absolute;
+  left: 2px;
+  color: var(--accent);
+  font-weight: 700;
+}
+
+/* ===== Exercises ===== */
+.exercise {
+  background: var(--purple-dim);
+  border: 1px solid var(--purple);
+  border-radius: 6px;
+  padding: 14px 18px;
+  margin: 8px 0;
+}
+
+.exercise .exercise-label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--purple);
+  margin-bottom: 4px;
+}
+
+/* ===== Pitfall ===== */
+.pitfall {
+  background: var(--red-dim);
+  border-left: 3px solid var(--red);
+  border-radius: 0 6px 6px 0;
+  padding: 10px 14px;
+  margin: 10px 0;
+  font-size: 14px;
+}
+
+.pitfall strong {
+  color: var(--red);
+}
+
+/* ===== Connection ===== */
+.connection {
+  background: var(--accent-dim);
+  border-left: 3px solid var(--accent);
+  border-radius: 0 6px 6px 0;
+  padding: 10px 14px;
+  margin: 10px 0;
+  font-size: 14px;
+  color: var(--muted);
+}
+
+/* ===== Review Cards ===== */
+.review-card {
+  background: var(--surface1);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--purple);
+  border-radius: var(--radius);
+  padding: 20px 24px;
+  margin-bottom: 16px;
+  box-shadow: var(--shadow);
+}
+
+.review-card .review-header {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  margin-bottom: 6px;
+  flex-wrap: wrap;
+}
+
+.review-card h3 {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.review-card .review-meta {
+  font-size: 12px;
+  color: var(--muted);
+  background: var(--surface2);
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
+.review-card h4 {
+  font-size: 14px;
+  font-weight: 600;
+  margin: 14px 0 6px;
+  color: var(--text);
+}
+
+.review-card p, .review-card li {
+  color: var(--text);
+  line-height: 1.6;
+  font-size: 14px;
+}
+
+.review-card pre {
+  font-size: 12.5px;
+  padding: 12px 14px;
+  margin: 6px 0 10px;
+}
+
+.review-card .pitfall {
+  font-size: 13px;
+  padding: 8px 12px;
+}
+
+/* ===== Topic Badge ===== */
+.topic-badge {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 2px 8px;
+  border-radius: 4px;
+  background: var(--accent-dim);
+  color: var(--accent);
+  margin-left: 4px;
+}
+
+/* ===== Footer ===== */
+.footer {
+  margin-top: 60px;
+  padding: 24px 0;
+  border-top: 1px solid var(--border);
+}
+
+.footer h4 {
+  font-size: 14px;
+  color: var(--muted);
+  margin-bottom: 10px;
+}
+
+.footer ul {
+  list-style: none;
+  padding: 0;
+}
+
+.footer li {
+  margin-bottom: 4px;
+  font-size: 14px;
+}
+
+.footer li a { color: var(--accent); }
+.footer .current { color: var(--green); font-weight: 600; }
+
+/* ===== Bash code blocks ===== */
+pre.bash::after {
+  content: 'Bash';
+}
+
+/* ===== YAML code blocks ===== */
+pre.yaml-code::after {
+  content: 'YAML';
+}
+
+/* ===== Responsive ===== */
+@media (max-width: 900px) {
+  .sidebar {
+    transform: translateX(-100%);
+  }
+  .sidebar.open {
+    transform: translateX(0);
+    box-shadow: 4px 0 20px rgba(0,0,0,0.5);
+  }
+  #sidebar-toggle {
+    display: flex;
+  }
+  .main {
+    margin-left: 0;
+    padding: 60px 20px 60px;
+    max-width: 100%;
+  }
+  .do-dont {
+    grid-template-columns: 1fr;
+  }
+  #theme-toggle {
+    right: 14px;
+    top: 16px;
+  }
+}
+</style>
+</head>
+<body>
+
+<!-- Theme Toggle -->
+<button id="theme-toggle" aria-label="Toggle theme" title="Toggle light/dark theme">&#9789;</button>
+
+<!-- Mobile Sidebar Toggle -->
+<button id="sidebar-toggle" aria-label="Toggle sidebar">&#9776;</button>
+
+<!-- Sidebar -->
+<nav class="sidebar" id="sidebar">
+  <div class="sidebar-header">
+    <h2>Go Guide</h2>
+    <div class="subtitle">Day 25 &mdash; 2026-06-30</div>
+  </div>
+
+  <div class="sidebar-section">
+    <div class="sidebar-section-title">Review (6 concepts)</div>
+    <a href="#maps" class="sidebar-link">Maps</a>
+    <a href="#strings_runes" class="sidebar-link">Strings &amp; Runes</a>
+    <a href="#structs_methods" class="sidebar-link">Structs &amp; Methods</a>
+    <a href="#graceful_shutdown" class="sidebar-link">Graceful Shutdown</a>
+    <a href="#config_management" class="sidebar-link">Configuration Management</a>
+    <a href="#escape_analysis" class="sidebar-link">Escape Analysis</a>
+  </div>
+
+  <div class="sidebar-section">
+    <div class="sidebar-section-title">Randomness, Hashing &amp; Text (3)</div>
+    <a href="#rand_v2" class="sidebar-link">math/rand/v2</a>
+    <a href="#hash_fnv" class="sidebar-link">hash/fnv &amp; crc32</a>
+    <a href="#tabwriter" class="sidebar-link">text/tabwriter</a>
+  </div>
+
+  <div class="sidebar-section">
+    <div class="sidebar-section-title">Processes &amp; Data Formats (2)</div>
+    <a href="#os_exec" class="sidebar-link">os/exec</a>
+    <a href="#encoding_csv" class="sidebar-link">encoding/csv</a>
+  </div>
+</nav>
+
+<!-- Main Content -->
+<div class="main">
+
+<h1 class="page-title">Go Daily Guide &mdash; 2026-06-30 (Day 25)</h1>
+<p class="page-subtitle">Day 25 &mdash; Tuesday, June 30, 2026 &bull; 11 concepts (6 review + 5 new)</p>
+
+<!-- How to Use -->
+<div class="how-to-use">
+  <h3>How to Use This Guide</h3>
+  <ul>
+    <li>Start with the <strong>Review</strong> section &mdash; try to recall each concept before reading the refresher</li>
+    <li>Complete the challenge exercise for each review card without looking back at previous days</li>
+    <li>Then work through the <strong>New Concepts</strong> section, typing out every code example yourself</li>
+    <li>Pay special attention to the common mistakes sections (they highlight real Go gotchas)</li>
+    <li>Complete the exercises at the bottom of each concept without looking at solutions</li>
+    <li>Use <code>go run main.go</code> to test your code locally, or use the <a href="https://go.dev/play/" target="_blank">Go Playground</a></li>
+  </ul>
+</div>
+
+<!-- ============================================================ -->
+<!-- REVIEW SECTION -->
+<!-- ============================================================ -->
+<div class="section">
+  <span class="section-label review">Review</span>
+  <h2 class="section-title">Spaced Repetition Review &mdash; 6 Concepts</h2>
+
+  <!-- Review 1: Maps -->
+  <div class="review-card" id="maps">
+    <div class="review-header">
+      <h3>Maps</h3>
+      <span class="review-meta">Go Foundations &bull; due today &bull; rep 3</span>
+    </div>
+
+    <h4>Quick Reminder</h4>
+    <p>A <code>map[K]V</code> is a reference to a hash table; the zero value is <code>nil</code> and reading it is fine but <em>writing</em> to a nil map panics &mdash; always <code>make(map[K]V)</code> or use a literal first. Indexing a missing key returns the value's zero value, so use the <em>comma-ok</em> form <code>v, ok := m[k]</code> to tell "absent" from "present-but-zero". Iteration order is deliberately randomized.</p>
+
+    <h4>Key Pattern</h4>
+<pre>package main
+
+import "fmt"
+
+func main() {
+    counts := make(map[string]int)
+    for _, w := range []string{"go", "rust", "go"} {
+        counts[w]++ // missing key reads as 0, then increments
+    }
+
+    if n, ok := counts["go"]; ok {
+        fmt.Println("go:", n) // go: 2
+    }
+    fmt.Println(counts["zig"]) // 0 (absent -> zero value)
+
+    delete(counts, "rust")     // safe even if key is absent
+    fmt.Println(len(counts))   // 1
+}</pre>
+
+    <div class="exercise">
+      <div class="exercise-label">Challenge Exercise</div>
+      <p>Build a <code>map[string][]int</code> that groups numbers by a bucket name, appending to the slice for each key (note that <code>append</code> to a missing key works because the nil slice is a valid starting point). Then write a function that returns the keys sorted, since map iteration order is random. Finally, explain why you cannot take the address of a map element (<code>&amp;m[k]</code> is a compile error) and how a <code>map[K]*Struct</code> works around it.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>Pitfall:</strong> Assuming you can mutate a struct value stored directly in a map: <code>m[k].Field = x</code> is a compile error because map values are not addressable. Either store a pointer (<code>map[K]*T</code>) and mutate through it, or read the whole struct out, modify the copy, and assign it back with <code>m[k] = v</code>.
+    </div>
+  </div>
+
+  <!-- Review 2: Strings & Runes -->
+  <div class="review-card" id="strings_runes">
+    <div class="review-header">
+      <h3>Strings &amp; Runes</h3>
+      <span class="review-meta">Go Foundations &bull; due today &bull; rep 3</span>
+    </div>
+
+    <h4>Quick Reminder</h4>
+    <p>A Go <code>string</code> is an immutable, read-only slice of <em>bytes</em> (UTF-8 by convention), not characters. Indexing <code>s[i]</code> yields a <code>byte</code>; ranging over a string decodes <em>runes</em> (Unicode code points) and gives you the byte offset of each. <code>len(s)</code> is the byte count, not the character count &mdash; use <code>utf8.RuneCountInString</code> for the latter.</p>
+
+    <h4>Key Pattern</h4>
+<pre>package main
+
+import (
+    "fmt"
+    "unicode/utf8"
+)
+
+func main() {
+    s := "Héllo" // 'é' is two bytes in UTF-8
+
+    fmt.Println(len(s))                    // 6 bytes
+    fmt.Println(utf8.RuneCountInString(s)) // 5 runes
+
+    for i, r := range s { // r is a rune, i is a BYTE index
+        fmt.Printf("%d:%c ", i, r)
+    }
+    fmt.Println()
+
+    // Convert to []rune to index by character:
+    rs := []rune(s)
+    fmt.Printf("%c\n", rs[1]) // é
+}</pre>
+    <div class="output-label">Output</div>
+    <div class="output">6
+5
+0:H 1:é 3:l 4:l 5:o
+é</div>
+
+    <div class="exercise">
+      <div class="exercise-label">Challenge Exercise</div>
+      <p>Write a <code>Reverse(s string) string</code> that correctly reverses by rune, not byte, so multi-byte characters survive. Then write a function that counts how many bytes each of the first N runes occupies. Explain why <code>s[0]</code> gives a <code>byte</code> (uint8) rather than a rune, and why building a string with <code>+=</code> in a loop is quadratic while <code>strings.Builder</code> is linear.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>Pitfall:</strong> Slicing a string by byte offset (<code>s[i:j]</code>) in the middle of a multi-byte rune produces invalid UTF-8 &mdash; a garbled character. Byte-slicing is only safe at rune boundaries. When you need character-based indexing, convert to <code>[]rune</code> once (it costs an allocation) rather than slicing bytes blindly.
+    </div>
+  </div>
+
+  <!-- Review 3: Structs & Methods -->
+  <div class="review-card" id="structs_methods">
+    <div class="review-header">
+      <h3>Structs &amp; Methods</h3>
+      <span class="review-meta">Go Foundations &bull; due today &bull; rep 3</span>
+    </div>
+
+    <h4>Quick Reminder</h4>
+    <p>A struct groups named fields; methods attach behavior via a <em>receiver</em>. A <strong>value receiver</strong> <code>(t T)</code> operates on a copy &mdash; mutations don't stick; a <strong>pointer receiver</strong> <code>(t *T)</code> can mutate the original and avoids copying large structs. Go auto-takes the address for you when calling a pointer method on an addressable value. Keep the receiver type consistent across a type's method set.</p>
+
+    <h4>Key Pattern</h4>
+<pre>package main
+
+import "fmt"
+
+type Counter struct{ n int }
+
+func (c Counter) Value() int { return c.n } // value receiver: read
+func (c *Counter) Inc()      { c.n++ }       // pointer receiver: mutate
+
+func main() {
+    c := Counter{}
+    c.Inc() // Go rewrites this as (&amp;c).Inc()
+    c.Inc()
+    fmt.Println(c.Value()) // 2
+
+    // Embedding: promoted fields & methods
+    type Labeled struct {
+        Counter // anonymous field -> Inc/Value are promoted
+        Label string
+    }
+    l := Labeled{Label: "hits"}
+    l.Inc()
+    fmt.Println(l.Label, l.Value()) // hits 1
+}</pre>
+
+    <div class="exercise">
+      <div class="exercise-label">Challenge Exercise</div>
+      <p>Define a <code>Rectangle</code> with <code>Area()</code> (value receiver) and <code>Scale(f float64)</code> (pointer receiver), and show why calling <code>Scale</code> on an element of a <code>[]Rectangle</code> works but calling it on a <code>map[string]Rectangle</code> value does not (addressability). Then embed <code>Rectangle</code> in a <code>NamedShape</code> and override <code>Area()</code>, demonstrating method promotion and shadowing.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>Pitfall:</strong> Mixing value and pointer receivers on the same type. If some methods need a pointer, make them <em>all</em> pointer receivers &mdash; otherwise only <code>*T</code> satisfies the full method set, and storing a <code>T</code> value (e.g. in an interface) silently drops the pointer methods, so mutations appear to vanish or the type fails to implement the interface.
+    </div>
+  </div>
+
+  <!-- Review 4: Graceful Shutdown -->
+  <div class="review-card" id="graceful_shutdown">
+    <div class="review-header">
+      <h3>Graceful Shutdown</h3>
+      <span class="review-meta">Production Go &bull; due today &bull; rep 2</span>
+    </div>
+
+    <h4>Quick Reminder</h4>
+    <p>A production server must stop <em>cleanly</em>: catch <code>SIGINT</code>/<code>SIGTERM</code>, stop accepting new connections, and let in-flight requests finish before exiting. <code>signal.NotifyContext</code> gives you a context cancelled on those signals; <code>http.Server.Shutdown(ctx)</code> drains active requests up to the context's deadline, then returns. Pair them so a <code>Ctrl-C</code> triggers an orderly drain instead of a hard kill.</p>
+
+    <h4>Key Pattern</h4>
+<pre>package main
+
+import (
+    "context"
+    "errors"
+    "net/http"
+    "os/signal"
+    "syscall"
+    "time"
+)
+
+func main() {
+    srv := &amp;http.Server{Addr: ":8080"}
+
+    ctx, stop := signal.NotifyContext(context.Background(),
+        syscall.SIGINT, syscall.SIGTERM)
+    defer stop()
+
+    go func() {
+        if err := srv.ListenAndServe(); err != nil &amp;&amp;
+            !errors.Is(err, http.ErrServerClosed) {
+            panic(err)
+        }
+    }()
+
+    &lt;-ctx.Done() // block until a signal arrives
+    // give in-flight requests up to 10s to finish
+    shCtx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+    defer cancel()
+    _ = srv.Shutdown(shCtx)
+}</pre>
+
+    <div class="exercise">
+      <div class="exercise-label">Challenge Exercise</div>
+      <p>Extend the pattern so shutdown also closes a database pool and flushes a metrics buffer, running those teardowns only <em>after</em> <code>Shutdown</code> returns. Add a hard-timeout fallback: if the drain context expires, call <code>srv.Close()</code> to force-close remaining connections. Explain why <code>ListenAndServe</code> returns <code>http.ErrServerClosed</code> on a clean shutdown and why you must not treat that as a fatal error.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>Pitfall:</strong> Calling <code>srv.Shutdown</code> with a <code>context.Background()</code> that has no deadline. If a client holds a slow or hung connection open, <code>Shutdown</code> blocks forever and the process never exits. Always pass a bounded context, and consider a <code>Close()</code> fallback when the deadline is hit.
+    </div>
+  </div>
+
+  <!-- Review 5: Configuration Management -->
+  <div class="review-card" id="config_management">
+    <div class="review-header">
+      <h3>Configuration Management</h3>
+      <span class="review-meta">Production Go &bull; due today &bull; rep 2</span>
+    </div>
+
+    <h4>Quick Reminder</h4>
+    <p>Twelve-factor config lives in the <em>environment</em>, not in code. Read values with <code>os.Getenv</code> (or <code>os.LookupEnv</code> to distinguish unset from empty), parse them into a typed struct, apply sane defaults, and <em>fail fast</em> at startup if a required value is missing or malformed. Centralize this in one <code>LoadConfig()</code> so the rest of the program depends on validated data, not raw strings.</p>
+
+    <h4>Key Pattern</h4>
+<pre>package main
+
+import (
+    "fmt"
+    "os"
+    "strconv"
+    "time"
+)
+
+type Config struct {
+    Port    int
+    Timeout time.Duration
+}
+
+func LoadConfig() (Config, error) {
+    c := Config{Port: 8080, Timeout: 5 * time.Second} // defaults
+
+    if v, ok := os.LookupEnv("PORT"); ok {
+        p, err := strconv.Atoi(v)
+        if err != nil {
+            return c, fmt.Errorf("PORT: %w", err) // fail fast
+        }
+        c.Port = p
+    }
+    if v, ok := os.LookupEnv("TIMEOUT"); ok {
+        d, err := time.ParseDuration(v)
+        if err != nil {
+            return c, fmt.Errorf("TIMEOUT: %w", err)
+        }
+        c.Timeout = d
+    }
+    return c, nil
+}</pre>
+
+    <div class="exercise">
+      <div class="exercise-label">Challenge Exercise</div>
+      <p>Write a generic helper <code>envOr[T any](key string, def T, parse func(string) (T, error)) (T, error)</code> that reads, parses, and defaults a single variable, then compose <code>LoadConfig</code> from it. Add a <code>Validate()</code> that rejects a zero port or a negative timeout, aggregating all problems with <code>errors.Join</code> so the operator sees every misconfiguration at once, not just the first.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>Pitfall:</strong> Using <code>os.Getenv</code> and treating <code>""</code> as "unset". An explicitly empty variable (<code>FOO=</code>) is indistinguishable from a missing one this way, so a required-but-blank value silently falls back to a default. Use <code>os.LookupEnv</code>'s <code>ok</code> boolean when the difference between "absent" and "empty" matters.
+    </div>
+  </div>
+
+  <!-- Review 6: Escape Analysis -->
+  <div class="review-card" id="escape_analysis">
+    <div class="review-header">
+      <h3>Escape Analysis &amp; Stack vs Heap</h3>
+      <span class="review-meta">Memory &amp; Performance &bull; due today &bull; rep 2</span>
+    </div>
+
+    <h4>Quick Reminder</h4>
+    <p>The compiler decides <em>at compile time</em> whether a value lives on the goroutine's stack (cheap, auto-freed on return) or <em>escapes</em> to the heap (GC-managed). A value escapes when its lifetime outlives the function &mdash; most commonly by returning a pointer to a local, storing it in an interface, or capturing it in a closure that outlives the call. Fewer escapes mean fewer allocations and less GC pressure. Inspect with <code>go build -gcflags='-m'</code>.</p>
+
+    <h4>Key Pattern</h4>
+<pre>package main
+
+// Returning &amp;x forces x onto the heap: it must outlive newInt.
+func newInt() *int {
+    x := 42
+    return &amp;x // "moved to heap: x"
+}
+
+// Stays on the stack: sum never leaves the function as a pointer.
+func total(xs []int) int {
+    sum := 0
+    for _, v := range xs {
+        sum += v
+    }
+    return sum // returned by value -> no escape
+}
+
+// go build -gcflags='-m' main.go
+//   ./main.go: moved to heap: x
+//   ./main.go: total ... does not escape</pre>
+
+    <div class="exercise">
+      <div class="exercise-label">Challenge Exercise</div>
+      <p>Take a function that builds a <code>[]byte</code> and passes it to <code>fmt.Sprintf</code>, run <code>-gcflags='-m'</code>, and explain each "escapes to heap" line. Then rewrite a hot path to accept a caller-provided buffer (<code>func(dst []byte) []byte</code>) so the allocation moves to the caller and can be pooled. Explain why passing a value to an <code>interface{}</code> parameter (like <code>fmt.Println</code>) usually forces an escape.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>Pitfall:</strong> "Optimizing" by returning a pointer to avoid copying a small struct. Returning <code>&amp;x</code> forces a heap allocation and a GC scan, whereas returning the struct <em>by value</em> often stays on the stack and is faster for small types. Measure with <code>-gcflags='-m'</code> and <code>-benchmem</code> before assuming pointers are cheaper.
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- NEW CONCEPTS SECTION -->
+<!-- ============================================================ -->
+<div class="section">
+  <span class="section-label new">New</span>
+  <h2 class="section-title">New Concepts &mdash; 5 in 2 Sections</h2>
+
+  <h3 style="font-size:18px;margin:8px 0 18px;color:var(--muted);">Section 1 &mdash; Randomness, Hashing &amp; Text Formatting</h3>
+
+  <!-- New 1: math/rand/v2 -->
+  <div class="concept" id="rand_v2">
+    <div class="concept-header">
+      <h3>math/rand/v2: Modern Pseudo-Randomness</h3>
+      <span class="topic-badge">Std Lib</span>
+    </div>
+    <p class="why-matters">Why it matters: <code>math/rand/v2</code> (Go 1.22, the standard library's first <code>v2</code> package) fixes the ergonomic warts of the original <code>math/rand</code>. The global generator is now <em>automatically</em> seeded and safe for concurrent use, the API drops the error-prone default-<code>Source</code> boilerplate, and it adds handy helpers like <code>N</code> and <code>IntN</code>. Use it for shuffling, jitter, sampling, and load generation &mdash; but never for security tokens.</p>
+
+    <h4>Package-level helpers, no seeding required</h4>
+    <p>The top-level functions use a global, auto-seeded, goroutine-safe source. <code>IntN(n)</code> returns a value in <code>[0, n)</code>; the generic <code>N[T]</code> works for any integer type including <code>time.Duration</code>.</p>
+<pre>package main
+
+import (
+    "fmt"
+    "math/rand/v2"
+    "time"
+)
+
+func main() {
+    fmt.Println(rand.IntN(6) + 1)   // dice roll: 1..6
+    fmt.Println(rand.Float64())     // 0.0 <= x < 1.0
+
+    // rand.N is generic over integer types:
+    jitter := rand.N(500 * time.Millisecond) // 0..500ms
+    fmt.Println(jitter < 500*time.Millisecond) // true
+
+    xs := []string{"a", "b", "c", "d"}
+    rand.Shuffle(len(xs), func(i, j int) {
+        xs[i], xs[j] = xs[j], xs[i]
+    })
+    fmt.Println(len(xs)) // 4 (order randomized)
+}</pre>
+    <div class="output-label">Output (varies)</div>
+    <div class="output">4
+0.6122...
+true
+4</div>
+
+    <h4>Deterministic runs with an explicit source</h4>
+    <p>For reproducible tests, construct your own generator from a seeded <code>Source</code>. <code>NewPCG</code> is a modern, fast, high-quality algorithm; a fixed seed yields the same sequence every run.</p>
+<pre>package main
+
+import (
+    "fmt"
+    "math/rand/v2"
+)
+
+func main() {
+    // Two 64-bit seed words -> fully reproducible stream.
+    r := rand.New(rand.NewPCG(1, 2))
+    for i := 0; i < 3; i++ {
+        fmt.Println(r.IntN(100))
+    }
+    // Same seeds -> identical output on every run & machine.
+}</pre>
+    <div class="output-label">Output (stable for these seeds)</div>
+    <div class="output">1
+30
+53</div>
+
+    <h4>Common Mistakes</h4>
+    <div class="do-dont">
+      <div class="dont-box">
+        <div class="label">Wrong</div>
+<pre>// v1 habit: manual Seed with the clock,
+// and Intn spelled the old way.
+rand.Seed(time.Now().UnixNano()) // no Seed in v2!
+n := rand.Intn(6)                // renamed to IntN</pre>
+      </div>
+      <div class="do-box">
+        <div class="label">Right</div>
+<pre>// v2 global source is auto-seeded & concurrent-safe.
+n := rand.IntN(6)
+// Reproducible? build your own:
+r := rand.New(rand.NewPCG(seed1, seed2))</pre>
+      </div>
+    </div>
+
+    <h4>Key Rules</h4>
+    <ul class="rules-list">
+      <li>The global functions are auto-seeded and safe for concurrent use &mdash; there is no <code>Seed</code> function in v2; delete old <code>rand.Seed</code> calls.</li>
+      <li>Methods are renamed to <code>IntN</code>/<code>Int64N</code>/<code>Uint64N</code>; the generic <code>rand.N[T](n)</code> covers any integer type (great for durations).</li>
+      <li>For reproducible sequences, build <code>rand.New(rand.NewPCG(s1, s2))</code> &mdash; a per-instance generator is <em>not</em> goroutine-safe, so give each goroutine its own.</li>
+      <li>Never use <code>math/rand/v2</code> for tokens, keys, or nonces &mdash; it is predictable; use <code>crypto/rand</code> for security.</li>
+    </ul>
+
+    <div class="exercise">
+      <div class="exercise-label">Practice Exercise</div>
+      <p>Write a retry helper that sleeps <code>base * 2^attempt</code> plus a random jitter drawn with <code>rand.N</code>, capping the total. Then write a weighted sampler: given items with integer weights, pick one proportional to its weight using a single <code>IntN(total)</code> draw. Finally, prove reproducibility by seeding two <code>NewPCG(1, 2)</code> generators and asserting they emit identical sequences &mdash; then contrast with why <code>crypto/rand</code> would be required for a session token.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>Pitfall:</strong> Sharing one <code>*rand.Rand</code> instance across goroutines. Unlike the top-level functions, a generator you create with <code>rand.New</code> is <em>not</em> safe for concurrent use &mdash; concurrent calls corrupt its internal state and can panic or bias output. Either use the package-level helpers or give each goroutine its own seeded generator.
+    </div>
+
+    <div class="connection">
+      <strong>Connections:</strong> The randomness source behind shuffling, jittered <a href="#graceful_shutdown">backoff</a>, and load testing; contrasts with <code>crypto/rand</code> for security; its <code>rand.N</code> generic echoes the type-parameter machinery from the generics topics.
+    </div>
+  </div>
+
+  <!-- New 2: hash/fnv & crc32 -->
+  <div class="concept" id="hash_fnv">
+    <div class="concept-header">
+      <h3>Non-Cryptographic Hashing: hash/fnv &amp; hash/crc32</h3>
+      <span class="topic-badge">Std Lib</span>
+    </div>
+    <p class="why-matters">Why it matters: not every hash needs to be cryptographic. For sharding keys across buckets, deduplicating, building hash tables, or a cheap checksum, you want a <em>fast</em>, well-distributed, non-secure hash &mdash; not the cost of SHA-256. <code>hash/fnv</code> and <code>hash/crc32</code> implement Go's common <code>hash.Hash</code> interface (an <code>io.Writer</code> you feed bytes, then read a <code>Sum</code>), so they slot into the same plumbing as the crypto hashers.</p>
+
+    <h4>FNV for fast key hashing</h4>
+    <p>FNV-1a is a tiny, fast hash ideal for bucketing. Create a hasher, <code>Write</code> your bytes (it never errors), and read the result with <code>Sum32</code>/<code>Sum64</code>.</p>
+<pre>package main
+
+import (
+    "fmt"
+    "hash/fnv"
+)
+
+func bucket(key string, n uint32) uint32 {
+    h := fnv.New32a()
+    h.Write([]byte(key)) // io.Writer; error is always nil
+    return h.Sum32() % n
+}
+
+func main() {
+    for _, k := range []string{"alice", "bob", "carol"} {
+        fmt.Printf("%s -> shard %d\n", k, bucket(k, 4))
+    }
+}</pre>
+    <div class="output-label">Output</div>
+    <div class="output">alice -> shard 3
+bob -> shard 1
+carol -> shard 2</div>
+
+    <h4>CRC-32 for checksums</h4>
+    <p><code>crc32.ChecksumIEEE</code> is a one-shot checksum over a byte slice &mdash; the same polynomial used by zip/gzip &mdash; great for detecting accidental corruption (not tampering).</p>
+<pre>package main
+
+import (
+    "fmt"
+    "hash/crc32"
+)
+
+func main() {
+    data := []byte("go is fun")
+
+    sum := crc32.ChecksumIEEE(data)
+    fmt.Printf("%08x\n", sum)
+
+    // Streaming form (implements hash.Hash32):
+    h := crc32.NewIEEE()
+    h.Write([]byte("go "))
+    h.Write([]byte("is fun"))
+    fmt.Printf("%08x\n", h.Sum32()) // same as one-shot
+}</pre>
+    <div class="output-label">Output</div>
+    <div class="output">6f8f9f0d
+6f8f9f0d</div>
+
+    <h4>Common Mistakes</h4>
+    <div class="do-dont">
+      <div class="dont-box">
+        <div class="label">Wrong</div>
+<pre>// Reusing a hasher without Reset carries
+// the previous bytes into the next sum.
+h := fnv.New32a()
+h.Write([]byte("a"))
+sumA := h.Sum32()
+h.Write([]byte("b")) // now hashing "ab", not "b"!
+sumB := h.Sum32()</pre>
+      </div>
+      <div class="do-box">
+        <div class="label">Right</div>
+<pre>h := fnv.New32a()
+h.Write([]byte("a"))
+sumA := h.Sum32()
+h.Reset() // clear state before the next value
+h.Write([]byte("b"))
+sumB := h.Sum32()</pre>
+      </div>
+    </div>
+
+    <h4>Key Rules</h4>
+    <ul class="rules-list">
+      <li>Both packages implement <code>hash.Hash</code> &mdash; <code>Write</code> bytes (error is always nil), then read <code>Sum32</code>/<code>Sum64</code>; call <code>Reset()</code> to reuse a hasher.</li>
+      <li>These are <em>not</em> cryptographic: they are trivially reversible/collidable, so never use them for passwords, signatures, or integrity against an attacker.</li>
+      <li>Use <code>fnv</code> for in-memory bucketing/sharding; use <code>crc32.ChecksumIEEE</code> for accidental-corruption checksums (matches gzip/zip).</li>
+      <li>The one-shot helpers (<code>crc32.ChecksumIEEE</code>) avoid hasher allocation; the streaming form suits data arriving in chunks via <code>io.Copy</code>.</li>
+    </ul>
+
+    <div class="exercise">
+      <div class="exercise-label">Practice Exercise</div>
+      <p>Build a consistent-ish shard router: hash each key with FNV-1a and map it into <code>N</code> buckets, then print the load distribution for 10k random keys to confirm it's roughly even. Then write a file-integrity checker that streams a file through <code>crc32.NewIEEE()</code> with <code>io.Copy</code> and compares against a stored checksum. Finally, benchmark <code>fnv.New64a</code> vs <code>sha256.New</code> on the same input and quantify the speed gap &mdash; and explain when the crypto cost is nonetheless mandatory.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>Pitfall:</strong> Reaching for CRC-32 or FNV as a "hash" to protect data integrity against tampering. Both are easily forged &mdash; an attacker can craft a different input with the same checksum. They detect <em>accidental</em> corruption only. For security (integrity against an adversary), use <code>crypto/sha256</code> or an HMAC.
+    </div>
+
+    <div class="connection">
+      <strong>Connections:</strong> Shares the <code>hash.Hash</code>/<code>io.Writer</code> contract with <code>crypto</code> hashers and the <code>io</code> plumbing; the streaming form pairs with <code>bufio</code> and <code>io.Copy</code>; contrast its speed/security trade-off with <a href="#rand_v2">crypto/rand</a>-grade primitives.
+    </div>
+  </div>
+
+  <!-- New 3: text/tabwriter -->
+  <div class="concept" id="tabwriter">
+    <div class="concept-header">
+      <h3>text/tabwriter: Aligned Columnar Output</h3>
+      <span class="topic-badge">Std Lib</span>
+    </div>
+    <p class="why-matters">Why it matters: printing tab-separated data with <code>fmt</code> leaves ragged columns because tab stops don't line up. <code>text/tabwriter</code> is an <code>io.Writer</code> filter that buffers your tab-delimited rows and, on <code>Flush</code>, pads each cell so columns align &mdash; the mechanism behind clean CLI tables (it's what <code>go</code> tooling and <code>kubectl</code>-style output use). You write once with <code>\t</code> separators and let it compute widths.</p>
+
+    <h4>Elastic tabstops in a few lines</h4>
+    <p>Wrap any <code>io.Writer</code> with <code>tabwriter.NewWriter</code>, write rows using <code>\t</code> between columns, and call <code>Flush</code> to emit the aligned result. Nothing prints until you flush.</p>
+<pre>package main
+
+import (
+    "fmt"
+    "os"
+    "text/tabwriter"
+)
+
+func main() {
+    // minwidth=0, tabwidth=0, padding=2, padchar=' ', flags=0
+    w := tabwriter.NewWriter(os.Stdout, 0, 0, 2, ' ', 0)
+
+    fmt.Fprintln(w, "NAME\tLANG\tSTARS")
+    fmt.Fprintln(w, "cobra\tGo\t38000")
+    fmt.Fprintln(w, "gin\tGo\t79000")
+    fmt.Fprintln(w, "ripgrep\tRust\t48000")
+
+    w.Flush() // aligns all buffered rows now
+}</pre>
+    <div class="output-label">Output</div>
+    <div class="output">NAME     LANG  STARS
+cobra    Go    38000
+gin      Go    79000
+ripgrep  Rust  48000</div>
+
+    <h4>Right-align numbers with AlignRight</h4>
+    <p>Flags tune behavior: <code>tabwriter.AlignRight</code> right-justifies cells (ideal for numbers), and <code>tabwriter.Debug</code> draws a <code>|</code> between columns to visualize boundaries.</p>
+<pre>package main
+
+import (
+    "fmt"
+    "os"
+    "text/tabwriter"
+)
+
+func main() {
+    w := tabwriter.NewWriter(os.Stdout, 0, 0, 1, ' ',
+        tabwriter.AlignRight)
+
+    fmt.Fprintln(w, "ITEM\tQTY\tPRICE")
+    fmt.Fprintln(w, "widget\t3\t9")
+    fmt.Fprintln(w, "gadget\t12\t120")
+    w.Flush()
+}</pre>
+    <div class="output-label">Output</div>
+    <div class="output">  ITEM QTY PRICE
+widget   3     9
+gadget  12   120</div>
+
+    <h4>Common Mistakes</h4>
+    <div class="do-dont">
+      <div class="dont-box">
+        <div class="label">Wrong</div>
+<pre>w := tabwriter.NewWriter(os.Stdout, 0, 0, 2, ' ', 0)
+fmt.Fprintln(w, "a\tb")
+// forgot Flush -> nothing is ever printed
+</pre>
+      </div>
+      <div class="do-box">
+        <div class="label">Right</div>
+<pre>w := tabwriter.NewWriter(os.Stdout, 0, 0, 2, ' ', 0)
+fmt.Fprintln(w, "a\tb")
+w.Flush() // or defer w.Flush() right after creating it</pre>
+      </div>
+    </div>
+
+    <h4>Key Rules</h4>
+    <ul class="rules-list">
+      <li><code>tabwriter</code> is an <code>io.Writer</code> filter &mdash; separate columns with <code>\t</code>, then <code>Flush()</code> to emit aligned output (buffered until then).</li>
+      <li>Constructor params are <code>(output, minwidth, tabwidth, padding, padchar, flags)</code>; the common table setup is <code>(w, 0, 0, 2, ' ', 0)</code>.</li>
+      <li>Use the <code>AlignRight</code> flag for numeric columns and <code>Debug</code> to visualize column edges while developing.</li>
+      <li>A trailing tab starts a new cell, so a line ending in <code>\t</code> creates an empty final column &mdash; end data rows without one.</li>
+    </ul>
+
+    <div class="exercise">
+      <div class="exercise-label">Practice Exercise</div>
+      <p>Render a process table from a slice of structs (name, PID, memory, status) with a header row, using <code>AlignRight</code> for the numeric columns. Then wrap the whole thing so it writes to a <code>bytes.Buffer</code> instead of stdout, letting you unit-test the exact aligned bytes. Finally, add a summary footer row and explain why you must <code>Flush</code> before reading the buffer, and how <code>tabwriter</code> handles a row with fewer columns than the header.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>Pitfall:</strong> Forgetting to <code>Flush</code> (or flushing too early). Because <code>tabwriter</code> buffers every row to compute column widths, output is empty until <code>Flush</code> &mdash; and if you flush mid-table, later rows are aligned in a <em>separate</em> block with different widths. Write all rows, then flush once (a <code>defer w.Flush()</code> right after construction is the safe idiom for simple cases).
+    </div>
+
+    <div class="connection">
+      <strong>Connections:</strong> An <code>io.Writer</code> filter like the <code>bufio</code> writers, commonly targeting <code>os.Stdout</code> or a <code>bytes.Buffer</code>; pairs with <code>fmt.Fprintf</code> for formatting and with the <a href="#os_exec">os/exec</a> / CLI topics for building command-line tools.
+    </div>
+  </div>
+
+  <h3 style="font-size:18px;margin:28px 0 18px;color:var(--muted);">Section 2 &mdash; Processes &amp; Data Formats</h3>
+
+  <!-- New 4: os/exec -->
+  <div class="concept" id="os_exec">
+    <div class="concept-header">
+      <h3>os/exec: Running External Commands</h3>
+      <span class="topic-badge">Std Lib</span>
+    </div>
+    <p class="why-matters">Why it matters: real tools shell out &mdash; running <code>git</code>, <code>ffmpeg</code>, a linter, or a subprocess worker. <code>os/exec</code> builds and runs external commands with full control over arguments, environment, working directory, stdin/stdout/stderr, and cancellation via <code>context</code>. Crucially it does <em>not</em> use a shell by default, so arguments are passed directly &mdash; sidestepping the shell-injection class of bugs.</p>
+
+    <h4>Capture output the simple way</h4>
+    <p><code>exec.Command(name, args...)</code> builds a <code>*Cmd</code>; <code>Output()</code> runs it and returns stdout. On failure you get an <code>*exec.ExitError</code> whose <code>Stderr</code> holds the command's error text.</p>
+<pre>package main
+
+import (
+    "errors"
+    "fmt"
+    "os/exec"
+)
+
+func main() {
+    out, err := exec.Command("echo", "hello", "go").Output()
+    if err != nil {
+        var ee *exec.ExitError
+        if errors.As(err, &amp;ee) {
+            fmt.Printf("exit %d: %s", ee.ExitCode(), ee.Stderr)
+        }
+        return
+    }
+    fmt.Printf("%s", out) // hello go
+}</pre>
+    <div class="output-label">Output</div>
+    <div class="output">hello go</div>
+
+    <h4>Context for timeouts, plus pipes and env</h4>
+    <p>Use <code>exec.CommandContext</code> so a cancelled or timed-out context kills the process. Set <code>cmd.Dir</code>, <code>cmd.Env</code>, and stream I/O by assigning to <code>cmd.Stdin</code>/<code>Stdout</code>/<code>Stderr</code>.</p>
+<pre>package main
+
+import (
+    "bytes"
+    "context"
+    "fmt"
+    "os/exec"
+    "time"
+)
+
+func main() {
+    ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
+    defer cancel()
+
+    cmd := exec.CommandContext(ctx, "go", "version")
+    cmd.Dir = "."               // working directory
+    cmd.Env = append(cmd.Environ(), "GOFLAGS=-mod=mod")
+
+    var out bytes.Buffer
+    cmd.Stdout = &amp;out           // stream stdout into a buffer
+    if err := cmd.Run(); err != nil {
+        fmt.Println("run failed:", err)
+        return
+    }
+    fmt.Print(out.String())
+}</pre>
+    <div class="output-label">Output (varies)</div>
+    <div class="output">go version go1.24 darwin/arm64</div>
+
+    <h4>Common Mistakes</h4>
+    <div class="do-dont">
+      <div class="dont-box">
+        <div class="label">Wrong</div>
+<pre>// Passing a whole command line as ONE string
+// runs a program literally named "ls -l /tmp".
+exec.Command("ls -l /tmp").Run() // file not found
+
+// Or worse, invoking a shell with user input:
+exec.Command("sh", "-c", "cat "+userInput) // injection!</pre>
+      </div>
+      <div class="do-box">
+        <div class="label">Right</div>
+<pre>// Program name and each arg passed separately:
+exec.Command("ls", "-l", "/tmp").Run()
+
+// No shell -> userInput is a plain argument, not code:
+exec.Command("cat", userInput).Run()</pre>
+      </div>
+    </div>
+
+    <h4>Key Rules</h4>
+    <ul class="rules-list">
+      <li><code>exec.Command(name, arg1, arg2, ...)</code> takes the program and each argument <em>separately</em> &mdash; there is no shell, so no globbing, pipes, or <code>$VAR</code> expansion unless you invoke one explicitly.</li>
+      <li><code>Output()</code> captures stdout; <code>CombinedOutput()</code> merges stdout+stderr; <code>Run()</code> just waits; <code>Start()</code>+<code>Wait()</code> lets you do work while it runs.</li>
+      <li>Use <code>exec.CommandContext</code> for timeouts/cancellation &mdash; the process is killed when the context is done.</li>
+      <li>Check errors with <code>errors.As(&amp;exec.ExitError{})</code> to read the exit code and <code>Stderr</code>; a nil error means exit status 0.</li>
+    </ul>
+
+    <div class="exercise">
+      <div class="exercise-label">Practice Exercise</div>
+      <p>Write <code>runGit(ctx, args...) (string, error)</code> that runs <code>git</code> in a given directory, returns trimmed stdout, and surfaces stderr on failure via <code>errors.As</code>. Then build a pipeline: connect the stdout of one <code>Cmd</code> to the stdin of another using <code>StdoutPipe</code> (emulating <code>a | b</code>) and run both concurrently with <code>Start</code>/<code>Wait</code>. Finally, add a 500ms <code>CommandContext</code> timeout to a <code>sleep 5</code> and confirm the process is killed &mdash; and explain why never passing user input to <code>sh -c</code> eliminates shell injection.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>Pitfall:</strong> Building a command by concatenating strings and running it through <code>sh -c</code>. That reintroduces shell injection &mdash; a value like <code>; rm -rf ~</code> becomes executable code. Pass arguments as separate slice elements to <code>exec.Command</code> (the default, shell-free path); only use a shell when you truly need shell features, and never with untrusted input.
+    </div>
+
+    <div class="connection">
+      <strong>Connections:</strong> Uses <code>context</code> for cancellation like the concurrency topics, streams through <code>io.Writer</code>/<code>bytes.Buffer</code>, and errors flow through <code>errors.As</code>; the backbone of CLI wrappers built with <code>flag</code>/Cobra and formatted via <a href="#tabwriter">tabwriter</a>.
+    </div>
+  </div>
+
+  <!-- New 5: encoding/csv -->
+  <div class="concept" id="encoding_csv">
+    <div class="concept-header">
+      <h3>encoding/csv: Reading &amp; Writing CSV</h3>
+      <span class="topic-badge">Std Lib</span>
+    </div>
+    <p class="why-matters">Why it matters: CSV is the lingua franca of data exchange &mdash; exports, spreadsheets, ETL feeds. Doing it by hand with <code>strings.Split(",")</code> breaks the moment a field contains a comma, quote, or newline. <code>encoding/csv</code> handles RFC 4180 quoting, embedded newlines, and configurable delimiters correctly, exposing a streaming <code>Reader</code> (record by record) and a buffered <code>Writer</code>.</p>
+
+    <h4>Streaming a reader row by row</h4>
+    <p><code>csv.NewReader</code> wraps any <code>io.Reader</code>. <code>Read()</code> returns one record (a <code>[]string</code>) at a time until <code>io.EOF</code> &mdash; the memory-friendly way to process large files.</p>
+<pre>package main
+
+import (
+    "encoding/csv"
+    "fmt"
+    "io"
+    "strings"
+)
+
+func main() {
+    const data = `name,age,city
+"Ada, L.",36,London
+Bo,25,"New
+York"`
+
+    r := csv.NewReader(strings.NewReader(data))
+    for {
+        rec, err := r.Read()
+        if err == io.EOF {
+            break
+        }
+        if err != nil {
+            fmt.Println("error:", err)
+            return
+        }
+        fmt.Printf("%q\n", rec)
+    }
+}</pre>
+    <div class="output-label">Output</div>
+    <div class="output">["name" "age" "city"]
+["Ada, L." "36" "London"]
+["Bo" "25" "New\nYork"]</div>
+
+    <h4>Writing records with automatic quoting</h4>
+    <p><code>csv.NewWriter</code> quotes fields that need it and must be <code>Flush</code>ed. Set <code>Comma</code> to change the delimiter (e.g. <code>'\t'</code> for TSV or <code>';'</code>).</p>
+<pre>package main
+
+import (
+    "encoding/csv"
+    "os"
+)
+
+func main() {
+    w := csv.NewWriter(os.Stdout)
+    defer w.Flush() // buffered: nothing written until flush
+
+    rows := [][]string{
+        {"product", "note"},
+        {"pen", "blue, fine"}, // comma -> auto-quoted
+        {"pad", "3\"x5\""},     // quote -> escaped
+    }
+    for _, row := range rows {
+        if err := w.Write(row); err != nil {
+            return
+        }
+    }
+}</pre>
+    <div class="output-label">Output</div>
+    <div class="output">product,note
+pen,"blue, fine"
+pad,"3""x5"""</div>
+
+    <h4>Common Mistakes</h4>
+    <div class="do-dont">
+      <div class="dont-box">
+        <div class="label">Wrong</div>
+<pre>// Naive split mangles quoted commas & newlines:
+for _, line := range strings.Split(data, "\n") {
+    fields := strings.Split(line, ",")
+    // "Ada, L." becomes two broken fields
+}</pre>
+      </div>
+      <div class="do-box">
+        <div class="label">Right</div>
+<pre>r := csv.NewReader(strings.NewReader(data))
+records, err := r.ReadAll() // or Read() in a loop
+// quoting, embedded commas & newlines handled correctly</pre>
+      </div>
+    </div>
+
+    <h4>Key Rules</h4>
+    <ul class="rules-list">
+      <li><code>csv.NewReader</code> streams records via <code>Read()</code> (stop on <code>io.EOF</code>) or slurps everything with <code>ReadAll()</code>; each record is a <code>[]string</code>.</li>
+      <li>The <code>Writer</code> is buffered &mdash; you <em>must</em> <code>Flush()</code> (and check <code>w.Error()</code>) or the tail of your output is lost.</li>
+      <li>Set <code>Comma</code> for other delimiters and <code>reader.FieldsPerRecord</code> to enforce (or with <code>-1</code>, allow) a variable column count.</li>
+      <li>Enable <code>reader.ReuseRecord = true</code> in hot loops to avoid a per-row allocation &mdash; but then copy the slice if you keep it, since it's overwritten next <code>Read</code>.</li>
+    </ul>
+
+    <div class="exercise">
+      <div class="exercise-label">Practice Exercise</div>
+      <p>Parse a CSV with a header row into a <code>[]map[string]string</code> keyed by column name, validating that every row has the header's field count. Then transform and write it back out as TSV by setting <code>Comma = '\t'</code>. Finally, process a large file in a streaming loop with <code>ReuseRecord = true</code>, and demonstrate the bug you get if you append the reused record slice to a growing list without copying it.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>Pitfall:</strong> Forgetting to <code>Flush</code> the <code>csv.Writer</code> (or ignoring <code>w.Error()</code>). Because writes are buffered, a program that exits or returns without flushing silently drops the last rows &mdash; the file looks truncated for no obvious reason. Always <code>defer w.Flush()</code> and check <code>w.Error()</code> afterward to catch write failures that <code>Write</code> itself didn't surface.
+    </div>
+
+    <div class="connection">
+      <strong>Connections:</strong> A streaming codec over <code>io.Reader</code>/<code>io.Writer</code> like <code>encoding/json</code> and <code>encoding/gob</code>; fields are <code>[]string</code> you often feed to <code>strconv</code>; the buffered-<code>Flush</code> discipline mirrors <a href="#tabwriter">tabwriter</a> and <code>bufio</code>.
+    </div>
+  </div>
+
+</div><!-- end New Concepts section -->
+
+
+<!-- ============================================================ -->
+<!-- FOOTER -->
+<!-- ============================================================ -->
+<footer class="footer">
+  <h4>All Go Guides</h4>
+  <ul>
+    <li><a href="golang-guides/golang-guide-2026-07-09.html">Day 34 &mdash; 2026-07-09</a></li>
+    <li><a href="golang-guides/golang-guide-2026-07-08.html">Day 33 &mdash; 2026-07-08</a></li>
+    <li><a href="golang-guides/golang-guide-2026-07-07.html">Day 32 &mdash; 2026-07-07</a></li>
+    <li><a href="golang-guides/golang-guide-2026-07-06.html">Day 31 &mdash; 2026-07-06</a></li>
+    <li><a href="golang-guides/golang-guide-2026-07-05.html">Day 30 &mdash; 2026-07-05</a></li>
+    <li><a href="golang-guides/golang-guide-2026-07-04.html">Day 29 &mdash; 2026-07-04</a></li>
+    <li><a href="golang-guides/golang-guide-2026-07-03.html">Day 28 &mdash; 2026-07-03</a></li>
+    <li><a href="golang-guides/golang-guide-2026-07-02.html">Day 27 &mdash; 2026-07-02</a></li>
+    <li><a href="golang-guides/golang-guide-2026-07-01.html">Day 26 &mdash; 2026-07-01</a></li>
+    <li class="current">Day 25 &mdash; 2026-06-30 (current)</li>
+    <li><a href="golang-guides/golang-guide-2026-06-29.html">Day 24 &mdash; 2026-06-29</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-28.html">Day 23 &mdash; 2026-06-28</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-27.html">Day 22 &mdash; 2026-06-27</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-26.html">Day 21 &mdash; 2026-06-26</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-25.html">Day 20 &mdash; 2026-06-25</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-24.html">Day 19 &mdash; 2026-06-24</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-23.html">Day 18 &mdash; 2026-06-23</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-22.html">Day 17 &mdash; 2026-06-22</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-21.html">Day 16 &mdash; 2026-06-21</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-19.html">Day 15 &mdash; 2026-06-19</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-18.html">Day 14 &mdash; 2026-06-18</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-17.html">Day 13 &mdash; 2026-06-17</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-15.html">Day 12 &mdash; 2026-06-15</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-13.html">Day 11 &mdash; 2026-06-13</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-12.html">Day 10 &mdash; 2026-06-12</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-11.html">Day 9 &mdash; 2026-06-11</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-10.html">Day 8 &mdash; 2026-06-10</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-09.html">Day 7 &mdash; 2026-06-09</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-08.html">Day 6 &mdash; 2026-06-08</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-07.html">Day 5 &mdash; 2026-06-07</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-05.html">Day 4 &mdash; 2026-06-05</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-04.html">Day 3 &mdash; 2026-06-04</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-03.html">Day 2 &mdash; 2026-06-03</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-02.html">Day 1 &mdash; 2026-06-02</a></li>
+  </ul>
+
+  <h4 style="margin-top: 20px;">All Guides</h4>
+  <ul>
+    <li><a href="guide.html">LeetCode Study Guide</a></li>
+    <li><a href="lang-guide.html">Multi-Language Guide</a></li>
+    <li><a href="python-guide.html">Python Guide</a></li>
+    <li><a href="typescript-guide.html">TypeScript Guide</a></li>
+    <li><a href="javascript-guide.html">JavaScript Guide</a></li>
+    <li><a href="golang-guide.html">Go Guide (current)</a></li>
+    <li><a href="report.html">Performance Report</a></li>
+  </ul>
+</footer>
+
+</div><!-- end main -->
+
+<script>
+// ===== Theme Toggle =====
+(function() {
+  var KEY = 'lc-goguide-theme';
+  var toggle = document.getElementById('theme-toggle');
+  var html = document.documentElement;
+
+  function setTheme(theme) {
+    html.setAttribute('data-theme', theme);
+    localStorage.setItem(KEY, theme);
+    toggle.textContent = theme === 'dark' ? '☽' : '☀';
+  }
+
+  var saved = localStorage.getItem(KEY) || 'dark';
+  setTheme(saved);
+
+  toggle.addEventListener('click', function() {
+    setTheme(html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
+  });
+})();
+
+// ===== Mobile Sidebar Toggle =====
+(function() {
+  var btn = document.getElementById('sidebar-toggle');
+  var sidebar = document.getElementById('sidebar');
+
+  btn.addEventListener('click', function() {
+    sidebar.classList.toggle('open');
+  });
+
+  // Close sidebar when clicking a link (mobile)
+  sidebar.querySelectorAll('.sidebar-link').forEach(function(link) {
+    link.addEventListener('click', function() {
+      if (window.innerWidth <= 900) {
+        sidebar.classList.remove('open');
+      }
+    });
+  });
+})();
+
+// ===== Active Sidebar Link on Scroll =====
+(function() {
+  var links = document.querySelectorAll('.sidebar-link');
+  var sections = [];
+
+  links.forEach(function(link) {
+    var id = link.getAttribute('href').replace('#', '');
+    var el = document.getElementById(id);
+    if (el) sections.push({ id: id, el: el, link: link });
+  });
+
+  function onScroll() {
+    var scrollTop = window.scrollY + 120;
+    var current = null;
+
+    for (var i = sections.length - 1; i >= 0; i--) {
+      if (sections[i].el.offsetTop <= scrollTop) {
+        current = sections[i];
+        break;
+      }
+    }
+
+    links.forEach(function(l) { l.classList.remove('active'); });
+    if (current) current.link.classList.add('active');
+  }
+
+  window.addEventListener('scroll', onScroll);
+  onScroll();
+})();
+</script>
+</body>
+</html>

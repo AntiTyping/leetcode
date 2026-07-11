@@ -1,0 +1,1134 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TypeScript Daily Guide — 2026-07-04 (Day 31)</title>
+<style>
+:root {
+  --bg: #0d1117;
+  --surface: #161b22;
+  --surface2: #1c2129;
+  --border: #30363d;
+  --text: #e6edf3;
+  --text-muted: #8b949e;
+  --accent: #58a6ff;
+  --accent-bg: rgba(56,139,253,0.15);
+  --green: #3fb950;
+  --green-bg: rgba(63,185,80,0.08);
+  --red: #f85149;
+  --red-bg: rgba(248,81,73,0.08);
+  --yellow: #d29922;
+  --yellow-bg: rgba(210,153,34,0.1);
+  --orange: #db6d28;
+  --purple: #bc8cff;
+  --purple-bg: rgba(188,140,255,0.08);
+  --purple-border: rgba(188,140,255,0.2);
+  --link: #58a6ff;
+  --code-bg: #1c2129;
+  --output-bg: #0e1c0e;
+  --output-border: #1a3a1a;
+  --sidebar-bg: #161b22;
+  --sidebar-active: rgba(56,139,253,0.15);
+  --exercise-border: #30363d;
+}
+[data-theme="light"] {
+  --bg: #ffffff;
+  --surface: #f6f8fa;
+  --surface2: #eef1f5;
+  --border: #d0d7de;
+  --text: #1f2328;
+  --text-muted: #656d76;
+  --accent: #0969da;
+  --accent-bg: rgba(9,105,218,0.1);
+  --green: #1a7f37;
+  --green-bg: rgba(26,127,55,0.06);
+  --red: #cf222e;
+  --red-bg: rgba(207,34,46,0.06);
+  --yellow: #9a6700;
+  --yellow-bg: rgba(154,103,0,0.06);
+  --orange: #bc4c00;
+  --purple: #8250df;
+  --purple-bg: rgba(130,80,223,0.06);
+  --purple-border: rgba(130,80,223,0.15);
+  --link: #0969da;
+  --code-bg: #eef1f5;
+  --output-bg: #f0faf0;
+  --output-border: #c6e6c6;
+  --sidebar-bg: #f6f8fa;
+  --sidebar-active: rgba(9,105,218,0.1);
+  --exercise-border: #d0d7de;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;font-size:16px;line-height:1.7;color:var(--text);background:var(--bg);display:flex;min-height:100vh}
+a{color:var(--link);text-decoration:none}
+a:hover{text-decoration:underline}
+
+/* Sidebar */
+.sidebar{position:fixed;top:0;left:0;width:300px;height:100vh;background:var(--sidebar-bg);border-right:1px solid var(--border);overflow-y:auto;padding:20px 0;z-index:100}
+.sidebar-header{padding:16px 20px;border-bottom:1px solid var(--border);margin-bottom:12px}
+.sidebar-header h2{font-size:15px;font-weight:600;color:var(--text)}
+.sidebar-header .date{font-size:13px;color:var(--text-muted);margin-top:2px}
+.sidebar-section{padding:8px 20px 4px;font-size:12px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px}
+.sidebar-section.review-label{color:var(--purple)}
+.sidebar-nav{list-style:none;padding:0}
+.sidebar-nav li a{display:block;padding:6px 20px 6px 28px;font-size:14px;color:var(--text-muted);transition:all 0.15s}
+.sidebar-nav li a:hover,.sidebar-nav li a.active{color:var(--accent);background:var(--sidebar-active);text-decoration:none}
+.sidebar-nav li a .nav-id{font-size:11px;color:var(--text-muted);opacity:0.6;margin-left:6px}
+
+/* Main */
+.main{margin-left:300px;flex:1;padding:40px;max-width:1160px}
+.content{max-width:860px;margin:0 auto}
+
+/* Theme Toggle */
+.theme-toggle{position:fixed;top:16px;right:20px;z-index:200;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:8px 12px;cursor:pointer;color:var(--text);font-size:18px;line-height:1;transition:all 0.15s}
+.theme-toggle:hover{border-color:var(--accent)}
+
+/* Header */
+.guide-header{text-align:center;padding:32px 0 40px;border-bottom:1px solid var(--border);margin-bottom:40px}
+.guide-header h1{font-size:28px;font-weight:700;margin-bottom:8px}
+.guide-header .meta{font-size:15px;color:var(--text-muted)}
+.guide-header .meta span{margin:0 8px}
+.badge{display:inline-block;padding:2px 10px;border-radius:12px;font-size:13px;font-weight:500}
+.badge-blue{background:var(--accent-bg);color:var(--accent)}
+.badge-purple{background:var(--purple-bg);color:var(--purple)}
+
+/* How To Use */
+.how-to-use{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:24px 28px;margin-bottom:40px}
+.how-to-use h2{font-size:18px;margin-bottom:12px}
+.how-to-use ol{padding-left:24px}
+.how-to-use li{margin-bottom:6px;color:var(--text-muted)}
+
+/* Review Section */
+.review-section{margin-bottom:48px}
+.review-section-header{font-size:22px;font-weight:700;padding-bottom:12px;border-bottom:2px solid var(--purple);margin-bottom:28px;display:flex;align-items:center;gap:12px;color:var(--purple)}
+
+/* Review Card */
+.review-card{background:var(--purple-bg);border:1px solid var(--purple-border);border-left:4px solid var(--purple);border-radius:10px;padding:28px;margin-bottom:24px}
+.review-card .review-header{display:flex;align-items:center;gap:12px;margin-bottom:12px;flex-wrap:wrap}
+.review-card .review-title{font-size:18px;font-weight:700;color:var(--purple)}
+.review-card .review-meta{font-size:13px;color:var(--text-muted)}
+.review-card .review-reminder{color:var(--text-muted);font-style:italic;margin-bottom:16px;padding-left:14px;border-left:3px solid var(--purple)}
+.review-card .review-pattern{margin-bottom:16px}
+.review-card .review-pattern strong{display:block;margin-bottom:8px;font-size:14px;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px}
+.review-card .review-challenge{margin-bottom:12px}
+.review-card .review-challenge strong{display:block;margin-bottom:8px;font-size:14px;color:var(--yellow);text-transform:uppercase;letter-spacing:0.5px}
+.review-card .review-challenge p{line-height:1.6}
+.review-card .review-pitfall{background:var(--red-bg);border:1px solid rgba(248,81,73,0.15);border-radius:6px;padding:12px 16px;font-size:14px;line-height:1.6}
+.review-card .review-pitfall strong{color:var(--red);margin-right:4px}
+.review-card code{background:var(--code-bg);padding:2px 6px;border-radius:4px;font-family:'SF Mono','Fira Code','Consolas',monospace;font-size:13px}
+
+/* Topic Section */
+.topic-section{margin-bottom:48px}
+.topic-section-header{font-size:22px;font-weight:700;padding-bottom:12px;border-bottom:2px solid var(--accent);margin-bottom:28px;display:flex;align-items:center;gap:12px}
+.topic-section-header .section-num{background:var(--accent);color:#fff;width:32px;height:32px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:15px;font-weight:700;flex-shrink:0}
+
+/* Concept Card */
+.concept-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:28px;margin-bottom:32px}
+.concept-header{display:flex;align-items:center;gap:12px;margin-bottom:16px;flex-wrap:wrap}
+.concept-title{font-size:20px;font-weight:700}
+.ttag{display:inline-block;padding:2px 10px;border-radius:12px;font-size:12px;font-weight:500;background:var(--accent-bg);color:var(--accent)}
+
+.why-matters{color:var(--text-muted);font-style:italic;margin-bottom:20px;padding-left:14px;border-left:3px solid var(--accent)}
+.explanation{margin-bottom:20px;line-height:1.8}
+.explanation p{margin-bottom:12px}
+.explanation ul,.explanation ol{padding-left:24px;margin-bottom:12px}
+.explanation li{margin-bottom:4px}
+.explanation code{background:var(--code-bg);padding:2px 6px;border-radius:4px;font-family:'SF Mono','Fira Code','Consolas',monospace;font-size:14px}
+.step{display:flex;gap:12px;margin-bottom:10px;align-items:flex-start}
+.step-num{background:var(--accent-bg);color:var(--accent);width:24px;height:24px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;margin-top:3px}
+
+/* Code Examples */
+.code-example{margin-bottom:20px;border:1px solid var(--border);border-radius:8px;overflow:hidden}
+.lang-badge{background:var(--surface2);color:var(--text-muted);font-size:12px;font-weight:600;padding:6px 14px;border-bottom:1px solid var(--border);font-family:'SF Mono','Fira Code','Consolas',monospace}
+pre{margin:0;padding:16px;overflow-x:auto;background:var(--code-bg);font-family:'SF Mono','Fira Code','Consolas',monospace;font-size:13.5px;line-height:1.6;white-space:pre-wrap}
+pre code{background:none;padding:0;font-size:inherit}
+.output{background:var(--output-bg);border-top:1px solid var(--output-border);padding:12px 16px;font-family:'SF Mono','Fira Code','Consolas',monospace;font-size:13px;color:var(--green);white-space:pre-wrap}
+.output::before{content:"Output:";display:block;font-size:11px;font-weight:600;color:var(--text-muted);margin-bottom:4px;text-transform:uppercase;letter-spacing:0.5px}
+.type-result{background:var(--output-bg);border-top:1px solid var(--output-border);padding:12px 16px;font-family:'SF Mono','Fira Code','Consolas',monospace;font-size:13px;color:var(--green);white-space:pre-wrap}
+.type-result::before{content:"Type Result:";display:block;font-size:11px;font-weight:600;color:var(--text-muted);margin-bottom:4px;text-transform:uppercase;letter-spacing:0.5px}
+.type-error{background:var(--red-bg);border-top:1px solid rgba(248,81,73,0.2);padding:12px 16px;font-family:'SF Mono','Fira Code','Consolas',monospace;font-size:13px;color:var(--red);white-space:pre-wrap}
+.type-error::before{content:"Type Error:";display:block;font-size:11px;font-weight:600;color:var(--red);margin-bottom:4px;text-transform:uppercase;letter-spacing:0.5px}
+
+/* Callouts */
+.callout-warning{background:var(--yellow-bg);border:1px solid rgba(210,153,34,0.2);border-radius:8px;padding:20px;margin-bottom:20px}
+.callout-warning strong{color:var(--yellow);display:block;margin-bottom:12px;font-size:16px}
+.mistake,.correct{padding:10px 14px;border-radius:6px;margin-bottom:10px;font-size:14px;line-height:1.6}
+.mistake{background:var(--red-bg);border-left:3px solid var(--red)}
+.mistake code,.correct code{background:var(--code-bg);padding:2px 6px;border-radius:4px;font-family:'SF Mono','Fira Code','Consolas',monospace;font-size:13px}
+.correct{background:var(--green-bg);border-left:3px solid var(--green)}
+
+/* Key Rules */
+.key-rules{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:20px;margin-bottom:20px}
+.key-rules strong{display:block;margin-bottom:10px;font-size:16px}
+.key-rules ul{padding-left:20px}
+.key-rules li{margin-bottom:6px}
+.key-rules code{background:var(--code-bg);padding:2px 6px;border-radius:4px;font-family:'SF Mono','Fira Code','Consolas',monospace;font-size:13px}
+
+/* Exercises */
+.exercises{border:2px dashed var(--exercise-border);border-radius:8px;padding:20px;margin-bottom:20px;margin-left:12px}
+.exercises strong{display:block;margin-bottom:14px;font-size:16px;color:var(--purple)}
+.exercise{margin-bottom:14px;padding-left:38px;position:relative;line-height:1.6}
+.exercise:last-child{margin-bottom:0}
+.exercise-num{position:absolute;left:0;top:2px;background:var(--purple);color:#fff;width:24px;height:24px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:12px;font-weight:700}
+.exercise code{background:var(--code-bg);padding:2px 6px;border-radius:4px;font-family:'SF Mono','Fira Code','Consolas',monospace;font-size:13px}
+
+/* Connections */
+.connections{background:var(--accent-bg);border:1px solid rgba(56,139,253,0.2);border-radius:8px;padding:16px 20px;font-size:14px;color:var(--text-muted)}
+.connections strong{color:var(--accent);margin-right:6px}
+
+/* Cross-links */
+.cross-links{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:20px 24px;margin-bottom:40px;text-align:center}
+.cross-links a{margin:0 10px;font-weight:500}
+
+/* Footer */
+.guide-footer{border-top:1px solid var(--border);padding-top:32px;margin-top:48px}
+.guide-footer h2{font-size:18px;margin-bottom:16px}
+.guide-footer ul{list-style:none;padding:0}
+.guide-footer li{padding:6px 0}
+.guide-footer li a{font-weight:500}
+
+/* Responsive */
+@media(max-width:900px){
+  .sidebar{display:none}
+  .main{margin-left:0}
+  .theme-toggle{top:12px;right:12px}
+}
+</style>
+</head>
+<body>
+
+<!-- Theme Toggle -->
+<button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">&#x1F319;</button>
+
+<!-- Sidebar -->
+<nav class="sidebar">
+  <div class="sidebar-header">
+    <h2>TypeScript Daily Guide</h2>
+    <div class="date">2026-07-04 &mdash; Day 31</div>
+  </div>
+
+  <div class="sidebar-section review-label">Review (6 concepts)</div>
+  <ul class="sidebar-nav">
+    <li><a href="#review_node">Node.js + TypeScript Setup <span class="nav-id">R1</span></a></li>
+    <li><a href="#review_trpc">API Typing: tRPC &amp; OpenAPI <span class="nav-id">R2</span></a></li>
+    <li><a href="#review_state">State Management Typing <span class="nav-id">R3</span></a></li>
+    <li><a href="#review_db">Database Typing: Prisma &amp; Drizzle <span class="nav-id">R4</span></a></li>
+    <li><a href="#review_gql">GraphQL Codegen <span class="nav-id">R5</span></a></li>
+    <li><a href="#review_rtl">Testing React Components <span class="nav-id">R6</span></a></li>
+  </ul>
+
+  <div class="sidebar-section">Node.js + TS: Resilience &amp; Lifecycle</div>
+  <ul class="sidebar-nav">
+    <li><a href="#shutdown">Graceful Shutdown &amp; Signals <span class="nav-id">#1</span></a></li>
+    <li><a href="#health">Health Checks &amp; Readiness <span class="nav-id">#2</span></a></li>
+    <li><a href="#resilience">Retries, Timeouts &amp; Breakers <span class="nav-id">#3</span></a></li>
+  </ul>
+
+  <div class="sidebar-section">Node.js + TS: Observability &amp; Context</div>
+  <ul class="sidebar-nav">
+    <li><a href="#als">Request Context (AsyncLocalStorage) <span class="nav-id">#4</span></a></li>
+    <li><a href="#otel">OpenTelemetry Tracing <span class="nav-id">#5</span></a></li>
+  </ul>
+</nav>
+
+<!-- Main Content -->
+<div class="main">
+<div class="content">
+
+<!-- Header -->
+<header class="guide-header">
+  <h1>TypeScript Daily Guide &mdash; Day 31</h1>
+  <div class="meta">
+    <span>2026-07-04</span>
+    <span>&middot;</span>
+    <span>Day 31 of 31</span>
+    <span>&middot;</span>
+    <span class="badge badge-purple">6 reviews</span>
+    <span class="badge badge-blue">5 new concepts</span>
+  </div>
+</header>
+
+<!-- How to Use -->
+<div class="how-to-use">
+  <h2>How to Use This Guide</h2>
+  <ol>
+    <li><strong>Review first</strong> &mdash; scan each purple review card; if the concept feels solid, move on; if fuzzy, re-read the code pattern</li>
+    <li><strong>Attempt the challenge exercise</strong> on any review card that felt shaky &mdash; this is your best reinforcement signal</li>
+    <li><strong>Work through new concepts</strong> top to bottom &mdash; each builds on the previous</li>
+    <li><strong>Type every code example</strong> yourself and run it with <code>node</code>/<code>tsx</code> &mdash; hover over inferred types in your editor to build intuition</li>
+    <li><strong>Do at least 2 exercises per concept</strong> before moving to the next one</li>
+  </ol>
+</div>
+
+<!-- Cross-links -->
+<div class="cross-links">
+  <a href="guide.html">LeetCode Guide</a>
+  <a href="lang-guide.html">Lang Guide</a>
+  <a href="python-guide.html">Python Guide</a>
+  <a href="golang-guide.html">Go Guide</a>
+  <a href="javascript-guide.html">JS Guide</a>
+  <a href="report.html">Report</a>
+</div>
+
+<!-- ============================================================ -->
+<!-- REVIEW SECTION                                                -->
+<!-- ============================================================ -->
+<div class="review-section">
+<div class="review-section-header">Review &mdash; 6 Concepts</div>
+
+<!-- R1: Node.js + TypeScript Setup -->
+<div class="review-card" id="review_node">
+  <div class="review-header">
+    <span class="review-title">R1. Node.js + TypeScript Setup</span>
+    <span class="badge badge-purple">Node.js &amp; APIs</span>
+    <span class="review-meta">19 days since review &middot; rep 1 &rarr; 2</span>
+  </div>
+  <div class="review-reminder">A modern Node + TS project runs source directly with <code>tsx</code>/<code>ts-node</code> in dev and compiles with <code>tsc</code> for prod. Under ESM (<code>"type": "module"</code> + <code>module: "nodenext"</code>) there&rsquo;s no <code>__dirname</code> &mdash; you reconstruct it from <code>import.meta.url</code> &mdash; and <code>process.env</code> values are all <code>string | undefined</code> until you parse them.</div>
+
+  <div class="review-pattern">
+    <strong>Key Pattern</strong>
+    <div class="code-example">
+<pre><code>import { fileURLToPath } from "node:url";
+import { dirname } from "node:path";
+
+const __dirname = dirname(fileURLToPath(import.meta.url));  // ESM shim
+
+// process.env is Record&lt;string, string | undefined&gt; — parse at the edge
+const port = Number(process.env.PORT ?? 3000);
+
+process.on("SIGTERM", () =&gt; server.close());</code></pre>
+<div class="type-result">env values are string | undefined; import.meta.url rebuilds __dirname under ESM</div>
+    </div>
+  </div>
+
+  <div class="review-challenge">
+    <strong>Challenge Exercise</strong>
+    <p>Set up a project whose <code>tsconfig.json</code> uses <code>"module": "nodenext"</code> and write a Zod <code>env.ts</code> that parses <code>process.env</code> into a typed, frozen <code>Env</code> object at startup (throwing on a missing var). Explain why <code>module: "nodenext"</code> forces explicit <code>.js</code> extensions on relative imports even in <code>.ts</code> files.</p>
+  </div>
+
+  <div class="review-pitfall">
+    <strong>Pitfall:</strong> Trusting <code>process.env.FOO</code> as a <code>string</code> &mdash; it&rsquo;s <code>string | undefined</code>, so a typo silently yields <code>undefined</code>. Parse env once at boot. And <code>__dirname</code>/<code>require</code> simply don&rsquo;t exist in ESM output &mdash; reach for <code>import.meta.url</code> and <code>createRequire</code> instead.
+  </div>
+</div>
+
+<!-- R2: API Typing tRPC & OpenAPI -->
+<div class="review-card" id="review_trpc">
+  <div class="review-header">
+    <span class="review-title">R2. API Typing: tRPC &amp; OpenAPI</span>
+    <span class="badge badge-purple">Node.js &amp; APIs</span>
+    <span class="review-meta">19 days since review &middot; rep 1 &rarr; 2</span>
+  </div>
+  <div class="review-reminder">Two routes to a typed API boundary. <strong>tRPC</strong> infers the client&rsquo;s types straight from the server router type &mdash; no codegen, but it couples both ends to one TS monorepo. <strong>OpenAPI</strong> is schema-first: the spec is the contract and you generate types for any language, at the cost of a build step.</div>
+
+  <div class="review-pattern">
+    <strong>Key Pattern</strong>
+    <div class="code-example">
+<pre><code>const appRouter = t.router({
+  getUser: t.procedure.input(z.object({ id: z.string() }))
+    .query(({ input }) =&gt; db.user(input.id)),   // returns User
+});
+export type AppRouter = typeof appRouter;        // the ONLY export the client needs
+
+// client — fully typed from AppRouter, zero codegen
+const user = await trpc.getUser.query({ id: "1" });  // user: User
+type Inputs = inferRouterInputs&lt;AppRouter&gt;;</code></pre>
+<div class="type-result">the client&rsquo;s call and result types flow from `typeof appRouter`</div>
+    </div>
+  </div>
+
+  <div class="review-challenge">
+    <strong>Challenge Exercise</strong>
+    <p>Add a <code>createPost</code> mutation with a Zod input, then derive <code>inferRouterInputs</code>/<code>inferRouterOutputs</code> and assert the mutation&rsquo;s output type with <code>expectTypeOf</code>. Then contrast: when would you choose OpenAPI + generated types over tRPC (hint: non-TS or third-party consumers)?</p>
+  </div>
+
+  <div class="review-pitfall">
+    <strong>Pitfall:</strong> Exporting <em>values</em> from the server into the client bundle instead of only <code>export type AppRouter</code> &mdash; that drags server code (and secrets) into the client. tRPC needs only the <em>type</em>. And tRPC&rsquo;s inference stops at the process boundary: a separate non-TS consumer still needs OpenAPI.
+  </div>
+</div>
+
+<!-- R3: State Management Typing -->
+<div class="review-card" id="review_state">
+  <div class="review-header">
+    <span class="review-title">R3. State Management Typing: Redux Toolkit &amp; Zustand</span>
+    <span class="badge badge-purple">Ecosystem Deep Dives</span>
+    <span class="review-meta">17 days since review &middot; rep 1 &rarr; 2</span>
+  </div>
+  <div class="review-reminder">Both stores derive their types from a single source of truth. RTK infers <code>RootState</code>/<code>AppDispatch</code> from the configured store and pre-types the hooks. Zustand uses a <em>curried</em> <code>create&lt;T&gt;()(...)</code> call so the store type is fixed once and middleware inference still works.</div>
+
+  <div class="review-pattern">
+    <strong>Key Pattern</strong>
+    <div class="code-example">
+<pre><code>// Zustand — note the curried create&lt;T&gt;()(...) form
+interface BearState { bears: number; add: () =&gt; void }
+const useBears = create&lt;BearState&gt;()((set) =&gt; ({
+  bears: 0,
+  add: () =&gt; set((s) =&gt; ({ bears: s.bears + 1 })),
+}));
+
+// RTK — types flow from the store
+export type RootState = ReturnType&lt;typeof store.getState&gt;;
+export type AppDispatch = typeof store.dispatch;</code></pre>
+<div class="type-result">store state is inferred once; selectors/actions read from it</div>
+    </div>
+  </div>
+
+  <div class="review-challenge">
+    <strong>Challenge Exercise</strong>
+    <p>Build a Zustand store with the <code>persist</code> middleware and a typed selector <code>useBears(s =&gt; s.bears)</code>; confirm the curried <code>create&lt;T&gt;()</code> keeps <code>set</code>&rsquo;s partial-update type intact. Then explain why <code>create&lt;T&gt;(...)</code> (single call) breaks middleware inference where <code>create&lt;T&gt;()(...)</code> does not.</p>
+  </div>
+
+  <div class="review-pitfall">
+    <strong>Pitfall:</strong> Writing <code>create&lt;BearState&gt;((set) =&gt; ...)</code> in one call &mdash; TypeScript can&rsquo;t infer the middleware mutators, so wrapped stores mistype. Use the two-step curried form <code>create&lt;T&gt;()(...)</code>. On the RTK side, hand-writing <code>RootState</code> instead of <code>ReturnType&lt;typeof store.getState&gt;</code> drifts from the real slice shape.
+  </div>
+</div>
+
+<!-- R4: Database Typing -->
+<div class="review-card" id="review_db">
+  <div class="review-header">
+    <span class="review-title">R4. Database Typing: Prisma &amp; Drizzle</span>
+    <span class="badge badge-purple">Ecosystem Deep Dives</span>
+    <span class="review-meta">17 days since review &middot; rep 1 &rarr; 2</span>
+  </div>
+  <div class="review-reminder">Prisma generates a client + types from a <code>schema.prisma</code> file; a <code>select</code>/<code>include</code> <em>narrows</em> the returned row type to exactly the requested fields. Drizzle is SQL-first &mdash; you define tables in TS and read <code>table.$inferSelect</code>/<code>$inferInsert</code>, so the schema <em>is</em> the type with no generation step.</div>
+
+  <div class="review-pattern">
+    <strong>Key Pattern</strong>
+    <div class="code-example">
+<pre><code>// Prisma — select narrows the result type
+const u = await prisma.user.findFirst({ select: { id: true, email: true } });
+//    u: { id: string; email: string } | null   — no `name`, no `password`
+
+// Drizzle — the table definition is the type
+const users = pgTable("users", { id: uuid().primaryKey(), email: text() });
+type User = typeof users.$inferSelect;   // { id: string; email: string }</code></pre>
+<div class="type-result">Prisma&rsquo;s select narrows to requested fields; Drizzle infers from the table</div>
+    </div>
+  </div>
+
+  <div class="review-challenge">
+    <strong>Challenge Exercise</strong>
+    <p>In Prisma, write a reusable query with <code>Prisma.validator</code> + <code>Prisma.UserGetPayload&lt;typeof args&gt;</code> so a <code>select</code>ed shape has a named type. In Drizzle, define a relation and infer the joined row type. Explain how each tool guarantees a <code>select</code>ed <code>password</code>-less shape never leaks the column at the type level.</p>
+  </div>
+
+  <div class="review-pitfall">
+    <strong>Pitfall:</strong> Assuming <code>findFirst()</code> returns a non-null full row &mdash; it&rsquo;s <code>T | null</code>, and a <code>select</code> removes fields at the <em>type</em> level, so reading an unselected field is a compile error (good!). Forgetting to regenerate the Prisma client after a schema edit leaves stale types.
+  </div>
+</div>
+
+<!-- R5: GraphQL Codegen -->
+<div class="review-card" id="review_gql">
+  <div class="review-header">
+    <span class="review-title">R5. GraphQL Codegen</span>
+    <span class="badge badge-purple">Ecosystem Deep Dives</span>
+    <span class="review-meta">15 days since review &middot; rep 1 &rarr; 2</span>
+  </div>
+  <div class="review-reminder">GraphQL Code Generator turns your schema + operation documents into TS types, so each query has a precise result and variables type. The <em>client-preset</em> / <code>TypedDocumentNode</code> approach ties a query string to its types &mdash; passing it to <code>useQuery</code> infers <code>data</code> and <code>variables</code> with no manual generics.</div>
+
+  <div class="review-pattern">
+    <strong>Key Pattern</strong>
+    <div class="code-example">
+<pre><code>// generated: graphql() returns a TypedDocumentNode&lt;Result, Variables&gt;
+const UserDoc = graphql(`
+  query User($id: ID!) { user(id: $id) { id name } }
+`);
+
+const { data } = useQuery(UserDoc, { variables: { id: "1" } });
+//    data?.user: { id: string; name: string } | undefined
+//    variables is checked: { id: string } required</code></pre>
+<div class="type-result">a TypedDocumentNode carries both result and variables types to the caller</div>
+    </div>
+  </div>
+
+  <div class="review-challenge">
+    <strong>Challenge Exercise</strong>
+    <p>Configure <code>codegen.ts</code> with the client-preset, write a query using a fragment, and confirm the generated <code>FragmentType</code> forces you through <code>useFragment</code> to read the data (masking). Explain why fragment masking keeps a component from depending on fields it didn&rsquo;t itself request.</p>
+  </div>
+
+  <div class="review-pitfall">
+    <strong>Pitfall:</strong> Letting generated types drift &mdash; codegen must re-run whenever the schema or an operation changes (wire it into CI / a watch script), or your types silently lie. And hand-writing result interfaces defeats the point: the generated <code>TypedDocumentNode</code> already knows the exact shape.
+  </div>
+</div>
+
+<!-- R6: Testing React Components -->
+<div class="review-card" id="review_rtl">
+  <div class="review-header">
+    <span class="review-title">R6. Testing React Components</span>
+    <span class="badge badge-purple">Ecosystem Deep Dives</span>
+    <span class="review-meta">15 days since review &middot; rep 1 &rarr; 2</span>
+  </div>
+  <div class="review-reminder">React Testing Library tests behaviour through the DOM, not implementation. <code>render</code> returns typed queries, <code>screen.getByRole</code> narrows to specific <code>HTMLElement</code> subtypes, and <code>userEvent</code> methods return promises you must <code>await</code>. A typed custom <code>render</code> wrapper injects providers once for every test.</div>
+
+  <div class="review-pattern">
+    <strong>Key Pattern</strong>
+    <div class="code-example">
+<pre><code>import { render, screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
+
+test("increments", async () =&gt; {
+  render(&lt;Counter /&gt;);
+  const btn = screen.getByRole("button");     // HTMLElement
+  await userEvent.click(btn);                 // await — it&rsquo;s async
+  expect(screen.getByText("1")).toBeInTheDocument();
+});</code></pre>
+<div class="type-result">queries return typed elements; userEvent actions are awaited promises</div>
+    </div>
+  </div>
+
+  <div class="review-challenge">
+    <strong>Challenge Exercise</strong>
+    <p>Write a typed <code>renderWithProviders(ui, { store?, route? })</code> wrapper (React Query + Router) whose options are a typed object, and use <code>getByRole&lt;HTMLInputElement&gt;</code> to read <code>.value</code> without a cast. Explain why preferring <code>*ByRole</code> over <code>*ByTestId</code> makes the test assert accessibility as a side effect.</p>
+  </div>
+
+  <div class="review-pitfall">
+    <strong>Pitfall:</strong> Forgetting to <code>await</code> a <code>userEvent</code> call (or a <code>findBy*</code> query) &mdash; the assertion runs before the update and flakes. And <code>getByRole</code> returns a generic <code>HTMLElement</code>; when you need element-specific fields, pass the subtype (<code>getByRole&lt;HTMLInputElement&gt;("textbox")</code>) rather than casting.
+  </div>
+</div>
+
+</div><!-- end review-section -->
+
+<!-- ============================================================ -->
+<!-- TOPIC SECTION 1: Resilience & Lifecycle                       -->
+<!-- ============================================================ -->
+<div class="topic-section">
+<div class="topic-section-header"><span class="section-num">1</span>Node.js + TS: Resilience &amp; Lifecycle</div>
+
+<!-- Concept 1: Graceful Shutdown -->
+<div class="concept-card" id="shutdown">
+  <div class="concept-header">
+    <span class="concept-title">1. Graceful Shutdown &amp; Lifecycle Signals</span>
+    <span class="ttag">Node.js + TypeScript</span>
+  </div>
+
+  <div class="why-matters">When an orchestrator (Kubernetes, a process manager) stops your service it sends <code>SIGTERM</code> and expects you to finish in-flight requests, close DB pools, and exit &mdash; or it kills you with <code>SIGKILL</code> and drops connections. A typed shutdown routine turns &ldquo;hope it exits cleanly&rdquo; into an ordered, testable sequence of async cleanup hooks.</div>
+
+  <div class="explanation">
+    <p>The lifecycle: catch the signal &rarr; stop accepting new work (<code>server.close()</code>) &rarr; run cleanup hooks (drain queues, close DB/Redis) &rarr; exit. Model each hook as a typed <code>ShutdownHook</code> and run them in reverse registration order (last-opened, first-closed), guarding against a hook that hangs with a hard timeout.</p>
+    <p>Two rules keep this correct: make shutdown <em>idempotent</em> (both <code>SIGTERM</code> and <code>SIGINT</code>, plus a possible error path, can trigger it &mdash; run once) and always arm a <em>force-exit timer</em> so a stuck hook can&rsquo;t wedge the process forever.</p>
+    <div class="step"><span class="step-num">1</span><div>Define a typed <code>ShutdownHook = () =&gt; Promise&lt;void&gt;</code> and collect them.</div></div>
+    <div class="step"><span class="step-num">2</span><div>On <code>SIGTERM</code>/<code>SIGINT</code>, stop the server, then run hooks in reverse order.</div></div>
+    <div class="step"><span class="step-num">3</span><div>Guard with an idempotent flag and a force-exit timeout.</div></div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 1 of 4 &mdash; a typed registry of cleanup hooks</div>
+<pre><code>type ShutdownHook = () =&gt; Promise&lt;void&gt;;
+
+const hooks: { name: string; run: ShutdownHook }[] = [];
+
+function onShutdown(name: string, run: ShutdownHook): void {
+  hooks.push({ name, run });
+}
+
+onShutdown("db", () =&gt; prisma.$disconnect());
+onShutdown("redis", async () =&gt; { await redis.quit(); });</code></pre>
+<div class="type-result">every cleanup step is a named, awaitable ShutdownHook</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 2 of 4 &mdash; run hooks in reverse, idempotently</div>
+<pre><code>let shuttingDown = false;
+
+async function shutdown(signal: NodeJS.Signals): Promise&lt;void&gt; {
+  if (shuttingDown) return;      // idempotent — signals can arrive twice
+  shuttingDown = true;
+  console.log(`${signal} received, draining…`);
+
+  for (const h of [...hooks].reverse()) {   // last opened, first closed
+    try { await h.run(); }
+    catch (err) { console.error(`hook ${h.name} failed`, err); }
+  }
+}</code></pre>
+<div class="type-result">signal is typed NodeJS.Signals; the guard makes shutdown run exactly once</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 3 of 4 &mdash; stop the server + force-exit timer</div>
+<pre><code>const server = app.listen(port);
+
+async function handle(signal: NodeJS.Signals) {
+  const force = setTimeout(() =&gt; process.exit(1), 10_000).unref();  // hard cap
+  await new Promise&lt;void&gt;((r) =&gt; server.close(() =&gt; r()));  // no new conns
+  await shutdown(signal);
+  clearTimeout(force);
+  process.exit(0);
+}</code></pre>
+<div class="type-result">server.close stops new work; the unref&rsquo;d timer guarantees an eventual exit</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 4 of 4 &mdash; wire the signals (and last-ditch errors)</div>
+<pre><code>const SIGNALS: NodeJS.Signals[] = ["SIGTERM", "SIGINT"];
+for (const sig of SIGNALS) process.on(sig, () =&gt; void handle(sig));
+
+process.on("unhandledRejection", (reason) =&gt; {
+  console.error("unhandledRejection", reason);
+  void handle("SIGTERM");
+});</code></pre>
+<div class="type-result">both operator signals and a fatal rejection funnel through one drain path</div>
+  </div>
+
+  <div class="callout-warning">
+    <strong>Common Mistakes:</strong>
+    <div class="mistake">&#10060; Calling <code>process.exit(0)</code> the instant <code>SIGTERM</code> arrives &mdash; in-flight requests are cut and DB writes may be lost mid-transaction.</div>
+    <div class="correct">&#9989; <code>server.close()</code> first to drain, run cleanup hooks, <em>then</em> exit.</div>
+    <div class="mistake">&#10060; No timeout &mdash; a hook that never resolves (a hung socket) wedges the pod until <code>SIGKILL</code>.</div>
+    <div class="correct">&#9989; Arm an <code>unref()</code>&rsquo;d force-exit timer so the process always terminates.</div>
+  </div>
+
+  <div class="key-rules">
+    <strong>Key Rules:</strong>
+    <ul>
+    <li><a href="typescript-guides/typescript-guide-2026-07-04.html">2026-07-04</a> (current &mdash; Day 31)</li>
+      <li>Handle <code>SIGTERM</code> <em>and</em> <code>SIGINT</code>; make the drain idempotent so a repeated signal is a no-op.</li>
+      <li>Stop accepting new work (<code>server.close()</code>) before running cleanup hooks.</li>
+      <li>Close resources in reverse of open order and swallow-log per-hook errors so one failure doesn&rsquo;t skip the rest.</li>
+      <li>Always arm a hard force-exit timeout &mdash; never trust every hook to resolve.</li>
+    </ul>
+  </div>
+
+  <div class="exercises">
+    <strong>Practice Exercises:</strong>
+    <div class="exercise"><span class="exercise-num">1</span>Add a <code>Promise.race</code> per hook so a single slow hook times out at 3s instead of eating the whole budget.</div>
+    <div class="exercise"><span class="exercise-num">2</span>Make <code>onShutdown</code> return an <em>unregister</em> function (typed <code>() =&gt; void</code>) so a module can remove its hook.</div>
+    <div class="exercise"><span class="exercise-num">3</span>Add a readiness flag that flips to <code>false</code> at the start of <code>handle</code> so the health endpoint (Concept 2) reports &ldquo;draining&rdquo; before the server closes.</div>
+  </div>
+
+  <div class="connections"><strong>Connections:</strong> The <code>NodeJS.Signals</code> handlers extend the process-typing from <em>Node.js + TypeScript</em> (R1), and closing the DB/Redis pools ties back to <em>repository pattern</em> and <em>Redis caching</em> (07-01). The readiness flag feeds directly into Concept 2&rsquo;s probe.</div>
+</div>
+
+<!-- Concept 2: Health Checks -->
+<div class="concept-card" id="health">
+  <div class="concept-header">
+    <span class="concept-title">2. Health Checks &amp; Readiness Probes</span>
+    <span class="ttag">Node.js + TypeScript</span>
+  </div>
+
+  <div class="why-matters">Orchestrators poll two distinct endpoints: <em>liveness</em> (&ldquo;is the process alive? restart if not&rdquo;) and <em>readiness</em> (&ldquo;can it serve traffic right now?&rdquo;). Conflating them causes restart loops or routing to a pod that can&rsquo;t reach its database. Typing each dependency check and the aggregated report keeps the two separate and machine-readable.</div>
+
+  <div class="explanation">
+    <p>Model a single dependency check as a function returning a discriminated <code>CheckResult</code> (<code>"up"</code> vs <code>"down"</code> with an error). Run all checks in parallel, aggregate to an overall status, and map it to HTTP: <code>200</code> when ready, <code>503</code> when not. Liveness stays trivial (return 200 if the event loop is running) so a failing dependency never triggers a pointless restart.</p>
+    <p>Readiness should also reflect the <em>lifecycle</em>: once the shutdown drain from Concept 1 begins, flip readiness to <code>false</code> so the load balancer stops sending new requests <em>before</em> the server closes.</p>
+    <div class="step"><span class="step-num">1</span><div>Type a <code>Check = () =&gt; Promise&lt;CheckResult&gt;</code> with a discriminated result.</div></div>
+    <div class="step"><span class="step-num">2</span><div>Run checks in parallel and aggregate to one <code>HealthReport</code>.</div></div>
+    <div class="step"><span class="step-num">3</span><div>Map ready/not-ready to <code>200</code>/<code>503</code>; keep liveness separate and trivial.</div></div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 1 of 4 &mdash; a discriminated check result</div>
+<pre><code>type CheckResult =
+  | { name: string; status: "up" }
+  | { name: string; status: "down"; error: string };
+
+type Check = () =&gt; Promise&lt;CheckResult&gt;;
+
+const dbCheck: Check = async () =&gt; {
+  try { await prisma.$queryRaw`SELECT 1`; return { name: "db", status: "up" }; }
+  catch (e) { return { name: "db", status: "down", error: String(e) }; }
+};</code></pre>
+<div class="type-result">a check is up, or down with an error — never an ambiguous boolean</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 2 of 4 &mdash; aggregate checks in parallel</div>
+<pre><code>interface HealthReport {
+  status: "healthy" | "unhealthy";
+  checks: CheckResult[];
+}
+
+async function runChecks(checks: Check[]): Promise&lt;HealthReport&gt; {
+  const results = await Promise.all(checks.map((c) =&gt; c()));
+  const status = results.every((r) =&gt; r.status === "up") ? "healthy" : "unhealthy";
+  return { status, checks: results };
+}</code></pre>
+<div class="type-result">one typed report; overall status derived from every dependency</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 3 of 4 &mdash; readiness maps status to 200/503</div>
+<pre><code>let isReady = true;   // flipped false when shutdown (Concept 1) begins
+
+app.get("/readyz", async (_req, res) =&gt; {
+  if (!isReady) return res.status(503).json({ status: "draining" });
+  const report = await runChecks([dbCheck, redisCheck]);
+  res.status(report.status === "healthy" ? 200 : 503).json(report);
+});</code></pre>
+<div class="type-result">503 while draining or when a dependency is down; 200 only when serveable</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 4 of 4 &mdash; liveness stays trivial &amp; dependency-free</div>
+<pre><code>// Liveness: "is the process wedged?" — must NOT touch the DB,
+// or a slow dependency triggers a needless restart loop.
+app.get("/livez", (_req, res) =&gt; res.status(200).send("ok"));</code></pre>
+<div class="type-result">liveness answers only &ldquo;is the event loop alive?&rdquo; — never checks dependencies</div>
+  </div>
+
+  <div class="callout-warning">
+    <strong>Common Mistakes:</strong>
+    <div class="mistake">&#10060; A single <code>/health</code> that checks the DB and is wired to the <em>liveness</em> probe &mdash; a brief DB blip restarts every pod, cascading the outage.</div>
+    <div class="correct">&#9989; Split liveness (trivial) from readiness (checks dependencies); only readiness gates traffic.</div>
+    <div class="mistake">&#10060; Returning <code>200</code> with a <code>{ ok: false }</code> body &mdash; the orchestrator only reads the status code, so it routes traffic anyway.</div>
+    <div class="correct">&#9989; Encode health in the HTTP <em>status</em> (<code>503</code> for not-ready), not just the body.</div>
+  </div>
+
+  <div class="key-rules">
+    <strong>Key Rules:</strong>
+    <ul>
+      <li>Keep liveness dependency-free; put dependency checks only in readiness.</li>
+      <li>Model each check as a discriminated <code>CheckResult</code> and run them with <code>Promise.all</code>.</li>
+      <li>Signal not-ready with a <code>503</code> status code &mdash; orchestrators read the code, not the body.</li>
+      <li>Flip readiness to not-ready as soon as graceful shutdown starts.</li>
+    </ul>
+  </div>
+
+  <div class="exercises">
+    <strong>Practice Exercises:</strong>
+    <div class="exercise"><span class="exercise-num">1</span>Add a per-check timeout so a hung dependency reports <code>down</code> after 2s instead of stalling <code>/readyz</code>.</div>
+    <div class="exercise"><span class="exercise-num">2</span>Extend <code>CheckResult</code> with a <code>latencyMs: number</code> and include it in the report for each check.</div>
+    <div class="exercise"><span class="exercise-num">3</span>Add a <code>"degraded"</code> status when non-critical checks fail but critical ones pass, and map it to <code>200</code>.</div>
+  </div>
+
+  <div class="connections"><strong>Connections:</strong> The discriminated <code>CheckResult</code> and <code>every</code>-narrowing reuse <em>discriminated unions in practice</em> and <em>never/exhaustiveness</em>. The <code>isReady</code> flag is the other half of Concept 1&rsquo;s drain, and mapping status to <code>503</code> mirrors the HTTP-boundary discipline of <em>problem+json</em> (07-03).</div>
+</div>
+
+<!-- Concept 3: Retries, Timeouts & Circuit Breakers -->
+<div class="concept-card" id="resilience">
+  <div class="concept-header">
+    <span class="concept-title">3. Typed Retries, Timeouts &amp; Circuit Breakers</span>
+    <span class="ttag">Node.js + TypeScript</span>
+  </div>
+
+  <div class="why-matters">Every network call can be slow, flaky, or dead. Three composable primitives tame that: a <em>timeout</em> caps latency, a <em>retry with backoff</em> rides out transient blips, and a <em>circuit breaker</em> stops hammering a downstream that&rsquo;s clearly down. Writing them as generic <code>&lt;T&gt;</code> wrappers keeps the operation&rsquo;s return type intact while adding resilience.</div>
+
+  <div class="explanation">
+    <p>Each wrapper takes a <code>() =&gt; Promise&lt;T&gt;</code> and returns a <code>Promise&lt;T&gt;</code>, so it&rsquo;s transparent to callers. Timeout races the work against an <code>AbortSignal.timeout</code>; retry loops with exponential backoff and a typed <em>should-retry</em> predicate; the breaker is a small state machine &mdash; a discriminated union of <code>closed</code> / <code>open</code> / <code>half-open</code> &mdash; that short-circuits calls while a dependency is failing.</p>
+    <p>Compose them outside-in: breaker wraps retry wraps timeout. The breaker sees the <em>final</em> outcome of the retried, time-bounded call, so a truly-down dependency trips it instead of every retry counting separately.</p>
+    <div class="step"><span class="step-num">1</span><div>Write a generic <code>withTimeout&lt;T&gt;</code> using <code>AbortSignal.timeout</code>.</div></div>
+    <div class="step"><span class="step-num">2</span><div>Write a generic <code>withRetry&lt;T&gt;</code> with backoff + a typed retry predicate.</div></div>
+    <div class="step"><span class="step-num">3</span><div>Model the breaker as a discriminated state machine and compose the three.</div></div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 1 of 4 &mdash; generic withTimeout via AbortSignal</div>
+<pre><code>async function withTimeout&lt;T&gt;(
+  fn: (signal: AbortSignal) =&gt; Promise&lt;T&gt;,
+  ms: number,
+): Promise&lt;T&gt; {
+  const signal = AbortSignal.timeout(ms);   // aborts after ms
+  return fn(signal);                        // pass to fetch/db so it truly cancels
+}
+
+const data = await withTimeout((s) =&gt; fetch(url, { signal: s }), 2000);</code></pre>
+<div class="type-result">withTimeout preserves T; the signal lets the underlying call actually cancel</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 2 of 4 &mdash; generic withRetry + exponential backoff</div>
+<pre><code>interface RetryOpts { retries: number; baseMs: number; retryable?: (e: unknown) =&gt; boolean }
+
+async function withRetry&lt;T&gt;(fn: () =&gt; Promise&lt;T&gt;, o: RetryOpts): Promise&lt;T&gt; {
+  let lastErr: unknown;
+  for (let attempt = 0; attempt &lt;= o.retries; attempt++) {
+    try { return await fn(); }
+    catch (e) {
+      lastErr = e;
+      if (o.retryable &amp;&amp; !o.retryable(e)) throw e;      // don&rsquo;t retry a 400
+      const delay = o.baseMs * 2 ** attempt + Math.random() * 100;  // + jitter
+      await new Promise((r) =&gt; setTimeout(r, delay));
+    }
+  }
+  throw lastErr;
+}</code></pre>
+<div class="type-result">returns T on success; backoff has jitter; a non-retryable error exits early</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 3 of 4 &mdash; the breaker as a discriminated state machine</div>
+<pre><code>type BreakerState =
+  | { kind: "closed"; failures: number }
+  | { kind: "open"; openedAt: number }
+  | { kind: "half-open" };
+
+class CircuitBreaker {
+  private state: BreakerState = { kind: "closed", failures: 0 };
+  constructor(private threshold = 5, private cooldownMs = 30_000) {}
+
+  async call&lt;T&gt;(fn: () =&gt; Promise&lt;T&gt;): Promise&lt;T&gt; {
+    if (this.state.kind === "open") {
+      if (Date.now() - this.state.openedAt &lt; this.cooldownMs)
+        throw new Error("circuit open");
+      this.state = { kind: "half-open" };   // probe once
+    }
+    try { const r = await fn(); this.state = { kind: "closed", failures: 0 }; return r; }
+    catch (e) { this.trip(); throw e; }
+  }
+
+  private trip() {
+    const failures = this.state.kind === "closed" ? this.state.failures + 1 : this.threshold;
+    this.state = failures &gt;= this.threshold
+      ? { kind: "open", openedAt: Date.now() }
+      : { kind: "closed", failures };
+  }
+}</code></pre>
+<div class="type-result">each state carries only its own data; open short-circuits until cooldown elapses</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 4 of 4 &mdash; compose breaker → retry → timeout</div>
+<pre><code>const breaker = new CircuitBreaker();
+
+const user = await breaker.call(() =&gt;
+  withRetry(
+    () =&gt; withTimeout((s) =&gt; fetchUser(id, s), 2000),
+    { retries: 3, baseMs: 100, retryable: (e) =&gt; e instanceof NetworkError },
+  ),
+);   // user: User — the resilient stack is transparent to the caller</code></pre>
+<div class="type-result">the composed stack still returns User; the breaker sees the final retried outcome</div>
+  </div>
+
+  <div class="callout-warning">
+    <strong>Common Mistakes:</strong>
+    <div class="mistake">&#10060; Retrying <em>everything</em> &mdash; a <code>400</code>/validation error will never succeed, so retries just amplify load and delay the failure.</div>
+    <div class="correct">&#9989; Gate retries with a typed <code>retryable</code> predicate (retry timeouts/5xx, fail fast on 4xx).</div>
+    <div class="mistake">&#10060; A <code>Promise.race</code> &ldquo;timeout&rdquo; that leaves the real request running &mdash; you stop <em>waiting</em> but the socket/query keeps consuming resources.</div>
+    <div class="correct">&#9989; Thread an <code>AbortSignal</code> into the call so a timeout genuinely cancels the work.</div>
+  </div>
+
+  <div class="key-rules">
+    <strong>Key Rules:</strong>
+    <ul>
+      <li>Write each primitive as a generic <code>&lt;T&gt;</code> wrapper so it&rsquo;s transparent to the caller&rsquo;s types.</li>
+      <li>Retry only transient failures (use a predicate); always add jitter to backoff to avoid thundering herds.</li>
+      <li>Model the breaker as a discriminated union so each state carries exactly its own data.</li>
+      <li>Compose breaker &rarr; retry &rarr; timeout, and thread an <code>AbortSignal</code> so timeouts truly cancel.</li>
+    </ul>
+  </div>
+
+  <div class="exercises">
+    <strong>Practice Exercises:</strong>
+    <div class="exercise"><span class="exercise-num">1</span>Add a <code>maxDelayMs</code> cap to <code>withRetry</code> so exponential backoff plateaus instead of growing unbounded.</div>
+    <div class="exercise"><span class="exercise-num">2</span>Give the breaker an <code>onStateChange(prev, next)</code> callback typed over <code>BreakerState</code> and log every transition.</div>
+    <div class="exercise"><span class="exercise-num">3</span>Write a <code>withTimeout</code> variant that rejects with a distinct <code>TimeoutError</code> subclass so <code>retryable</code> can treat it specially.</div>
+  </div>
+
+  <div class="connections"><strong>Connections:</strong> The generic <code>&lt;T&gt;</code> wrappers are <em>generics + async/Promise typing</em>, and the breaker&rsquo;s state union is a <em>type-safe state machine</em> (discriminated unions). This is the outbound complement to <em>rate limiting</em> (07-02) and pairs with the readiness probe &mdash; an open breaker can mark a dependency down.</div>
+</div>
+
+</div><!-- end topic-section 1 -->
+
+<!-- ============================================================ -->
+<!-- TOPIC SECTION 2: Observability & Context                      -->
+<!-- ============================================================ -->
+<div class="topic-section">
+<div class="topic-section-header"><span class="section-num">2</span>Node.js + TS: Observability &amp; Context</div>
+
+<!-- Concept 4: AsyncLocalStorage -->
+<div class="concept-card" id="als">
+  <div class="concept-header">
+    <span class="concept-title">4. Request Context with AsyncLocalStorage</span>
+    <span class="ttag">Node.js + TypeScript</span>
+  </div>
+
+  <div class="why-matters">You often need per-request data (a request id, the authenticated user, a trace id) deep inside code that shouldn&rsquo;t take it as a parameter &mdash; a logger, a repository. Node&rsquo;s <code>AsyncLocalStorage</code> is a typed, request-scoped store that survives <code>await</code> boundaries, so any code in the async call tree can read the current context without threading it through every signature.</div>
+
+  <div class="explanation">
+    <p>Create one <code>AsyncLocalStorage&lt;RequestContext&gt;</code> for the process. A middleware calls <code>als.run(ctx, next)</code> once per request; everything <code>next</code> triggers &mdash; across every <code>await</code> &mdash; can call <code>als.getStore()</code> to read that same <code>ctx</code>. Because <code>getStore()</code> returns <code>T | undefined</code> (you might be outside any request), wrap it in an accessor that throws, giving callers a non-optional type.</p>
+    <p>This is the backbone of contextual logging and trace propagation: the logger reads the current <code>requestId</code> itself, so you never pass it around. Keep the stored object small and treat it as read-mostly.</p>
+    <div class="step"><span class="step-num">1</span><div>Define a typed <code>RequestContext</code> and one module-level <code>AsyncLocalStorage</code>.</div></div>
+    <div class="step"><span class="step-num">2</span><div>In middleware, <code>als.run(ctx, next)</code> to bind context for the request&rsquo;s async tree.</div></div>
+    <div class="step"><span class="step-num">3</span><div>Expose a <code>getContext()</code> accessor that narrows away <code>undefined</code>.</div></div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 1 of 4 &mdash; a typed store for the process</div>
+<pre><code>import { AsyncLocalStorage } from "node:async_hooks";
+
+interface RequestContext {
+  requestId: string;
+  userId?: string;
+}
+
+const als = new AsyncLocalStorage&lt;RequestContext&gt;();</code></pre>
+<div class="type-result">the store is parameterized by RequestContext — getStore() returns it or undefined</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 2 of 4 &mdash; bind context in middleware</div>
+<pre><code>app.use((req, res, next) =&gt; {
+  const ctx: RequestContext = { requestId: crypto.randomUUID() };
+  als.run(ctx, () =&gt; next());   // everything downstream shares this ctx
+});
+
+// later middleware can enrich the SAME object after auth
+app.use((req, _res, next) =&gt; {
+  const ctx = als.getStore();
+  if (ctx &amp;&amp; req.user) ctx.userId = req.user.id;
+  next();
+});</code></pre>
+<div class="type-result">als.run scopes ctx to the request&rsquo;s entire async call tree, across awaits</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 3 of 4 &mdash; an accessor that narrows away undefined</div>
+<pre><code>function getContext(): RequestContext {
+  const ctx = als.getStore();
+  if (!ctx) throw new Error("getContext() called outside a request scope");
+  return ctx;   // callers get a non-optional RequestContext
+}</code></pre>
+<div class="type-result">the guard turns RequestContext | undefined into RequestContext</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 4 of 4 &mdash; a context-aware logger, no param threading</div>
+<pre><code>const log = {
+  info(msg: string, extra: Record&lt;string, unknown&gt; = {}) {
+    const { requestId, userId } = als.getStore() ?? {};
+    console.log(JSON.stringify({ level: "info", msg, requestId, userId, ...extra }));
+  },
+};
+
+// deep in a repository — no requestId argument needed:
+async function findOrder(id: string) { log.info("loading order", { id }); /* … */ }</code></pre>
+<div class="type-result">every log line carries the current requestId automatically</div>
+  </div>
+
+  <div class="callout-warning">
+    <strong>Common Mistakes:</strong>
+    <div class="mistake">&#10060; Storing request context in a module-level <code>let currentCtx</code> &mdash; concurrent requests clobber each other; whoever ran last wins.</div>
+    <div class="correct">&#9989; Use <code>AsyncLocalStorage</code>, which keeps a separate store per async call tree.</div>
+    <div class="mistake">&#10060; Treating <code>getStore()</code> as always-defined &mdash; it&rsquo;s <code>T | undefined</code>, and a background job or startup code runs outside any request.</div>
+    <div class="correct">&#9989; Wrap it in an accessor that throws (or supplies a default) so the type is honest.</div>
+  </div>
+
+  <div class="key-rules">
+    <strong>Key Rules:</strong>
+    <ul>
+      <li>Create one <code>AsyncLocalStorage&lt;T&gt;</code> per concern and bind it once per request with <code>als.run</code>.</li>
+      <li><code>getStore()</code> is <code>T | undefined</code> &mdash; wrap it in a guarded accessor for a non-optional type.</li>
+      <li>Keep the stored context small and read-mostly; mutate it only in early middleware (e.g. after auth).</li>
+      <li>Prefer implicit context for cross-cutting data (ids, user); pass real business args explicitly.</li>
+    </ul>
+  </div>
+
+  <div class="exercises">
+    <strong>Practice Exercises:</strong>
+    <div class="exercise"><span class="exercise-num">1</span>Add a <code>traceId</code> to <code>RequestContext</code> and propagate an incoming <code>x-request-id</code> header into it (generate one if absent).</div>
+    <div class="exercise"><span class="exercise-num">2</span>Write a generic <code>runWithContext&lt;T&gt;(ctx, fn: () =&gt; Promise&lt;T&gt;): Promise&lt;T&gt;</code> wrapper for use in background jobs outside HTTP.</div>
+    <div class="exercise"><span class="exercise-num">3</span>Type a <code>getContext()</code> overload that takes a default so callers can opt out of the throw.</div>
+  </div>
+
+  <div class="connections"><strong>Connections:</strong> The guarded accessor is the same <em>narrow-away-undefined</em> discipline as env parsing (R1) and <code>getStore</code> pairs with the <em>declaration-merged</em> <code>req.user</code> (07-02). This context store is exactly what OpenTelemetry (Concept 5) uses under the hood to propagate the active span.</div>
+</div>
+
+<!-- Concept 5: OpenTelemetry Tracing -->
+<div class="concept-card" id="otel">
+  <div class="concept-header">
+    <span class="concept-title">5. OpenTelemetry Tracing with TypeScript</span>
+    <span class="ttag">Node.js + TypeScript</span>
+  </div>
+
+  <div class="why-matters">Structured logs tell you <em>what</em> happened; distributed tracing tells you <em>where the time went</em> across services. OpenTelemetry is the vendor-neutral standard: you wrap units of work in <em>spans</em>, attach typed attributes, and record errors &mdash; and the SDK propagates the trace across HTTP calls so one request&rsquo;s spans stitch into a single waterfall.</div>
+
+  <div class="explanation">
+    <p>Get a <code>Tracer</code> and open a span with <code>startActiveSpan</code>, which makes that span the <em>active</em> one (via the same <code>AsyncLocalStorage</code> mechanism from Concept 4) so nested work becomes child spans automatically. On each span set attributes (typed as <code>string | number | boolean | arrays</code>), record exceptions, set a status, and &mdash; critically &mdash; always <code>span.end()</code> in a <code>finally</code>.</p>
+    <p>The ergonomic move is a generic <code>withSpan&lt;T&gt;(name, fn)</code> helper that opens a span, runs your <code>Promise&lt;T&gt;</code>, marks error/OK, and ends it &mdash; keeping the operation&rsquo;s return type intact while every call becomes observable. Context propagation across service boundaries is handled by the SDK&rsquo;s instrumentations once you set up the provider.</p>
+    <div class="step"><span class="step-num">1</span><div>Acquire a <code>Tracer</code> and open an active span for a unit of work.</div></div>
+    <div class="step"><span class="step-num">2</span><div>Set typed attributes; record exceptions and a <code>SpanStatusCode</code>.</div></div>
+    <div class="step"><span class="step-num">3</span><div>Wrap it in a generic <code>withSpan&lt;T&gt;</code> that always ends the span.</div></div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 1 of 4 &mdash; open an active span</div>
+<pre><code>import { trace, SpanStatusCode, type Span } from "@opentelemetry/api";
+
+const tracer = trace.getTracer("orders-service");
+
+tracer.startActiveSpan("loadDashboard", (span: Span) =&gt; {
+  // nested startActiveSpan calls become CHILD spans automatically
+  span.end();
+});</code></pre>
+<div class="type-result">startActiveSpan makes span the current context; children nest under it</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 2 of 4 &mdash; typed attributes, exception &amp; status</div>
+<pre><code>function instrument(span: Span, userId: string) {
+  span.setAttribute("user.id", userId);        // string | number | boolean | []
+  span.setAttribute("items.count", 3);
+  try {
+    /* … work … */
+    span.setStatus({ code: SpanStatusCode.OK });
+  } catch (err) {
+    span.recordException(err as Error);
+    span.setStatus({ code: SpanStatusCode.ERROR, message: String(err) });
+    throw err;
+  }
+}</code></pre>
+<div class="type-result">attribute values are constrained; a failed span is marked ERROR with the exception</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 3 of 4 &mdash; a generic withSpan&lt;T&gt; helper</div>
+<pre><code>async function withSpan&lt;T&gt;(name: string, fn: (span: Span) =&gt; Promise&lt;T&gt;): Promise&lt;T&gt; {
+  return tracer.startActiveSpan(name, async (span) =&gt; {
+    try {
+      const result = await fn(span);
+      span.setStatus({ code: SpanStatusCode.OK });
+      return result;                              // return type stays T
+    } catch (err) {
+      span.recordException(err as Error);
+      span.setStatus({ code: SpanStatusCode.ERROR });
+      throw err;
+    } finally {
+      span.end();                                 // ALWAYS end, even on throw
+    }
+  });
+}</code></pre>
+<div class="type-result">withSpan preserves T and guarantees span.end() runs on every path</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 4 of 4 &mdash; instrument a handler; propagation is automatic</div>
+<pre><code>app.get("/orders/:id", async (req, res) =&gt; {
+  const order = await withSpan("getOrder", async (span) =&gt; {
+    span.setAttribute("order.id", req.params.id);
+    return orderRepo.find(req.params.id);   // its own spans nest as children
+  });
+  res.json(order);
+});
+// the HTTP instrumentation injects/extracts trace headers across services
+</code></pre>
+<div class="type-result">nested calls form one trace; W3C traceparent headers propagate across hops</div>
+  </div>
+
+  <div class="callout-warning">
+    <strong>Common Mistakes:</strong>
+    <div class="mistake">&#10060; Forgetting <code>span.end()</code> (or only calling it on the success path) &mdash; unended spans never export, so traces look empty or truncated.</div>
+    <div class="correct">&#9989; End the span in a <code>finally</code> &mdash; a generic <code>withSpan</code> helper makes that automatic.</div>
+    <div class="mistake">&#10060; Using <code>startSpan</code> and never activating it &mdash; child work isn&rsquo;t parented, so you get orphan spans instead of a tree.</div>
+    <div class="correct">&#9989; Use <code>startActiveSpan</code> so nested operations attach as children via the active context.</div>
+  </div>
+
+  <div class="key-rules">
+    <strong>Key Rules:</strong>
+    <ul>
+      <li>Prefer <code>startActiveSpan</code> so nested work auto-parents into a single trace.</li>
+      <li>Always <code>span.end()</code> in a <code>finally</code>; record exceptions and set an explicit <code>SpanStatusCode</code>.</li>
+      <li>Attributes are typed primitives/arrays &mdash; keep them low-cardinality; put ids/details there, not in the span name.</li>
+      <li>Wrap tracing in a generic <code>withSpan&lt;T&gt;</code> so instrumentation is transparent to your types.</li>
+    </ul>
+  </div>
+
+  <div class="exercises">
+    <strong>Practice Exercises:</strong>
+    <div class="exercise"><span class="exercise-num">1</span>Extend <code>withSpan</code> to accept an initial <code>attributes: Record&lt;string, string | number | boolean&gt;</code> and set them before running <code>fn</code>.</div>
+    <div class="exercise"><span class="exercise-num">2</span>Add the current span&rsquo;s <code>traceId</code> (from <code>span.spanContext()</code>) into the <code>RequestContext</code> logger from Concept 4 so logs and traces correlate.</div>
+    <div class="exercise"><span class="exercise-num">3</span>Write a <code>withSpanSync&lt;T&gt;(name, fn: (s: Span) =&gt; T): T</code> for synchronous work and confirm the return type is preserved.</div>
+  </div>
+
+  <div class="connections"><strong>Connections:</strong> Active-span propagation <em>is</em> <code>AsyncLocalStorage</code> (Concept 4) under the hood. The generic <code>withSpan&lt;T&gt;</code> mirrors the resilience wrappers of Concept 3, and correlating <code>traceId</code> into logs ties back to <em>structured logging with pino</em> (07-01). Recording exceptions complements the <em>problem+json</em> error boundary (07-03).</div>
+</div>
+
+</div><!-- end topic-section 2 -->
+
+<!-- Footer -->
+<footer class="guide-footer">
+  <h2>All Guides</h2>
+  <ul>
+    <li><a href="typescript-guides/typescript-guide-2026-07-09.html">2026-07-09</a> (Day 36)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-07-08.html">2026-07-08</a> (Day 35)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-07-07.html">2026-07-07</a> (Day 34)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-07-06.html">2026-07-06</a> (Day 33)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-07-05.html">2026-07-05</a> (Day 32)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-07-04.html">2026-07-04</a> (Day 31)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-07-03.html">2026-07-03</a> (Day 30)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-07-02.html">2026-07-02</a> (Day 29)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-07-01.html">2026-07-01</a> (Day 28)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-30.html">2026-06-30</a> (Day 27)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-29.html">2026-06-29</a> (Day 26)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-28.html">2026-06-28</a> (Day 25)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-27.html">2026-06-27</a> (Day 24)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-26.html">2026-06-26</a> (Day 23)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-25.html">2026-06-25</a> (Day 22)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-24.html">2026-06-24</a> (Day 21)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-23.html">2026-06-23</a> (Day 20)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-22.html">2026-06-22</a> (Day 19)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-21.html">2026-06-21</a> (Day 18)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-19.html">2026-06-19</a> (Day 17)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-18.html">2026-06-18</a> (Day 16)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-17.html">2026-06-17</a> (Day 15)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-15.html">2026-06-15</a> (Day 14)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-13.html">2026-06-13</a> (Day 13)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-12.html">2026-06-12</a> (Day 12)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-11.html">2026-06-11</a> (Day 11)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-10.html">2026-06-10</a> (Day 10)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-09.html">2026-06-09</a> (Day 9)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-08.html">2026-06-08</a> (Day 8)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-07.html">2026-06-07</a> (Day 7)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-05.html">2026-06-05</a> (Day 6)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-04.html">2026-06-04</a> (Day 5)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-03.html">2026-06-03</a> (Day 4)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-02.html">2026-06-02</a> (Day 3)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-01.html">2026-06-01</a> (Day 2)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-05-31.html">2026-05-31</a> (Day 1)</li>
+  </ul>
+</footer>
+
+</div><!-- end content -->
+</div><!-- end main -->
+
+<script>
+// Theme toggle
+(function() {
+  var toggle = document.getElementById('themeToggle');
+  var html = document.documentElement;
+  var STORAGE_KEY = 'lc-tsguide-theme';
+
+  function setTheme(theme) {
+    html.setAttribute('data-theme', theme);
+    toggle.textContent = theme === 'dark' ? '\u{1F319}' : '\u{2600}\u{FE0F}';
+    try { localStorage.setItem(STORAGE_KEY, theme); } catch(e) {}
+  }
+
+  try {
+    var saved = localStorage.getItem(STORAGE_KEY);
+    if (saved) setTheme(saved);
+  } catch(e) {}
+
+  toggle.addEventListener('click', function() {
+    var current = html.getAttribute('data-theme') || 'dark';
+    setTheme(current === 'dark' ? 'light' : 'dark');
+  });
+})();
+
+// Sidebar active link tracking
+(function() {
+  var links = document.querySelectorAll('.sidebar-nav a');
+  var sections = [];
+  links.forEach(function(link) {
+    var id = link.getAttribute('href').replace('#', '');
+    var el = document.getElementById(id);
+    if (el) sections.push({ link: link, el: el });
+  });
+
+  function updateActive() {
+    var current = null;
+    var scrollY = window.scrollY + 120;
+    for (var i = sections.length - 1; i >= 0; i--) {
+      if (sections[i].el.offsetTop <= scrollY) {
+        current = sections[i];
+        break;
+      }
+    }
+    links.forEach(function(l) { l.classList.remove('active'); });
+    if (current) current.link.classList.add('active');
+  }
+
+  window.addEventListener('scroll', updateActive);
+  updateActive();
+})();
+</script>
+
+</body>
+</html>

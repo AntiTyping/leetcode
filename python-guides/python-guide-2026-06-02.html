@@ -1,0 +1,2425 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Python Study Guide &mdash; Day 6 (2026-06-02)</title>
+<style>
+/* ===== CSS Variables ===== */
+:root {
+  --bg: #0d1117;
+  --surface1: #161b22;
+  --surface2: #1c2333;
+  --border: #30363d;
+  --text: #e6edf3;
+  --muted: #8b949e;
+  --accent: #58a6ff;
+  --accent-dim: #1f6feb33;
+  --green: #3fb950;
+  --green-dim: #23863633;
+  --yellow: #d29922;
+  --yellow-dim: #d2992233;
+  --red: #f85149;
+  --red-dim: #f8514933;
+  --purple: #bc8cff;
+  --purple-dim: #bc8cff22;
+  --orange: #f0883e;
+  --orange-dim: #f0883e22;
+  --code-bg: #0d1117;
+  --sidebar-w: 300px;
+  --font-mono: 'SF Mono', 'Cascadia Code', 'Fira Code', Consolas, monospace;
+  --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+  --radius: 8px;
+  --shadow: 0 1px 3px rgba(0,0,0,0.4);
+}
+
+[data-theme="light"] {
+  --bg: #ffffff;
+  --surface1: #f6f8fa;
+  --surface2: #f0f3f6;
+  --border: #d0d7de;
+  --text: #1f2328;
+  --muted: #656d76;
+  --accent: #0969da;
+  --accent-dim: #0969da1a;
+  --green: #1a7f37;
+  --green-dim: #1a7f3718;
+  --yellow: #9a6700;
+  --yellow-dim: #9a670018;
+  --red: #cf222e;
+  --red-dim: #cf222e18;
+  --purple: #8250df;
+  --purple-dim: #8250df18;
+  --orange: #bc4c00;
+  --orange-dim: #bc4c0018;
+  --code-bg: #f6f8fa;
+  --shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+/* ===== Reset & Base ===== */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: var(--font-sans);
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.7;
+  font-size: 15px;
+  transition: background 0.2s, color 0.2s;
+}
+
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+/* ===== Theme Toggle ===== */
+#theme-toggle {
+  position: fixed;
+  top: 16px;
+  right: 20px;
+  z-index: 1000;
+  background: var(--surface1);
+  border: 1px solid var(--border);
+  color: var(--text);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+  box-shadow: var(--shadow);
+}
+#theme-toggle:hover { background: var(--surface2); border-color: var(--accent); }
+
+/* ===== Sidebar ===== */
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: var(--sidebar-w);
+  height: 100vh;
+  background: var(--surface1);
+  border-right: 1px solid var(--border);
+  overflow-y: auto;
+  padding: 20px 0;
+  z-index: 100;
+  transition: transform 0.3s;
+}
+
+.sidebar-header {
+  padding: 0 20px 16px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 12px;
+}
+
+.sidebar-header h2 {
+  font-size: 16px;
+  color: var(--text);
+  font-weight: 700;
+}
+
+.sidebar-header .subtitle {
+  font-size: 12px;
+  color: var(--muted);
+  margin-top: 2px;
+}
+
+.sidebar-section {
+  margin-bottom: 8px;
+}
+
+.sidebar-section-title {
+  padding: 6px 20px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+}
+
+.sidebar-link {
+  display: block;
+  padding: 5px 20px 5px 28px;
+  font-size: 13px;
+  color: var(--muted);
+  text-decoration: none;
+  border-left: 2px solid transparent;
+  transition: all 0.15s;
+  line-height: 1.4;
+}
+
+.sidebar-link:hover {
+  color: var(--text);
+  background: var(--accent-dim);
+  border-left-color: var(--accent);
+  text-decoration: none;
+}
+
+.sidebar-link.active {
+  color: var(--accent);
+  border-left-color: var(--accent);
+  background: var(--accent-dim);
+}
+
+/* ===== Mobile sidebar toggle ===== */
+#sidebar-toggle {
+  display: none;
+  position: fixed;
+  top: 16px;
+  left: 16px;
+  z-index: 200;
+  background: var(--surface1);
+  border: 1px solid var(--border);
+  color: var(--text);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 20px;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--shadow);
+}
+
+/* ===== Main Content ===== */
+.main {
+  margin-left: var(--sidebar-w);
+  padding: 40px 48px 80px;
+  max-width: calc(860px + var(--sidebar-w) + 96px);
+}
+
+.page-title {
+  font-size: 32px;
+  font-weight: 800;
+  margin-bottom: 4px;
+  color: var(--text);
+}
+
+.page-subtitle {
+  font-size: 15px;
+  color: var(--muted);
+  margin-bottom: 36px;
+}
+
+/* ===== How-to Box ===== */
+.how-to {
+  background: var(--surface1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px 24px;
+  margin-bottom: 36px;
+}
+
+.how-to h3 {
+  font-size: 15px;
+  font-weight: 700;
+  margin-bottom: 8px;
+  color: var(--accent);
+}
+
+.how-to ul {
+  padding-left: 20px;
+  margin: 0;
+}
+
+.how-to li {
+  font-size: 14px;
+  color: var(--muted);
+  margin-bottom: 3px;
+}
+
+/* ===== Sections ===== */
+.section {
+  margin-bottom: 48px;
+}
+
+.section-label {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  padding: 3px 10px;
+  border-radius: 4px;
+  margin-bottom: 12px;
+}
+
+.section-label.review { background: var(--yellow-dim); color: var(--yellow); }
+.section-label.new { background: var(--green-dim); color: var(--green); }
+
+.section-title {
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 24px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--border);
+}
+
+/* ===== Concept Cards ===== */
+.concept {
+  background: var(--surface1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 28px;
+  margin-bottom: 28px;
+  box-shadow: var(--shadow);
+}
+
+.concept-header {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  margin-bottom: 6px;
+  flex-wrap: wrap;
+}
+
+.concept h3 {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.concept-meta {
+  font-size: 12px;
+  color: var(--muted);
+  background: var(--surface2);
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
+.concept h4 {
+  font-size: 15px;
+  font-weight: 600;
+  margin: 20px 0 8px;
+  color: var(--text);
+}
+
+.concept p, .concept li {
+  color: var(--text);
+  line-height: 1.7;
+}
+
+.concept ul, .concept ol {
+  padding-left: 22px;
+  margin: 8px 0;
+}
+
+.concept li {
+  margin-bottom: 4px;
+}
+
+/* ===== Code Blocks ===== */
+pre {
+  background: var(--code-bg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 16px 18px;
+  overflow-x: auto;
+  margin: 10px 0 14px;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--text);
+  position: relative;
+}
+
+code {
+  font-family: var(--font-mono);
+  font-size: 0.9em;
+}
+
+:not(pre) > code {
+  background: var(--surface2);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.88em;
+}
+
+/* ===== Good/Bad Examples ===== */
+.do-dont {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin: 10px 0;
+}
+
+.do-box, .dont-box {
+  border-radius: 6px;
+  padding: 14px;
+  border: 1px solid;
+}
+
+.do-box {
+  background: var(--green-dim);
+  border-color: var(--green);
+}
+
+.dont-box {
+  background: var(--red-dim);
+  border-color: var(--red);
+}
+
+.do-box .label, .dont-box .label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 6px;
+}
+
+.do-box .label { color: var(--green); }
+.dont-box .label { color: var(--red); }
+
+.do-box pre, .dont-box pre {
+  margin: 0;
+  border: none;
+  background: transparent;
+  padding: 0;
+  font-size: 12.5px;
+}
+
+/* ===== Key Rules ===== */
+.rules-list {
+  list-style: none;
+  padding: 0;
+  margin: 8px 0;
+}
+
+.rules-list li {
+  padding: 6px 0 6px 24px;
+  position: relative;
+}
+
+.rules-list li::before {
+  content: "\2192";
+  position: absolute;
+  left: 2px;
+  color: var(--accent);
+  font-weight: 700;
+}
+
+/* ===== Exercises ===== */
+.exercise {
+  background: var(--purple-dim);
+  border: 1px solid var(--purple);
+  border-radius: 6px;
+  padding: 14px 18px;
+  margin: 8px 0;
+}
+
+.exercise .exercise-label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--purple);
+  margin-bottom: 4px;
+}
+
+/* ===== Challenge (Review) ===== */
+.challenge {
+  background: var(--orange-dim);
+  border: 1px solid var(--orange);
+  border-radius: 6px;
+  padding: 14px 18px;
+  margin: 10px 0;
+}
+
+.challenge .challenge-label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--orange);
+  margin-bottom: 4px;
+}
+
+/* ===== Pitfall ===== */
+.pitfall {
+  background: var(--red-dim);
+  border-left: 3px solid var(--red);
+  border-radius: 0 6px 6px 0;
+  padding: 10px 14px;
+  margin: 10px 0;
+  font-size: 14px;
+}
+
+.pitfall strong {
+  color: var(--red);
+}
+
+/* ===== Connection ===== */
+.connection {
+  background: var(--accent-dim);
+  border-left: 3px solid var(--accent);
+  border-radius: 0 6px 6px 0;
+  padding: 10px 14px;
+  margin: 10px 0;
+  font-size: 14px;
+  color: var(--muted);
+}
+
+/* ===== Output Block ===== */
+.output {
+  background: var(--green-dim);
+  border: 1px solid var(--green);
+  border-radius: 6px;
+  padding: 12px 16px;
+  margin: 8px 0 14px;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--text);
+  white-space: pre-wrap;
+}
+
+.output .output-label {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--green);
+  margin-bottom: 4px;
+}
+
+/* ===== Footer ===== */
+.footer {
+  margin-top: 60px;
+  padding: 24px 0;
+  border-top: 1px solid var(--border);
+}
+
+.footer h4 {
+  font-size: 14px;
+  color: var(--muted);
+  margin-bottom: 10px;
+}
+
+.footer ul {
+  list-style: none;
+  padding: 0;
+}
+
+.footer li {
+  margin-bottom: 4px;
+  font-size: 14px;
+}
+
+.footer li a { color: var(--accent); }
+.footer .current { color: var(--green); font-weight: 600; }
+
+/* ===== Responsive ===== */
+@media (max-width: 900px) {
+  .sidebar {
+    transform: translateX(-100%);
+  }
+  .sidebar.open {
+    transform: translateX(0);
+    box-shadow: 4px 0 20px rgba(0,0,0,0.5);
+  }
+  #sidebar-toggle {
+    display: flex;
+  }
+  .main {
+    margin-left: 0;
+    padding: 60px 20px 60px;
+    max-width: 100%;
+  }
+  .do-dont {
+    grid-template-columns: 1fr;
+  }
+  #theme-toggle {
+    right: 14px;
+    top: 16px;
+  }
+}
+</style>
+</head>
+<body>
+
+<!-- Theme Toggle -->
+<button id="theme-toggle" aria-label="Toggle theme" title="Toggle light/dark theme">&#9789;</button>
+
+<!-- Mobile Sidebar Toggle -->
+<button id="sidebar-toggle" aria-label="Toggle sidebar">&#9776;</button>
+
+<!-- Sidebar -->
+<nav class="sidebar" id="sidebar">
+  <div class="sidebar-header">
+    <h2>Python Guide</h2>
+    <div class="subtitle">Day 6 &mdash; 2026-06-02</div>
+  </div>
+
+  <div class="sidebar-section">
+    <div class="sidebar-section-title">Review (6 concepts)</div>
+    <a href="#review-chainmap" class="sidebar-link">ChainMap</a>
+    <a href="#review-stacking-decorators" class="sidebar-link">Stacking &amp; Parameterized Decorators</a>
+    <a href="#review-operator" class="sidebar-link">operator Module</a>
+    <a href="#review-closures" class="sidebar-link">Closures &amp; nonlocal</a>
+    <a href="#review-lambda" class="sidebar-link">Lambda Functions</a>
+    <a href="#review-functools" class="sidebar-link">functools</a>
+  </div>
+
+  <div class="sidebar-section">
+    <div class="sidebar-section-title">OOP Mastery (4 concepts)</div>
+    <a href="#abc-protocol" class="sidebar-link">ABC &amp; Protocol</a>
+    <a href="#dunder-containers" class="sidebar-link">__getitem__, __len__, __contains__</a>
+    <a href="#dunder-iteration" class="sidebar-link">__iter__, __next__, __call__</a>
+    <a href="#descriptors" class="sidebar-link">Descriptors</a>
+  </div>
+
+  <div class="sidebar-section">
+    <div class="sidebar-section-title">Error Handling (1 concept)</div>
+    <a href="#exception-hierarchy" class="sidebar-link">Exception Hierarchy &amp; Custom Exceptions</a>
+  </div>
+</nav>
+
+<!-- Main Content -->
+<div class="main">
+
+<h1 class="page-title">Python Daily Guide</h1>
+<p class="page-subtitle">Day 6 &mdash; Tuesday, June 2, 2026 &bull; 6 reviews, 5 new concepts</p>
+
+<!-- How to Use -->
+<div class="how-to">
+  <h3>How to Use This Guide</h3>
+  <ul>
+    <li><strong>Review cards</strong> &mdash; skim the reminder, write the key pattern from memory, then try the challenge.</li>
+    <li><strong>New concepts</strong> &mdash; read the explanation, run every code example in a REPL, then do the exercises.</li>
+    <li><strong>Don't peek at solutions</strong> &mdash; struggle for at least 10 minutes before looking things up.</li>
+    <li><strong>Connections</strong> &mdash; pay attention to how concepts link together across days.</li>
+  </ul>
+</div>
+
+
+<!-- ============================================================ -->
+<!-- REVIEW SECTION -->
+<!-- ============================================================ -->
+<div class="section">
+  <span class="section-label review">Review</span>
+  <h2 class="section-title">Review &mdash; 6 Concepts</h2>
+
+  <!-- Review 1: ChainMap -->
+  <div class="concept" id="review-chainmap">
+    <div class="concept-header">
+      <h3>ChainMap</h3>
+      <span class="concept-meta">Collections &bull; 3 days since last review</span>
+    </div>
+
+    <h4>Quick Reminder</h4>
+    <p><code>ChainMap</code> groups multiple dicts as a single view. The first dict takes priority for lookups. Mutations only affect the first map. Useful for layered configs (defaults &rarr; env &rarr; CLI).</p>
+
+    <h4>Key Pattern</h4>
+<pre>from collections import ChainMap
+
+defaults = {"color": "blue", "size": "medium"}
+env_vars = {"color": "green"}
+cli_args = {"size": "large"}
+
+config = ChainMap(cli_args, env_vars, defaults)
+print(config["color"])  # green  (env_vars wins over defaults)
+print(config["size"])   # large  (cli_args wins over all)
+# Output: green
+# Output: large</pre>
+
+    <div class="challenge">
+      <div class="challenge-label">Challenge</div>
+      <p>Build a 3-layer config system: <code>defaults</code>, <code>file_config</code>, and <code>cli_overrides</code>. Create a <code>ChainMap</code>, then update a value via the chain. Verify only the first map is mutated by printing each individual dict.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>#1 Pitfall:</strong> Thinking mutations affect underlying dicts beyond the first one. <code>config["new_key"] = "value"</code> always writes to the first dict in the chain, even if the key exists in a later dict.
+    </div>
+  </div>
+
+  <!-- Review 2: Stacking & Parameterized Decorators -->
+  <div class="concept" id="review-stacking-decorators">
+    <div class="concept-header">
+      <h3>Stacking &amp; Parameterized Decorators</h3>
+      <span class="concept-meta">Decorators &bull; 3 days since last review</span>
+    </div>
+
+    <h4>Quick Reminder</h4>
+    <p>Decorators stack bottom-up (closest to function runs first). Parameterized decorators use a triple nesting: outer function takes args &rarr; returns the actual decorator &rarr; which returns the wrapper.</p>
+
+    <h4>Key Pattern</h4>
+<pre>from functools import wraps
+
+def repeat(n):
+    def decorator(func):
+        @wraps(func)
+        def wrapper(*args, **kwargs):
+            for _ in range(n):
+                result = func(*args, **kwargs)
+            return result
+        return wrapper
+    return decorator
+
+@repeat(3)
+def greet(name):
+    print(f"Hello, {name}!")
+
+greet("Alice")
+# Output: Hello, Alice!
+# Output: Hello, Alice!
+# Output: Hello, Alice!</pre>
+
+    <div class="challenge">
+      <div class="challenge-label">Challenge</div>
+      <p>Write a parameterized <code>@retry(max_attempts=3)</code> decorator that catches any exception and retries the function up to <code>max_attempts</code> times. If all attempts fail, re-raise the last exception. Use <code>@wraps</code>.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>#1 Pitfall:</strong> Forgetting <code>@wraps(func)</code> causes loss of <code>__name__</code>, <code>__doc__</code>, and other metadata from the original function.
+    </div>
+  </div>
+
+  <!-- Review 3: operator Module -->
+  <div class="concept" id="review-operator">
+    <div class="concept-header">
+      <h3>operator Module</h3>
+      <span class="concept-meta">Functions &bull; 3 days since last review &bull; first review</span>
+    </div>
+
+    <h4>Quick Reminder</h4>
+    <p><code>operator</code> provides function equivalents of operators. <code>itemgetter</code> for key extraction, <code>attrgetter</code> for attribute access, <code>methodcaller</code> for method invocation. Faster than lambdas for sorting and key functions.</p>
+
+    <h4>Key Pattern</h4>
+<pre>from operator import itemgetter, attrgetter
+
+data = [{"name": "Alice", "age": 30}, {"name": "Bob", "age": 25}]
+sorted_data = sorted(data, key=itemgetter("age"))
+print(sorted_data)
+# Output: [{'name': 'Bob', 'age': 25}, {'name': 'Alice', 'age': 30}]
+
+# Multi-key sorting:
+from operator import itemgetter
+records = [("Alice", 30), ("Bob", 25), ("Charlie", 30)]
+print(sorted(records, key=itemgetter(1, 0)))
+# Output: [('Bob', 25), ('Alice', 30), ('Charlie', 30)]</pre>
+
+    <div class="challenge">
+      <div class="challenge-label">Challenge</div>
+      <p>Given a list of objects with <code>.name</code> and <code>.score</code> attributes, sort by score descending then name ascending using <code>attrgetter</code>. Also use <code>methodcaller</code> to call <code>.upper()</code> on a list of strings.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>#1 Pitfall:</strong> <code>itemgetter</code> returns the value, not a modified object &mdash; it's a key function for sorting, not a transform function.
+    </div>
+  </div>
+
+  <!-- Review 4: Closures & nonlocal -->
+  <div class="concept" id="review-closures">
+    <div class="concept-header">
+      <h3>Closures &amp; nonlocal</h3>
+      <span class="concept-meta">Functions &bull; 2 days since last review</span>
+    </div>
+
+    <h4>Quick Reminder</h4>
+    <p>Inner functions capture variables from the enclosing scope. Use <code>nonlocal</code> to modify them. Factory pattern: outer function returns inner function with captured state.</p>
+
+    <h4>Key Pattern</h4>
+<pre>def counter(start=0):
+    count = start
+    def inc():
+        nonlocal count
+        count += 1
+        return count
+    return inc
+
+c = counter(10)
+print(c())  # 11
+print(c())  # 12
+print(c())  # 13</pre>
+
+    <div class="challenge">
+      <div class="challenge-label">Challenge</div>
+      <p>Write a <code>make_accumulator()</code> closure that tracks a running total. It should accept a value and add it to the total, returning the new total each time. E.g., <code>acc = make_accumulator(); acc(5) # 5; acc(3) # 8; acc(-2) # 6</code>.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>#1 Pitfall:</strong> Forgetting <code>nonlocal</code> &mdash; without it, assignment creates a new local variable instead of modifying the closure variable. You get <code>UnboundLocalError</code>.
+    </div>
+  </div>
+
+  <!-- Review 5: Lambda Functions -->
+  <div class="concept" id="review-lambda">
+    <div class="concept-header">
+      <h3>Lambda Functions</h3>
+      <span class="concept-meta">Functions &bull; 1 day since last review</span>
+    </div>
+
+    <h4>Quick Reminder</h4>
+    <p>Anonymous single-expression functions. Best for short callbacks (sort keys, map/filter). Don't assign to variables &mdash; use <code>def</code> instead.</p>
+
+    <h4>Key Pattern</h4>
+<pre>pairs = [(1, "b"), (3, "a"), (2, "c")]
+sorted_pairs = sorted(pairs, key=lambda x: x[1])
+print(sorted_pairs)
+# Output: [(3, 'a'), (1, 'b'), (2, 'c')]</pre>
+
+    <div class="challenge">
+      <div class="challenge-label">Challenge</div>
+      <p>Use <code>map()</code> with a lambda to extract the domain from a list of email addresses. E.g., <code>["alice@gmail.com", "bob@work.org"]</code> &rarr; <code>["gmail.com", "work.org"]</code>.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>#1 Pitfall:</strong> Assigning lambda to a variable (<code>f = lambda x: x+1</code>) defeats its purpose and makes debugging harder (no function name in tracebacks). Use <code>def</code> for named functions.
+    </div>
+  </div>
+
+  <!-- Review 6: functools -->
+  <div class="concept" id="review-functools">
+    <div class="concept-header">
+      <h3>functools</h3>
+      <span class="concept-meta">Functions &bull; 1 day since last review</span>
+    </div>
+
+    <h4>Quick Reminder</h4>
+    <p><code>partial</code> for pre-filling args, <code>reduce</code> for cumulative operations, <code>lru_cache</code>/<code>cache</code> for memoization, <code>total_ordering</code> for comparison operators, <code>singledispatch</code> for type-based dispatch.</p>
+
+    <h4>Key Pattern</h4>
+<pre>from functools import cache
+
+@cache
+def fib(n):
+    return n if n &lt; 2 else fib(n - 1) + fib(n - 2)
+
+print(fib(30))
+# Output: 832040</pre>
+
+    <div class="challenge">
+      <div class="challenge-label">Challenge</div>
+      <p>Use <code>functools.partial</code> to create a <code>json_dumps_pretty</code> function that always calls <code>json.dumps</code> with <code>indent=2</code> and <code>sort_keys=True</code>. Then use it to serialize a nested dict.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>#1 Pitfall:</strong> Using <code>@cache</code> with mutable arguments (lists, dicts) &mdash; they're unhashable and will raise <code>TypeError</code>. Convert to tuples or frozensets first.
+    </div>
+  </div>
+
+</div><!-- end review section -->
+
+
+<!-- ============================================================ -->
+<!-- NEW CONCEPTS SECTION 1: OOP Mastery -->
+<!-- ============================================================ -->
+<div class="section">
+  <span class="section-label new">New</span>
+  <h2 class="section-title">OOP Mastery (continued)</h2>
+
+  <!-- Concept 1: ABC & Protocol -->
+  <div class="concept" id="abc-protocol">
+    <div class="concept-header">
+      <h3>Abstract Base Classes &amp; Protocol</h3>
+      <span class="concept-meta">OOP &bull; New</span>
+    </div>
+
+    <h4>Why It Matters</h4>
+    <p>ABCs enforce that subclasses implement required methods &mdash; catch missing implementations at instantiation time, not at runtime during a method call. Protocols provide structural ("duck") typing &mdash; any class with matching methods satisfies the protocol without inheritance. Together, they give you two powerful ways to define interfaces.</p>
+
+    <h4>Progressive Explanation</h4>
+
+    <p><strong>Basic ABC &mdash; enforcing method implementation:</strong></p>
+<pre>from abc import ABC, abstractmethod
+
+class Shape(ABC):
+    @abstractmethod
+    def area(self) -&gt; float:
+        """Return the area of the shape."""
+        ...
+
+    @abstractmethod
+    def perimeter(self) -&gt; float:
+        """Return the perimeter of the shape."""
+        ...
+
+    def describe(self) -&gt; str:
+        """Concrete method -- subclasses get this for free."""
+        return f"{type(self).__name__}: area={self.area():.2f}, perimeter={self.perimeter():.2f}"
+
+# This would fail:
+# s = Shape()  # TypeError: Can't instantiate abstract class Shape</pre>
+
+    <p><strong>Implementing an ABC &mdash; all abstract methods must be defined:</strong></p>
+<pre>import math
+
+class Circle(Shape):
+    def __init__(self, radius: float):
+        self.radius = radius
+
+    def area(self) -&gt; float:
+        return math.pi * self.radius ** 2
+
+    def perimeter(self) -&gt; float:
+        return 2 * math.pi * self.radius
+
+class Rectangle(Shape):
+    def __init__(self, width: float, height: float):
+        self.width = width
+        self.height = height
+
+    def area(self) -&gt; float:
+        return self.width * self.height
+
+    def perimeter(self) -&gt; float:
+        return 2 * (self.width + self.height)
+
+c = Circle(5)
+r = Rectangle(3, 4)
+print(c.describe())
+print(r.describe())
+print(isinstance(c, Shape))  # True
+# Output: Circle: area=78.54, perimeter=31.42
+# Output: Rectangle: area=12.00, perimeter=14.00
+# Output: True</pre>
+
+    <p><strong>Protocol &mdash; structural typing (no inheritance needed):</strong></p>
+<pre>from typing import Protocol
+
+class Drawable(Protocol):
+    def draw(self) -&gt; str:
+        """Any class with a draw() method satisfies this."""
+        ...
+
+class Button:
+    """Not inheriting from Drawable -- but has draw()."""
+    def __init__(self, label: str):
+        self.label = label
+
+    def draw(self) -&gt; str:
+        return f"[{self.label}]"
+
+class Icon:
+    """Also not inheriting from Drawable."""
+    def __init__(self, name: str):
+        self.name = name
+
+    def draw(self) -&gt; str:
+        return f"&lt;{self.name}&gt;"
+
+def render(widget: Drawable) -&gt; None:
+    """Type checkers know this expects anything with draw()."""
+    print(widget.draw())
+
+render(Button("OK"))     # [OK]
+render(Icon("star"))     # &lt;star&gt;</pre>
+
+    <p><strong>runtime_checkable Protocol &mdash; isinstance support:</strong></p>
+<pre>from typing import Protocol, runtime_checkable
+
+@runtime_checkable
+class Sized(Protocol):
+    def __len__(self) -&gt; int: ...
+
+print(isinstance([1, 2, 3], Sized))   # True -- list has __len__
+print(isinstance("hello", Sized))     # True -- str has __len__
+print(isinstance(42, Sized))          # False -- int has no __len__</pre>
+
+    <p><strong>When to use which:</strong></p>
+    <ul>
+    <li><a href="python-guides/python-guide-2026-07-08.html">2026-07-08</a> (Day 38)</li>
+      <li><strong>ABC</strong> &mdash; strict hierarchies, shared concrete methods, registration, runtime checks with <code>isinstance</code>.</li>
+      <li><strong>Protocol</strong> &mdash; flexible interfaces, third-party code you can't modify, minimal coupling, "if it quacks like a duck" scenarios.</li>
+    </ul>
+
+    <h4>Code Examples</h4>
+
+    <p><strong>Example 1: ABC with abstract property</strong></p>
+<pre>from abc import ABC, abstractmethod
+
+class Animal(ABC):
+    def __init__(self, name: str):
+        self.name = name
+
+    @property
+    @abstractmethod
+    def sound(self) -&gt; str:
+        """Each animal must define its sound."""
+        ...
+
+    def speak(self) -&gt; str:
+        return f"{self.name} says {self.sound}!"
+
+class Dog(Animal):
+    @property
+    def sound(self) -&gt; str:
+        return "Woof"
+
+class Cat(Animal):
+    @property
+    def sound(self) -&gt; str:
+        return "Meow"
+
+print(Dog("Rex").speak())
+print(Cat("Whiskers").speak())
+# Output: Rex says Woof!
+# Output: Whiskers says Meow!</pre>
+
+    <p><strong>Example 2: ABC register for virtual subclasses</strong></p>
+<pre>from abc import ABC, abstractmethod
+
+class Serializable(ABC):
+    @abstractmethod
+    def serialize(self) -&gt; str: ...
+
+# Register a class you don't control as a virtual subclass
+Serializable.register(str)
+
+print(isinstance("hello", Serializable))  # True
+print(issubclass(str, Serializable))      # True
+# But str doesn't actually have a serialize() method -- use carefully!</pre>
+
+    <p><strong>Example 3: Protocol with multiple methods</strong></p>
+<pre>from typing import Protocol
+
+class Repository(Protocol):
+    def get(self, id: int) -&gt; dict: ...
+    def save(self, item: dict) -&gt; None: ...
+    def delete(self, id: int) -&gt; None: ...
+
+class InMemoryRepo:
+    def __init__(self):
+        self._store: dict[int, dict] = {}
+
+    def get(self, id: int) -&gt; dict:
+        return self._store[id]
+
+    def save(self, item: dict) -&gt; None:
+        self._store[item["id"]] = item
+
+    def delete(self, id: int) -&gt; None:
+        del self._store[id]
+
+def process_items(repo: Repository) -&gt; None:
+    repo.save({"id": 1, "name": "Widget"})
+    print(repo.get(1))
+
+process_items(InMemoryRepo())
+# Output: {'id': 1, 'name': 'Widget'}</pre>
+
+    <h4>Common Mistakes</h4>
+    <div class="do-dont">
+      <div class="dont-box">
+        <div class="label">Don't</div>
+<pre># Forgetting @abstractmethod
+class Shape(ABC):
+    def area(self):  # not abstract!
+        pass
+
+s = Shape()  # No error -- but shouldn't be possible</pre>
+      </div>
+      <div class="do-box">
+        <div class="label">Do</div>
+<pre>class Shape(ABC):
+    @abstractmethod
+    def area(self):
+        ...
+
+# s = Shape()  # TypeError -- correct!</pre>
+      </div>
+    </div>
+
+    <div class="do-dont">
+      <div class="dont-box">
+        <div class="label">Don't</div>
+<pre># Trying to instantiate an ABC directly
+class Vehicle(ABC):
+    @abstractmethod
+    def start(self): ...
+
+v = Vehicle()  # TypeError!</pre>
+      </div>
+      <div class="do-box">
+        <div class="label">Do</div>
+<pre>class Car(Vehicle):
+    def start(self):
+        return "Vroom!"
+
+v = Car()  # OK -- implements start()
+print(v.start())  # Vroom!</pre>
+      </div>
+    </div>
+
+    <h4>Key Rules</h4>
+    <ul class="rules-list">
+      <li>Every <code>@abstractmethod</code> must be overridden in concrete subclasses, or instantiation fails.</li>
+      <li>ABCs can have concrete methods &mdash; subclasses inherit them for free.</li>
+      <li>Protocols don't require inheritance &mdash; any class with matching signatures satisfies the protocol.</li>
+      <li>Use <code>@runtime_checkable</code> on Protocols if you need <code>isinstance()</code> checks (but prefer static type checking).</li>
+      <li>Don't use <code>ABC.register()</code> unless you have a very good reason &mdash; it lies to <code>isinstance()</code>.</li>
+    </ul>
+
+    <h4>Exercises</h4>
+    <div class="exercise">
+      <div class="exercise-label">Exercise 1</div>
+      <p>Create a <code>Shape</code> ABC with abstract methods <code>area()</code> and <code>perimeter()</code>. Implement <code>Circle</code>, <code>Rectangle</code>, and <code>Triangle</code> subclasses. Add a concrete <code>is_larger_than(other)</code> method on the ABC that compares areas.</p>
+    </div>
+    <div class="exercise">
+      <div class="exercise-label">Exercise 2</div>
+      <p>Define a <code>Cacheable</code> Protocol with methods <code>cache_key() -&gt; str</code> and <code>to_bytes() -&gt; bytes</code>. Write a <code>cache_store(item: Cacheable)</code> function. Create two unrelated classes that satisfy <code>Cacheable</code> without inheriting from it.</p>
+    </div>
+    <div class="exercise">
+      <div class="exercise-label">Exercise 3</div>
+      <p>Create a <code>Drawable</code> Protocol and a <code>Canvas</code> class that accepts a list of <code>Drawable</code> objects. The canvas should call <code>draw()</code> on each, collecting the output. Test with three different classes that each implement <code>draw()</code>.</p>
+    </div>
+
+    <div class="connection">
+      <strong>Connections:</strong> ABCs build on inheritance &amp; MRO (Day 5). Protocol connects to duck typing &mdash; Python's core philosophy. Descriptors (later today) power how <code>@abstractmethod</code> marks methods internally.
+    </div>
+  </div>
+
+  <!-- Concept 2: Dunder Methods — containers -->
+  <div class="concept" id="dunder-containers">
+    <div class="concept-header">
+      <h3>Dunder Methods &mdash; __getitem__, __len__, __contains__</h3>
+      <span class="concept-meta">OOP &bull; New</span>
+    </div>
+
+    <h4>Why It Matters</h4>
+    <p>These dunders make your objects behave like built-in containers. <code>__getitem__</code> enables <code>obj[key]</code> indexing and even iteration as a fallback. <code>__len__</code> enables <code>len()</code> and truthiness testing. <code>__contains__</code> enables the <code>in</code> operator. Together, they let your custom classes feel native.</p>
+
+    <h4>Progressive Explanation</h4>
+
+    <p><strong>Basic __getitem__ and __len__:</strong></p>
+<pre>class Deck:
+    RANKS = "2 3 4 5 6 7 8 9 10 J Q K A".split()
+    SUITS = "Clubs Diamonds Hearts Spades".split()
+
+    def __init__(self):
+        self._cards = [
+            f"{rank} of {suit}"
+            for suit in self.SUITS
+            for rank in self.RANKS
+        ]
+
+    def __len__(self) -&gt; int:
+        return len(self._cards)
+
+    def __getitem__(self, index):
+        return self._cards[index]
+
+deck = Deck()
+print(len(deck))        # 52
+print(deck[0])          # 2 of Clubs
+print(deck[-1])         # A of Spades</pre>
+
+    <p><strong>__getitem__ enables iteration automatically:</strong></p>
+<pre># Even without __iter__, __getitem__ makes the object iterable!
+deck = Deck()
+for card in deck[:3]:    # slicing works too
+    print(card)
+# Output: 2 of Clubs
+# Output: 3 of Clubs
+# Output: 4 of Clubs
+
+# reversed() also works with __getitem__ + __len__
+print(list(reversed(deck))[:2])
+# Output: ['A of Spades', 'K of Spades']</pre>
+
+    <p><strong>__contains__ for the <code>in</code> operator:</strong></p>
+<pre>class Deck:
+    RANKS = "2 3 4 5 6 7 8 9 10 J Q K A".split()
+    SUITS = "Clubs Diamonds Hearts Spades".split()
+
+    def __init__(self):
+        self._cards = [
+            f"{rank} of {suit}"
+            for suit in self.SUITS
+            for rank in self.RANKS
+        ]
+
+    def __len__(self):
+        return len(self._cards)
+
+    def __getitem__(self, index):
+        return self._cards[index]
+
+    def __contains__(self, card: str) -&gt; bool:
+        return card in self._cards
+
+deck = Deck()
+print("A of Spades" in deck)    # True
+print("Joker" in deck)          # False</pre>
+
+    <p><strong>__getitem__ with slice support:</strong></p>
+<pre>class Matrix:
+    def __init__(self, rows: list[list[float]]):
+        self._rows = rows
+
+    def __getitem__(self, key):
+        if isinstance(key, tuple):
+            row, col = key
+            return self._rows[row][col]
+        return self._rows[key]  # single index returns a row
+
+    def __len__(self) -&gt; int:
+        return len(self._rows)
+
+m = Matrix([[1, 2, 3], [4, 5, 6], [7, 8, 9]])
+print(m[0])        # [1, 2, 3]  -- entire row
+print(m[1, 2])     # 6          -- row 1, col 2
+print(len(m))      # 3</pre>
+
+    <p><strong>__len__ and truthiness:</strong></p>
+<pre>class Playlist:
+    def __init__(self):
+        self._songs = []
+
+    def add(self, song: str):
+        self._songs.append(song)
+
+    def __len__(self) -&gt; int:
+        return len(self._songs)
+
+    def __getitem__(self, index):
+        return self._songs[index]
+
+playlist = Playlist()
+print(bool(playlist))  # False -- empty, len() == 0
+
+playlist.add("Bohemian Rhapsody")
+playlist.add("Stairway to Heaven")
+print(bool(playlist))  # True -- len() == 2
+
+if playlist:  # truthy because len > 0
+    print(f"Playing {len(playlist)} songs")
+# Output: Playing 2 songs</pre>
+
+    <h4>Code Examples</h4>
+
+    <p><strong>Example: Full container &mdash; a custom Registry</strong></p>
+<pre>class Registry:
+    """A named collection that supports indexing, len, and 'in'."""
+
+    def __init__(self, name: str):
+        self.name = name
+        self._items: dict[str, object] = {}
+
+    def register(self, key: str, value: object) -&gt; None:
+        self._items[key] = value
+
+    def __getitem__(self, key: str) -&gt; object:
+        if key not in self._items:
+            raise KeyError(f"'{key}' not found in {self.name}")
+        return self._items[key]
+
+    def __len__(self) -&gt; int:
+        return len(self._items)
+
+    def __contains__(self, key: str) -&gt; bool:
+        return key in self._items
+
+    def __repr__(self) -&gt; str:
+        return f"Registry({self.name!r}, items={len(self)})"
+
+plugins = Registry("plugins")
+plugins.register("auth", {"version": "2.0"})
+plugins.register("cache", {"version": "1.5"})
+
+print(len(plugins))           # 2
+print("auth" in plugins)      # True
+print(plugins["cache"])       # {'version': '1.5'}
+print(plugins)                # Registry('plugins', items=2)</pre>
+
+    <h4>Common Mistakes</h4>
+    <div class="do-dont">
+      <div class="dont-box">
+        <div class="label">Don't</div>
+<pre>class Grid:
+    def __getitem__(self, index):
+        # Doesn't handle slices!
+        return self._data[index]
+
+g = Grid()
+# g[1:3]  # might work or break depending
+#           on internal data structure</pre>
+      </div>
+      <div class="do-box">
+        <div class="label">Do</div>
+<pre>class Grid:
+    def __getitem__(self, index):
+        if isinstance(index, slice):
+            return self._data[index]
+        return self._data[index]</pre>
+      </div>
+    </div>
+
+    <div class="do-dont">
+      <div class="dont-box">
+        <div class="label">Don't</div>
+<pre># Forgetting that __getitem__ enables iteration
+class Data:
+    def __getitem__(self, i):
+        if i &gt;= 10:
+            raise IndexError  # REQUIRED to stop
+        return i * 2
+
+# Without IndexError, iteration is infinite!</pre>
+      </div>
+      <div class="do-box">
+        <div class="label">Do</div>
+<pre>class Data:
+    def __getitem__(self, i):
+        if i &gt;= len(self._items):
+            raise IndexError
+        return self._items[i]
+
+# IndexError tells for-loop when to stop</pre>
+      </div>
+    </div>
+
+    <h4>Key Rules</h4>
+    <ul class="rules-list">
+      <li><code>__getitem__</code> enables <code>obj[key]</code>, iteration (fallback), and <code>reversed()</code> (when paired with <code>__len__</code>).</li>
+      <li><code>__len__</code> enables <code>len(obj)</code> and truthiness &mdash; empty containers are falsy.</li>
+      <li><code>__contains__</code> enables <code>in</code> &mdash; without it, Python falls back to iterating via <code>__getitem__</code>.</li>
+      <li>Always raise <code>IndexError</code> for out-of-range integer keys to support proper iteration termination.</li>
+      <li>Handle <code>slice</code> objects in <code>__getitem__</code> if your class should support slicing.</li>
+    </ul>
+
+    <h4>Exercises</h4>
+    <div class="exercise">
+      <div class="exercise-label">Exercise 1</div>
+      <p>Build a <code>Sentence</code> class that takes a string and supports <code>len()</code> (word count), indexing by word position, <code>in</code> to check if a word exists, and slicing to get sub-sentences.</p>
+    </div>
+    <div class="exercise">
+      <div class="exercise-label">Exercise 2</div>
+      <p>Create a <code>FibSequence</code> class where <code>__getitem__(n)</code> returns the nth Fibonacci number, <code>__len__</code> returns a configurable max, and <code>__contains__</code> checks if a number is a Fibonacci number (up to the max).</p>
+    </div>
+
+    <div class="connection">
+      <strong>Connections:</strong> Builds on <code>__init__</code>/<code>__repr__</code>/<code>__str__</code> from Day 4. Next concept (<code>__iter__</code>/<code>__next__</code>) provides proper iteration protocol &mdash; more flexible than <code>__getitem__</code> fallback.
+    </div>
+  </div>
+
+  <!-- Concept 3: Dunder Methods — __iter__, __next__, __call__ -->
+  <div class="concept" id="dunder-iteration">
+    <div class="concept-header">
+      <h3>Dunder Methods &mdash; __iter__, __next__, __call__</h3>
+      <span class="concept-meta">OOP &bull; New</span>
+    </div>
+
+    <h4>Why It Matters</h4>
+    <p><code>__iter__</code> + <code>__next__</code> make your objects work in <code>for</code> loops, comprehensions, and anywhere Python expects an iterable. <code>__call__</code> makes instances callable like functions &mdash; perfect for stateful callbacks, configurable strategies, and decorator classes.</p>
+
+    <h4>Progressive Explanation</h4>
+
+    <p><strong>Basic iterator &mdash; __iter__ returning self, __next__ producing values:</strong></p>
+<pre>class CountDown:
+    def __init__(self, start: int):
+        self.current = start
+
+    def __iter__(self):
+        return self
+
+    def __next__(self) -&gt; int:
+        if self.current &lt; 0:
+            raise StopIteration
+        value = self.current
+        self.current -= 1
+        return value
+
+for n in CountDown(5):
+    print(n, end=" ")
+print()
+# Output: 5 4 3 2 1 0</pre>
+
+    <p><strong>Separate iterator from iterable (reusable):</strong></p>
+<pre>class Range:
+    """Iterable that can be looped over multiple times."""
+    def __init__(self, start: int, stop: int):
+        self.start = start
+        self.stop = stop
+
+    def __iter__(self):
+        # Return a NEW iterator each time -- allows multiple loops
+        return self._RangeIterator(self.start, self.stop)
+
+    class _RangeIterator:
+        def __init__(self, current, stop):
+            self.current = current
+            self.stop = stop
+
+        def __iter__(self):
+            return self
+
+        def __next__(self):
+            if self.current &gt;= self.stop:
+                raise StopIteration
+            value = self.current
+            self.current += 1
+            return value
+
+r = Range(1, 4)
+print(list(r))   # [1, 2, 3]
+print(list(r))   # [1, 2, 3]  -- works again!</pre>
+
+    <p><strong>__iter__ returning a generator (simplest approach):</strong></p>
+<pre>class EvenNumbers:
+    def __init__(self, limit: int):
+        self.limit = limit
+
+    def __iter__(self):
+        for n in range(0, self.limit, 2):
+            yield n
+
+evens = EvenNumbers(10)
+print(list(evens))   # [0, 2, 4, 6, 8]
+print(list(evens))   # [0, 2, 4, 6, 8]  -- works again!</pre>
+
+    <p><strong>__call__ &mdash; making instances callable:</strong></p>
+<pre>class Multiplier:
+    def __init__(self, factor: int):
+        self.factor = factor
+
+    def __call__(self, value: int) -&gt; int:
+        return value * self.factor
+
+double = Multiplier(2)
+triple = Multiplier(3)
+
+print(double(5))     # 10
+print(triple(5))     # 15
+print(callable(double))  # True
+
+# Works with map, sorted, etc.
+numbers = [1, 2, 3, 4, 5]
+print(list(map(double, numbers)))
+# Output: [2, 4, 6, 8, 10]</pre>
+
+    <p><strong>Stateful callable &mdash; a call counter:</strong></p>
+<pre>class CallCounter:
+    def __init__(self, func):
+        self.func = func
+        self.count = 0
+
+    def __call__(self, *args, **kwargs):
+        self.count += 1
+        return self.func(*args, **kwargs)
+
+@CallCounter
+def add(a, b):
+    return a + b
+
+print(add(2, 3))       # 5
+print(add(10, 20))     # 30
+print(add.count)        # 2</pre>
+
+    <h4>Code Examples</h4>
+
+    <p><strong>Example 1: Fibonacci iterator</strong></p>
+<pre>class Fibonacci:
+    def __init__(self, max_count: int):
+        self.max_count = max_count
+
+    def __iter__(self):
+        a, b = 0, 1
+        for _ in range(self.max_count):
+            yield a
+            a, b = b, a + b
+
+fib = Fibonacci(10)
+print(list(fib))
+# Output: [0, 1, 1, 2, 3, 5, 8, 13, 21, 34]
+
+# Can iterate again because __iter__ returns a new generator
+print(sum(fib))
+# Output: 88</pre>
+
+    <p><strong>Example 2: Callable pipeline</strong></p>
+<pre>class Pipeline:
+    def __init__(self):
+        self._steps = []
+
+    def add_step(self, func):
+        self._steps.append(func)
+        return self  # for chaining
+
+    def __call__(self, data):
+        result = data
+        for step in self._steps:
+            result = step(result)
+        return result
+
+pipe = Pipeline()
+pipe.add_step(str.strip).add_step(str.lower).add_step(str.title)
+
+print(pipe("  hello WORLD  "))
+# Output: Hello World</pre>
+
+    <p><strong>Example 3: Iterator vs iterable pattern comparison</strong></p>
+<pre># Pattern 1: __iter__ returns self (iterator -- single use)
+class SingleUse:
+    def __init__(self, items):
+        self._items = iter(items)
+
+    def __iter__(self):
+        return self
+
+    def __next__(self):
+        return next(self._items)
+
+s = SingleUse([1, 2, 3])
+print(list(s))   # [1, 2, 3]
+print(list(s))   # []  -- exhausted!
+
+# Pattern 2: __iter__ returns new iterator (iterable -- reusable)
+class Reusable:
+    def __init__(self, items):
+        self._items = list(items)
+
+    def __iter__(self):
+        return iter(self._items)
+
+r = Reusable([1, 2, 3])
+print(list(r))   # [1, 2, 3]
+print(list(r))   # [1, 2, 3]  -- fresh each time</pre>
+
+    <h4>Common Mistakes</h4>
+    <div class="do-dont">
+      <div class="dont-box">
+        <div class="label">Don't</div>
+<pre>class BadIter:
+    def __init__(self, n):
+        self.n = n
+        self.i = 0
+
+    def __iter__(self):
+        return self
+
+    def __next__(self):
+        self.i += 1
+        return self.i  # Never raises StopIteration!
+        # for loop NEVER stops</pre>
+      </div>
+      <div class="do-box">
+        <div class="label">Do</div>
+<pre>class GoodIter:
+    def __init__(self, n):
+        self.n = n
+        self.i = 0
+
+    def __iter__(self):
+        return self
+
+    def __next__(self):
+        if self.i &gt;= self.n:
+            raise StopIteration
+        self.i += 1
+        return self.i</pre>
+      </div>
+    </div>
+
+    <div class="do-dont">
+      <div class="dont-box">
+        <div class="label">Don't</div>
+<pre># __iter__ returns self -- can't iterate twice
+class Data:
+    def __init__(self, items):
+        self._it = iter(items)
+    def __iter__(self):
+        return self  # same iterator object
+    def __next__(self):
+        return next(self._it)</pre>
+      </div>
+      <div class="do-box">
+        <div class="label">Do</div>
+<pre># __iter__ returns a new generator each time
+class Data:
+    def __init__(self, items):
+        self._items = list(items)
+    def __iter__(self):
+        return iter(self._items)  # fresh iterator</pre>
+      </div>
+    </div>
+
+    <h4>Key Rules</h4>
+    <ul class="rules-list">
+      <li><code>__iter__</code> must return an iterator (an object with <code>__next__</code>).</li>
+      <li><code>__next__</code> must raise <code>StopIteration</code> when exhausted &mdash; forgetting this creates infinite loops.</li>
+      <li>For reusable iteration, return a new iterator from <code>__iter__</code> (generator or separate class).</li>
+      <li><code>__call__</code> makes instances callable &mdash; <code>callable(obj)</code> returns <code>True</code>.</li>
+      <li>Prefer <code>yield</code> in <code>__iter__</code> over manual <code>__next__</code> &mdash; it's simpler and handles <code>StopIteration</code> automatically.</li>
+    </ul>
+
+    <h4>Exercises</h4>
+    <div class="exercise">
+      <div class="exercise-label">Exercise 1</div>
+      <p>Build a <code>Fibonacci</code> iterator class using <code>__iter__</code> and <code>__next__</code> (not generators) that produces the first <code>n</code> Fibonacci numbers. Verify it works in a <code>for</code> loop.</p>
+    </div>
+    <div class="exercise">
+      <div class="exercise-label">Exercise 2</div>
+      <p>Create a <code>Logger</code> class with <code>__call__</code> that logs every call with a timestamp. Wrap it around a function and verify that <code>logger.history</code> tracks all calls and arguments.</p>
+    </div>
+    <div class="exercise">
+      <div class="exercise-label">Exercise 3</div>
+      <p>Write a <code>Cycle</code> iterable that loops over its items infinitely (like <code>itertools.cycle</code>). Use <code>__iter__</code> that yields items in an infinite loop. Test by taking the first 10 elements from a 3-element cycle.</p>
+    </div>
+
+    <div class="connection">
+      <strong>Connections:</strong> <code>__getitem__</code> (previous concept) provides iteration fallback, but <code>__iter__</code> is the proper protocol. Generator expressions (reviewed today) are syntactic sugar for the iterator protocol. <code>__call__</code> connects to decorators &mdash; decorator classes use <code>__call__</code> as the wrapper.
+    </div>
+  </div>
+
+  <!-- Concept 4: Descriptors -->
+  <div class="concept" id="descriptors">
+    <div class="concept-header">
+      <h3>Descriptors &mdash; __get__, __set__, __delete__</h3>
+      <span class="concept-meta">OOP &bull; New</span>
+    </div>
+
+    <h4>Why It Matters</h4>
+    <p>Descriptors are the mechanism behind <code>@property</code>, <code>@classmethod</code>, <code>@staticmethod</code>, and <code>__slots__</code>. Understanding descriptors means understanding how Python attribute access really works. When you need reusable attribute validation or computed attributes across many classes, descriptors are the tool.</p>
+
+    <h4>Progressive Explanation</h4>
+
+    <p><strong>The descriptor protocol &mdash; three methods:</strong></p>
+<pre># A descriptor is any object that defines __get__, __set__, or __delete__.
+# When assigned as a CLASS attribute, Python calls these methods
+# automatically during attribute access.
+
+# __get__(self, obj, objtype)  -- triggered on attribute read
+# __set__(self, obj, value)    -- triggered on attribute assignment
+# __delete__(self, obj)        -- triggered on attribute deletion</pre>
+
+    <p><strong>Basic descriptor &mdash; a type-checked attribute:</strong></p>
+<pre>class Typed:
+    """Descriptor that enforces a type on assignment."""
+
+    def __init__(self, name: str, expected_type: type):
+        self.name = name
+        self.expected_type = expected_type
+        self.storage_name = f"_typed_{name}"
+
+    def __get__(self, obj, objtype=None):
+        if obj is None:
+            return self  # accessed on the class, not an instance
+        return getattr(obj, self.storage_name, None)
+
+    def __set__(self, obj, value):
+        if not isinstance(value, self.expected_type):
+            raise TypeError(
+                f"{self.name} must be {self.expected_type.__name__}, "
+                f"got {type(value).__name__}"
+            )
+        setattr(obj, self.storage_name, value)
+
+class Person:
+    name = Typed("name", str)
+    age = Typed("age", int)
+
+    def __init__(self, name: str, age: int):
+        self.name = name   # triggers Typed.__set__
+        self.age = age     # triggers Typed.__set__
+
+p = Person("Alice", 30)
+print(p.name)  # Alice  (triggers Typed.__get__)
+print(p.age)   # 30
+
+try:
+    p.age = "thirty"  # triggers Typed.__set__ -> TypeError
+except TypeError as e:
+    print(e)
+# Output: age must be int, got str</pre>
+
+    <p><strong>Data descriptors vs non-data descriptors:</strong></p>
+<pre># Data descriptor: defines __set__ (or __delete__)
+# Non-data descriptor: only defines __get__
+
+# Lookup order:
+# 1. Data descriptors (have __set__) WIN over instance __dict__
+# 2. Instance __dict__ WINS over non-data descriptors (only __get__)
+# 3. Non-data descriptors (only __get__) as last resort
+
+class DataDesc:
+    """Data descriptor -- has __set__, so it wins over instance dict."""
+    def __get__(self, obj, objtype=None):
+        return "from data descriptor"
+    def __set__(self, obj, value):
+        pass  # intercepts all assignments
+
+class NonDataDesc:
+    """Non-data descriptor -- only __get__, instance dict can override."""
+    def __get__(self, obj, objtype=None):
+        return "from non-data descriptor"
+
+class MyClass:
+    data = DataDesc()
+    non_data = NonDataDesc()
+
+obj = MyClass()
+obj.__dict__["data"] = "instance value"
+obj.__dict__["non_data"] = "instance value"
+
+print(obj.data)      # from data descriptor  (data desc wins!)
+print(obj.non_data)  # instance value  (instance dict wins!)</pre>
+
+    <p><strong>How @property is implemented using descriptors:</strong></p>
+<pre># @property is just a data descriptor!
+# Here's a simplified version:
+
+class MyProperty:
+    def __init__(self, fget=None, fset=None, fdel=None):
+        self.fget = fget
+        self.fset = fset
+        self.fdel = fdel
+
+    def __get__(self, obj, objtype=None):
+        if obj is None:
+            return self
+        if self.fget is None:
+            raise AttributeError("unreadable attribute")
+        return self.fget(obj)
+
+    def __set__(self, obj, value):
+        if self.fset is None:
+            raise AttributeError("can't set attribute")
+        self.fset(obj, value)
+
+    def setter(self, fset):
+        return type(self)(self.fget, fset, self.fdel)
+
+class Demo:
+    def __init__(self, x):
+        self._x = x
+
+    @MyProperty
+    def x(self):
+        return self._x
+
+    @x.setter
+    def x(self, value):
+        self._x = value
+
+d = Demo(10)
+print(d.x)    # 10
+d.x = 20
+print(d.x)    # 20</pre>
+
+    <p><strong>The shared-state bug &mdash; the #1 descriptor mistake:</strong></p>
+<pre># WRONG: storing values on the descriptor itself
+class BadValidator:
+    def __init__(self):
+        self.value = None  # shared across ALL instances!
+
+    def __get__(self, obj, objtype=None):
+        return self.value
+
+    def __set__(self, obj, value):
+        self.value = value  # stored on descriptor, not instance
+
+class Thing:
+    x = BadValidator()
+
+a = Thing()
+b = Thing()
+a.x = 10
+b.x = 20
+print(a.x)  # 20  -- WRONG! b's assignment overwrote a's value
+
+# CORRECT: store values on the instance
+class GoodValidator:
+    def __init__(self, name):
+        self.storage_name = f"_{name}"
+
+    def __get__(self, obj, objtype=None):
+        if obj is None:
+            return self
+        return getattr(obj, self.storage_name, None)
+
+    def __set__(self, obj, value):
+        setattr(obj, self.storage_name, value)  # stored on instance
+
+class Thing:
+    x = GoodValidator("x")
+
+a = Thing()
+b = Thing()
+a.x = 10
+b.x = 20
+print(a.x)  # 10  -- correct!</pre>
+
+    <h4>Code Examples</h4>
+
+    <p><strong>Example 1: Range-validated descriptor</strong></p>
+<pre>class Bounded:
+    """Descriptor that enforces min/max bounds."""
+
+    def __init__(self, name: str, min_val: float, max_val: float):
+        self.name = name
+        self.min_val = min_val
+        self.max_val = max_val
+        self.storage = f"_bounded_{name}"
+
+    def __get__(self, obj, objtype=None):
+        if obj is None:
+            return self
+        return getattr(obj, self.storage, self.min_val)
+
+    def __set__(self, obj, value):
+        if not self.min_val &lt;= value &lt;= self.max_val:
+            raise ValueError(
+                f"{self.name} must be between {self.min_val} and {self.max_val}, got {value}"
+            )
+        setattr(obj, self.storage, value)
+
+class Color:
+    r = Bounded("r", 0, 255)
+    g = Bounded("g", 0, 255)
+    b = Bounded("b", 0, 255)
+
+    def __init__(self, r: int, g: int, b: int):
+        self.r = r
+        self.g = g
+        self.b = b
+
+    def __repr__(self):
+        return f"Color({self.r}, {self.g}, {self.b})"
+
+c = Color(100, 200, 50)
+print(c)  # Color(100, 200, 50)
+
+try:
+    c.r = 300
+except ValueError as e:
+    print(e)
+# Output: r must be between 0 and 255, got 300</pre>
+
+    <p><strong>Example 2: __set_name__ for automatic naming (Python 3.6+)</strong></p>
+<pre>class Validated:
+    """Uses __set_name__ so you don't repeat the attribute name."""
+
+    def __init__(self, validator):
+        self.validator = validator
+
+    def __set_name__(self, owner, name):
+        self.name = name
+        self.storage = f"_{name}"
+
+    def __get__(self, obj, objtype=None):
+        if obj is None:
+            return self
+        return getattr(obj, self.storage, None)
+
+    def __set__(self, obj, value):
+        self.validator(self.name, value)
+        setattr(obj, self.storage, value)
+
+def positive(name, value):
+    if value &lt;= 0:
+        raise ValueError(f"{name} must be positive, got {value}")
+
+class Product:
+    price = Validated(positive)   # name auto-detected as "price"
+    quantity = Validated(positive)  # name auto-detected as "quantity"
+
+    def __init__(self, name, price, quantity):
+        self.name = name
+        self.price = price
+        self.quantity = quantity
+
+p = Product("Widget", 9.99, 100)
+print(p.price, p.quantity)  # 9.99 100
+
+try:
+    p.price = -5
+except ValueError as e:
+    print(e)
+# Output: price must be positive, got -5</pre>
+
+    <p><strong>Example 3: Lazy descriptor &mdash; compute once on first access</strong></p>
+<pre>class Lazy:
+    """Non-data descriptor: computes value once, then instance dict takes over."""
+
+    def __init__(self, func):
+        self.func = func
+        self.name = func.__name__
+
+    def __get__(self, obj, objtype=None):
+        if obj is None:
+            return self
+        value = self.func(obj)
+        # Store on instance dict -- next access bypasses descriptor
+        setattr(obj, self.name, value)
+        return value
+
+class Config:
+    def __init__(self, path):
+        self.path = path
+
+    @Lazy
+    def data(self):
+        print(f"Loading config from {self.path}...")
+        return {"key": "value", "debug": True}
+
+cfg = Config("/etc/app.conf")
+print(cfg.data)   # Loading config from /etc/app.conf...
+                   # {'key': 'value', 'debug': True}
+print(cfg.data)   # {'key': 'value', 'debug': True}  -- no loading!</pre>
+
+    <h4>Common Mistakes</h4>
+    <div class="do-dont">
+      <div class="dont-box">
+        <div class="label">Don't</div>
+<pre># Storing on the descriptor -- shared state!
+class Bad:
+    def __set__(self, obj, value):
+        self.value = value  # descriptor attr
+    def __get__(self, obj, objtype=None):
+        return self.value   # same for ALL instances</pre>
+      </div>
+      <div class="do-box">
+        <div class="label">Do</div>
+<pre># Store on the instance -- isolated state
+class Good:
+    def __set__(self, obj, value):
+        obj.__dict__[self.name] = value
+    def __get__(self, obj, objtype=None):
+        if obj is None: return self
+        return obj.__dict__.get(self.name)</pre>
+      </div>
+    </div>
+
+    <div class="do-dont">
+      <div class="dont-box">
+        <div class="label">Don't</div>
+<pre># Forgetting to handle class-level access
+class Desc:
+    def __get__(self, obj, objtype=None):
+        return obj._value  # AttributeError if obj is None
+        # MyClass.attr  -- obj is None!</pre>
+      </div>
+      <div class="do-box">
+        <div class="label">Do</div>
+<pre>class Desc:
+    def __get__(self, obj, objtype=None):
+        if obj is None:
+            return self  # class-level access
+        return obj._value</pre>
+      </div>
+    </div>
+
+    <h4>Key Rules</h4>
+    <ul class="rules-list">
+      <li>Descriptors are defined as <strong>class</strong> attributes, but they control access to <strong>instance</strong> attributes.</li>
+      <li>Data descriptors (<code>__set__</code>/<code>__delete__</code>) take priority over instance <code>__dict__</code>.</li>
+      <li>Non-data descriptors (only <code>__get__</code>) lose to instance <code>__dict__</code> &mdash; useful for lazy/cached patterns.</li>
+      <li>Always store per-instance values on the <strong>instance</strong> (via <code>setattr(obj, ...)</code>), never on the descriptor itself.</li>
+      <li>Use <code>__set_name__</code> (Python 3.6+) to avoid repeating attribute names.</li>
+      <li><code>@property</code>, <code>@classmethod</code>, <code>@staticmethod</code> are all descriptors under the hood.</li>
+    </ul>
+
+    <h4>Exercises</h4>
+    <div class="exercise">
+      <div class="exercise-label">Exercise 1</div>
+      <p>Build a <code>TypeChecked</code> descriptor using <code>__set_name__</code> that validates attribute types. Use it to create a <code>User</code> class with <code>name: str</code>, <code>age: int</code>, and <code>email: str</code> fields that reject wrong types on assignment.</p>
+    </div>
+    <div class="exercise">
+      <div class="exercise-label">Exercise 2</div>
+      <p>Implement a <code>CachedProperty</code> descriptor (non-data) that computes a value on first access and caches it. Compare its behavior to <code>functools.cached_property</code> &mdash; they should work identically.</p>
+    </div>
+    <div class="exercise">
+      <div class="exercise-label">Exercise 3</div>
+      <p>Create a <code>Logged</code> descriptor that prints a message every time an attribute is read or written, including the old and new values. Use it on a <code>BankAccount</code> class with a <code>balance</code> attribute.</p>
+    </div>
+
+    <div class="connection">
+      <strong>Connections:</strong> <code>@property</code> (Day 5) is a descriptor. <code>@classmethod</code> and <code>@staticmethod</code> (Day 5) are non-data descriptors. <code>__slots__</code> (Day 5) uses descriptors internally. Understanding descriptors unifies all of these.
+    </div>
+  </div>
+
+</div><!-- end OOP section -->
+
+
+<!-- ============================================================ -->
+<!-- NEW CONCEPTS SECTION 2: Error Handling -->
+<!-- ============================================================ -->
+<div class="section">
+  <span class="section-label new">New</span>
+  <h2 class="section-title">Error Handling</h2>
+
+  <!-- Concept 5: Exception Hierarchy & Custom Exceptions -->
+  <div class="concept" id="exception-hierarchy">
+    <div class="concept-header">
+      <h3>Exception Hierarchy &amp; Custom Exceptions</h3>
+      <span class="concept-meta">Error Handling &bull; New</span>
+    </div>
+
+    <h4>Why It Matters</h4>
+    <p>Python's exception system is hierarchical. Understanding the tree tells you what <code>except</code> catches (and what it misses). Custom exceptions make your library's errors self-documenting and let callers catch specific failure modes. This is Week 4's opening topic &mdash; error handling done right.</p>
+
+    <h4>Progressive Explanation</h4>
+
+    <p><strong>The exception hierarchy:</strong></p>
+<pre># BaseException
+# +-- SystemExit
+# +-- KeyboardInterrupt
+# +-- GeneratorExit
+# +-- Exception
+#     +-- StopIteration
+#     +-- ArithmeticError
+#     |   +-- ZeroDivisionError
+#     |   +-- OverflowError
+#     +-- LookupError
+#     |   +-- IndexError
+#     |   +-- KeyError
+#     +-- OSError
+#     |   +-- FileNotFoundError
+#     |   +-- PermissionError
+#     +-- TypeError
+#     +-- ValueError
+#     +-- AttributeError
+#     +-- ...
+
+# KEY INSIGHT: except Exception catches all "normal" errors
+# but NOT SystemExit, KeyboardInterrupt, or GeneratorExit</pre>
+
+    <p><strong>Catch specific exceptions, not broad ones:</strong></p>
+<pre># BAD -- catches everything including Ctrl+C
+try:
+    value = int(input("Number: "))
+except:
+    print("Error")  # even KeyboardInterrupt is swallowed!
+
+# BETTER -- catches only ValueError
+try:
+    value = int("abc")
+except ValueError as e:
+    print(f"Invalid number: {e}")
+# Output: Invalid number: invalid literal for int() with base 10: 'abc'
+
+# GOOD -- multiple specific exceptions
+try:
+    data = {"a": 1}
+    value = data["b"]
+except KeyError as e:
+    print(f"Missing key: {e}")
+except (TypeError, ValueError) as e:
+    print(f"Type/value error: {e}")
+# Output: Missing key: 'b'</pre>
+
+    <p><strong>Creating custom exceptions:</strong></p>
+<pre>class AppError(Exception):
+    """Base exception for our application."""
+    pass
+
+class ValidationError(AppError):
+    """Raised when input validation fails."""
+    def __init__(self, field: str, message: str):
+        self.field = field
+        self.message = message
+        super().__init__(f"{field}: {message}")
+
+class NotFoundError(AppError):
+    """Raised when a resource is not found."""
+    def __init__(self, resource: str, id: object):
+        self.resource = resource
+        self.id = id
+        super().__init__(f"{resource} with id={id} not found")
+
+# Usage
+try:
+    raise ValidationError("email", "must contain @")
+except ValidationError as e:
+    print(f"Validation failed -- {e.field}: {e.message}")
+# Output: Validation failed -- email: must contain @
+
+try:
+    raise NotFoundError("User", 42)
+except AppError as e:
+    # Catches both ValidationError and NotFoundError
+    print(f"App error: {e}")
+# Output: App error: User with id=42 not found</pre>
+
+    <p><strong>Exception chaining &mdash; <code>raise X from Y</code>:</strong></p>
+<pre>class ConfigError(Exception):
+    pass
+
+def load_config(path: str) -&gt; dict:
+    try:
+        with open(path) as f:
+            return eval(f.read())  # simplified
+    except FileNotFoundError as e:
+        raise ConfigError(f"Config file missing: {path}") from e
+    except SyntaxError as e:
+        raise ConfigError(f"Invalid config syntax in {path}") from e
+
+try:
+    load_config("/nonexistent/config.py")
+except ConfigError as e:
+    print(f"Error: {e}")
+    print(f"Caused by: {e.__cause__}")
+# Output: Error: Config file missing: /nonexistent/config.py
+# Output: Caused by: [Errno 2] No such file or directory: '/nonexistent/config.py'</pre>
+
+    <p><strong>Exception groups (Python 3.11+):</strong></p>
+<pre>import sys
+
+# ExceptionGroup bundles multiple errors
+def validate_user(data: dict) -&gt; None:
+    errors = []
+    if "name" not in data:
+        errors.append(ValueError("name is required"))
+    if "age" not in data:
+        errors.append(ValueError("age is required"))
+    elif not isinstance(data["age"], int):
+        errors.append(TypeError("age must be an integer"))
+    if errors:
+        raise ExceptionGroup("validation failed", errors)
+
+try:
+    validate_user({})
+except ExceptionGroup as eg:
+    print(f"Got {len(eg.exceptions)} errors:")
+    for err in eg.exceptions:
+        print(f"  - {err}")
+# Output: Got 2 errors:
+# Output:   - name is required
+# Output:   - age is required
+
+# except* (Python 3.11+) catches specific types from the group
+try:
+    validate_user({"name": "Alice", "age": "thirty"})
+except* TypeError as eg:
+    print(f"Type errors: {eg.exceptions}")
+except* ValueError as eg:
+    print(f"Value errors: {eg.exceptions}")
+# Output: Type errors: (TypeError('age must be an integer'),)</pre>
+
+    <h4>Code Examples</h4>
+
+    <p><strong>Example 1: Custom exception hierarchy for a library</strong></p>
+<pre>class DatabaseError(Exception):
+    """Base for all database errors."""
+
+class ConnectionError(DatabaseError):
+    """Failed to connect to database."""
+    def __init__(self, host: str, port: int):
+        self.host = host
+        self.port = port
+        super().__init__(f"Cannot connect to {host}:{port}")
+
+class QueryError(DatabaseError):
+    """SQL query failed."""
+    def __init__(self, query: str, reason: str):
+        self.query = query
+        self.reason = reason
+        super().__init__(f"Query failed: {reason}")
+
+class IntegrityError(QueryError):
+    """Constraint violation."""
+
+# Caller can catch at different levels of specificity:
+def demo():
+    try:
+        raise IntegrityError(
+            "INSERT INTO users ...",
+            "duplicate key 'email'"
+        )
+    except IntegrityError as e:
+        print(f"Integrity: {e}")
+    except QueryError as e:
+        print(f"Query: {e}")
+    except DatabaseError as e:
+        print(f"Database: {e}")
+
+demo()
+# Output: Integrity: Query failed: duplicate key 'email'</pre>
+
+    <p><strong>Example 2: Context manager with proper exception handling</strong></p>
+<pre>class Transaction:
+    def __init__(self, name: str):
+        self.name = name
+        self.committed = False
+
+    def __enter__(self):
+        print(f"BEGIN {self.name}")
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        if exc_type is None:
+            print(f"COMMIT {self.name}")
+            self.committed = True
+        else:
+            print(f"ROLLBACK {self.name} due to {exc_type.__name__}: {exc_val}")
+        return False  # don't suppress exceptions
+
+with Transaction("transfer") as t:
+    print("Doing work...")
+# Output: BEGIN transfer
+# Output: Doing work...
+# Output: COMMIT transfer
+
+try:
+    with Transaction("bad_op") as t:
+        raise ValueError("insufficient funds")
+except ValueError:
+    pass
+# Output: BEGIN bad_op
+# Output: ROLLBACK bad_op due to ValueError: insufficient funds</pre>
+
+    <p><strong>Example 3: Retry pattern with custom exceptions</strong></p>
+<pre>import random
+
+class RetryError(Exception):
+    """All retries exhausted."""
+    def __init__(self, attempts: int, last_error: Exception):
+        self.attempts = attempts
+        self.last_error = last_error
+        super().__init__(
+            f"Failed after {attempts} attempts. Last error: {last_error}"
+        )
+
+class TemporaryError(Exception):
+    """A transient error that might succeed on retry."""
+
+def unreliable_operation():
+    if random.random() &lt; 0.7:
+        raise TemporaryError("server busy")
+    return "success"
+
+def retry(func, max_attempts=5):
+    last_error = None
+    for attempt in range(1, max_attempts + 1):
+        try:
+            return func()
+        except TemporaryError as e:
+            last_error = e
+            print(f"Attempt {attempt} failed: {e}")
+    raise RetryError(max_attempts, last_error) from last_error
+
+random.seed(42)
+try:
+    result = retry(unreliable_operation)
+    print(f"Got: {result}")
+except RetryError as e:
+    print(f"Gave up: {e}")
+    print(f"Original cause: {e.__cause__}")</pre>
+
+    <h4>Common Mistakes</h4>
+    <div class="do-dont">
+      <div class="dont-box">
+        <div class="label">Don't</div>
+<pre># Bare except catches EVERYTHING
+try:
+    do_work()
+except:  # catches SystemExit, KeyboardInterrupt!
+    pass  # silently swallows ALL errors</pre>
+      </div>
+      <div class="do-box">
+        <div class="label">Do</div>
+<pre># Catch Exception (or more specific)
+try:
+    do_work()
+except Exception as e:
+    logging.error(f"Work failed: {e}")
+    raise  # re-raise after logging</pre>
+      </div>
+    </div>
+
+    <div class="do-dont">
+      <div class="dont-box">
+        <div class="label">Don't</div>
+<pre># Inheriting from BaseException
+class MyError(BaseException):
+    pass
+
+# except Exception won't catch this!
+try:
+    raise MyError("oops")
+except Exception:
+    print("caught")  # never runs</pre>
+      </div>
+      <div class="do-box">
+        <div class="label">Do</div>
+<pre># Inherit from Exception
+class MyError(Exception):
+    pass
+
+try:
+    raise MyError("oops")
+except Exception:
+    print("caught")  # works!
+# Output: caught</pre>
+      </div>
+    </div>
+
+    <div class="do-dont">
+      <div class="dont-box">
+        <div class="label">Don't</div>
+<pre># Losing the original exception context
+try:
+    int("abc")
+except ValueError:
+    raise RuntimeError("parse failed")
+    # implicit chaining -- confusing traceback</pre>
+      </div>
+      <div class="do-box">
+        <div class="label">Do</div>
+<pre># Explicit chaining preserves context
+try:
+    int("abc")
+except ValueError as e:
+    raise RuntimeError("parse failed") from e
+    # clear cause chain in traceback</pre>
+      </div>
+    </div>
+
+    <h4>Key Rules</h4>
+    <ul class="rules-list">
+      <li>Always inherit custom exceptions from <code>Exception</code>, never <code>BaseException</code>.</li>
+      <li>Create a base exception for your library, then derive specific ones from it.</li>
+      <li>Catch the most specific exception possible &mdash; never use bare <code>except:</code>.</li>
+      <li>Use <code>raise X from Y</code> to chain exceptions &mdash; preserves the original cause in tracebacks.</li>
+      <li>Call <code>super().__init__(message)</code> in custom exception constructors so <code>str(e)</code> works.</li>
+      <li>Store useful context as attributes on custom exceptions (<code>e.field</code>, <code>e.code</code>).</li>
+    </ul>
+
+    <h4>Exercises</h4>
+    <div class="exercise">
+      <div class="exercise-label">Exercise 1</div>
+      <p>Create a validation library with a <code>ValidationError</code> base and specific subclasses: <code>MissingFieldError</code>, <code>InvalidTypeError</code>, <code>OutOfRangeError</code>. Each should store relevant context (field name, expected type, etc.). Write a <code>validate_user(data)</code> function that raises these errors.</p>
+    </div>
+    <div class="exercise">
+      <div class="exercise-label">Exercise 2</div>
+      <p>Write a function that reads a JSON config file and wraps all possible errors (<code>FileNotFoundError</code>, <code>json.JSONDecodeError</code>, <code>KeyError</code>) into a single <code>ConfigError</code> using exception chaining (<code>from e</code>). The caller should be able to inspect <code>e.__cause__</code>.</p>
+    </div>
+    <div class="exercise">
+      <div class="exercise-label">Exercise 3</div>
+      <p>If using Python 3.11+, create a form validator that collects all validation errors and raises them as an <code>ExceptionGroup</code>. Use <code>except*</code> to handle <code>TypeError</code> and <code>ValueError</code> separately from the group.</p>
+    </div>
+
+    <div class="connection">
+      <strong>Connections:</strong> Custom exceptions pair with context managers (<code>__exit__</code> receives exception info). Exception hierarchies mirror class inheritance (Day 5). <code>raise from</code> creates a linked list of exceptions &mdash; useful for debugging layered systems.
+    </div>
+  </div>
+
+</div><!-- end error handling section -->
+
+
+<!-- ============================================================ -->
+<!-- FOOTER -->
+<!-- ============================================================ -->
+<div class="footer">
+  <h4>All Python Study Guides</h4>
+    <ul>
+    <li><a href="python-guides/python-guide-2026-07-09.html">2026-07-09</a> (Day 39)</li>
+    <li><a href="python-guides/python-guide-2026-07-08.html">2026-07-08</a> (Day 38)</li>
+    <li><a href="python-guides/python-guide-2026-07-07.html">2026-07-07</a> (Day 37)</li>
+    <li><a href="python-guides/python-guide-2026-07-06.html">2026-07-06</a> (Day 36)</li>
+    <li><a href="python-guides/python-guide-2026-07-05.html">2026-07-05</a> (Day 35)</li>
+    <li><a href="python-guides/python-guide-2026-07-04.html">2026-07-04</a> (Day 34)</li>
+    <li><a href="python-guides/python-guide-2026-07-03.html">2026-07-03</a> (Day 33)</li>
+    <li><a href="python-guides/python-guide-2026-07-02.html">2026-07-02</a> (Day 32)</li>
+    <li><a href="python-guides/python-guide-2026-07-01.html">2026-07-01</a> (Day 31)</li>
+    <li><a href="python-guides/python-guide-2026-06-30.html">2026-06-30</a> (Day 30)</li>
+    <li><a href="python-guides/python-guide-2026-06-29.html">2026-06-29</a> (Day 29)</li>
+    <li><a href="python-guides/python-guide-2026-06-28.html">2026-06-28</a> (Day 28)</li>
+    <li><a href="python-guides/python-guide-2026-06-27.html">2026-06-27</a> (Day 27)</li>
+    <li><a href="python-guides/python-guide-2026-06-26.html">2026-06-26</a> (Day 26)</li>
+    <li><a href="python-guides/python-guide-2026-06-25.html">2026-06-25</a> (Day 25)</li>
+    <li><a href="python-guides/python-guide-2026-06-24.html">2026-06-24</a> (Day 24)</li>
+    <li><a href="python-guides/python-guide-2026-06-23.html">2026-06-23</a> (Day 23)</li>
+    <li><a href="python-guides/python-guide-2026-06-22.html">2026-06-22</a> (Day 22)</li>
+    <li><a href="python-guides/python-guide-2026-06-21.html">2026-06-21</a> (Day 21)</li>
+    <li><a href="python-guides/python-guide-2026-06-19.html">2026-06-19</a> (Day 20)</li>
+    <li><a href="python-guides/python-guide-2026-06-18.html">2026-06-18</a> (Day 19)</li>
+    <li><a href="python-guides/python-guide-2026-06-17.html">2026-06-17</a> (Day 18)</li>
+    <li><a href="python-guides/python-guide-2026-06-15.html">2026-06-15</a> (Day 17)</li>
+    <li><a href="python-guides/python-guide-2026-06-13.html">2026-06-13</a> (Day 16)</li>
+    <li><a href="python-guides/python-guide-2026-06-12.html">2026-06-12</a> (Day 15)</li>
+    <li><a href="python-guides/python-guide-2026-06-11.html">2026-06-11</a> (Day 14)</li>
+    <li><a href="python-guides/python-guide-2026-06-10.html">2026-06-10</a> (Day 13)</li>
+    <li><a href="python-guides/python-guide-2026-06-09.html">2026-06-09</a> (Day 12)</li>
+    <li><a href="python-guides/python-guide-2026-06-08.html">2026-06-08</a> (Day 11)</li>
+    <li><a href="python-guides/python-guide-2026-06-07.html">2026-06-07</a> (Day 10)</li>
+    <li><a href="python-guides/python-guide-2026-06-05.html">2026-06-05</a> (Day 9)</li>
+    <li><a href="python-guides/python-guide-2026-06-04.html">2026-06-04</a> (Day 8)</li>
+    <li><a href="python-guides/python-guide-2026-06-03.html">2026-06-03</a> (Day 7)</li>
+    <li class="current"><a href="python-guides/python-guide-2026-06-02.html">2026-06-02</a> </li>
+    <li><a href="python-guides/python-guide-2026-06-01.html">2026-06-01</a> (Day 5)</li>
+    <li><a href="python-guides/python-guide-2026-05-31.html">2026-05-31</a> (Day 4)</li>
+    <li><a href="python-guides/python-guide-2026-05-30.html">2026-05-30</a> (Day 3)</li>
+    <li><a href="python-guides/python-guide-2026-05-29.html">2026-05-29</a> (Day 2)</li>
+    <li><a href="python-guides/python-guide-2026-05-28.html">2026-05-28</a> (Day 1)</li>
+  </ul>
+</div>
+
+</div><!-- end main -->
+
+<script>
+(function() {
+  // ===== Theme Toggle =====
+  const THEME_KEY = 'lc-pyguide-theme';
+  const toggle = document.getElementById('theme-toggle');
+  const html = document.documentElement;
+
+  function setTheme(theme) {
+    html.setAttribute('data-theme', theme);
+    localStorage.setItem(THEME_KEY, theme);
+    toggle.textContent = theme === 'dark' ? '☽' : '☀';
+    toggle.title = theme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme';
+  }
+
+  const saved = localStorage.getItem(THEME_KEY) || 'dark';
+  setTheme(saved);
+
+  toggle.addEventListener('click', function() {
+    const current = html.getAttribute('data-theme');
+    setTheme;
+  });
+
+  // ===== Mobile Sidebar Toggle =====
+  const sidebarToggle = document.getElementById('sidebar-toggle');
+  const sidebar = document.getElementById('sidebar');
+
+  sidebarToggle.addEventListener('click', function() {
+    sidebar.classList.toggle('open');
+  });
+
+  // Close sidebar when clicking a link on mobile
+  sidebar.querySelectorAll('.sidebar-link').forEach(function(link) {
+    link.addEventListener('click', function() {
+      if (window.innerWidth <= 900) {
+        sidebar.classList.remove('open');
+      }
+    });
+  });
+
+  // ===== Active Sidebar Link on Scroll =====
+  const links = document.querySelectorAll('.sidebar-link');
+  const sections = [];
+
+  links.forEach(function(link) {
+    var id = link.getAttribute('href').slice(1);
+    var el = document.getElementById(id);
+    if (el) sections.push({ id: id, el: el, link: link });
+  });
+
+  function updateActive() {
+    var current = null;
+    var scrollY = window.scrollY + 100;
+
+    for (var i = sections.length - 1; i >= 0; i--) {
+      if (sections[i].el.offsetTop <= scrollY) {
+        current = sections[i];
+        break;
+      }
+    }
+
+    links.forEach(function(l) { l.classList.remove('active'); });
+    if  current.link.classList.add('active');
+  }
+
+  window.addEventListener('scroll', updateActive, { passive: true });
+  updateActive();
+})();
+</script>
+
+</body>
+</html>

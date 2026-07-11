@@ -1,0 +1,1726 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Python Study Guide &mdash; Day 17 (2026-06-15)</title>
+<style>
+/* ===== CSS Variables ===== */
+:root {
+  --bg: #0d1117;
+  --surface1: #161b22;
+  --surface2: #1c2333;
+  --border: #30363d;
+  --text: #e6edf3;
+  --muted: #8b949e;
+  --accent: #58a6ff;
+  --accent-dim: #1f6feb33;
+  --green: #3fb950;
+  --green-dim: #23863633;
+  --yellow: #d29922;
+  --yellow-dim: #d2992233;
+  --red: #f85149;
+  --red-dim: #f8514933;
+  --purple: #bc8cff;
+  --purple-dim: #bc8cff22;
+  --orange: #f0883e;
+  --orange-dim: #f0883e22;
+  --code-bg: #0d1117;
+  --sidebar-w: 300px;
+  --font-mono: 'SF Mono', 'Cascadia Code', 'Fira Code', Consolas, monospace;
+  --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+  --radius: 8px;
+  --shadow: 0 1px 3px rgba(0,0,0,0.4);
+}
+
+[data-theme="light"] {
+  --bg: #ffffff;
+  --surface1: #f6f8fa;
+  --surface2: #f0f3f6;
+  --border: #d0d7de;
+  --text: #1f2328;
+  --muted: #656d76;
+  --accent: #0969da;
+  --accent-dim: #0969da1a;
+  --green: #1a7f37;
+  --green-dim: #1a7f3718;
+  --yellow: #9a6700;
+  --yellow-dim: #9a670018;
+  --red: #cf222e;
+  --red-dim: #cf222e18;
+  --purple: #8250df;
+  --purple-dim: #8250df18;
+  --orange: #bc4c00;
+  --orange-dim: #bc4c0018;
+  --code-bg: #f6f8fa;
+  --shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+/* ===== Reset & Base ===== */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: var(--font-sans);
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.7;
+  font-size: 16px;
+  transition: background 0.2s, color 0.2s;
+}
+
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+/* ===== Theme Toggle ===== */
+#theme-toggle {
+  position: fixed;
+  top: 16px;
+  right: 20px;
+  z-index: 1000;
+  background: var(--surface1);
+  border: 1px solid var(--border);
+  color: var(--text);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+  box-shadow: var(--shadow);
+}
+#theme-toggle:hover { background: var(--surface2); border-color: var(--accent); }
+
+/* ===== Sidebar ===== */
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: var(--sidebar-w);
+  height: 100vh;
+  background: var(--surface1);
+  border-right: 1px solid var(--border);
+  overflow-y: auto;
+  padding: 20px 0;
+  z-index: 100;
+  transition: transform 0.3s;
+}
+
+.sidebar-header {
+  padding: 0 20px 16px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 12px;
+}
+
+.sidebar-header h2 {
+  font-size: 16px;
+  color: var(--text);
+  font-weight: 700;
+}
+
+.sidebar-header .subtitle {
+  font-size: 12px;
+  color: var(--muted);
+  margin-top: 2px;
+}
+
+.sidebar-section {
+  margin-bottom: 8px;
+}
+
+.sidebar-section-title {
+  padding: 6px 20px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+}
+
+.sidebar-link {
+  display: block;
+  padding: 5px 20px 5px 28px;
+  font-size: 13px;
+  color: var(--muted);
+  text-decoration: none;
+  border-left: 2px solid transparent;
+  transition: all 0.15s;
+  line-height: 1.4;
+}
+
+.sidebar-link:hover {
+  color: var(--text);
+  background: var(--accent-dim);
+  border-left-color: var(--accent);
+  text-decoration: none;
+}
+
+.sidebar-link.active {
+  color: var(--accent);
+  border-left-color: var(--accent);
+  background: var(--accent-dim);
+}
+
+/* ===== Mobile sidebar toggle ===== */
+#sidebar-toggle {
+  display: none;
+  position: fixed;
+  top: 16px;
+  left: 16px;
+  z-index: 200;
+  background: var(--surface1);
+  border: 1px solid var(--border);
+  color: var(--text);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 20px;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--shadow);
+}
+
+/* ===== Main Content ===== */
+.main {
+  margin-left: var(--sidebar-w);
+  padding: 40px 48px 80px;
+  max-width: calc(860px + var(--sidebar-w) + 96px);
+}
+
+.page-title {
+  font-size: 32px;
+  font-weight: 800;
+  margin-bottom: 4px;
+  color: var(--text);
+}
+
+.page-subtitle {
+  font-size: 15px;
+  color: var(--muted);
+  margin-bottom: 36px;
+}
+
+/* ===== How to Use ===== */
+.how-to {
+  background: var(--surface1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px 24px;
+  margin-bottom: 36px;
+}
+
+.how-to h3 {
+  font-size: 15px;
+  font-weight: 700;
+  margin-bottom: 8px;
+  color: var(--muted);
+}
+
+.how-to ul {
+  padding-left: 22px;
+  margin: 0;
+}
+
+.how-to li {
+  font-size: 14px;
+  color: var(--muted);
+  margin-bottom: 3px;
+}
+
+/* ===== Sections ===== */
+.section {
+  margin-bottom: 48px;
+}
+
+.section-label {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  padding: 3px 10px;
+  border-radius: 4px;
+  margin-bottom: 12px;
+}
+
+.section-label.review { background: var(--yellow-dim); color: var(--yellow); }
+.section-label.new { background: var(--green-dim); color: var(--green); }
+
+.section-title {
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 24px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--border);
+}
+
+/* ===== Concept Cards ===== */
+.concept {
+  background: var(--surface1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 28px;
+  margin-bottom: 28px;
+  box-shadow: var(--shadow);
+}
+
+.concept.review-card {
+  background: linear-gradient(135deg, var(--purple-dim), var(--surface1));
+  border-color: var(--purple);
+}
+
+.concept-header {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  margin-bottom: 6px;
+  flex-wrap: wrap;
+}
+
+.concept h3 {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.concept-meta {
+  font-size: 12px;
+  color: var(--muted);
+  background: var(--surface2);
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
+.concept h4 {
+  font-size: 15px;
+  font-weight: 600;
+  margin: 20px 0 8px;
+  color: var(--text);
+}
+
+.concept p, .concept li {
+  color: var(--text);
+  line-height: 1.7;
+}
+
+.concept ul, .concept ol {
+  padding-left: 22px;
+  margin: 8px 0;
+}
+
+.concept li {
+  margin-bottom: 4px;
+}
+
+/* ===== Topic Tags ===== */
+.ttag {
+  display: inline-block;
+  font-size: 10px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 8px;
+  background: rgba(56,139,253,0.12);
+  color: var(--accent);
+}
+
+/* ===== Code Blocks ===== */
+pre {
+  background: var(--code-bg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 16px 18px;
+  overflow-x: auto;
+  margin: 10px 0 14px;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--text);
+  position: relative;
+}
+
+code {
+  font-family: var(--font-mono);
+  font-size: 0.9em;
+}
+
+:not(pre) > code {
+  background: var(--surface2);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.88em;
+}
+
+.output {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 12px 18px;
+  margin: -8px 0 14px;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  line-height: 1.6;
+  white-space: pre-wrap;
+  color: var(--green);
+}
+
+/* ===== Good/Bad Examples ===== */
+.do-dont {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin: 10px 0;
+}
+
+.do-box, .dont-box {
+  border-radius: 6px;
+  padding: 14px;
+  border: 1px solid;
+}
+
+.do-box {
+  background: var(--green-dim);
+  border-color: var(--green);
+}
+
+.dont-box {
+  background: var(--red-dim);
+  border-color: var(--red);
+}
+
+.do-box .label, .dont-box .label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 6px;
+}
+
+.do-box .label { color: var(--green); }
+.dont-box .label { color: var(--red); }
+
+.do-box pre, .dont-box pre {
+  margin: 0;
+  border: none;
+  background: transparent;
+  padding: 0;
+  font-size: 12.5px;
+}
+
+/* ===== Key Rules ===== */
+.rules-list {
+  list-style: none;
+  padding: 0;
+  margin: 8px 0;
+}
+
+.rules-list li {
+  padding: 6px 0 6px 24px;
+  position: relative;
+}
+
+.rules-list li::before {
+  content: "\2192";
+  position: absolute;
+  left: 2px;
+  color: var(--accent);
+  font-weight: 700;
+}
+
+/* ===== Exercises ===== */
+.exercise {
+  background: var(--purple-dim);
+  border: 1px solid var(--purple);
+  border-radius: 6px;
+  padding: 14px 18px;
+  margin: 8px 0;
+}
+
+.exercise .exercise-label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--purple);
+  margin-bottom: 4px;
+}
+
+/* ===== Challenge (Review) ===== */
+.challenge {
+  background: var(--orange-dim);
+  border: 1px solid var(--orange);
+  border-radius: 6px;
+  padding: 14px 18px;
+  margin: 10px 0;
+}
+
+.challenge .challenge-label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--orange);
+  margin-bottom: 4px;
+}
+
+/* ===== Pitfall ===== */
+.pitfall {
+  background: var(--red-dim);
+  border-left: 3px solid var(--red);
+  border-radius: 0 6px 6px 0;
+  padding: 10px 14px;
+  margin: 10px 0;
+  font-size: 14px;
+}
+
+.pitfall strong {
+  color: var(--red);
+}
+
+/* ===== Connection ===== */
+.connection {
+  background: var(--accent-dim);
+  border-left: 3px solid var(--accent);
+  border-radius: 0 6px 6px 0;
+  padding: 10px 14px;
+  margin: 10px 0;
+  font-size: 14px;
+  color: var(--muted);
+}
+
+/* ===== Footer ===== */
+.footer {
+  margin-top: 60px;
+  padding: 24px 0;
+  border-top: 1px solid var(--border);
+}
+
+.footer h4 {
+  font-size: 14px;
+  color: var(--muted);
+  margin-bottom: 10px;
+}
+
+.footer ul {
+  list-style: none;
+  padding: 0;
+}
+
+.footer li {
+  margin-bottom: 4px;
+  font-size: 14px;
+}
+
+.footer li a { color: var(--accent); }
+.footer .current { color: var(--green); font-weight: 600; }
+
+/* ===== Responsive ===== */
+@media (max-width: 900px) {
+  .sidebar {
+    transform: translateX(-100%);
+  }
+  .sidebar.open {
+    transform: translateX(0);
+    box-shadow: 4px 0 20px rgba(0,0,0,0.5);
+  }
+  #sidebar-toggle {
+    display: flex;
+  }
+  .main {
+    margin-left: 0;
+    padding: 60px 20px 60px;
+    max-width: 100%;
+  }
+  .do-dont {
+    grid-template-columns: 1fr;
+  }
+  #theme-toggle {
+    right: 14px;
+    top: 16px;
+  }
+}
+</style>
+</head>
+<body>
+
+<!-- Theme Toggle -->
+<button id="theme-toggle" aria-label="Toggle theme" title="Toggle light/dark theme">&#9789;</button>
+
+<!-- Mobile Sidebar Toggle -->
+<button id="sidebar-toggle" aria-label="Toggle sidebar">&#9776;</button>
+
+<!-- Sidebar -->
+<nav class="sidebar" id="sidebar">
+  <div class="sidebar-header">
+    <h2>Python Guide</h2>
+    <div class="subtitle">Day 17 &mdash; 2026-06-15</div>
+  </div>
+
+  <div class="sidebar-section">
+    <div class="sidebar-section-title">Review (6 concepts)</div>
+    <a href="#review-dunder-iter-next-call" class="sidebar-link">Dunder: __iter__, __next__, __call__</a>
+    <a href="#review-descriptors" class="sidebar-link">Descriptors</a>
+    <a href="#review-exception-hierarchy" class="sidebar-link">Exception Hierarchy &amp; Custom</a>
+    <a href="#review-venv-pyproject" class="sidebar-link">Virtual Envs &amp; pyproject.toml</a>
+    <a href="#review-design-patterns" class="sidebar-link">Design Patterns in Python</a>
+    <a href="#review-metaprogramming" class="sidebar-link">Metaprogramming: __init_subclass__</a>
+  </div>
+
+  <div class="sidebar-section">
+    <div class="sidebar-section-title">Security &amp; Serialization</div>
+    <a href="#hashlib-secrets" class="sidebar-link">hashlib &amp; secrets</a>
+    <a href="#pickle-shelve" class="sidebar-link">pickle &amp; shelve</a>
+  </div>
+
+  <div class="sidebar-section">
+    <div class="sidebar-section-title">Numeric Precision &amp; Data</div>
+    <a href="#decimal-fraction" class="sidebar-link">Decimal &amp; Fraction</a>
+    <a href="#statistics-module" class="sidebar-link">statistics Module</a>
+    <a href="#graphlib-toposort" class="sidebar-link">graphlib.TopologicalSorter</a>
+  </div>
+</nav>
+
+<!-- Main Content -->
+<div class="main">
+
+<h1 class="page-title">Python Daily Guide</h1>
+<p class="page-subtitle">Day 17 &mdash; Sunday, June 15, 2026 &bull; 11 concepts (6 review + 5 new)</p>
+
+<!-- How to Use -->
+<div class="how-to">
+  <h3>How to Use This Guide</h3>
+  <ul>
+    <li><strong>Review cards</strong> &mdash; skim the reminder, write the key pattern from memory, then try the challenge.</li>
+    <li><strong>New concepts</strong> &mdash; read the explanation, run every code example in a REPL, then do the exercises.</li>
+    <li><strong>Don&rsquo;t peek at solutions</strong> &mdash; struggle for at least 10 minutes before looking things up.</li>
+    <li><strong>Connections</strong> &mdash; pay attention to how concepts link together across days.</li>
+  </ul>
+</div>
+
+
+<!-- ============================================================ -->
+<!-- REVIEW SECTION -->
+<!-- ============================================================ -->
+<div class="section">
+  <span class="section-label review">Review</span>
+  <h2 class="section-title">Review &mdash; 6 Concepts</h2>
+
+  <!-- Review 1: Dunder Methods — __iter__, __next__, __call__ -->
+  <div class="concept review-card" id="review-dunder-iter-next-call">
+    <div class="concept-header">
+      <h3>Dunder Methods &mdash; __iter__, __next__, __call__</h3>
+      <span class="concept-meta">OOP &bull; 9 days ago &bull; rep 1</span>
+    </div>
+
+    <h4>Quick Reminder</h4>
+    <p><code>__iter__</code> returns the iterator object (often <code>self</code>), <code>__next__</code> returns the next value or raises <code>StopIteration</code>, <code>__call__</code> makes instances callable like functions.</p>
+
+    <h4>Key Pattern</h4>
+<pre>class Countdown:
+    def __init__(self, start):
+        self.current = start
+    def __iter__(self):
+        return self
+    def __next__(self):
+        if self.current &lt;= 0:
+            raise StopIteration
+        self.current -= 1
+        return self.current + 1
+
+class Multiplier:
+    def __init__(self, factor):
+        self.factor = factor
+    def __call__(self, x):
+        return x * self.factor
+
+double = Multiplier(2)
+print(double(5))  # 10</pre>
+    <div class="output">10</div>
+
+    <div class="challenge">
+      <div class="challenge-label">Challenge</div>
+      <p>Create a <code>Fibonacci</code> class that is iterable (yields Fibonacci numbers endlessly) AND callable (calling it with <code>n</code> returns the nth number).</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>#1 Pitfall:</strong> Forgetting to raise <code>StopIteration</code> in <code>__next__</code> &mdash; the loop never ends.
+    </div>
+  </div>
+
+  <!-- Review 2: Descriptors -->
+  <div class="concept review-card" id="review-descriptors">
+    <div class="concept-header">
+      <h3>Descriptors</h3>
+      <span class="concept-meta">OOP &bull; 9 days ago &bull; rep 1</span>
+    </div>
+
+    <h4>Quick Reminder</h4>
+    <p>Descriptors implement <code>__get__</code>, <code>__set__</code>, <code>__delete__</code> to intercept attribute access. Data descriptors (with <code>__set__</code>) take priority over instance <code>__dict__</code>.</p>
+
+    <h4>Key Pattern</h4>
+<pre>class Validated:
+    def __init__(self, min_val, max_val):
+        self.min_val = min_val
+        self.max_val = max_val
+    def __set_name__(self, owner, name):
+        self.name = name
+    def __get__(self, obj, objtype=None):
+        if obj is None:
+            return self
+        return obj.__dict__.get(self.name)
+    def __set__(self, obj, value):
+        if not self.min_val &lt;= value &lt;= self.max_val:
+            raise ValueError(f"{self.name} must be between {self.min_val} and {self.max_val}")
+        obj.__dict__[self.name] = value</pre>
+
+    <div class="challenge">
+      <div class="challenge-label">Challenge</div>
+      <p>Create a <code>Typed</code> descriptor that validates type &mdash; <code>Typed(int)</code> only accepts integers, <code>Typed(str)</code> only strings.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>#1 Pitfall:</strong> Not using <code>__set_name__</code> and hardcoding the attribute name, which breaks when the same descriptor class is reused.
+    </div>
+  </div>
+
+  <!-- Review 3: Exception Hierarchy & Custom Exceptions -->
+  <div class="concept review-card" id="review-exception-hierarchy">
+    <div class="concept-header">
+      <h3>Exception Hierarchy &amp; Custom Exceptions</h3>
+      <span class="concept-meta">Error Handling &bull; 9 days ago &bull; rep 1</span>
+    </div>
+
+    <h4>Quick Reminder</h4>
+    <p>All exceptions inherit from <code>BaseException</code>. Use <code>Exception</code> for application errors. Create custom hierarchies with specific <code>__init__</code> for context. Use exception groups (<code>ExceptionGroup</code>) for multiple errors.</p>
+
+    <h4>Key Pattern</h4>
+<pre>class AppError(Exception):
+    """Base for all app errors."""
+
+class ValidationError(AppError):
+    def __init__(self, field, message):
+        self.field = field
+        super().__init__(f"{field}: {message}")
+
+class NotFoundError(AppError):
+    def __init__(self, resource, id_):
+        self.resource = resource
+        self.id = id_
+        super().__init__(f"{resource} {id_} not found")
+
+try:
+    raise ValidationError("email", "invalid format")
+except AppError as e:
+    print(type(e).__name__, e)  # ValidationError email: invalid format</pre>
+    <div class="output">ValidationError email: invalid format</div>
+
+    <div class="challenge">
+      <div class="challenge-label">Challenge</div>
+      <p>Build an <code>APIError</code> hierarchy with <code>RateLimitError(retry_after: float)</code> and <code>AuthError(reason: str)</code> that each expose their fields as attributes.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>#1 Pitfall:</strong> Catching <code>Exception</code> too broadly &mdash; swallows errors you didn&rsquo;t anticipate.
+    </div>
+  </div>
+
+  <!-- Review 4: Virtual Environments & pyproject.toml -->
+  <div class="concept review-card" id="review-venv-pyproject">
+    <div class="concept-header">
+      <h3>Virtual Environments &amp; pyproject.toml</h3>
+      <span class="concept-meta">Testing &amp; Packaging &bull; 7 days overdue &bull; rep 0</span>
+    </div>
+
+    <h4>Quick Reminder</h4>
+    <p><code>python -m venv .venv</code> creates an isolated environment. <code>pyproject.toml</code> is the modern standard for project metadata, build system, and dependencies, replacing <code>setup.py</code>/<code>setup.cfg</code>.</p>
+
+    <h4>Key Pattern</h4>
+<pre># pyproject.toml
+# [project]
+# name = "mypackage"
+# version = "1.0.0"
+# dependencies = ["requests&gt;=2.28", "click&gt;=8.0"]
+#
+# [project.optional-dependencies]
+# dev = ["pytest&gt;=7.0", "mypy&gt;=1.0"]
+#
+# [project.scripts]
+# mycli = "mypackage.cli:main"</pre>
+
+    <div class="challenge">
+      <div class="challenge-label">Challenge</div>
+      <p>Write a <code>pyproject.toml</code> from memory for a CLI tool named &ldquo;tasker&rdquo; that depends on <code>rich</code> and <code>click</code>, has a dev dependency on <code>pytest</code>, and exposes a console script <code>task</code> pointing to <code>tasker.main:cli</code>.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>#1 Pitfall:</strong> Forgetting to activate the venv &mdash; installing globally instead of locally.
+    </div>
+  </div>
+
+  <!-- Review 5: Design Patterns in Python -->
+  <div class="concept review-card" id="review-design-patterns">
+    <div class="concept-header">
+      <h3>Design Patterns in Python</h3>
+      <span class="concept-meta">Testing &amp; Packaging &bull; 7 days overdue &bull; rep 0</span>
+    </div>
+
+    <h4>Quick Reminder</h4>
+    <p>Python&rsquo;s duck typing makes some patterns simpler &mdash; Strategy is just a function, Singleton uses <code>__new__</code> or a module, Factory uses classmethods, Observer uses callbacks or built-in patterns.</p>
+
+    <h4>Key Pattern</h4>
+<pre># Strategy pattern — just pass a function
+def process(data, strategy):
+    return strategy(data)
+
+result = process([3, 1, 2], sorted)       # [1, 2, 3]
+result = process([3, 1, 2], lambda d: d[::-1])  # [2, 1, 3]
+
+# Observer
+class EventEmitter:
+    def __init__(self):
+        self._listeners = {}
+    def on(self, event, callback):
+        self._listeners.setdefault(event, []).append(callback)
+    def emit(self, event, *args):
+        for cb in self._listeners.get(event, []):
+            cb(*args)</pre>
+
+    <div class="challenge">
+      <div class="challenge-label">Challenge</div>
+      <p>Implement a Registry pattern &mdash; a <code>@register</code> decorator that tracks all decorated classes by name in a dict, with a <code>create(name, *args)</code> factory function.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>#1 Pitfall:</strong> Over-engineering &mdash; using a class-based Strategy when a plain function (or dict of functions) suffices.
+    </div>
+  </div>
+
+  <!-- Review 6: Metaprogramming: __init_subclass__ & __class_getitem__ -->
+  <div class="concept review-card" id="review-metaprogramming">
+    <div class="concept-header">
+      <h3>Metaprogramming: __init_subclass__ &amp; __class_getitem__</h3>
+      <span class="concept-meta">Advanced Topics &bull; 7 days overdue &bull; rep 0</span>
+    </div>
+
+    <h4>Quick Reminder</h4>
+    <p><code>__init_subclass__</code> is called when a class is subclassed &mdash; great for registries and validation. <code>__class_getitem__</code> enables <code>MyClass[int]</code> subscript syntax for custom generics.</p>
+
+    <h4>Key Pattern</h4>
+<pre>class Plugin:
+    _registry = {}
+    def __init_subclass__(cls, name=None, **kwargs):
+        super().__init_subclass__(**kwargs)
+        Plugin._registry[name or cls.__name__] = cls
+
+class JSONPlugin(Plugin, name="json"):
+    pass
+
+class XMLPlugin(Plugin, name="xml"):
+    pass
+
+print(Plugin._registry)  # {'json': &lt;class 'JSONPlugin'&gt;, 'xml': &lt;class 'XMLPlugin'&gt;}</pre>
+    <div class="output">{'json': &lt;class 'JSONPlugin'&gt;, 'xml': &lt;class 'XMLPlugin'&gt;}</div>
+
+    <div class="challenge">
+      <div class="challenge-label">Challenge</div>
+      <p>Create a <code>Validator</code> base class using <code>__init_subclass__</code> that requires all subclasses to implement a <code>validate(self, value) -&gt; bool</code> method (raise <code>TypeError</code> in <code>__init_subclass__</code> if missing).</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>#1 Pitfall:</strong> Forgetting <code>super().__init_subclass__(**kwargs)</code> &mdash; breaks cooperative multiple inheritance.
+    </div>
+  </div>
+
+</div><!-- end review section -->
+
+
+<!-- ============================================================ -->
+<!-- NEW CONCEPTS SECTION 1: Security & Serialization -->
+<!-- ============================================================ -->
+<div class="section">
+  <span class="section-label new">New</span>
+  <h2 class="section-title">Security &amp; Serialization</h2>
+
+  <!-- Concept 1: hashlib & secrets -->
+  <div class="concept" id="hashlib-secrets">
+    <div class="concept-header">
+      <h3>hashlib &amp; secrets &mdash; Hashing &amp; Secure Random</h3>
+      <span class="ttag">Security &amp; Cryptography</span>
+    </div>
+
+    <p>Every application that handles passwords, verifies file integrity, or generates tokens needs cryptographic hashing and secure randomness. Python&rsquo;s <code>hashlib</code> and <code>secrets</code> modules are the correct tools &mdash; never use <code>random</code> for security.</p>
+
+    <h4>Example 1 &mdash; Basic hashing</h4>
+<pre>import hashlib
+
+# Hash a string (must encode to bytes first)
+digest = hashlib.sha256(b"hello world").hexdigest()
+print(digest)  # a591a6d40bf420404a011733cfb7b190d62c65bf0bcda32b57b277d9ad9f146e
+print(len(digest))  # 64 hex chars = 32 bytes
+
+# MD5 (not for security, but useful for checksums)
+print(hashlib.md5(b"hello").hexdigest())  # 5d41402abc4b2a76b9719d911017c592</pre>
+    <div class="output">a591a6d40bf420404a011733cfb7b190d62c65bf0bcda32b57b277d9ad9f146e
+64
+5d41402abc4b2a76b9719d911017c592</div>
+
+    <h4>Example 2 &mdash; Incremental hashing (large files)</h4>
+<pre>import hashlib
+
+def file_hash(path, algo="sha256", chunk_size=8192):
+    h = hashlib.new(algo)
+    with open(path, "rb") as f:
+        while chunk := f.read(chunk_size):
+            h.update(chunk)
+    return h.hexdigest()
+
+# Equivalent to hashing the whole file at once, but memory-efficient
+# file_hash("large_file.bin")</pre>
+
+    <h4>Example 3 &mdash; secrets module for secure tokens</h4>
+<pre>import secrets
+
+# Secure random token (URL-safe)
+token = secrets.token_urlsafe(32)
+print(token)  # e.g., "dGhpcyBpcyBhIHNlY3VyZSB0b2tlbg..."
+print(len(token))  # ~43 chars
+
+# Secure random hex
+hex_token = secrets.token_hex(16)
+print(hex_token)  # e.g., "a3f2b8c9d1e4f5a6b7c8d9e0f1a2b3c4"
+
+# Secure random bytes
+raw = secrets.token_bytes(16)
+print(len(raw))  # 16
+
+# Secure random integer
+print(secrets.randbelow(100))  # 0-99, cryptographically secure
+
+# Compare strings in constant time (prevents timing attacks)
+print(secrets.compare_digest("abc", "abc"))  # True
+print(secrets.compare_digest("abc", "abd"))  # False</pre>
+
+    <h4>Example 4 &mdash; Password hashing with PBKDF2</h4>
+<pre>import hashlib
+import secrets
+
+def hash_password(password: str) -&gt; str:
+    salt = secrets.token_hex(16)
+    dk = hashlib.pbkdf2_hmac("sha256", password.encode(), salt.encode(), iterations=600_000)
+    return f"{salt}${dk.hex()}"
+
+def verify_password(password: str, stored: str) -&gt; bool:
+    salt, hash_hex = stored.split("$")
+    dk = hashlib.pbkdf2_hmac("sha256", password.encode(), salt.encode(), iterations=600_000)
+    return secrets.compare_digest(dk.hex(), hash_hex)
+
+stored = hash_password("mypassword")
+print(stored)  # "a1b2c3...$d4e5f6..."
+print(verify_password("mypassword", stored))   # True
+print(verify_password("wrongpassword", stored)) # False</pre>
+    <div class="output">(salt)$(hash)
+True
+False</div>
+
+    <h4>Example 5 &mdash; HMAC for message authentication</h4>
+<pre>import hmac
+import hashlib
+
+key = b"my-secret-key"
+message = b"transfer $100 to Alice"
+
+# Create HMAC
+signature = hmac.new(key, message, hashlib.sha256).hexdigest()
+print(signature)  # consistent hash that requires the key
+
+# Verify — use hmac.compare_digest (constant time)
+received_sig = signature  # pretend we received this
+is_valid = hmac.compare_digest(
+    hmac.new(key, message, hashlib.sha256).hexdigest(),
+    received_sig
+)
+print(is_valid)  # True</pre>
+
+    <h4>Common Mistakes</h4>
+    <div class="do-dont">
+      <div class="dont-box">
+        <div class="label">Don&rsquo;t</div>
+<pre>random.randint() for tokens
+# Predictable, not cryptographically secure
+
+hashlib.sha256(password) alone
+# Vulnerable to rainbow tables
+
+hash_a == hash_b
+# Timing attack vulnerability</pre>
+      </div>
+      <div class="do-box">
+        <div class="label">Do</div>
+<pre>secrets.token_urlsafe() or token_hex()
+# Cryptographically secure randomness
+
+pbkdf2_hmac with random salt + high iterations
+# Resistant to rainbow tables
+
+secrets.compare_digest(a, b)
+# Constant-time comparison</pre>
+      </div>
+    </div>
+
+    <h4>Key Rules</h4>
+    <ul class="rules-list">
+      <li><code>hashlib</code> for one-way hashing (integrity, checksums). <code>secrets</code> for randomness that must be unpredictable.</li>
+      <li>Never use MD5 or SHA-1 for security (use SHA-256+). MD5 is fine for non-security checksums.</li>
+      <li>Always salt passwords. Use <code>pbkdf2_hmac</code> with &ge;600,000 iterations (OWASP recommendation).</li>
+    </ul>
+
+    <div class="exercise">
+      <div class="exercise-label">Exercise 1</div>
+      <p>Write a function <code>checksum(filepath)</code> that returns the SHA-256 hex digest of a file, reading in 4KB chunks. Test with any small file. Expected: A 64-character hex string.</p>
+    </div>
+    <div class="exercise">
+      <div class="exercise-label">Exercise 2</div>
+      <p>Write a <code>generate_api_key()</code> function that returns a string like <code>"sk-"</code> followed by 32 URL-safe random characters. Expected: <code>"sk-aBcDeFgHiJkLmNoPqRsTuVwXyZ012345678..."</code> (43+ chars total).</p>
+    </div>
+    <div class="exercise">
+      <div class="exercise-label">Exercise 3</div>
+      <p>Implement <code>hash_password(pw)</code> and <code>check_password(pw, stored)</code> using PBKDF2 with a random 16-byte salt. Verify round-trip works.</p>
+    </div>
+
+    <div class="connection">
+      <strong>Connection:</strong> Relates to <strong>struct/binary data</strong> (binary data) and <strong>context managers</strong> (file handling). <code>secrets</code> builds on <code>os.urandom()</code> from CPython internals.
+    </div>
+  </div>
+
+  <!-- Concept 2: pickle & shelve -->
+  <div class="concept" id="pickle-shelve">
+    <div class="concept-header">
+      <h3>pickle &amp; shelve &mdash; Object Serialization</h3>
+      <span class="ttag">Serialization</span>
+    </div>
+
+    <p><code>pickle</code> serializes arbitrary Python objects to bytes &mdash; useful for caching, IPC, and ML model storage. <code>shelve</code> provides a dict-like persistent store backed by pickle. Both have serious security implications.</p>
+
+    <h4>Example 1 &mdash; Basic pickling</h4>
+<pre>import pickle
+
+data = {"name": "Alice", "scores": [95, 87, 92], "active": True}
+
+# Serialize to bytes
+pickled = pickle.dumps(data)
+print(type(pickled), len(pickled))  # &lt;class 'bytes'&gt; ~65
+
+# Deserialize
+restored = pickle.loads(pickled)
+print(restored)  # {'name': 'Alice', 'scores': [95, 87, 92], 'active': True}
+print(data == restored)  # True</pre>
+
+    <h4>Example 2 &mdash; Pickle to file</h4>
+<pre>import pickle
+
+class Model:
+    def __init__(self, weights):
+        self.weights = weights
+    def predict(self, x):
+        return sum(w * xi for w, xi in zip(self.weights, x))
+
+model = Model([0.5, -0.3, 0.8])
+
+# Save
+with open("/tmp/model.pkl", "wb") as f:
+    pickle.dump(model, f)
+
+# Load
+with open("/tmp/model.pkl", "rb") as f:
+    loaded = pickle.load(f)
+
+print(loaded.predict([1, 2, 3]))  # 0.5 - 0.6 + 2.4 = 2.3
+print(type(loaded))  # &lt;class '__main__.Model'&gt;</pre>
+    <div class="output">2.3
+&lt;class '__main__.Model'&gt;</div>
+
+    <h4>Example 3 &mdash; Customizing pickling</h4>
+<pre>import pickle
+
+class Connection:
+    def __init__(self, host, port):
+        self.host = host
+        self.port = port
+        self.socket = f"&lt;socket to {host}:{port}&gt;"  # unpicklable resource
+
+    def __getstate__(self):
+        state = self.__dict__.copy()
+        del state["socket"]  # remove unpicklable
+        return state
+
+    def __setstate__(self, state):
+        self.__dict__.update(state)
+        self.socket = f"&lt;socket to {self.host}:{self.port}&gt;"  # reconnect
+
+conn = Connection("localhost", 5432)
+restored = pickle.loads(pickle.dumps(conn))
+print(restored.host, restored.socket)
+# localhost &lt;socket to localhost:5432&gt;</pre>
+    <div class="output">localhost &lt;socket to localhost:5432&gt;</div>
+
+    <h4>Example 4 &mdash; shelve for persistent dict</h4>
+<pre>import shelve
+
+# shelve works like a persistent dict
+with shelve.open("/tmp/mydata") as db:
+    db["users"] = ["Alice", "Bob"]
+    db["config"] = {"theme": "dark", "lang": "en"}
+
+# Later, in another session:
+with shelve.open("/tmp/mydata") as db:
+    print(list(db.keys()))   # ['users', 'config']
+    print(db["users"])       # ['Alice', 'Bob']
+
+    # Gotcha: mutable values need reassignment
+    users = db["users"]
+    users.append("Charlie")
+    db["users"] = users      # must reassign!
+    print(db["users"])       # ['Alice', 'Bob', 'Charlie']</pre>
+
+    <h4>Common Mistakes</h4>
+    <div class="do-dont">
+      <div class="dont-box">
+        <div class="label">Don&rsquo;t</div>
+<pre># Loading pickle from untrusted sources
+pickle.loads(data_from_internet)
+# Could run arbitrary code!
+
+# Mutating shelve values in place
+db["items"].append("x")
+# Change is LOST
+
+# Pickle for long-term storage
+# Class changes break unpickling</pre>
+      </div>
+      <div class="do-box">
+        <div class="label">Do</div>
+<pre># Use JSON for untrusted data
+json.loads(data_from_internet)
+# Safe — no code execution
+
+# Reassign after mutation
+items = db["items"]
+items.append("x")
+db["items"] = items
+
+# JSON, database, or protobuf for durable storage</pre>
+      </div>
+    </div>
+
+    <h4>Key Rules</h4>
+    <ul class="rules-list">
+      <li>NEVER unpickle untrusted data &mdash; it&rsquo;s a remote code execution vector.</li>
+      <li>Use <code>__getstate__</code>/<code>__setstate__</code> to customize serialization (skip sockets, locks, etc.).</li>
+      <li><code>shelve</code> is dict-like persistence for small data &mdash; not a database replacement.</li>
+    </ul>
+
+    <div class="exercise">
+      <div class="exercise-label">Exercise 1</div>
+      <p>Create a <code>Cache</code> class with <code>save(filepath)</code> and <code>load(filepath)</code> methods that uses pickle. Store a dict of <code>{key: (value, timestamp)}</code> pairs. Test round-trip.</p>
+    </div>
+    <div class="exercise">
+      <div class="exercise-label">Exercise 2</div>
+      <p>Build a persistent counter using shelve: <code>increment(name)</code> adds 1 to a named counter, <code>get(name)</code> returns the count. Data survives program restarts.</p>
+    </div>
+    <div class="exercise">
+      <div class="exercise-label">Exercise 3</div>
+      <p>Create a class <code>SecureModel</code> with a socket attribute. Implement <code>__getstate__</code>/<code>__setstate__</code> to exclude the socket on pickle and recreate it on unpickle.</p>
+    </div>
+
+    <div class="connection">
+      <strong>Connection:</strong> Contrasts with <strong>JSON/CSV formats</strong> (text-based, safe). Relates to <strong>struct/binary data</strong> (another binary format). <code>__getstate__</code>/<code>__setstate__</code> are dunder methods like those in the OOP section.
+    </div>
+  </div>
+
+</div><!-- end security & serialization section -->
+
+
+<!-- ============================================================ -->
+<!-- NEW CONCEPTS SECTION 2: Numeric Precision & Data -->
+<!-- ============================================================ -->
+<div class="section">
+  <span class="section-label new">New</span>
+  <h2 class="section-title">Numeric Precision &amp; Data</h2>
+
+  <!-- Concept 3: decimal.Decimal & fractions.Fraction -->
+  <div class="concept" id="decimal-fraction">
+    <div class="concept-header">
+      <h3>decimal.Decimal &amp; fractions.Fraction &mdash; Exact Arithmetic</h3>
+      <span class="ttag">Numeric Precision</span>
+    </div>
+
+    <p>Floating-point arithmetic produces surprising results (<code>0.1 + 0.2 != 0.3</code>). Financial calculations, scientific computation, and any domain requiring exact decimal results needs <code>Decimal</code>. <code>Fraction</code> handles exact rational arithmetic.</p>
+
+    <h4>Example 1 &mdash; The floating-point problem</h4>
+<pre>from decimal import Decimal
+
+# The classic float problem
+print(0.1 + 0.2)           # 0.30000000000000004
+print(0.1 + 0.2 == 0.3)    # False
+
+# Decimal fixes this
+print(Decimal("0.1") + Decimal("0.2"))          # 0.3
+print(Decimal("0.1") + Decimal("0.2") == Decimal("0.3"))  # True</pre>
+    <div class="output">0.30000000000000004
+False
+0.3
+True</div>
+
+    <h4>Example 2 &mdash; Decimal precision and rounding</h4>
+<pre>from decimal import Decimal, ROUND_HALF_UP, ROUND_DOWN, getcontext
+
+# Always create from strings (not floats!)
+price = Decimal("19.99")
+tax_rate = Decimal("0.0875")
+tax = price * tax_rate
+print(tax)  # 1.749125
+
+# Round to cents
+print(tax.quantize(Decimal("0.01")))                    # 1.75
+print(tax.quantize(Decimal("0.01"), ROUND_HALF_UP))     # 1.75
+print(tax.quantize(Decimal("0.01"), ROUND_DOWN))        # 1.74
+
+# Set global precision
+getcontext().prec = 50
+print(Decimal(1) / Decimal(7))  # 0.14285714285714285714285714285714285714285714285714</pre>
+
+    <h4>Example 3 &mdash; Financial calculation</h4>
+<pre>from decimal import Decimal, ROUND_HALF_UP
+
+def calculate_total(items):
+    """Calculate order total with tax, rounding each line item."""
+    subtotal = Decimal("0")
+    for name, price, qty in items:
+        line = Decimal(str(price)) * qty
+        subtotal += line
+    tax = (subtotal * Decimal("0.08")).quantize(Decimal("0.01"), ROUND_HALF_UP)
+    return subtotal, tax, subtotal + tax
+
+items = [("Widget", 9.99, 3), ("Gadget", 24.50, 2)]
+sub, tax, total = calculate_total(items)
+print(f"Subtotal: ${sub}, Tax: ${tax}, Total: ${total}")
+# Subtotal: $78.97, Tax: $6.32, Total: $85.29</pre>
+    <div class="output">Subtotal: $78.97, Tax: $6.32, Total: $85.29</div>
+
+    <h4>Example 4 &mdash; Fractions</h4>
+<pre>from fractions import Fraction
+
+# Create from various inputs
+print(Fraction(1, 3))          # 1/3
+print(Fraction("3.14"))        # 157/50
+print(Fraction(0.1))           # 3602879701896397/36028797018963968 (exact float rep)
+print(Fraction("0.1"))         # 1/10 (from string is exact)
+
+# Arithmetic is exact
+a = Fraction(1, 3)
+b = Fraction(1, 6)
+print(a + b)      # 1/2
+print(a * b)      # 1/18
+print(a - b)      # 1/6
+
+# Convert back
+print(float(Fraction(1, 3)))   # 0.3333333333333333
+
+# Limit denominator (approximate)
+pi_approx = Fraction("3.14159265358979")
+print(pi_approx.limit_denominator(100))   # 311/99
+print(pi_approx.limit_denominator(1000))  # 355/113</pre>
+
+    <h4>Common Mistakes</h4>
+    <div class="do-dont">
+      <div class="dont-box">
+        <div class="label">Don&rsquo;t</div>
+<pre># Creating Decimal from float
+Decimal(0.1)
+# 0.10000000000000000555...
+
+# Mixing Decimal and float
+Decimal("1.5") + 0.1
+# TypeError!
+
+# Using round() for financial rounding
+round(2.5)  # 2 (banker's rounding)</pre>
+      </div>
+      <div class="do-box">
+        <div class="label">Do</div>
+<pre># Always create from string
+Decimal("0.1")
+# Exactly 0.1
+
+# Keep everything as Decimal
+Decimal("1.5") + Decimal("0.1")
+
+# Use .quantize() with explicit mode
+tax.quantize(Decimal("0.01"), ROUND_HALF_UP)</pre>
+      </div>
+    </div>
+
+    <h4>Key Rules</h4>
+    <ul class="rules-list">
+      <li>Use <code>Decimal</code> for money, finance, and anywhere exact decimal representation matters. Create from strings.</li>
+      <li>Use <code>Fraction</code> when you need exact rational arithmetic (recipe scaling, music timing, etc.).</li>
+      <li>Float is fine for science/graphics where small errors are acceptable and speed matters.</li>
+    </ul>
+
+    <div class="exercise">
+      <div class="exercise-label">Exercise 1</div>
+      <p>Write a tip calculator that takes a bill amount (string) and tip percentage, returns the tip and total rounded to cents using ROUND_HALF_UP. <code>tip_calc("87.50", 18)</code> &rarr; <code>(Decimal('15.75'), Decimal('103.25'))</code>.</p>
+    </div>
+    <div class="exercise">
+      <div class="exercise-label">Exercise 2</div>
+      <p>Write a function that finds the best rational approximation of pi (3.14159265...) with denominator &le; 1000 using <code>Fraction.limit_denominator()</code>. Print the fraction and its float value.</p>
+    </div>
+    <div class="exercise">
+      <div class="exercise-label">Exercise 3</div>
+      <p>Implement <code>split_bill(total: str, n: int)</code> that splits a bill exactly &mdash; returns a list of n amounts that sum to exactly the total. Handle the penny remainder by giving extra cents to the first people. <code>split_bill("100.00", 3)</code> &rarr; <code>[Decimal('33.34'), Decimal('33.33'), Decimal('33.33')]</code>.</p>
+    </div>
+
+    <div class="connection">
+      <strong>Connection:</strong> Directly addresses the float issues seen in comprehensions and basic arithmetic. Relates to <strong>type hints</strong> (can annotate with Decimal).
+    </div>
+  </div>
+
+  <!-- Concept 4: statistics Module -->
+  <div class="concept" id="statistics-module">
+    <div class="concept-header">
+      <h3>statistics Module</h3>
+      <span class="ttag">Data Analysis</span>
+    </div>
+
+    <p>Python&rsquo;s <code>statistics</code> module provides production-ready statistical functions without needing NumPy. Perfect for quick calculations, data validation, and lightweight analytics.</p>
+
+    <h4>Example 1 &mdash; Central tendency</h4>
+<pre>import statistics
+
+data = [4, 8, 15, 16, 23, 42]
+
+print(statistics.mean(data))      # 18
+print(statistics.median(data))    # 15.5  (average of middle two)
+print(statistics.mode([1, 2, 2, 3, 3, 3]))  # 3
+print(statistics.multimode([1, 1, 2, 2, 3]))  # [1, 2]
+
+# Geometric &amp; harmonic means
+print(statistics.geometric_mean([1, 2, 4, 8]))  # 2.8284...
+print(statistics.harmonic_mean([40, 60]))         # 48.0</pre>
+    <div class="output">18
+15.5
+3
+[1, 2]
+2.8284271247461903
+48.0</div>
+
+    <h4>Example 2 &mdash; Spread measures</h4>
+<pre>import statistics
+
+data = [2, 4, 4, 4, 5, 5, 7, 9]
+
+print(statistics.variance(data))    # 4.571... (sample variance)
+print(statistics.pvariance(data))   # 4.0     (population variance)
+print(statistics.stdev(data))       # 2.138... (sample std dev)
+print(statistics.pstdev(data))      # 2.0     (population std dev)
+
+# Quantiles
+print(statistics.quantiles(data))              # [3.5, 4.5, 6.5] (quartiles)
+print(statistics.quantiles(data, n=10))        # deciles
+print(statistics.quantiles(range(100), n=4))   # [24.75, 49.5, 74.25]</pre>
+
+    <h4>Example 3 &mdash; Linear regression and correlation</h4>
+<pre>import statistics
+
+# Study hours vs exam scores
+hours = [1, 2, 3, 4, 5, 6, 7, 8]
+scores = [52, 58, 65, 68, 73, 79, 84, 90]
+
+# Correlation coefficient
+r = statistics.correlation(hours, scores)
+print(f"Correlation: {r:.4f}")  # ~0.9944 (strong positive)
+
+# Linear regression
+slope, intercept = statistics.linear_regression(hours, scores)
+print(f"Score = {slope:.2f} * hours + {intercept:.2f}")
+# Score ≈ 5.43 * hours + 48.00
+
+# Predict for 10 hours
+predicted = slope * 10 + intercept
+print(f"Predicted score for 10 hours: {predicted:.1f}")  # ~102.3</pre>
+
+    <h4>Example 4 &mdash; NormalDist for probability</h4>
+<pre>from statistics import NormalDist
+
+# IQ scores: mean=100, stdev=15
+iq = NormalDist(mu=100, sigma=15)
+
+print(f"P(IQ &lt; 130): {iq.cdf(130):.4f}")         # ~0.9772
+print(f"P(IQ &gt; 130): {1 - iq.cdf(130):.4f}")      # ~0.0228
+print(f"P(85 &lt; IQ &lt; 115): {iq.cdf(115) - iq.cdf(85):.4f}")  # ~0.6827
+
+# Quantiles — what IQ is the 95th percentile?
+print(f"95th percentile: {iq.inv_cdf(0.95):.1f}")  # ~124.7
+
+# Overlap between two distributions
+exam_a = NormalDist(75, 10)
+exam_b = NormalDist(80, 12)
+print(f"Overlap: {exam_a.overlap(exam_b):.4f}")    # ~0.8037</pre>
+
+    <h4>Common Mistakes</h4>
+    <div class="do-dont">
+      <div class="dont-box">
+        <div class="label">Don&rsquo;t</div>
+<pre># mode() on data with no repeats (Python &lt; 3.8)
+statistics.mode([1, 2, 3])
+# StatisticsError!
+
+# Confusing sample vs population variance
+statistics.variance(population_data)
+# Wrong divisor (n-1 vs n)
+
+# mean() on empty sequence
+statistics.mean([])
+# StatisticsError!</pre>
+      </div>
+      <div class="do-box">
+        <div class="label">Do</div>
+<pre># Use multimode() — always returns a list
+statistics.multimode([1, 2, 3])
+# [1, 2, 3]
+
+# pvariance/pstdev for full population
+statistics.pvariance(population_data)
+
+# Check length first
+if data:
+    statistics.mean(data)</pre>
+      </div>
+    </div>
+
+    <h4>Key Rules</h4>
+    <ul class="rules-list">
+      <li>Use <code>statistics</code> for stdlib-only analysis. For heavy computation, use NumPy/pandas.</li>
+      <li>Sample (<code>variance</code>/<code>stdev</code>) divides by n-1; population (<code>pvariance</code>/<code>pstdev</code>) divides by n.</li>
+      <li><code>NormalDist</code> is surprisingly powerful &mdash; CDF, inverse CDF, overlap, arithmetic on distributions.</li>
+    </ul>
+
+    <div class="exercise">
+      <div class="exercise-label">Exercise 1</div>
+      <p>Given exam scores <code>[72, 85, 90, 88, 76, 95, 68, 82, 91, 87]</code>, compute mean, median, stdev, and the quartile boundaries.</p>
+    </div>
+    <div class="exercise">
+      <div class="exercise-label">Exercise 2</div>
+      <p>Using <code>NormalDist</code>, if average delivery time is 5 days (stdev 1.2), what&rsquo;s the probability a delivery takes more than 7 days?</p>
+    </div>
+    <div class="exercise">
+      <div class="exercise-label">Exercise 3</div>
+      <p>Given x = [1, 2, 3, 4, 5] and y = [2.1, 3.9, 6.2, 7.8, 10.1], compute the correlation coefficient and predict y when x = 10.</p>
+    </div>
+
+    <div class="connection">
+      <strong>Connection:</strong> Combines with <strong>Decimal &amp; Fraction</strong> (today) for exact statistical calculations. Relates to <strong>profiling</strong> (analyzing timing data statistically).
+    </div>
+  </div>
+
+  <!-- Concept 5: graphlib.TopologicalSorter -->
+  <div class="concept" id="graphlib-toposort">
+    <div class="concept-header">
+      <h3>graphlib.TopologicalSorter &mdash; Dependency Resolution</h3>
+      <span class="ttag">Algorithms &amp; Data Structures</span>
+    </div>
+
+    <p>Dependency resolution is everywhere &mdash; build systems, task scheduling, package managers, database migrations. Python 3.9+ includes <code>graphlib.TopologicalSorter</code> for exactly this.</p>
+
+    <h4>Example 1 &mdash; Basic topological sort</h4>
+<pre>from graphlib import TopologicalSorter
+
+# Task dependencies: {task: [depends_on...]}
+ts = TopologicalSorter()
+ts.add("cook", "prep_ingredients", "preheat_oven")
+ts.add("prep_ingredients", "shop")
+ts.add("preheat_oven")
+ts.add("serve", "cook", "set_table")
+ts.add("set_table")
+ts.add("shop")
+
+order = list(ts.static_order())
+print(order)
+# ['shop', 'preheat_oven', 'set_table', 'prep_ingredients', 'cook', 'serve']</pre>
+    <div class="output">['shop', 'preheat_oven', 'set_table', 'prep_ingredients', 'cook', 'serve']</div>
+
+    <h4>Example 2 &mdash; From a dependency dict</h4>
+<pre>from graphlib import TopologicalSorter
+
+# Package dependencies
+deps = {
+    "app": ["flask", "sqlalchemy"],
+    "flask": ["werkzeug", "jinja2"],
+    "sqlalchemy": ["greenlet"],
+    "werkzeug": [],
+    "jinja2": ["markupsafe"],
+    "greenlet": [],
+    "markupsafe": [],
+}
+
+ts = TopologicalSorter(deps)
+install_order = list(ts.static_order())
+print(install_order)
+# ['werkzeug', 'markupsafe', 'greenlet', 'jinja2', 'sqlalchemy', 'flask', 'app']</pre>
+    <div class="output">['werkzeug', 'markupsafe', 'greenlet', 'jinja2', 'sqlalchemy', 'flask', 'app']</div>
+
+    <h4>Example 3 &mdash; Parallel execution with prepare/done</h4>
+<pre>from graphlib import TopologicalSorter
+
+deps = {
+    "compile": ["parse"],
+    "link": ["compile", "fetch_libs"],
+    "parse": [],
+    "fetch_libs": [],
+    "test": ["link"],
+}
+
+ts = TopologicalSorter(deps)
+ts.prepare()
+
+while ts.is_active():
+    # get_ready() returns tasks whose deps are all done
+    ready = ts.get_ready()
+    print(f"Can run in parallel: {ready}")
+    # In real code, you'd run these concurrently
+    for task in ready:
+        ts.done(task)  # mark as completed</pre>
+    <div class="output">Can run in parallel: ('parse', 'fetch_libs')
+Can run in parallel: ('compile',)
+Can run in parallel: ('link',)
+Can run in parallel: ('test',)</div>
+
+    <h4>Example 4 &mdash; Detecting cycles</h4>
+<pre>from graphlib import TopologicalSorter, CycleError
+
+deps = {
+    "A": ["B"],
+    "B": ["C"],
+    "C": ["A"],  # cycle!
+}
+
+ts = TopologicalSorter(deps)
+try:
+    list(ts.static_order())
+except CycleError as e:
+    print(f"Cycle detected: {e}")
+    # Cycle detected: nodes are in a cycle ['A', 'C', 'B', 'A']</pre>
+
+    <h4>Example 5 &mdash; Real-world: database migration ordering</h4>
+<pre>from graphlib import TopologicalSorter
+
+migrations = {
+    "003_add_email_index": ["002_add_users_email"],
+    "002_add_users_email": ["001_create_users"],
+    "001_create_users": [],
+    "004_create_orders": ["001_create_users"],
+    "005_add_order_total": ["004_create_orders"],
+    "006_user_orders_fk": ["002_add_users_email", "004_create_orders"],
+}
+
+ts = TopologicalSorter(migrations)
+print("Migration order:")
+for m in ts.static_order():
+    print(f"  → {m}")</pre>
+    <div class="output">Migration order:
+  &rarr; 001_create_users
+  &rarr; 002_add_users_email
+  &rarr; 004_create_orders
+  &rarr; 003_add_email_index
+  &rarr; 005_add_order_total
+  &rarr; 006_user_orders_fk</div>
+
+    <h4>Common Mistakes</h4>
+    <div class="do-dont">
+      <div class="dont-box">
+        <div class="label">Don&rsquo;t</div>
+<pre># get_ready() without prepare()
+ts.get_ready()
+# ValueError!
+
+# Forgetting to call done()
+ready = ts.get_ready()
+# process tasks...
+# sorter hangs — never progresses
+
+# Adding nodes after prepare()
+ts.prepare()
+ts.add("new_task", "dep")
+# ValueError!</pre>
+      </div>
+      <div class="do-box">
+        <div class="label">Do</div>
+<pre># Always call prepare() first
+ts.prepare()
+ready = ts.get_ready()
+
+# Always mark nodes done
+for task in ready:
+    process(task)
+    ts.done(task)
+
+# Build entire graph before prepare()
+for node, deps in all_deps.items():
+    ts.add(node, *deps)
+ts.prepare()</pre>
+      </div>
+    </div>
+
+    <h4>Key Rules</h4>
+    <ul class="rules-list">
+      <li>Use <code>static_order()</code> for simple sequential ordering. Use <code>prepare()</code>/<code>get_ready()</code>/<code>done()</code> when tasks can run in parallel.</li>
+      <li><code>CycleError</code> is raised if the graph has cycles &mdash; catch it to give useful error messages.</li>
+      <li>The dict format is <code>{node: [predecessors]}</code> &mdash; the predecessors must be completed before the node.</li>
+    </ul>
+
+    <div class="exercise">
+      <div class="exercise-label">Exercise 1</div>
+      <p>Given courses with prerequisites <code>{"ML": ["Stats", "Python"], "Stats": ["Calculus"], "Calculus": [], "Python": [], "Deep Learning": ["ML", "Linear Algebra"], "Linear Algebra": ["Calculus"]}</code>, print the order to take them.</p>
+    </div>
+    <div class="exercise">
+      <div class="exercise-label">Exercise 2</div>
+      <p>Using the <code>prepare()</code>/<code>get_ready()</code>/<code>done()</code> API, determine which courses from exercise 1 can be taken simultaneously each semester.</p>
+    </div>
+    <div class="exercise">
+      <div class="exercise-label">Exercise 3</div>
+      <p>Write a function <code>detect_circular_deps(deps: dict) -&gt; list | None</code> that returns the cycle if one exists, or None if the graph is valid.</p>
+    </div>
+
+    <div class="connection">
+      <strong>Connection:</strong> Relates to <strong>async/await</strong> (parallel task execution). The <code>prepare()</code>/<code>done()</code> API mirrors <code>concurrent.futures</code> patterns. Graph algorithms connect to LeetCode graph problems.
+    </div>
+  </div>
+
+</div><!-- end numeric precision & data section -->
+
+
+<!-- ============================================================ -->
+<!-- FOOTER -->
+<!-- ============================================================ -->
+<div class="footer">
+  <h4>All Python Study Guides</h4>
+    <ul>
+    <li><a href="python-guides/python-guide-2026-07-09.html">2026-07-09</a> (Day 39)</li>
+    <li><a href="python-guides/python-guide-2026-07-08.html">2026-07-08</a> (Day 38)</li>
+    <li><a href="python-guides/python-guide-2026-07-07.html">2026-07-07</a> (Day 37)</li>
+    <li><a href="python-guides/python-guide-2026-07-06.html">2026-07-06</a> (Day 36)</li>
+    <li><a href="python-guides/python-guide-2026-07-05.html">2026-07-05</a> (Day 35)</li>
+    <li><a href="python-guides/python-guide-2026-07-04.html">2026-07-04</a> (Day 34)</li>
+    <li><a href="python-guides/python-guide-2026-07-03.html">2026-07-03</a> (Day 33)</li>
+    <li><a href="python-guides/python-guide-2026-07-02.html">2026-07-02</a> (Day 32)</li>
+    <li><a href="python-guides/python-guide-2026-07-01.html">2026-07-01</a> (Day 31)</li>
+    <li><a href="python-guides/python-guide-2026-06-30.html">2026-06-30</a> (Day 30)</li>
+    <li><a href="python-guides/python-guide-2026-06-29.html">2026-06-29</a> (Day 29)</li>
+    <li><a href="python-guides/python-guide-2026-06-28.html">2026-06-28</a> (Day 28)</li>
+    <li><a href="python-guides/python-guide-2026-06-27.html">2026-06-27</a> (Day 27)</li>
+    <li><a href="python-guides/python-guide-2026-06-26.html">2026-06-26</a> (Day 26)</li>
+    <li><a href="python-guides/python-guide-2026-06-25.html">2026-06-25</a> (Day 25)</li>
+    <li><a href="python-guides/python-guide-2026-06-24.html">2026-06-24</a> (Day 24)</li>
+    <li><a href="python-guides/python-guide-2026-06-23.html">2026-06-23</a> (Day 23)</li>
+    <li><a href="python-guides/python-guide-2026-06-22.html">2026-06-22</a> (Day 22)</li>
+    <li><a href="python-guides/python-guide-2026-06-21.html">2026-06-21</a> (Day 21)</li>
+    <li><a href="python-guides/python-guide-2026-06-19.html">2026-06-19</a> (Day 20)</li>
+    <li><a href="python-guides/python-guide-2026-06-18.html">2026-06-18</a> (Day 19)</li>
+    <li><a href="python-guides/python-guide-2026-06-17.html">2026-06-17</a> (Day 18)</li>
+    <li class="current"><a href="python-guides/python-guide-2026-06-15.html">2026-06-15</a> </li>
+    <li><a href="python-guides/python-guide-2026-06-13.html">2026-06-13</a> (Day 16)</li>
+    <li><a href="python-guides/python-guide-2026-06-12.html">2026-06-12</a> (Day 15)</li>
+    <li><a href="python-guides/python-guide-2026-06-11.html">2026-06-11</a> (Day 14)</li>
+    <li><a href="python-guides/python-guide-2026-06-10.html">2026-06-10</a> (Day 13)</li>
+    <li><a href="python-guides/python-guide-2026-06-09.html">2026-06-09</a> (Day 12)</li>
+    <li><a href="python-guides/python-guide-2026-06-08.html">2026-06-08</a> (Day 11)</li>
+    <li><a href="python-guides/python-guide-2026-06-07.html">2026-06-07</a> (Day 10)</li>
+    <li><a href="python-guides/python-guide-2026-06-05.html">2026-06-05</a> (Day 9)</li>
+    <li><a href="python-guides/python-guide-2026-06-04.html">2026-06-04</a> (Day 8)</li>
+    <li><a href="python-guides/python-guide-2026-06-03.html">2026-06-03</a> (Day 7)</li>
+    <li><a href="python-guides/python-guide-2026-06-02.html">2026-06-02</a> (Day 6)</li>
+    <li><a href="python-guides/python-guide-2026-06-01.html">2026-06-01</a> (Day 5)</li>
+    <li><a href="python-guides/python-guide-2026-05-31.html">2026-05-31</a> (Day 4)</li>
+    <li><a href="python-guides/python-guide-2026-05-30.html">2026-05-30</a> (Day 3)</li>
+    <li><a href="python-guides/python-guide-2026-05-29.html">2026-05-29</a> (Day 2)</li>
+    <li><a href="python-guides/python-guide-2026-05-28.html">2026-05-28</a> (Day 1)</li>
+  </ul>
+</div>
+
+</div><!-- end main -->
+
+<script>
+(function() {
+  // ===== Theme Toggle =====
+  var THEME_KEY = 'lc-pyguide-theme';
+  var toggle = document.getElementById('theme-toggle');
+  var html = document.documentElement;
+
+  function setTheme(theme) {
+    html.setAttribute('data-theme', theme);
+    localStorage.setItem(THEME_KEY, theme);
+    toggle.textContent = theme === 'dark' ? '☽' : '☀';
+    toggle.title = theme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme';
+  }
+
+  var saved = localStorage.getItem(THEME_KEY) || 'dark';
+  setTheme(saved);
+
+  toggle.addEventListener('click', function() {
+    var current = html.getAttribute('data-theme');
+    setTheme;
+  });
+
+  // ===== Mobile Sidebar Toggle =====
+  var sidebarToggle = document.getElementById('sidebar-toggle');
+  var sidebar = document.getElementById('sidebar');
+
+  sidebarToggle.addEventListener('click', function() {
+    sidebar.classList.toggle('open');
+  });
+
+  // Close sidebar when clicking a link on mobile
+  sidebar.querySelectorAll('.sidebar-link').forEach(function(link) {
+    link.addEventListener('click', function() {
+      if (window.innerWidth <= 900) {
+        sidebar.classList.remove('open');
+      }
+    });
+  });
+
+  // ===== Active Sidebar Link on Scroll =====
+  var links = document.querySelectorAll('.sidebar-link');
+  var sections = [];
+
+  links.forEach(function(link) {
+    var id = link.getAttribute('href').slice(1);
+    var el = document.getElementById(id);
+    if (el) sections.push({ id: id, el: el, link: link });
+  });
+
+  function updateActive() {
+    var current = null;
+    var scrollY = window.scrollY + 100;
+
+    for (var i = sections.length - 1; i >= 0; i--) {
+      if (sections[i].el.offsetTop <= scrollY) {
+        current = sections[i];
+        break;
+      }
+    }
+
+    links.forEach(function(l) { l.classList.remove('active'); });
+    if  current.link.classList.add('active');
+  }
+
+  window.addEventListener('scroll', updateActive, { passive: true });
+  updateActive();
+})();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,1112 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TypeScript Daily Guide — 2026-06-24 (Day 21)</title>
+<style>
+:root {
+  --bg: #0d1117;
+  --surface: #161b22;
+  --surface2: #1c2129;
+  --border: #30363d;
+  --text: #e6edf3;
+  --text-muted: #8b949e;
+  --accent: #58a6ff;
+  --accent-bg: rgba(56,139,253,0.15);
+  --green: #3fb950;
+  --green-bg: rgba(63,185,80,0.08);
+  --red: #f85149;
+  --red-bg: rgba(248,81,73,0.08);
+  --yellow: #d29922;
+  --yellow-bg: rgba(210,153,34,0.1);
+  --orange: #db6d28;
+  --purple: #bc8cff;
+  --purple-bg: rgba(188,140,255,0.08);
+  --purple-border: rgba(188,140,255,0.2);
+  --link: #58a6ff;
+  --code-bg: #1c2129;
+  --output-bg: #0e1c0e;
+  --output-border: #1a3a1a;
+  --sidebar-bg: #161b22;
+  --sidebar-active: rgba(56,139,253,0.15);
+  --exercise-border: #30363d;
+}
+[data-theme="light"] {
+  --bg: #ffffff;
+  --surface: #f6f8fa;
+  --surface2: #eef1f5;
+  --border: #d0d7de;
+  --text: #1f2328;
+  --text-muted: #656d76;
+  --accent: #0969da;
+  --accent-bg: rgba(9,105,218,0.1);
+  --green: #1a7f37;
+  --green-bg: rgba(26,127,55,0.06);
+  --red: #cf222e;
+  --red-bg: rgba(207,34,46,0.06);
+  --yellow: #9a6700;
+  --yellow-bg: rgba(154,103,0,0.06);
+  --orange: #bc4c00;
+  --purple: #8250df;
+  --purple-bg: rgba(130,80,223,0.06);
+  --purple-border: rgba(130,80,223,0.15);
+  --link: #0969da;
+  --code-bg: #eef1f5;
+  --output-bg: #f0faf0;
+  --output-border: #c6e6c6;
+  --sidebar-bg: #f6f8fa;
+  --sidebar-active: rgba(9,105,218,0.1);
+  --exercise-border: #d0d7de;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;font-size:16px;line-height:1.7;color:var(--text);background:var(--bg);display:flex;min-height:100vh}
+a{color:var(--link);text-decoration:none}
+a:hover{text-decoration:underline}
+
+/* Sidebar */
+.sidebar{position:fixed;top:0;left:0;width:300px;height:100vh;background:var(--sidebar-bg);border-right:1px solid var(--border);overflow-y:auto;padding:20px 0;z-index:100}
+.sidebar-header{padding:16px 20px;border-bottom:1px solid var(--border);margin-bottom:12px}
+.sidebar-header h2{font-size:15px;font-weight:600;color:var(--text)}
+.sidebar-header .date{font-size:13px;color:var(--text-muted);margin-top:2px}
+.sidebar-section{padding:8px 20px 4px;font-size:12px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px}
+.sidebar-section.review-label{color:var(--purple)}
+.sidebar-nav{list-style:none;padding:0}
+.sidebar-nav li a{display:block;padding:6px 20px 6px 28px;font-size:14px;color:var(--text-muted);transition:all 0.15s}
+.sidebar-nav li a:hover,.sidebar-nav li a.active{color:var(--accent);background:var(--sidebar-active);text-decoration:none}
+.sidebar-nav li a .nav-id{font-size:11px;color:var(--text-muted);opacity:0.6;margin-left:6px}
+
+/* Main */
+.main{margin-left:300px;flex:1;padding:40px;max-width:1160px}
+.content{max-width:860px;margin:0 auto}
+
+/* Theme Toggle */
+.theme-toggle{position:fixed;top:16px;right:20px;z-index:200;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:8px 12px;cursor:pointer;color:var(--text);font-size:18px;line-height:1;transition:all 0.15s}
+.theme-toggle:hover{border-color:var(--accent)}
+
+/* Header */
+.guide-header{text-align:center;padding:32px 0 40px;border-bottom:1px solid var(--border);margin-bottom:40px}
+.guide-header h1{font-size:28px;font-weight:700;margin-bottom:8px}
+.guide-header .meta{font-size:15px;color:var(--text-muted)}
+.guide-header .meta span{margin:0 8px}
+.badge{display:inline-block;padding:2px 10px;border-radius:12px;font-size:13px;font-weight:500}
+.badge-blue{background:var(--accent-bg);color:var(--accent)}
+.badge-purple{background:var(--purple-bg);color:var(--purple)}
+
+/* How To Use */
+.how-to-use{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:24px 28px;margin-bottom:40px}
+.how-to-use h2{font-size:18px;margin-bottom:12px}
+.how-to-use ol{padding-left:24px}
+.how-to-use li{margin-bottom:6px;color:var(--text-muted)}
+
+/* Review Section */
+.review-section{margin-bottom:48px}
+.review-section-header{font-size:22px;font-weight:700;padding-bottom:12px;border-bottom:2px solid var(--purple);margin-bottom:28px;display:flex;align-items:center;gap:12px;color:var(--purple)}
+
+/* Review Card */
+.review-card{background:var(--purple-bg);border:1px solid var(--purple-border);border-left:4px solid var(--purple);border-radius:10px;padding:28px;margin-bottom:24px}
+.review-card .review-header{display:flex;align-items:center;gap:12px;margin-bottom:12px;flex-wrap:wrap}
+.review-card .review-title{font-size:18px;font-weight:700;color:var(--purple)}
+.review-card .review-meta{font-size:13px;color:var(--text-muted)}
+.review-card .review-reminder{color:var(--text-muted);font-style:italic;margin-bottom:16px;padding-left:14px;border-left:3px solid var(--purple)}
+.review-card .review-pattern{margin-bottom:16px}
+.review-card .review-pattern strong{display:block;margin-bottom:8px;font-size:14px;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px}
+.review-card .review-challenge{margin-bottom:12px}
+.review-card .review-challenge strong{display:block;margin-bottom:8px;font-size:14px;color:var(--yellow);text-transform:uppercase;letter-spacing:0.5px}
+.review-card .review-challenge p{line-height:1.6}
+.review-card .review-pitfall{background:var(--red-bg);border:1px solid rgba(248,81,73,0.15);border-radius:6px;padding:12px 16px;font-size:14px;line-height:1.6}
+.review-card .review-pitfall strong{color:var(--red);margin-right:4px}
+.review-card code{background:var(--code-bg);padding:2px 6px;border-radius:4px;font-family:'SF Mono','Fira Code','Consolas',monospace;font-size:13px}
+
+/* Topic Section */
+.topic-section{margin-bottom:48px}
+.topic-section-header{font-size:22px;font-weight:700;padding-bottom:12px;border-bottom:2px solid var(--accent);margin-bottom:28px;display:flex;align-items:center;gap:12px}
+.topic-section-header .section-num{background:var(--accent);color:#fff;width:32px;height:32px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:15px;font-weight:700;flex-shrink:0}
+
+/* Concept Card */
+.concept-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:28px;margin-bottom:32px}
+.concept-header{display:flex;align-items:center;gap:12px;margin-bottom:16px;flex-wrap:wrap}
+.concept-title{font-size:20px;font-weight:700}
+.ttag{display:inline-block;padding:2px 10px;border-radius:12px;font-size:12px;font-weight:500;background:var(--accent-bg);color:var(--accent)}
+
+.why-matters{color:var(--text-muted);font-style:italic;margin-bottom:20px;padding-left:14px;border-left:3px solid var(--accent)}
+.explanation{margin-bottom:20px;line-height:1.8}
+.explanation p{margin-bottom:12px}
+.explanation ul,.explanation ol{padding-left:24px;margin-bottom:12px}
+.explanation li{margin-bottom:4px}
+.explanation code{background:var(--code-bg);padding:2px 6px;border-radius:4px;font-family:'SF Mono','Fira Code','Consolas',monospace;font-size:14px}
+.step{display:flex;gap:12px;margin-bottom:10px;align-items:flex-start}
+.step-num{background:var(--accent-bg);color:var(--accent);width:24px;height:24px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;margin-top:3px}
+
+/* Code Examples */
+.code-example{margin-bottom:20px;border:1px solid var(--border);border-radius:8px;overflow:hidden}
+.lang-badge{background:var(--surface2);color:var(--text-muted);font-size:12px;font-weight:600;padding:6px 14px;border-bottom:1px solid var(--border);font-family:'SF Mono','Fira Code','Consolas',monospace}
+pre{margin:0;padding:16px;overflow-x:auto;background:var(--code-bg);font-family:'SF Mono','Fira Code','Consolas',monospace;font-size:13.5px;line-height:1.6;white-space:pre-wrap}
+pre code{background:none;padding:0;font-size:inherit}
+.output{background:var(--output-bg);border-top:1px solid var(--output-border);padding:12px 16px;font-family:'SF Mono','Fira Code','Consolas',monospace;font-size:13px;color:var(--green);white-space:pre-wrap}
+.output::before{content:"Output:";display:block;font-size:11px;font-weight:600;color:var(--text-muted);margin-bottom:4px;text-transform:uppercase;letter-spacing:0.5px}
+.type-result{background:var(--output-bg);border-top:1px solid var(--output-border);padding:12px 16px;font-family:'SF Mono','Fira Code','Consolas',monospace;font-size:13px;color:var(--green);white-space:pre-wrap}
+.type-result::before{content:"Type Result:";display:block;font-size:11px;font-weight:600;color:var(--text-muted);margin-bottom:4px;text-transform:uppercase;letter-spacing:0.5px}
+.type-error{background:var(--red-bg);border-top:1px solid rgba(248,81,73,0.2);padding:12px 16px;font-family:'SF Mono','Fira Code','Consolas',monospace;font-size:13px;color:var(--red);white-space:pre-wrap}
+.type-error::before{content:"Type Error:";display:block;font-size:11px;font-weight:600;color:var(--red);margin-bottom:4px;text-transform:uppercase;letter-spacing:0.5px}
+
+/* Callouts */
+.callout-warning{background:var(--yellow-bg);border:1px solid rgba(210,153,34,0.2);border-radius:8px;padding:20px;margin-bottom:20px}
+.callout-warning strong{color:var(--yellow);display:block;margin-bottom:12px;font-size:16px}
+.mistake,.correct{padding:10px 14px;border-radius:6px;margin-bottom:10px;font-size:14px;line-height:1.6}
+.mistake{background:var(--red-bg);border-left:3px solid var(--red)}
+.mistake code,.correct code{background:var(--code-bg);padding:2px 6px;border-radius:4px;font-family:'SF Mono','Fira Code','Consolas',monospace;font-size:13px}
+.correct{background:var(--green-bg);border-left:3px solid var(--green)}
+
+/* Key Rules */
+.key-rules{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:20px;margin-bottom:20px}
+.key-rules strong{display:block;margin-bottom:10px;font-size:16px}
+.key-rules ul{padding-left:20px}
+.key-rules li{margin-bottom:6px}
+.key-rules code{background:var(--code-bg);padding:2px 6px;border-radius:4px;font-family:'SF Mono','Fira Code','Consolas',monospace;font-size:13px}
+
+/* Exercises */
+.exercises{border:2px dashed var(--exercise-border);border-radius:8px;padding:20px;margin-bottom:20px;margin-left:12px}
+.exercises strong{display:block;margin-bottom:14px;font-size:16px;color:var(--purple)}
+.exercise{margin-bottom:14px;padding-left:38px;position:relative;line-height:1.6}
+.exercise:last-child{margin-bottom:0}
+.exercise-num{position:absolute;left:0;top:2px;background:var(--purple);color:#fff;width:24px;height:24px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:12px;font-weight:700}
+.exercise code{background:var(--code-bg);padding:2px 6px;border-radius:4px;font-family:'SF Mono','Fira Code','Consolas',monospace;font-size:13px}
+
+/* Connections */
+.connections{background:var(--accent-bg);border:1px solid rgba(56,139,253,0.2);border-radius:8px;padding:16px 20px;font-size:14px;color:var(--text-muted)}
+.connections strong{color:var(--accent);margin-right:6px}
+
+/* Cross-links */
+.cross-links{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:20px 24px;margin-bottom:40px;text-align:center}
+.cross-links a{margin:0 10px;font-weight:500}
+
+/* Footer */
+.guide-footer{border-top:1px solid var(--border);padding-top:32px;margin-top:48px}
+.guide-footer h2{font-size:18px;margin-bottom:16px}
+.guide-footer ul{list-style:none;padding:0}
+.guide-footer li{padding:6px 0}
+.guide-footer li a{font-weight:500}
+
+/* Responsive */
+@media(max-width:900px){
+  .sidebar{display:none}
+  .main{margin-left:0}
+  .theme-toggle{top:12px;right:12px}
+}
+</style>
+</head>
+<body>
+
+<!-- Theme Toggle -->
+<button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">&#x1F319;</button>
+
+<!-- Sidebar -->
+<nav class="sidebar">
+  <div class="sidebar-header">
+    <h2>TypeScript Daily Guide</h2>
+    <div class="date">2026-06-24 &mdash; Day 21</div>
+  </div>
+
+  <div class="sidebar-section review-label">Review (6 concepts)</div>
+  <ul class="sidebar-nav">
+    <li><a href="#review_zustand">Zustand with TypeScript <span class="nav-id">R1</span></a></li>
+    <li><a href="#review_hkt">HKT Simulation <span class="nav-id">R2</span></a></li>
+    <li><a href="#review_decl_merge">Declaration Merging <span class="nav-id">R3</span></a></li>
+    <li><a href="#review_ambient">Ambient Declarations <span class="nav-id">R4</span></a></li>
+    <li><a href="#review_const_type_param">const Type Parameters <span class="nav-id">R5</span></a></li>
+    <li><a href="#review_noinfer">NoInfer Utility Type <span class="nav-id">R6</span></a></li>
+  </ul>
+
+  <div class="sidebar-section">Type-Level Modeling</div>
+  <ul class="sidebar-nav">
+    <li><a href="#tuple_to_object">Tuple &harr; Object Types <span class="nav-id">#1</span></a></li>
+    <li><a href="#deep_partial">DeepPartial &amp; DeepReadonly <span class="nav-id">#2</span></a></li>
+    <li><a href="#union_to_intersection">UnionToIntersection <span class="nav-id">#3</span></a></li>
+  </ul>
+
+  <div class="sidebar-section">Runtime Safety Patterns</div>
+  <ul class="sidebar-nav">
+    <li><a href="#type_safe_storage">Type-Safe localStorage <span class="nav-id">#4</span></a></li>
+    <li><a href="#exhaustive_reducer">Exhaustive Reducers <span class="nav-id">#5</span></a></li>
+  </ul>
+</nav>
+
+<!-- Main Content -->
+<div class="main">
+<div class="content">
+
+<!-- Header -->
+<header class="guide-header">
+  <h1>TypeScript Daily Guide &mdash; Day 21</h1>
+  <div class="meta">
+    <span>2026-06-24</span>
+    <span>&middot;</span>
+    <span>Day 21 of 21</span>
+    <span>&middot;</span>
+    <span class="badge badge-purple">6 reviews</span>
+    <span class="badge badge-blue">5 new concepts</span>
+  </div>
+</header>
+
+<!-- How to Use -->
+<div class="how-to-use">
+  <h2>How to Use This Guide</h2>
+  <ol>
+    <li><strong>Review first</strong> &mdash; scan each purple review card; if the concept feels solid, move on; if fuzzy, re-read the code pattern</li>
+    <li><strong>Attempt the challenge exercise</strong> on any review card that felt shaky &mdash; this is your best reinforcement signal</li>
+    <li><strong>Work through new concepts</strong> top to bottom &mdash; each builds on the previous</li>
+    <li><strong>Type every code example</strong> yourself in a .ts file &mdash; hover over types in your editor to build intuition</li>
+    <li><strong>Do at least 2 exercises per concept</strong> before moving to the next one</li>
+  </ol>
+</div>
+
+<!-- Cross-links -->
+<div class="cross-links">
+  <a href="guide.html">LeetCode Guide</a>
+  <a href="lang-guide.html">Lang Guide</a>
+  <a href="python-guide.html">Python Guide</a>
+  <a href="golang-guide.html">Go Guide</a>
+  <a href="javascript-guide.html">JS Guide</a>
+  <a href="report.html">Report</a>
+</div>
+
+<!-- ============================================================ -->
+<!-- REVIEW SECTION                                                -->
+<!-- ============================================================ -->
+<div class="review-section">
+<div class="review-section-header">Review &mdash; 6 Concepts</div>
+
+<!-- R1: Zustand with TypeScript -->
+<div class="review-card" id="review_zustand">
+  <div class="review-header">
+    <span class="review-title">R1. Zustand with TypeScript</span>
+    <span class="badge badge-purple">State Management</span>
+    <span class="review-meta">overdue &middot; rep 0 &rarr; 1</span>
+  </div>
+  <div class="review-reminder">Zustand&rsquo;s <code>create</code> is curried in TypeScript: you write <code>create&lt;State&gt;()(setFn)</code> &mdash; note the empty <code>()</code> after the type argument. That extra call is what lets the store type be inferred correctly when middleware is layered on.</div>
+
+  <div class="review-pattern">
+    <strong>Key Pattern</strong>
+    <div class="code-example">
+<pre><code>import { create } from "zustand";
+
+interface BearState {
+  bears: number;
+  increase: (by: number) =&gt; void;
+}
+
+// note the curried call:  create&lt;T&gt;()(...)
+const useStore = create&lt;BearState&gt;()((set) =&gt; ({
+  bears: 0,
+  increase: (by) =&gt; set((s) =&gt; ({ bears: s.bears + by })),
+}));
+
+const bears = useStore((s) =&gt; s.bears); // number, fully typed</code></pre>
+<div class="type-result">useStore selector is typed against BearState</div>
+    </div>
+  </div>
+
+  <div class="review-challenge">
+    <strong>Challenge Exercise</strong>
+    <p>Define a <code>useCartStore</code> with <code>items: Item[]</code>, <code>addItem(item)</code>, and <code>total</code> derived in selectors. Wrap it in the <code>persist</code> middleware and give the store the correct curried type so <code>set</code>/<code>get</code> stay typed. Confirm a selector returning <code>state.total</code> is inferred as <code>number</code>.</p>
+  </div>
+
+  <div class="review-pitfall">
+    <strong>Pitfall:</strong> Writing <code>create&lt;BearState&gt;((set) =&gt; ...)</code> without the second call. The single-call form does not give TypeScript the inference hook it needs once middleware is involved, producing confusing &ldquo;not assignable&rdquo; errors. Always use the curried <code>create&lt;T&gt;()(...)</code> form in TS.
+  </div>
+</div>
+
+<!-- R2: HKT Simulation -->
+<div class="review-card" id="review_hkt">
+  <div class="review-header">
+    <span class="review-title">R2. HKT Simulation &amp; Type-Level Computation</span>
+    <span class="badge badge-purple">Advanced Type Patterns</span>
+    <span class="review-meta">overdue &middot; rep 0 &rarr; 1</span>
+  </div>
+  <div class="review-reminder">TypeScript has no real higher-kinded types, so we simulate them: declare an interface keyed by a brand whose members map an input type to an output type, then &ldquo;apply&rdquo; the type constructor by indexing that interface. This is the &ldquo;defunctionalization&rdquo; trick (lightweight-HKT pattern).</div>
+
+  <div class="review-pattern">
+    <strong>Key Pattern</strong>
+    <div class="code-example">
+<pre><code>interface HKT { readonly _A: unknown; readonly type: unknown; }
+type Apply&lt;F extends HKT, A&gt; = (F &amp; { readonly _A: A })["type"];
+
+interface ArrayHKT extends HKT { type: this["_A"][]; }
+interface PromiseHKT extends HKT { type: Promise&lt;this["_A"]&gt;; }
+
+type T1 = Apply&lt;ArrayHKT, string&gt;;    // string[]
+type T2 = Apply&lt;PromiseHKT, number&gt;;  // Promise&lt;number&gt;</code></pre>
+<div class="type-result">T1 = string[]
+T2 = Promise&lt;number&gt;</div>
+    </div>
+  </div>
+
+  <div class="review-challenge">
+    <strong>Challenge Exercise</strong>
+    <p>Add an <code>OptionHKT</code> whose <code>type</code> is <code>this["_A"] | null</code>, and write a generic <code>mapHKT</code>-style type alias that, given an <code>F extends HKT</code> and a mapping from <code>A</code> to <code>B</code>, produces <code>Apply&lt;F, B&gt;</code>. Verify <code>Apply&lt;OptionHKT, User&gt;</code> resolves to <code>User | null</code>.</p>
+  </div>
+
+  <div class="review-pitfall">
+    <strong>Pitfall:</strong> Expecting full type inference of the kind <code>F&lt;_&gt;</code> the way Haskell/Scala provide. This pattern only <em>simulates</em> HKTs &mdash; it works for explicit <code>Apply</code> calls but TypeScript will not infer the type constructor <code>F</code> from a value, so use it sparingly where the constructor is known statically.
+  </div>
+</div>
+
+<!-- R3: Declaration Merging -->
+<div class="review-card" id="review_decl_merge">
+  <div class="review-header">
+    <span class="review-title">R3. Declaration Merging &amp; Module Augmentation</span>
+    <span class="badge badge-purple">Advanced Type Patterns</span>
+    <span class="review-meta">overdue &middot; rep 0 &rarr; 1</span>
+  </div>
+  <div class="review-reminder">Two interfaces with the same name in the same scope <em>merge</em> their members. <code>declare module "x"</code> augments an existing module&rsquo;s types; <code>declare global</code> augments global scope. This is how you extend third-party types (e.g. Express <code>Request</code>) without forking them.</div>
+
+  <div class="review-pattern">
+    <strong>Key Pattern</strong>
+    <div class="code-example">
+<pre><code>// augment a third-party module's interface
+import "express";
+
+declare module "express" {
+  interface Request {
+    user?: { id: number; role: string };  // merged into Request
+  }
+}
+
+// now app.get((req) =&gt; req.user?.id) is fully typed everywhere</code></pre>
+<div class="type-result">Request now has an optional `user` property</div>
+    </div>
+  </div>
+
+  <div class="review-challenge">
+    <strong>Challenge Exercise</strong>
+    <p>Augment the global <code>Window</code> interface (via <code>declare global</code>) to add a typed <code>__APP_CONFIG__: { apiUrl: string }</code>. Then merge a <code>namespace</code> into a <code>function</code> so that <code>greet</code> is callable <em>and</em> exposes <code>greet.lang: string</code>. Show both compile and are typed.</p>
+  </div>
+
+  <div class="review-pitfall">
+    <strong>Pitfall:</strong> Putting a module augmentation in a file with no top-level <code>import</code>/<code>export</code>. Without them the file is a <em>script</em>, not a module, so <code>declare module</code> is interpreted as ambient declaration rather than augmentation &mdash; and your additions silently fail to merge. Add an <code>import</code> or <code>export {}</code> to make it a module.
+  </div>
+</div>
+
+<!-- R4: Ambient Declarations -->
+<div class="review-card" id="review_ambient">
+  <div class="review-header">
+    <span class="review-title">R4. Ambient Declarations &amp; Global Types</span>
+    <span class="badge badge-purple">Advanced Type Patterns</span>
+    <span class="review-meta">overdue &middot; rep 0 &rarr; 1</span>
+  </div>
+  <div class="review-reminder"><code>declare</code> describes the <em>shape</em> of something that exists at runtime but has no TypeScript source &mdash; a global from a script tag, a non-code asset import, or an untyped JS module. Ambient declarations emit no JavaScript; they are pure compile-time information, usually living in <code>.d.ts</code> files.</div>
+
+  <div class="review-pattern">
+    <strong>Key Pattern</strong>
+    <div class="code-example">
+<pre><code>// globals.d.ts  (a .d.ts is implicitly ambient)
+declare const __VERSION__: string;          // injected by the bundler
+declare function gtag(cmd: string, ...args: unknown[]): void;
+
+// type a non-code import
+declare module "*.svg" {
+  const url: string;
+  export default url;
+}
+
+// usage in app code, fully typed, no import needed for globals:
+console.log(__VERSION__);
+gtag("event", "page_view");</code></pre>
+<div class="type-result">__VERSION__: string; gtag callable; *.svg imports resolve</div>
+    </div>
+  </div>
+
+  <div class="review-challenge">
+    <strong>Challenge Exercise</strong>
+    <p>Write a <code>.d.ts</code> that (a) declares a global <code>process.env.NODE_ENV</code> as <code>"development" | "production"</code> via module augmentation of <code>NodeJS.ProcessEnv</code>, and (b) declares a wildcard module for <code>"*.json"</code> exporting <code>unknown</code>. Confirm <code>NODE_ENV</code> narrows in a conditional.</p>
+  </div>
+
+  <div class="review-pitfall">
+    <strong>Pitfall:</strong> Adding a value-producing statement to an ambient <code>.d.ts</code> &mdash; <code>declare</code> files must contain only declarations, never executable code. Conversely, writing <code>declare const x = 5</code> with an initializer is an error: ambient declarations describe types, they never assign values.
+  </div>
+</div>
+
+<!-- R5: const Type Parameters -->
+<div class="review-card" id="review_const_type_param">
+  <div class="review-header">
+    <span class="review-title">R5. const Type Parameters</span>
+    <span class="badge badge-purple">TypeScript 5.x</span>
+    <span class="review-meta">overdue &middot; rep 0 &rarr; 1</span>
+  </div>
+  <div class="review-reminder">A <code>const</code> type parameter (<code>function f&lt;const T&gt;(x: T)</code>) makes the inferred type as narrow as if the caller wrote <code>as const</code> &mdash; without forcing them to. Array literals infer as readonly tuples, strings as literals, instead of widening to <code>string[]</code> / <code>string</code>.</div>
+
+  <div class="review-pattern">
+    <strong>Key Pattern</strong>
+    <div class="code-example">
+<pre><code>function tuple&lt;const T extends readonly unknown[]&gt;(t: T): T { return t; }
+
+const a = tuple([1, 2, 3]);          // readonly [1, 2, 3]  (not number[])
+
+function pluck&lt;const K extends string&gt;(keys: K[]) { return keys; }
+const ks = pluck(["id", "name"]);    // ("id" | "name")[]  literals kept</code></pre>
+<div class="type-result">a: readonly [1, 2, 3]
+ks: ("id" | "name")[]</div>
+    </div>
+  </div>
+
+  <div class="review-challenge">
+    <strong>Challenge Exercise</strong>
+    <p>Write a <code>defineRoutes&lt;const T&gt;(routes: T): T</code> that, given <code>["/home", "/about"]</code>, infers the readonly tuple of literal paths. Then derive a <code>RouteUnion = T[number]</code> type from the result and confirm it is <code>"/home" | "/about"</code> rather than <code>string</code>.</p>
+  </div>
+
+  <div class="review-pitfall">
+    <strong>Pitfall:</strong> Expecting <code>const</code> on the type parameter to make the runtime value immutable. It only affects <em>inference</em> &mdash; the array is still a mutable JS array at runtime. It also has no effect if the parameter type already widens it away (e.g. a constraint of <code>string[]</code> instead of <code>readonly string[]</code>), so pair it with <code>readonly</code> constraints.
+  </div>
+</div>
+
+<!-- R6: NoInfer Utility Type -->
+<div class="review-card" id="review_noinfer">
+  <div class="review-header">
+    <span class="review-title">R6. NoInfer Utility Type</span>
+    <span class="badge badge-purple">TypeScript 5.x</span>
+    <span class="review-meta">overdue &middot; rep 0 &rarr; 1</span>
+  </div>
+  <div class="review-reminder"><code>NoInfer&lt;T&gt;</code> blocks a type parameter from being inferred at that position. You use it to pin inference to <em>one</em> argument and have the others merely <em>checked</em> against it &mdash; e.g. infer the union from a list, then validate the default against it instead of widening.</div>
+
+  <div class="review-pattern">
+    <strong>Key Pattern</strong>
+    <div class="code-example">
+<pre><code>function createMachine&lt;T extends string&gt;(config: {
+  states: T[];
+  initial: NoInfer&lt;T&gt;;       // checked against T, not an inference source
+}) { return config; }
+
+createMachine({ states: ["on", "off"], initial: "on" });   // ok
+createMachine({ states: ["on", "off"], initial: "idle" }); // Error</code></pre>
+<div class="type-error">Argument of type '"idle"' is not assignable to '"on" | "off"'.</div>
+    </div>
+  </div>
+
+  <div class="review-challenge">
+    <strong>Challenge Exercise</strong>
+    <p>Write <code>pickDefault&lt;T&gt;(options: T[], fallback: NoInfer&lt;T&gt;): T</code> so that <code>T</code> is inferred only from <code>options</code> and <code>fallback</code> must be one of them. Show that passing a <code>fallback</code> not present in <code>options</code> is a compile error rather than silently widening <code>T</code>.</p>
+  </div>
+
+  <div class="review-pitfall">
+    <strong>Pitfall:</strong> Before <code>NoInfer</code>, people forced this with a second dummy type parameter or an intersection trick. Reaching for those now adds noise &mdash; but also remember <code>NoInfer</code> only <em>removes</em> an inference site; it cannot <em>create</em> a constraint. If no other argument supplies <code>T</code>, the parameter stays <code>unknown</code>.
+  </div>
+</div>
+
+</div><!-- end review-section -->
+
+<!-- ============================================================ -->
+<!-- TOPIC SECTION 1: Type-Level Modeling                          -->
+<!-- ============================================================ -->
+<div class="topic-section">
+<div class="topic-section-header"><span class="section-num">1</span>Type-Level Modeling</div>
+
+<!-- Concept 1: Tuple <-> Object Types -->
+<div class="concept-card" id="tuple_to_object">
+  <div class="concept-header">
+    <span class="concept-title">1. Tuple &harr; Object Type Conversions</span>
+    <span class="ttag">Type-Level</span>
+  </div>
+
+  <div class="why-matters">Converting between tuples and objects at the type level is the backbone of typed routers, ORMs, and form libraries: a tuple of keys becomes a record, a record becomes a tuple of entries, and back. Master it and most &ldquo;magic&rdquo; library types stop being magic.</div>
+
+  <div class="explanation">
+    <p>A tuple indexed by <code>[number]</code> collapses to the <em>union</em> of its element types. Mapping over that union with a mapped type turns a tuple of keys into an object. Going the other way, <code>keyof</code> plus a mapped type reconstructs a tuple-like or record shape from an object.</p>
+    <p>The two workhorses: <code>T[number]</code> (tuple &rarr; union of elements) and <code>{ [K in U]: ... }</code> (union &rarr; object). Combine with <code>infer</code> in template literals and you can parse and rebuild shapes the compiler tracks exactly.</p>
+    <div class="step"><span class="step-num">1</span><div><code>T[number]</code> turns a tuple type into a union of its members.</div></div>
+    <div class="step"><span class="step-num">2</span><div>A mapped type <code>{ [K in Union]: V }</code> turns that union into an object.</div></div>
+    <div class="step"><span class="step-num">3</span><div><code>keyof O</code> + indexing reverses an object back toward keys/values.</div></div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 1 of 4 &mdash; tuple of keys to a record</div>
+<pre><code>type Keys = ["id", "name", "email"];
+
+type RecordFromKeys&lt;K extends readonly string[]&gt; = {
+  [P in K[number]]: string;
+};
+
+type User = RecordFromKeys&lt;Keys&gt;;
+// { id: string; name: string; email: string }</code></pre>
+<div class="type-result">User = { id: string; name: string; email: string }</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 2 of 4 &mdash; object to a union of entry tuples</div>
+<pre><code>type Entries&lt;T&gt; = {
+  [K in keyof T]: [K, T[K]];
+}[keyof T];
+
+type O = { a: number; b: string };
+type E = Entries&lt;O&gt;;
+// ["a", number] | ["b", string]</code></pre>
+<div class="type-result">E = ["a", number] | ["b", string]</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 3 of 4 &mdash; tuple of [key, value] pairs to object</div>
+<pre><code>type FromEntries&lt;T extends readonly [PropertyKey, unknown][]&gt; = {
+  [P in T[number] as P[0]]: P[1];
+};
+
+type Obj = FromEntries&lt;[["x", number], ["y", string]]&gt;;
+// { x: number; y: string }    &mdash; key remapping via `as P[0]`</code></pre>
+<div class="type-result">Obj = { x: number; y: string }</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 4 of 4 &mdash; a typed Object.fromEntries wrapper</div>
+<pre><code>function fromEntries&lt;const T extends readonly (readonly [PropertyKey, unknown])[]&gt;(
+  entries: T,
+): { [P in T[number] as P[0]]: P[1] } {
+  return Object.fromEntries(entries) as never;
+}
+
+const cfg = fromEntries([["port", 3000], ["host", "localhost"]] as const);
+// cfg: { port: 3000; host: "localhost" }
+console.log(cfg.port);   // 3000</code></pre>
+<div class="output">3000</div>
+  </div>
+
+  <div class="callout-warning">
+    <strong>Common Mistakes:</strong>
+    <div class="mistake">&#10060; Using <code>T[0] | T[1] | ...</code> by hand to get the element union &mdash; brittle and breaks for tuples of unknown length.</div>
+    <div class="correct">&#9989; Use <code>T[number]</code>, which yields the union of <em>all</em> elements regardless of length.</div>
+    <div class="mistake">&#10060; Forgetting <code>as const</code> on the runtime tuple, so <code>["port", 3000]</code> widens to <code>(string | number)[]</code> and the key/value literals are lost.</div>
+    <div class="correct">&#9989; Add <code>as const</code> (or a <code>const</code> type parameter) so element literals survive into the mapped type.</div>
+  </div>
+
+  <div class="key-rules">
+    <strong>Key Rules:</strong>
+    <ul>
+    <li><a href="typescript-guides/typescript-guide-2026-07-04.html">2026-07-04</a> (Day 31)</li>
+      <li><code>T[number]</code> = union of a tuple&rsquo;s element types; the key tool for tuple &rarr; union.</li>
+      <li><code>{ [K in U]: V }</code> builds an object from a union; add <code>as ...</code> to remap keys.</li>
+      <li><code>{ [K in keyof T]: ... }[keyof T]</code> projects an object into a union of computed members.</li>
+      <li>Pair these with <code>as const</code> / <code>const</code> type params so literal types are preserved.</li>
+    </ul>
+  </div>
+
+  <div class="exercises">
+    <strong>Practice Exercises:</strong>
+    <div class="exercise"><span class="exercise-num">1</span>Write <code>Zip&lt;K extends readonly string[], V extends readonly unknown[]&gt;</code> that pairs a tuple of keys with a tuple of values into an object type, assuming equal length.</div>
+    <div class="exercise"><span class="exercise-num">2</span>Write <code>ValuesOf&lt;T&gt;</code> that returns the union of an object&rsquo;s value types using a mapped type and <code>[keyof T]</code>.</div>
+    <div class="exercise"><span class="exercise-num">3</span>Build a typed <code>groupBy&lt;T, K extends keyof T&gt;</code> return type that maps each distinct value of <code>T[K]</code> to a <code>T[]</code> bucket.</div>
+  </div>
+
+  <div class="connections"><strong>Connections:</strong> Key remapping (<code>as</code>) ties back to <em>Mapped Type Key Remapping</em>; <code>T[number]</code> underpins <em>Variadic Tuple Types</em>. The typed <code>fromEntries</code> uses a <em>const Type Parameter</em> (R5) to keep literals.</div>
+</div>
+
+<!-- Concept 2: DeepPartial & DeepReadonly -->
+<div class="concept-card" id="deep_partial">
+  <div class="concept-header">
+    <span class="concept-title">2. Recursive DeepPartial &amp; DeepReadonly</span>
+    <span class="ttag">Type-Level</span>
+  </div>
+
+  <div class="why-matters">Built-in <code>Partial</code> and <code>Readonly</code> only go one level deep, which is rarely what configuration, patch, and immutable-state code actually needs. The recursive versions are among the most copy-pasted utility types in real codebases &mdash; worth being able to write from memory.</div>
+
+  <div class="explanation">
+    <p>A recursive mapped type applies itself to each property whose value is an object, and leaves primitives alone. The trick is the recursion guard: you must stop at non-objects (and usually at functions and arrays-of-primitives) or the type either over-applies or hits the depth limit.</p>
+    <p><code>DeepPartial</code> makes every nested property optional; <code>DeepReadonly</code> makes every nested property <code>readonly</code>. Both special-case arrays so element types are recursed into without turning the array itself into an indexed object.</p>
+    <div class="step"><span class="step-num">1</span><div>Map over <code>keyof T</code> with the modifier you want (<code>?</code> or <code>readonly</code>).</div></div>
+    <div class="step"><span class="step-num">2</span><div>For each property, recurse if the value is an object, else keep it.</div></div>
+    <div class="step"><span class="step-num">3</span><div>Special-case arrays so element types recurse but the array shape is preserved.</div></div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 1 of 4 &mdash; built-ins are shallow</div>
+<pre><code>type Config = { db: { host: string; port: number }; debug: boolean };
+
+type P = Partial&lt;Config&gt;;
+// { db?: { host: string; port: number }; debug?: boolean }
+//        ^ db is optional, but host/port are still REQUIRED</code></pre>
+<div class="type-result">Partial only makes top-level keys optional</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 2 of 4 &mdash; DeepPartial</div>
+<pre><code>type DeepPartial&lt;T&gt; = T extends object
+  ? { [K in keyof T]?: DeepPartial&lt;T[K]&gt; }
+  : T;
+
+type DP = DeepPartial&lt;Config&gt;;
+// { db?: { host?: string; port?: number }; debug?: boolean }
+
+const patch: DP = { db: { port: 5432 } };  // ok: everything optional</code></pre>
+<div class="type-result">DP = { db?: { host?: string; port?: number }; debug?: boolean }</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 3 of 4 &mdash; DeepReadonly with array handling</div>
+<pre><code>type DeepReadonly&lt;T&gt; =
+  T extends (infer E)[]      ? ReadonlyArray&lt;DeepReadonly&lt;E&gt;&gt;
+  : T extends object         ? { readonly [K in keyof T]: DeepReadonly&lt;T[K]&gt; }
+  : T;
+
+type State = { user: { roles: string[] } };
+type RO = DeepReadonly&lt;State&gt;;
+// { readonly user: { readonly roles: readonly string[] } }</code></pre>
+<div class="type-result">nested arrays become readonly too</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 4 of 4 &mdash; guarding functions so they are not mangled</div>
+<pre><code>type DeepPartialSafe&lt;T&gt; =
+  T extends (...args: any[]) =&gt; any ? T        // leave functions intact
+  : T extends object ? { [K in keyof T]?: DeepPartialSafe&lt;T[K]&gt; }
+  : T;
+
+type Svc = { fetch: (id: number) =&gt; void; opts: { retry: number } };
+type DPS = DeepPartialSafe&lt;Svc&gt;;
+// { fetch?: (id: number) =&gt; void; opts?: { retry?: number } }</code></pre>
+<div class="type-result">function signature preserved, not turned into { }</div>
+  </div>
+
+  <div class="callout-warning">
+    <strong>Common Mistakes:</strong>
+    <div class="mistake">&#10060; Recursing without an array guard, so <code>string[]</code> becomes <code>{ [n: number]?: string; length?: number; ... }</code> &mdash; every array method signature turned optional.</div>
+    <div class="correct">&#9989; Match <code>T extends (infer E)[]</code> first and map to <code>ReadonlyArray&lt;DeepReadonly&lt;E&gt;&gt;</code> (or <code>DeepPartial&lt;E&gt;[]</code>).</div>
+    <div class="mistake">&#10060; Treating functions as plain objects, which strips them into <code>{}</code> and breaks call signatures downstream.</div>
+    <div class="correct">&#9989; Add a <code>T extends (...args) =&gt; any ? T</code> branch <em>before</em> the object branch to leave callables alone.</div>
+  </div>
+
+  <div class="key-rules">
+    <strong>Key Rules:</strong>
+    <ul>
+      <li>Built-in <code>Partial</code>/<code>Readonly</code> are one level deep; recurse for nested shapes.</li>
+      <li>Order the conditional branches: array first, then function, then object, then base case.</li>
+      <li>Apply the modifier (<code>?</code> / <code>readonly</code>) in the mapped type, recurse on <code>T[K]</code>.</li>
+      <li>Deeply recursive utilities can hit the instantiation-depth cap on very nested types &mdash; keep inputs bounded.</li>
+    </ul>
+  </div>
+
+  <div class="exercises">
+    <strong>Practice Exercises:</strong>
+    <div class="exercise"><span class="exercise-num">1</span>Write <code>DeepRequired&lt;T&gt;</code> that removes optionality recursively (the inverse of <code>DeepPartial</code>).</div>
+    <div class="exercise"><span class="exercise-num">2</span>Write <code>DeepMutable&lt;T&gt;</code> that strips <code>readonly</code> at every depth, including inside arrays.</div>
+    <div class="exercise"><span class="exercise-num">3</span>Extend <code>DeepReadonly</code> to also handle <code>Map&lt;K, V&gt;</code> and <code>Set&lt;V&gt;</code> by recursing into their type arguments and using the readonly variants.</div>
+  </div>
+
+  <div class="connections"><strong>Connections:</strong> These are the recursive cousins of <em>Mapped Types</em> and <em>Utility Types</em>; the array/function guards reuse the <em>Conditional Types</em> + <code>infer</code> patterns from <em>infer Mastery</em>. <code>DeepPartial</code> is the natural input type for a merge/patch helper.</div>
+</div>
+
+<!-- Concept 3: UnionToIntersection -->
+<div class="concept-card" id="union_to_intersection">
+  <div class="concept-header">
+    <span class="concept-title">3. UnionToIntersection &amp; Distributive Tricks</span>
+    <span class="ttag">Type-Level</span>
+  </div>
+
+  <div class="why-matters">Turning a union into an intersection is the single most famous &ldquo;type wizardry&rdquo; one-liner. It powers merging plugin types, deriving a combined config from many modules, and extracting the last member of a union &mdash; and it teaches you how conditional-type distribution and inference positions really work.</div>
+
+  <div class="explanation">
+    <p>The trick exploits <em>contravariance</em>: when a naked type parameter is distributed across a union and each member is placed in a <em>function parameter</em> position, then <code>infer</code>-ed back out, TypeScript must satisfy <em>all</em> the function signatures at once &mdash; which forces an <em>intersection</em> rather than a union.</p>
+    <p>The same family of tricks gives you <code>LastInUnion</code> (infer from the most-recently-added overload) and from there <code>UnionToTuple</code>. They&rsquo;re fragile by nature (order isn&rsquo;t guaranteed for tuple conversion) &mdash; use them for merging, not for relying on element order.</p>
+    <div class="step"><span class="step-num">1</span><div>Distribute the union into function-parameter positions: <code>U extends any ? (x: U) =&gt; void : never</code>.</div></div>
+    <div class="step"><span class="step-num">2</span><div><code>infer</code> the parameter back out of the resulting intersection of functions.</div></div>
+    <div class="step"><span class="step-num">3</span><div>Contravariance forces the inferred type to be the <em>intersection</em> of the members.</div></div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 1 of 4 &mdash; the canonical one-liner</div>
+<pre><code>type UnionToIntersection&lt;U&gt; =
+  (U extends any ? (x: U) =&gt; void : never) extends
+   (x: infer I) =&gt; void ? I : never;
+
+type R = UnionToIntersection&lt;{ a: 1 } | { b: 2 }&gt;;
+// { a: 1 } &amp; { b: 2 }</code></pre>
+<div class="type-result">R = { a: 1 } &amp; { b: 2 }</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 2 of 4 &mdash; why: distribution + contravariance</div>
+<pre><code>// Step A: distribute over the union (each member in a param position)
+type Fns = ((x: { a: 1 }) =&gt; void) | ((x: { b: 2 }) =&gt; void);
+
+// Step B: a value must satisfy BOTH call signatures, so inferring the
+// single parameter type that works for both yields their intersection.
+//   (x: infer I) =&gt; void   =&gt;   I = { a: 1 } &amp; { b: 2 }</code></pre>
+<div class="type-result">parameter positions are contravariant =&gt; intersection</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 3 of 4 &mdash; merging many module configs</div>
+<pre><code>type AuthCfg  = { auth: { secret: string } };
+type DbCfg    = { db: { url: string } };
+type CacheCfg = { cache: { ttl: number } };
+
+type AppConfig = UnionToIntersection&lt;AuthCfg | DbCfg | CacheCfg&gt;;
+// { auth: {...} } &amp; { db: {...} } &amp; { cache: {...} }
+//  =&gt; one object with all three sections, fully typed</code></pre>
+<div class="type-result">AppConfig has auth, db, and cache keys</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 4 of 4 &mdash; LastInUnion (advanced, order-sensitive)</div>
+<pre><code>type LastInUnion&lt;U&gt; =
+  UnionToIntersection&lt;U extends any ? (x: U) =&gt; void : never&gt; extends
+    (x: infer L) =&gt; void ? L : never;
+
+type L = LastInUnion&lt;1 | 2 | 3&gt;;   // 3  (compiler-dependent ordering)
+// Building blocks for UnionToTuple &mdash; but treat order as unspecified.</code></pre>
+<div class="type-result">L = 3   (do not rely on this ordering as a contract)</div>
+  </div>
+
+  <div class="callout-warning">
+    <strong>Common Mistakes:</strong>
+    <div class="mistake">&#10060; Putting the union in a <em>covariant</em> (return) position and expecting an intersection &mdash; <code>() =&gt; U</code> keeps it a union. The intersection only emerges from a contravariant (parameter) position.</div>
+    <div class="correct">&#9989; Place each distributed member as a function <em>parameter</em> (<code>(x: U) =&gt; void</code>) so contravariance forces the intersection.</div>
+    <div class="mistake">&#10060; Relying on <code>UnionToTuple</code> ordering as a stable contract &mdash; it depends on internal compiler overload resolution and can change between versions.</div>
+    <div class="correct">&#9989; Use it only where order is irrelevant (merging), or sort/normalize explicitly if you truly need an order.</div>
+  </div>
+
+  <div class="key-rules">
+    <strong>Key Rules:</strong>
+    <ul>
+      <li>Distribution: a naked type param in a conditional spreads across each union member.</li>
+      <li>Parameter positions are contravariant &mdash; inferring from them yields an intersection.</li>
+      <li><code>UnionToIntersection</code> is the merge primitive; <code>LastInUnion</code>/<code>UnionToTuple</code> build on it.</li>
+      <li>Treat union-to-tuple ordering as undefined behavior; never depend on it.</li>
+    </ul>
+  </div>
+
+  <div class="exercises">
+    <strong>Practice Exercises:</strong>
+    <div class="exercise"><span class="exercise-num">1</span>Use <code>UnionToIntersection</code> to write <code>MergeAll&lt;T extends object[]&gt;</code> that intersects every object type in a tuple into one.</div>
+    <div class="exercise"><span class="exercise-num">2</span>Write <code>IsUnion&lt;T&gt;</code> that resolves to <code>true</code> when <code>T</code> is a union and <code>false</code> otherwise (hint: compare a distributed form against the whole).</div>
+    <div class="exercise"><span class="exercise-num">3</span>Build <code>UnionToTuple&lt;U&gt;</code> on top of <code>LastInUnion</code> and explain in a comment why its ordering must not be treated as a guarantee.</div>
+  </div>
+
+  <div class="connections"><strong>Connections:</strong> This leans on conditional-type <em>distribution</em>, <em>infer</em>, and the <em>Covariance &amp; Contravariance</em> rules (reviewed earlier this cycle). The merge use case is the type-level analogue of combining plugin/module shapes in <em>Type-Safe Plugin Systems</em>.</div>
+</div>
+
+</div><!-- end topic-section 1 -->
+
+<!-- ============================================================ -->
+<!-- TOPIC SECTION 2: Runtime Safety Patterns                      -->
+<!-- ============================================================ -->
+<div class="topic-section">
+<div class="topic-section-header"><span class="section-num">2</span>Runtime Safety Patterns</div>
+
+<!-- Concept 4: Type-Safe localStorage -->
+<div class="concept-card" id="type_safe_storage">
+  <div class="concept-header">
+    <span class="concept-title">4. Type-Safe localStorage / Storage Wrappers</span>
+    <span class="ttag">Runtime Safety</span>
+  </div>
+
+  <div class="why-matters"><code>localStorage</code> is a <code>string</code>-only, untyped key&ndash;value bag at the most dangerous boundary there is: data persisted from a <em>previous</em> version of your app. A typed wrapper turns &ldquo;trust me&rdquo; reads into validated, schema-keyed access so stale or corrupt entries fail loudly instead of crashing deep in your UI.</div>
+
+  <div class="explanation">
+    <p>The native API returns <code>string | null</code> and accepts any string key, so nothing the compiler knows survives a round-trip. The fix is a wrapper parameterized by a <em>schema map</em>: an object type whose keys are the allowed storage keys and whose values are the expected shapes.</p>
+    <p>On write you <code>JSON.stringify</code>; on read you <code>JSON.parse</code> and <em>validate</em> &mdash; ideally with Zod, since the bytes came from outside your program&rsquo;s current type system. A <code>get</code> that returns <code>T | null</code> and validates before returning is the whole pattern.</p>
+    <div class="step"><span class="step-num">1</span><div>Define a schema map: key &rarr; expected type (and a Zod schema per key).</div></div>
+    <div class="step"><span class="step-num">2</span><div>Constrain <code>get</code>/<code>set</code> to <code>K extends keyof Schema</code> so only known keys compile.</div></div>
+    <div class="step"><span class="step-num">3</span><div>On read, parse JSON and validate; return <code>null</code> on miss or invalid data.</div></div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 1 of 4 &mdash; the raw API loses all types</div>
+<pre><code>localStorage.setItem("user", JSON.stringify({ id: 1 }));
+
+const raw = localStorage.getItem("user");   // string | null
+const user = JSON.parse(raw!);              // any  &mdash; danger
+user.naem;                                  // no error, typo survives</code></pre>
+<div class="type-result">JSON.parse returns `any` &mdash; the boundary is untyped</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 2 of 4 &mdash; a key-constrained wrapper</div>
+<pre><code>interface StoreSchema {
+  user: { id: number; name: string };
+  theme: "dark" | "light";
+}
+
+function getItem&lt;K extends keyof StoreSchema&gt;(key: K): StoreSchema[K] | null {
+  const raw = localStorage.getItem(key);
+  return raw === null ? null : (JSON.parse(raw) as StoreSchema[K]);
+}
+function setItem&lt;K extends keyof StoreSchema&gt;(key: K, value: StoreSchema[K]) {
+  localStorage.setItem(key, JSON.stringify(value));
+}
+
+const theme = getItem("theme");   // "dark" | "light" | null
+// getItem("unknown");            // Error: not a known key</code></pre>
+<div class="type-result">theme: "dark" | "light" | null; bad keys rejected at compile time</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 3 of 4 &mdash; validate on read with Zod</div>
+<pre><code>import { z } from "zod";
+
+const schemas = {
+  user:  z.object({ id: z.number(), name: z.string() }),
+  theme: z.enum(["dark", "light"]),
+} as const;
+
+function read&lt;K extends keyof typeof schemas&gt;(key: K) {
+  const raw = localStorage.getItem(key);
+  if (raw === null) return null;
+  const parsed = schemas[key].safeParse(JSON.parse(raw));
+  return parsed.success ? (parsed.data as z.infer&lt;typeof schemas[K]&gt;) : null;
+}
+// stale/corrupt data from an old app version =&gt; null, not a crash</code></pre>
+<div class="type-result">read("user"): { id: number; name: string } | null (validated)</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 4 of 4 &mdash; guarding JSON.parse from throwing</div>
+<pre><code>function safeParse&lt;T&gt;(raw: string | null): T | null {
+  if (raw === null) return null;
+  try { return JSON.parse(raw) as T; }
+  catch { return null; }              // malformed JSON =&gt; null, no throw
+}
+
+const data = safeParse&lt;{ count: number }&gt;(localStorage.getItem("stats"));
+if (data) console.log(data.count);   // narrowed to the object</code></pre>
+<div class="type-result">data: { count: number } | null</div>
+  </div>
+
+  <div class="callout-warning">
+    <strong>Common Mistakes:</strong>
+    <div class="mistake">&#10060; Casting <code>JSON.parse(raw) as User</code> and trusting it. The cast is a lie at runtime &mdash; old or hand-edited storage can hold any shape, and the bug surfaces far from the read.</div>
+    <div class="correct">&#9989; Validate parsed data with Zod (or a type guard) and return <code>null</code> on failure, so corruption fails at the boundary.</div>
+    <div class="mistake">&#10060; Calling <code>JSON.parse</code> directly on possibly-malformed strings &mdash; it throws a <code>SyntaxError</code> that crashes the calling component.</div>
+    <div class="correct">&#9989; Wrap parsing in <code>try/catch</code> (or use a result-returning helper) so malformed input degrades to <code>null</code>.</div>
+  </div>
+
+  <div class="key-rules">
+    <strong>Key Rules:</strong>
+    <ul>
+      <li><code>localStorage</code> is <code>string</code>-only and untyped; never trust the shape of what comes back.</li>
+      <li>Constrain keys with <code>K extends keyof Schema</code> so typos and unknown keys are compile errors.</li>
+      <li>Validate on read &mdash; persisted data is external input, possibly from an older app version.</li>
+      <li>Guard <code>JSON.parse</code> against throwing; return <code>null</code> for missing <em>and</em> malformed entries.</li>
+    </ul>
+  </div>
+
+  <div class="exercises">
+    <strong>Practice Exercises:</strong>
+    <div class="exercise"><span class="exercise-num">1</span>Build a <code>createStorage&lt;S&gt;(schemas)</code> factory returning <code>{ get, set, remove }</code> all keyed to <code>keyof S</code>, with Zod validation on <code>get</code>.</div>
+    <div class="exercise"><span class="exercise-num">2</span>Add a version field to stored values and have <code>get</code> return <code>null</code> (triggering a re-fetch) when the stored version is older than the current one.</div>
+    <div class="exercise"><span class="exercise-num">3</span>Make the wrapper work with both <code>localStorage</code> and <code>sessionStorage</code> by taking a <code>Storage</code> parameter, and confirm the types are identical for both.</div>
+  </div>
+
+  <div class="connections"><strong>Connections:</strong> Validate-at-the-boundary is the same discipline as <em>Zod &amp; Runtime Validation</em> and <em>Type-Safe Configuration</em>; the schema-map keying reuses the <em>keyof &amp; Indexed Access</em> machinery. The <code>safeParse</code> result shape echoes <em>Type-Safe Error Boundaries</em>.</div>
+</div>
+
+<!-- Concept 5: Exhaustive Reducers -->
+<div class="concept-card" id="exhaustive_reducer">
+  <div class="concept-header">
+    <span class="concept-title">5. Exhaustive Reducers with Discriminated Actions</span>
+    <span class="ttag">Runtime Safety</span>
+  </div>
+
+  <div class="why-matters">A reducer is a giant <code>switch</code> over action types &mdash; exactly the place a forgotten case ships a silent bug. Modeling actions as a discriminated union and pairing the <code>switch</code> with a <code>never</code> exhaustiveness check turns &ldquo;I added an action but forgot to handle it&rdquo; into a compile error.</div>
+
+  <div class="explanation">
+    <p>Model the action as a discriminated union on a literal <code>type</code> field. In the reducer, <code>switch (action.type)</code> narrows each <code>case</code> to that specific action, so its payload is exactly typed &mdash; no casting. The closing move is a <code>default</code> that assigns the action to a <code>never</code>-typed variable: if any case is unhandled, the union isn&rsquo;t fully narrowed, the residual type isn&rsquo;t <code>never</code>, and assignment fails to compile.</p>
+    <p>Because the state transitions are typed per action, you also get autocomplete on <code>action.payload</code> inside each branch, and adding a new action variant immediately lights up the reducer as incomplete.</p>
+    <div class="step"><span class="step-num">1</span><div>Define actions as a discriminated union keyed by <code>type</code>.</div></div>
+    <div class="step"><span class="step-num">2</span><div><code>switch (action.type)</code> &mdash; each case narrows to one action with its payload.</div></div>
+    <div class="step"><span class="step-num">3</span><div>In <code>default</code>, assign to <code>const _exhaustive: never = action</code> to force coverage.</div></div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 1 of 4 &mdash; discriminated action union</div>
+<pre><code>type Action =
+  | { type: "increment"; by: number }
+  | { type: "reset" }
+  | { type: "setLabel"; label: string };
+
+interface State { count: number; label: string }</code></pre>
+<div class="type-result">Action is a union discriminated on `type`</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 2 of 4 &mdash; reducer with narrowing per case</div>
+<pre><code>function reducer(state: State, action: Action): State {
+  switch (action.type) {
+    case "increment":           // action: { type: "increment"; by: number }
+      return { ...state, count: state.count + action.by };
+    case "reset":               // action: { type: "reset" }
+      return { ...state, count: 0 };
+    case "setLabel":            // action: { type: "setLabel"; label: string }
+      return { ...state, label: action.label };
+    default: {
+      const _exhaustive: never = action;   // compile error if a case is missing
+      return _exhaustive;
+    }
+  }
+}</code></pre>
+<div class="type-result">each case is narrowed; default enforces exhaustiveness</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 3 of 4 &mdash; adding a case you forgot to handle</div>
+<pre><code>type Action2 = Action | { type: "decrement"; by: number };
+
+function reducer2(state: State, action: Action2): State {
+  switch (action.type) {
+    case "increment": return { ...state, count: state.count + action.by };
+    case "reset":     return { ...state, count: 0 };
+    case "setLabel":  return { ...state, label: action.label };
+    // forgot "decrement"!
+    default: {
+      const _exhaustive: never = action;   // Error here points at the gap
+      return _exhaustive;
+    }
+  }
+}</code></pre>
+<div class="type-error">Type '{ type: "decrement"; by: number }' is not assignable to type 'never'.</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 4 of 4 &mdash; a reusable assertNever helper</div>
+<pre><code>function assertNever(x: never): never {
+  throw new Error(`Unhandled case: ${JSON.stringify(x)}`);
+}
+
+function handle(action: Action): string {
+  switch (action.type) {
+    case "increment": return `+${action.by}`;
+    case "reset":     return "reset";
+    case "setLabel":  return action.label;
+    default:          return assertNever(action); // compile + runtime guard
+  }
+}
+console.log(handle({ type: "setLabel", label: "hi" })); // "hi"</code></pre>
+<div class="output">hi</div>
+  </div>
+
+  <div class="callout-warning">
+    <strong>Common Mistakes:</strong>
+    <div class="mistake">&#10060; A <code>default</code> that just returns <code>state</code>. It silently swallows unknown actions, so a forgotten case is a no-op bug, not a compile error.</div>
+    <div class="correct">&#9989; Assign the action to <code>never</code> (or call <code>assertNever</code>) in <code>default</code> so any unhandled variant fails to type-check.</div>
+    <div class="mistake">&#10060; Using a non-literal discriminant (e.g. <code>type: string</code>) so the union never narrows and every <code>action.payload</code> needs a cast.</div>
+    <div class="correct">&#9989; Use string-literal <code>type</code> tags (a discriminated union) so each <code>case</code> narrows the payload automatically.</div>
+  </div>
+
+  <div class="key-rules">
+    <strong>Key Rules:</strong>
+    <ul>
+      <li>Model actions as a discriminated union on a literal <code>type</code> tag for free per-case narrowing.</li>
+      <li>Close every reducer <code>switch</code> with a <code>never</code> assignment or <code>assertNever</code> in <code>default</code>.</li>
+      <li>The compile error from the <code>never</code> check pinpoints exactly which variant is unhandled.</li>
+      <li><code>assertNever</code> doubles as a runtime guard if an unexpected action slips through untyped boundaries.</li>
+    </ul>
+  </div>
+
+  <div class="exercises">
+    <strong>Practice Exercises:</strong>
+    <div class="exercise"><span class="exercise-num">1</span>Write a <code>formReducer</code> over actions <code>{ type: "setField"; name; value }</code>, <code>{ type: "submit" }</code>, <code>{ type: "reset" }</code> with an <code>assertNever</code> default; then add a fourth action and observe the error.</div>
+    <div class="exercise"><span class="exercise-num">2</span>Make the reducer generic over a <code>FieldName</code> union so <code>setField.name</code> is constrained to real field keys.</div>
+    <div class="exercise"><span class="exercise-num">3</span>Combine this with the <em>Type-Safe localStorage</em> wrapper (Concept 4) to persist reducer state and rehydrate it with validation on load.</div>
+  </div>
+
+  <div class="connections"><strong>Connections:</strong> This is the applied form of <em>never &amp; Exhaustiveness</em> and <em>Discriminated Unions in Practice</em>, and the typing core of <em>Redux Toolkit</em> / <em>Zustand</em> (R1) actions. The <code>assertNever</code> boundary mirrors the validate-or-fail stance of Concept 4.</div>
+</div>
+
+</div><!-- end topic-section 2 -->
+
+<!-- Footer -->
+<footer class="guide-footer">
+  <h2>All Guides</h2>
+  <ul>
+    <li><a href="typescript-guides/typescript-guide-2026-07-09.html">2026-07-09</a> (Day 36)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-07-08.html">2026-07-08</a> (Day 35)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-07-07.html">2026-07-07</a> (Day 34)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-07-06.html">2026-07-06</a> (Day 33)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-07-05.html">2026-07-05</a> (Day 32)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-07-04.html">2026-07-04</a> (Day 31)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-07-03.html">2026-07-03</a> (Day 30)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-07-02.html">2026-07-02</a> (Day 29)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-07-01.html">2026-07-01</a> (Day 28)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-30.html">2026-06-30</a> (Day 27)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-29.html">2026-06-29</a> (Day 26)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-28.html">2026-06-28</a> (Day 25)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-27.html">2026-06-27</a> (Day 24)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-26.html">2026-06-26</a> (Day 23)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-25.html">2026-06-25</a> (Day 22)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-24.html">2026-06-24</a> (Day 21)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-23.html">2026-06-23</a> (Day 20)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-22.html">2026-06-22</a> (Day 19)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-21.html">2026-06-21</a> (Day 18)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-19.html">2026-06-19</a> (Day 17)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-18.html">2026-06-18</a> (Day 16)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-17.html">2026-06-17</a> (Day 15)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-15.html">2026-06-15</a> (Day 14)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-13.html">2026-06-13</a> (Day 13)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-12.html">2026-06-12</a> (Day 12)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-11.html">2026-06-11</a> (Day 11)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-10.html">2026-06-10</a> (Day 10)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-09.html">2026-06-09</a> (Day 9)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-08.html">2026-06-08</a> (Day 8)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-07.html">2026-06-07</a> (Day 7)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-05.html">2026-06-05</a> (Day 6)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-04.html">2026-06-04</a> (Day 5)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-03.html">2026-06-03</a> (Day 4)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-02.html">2026-06-02</a> (Day 3)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-01.html">2026-06-01</a> (Day 2)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-05-31.html">2026-05-31</a> (Day 1)</li>
+  </ul>
+</footer>
+
+</div><!-- end content -->
+</div><!-- end main -->
+
+<script>
+// Theme toggle
+(function() {
+  var toggle = document.getElementById('themeToggle');
+  var html = document.documentElement;
+  var STORAGE_KEY = 'lc-tsguide-theme';
+
+  function setTheme(theme) {
+    html.setAttribute('data-theme', theme);
+    toggle.textContent = theme === 'dark' ? '\u{1F319}' : '\u{2600}\u{FE0F}';
+    try { localStorage.setItem(STORAGE_KEY, theme); } catch(e) {}
+  }
+
+  try {
+    var saved = localStorage.getItem(STORAGE_KEY);
+    if (saved) setTheme(saved);
+  } catch(e) {}
+
+  toggle.addEventListener('click', function() {
+    var current = html.getAttribute('data-theme') || 'dark';
+    setTheme(current === 'dark' ? 'light' : 'dark');
+  });
+})();
+
+// Sidebar active link tracking
+(function() {
+  var links = document.querySelectorAll('.sidebar-nav a');
+  var sections = [];
+  links.forEach(function(link) {
+    var id = link.getAttribute('href').replace('#', '');
+    var el = document.getElementById(id);
+    if (el) sections.push({ link: link, el: el });
+  });
+
+  function updateActive() {
+    var current = null;
+    var scrollY = window.scrollY + 120;
+    for (var i = sections.length - 1; i >= 0; i--) {
+      if (sections[i].el.offsetTop <= scrollY) {
+        current = sections[i];
+        break;
+      }
+    }
+    links.forEach(function(l) { l.classList.remove('active'); });
+    if (current) current.link.classList.add('active');
+  }
+
+  window.addEventListener('scroll', updateActive);
+  updateActive();
+})();
+</script>
+
+</body>
+</html>

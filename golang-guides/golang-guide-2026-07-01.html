@@ -1,0 +1,1653 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Go Study Guide &mdash; Day 26 (2026-07-01)</title>
+<style>
+/* ===== CSS Variables ===== */
+:root {
+  --bg: #0d1117;
+  --surface1: #161b22;
+  --surface2: #1c2129;
+  --border: #30363d;
+  --text: #e6edf3;
+  --muted: #8b949e;
+  --accent: #58a6ff;
+  --accent-dim: #1f6feb33;
+  --green: #3fb950;
+  --green-dim: #23863633;
+  --yellow: #d29922;
+  --yellow-dim: #d2992233;
+  --red: #f85149;
+  --red-dim: #f8514933;
+  --purple: #bc8cff;
+  --purple-dim: #bc8cff22;
+  --orange: #f0883e;
+  --orange-dim: #f0883e22;
+  --code-bg: #0d1117;
+  --sidebar-w: 300px;
+  --font-mono: 'SF Mono', 'Cascadia Code', 'Fira Code', Consolas, monospace;
+  --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+  --radius: 8px;
+  --shadow: 0 1px 3px rgba(0,0,0,0.4);
+}
+
+[data-theme="light"] {
+  --bg: #ffffff;
+  --surface1: #f6f8fa;
+  --surface2: #f0f3f6;
+  --border: #d0d7de;
+  --text: #1f2328;
+  --muted: #656d76;
+  --accent: #0969da;
+  --accent-dim: #0969da1a;
+  --green: #1a7f37;
+  --green-dim: #1a7f3718;
+  --yellow: #9a6700;
+  --yellow-dim: #9a670018;
+  --red: #cf222e;
+  --red-dim: #cf222e18;
+  --purple: #8250df;
+  --purple-dim: #8250df18;
+  --orange: #bc4c00;
+  --orange-dim: #bc4c0018;
+  --code-bg: #f6f8fa;
+  --shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+/* ===== Reset & Base ===== */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: var(--font-sans);
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.7;
+  font-size: 16px;
+  transition: background 0.2s, color 0.2s;
+}
+
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+/* ===== Theme Toggle ===== */
+#theme-toggle {
+  position: fixed;
+  top: 16px;
+  right: 20px;
+  z-index: 1000;
+  background: var(--surface1);
+  border: 1px solid var(--border);
+  color: var(--text);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+  box-shadow: var(--shadow);
+}
+#theme-toggle:hover { background: var(--surface2); border-color: var(--accent); }
+
+/* ===== Sidebar ===== */
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: var(--sidebar-w);
+  height: 100vh;
+  background: var(--surface1);
+  border-right: 1px solid var(--border);
+  overflow-y: auto;
+  padding: 20px 0;
+  z-index: 100;
+  transition: transform 0.3s;
+}
+
+.sidebar-header {
+  padding: 0 20px 16px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 12px;
+}
+
+.sidebar-header h2 {
+  font-size: 16px;
+  color: var(--text);
+  font-weight: 700;
+}
+
+.sidebar-header .subtitle {
+  font-size: 12px;
+  color: var(--muted);
+  margin-top: 2px;
+}
+
+.sidebar-section {
+  margin-bottom: 8px;
+}
+
+.sidebar-section-title {
+  padding: 6px 20px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+}
+
+.sidebar-link {
+  display: block;
+  padding: 5px 20px 5px 28px;
+  font-size: 13px;
+  color: var(--muted);
+  text-decoration: none;
+  border-left: 2px solid transparent;
+  transition: all 0.15s;
+  line-height: 1.4;
+}
+
+.sidebar-link:hover {
+  color: var(--text);
+  background: var(--accent-dim);
+  border-left-color: var(--accent);
+  text-decoration: none;
+}
+
+.sidebar-link.active {
+  color: var(--accent);
+  border-left-color: var(--accent);
+  background: var(--accent-dim);
+}
+
+/* ===== Mobile sidebar toggle ===== */
+#sidebar-toggle {
+  display: none;
+  position: fixed;
+  top: 16px;
+  left: 16px;
+  z-index: 200;
+  background: var(--surface1);
+  border: 1px solid var(--border);
+  color: var(--text);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 20px;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--shadow);
+}
+
+/* ===== Main Content ===== */
+.main {
+  margin-left: var(--sidebar-w);
+  padding: 40px 48px 80px;
+  max-width: calc(860px + var(--sidebar-w) + 96px);
+}
+
+.page-title {
+  font-size: 32px;
+  font-weight: 800;
+  margin-bottom: 4px;
+  color: var(--text);
+}
+
+.page-subtitle {
+  font-size: 15px;
+  color: var(--muted);
+  margin-bottom: 36px;
+}
+
+/* ===== Sections ===== */
+.section {
+  margin-bottom: 48px;
+}
+
+.section-label {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  padding: 3px 10px;
+  border-radius: 4px;
+  margin-bottom: 12px;
+}
+
+.section-label.review { background: var(--yellow-dim); color: var(--yellow); }
+.section-label.new { background: var(--green-dim); color: var(--green); }
+
+.section-title {
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 24px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--border);
+}
+
+/* ===== How To Use ===== */
+.how-to-use {
+  background: var(--surface1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px 24px;
+  margin-bottom: 36px;
+}
+
+.how-to-use h3 {
+  font-size: 16px;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.how-to-use ul {
+  padding-left: 22px;
+  margin: 0;
+}
+
+.how-to-use li {
+  font-size: 14px;
+  color: var(--muted);
+  margin-bottom: 4px;
+}
+
+/* ===== Concept Cards ===== */
+.concept {
+  background: var(--surface1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 28px;
+  margin-bottom: 28px;
+  box-shadow: var(--shadow);
+}
+
+.concept-header {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  margin-bottom: 6px;
+  flex-wrap: wrap;
+}
+
+.concept h3 {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.concept-meta {
+  font-size: 12px;
+  color: var(--muted);
+  background: var(--surface2);
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
+.concept h4 {
+  font-size: 15px;
+  font-weight: 600;
+  margin: 20px 0 8px;
+  color: var(--text);
+}
+
+.concept p, .concept li {
+  color: var(--text);
+  line-height: 1.7;
+}
+
+.concept ul, .concept ol {
+  padding-left: 22px;
+  margin: 8px 0;
+}
+
+.concept li {
+  margin-bottom: 4px;
+}
+
+.concept .why-matters {
+  font-style: italic;
+  color: var(--muted);
+  margin: 6px 0 16px;
+  font-size: 15px;
+}
+
+/* ===== Code Blocks ===== */
+pre {
+  background: var(--code-bg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 16px 18px;
+  overflow-x: auto;
+  margin: 10px 0 14px;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--text);
+  position: relative;
+}
+
+pre::after {
+  content: 'Go';
+  position: absolute;
+  top: 6px;
+  right: 10px;
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  opacity: 0.6;
+}
+
+code {
+  font-family: var(--font-mono);
+  font-size: 0.9em;
+}
+
+:not(pre) > code {
+  background: var(--surface2);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.88em;
+}
+
+/* ===== Output Blocks ===== */
+.output {
+  background: var(--green-dim);
+  border: 1px solid var(--green);
+  border-radius: 6px;
+  padding: 12px 16px;
+  margin: 6px 0 14px;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--text);
+  white-space: pre-wrap;
+}
+
+.output::after { content: none; }
+
+.output-label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--green);
+  margin-bottom: 4px;
+}
+
+/* ===== Good/Bad Examples ===== */
+.do-dont {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin: 10px 0;
+}
+
+.do-box, .dont-box {
+  border-radius: 6px;
+  padding: 14px;
+  border: 1px solid;
+}
+
+.do-box {
+  background: var(--green-dim);
+  border-color: var(--green);
+}
+
+.dont-box {
+  background: var(--red-dim);
+  border-color: var(--red);
+}
+
+.do-box .label, .dont-box .label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 6px;
+}
+
+.do-box .label { color: var(--green); }
+.dont-box .label { color: var(--red); }
+
+.do-box pre, .dont-box pre {
+  margin: 0;
+  border: none;
+  background: transparent;
+  padding: 0;
+  font-size: 12.5px;
+}
+
+.do-box pre::after, .dont-box pre::after { content: none; }
+
+/* ===== Key Rules ===== */
+.rules-list {
+  list-style: none;
+  padding: 0;
+  margin: 8px 0;
+}
+
+.rules-list li {
+  padding: 6px 0 6px 24px;
+  position: relative;
+}
+
+.rules-list li::before {
+  content: "\2192";
+  position: absolute;
+  left: 2px;
+  color: var(--accent);
+  font-weight: 700;
+}
+
+/* ===== Exercises ===== */
+.exercise {
+  background: var(--purple-dim);
+  border: 1px solid var(--purple);
+  border-radius: 6px;
+  padding: 14px 18px;
+  margin: 8px 0;
+}
+
+.exercise .exercise-label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--purple);
+  margin-bottom: 4px;
+}
+
+/* ===== Pitfall ===== */
+.pitfall {
+  background: var(--red-dim);
+  border-left: 3px solid var(--red);
+  border-radius: 0 6px 6px 0;
+  padding: 10px 14px;
+  margin: 10px 0;
+  font-size: 14px;
+}
+
+.pitfall strong {
+  color: var(--red);
+}
+
+/* ===== Connection ===== */
+.connection {
+  background: var(--accent-dim);
+  border-left: 3px solid var(--accent);
+  border-radius: 0 6px 6px 0;
+  padding: 10px 14px;
+  margin: 10px 0;
+  font-size: 14px;
+  color: var(--muted);
+}
+
+/* ===== Review Cards ===== */
+.review-card {
+  background: var(--surface1);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--purple);
+  border-radius: var(--radius);
+  padding: 20px 24px;
+  margin-bottom: 16px;
+  box-shadow: var(--shadow);
+}
+
+.review-card .review-header {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  margin-bottom: 6px;
+  flex-wrap: wrap;
+}
+
+.review-card h3 {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.review-card .review-meta {
+  font-size: 12px;
+  color: var(--muted);
+  background: var(--surface2);
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
+.review-card h4 {
+  font-size: 14px;
+  font-weight: 600;
+  margin: 14px 0 6px;
+  color: var(--text);
+}
+
+.review-card p, .review-card li {
+  color: var(--text);
+  line-height: 1.6;
+  font-size: 14px;
+}
+
+.review-card pre {
+  font-size: 12.5px;
+  padding: 12px 14px;
+  margin: 6px 0 10px;
+}
+
+.review-card .pitfall {
+  font-size: 13px;
+  padding: 8px 12px;
+}
+
+/* ===== Topic Badge ===== */
+.topic-badge {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 2px 8px;
+  border-radius: 4px;
+  background: var(--accent-dim);
+  color: var(--accent);
+  margin-left: 4px;
+}
+
+/* ===== Footer ===== */
+.footer {
+  margin-top: 60px;
+  padding: 24px 0;
+  border-top: 1px solid var(--border);
+}
+
+.footer h4 {
+  font-size: 14px;
+  color: var(--muted);
+  margin-bottom: 10px;
+}
+
+.footer ul {
+  list-style: none;
+  padding: 0;
+}
+
+.footer li {
+  margin-bottom: 4px;
+  font-size: 14px;
+}
+
+.footer li a { color: var(--accent); }
+.footer .current { color: var(--green); font-weight: 600; }
+
+/* ===== Bash code blocks ===== */
+pre.bash::after {
+  content: 'Bash';
+}
+
+/* ===== XML code blocks ===== */
+pre.xml-code::after {
+  content: 'XML';
+}
+
+/* ===== Responsive ===== */
+@media (max-width: 900px) {
+  .sidebar {
+    transform: translateX(-100%);
+  }
+  .sidebar.open {
+    transform: translateX(0);
+    box-shadow: 4px 0 20px rgba(0,0,0,0.5);
+  }
+  #sidebar-toggle {
+    display: flex;
+  }
+  .main {
+    margin-left: 0;
+    padding: 60px 20px 60px;
+    max-width: 100%;
+  }
+  .do-dont {
+    grid-template-columns: 1fr;
+  }
+  #theme-toggle {
+    right: 14px;
+    top: 16px;
+  }
+}
+</style>
+</head>
+<body>
+
+<!-- Theme Toggle -->
+<button id="theme-toggle" aria-label="Toggle theme" title="Toggle light/dark theme">&#9789;</button>
+
+<!-- Mobile Sidebar Toggle -->
+<button id="sidebar-toggle" aria-label="Toggle sidebar">&#9776;</button>
+
+<!-- Sidebar -->
+<nav class="sidebar" id="sidebar">
+  <div class="sidebar-header">
+    <h2>Go Guide</h2>
+    <div class="subtitle">Day 26 &mdash; 2026-07-01</div>
+  </div>
+
+  <div class="sidebar-section">
+    <div class="sidebar-section-title">Review (6 concepts)</div>
+    <a href="#mocking_interfaces" class="sidebar-link">Mocking: Interfaces for Testability</a>
+    <a href="#go_vet_staticcheck" class="sidebar-link">go vet &amp; staticcheck</a>
+    <a href="#builder_pattern" class="sidebar-link">Builder Pattern</a>
+    <a href="#code_generation" class="sidebar-link">Code Generation</a>
+    <a href="#repository_pattern" class="sidebar-link">Repository Pattern</a>
+    <a href="#unsafe_package" class="sidebar-link">unsafe Package</a>
+  </div>
+
+  <div class="sidebar-section">
+    <div class="sidebar-section-title">Networking, Filesystems &amp; Bits (3)</div>
+    <a href="#net_netip" class="sidebar-link">net/netip</a>
+    <a href="#io_fs" class="sidebar-link">io/fs</a>
+    <a href="#math_bits" class="sidebar-link">math/bits</a>
+  </div>
+
+  <div class="sidebar-section">
+    <div class="sidebar-section-title">Encoding &amp; Data Structures (2)</div>
+    <a href="#encoding_xml" class="sidebar-link">encoding/xml</a>
+    <a href="#container_list" class="sidebar-link">container/list</a>
+  </div>
+</nav>
+
+<!-- Main Content -->
+<div class="main">
+
+<h1 class="page-title">Go Daily Guide &mdash; 2026-07-01 (Day 26)</h1>
+<p class="page-subtitle">Day 26 &mdash; Wednesday, July 1, 2026 &bull; 11 concepts (6 review + 5 new)</p>
+
+<!-- How to Use -->
+<div class="how-to-use">
+  <h3>How to Use This Guide</h3>
+  <ul>
+    <li>Start with the <strong>Review</strong> section &mdash; try to recall each concept before reading the refresher</li>
+    <li>Complete the challenge exercise for each review card without looking back at previous days</li>
+    <li>Then work through the <strong>New Concepts</strong> section, typing out every code example yourself</li>
+    <li>Pay special attention to the common mistakes sections (they highlight real Go gotchas)</li>
+    <li>Complete the exercises at the bottom of each concept without looking at solutions</li>
+    <li>Use <code>go run main.go</code> to test your code locally, or use the <a href="https://go.dev/play/" target="_blank">Go Playground</a></li>
+  </ul>
+</div>
+
+<!-- ============================================================ -->
+<!-- REVIEW SECTION -->
+<!-- ============================================================ -->
+<div class="section">
+  <span class="section-label review">Review</span>
+  <h2 class="section-title">Spaced Repetition Review &mdash; 6 Concepts</h2>
+
+  <!-- Review 1: Mocking -->
+  <div class="review-card" id="mocking_interfaces">
+    <div class="review-header">
+      <h3>Mocking: Interfaces for Testability</h3>
+      <span class="review-meta">Testing &amp; Tooling &bull; overdue &bull; rep 1</span>
+    </div>
+
+    <h4>Quick Reminder</h4>
+    <p>Go ships no mocking framework and rarely needs one. You make code testable by having it depend on a <em>small interface</em> rather than a concrete type, then in tests you pass a hand-written fake (stub/spy) that implements that interface. The guiding idiom is <strong>accept interfaces, return structs</strong>: define the interface where it is <em>consumed</em>, keep it narrow (one or two methods), and the real and test implementations both satisfy it.</p>
+
+    <h4>Key Pattern</h4>
+<pre>package main
+
+import "fmt"
+
+// Consumer defines a narrow interface it depends on.
+type Notifier interface {
+    Send(to, msg string) error
+}
+
+type Service struct{ n Notifier }
+
+func (s Service) Alert(user string) error {
+    return s.n.Send(user, "alert!")
+}
+
+// Test double: a spy that records calls and returns a canned result.
+type fakeNotifier struct {
+    sent []string
+    err  error
+}
+
+func (f *fakeNotifier) Send(to, msg string) error {
+    f.sent = append(f.sent, to+":"+msg)
+    return f.err
+}
+
+func main() {
+    f := &amp;fakeNotifier{}
+    _ = Service{n: f}.Alert("ada")
+    fmt.Println(f.sent) // [ada:alert!]
+}</pre>
+    <div class="output-label">Output</div>
+    <div class="output">[ada:alert!]</div>
+
+    <div class="exercise">
+      <div class="exercise-label">Challenge Exercise</div>
+      <p>Write a <code>Charger</code> that depends on a <code>PaymentGateway</code> interface with one method <code>Charge(cents int) (txID string, err error)</code>. Provide a fake that can be scripted to succeed or fail, and assert both the returned id and that exactly one call was made. Then explain why defining the interface in the <em>consumer</em> package (not the implementation package) keeps dependencies pointing inward, and why a one-method interface is easier to fake than a fat one.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>Pitfall:</strong> Defining a huge interface next to the concrete implementation and re-exporting it everywhere. Fat interfaces force your fakes to stub dozens of unused methods and couple every consumer to methods it never calls. Declare the smallest interface each consumer actually needs, on the consumer side.
+    </div>
+  </div>
+
+  <!-- Review 2: go vet & staticcheck -->
+  <div class="review-card" id="go_vet_staticcheck">
+    <div class="review-header">
+      <h3>go vet &amp; staticcheck</h3>
+      <span class="review-meta">Testing &amp; Tooling &bull; overdue &bull; rep 1</span>
+    </div>
+
+    <h4>Quick Reminder</h4>
+    <p><code>go vet</code> is the compiler's suspicious-code detector: it flags constructs that <em>compile</em> but are almost certainly bugs &mdash; <code>Printf</code> format/argument mismatches, struct tags with bad syntax, unreachable code, copying a value that contains a <code>sync.Mutex</code>, and loop-variable capture. It ships with the toolchain and runs automatically as part of <code>go test</code>. <code>staticcheck</code> (a third-party linter) adds hundreds more checks and is the de-facto standard in CI.</p>
+
+    <h4>Key Pattern</h4>
+<pre class="bash"># vet the whole module; also runs during `go test`
+go vet ./...
+
+# A classic catch: format verb doesn't match the argument type
+#   fmt.Printf("%d\n", "hello")
+# vet reports:
+#   Printf format %d has arg "hello" of wrong type string
+
+# staticcheck: install once, then run across packages
+go install honnef.co/go/tools/cmd/staticcheck@latest
+staticcheck ./...
+#   e.g. SA4006: value assigned to x is never read
+#        S1005: unnecessary assignment to the blank identifier</pre>
+
+    <div class="exercise">
+      <div class="exercise-label">Challenge Exercise</div>
+      <p>Write a tiny program with three latent bugs vet catches: a <code>Printf("%d", someString)</code>, a struct literal copied while it embeds a <code>sync.Mutex</code>, and an unreachable <code>return</code>. Run <code>go vet</code> and read each diagnostic. Then wire <code>go vet ./...</code> and <code>staticcheck ./...</code> into a CI step and explain why they are complementary rather than redundant, and why vet is deliberately conservative (few false positives) while staticcheck is broader.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>Pitfall:</strong> Assuming "it compiled, so it's fine." The compiler accepts <code>fmt.Printf("%d", name)</code>, a self-assignment, or a mutex copied by value &mdash; all real bugs that only vet/staticcheck surface. Treat their output as build-breaking in CI, not advisory.
+    </div>
+  </div>
+
+  <!-- Review 3: Builder Pattern -->
+  <div class="review-card" id="builder_pattern">
+    <div class="review-header">
+      <h3>Builder Pattern</h3>
+      <span class="review-meta">Advanced Patterns &bull; overdue &bull; rep 1</span>
+    </div>
+
+    <h4>Quick Reminder</h4>
+    <p>The builder assembles a complex value step by step through <em>chained</em> methods that each return the receiver, finishing with a terminal <code>Build()</code>. It shines when a struct has many optional fields or requires validation before construction. In Go it competes with the functional-options pattern; builders are fluent and stateful, options are variadic and composable &mdash; pick one per API.</p>
+
+    <h4>Key Pattern</h4>
+<pre>package main
+
+import "fmt"
+
+type Request struct {
+    method, url string
+    headers     map[string]string
+}
+
+type Builder struct{ r Request }
+
+func NewBuilder(url string) *Builder {
+    return &amp;Builder{r: Request{method: "GET", url: url, headers: map[string]string{}}}
+}
+func (b *Builder) Method(m string) *Builder    { b.r.method = m; return b }
+func (b *Builder) Header(k, v string) *Builder { b.r.headers[k] = v; return b }
+func (b *Builder) Build() Request              { return b.r }
+
+func main() {
+    req := NewBuilder("/api").
+        Method("POST").
+        Header("Accept", "json").
+        Build()
+    fmt.Println(req.method, req.url, req.headers) // POST /api map[Accept:json]
+}</pre>
+    <div class="output-label">Output</div>
+    <div class="output">POST /api map[Accept:json]</div>
+
+    <div class="exercise">
+      <div class="exercise-label">Challenge Exercise</div>
+      <p>Build a <code>QueryBuilder</code> that composes a SQL-ish string with chained <code>Select</code>, <code>From</code>, <code>Where</code> methods and a <code>Build() (string, error)</code> that fails if <code>From</code> was never called. Return the error from the terminal method rather than panicking mid-chain. Then compare it against a functional-options constructor for the same type and explain which reads better for a required-vs-optional field split.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>Pitfall:</strong> Returning the builder by value from each step instead of a pointer. With a value receiver, each chained call mutates a <em>copy</em> and the accumulated state is lost. Use a pointer receiver (<code>*Builder</code>) so the chain threads one instance &mdash; or fully embrace value semantics and reassign at every step.
+    </div>
+  </div>
+
+  <!-- Review 4: Code Generation -->
+  <div class="review-card" id="code_generation">
+    <div class="review-header">
+      <h3>Code Generation</h3>
+      <span class="review-meta">Advanced Patterns &bull; overdue &bull; rep 1</span>
+    </div>
+
+    <h4>Quick Reminder</h4>
+    <p>Go leans on <em>generated</em> code instead of runtime reflection for repetitive boilerplate: enum stringers, mocks, protobuf bindings, marshalers. A <code>//go:generate</code> comment records the command; running <code>go generate ./...</code> executes every such directive. The generated <code>.go</code> file is committed to the repo so builds stay reflection-free and hermetic &mdash; <code>go generate</code> is never run automatically by <code>go build</code>.</p>
+
+    <h4>Key Pattern</h4>
+<pre>package main
+
+import "fmt"
+
+//go:generate stringer -type=Pill
+type Pill int
+
+const (
+    Placebo Pill = iota
+    Aspirin
+    Ibuprofen
+)
+
+// Running `go generate ./...` invokes stringer, which writes
+// pill_string.go containing:
+//   func (p Pill) String() string { ... }
+
+func main() {
+    fmt.Println(Aspirin) // "Aspirin" after generation (else "1")
+}</pre>
+
+    <div class="exercise">
+      <div class="exercise-label">Challenge Exercise</div>
+      <p>Add a <code>//go:generate stringer -type=Direction</code> directive to a <code>Direction</code> enum, run <code>go generate ./...</code>, and inspect the produced <code>_string.go</code> file. Then write your own trivial generator: a small program that reads a list of type names from a flag and emits a <code>.go</code> file with a header comment <code>// Code generated by ...; DO NOT EDIT.</code>. Explain why generated files carry that marker and why you commit them rather than generating at build time.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>Pitfall:</strong> Expecting <code>go build</code> or <code>go test</code> to run your <code>//go:generate</code> directives. They never do &mdash; generation is a manual step (<code>go generate ./...</code>), usually enforced by a CI check that regenerates and fails if the working tree changed. Forget it and your committed generated code silently drifts from its source.
+    </div>
+  </div>
+
+  <!-- Review 5: Repository Pattern -->
+  <div class="review-card" id="repository_pattern">
+    <div class="review-header">
+      <h3>Repository Pattern</h3>
+      <span class="review-meta">Advanced Patterns &bull; overdue &bull; rep 1</span>
+    </div>
+
+    <h4>Quick Reminder</h4>
+    <p>A repository hides <em>where and how</em> data is persisted behind a domain-shaped interface (<code>Get</code>, <code>Save</code>, <code>List</code>), so business logic depends on the abstraction, not on SQL, HTTP, or a specific driver. You get a swappable backend: a real Postgres implementation in production, an in-memory map in tests. It is a specific application of "accept interfaces" to the persistence boundary.</p>
+
+    <h4>Key Pattern</h4>
+<pre>package main
+
+import (
+    "errors"
+    "fmt"
+)
+
+type User struct{ ID, Name string }
+
+type UserRepo interface {
+    Get(id string) (User, error)
+    Save(u User) error
+}
+
+// In-memory implementation &mdash; ideal for fast, hermetic tests.
+type memRepo struct{ m map[string]User }
+
+func newMemRepo() *memRepo { return &amp;memRepo{m: map[string]User{}} }
+
+func (r *memRepo) Get(id string) (User, error) {
+    u, ok := r.m[id]
+    if !ok {
+        return User{}, errors.New("not found")
+    }
+    return u, nil
+}
+func (r *memRepo) Save(u User) error { r.m[u.ID] = u; return nil }
+
+func main() {
+    var repo UserRepo = newMemRepo()
+    _ = repo.Save(User{ID: "1", Name: "Ada"})
+    u, _ := repo.Get("1")
+    fmt.Println(u.Name) // Ada
+}</pre>
+    <div class="output-label">Output</div>
+    <div class="output">Ada</div>
+
+    <div class="exercise">
+      <div class="exercise-label">Challenge Exercise</div>
+      <p>Define a <code>ProductRepo</code> interface and give it two implementations: an in-memory map and one backed by <code>database/sql</code> (sketch the queries). Write a service that takes the interface and add a sentinel <code>ErrNotFound</code> that both repos return, so callers use <code>errors.Is</code> regardless of backend. Explain why leaking a driver-specific error (like <code>sql.ErrNoRows</code>) through the interface breaks the abstraction.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>Pitfall:</strong> Letting storage details bleed through the interface &mdash; returning <code>*sql.Rows</code>, exposing a <code>*gorm.DB</code>, or surfacing <code>sql.ErrNoRows</code> directly. The whole point is that callers can't tell which backend they're on. Translate driver errors into domain sentinels and return plain domain types.
+    </div>
+  </div>
+
+  <!-- Review 6: unsafe Package -->
+  <div class="review-card" id="unsafe_package">
+    <div class="review-header">
+      <h3>unsafe Package</h3>
+      <span class="review-meta">Advanced Patterns &bull; overdue &bull; rep 1</span>
+    </div>
+
+    <h4>Quick Reminder</h4>
+    <p><code>unsafe</code> steps outside Go's type and memory safety. <code>unsafe.Pointer</code> converts between arbitrary pointer types; <code>Sizeof</code>, <code>Offsetof</code>, and <code>Alignof</code> introspect memory layout; and (Go 1.17+/1.20+) <code>unsafe.Slice</code>/<code>unsafe.String</code> build slices and strings from a pointer and length for zero-copy conversions. Reach for it only for FFI, layout tricks, or hot-path conversions &mdash; it voids portability and can defeat the garbage collector if misused.</p>
+
+    <h4>Key Pattern</h4>
+<pre>package main
+
+import (
+    "fmt"
+    "unsafe"
+)
+
+type Point struct {
+    X int32
+    Y int32
+}
+
+func main() {
+    var p Point
+    fmt.Println(unsafe.Sizeof(p))     // 8  (two int32s)
+    fmt.Println(unsafe.Offsetof(p.Y)) // 4  (bytes into the struct)
+    fmt.Println(unsafe.Alignof(p))    // 4
+
+    // Zero-copy []byte -> string without allocating (Go 1.20+).
+    b := []byte("hi")
+    s := unsafe.String(&amp;b[0], len(b))
+    fmt.Println(s) // hi
+}</pre>
+    <div class="output-label">Output</div>
+    <div class="output">8
+4
+4
+hi</div>
+
+    <div class="exercise">
+      <div class="exercise-label">Challenge Exercise</div>
+      <p>Use <code>unsafe.Sizeof</code>/<code>Offsetof</code> to observe struct padding: compare <code>struct{ a bool; b int64; c bool }</code> against a reordered <code>struct{ b int64; a, c bool }</code> and explain the size difference. Then write a benchmarked zero-copy <code>[]byte</code>&harr;<code>string</code> conversion with <code>unsafe.String</code>/<code>unsafe.Slice</code>, and describe the invariant you must uphold (the backing bytes must not be mutated afterward) and why violating it corrupts an immutable string.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>Pitfall:</strong> Storing the result of <code>uintptr(unsafe.Pointer(&amp;x))</code> in a variable and dereferencing it later. A <code>uintptr</code> is just a number &mdash; the GC doesn't track it, so it can move or collect <code>x</code> out from under you. Conversions through <code>uintptr</code> must happen in a single expression; never park a pointer's address in a <code>uintptr</code> across statements.
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- NEW CONCEPTS SECTION -->
+<!-- ============================================================ -->
+<div class="section">
+  <span class="section-label new">New</span>
+  <h2 class="section-title">New Concepts &mdash; 5 in 2 Sections</h2>
+
+  <h3 style="font-size:18px;margin:8px 0 18px;color:var(--muted);">Section 1 &mdash; Networking, Filesystems &amp; Bits</h3>
+
+  <!-- New 1: net/netip -->
+  <div class="concept" id="net_netip">
+    <div class="concept-header">
+      <h3>net/netip: Modern IP Address Types</h3>
+      <span class="topic-badge">Std Lib</span>
+    </div>
+    <p class="why-matters">Why it matters: the old <code>net.IP</code> is a <code>[]byte</code> slice &mdash; it allocates, is not comparable (can't be a map key), and carries no notion of IPv4-vs-IPv6 cleanly. <code>net/netip</code> (Go 1.18) introduces small, immutable, <em>comparable</em> value types: <code>Addr</code>, <code>AddrPort</code>, and <code>Prefix</code>. They fit in a register-friendly struct, work as map keys, and make CIDR containment a one-liner. Prefer them for any new address handling.</p>
+
+    <h4>Parsing addresses and ports</h4>
+    <p><code>Addr</code> is a value you compare with <code>==</code> and use directly as a map key. <code>MustParseAddr</code>/<code>MustParseAddrPort</code> panic on bad input (great for constants and tests); use the <code>ParseAddr</code> form to get an error at runtime.</p>
+<pre>package main
+
+import (
+    "fmt"
+    "net/netip"
+)
+
+func main() {
+    a := netip.MustParseAddr("192.168.0.42")
+    fmt.Println(a.Is4())    // true
+    fmt.Println(a.Is6())    // false
+    fmt.Println(a.String()) // 192.168.0.42
+
+    ap := netip.MustParseAddrPort("[2001:db8::1]:443")
+    fmt.Println(ap.Addr(), ap.Port()) // 2001:db8::1 443
+
+    // Addr is comparable -> usable as a map key with no allocation.
+    seen := map[netip.Addr]int{}
+    seen[a]++
+    fmt.Println(seen[a]) // 1
+}</pre>
+    <div class="output-label">Output</div>
+    <div class="output">true
+false
+192.168.0.42
+2001:db8::1 443
+1</div>
+
+    <h4>CIDR prefixes and containment</h4>
+    <p><code>Prefix</code> models a network like <code>10.0.0.0/8</code>. <code>Contains</code> tests membership, and <code>Masked</code> zeroes the host bits &mdash; the canonical form of the network.</p>
+<pre>package main
+
+import (
+    "fmt"
+    "net/netip"
+)
+
+func main() {
+    pfx := netip.MustParsePrefix("10.0.0.0/8")
+    fmt.Println(pfx.Contains(netip.MustParseAddr("10.1.2.3"))) // true
+    fmt.Println(pfx.Contains(netip.MustParseAddr("11.0.0.1"))) // false
+    fmt.Println(pfx.Masked())                                  // 10.0.0.0/8
+}</pre>
+    <div class="output-label">Output</div>
+    <div class="output">true
+false
+10.0.0.0/8</div>
+
+    <h4>Common Mistakes</h4>
+    <div class="do-dont">
+      <div class="dont-box">
+        <div class="label">Wrong</div>
+<pre>// net.IP is a []byte: not comparable, allocates,
+// and can't be a map key.
+ip := net.ParseIP("10.0.0.1")
+seen := map[string]bool{}
+seen[ip.String()] = true // stringify just to key it</pre>
+      </div>
+      <div class="do-box">
+        <div class="label">Right</div>
+<pre>// netip.Addr is a comparable value type.
+ip := netip.MustParseAddr("10.0.0.1")
+seen := map[netip.Addr]bool{}
+seen[ip] = true // direct, allocation-free key</pre>
+      </div>
+    </div>
+
+    <h4>Key Rules</h4>
+    <ul class="rules-list">
+      <li><code>Addr</code>, <code>AddrPort</code>, and <code>Prefix</code> are small immutable values &mdash; compare with <code>==</code>, use as map keys, and pass by value freely.</li>
+      <li>Use <code>ParseAddr</code>/<code>ParsePrefix</code> for untrusted input (returns an error); the <code>MustParse*</code> variants panic and belong in constants/tests only.</li>
+      <li><code>Prefix.Contains</code> answers CIDR membership; <code>Masked()</code> normalizes to the network address; <code>Addr.Is4()</code>/<code>Is6()</code>/<code>Unmap()</code> handle the family.</li>
+      <li>Bridge to the older API when needed: <code>netip.AddrFromSlice</code>, <code>Addr.AsSlice()</code>, and <code>net.TCPAddrFromAddrPort</code> convert to/from <code>net.IP</code>/<code>net.TCPAddr</code>.</li>
+    </ul>
+
+    <div class="exercise">
+      <div class="exercise-label">Practice Exercise</div>
+      <p>Build an allowlist checker: parse a set of CIDR <code>Prefix</code>es once, then classify a stream of client <code>Addr</code>s as allowed/denied with <code>Contains</code>. Store per-address hit counts in a <code>map[netip.Addr]int</code> to prove the type keys directly. Then convert an incoming <code>*net.TCPAddr</code> (from a real listener) into a <code>netip.AddrPort</code> and back, and explain why <code>netip</code>'s value semantics reduce allocations on a hot connection-accept path compared with <code>net.IP</code>.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>Pitfall:</strong> Comparing a <code>netip.Addr</code> parsed from an IPv4 literal against one that came through an IPv4-in-IPv6 mapping (<code>::ffff:10.0.0.1</code>). They are <em>not</em> <code>==</code> even though they denote the same host. Normalize with <code>Addr.Unmap()</code> before comparing or using as a key when both forms can occur.
+    </div>
+
+    <div class="connection">
+      <strong>Connections:</strong> The modern counterpart to the <code>net</code> types behind <code>net/http</code> and TCP servers; its comparable value semantics echo the "small immutable value" design of <code>time.Time</code>, and it pairs with <a href="#container_list">containers</a> and maps as first-class keys.
+    </div>
+  </div>
+
+  <!-- New 2: io/fs -->
+  <div class="concept" id="io_fs">
+    <div class="concept-header">
+      <h3>io/fs: The Filesystem Abstraction</h3>
+      <span class="topic-badge">Std Lib</span>
+    </div>
+    <p class="why-matters">Why it matters: <code>io/fs</code> (Go 1.16) defines <code>fs.FS</code> &mdash; a read-only filesystem <em>interface</em> &mdash; so code that reads files no longer hard-depends on the real disk. The same function works over the OS (<code>os.DirFS</code>), an embedded bundle (<code>//go:embed</code>), a zip archive, or an in-memory <code>fstest.MapFS</code> for tests. Helpers like <code>fs.ReadFile</code>, <code>fs.WalkDir</code>, <code>fs.Glob</code>, and <code>fs.Sub</code> operate on any <code>fs.FS</code>.</p>
+
+    <h4>Walk and read any fs.FS</h4>
+    <p>Write your logic against <code>fs.FS</code>; supply an in-memory <code>fstest.MapFS</code> in tests and a real <code>os.DirFS("/some/dir")</code> in production. <code>fs.WalkDir</code> visits entries in lexical order.</p>
+<pre>package main
+
+import (
+    "fmt"
+    "io/fs"
+    "testing/fstest"
+)
+
+func main() {
+    fsys := fstest.MapFS{
+        "README.md":  {Data: []byte("hi")},
+        "docs/a.txt": {Data: []byte("alpha")},
+        "docs/b.txt": {Data: []byte("bravo")},
+    }
+
+    data, _ := fs.ReadFile(fsys, "docs/a.txt")
+    fmt.Println(string(data)) // alpha
+
+    fs.WalkDir(fsys, ".", func(p string, d fs.DirEntry, err error) error {
+        if !d.IsDir() {
+            fmt.Println(p)
+        }
+        return nil
+    })
+}</pre>
+    <div class="output-label">Output</div>
+    <div class="output">alpha
+README.md
+docs/a.txt
+docs/b.txt</div>
+
+    <h4>Glob and sub-filesystems</h4>
+    <p><code>fs.Glob</code> matches patterns (sorted results); <code>fs.Sub</code> returns an <code>fs.FS</code> rooted at a subdirectory, so callers see a trimmed namespace.</p>
+<pre>package main
+
+import (
+    "fmt"
+    "io/fs"
+    "testing/fstest"
+)
+
+func main() {
+    fsys := fstest.MapFS{
+        "img/a.png": {Data: []byte("x")},
+        "img/b.png": {Data: []byte("y")},
+        "img/c.txt": {Data: []byte("z")},
+    }
+
+    pngs, _ := fs.Glob(fsys, "img/*.png")
+    fmt.Println(pngs) // [img/a.png img/b.png]
+
+    sub, _ := fs.Sub(fsys, "img") // root at img/
+    entries, _ := fs.ReadDir(sub, ".")
+    for _, e := range entries {
+        fmt.Println(e.Name())
+    }
+}</pre>
+    <div class="output-label">Output</div>
+    <div class="output">[img/a.png img/b.png]
+a.png
+b.png
+c.txt</div>
+
+    <h4>Common Mistakes</h4>
+    <div class="do-dont">
+      <div class="dont-box">
+        <div class="label">Wrong</div>
+<pre>// Hard-wired to the OS disk -> untestable without
+// real files, and paths use OS separators.
+func Load(dir string) ([]byte, error) {
+    return os.ReadFile(dir + "/config.yaml")
+}</pre>
+      </div>
+      <div class="do-box">
+        <div class="label">Right</div>
+<pre>// Depends on the fs.FS interface; test with fstest.MapFS,
+// run against os.DirFS or an embed.FS in production.
+func Load(fsys fs.FS) ([]byte, error) {
+    return fs.ReadFile(fsys, "config.yaml")
+}</pre>
+      </div>
+    </div>
+
+    <h4>Key Rules</h4>
+    <ul class="rules-list">
+      <li>Accept an <code>fs.FS</code> parameter instead of a directory string &mdash; the same code then serves OS dirs (<code>os.DirFS</code>), embeds (<code>embed.FS</code>), zips, and test doubles.</li>
+      <li>Paths in <code>fs.FS</code> are always slash-separated, unrooted, and relative to the FS root &mdash; no leading <code>/</code>, no <code>..</code>, no OS-specific separators.</li>
+      <li>Use the package helpers <code>fs.ReadFile</code>, <code>fs.WalkDir</code>, <code>fs.Glob</code>, <code>fs.ReadDir</code>, and <code>fs.Sub</code>; a minimal <code>fs.FS</code> only needs one <code>Open</code> method.</li>
+      <li><code>fstest.MapFS</code> is a ready-made in-memory filesystem for tests, and <code>fstest.TestFS</code> validates that a custom implementation obeys the contract.</li>
+    </ul>
+
+    <div class="exercise">
+      <div class="exercise-label">Practice Exercise</div>
+      <p>Write <code>CountLines(fsys fs.FS, glob string) (int, error)</code> that walks all files matching a glob and sums their line counts, then test it entirely with an <code>fstest.MapFS</code> &mdash; no disk touched. Run the same function against <code>os.DirFS(".")</code> to prove one implementation serves both. Finally, embed a directory with <code>//go:embed assets/*</code> and pass the <code>embed.FS</code> to the same function, explaining why slash-only, unrooted paths make the abstraction portable across all three backends.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>Pitfall:</strong> Passing OS-style or rooted paths to an <code>fs.FS</code> &mdash; <code>fs.ReadFile(fsys, "/etc/x")</code> or <code>fs.ReadFile(fsys, "dir\\file")</code>. The <code>fs</code> contract requires clean, slash-separated, relative paths; a leading slash or backslash yields <code>fs.ErrInvalid</code> (or simply "file does not exist"). Convert with <code>filepath.ToSlash</code> and strip any root before handing a path to <code>fs</code>.
+    </div>
+
+    <div class="connection">
+      <strong>Connections:</strong> The interface behind <code>//go:embed</code>'s <code>embed.FS</code>, <code>http.FS</code> for serving static assets, and <code>os.DirFS</code>; its "accept the interface" design mirrors <a href="#repository_pattern">the repository pattern</a> and <a href="#mocking_interfaces">interface-based testing</a> from today's review.
+    </div>
+  </div>
+
+  <!-- New 3: math/bits -->
+  <div class="concept" id="math_bits">
+    <div class="concept-header">
+      <h3>math/bits: Bit-Level Primitives</h3>
+      <span class="topic-badge">Std Lib</span>
+    </div>
+    <p class="why-matters">Why it matters: <code>math/bits</code> exposes the CPU's bit-twiddling instructions as portable, inlinable functions &mdash; population count, leading/trailing zeros, rotations, reversals, and overflow-aware add/subtract/multiply/divide. These power hash tables, bitsets, compression, and fixed-point math, and the compiler lowers most of them to a single machine instruction. Reach for it instead of hand-rolled loops that the optimizer can't recognize.</p>
+
+    <h4>Counting and locating bits</h4>
+    <p><code>OnesCount</code> is population count; <code>Len</code> gives the index of the highest set bit (so it doubles as an integer log2); <code>LeadingZeros</code>/<code>TrailingZeros</code> come in sized variants (<code>8/16/32/64</code>).</p>
+<pre>package main
+
+import (
+    "fmt"
+    "math/bits"
+)
+
+func main() {
+    x := uint(0b1011_0100) // 180
+
+    fmt.Println(bits.OnesCount(x))               // 4  set bits
+    fmt.Println(bits.Len(x))                     // 8  high bit position
+    fmt.Println(bits.LeadingZeros8(0b0001_0000)) // 3  in an 8-bit value
+    fmt.Println(bits.TrailingZeros(x))           // 2  low zero run
+    fmt.Println(bits.Reverse8(0b0000_0001))      // 128 bit-reversed
+}</pre>
+    <div class="output-label">Output</div>
+    <div class="output">4
+8
+3
+2
+128</div>
+
+    <h4>Rounding to powers of two and wide multiply</h4>
+    <p><code>Len</code> gives a branch-free "round up to the next power of two"; <code>Mul64</code> returns the full 128-bit product as <code>(hi, lo)</code>, so you never silently lose the overflow.</p>
+<pre>package main
+
+import (
+    "fmt"
+    "math/bits"
+)
+
+func main() {
+    nextPow2 := func(n uint) uint {
+        if n <= 1 {
+            return 1
+        }
+        return 1 &lt;&lt; bits.Len(n-1)
+    }
+    fmt.Println(nextPow2(17)) // 32
+    fmt.Println(nextPow2(16)) // 16
+
+    // Full 64x64 -> 128-bit product; hi holds the overflow.
+    hi, lo := bits.Mul64(1&lt;&lt;40, 1&lt;&lt;40) // 2^80
+    fmt.Println(hi, lo)               // 65536 0
+}</pre>
+    <div class="output-label">Output</div>
+    <div class="output">32
+16
+65536 0</div>
+
+    <h4>Common Mistakes</h4>
+    <div class="do-dont">
+      <div class="dont-box">
+        <div class="label">Wrong</div>
+<pre>// Hand-rolled popcount the optimizer won't
+// turn into a POPCNT instruction.
+count := 0
+for x != 0 {
+    count += int(x &amp; 1)
+    x &gt;&gt;= 1
+}</pre>
+      </div>
+      <div class="do-box">
+        <div class="label">Right</div>
+<pre>// One intrinsic, lowered to a single CPU instruction.
+count := bits.OnesCount64(x)</pre>
+      </div>
+    </div>
+
+    <h4>Key Rules</h4>
+    <ul class="rules-list">
+      <li>Functions come in width-specific flavors (<code>OnesCount8/16/32/64</code>) plus a word-width default (<code>OnesCount</code>) that matches <code>uint</code>.</li>
+      <li><code>Len(x)</code> is the bit length (index of the top set bit, <code>0</code> for <code>0</code>) &mdash; a cheap <code>floor(log2)+1</code>; <code>Len(x-1)</code> rounds up to a power of two.</li>
+      <li><code>Add64</code>/<code>Sub64</code>/<code>Mul64</code>/<code>Div64</code> expose carry/borrow and the full wide result for big-integer and checksum code without overflow loss.</li>
+      <li>Everything operates on <em>unsigned</em> integers; convert signed values explicitly and mind the width you pass to sized variants.</li>
+    </ul>
+
+    <div class="exercise">
+      <div class="exercise-label">Practice Exercise</div>
+      <p>Implement a compact bitset over <code>[]uint64</code> with <code>Set</code>, <code>Clear</code>, <code>Test</code>, and a <code>Count()</code> that sums <code>bits.OnesCount64</code> across words. Add a <code>Next(i)</code> that finds the next set bit at or after index <code>i</code> using <code>bits.TrailingZeros64</code> on the masked word. Then write a power-of-two allocator size class using <code>bits.Len</code>, and benchmark your bitset's <code>Count</code> against a naive per-bit loop to see the intrinsic win.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>Pitfall:</strong> Passing a value wider than the sized function expects &mdash; e.g. <code>bits.LeadingZeros8(x)</code> where <code>x</code> exceeds 8 bits, or assuming <code>bits.Len</code> counts a fixed 64. <code>LeadingZeros8</code> only considers the low 8 bits, and <code>Len</code> returns a variable count (0 for 0). Match the function width to your data, and remember these operate on unsigned integers &mdash; a negative <code>int</code> won't behave as you expect until converted.
+    </div>
+
+    <div class="connection">
+      <strong>Connections:</strong> The low-level engine under hash bucketing (<a href="#io_fs">FNV/CRC-style</a> sharding), <code>container/heap</code> sizing, and <code>math/big</code>'s wide arithmetic; its intrinsics are the kind of hot-path win you verify with the benchmarking and escape-analysis tooling from earlier days.
+    </div>
+  </div>
+
+  <h3 style="font-size:18px;margin:28px 0 18px;color:var(--muted);">Section 2 &mdash; Encoding &amp; Data Structures</h3>
+
+  <!-- New 4: encoding/xml -->
+  <div class="concept" id="encoding_xml">
+    <div class="concept-header">
+      <h3>encoding/xml: Reading &amp; Writing XML</h3>
+      <span class="topic-badge">Std Lib</span>
+    </div>
+    <p class="why-matters">Why it matters: XML still runs the enterprise world &mdash; SOAP, RSS/Atom feeds, config formats, SAML, sitemaps, office document parts. <code>encoding/xml</code> mirrors the familiar <code>encoding/json</code> model: struct tags map fields to elements and attributes, <code>Marshal</code>/<code>Unmarshal</code> handle whole documents, and a streaming <code>Decoder</code> processes huge inputs token by token. The tag syntax adds an XML-specific twist for attributes and nested paths.</p>
+
+    <h4>Marshaling with element and attribute tags</h4>
+    <p>An <code>xml:"...,attr"</code> tag makes a field an attribute; <code>xml:"parent&gt;child"</code> nests it under an intermediate element; <code>XMLName</code> sets the root element name.</p>
+<pre>package main
+
+import (
+    "encoding/xml"
+    "fmt"
+)
+
+type Book struct {
+    XMLName xml.Name `xml:"book"`
+    ID      int      `xml:"id,attr"`
+    Title   string   `xml:"title"`
+    Authors []string `xml:"authors&gt;author"`
+}
+
+func main() {
+    b := Book{ID: 7, Title: "Go in Action",
+        Authors: []string{"Kennedy", "Ketelsen"}}
+    out, _ := xml.MarshalIndent(b, "", "  ")
+    fmt.Println(string(out))
+}</pre>
+    <div class="output-label">Output</div>
+    <div class="output">&lt;book id="7"&gt;
+  &lt;title&gt;Go in Action&lt;/title&gt;
+  &lt;authors&gt;
+    &lt;author&gt;Kennedy&lt;/author&gt;
+    &lt;author&gt;Ketelsen&lt;/author&gt;
+  &lt;/authors&gt;
+&lt;/book&gt;</div>
+
+    <h4>Unmarshaling back into a struct</h4>
+    <p><code>xml.Unmarshal</code> fills exported fields by matching tags; attributes and nested paths round-trip symmetrically with marshaling.</p>
+<pre>package main
+
+import (
+    "encoding/xml"
+    "fmt"
+)
+
+type Config struct {
+    Env   string   `xml:"env,attr"`
+    Hosts []string `xml:"hosts&gt;host"`
+}
+
+func main() {
+    data := `&lt;config env="prod"&gt;
+  &lt;hosts&gt;
+    &lt;host&gt;a.example.com&lt;/host&gt;
+    &lt;host&gt;b.example.com&lt;/host&gt;
+  &lt;/hosts&gt;
+&lt;/config&gt;`
+
+    var c Config
+    if err := xml.Unmarshal([]byte(data), &amp;c); err != nil {
+        panic(err)
+    }
+    fmt.Println(c.Env)   // prod
+    fmt.Println(c.Hosts) // [a.example.com b.example.com]
+}</pre>
+    <div class="output-label">Output</div>
+    <div class="output">prod
+[a.example.com b.example.com]</div>
+
+    <h4>Common Mistakes</h4>
+    <div class="do-dont">
+      <div class="dont-box">
+        <div class="label">Wrong</div>
+<pre>// json tags are ignored by encoding/xml, and
+// unexported fields are never (un)marshaled.
+type T struct {
+    id    int    `json:"id"`   // lowercase + wrong tag
+    Title string `json:"title"`
+}</pre>
+      </div>
+      <div class="do-box">
+        <div class="label">Right</div>
+<pre>type T struct {
+    ID    int    `xml:"id,attr"`
+    Title string `xml:"title"`
+}</pre>
+      </div>
+    </div>
+
+    <h4>Key Rules</h4>
+    <ul class="rules-list">
+      <li>Only <em>exported</em> fields are processed; use <code>xml:"name"</code> for an element, <code>xml:"name,attr"</code> for an attribute, and <code>xml:",chardata"</code> for the element's text content.</li>
+      <li><code>xml:"a&gt;b&gt;c"</code> maps a field through nested elements; <code>XMLName xml.Name</code> pins the wrapping element's name (and namespace).</li>
+      <li>Use <code>xml.MarshalIndent</code> for readable output and a streaming <code>xml.NewDecoder(r).Token()</code> loop for large documents you can't hold in memory.</li>
+      <li>XML has no native map type and no unmarshal-into-<code>any</code>; model documents as structs (or handle raw tokens), and add <code>,omitempty</code> to skip zero-valued fields on marshal.</li>
+    </ul>
+
+    <div class="exercise">
+      <div class="exercise-label">Practice Exercise</div>
+      <p>Model a minimal RSS feed (<code>channel</code> with a title and a slice of <code>item</code>s) and round-trip it: unmarshal a sample document, then marshal it back with <code>MarshalIndent</code> and diff. Add an attribute and a <code>,chardata</code> field to capture mixed content. Then rewrite the reader as a streaming <code>Decoder</code> that calls <code>DecodeElement</code> only on <code>&lt;item&gt;</code> start tokens, and explain why streaming matters for a multi-gigabyte feed where <code>Unmarshal</code> would exhaust memory.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>Pitfall:</strong> Expecting <code>encoding/xml</code> to honor <code>json</code> tags or to unmarshal arbitrary XML into a <code>map[string]any</code> like JSON does. It reads only <code>xml:</code> tags, ignores unexported fields silently, and has no generic map target &mdash; unmatched elements are simply skipped with no error. Define a struct that mirrors the document, and reach for a streaming decoder when the shape is irregular.
+    </div>
+
+    <div class="connection">
+      <strong>Connections:</strong> Same tag-driven marshal/unmarshal model as <code>encoding/json</code> and <code>encoding/gob</code>, and the streaming <code>Decoder</code> mirrors the <code>csv.Reader</code>/<code>json.Decoder</code> token loops; the struct-tag reflection underneath is the same machinery vet checks for malformed tags.
+    </div>
+  </div>
+
+  <!-- New 5: container/list -->
+  <div class="concept" id="container_list">
+    <div class="concept-header">
+      <h3>container/list: Doubly Linked Lists</h3>
+      <span class="topic-badge">Std Lib</span>
+    </div>
+    <p class="why-matters">Why it matters: <code>container/list</code> is Go's ready-made doubly linked list &mdash; O(1) insert and remove at <em>any</em> position given the element, which slices can't do without shifting. It's the classic backbone of an LRU cache (move-to-front on use, evict from the back) and any queue where you splice elements out of the middle. It predates generics, so values are stored as <code>any</code>.</p>
+
+    <h4>Building and traversing a list</h4>
+    <p><code>list.New()</code> returns an empty <code>*List</code>. <code>PushBack</code>/<code>PushFront</code> return the inserted <code>*Element</code>; walk with <code>Front()</code> and <code>e.Next()</code> until <code>nil</code>.</p>
+<pre>package main
+
+import (
+    "container/list"
+    "fmt"
+)
+
+func main() {
+    l := list.New()
+    l.PushBack(1)
+    l.PushBack(2)
+    l.PushFront(0)
+
+    for e := l.Front(); e != nil; e = e.Next() {
+        fmt.Print(e.Value, " ")
+    }
+    fmt.Println()
+    fmt.Println("len:", l.Len())
+}</pre>
+    <div class="output-label">Output</div>
+    <div class="output">0 1 2
+len: 3</div>
+
+    <h4>O(1) splicing: the LRU move</h4>
+    <p>Holding the <code>*Element</code> lets you <code>MoveToFront</code> (mark as recently used) or <code>Remove</code> (evict) in constant time &mdash; no scan, no shifting.</p>
+<pre>package main
+
+import (
+    "container/list"
+    "fmt"
+)
+
+func main() {
+    l := list.New()
+    a := l.PushBack("a")
+    l.PushBack("b")
+    c := l.PushBack("c")
+
+    l.MoveToFront(c) // promote most-recently-used
+    l.Remove(a)      // evict least-recently-used
+
+    for e := l.Front(); e != nil; e = e.Next() {
+        fmt.Print(e.Value, " ")
+    }
+    fmt.Println()
+}</pre>
+    <div class="output-label">Output</div>
+    <div class="output">c b </div>
+
+    <h4>Common Mistakes</h4>
+    <div class="do-dont">
+      <div class="dont-box">
+        <div class="label">Wrong</div>
+<pre>// Value is `any` -> forgetting the type assertion,
+// or using the zero *List value.
+var l list.List        // usable, but easy to misuse
+e := l.PushBack(42)
+n := e.Value + 1       // compile error: any + int</pre>
+      </div>
+      <div class="do-box">
+        <div class="label">Right</div>
+<pre>l := list.New()
+e := l.PushBack(42)
+n := e.Value.(int) + 1 // assert back to the concrete type</pre>
+      </div>
+    </div>
+
+    <h4>Key Rules</h4>
+    <ul class="rules-list">
+      <li><code>PushBack</code>/<code>PushFront</code> return the <code>*Element</code> &mdash; keep it if you'll later <code>Remove</code>, <code>MoveToFront</code>, or <code>InsertBefore</code> in O(1).</li>
+      <li><code>Element.Value</code> is <code>any</code>; type-assert on read. For a single element type, a generic wrapper or a slice-backed structure is often cleaner and faster.</li>
+      <li>Traverse with <code>for e := l.Front(); e != nil; e = e.Next()</code> (or <code>Back()</code>/<code>Prev()</code>); removing the current element mid-loop is safe if you capture <code>e.Next()</code> first.</li>
+      <li>The zero <code>list.List</code> is a valid empty list, but <code>list.New()</code> is the idiomatic constructor; don't move an <code>*Element</code> between different lists.</li>
+    </ul>
+
+    <div class="exercise">
+      <div class="exercise-label">Practice Exercise</div>
+      <p>Build an LRU cache with capacity <code>N</code>: a <code>map[string]*list.Element</code> for O(1) lookup plus a <code>*list.List</code> for recency order; on <code>Get</code> move the node to front, on <code>Put</code> insert at front and evict from the back when over capacity. Store a <code>{key, value}</code> struct as the element's <code>Value</code> so eviction can delete the map entry. Then benchmark it against a slice-based version and explain where the linked list's O(1) splice actually pays off &mdash; and when a plain slice or generic ring buffer would be faster due to cache locality.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>Pitfall:</strong> Reaching for <code>container/list</code> as a default sequence type. Because every node is a separately heap-allocated <code>*Element</code> holding an <code>any</code>, it fragments memory, defeats CPU cache locality, and boxes every value &mdash; a plain <code>[]T</code> beats it for iteration and append-heavy workloads. Use it only when you genuinely need O(1) removal from the middle while holding element references (e.g. an LRU).
+    </div>
+
+    <div class="connection">
+      <strong>Connections:</strong> Complements <code>container/heap</code> and <code>container/ring</code> as the standard-library container trio; the LRU pattern pairs a list with a map keyed by <a href="#net_netip">comparable values</a>, and its <code>any</code>-typed storage is exactly the boxing that generics (from earlier days) were introduced to avoid.
+    </div>
+  </div>
+
+</div><!-- end New Concepts section -->
+
+
+<!-- ============================================================ -->
+<!-- FOOTER -->
+<!-- ============================================================ -->
+<footer class="footer">
+  <h4>All Go Guides</h4>
+  <ul>
+    <li><a href="golang-guides/golang-guide-2026-07-09.html">Day 34 &mdash; 2026-07-09</a></li>
+    <li><a href="golang-guides/golang-guide-2026-07-08.html">Day 33 &mdash; 2026-07-08</a></li>
+    <li><a href="golang-guides/golang-guide-2026-07-07.html">Day 32 &mdash; 2026-07-07</a></li>
+    <li><a href="golang-guides/golang-guide-2026-07-06.html">Day 31 &mdash; 2026-07-06</a></li>
+    <li><a href="golang-guides/golang-guide-2026-07-05.html">Day 30 &mdash; 2026-07-05</a></li>
+    <li><a href="golang-guides/golang-guide-2026-07-04.html">Day 29 &mdash; 2026-07-04</a></li>
+    <li><a href="golang-guides/golang-guide-2026-07-03.html">Day 28 &mdash; 2026-07-03</a></li>
+    <li><a href="golang-guides/golang-guide-2026-07-02.html">Day 27 &mdash; 2026-07-02</a></li>
+    <li class="current">Day 26 &mdash; 2026-07-01 (current)</li>
+    <li><a href="golang-guides/golang-guide-2026-06-30.html">Day 25 &mdash; 2026-06-30</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-29.html">Day 24 &mdash; 2026-06-29</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-28.html">Day 23 &mdash; 2026-06-28</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-27.html">Day 22 &mdash; 2026-06-27</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-26.html">Day 21 &mdash; 2026-06-26</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-25.html">Day 20 &mdash; 2026-06-25</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-24.html">Day 19 &mdash; 2026-06-24</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-23.html">Day 18 &mdash; 2026-06-23</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-22.html">Day 17 &mdash; 2026-06-22</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-21.html">Day 16 &mdash; 2026-06-21</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-19.html">Day 15 &mdash; 2026-06-19</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-18.html">Day 14 &mdash; 2026-06-18</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-17.html">Day 13 &mdash; 2026-06-17</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-15.html">Day 12 &mdash; 2026-06-15</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-13.html">Day 11 &mdash; 2026-06-13</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-12.html">Day 10 &mdash; 2026-06-12</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-11.html">Day 9 &mdash; 2026-06-11</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-10.html">Day 8 &mdash; 2026-06-10</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-09.html">Day 7 &mdash; 2026-06-09</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-08.html">Day 6 &mdash; 2026-06-08</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-07.html">Day 5 &mdash; 2026-06-07</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-05.html">Day 4 &mdash; 2026-06-05</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-04.html">Day 3 &mdash; 2026-06-04</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-03.html">Day 2 &mdash; 2026-06-03</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-02.html">Day 1 &mdash; 2026-06-02</a></li>
+  </ul>
+
+  <h4 style="margin-top: 20px;">All Guides</h4>
+  <ul>
+    <li><a href="guide.html">LeetCode Study Guide</a></li>
+    <li><a href="lang-guide.html">Multi-Language Guide</a></li>
+    <li><a href="python-guide.html">Python Guide</a></li>
+    <li><a href="typescript-guide.html">TypeScript Guide</a></li>
+    <li><a href="javascript-guide.html">JavaScript Guide</a></li>
+    <li><a href="golang-guide.html">Go Guide (current)</a></li>
+    <li><a href="report.html">Performance Report</a></li>
+  </ul>
+</footer>
+
+</div><!-- end main -->
+
+<script>
+// ===== Theme Toggle =====
+(function() {
+  var KEY = 'lc-goguide-theme';
+  var toggle = document.getElementById('theme-toggle');
+  var html = document.documentElement;
+
+  function setTheme(theme) {
+    html.setAttribute('data-theme', theme);
+    localStorage.setItem(KEY, theme);
+    toggle.textContent = theme === 'dark' ? '☽' : '☀';
+  }
+
+  var saved = localStorage.getItem(KEY) || 'dark';
+  setTheme(saved);
+
+  toggle.addEventListener('click', function() {
+    setTheme(html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
+  });
+})();
+
+// ===== Mobile Sidebar Toggle =====
+(function() {
+  var btn = document.getElementById('sidebar-toggle');
+  var sidebar = document.getElementById('sidebar');
+
+  btn.addEventListener('click', function() {
+    sidebar.classList.toggle('open');
+  });
+
+  // Close sidebar when clicking a link (mobile)
+  sidebar.querySelectorAll('.sidebar-link').forEach(function(link) {
+    link.addEventListener('click', function() {
+      if (window.innerWidth <= 900) {
+        sidebar.classList.remove('open');
+      }
+    });
+  });
+})();
+
+// ===== Active Sidebar Link on Scroll =====
+(function() {
+  var links = document.querySelectorAll('.sidebar-link');
+  var sections = [];
+
+  links.forEach(function(link) {
+    var id = link.getAttribute('href').replace('#', '');
+    var el = document.getElementById(id);
+    if (el) sections.push({ id: id, el: el, link: link });
+  });
+
+  function onScroll() {
+    var scrollTop = window.scrollY + 120;
+    var current = null;
+
+    for (var i = sections.length - 1; i >= 0; i--) {
+      if (sections[i].el.offsetTop <= scrollTop) {
+        current = sections[i];
+        break;
+      }
+    }
+
+    links.forEach(function(l) { l.classList.remove('active'); });
+    if (current) current.link.classList.add('active');
+  }
+
+  window.addEventListener('scroll', onScroll);
+  onScroll();
+})();
+</script>
+</body>
+</html>

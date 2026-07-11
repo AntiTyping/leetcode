@@ -1,0 +1,1927 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Python Study Guide &mdash; Day 4 (2026-05-31)</title>
+<style>
+/* ===== CSS Variables ===== */
+:root {
+  --bg: #0d1117;
+  --surface1: #161b22;
+  --surface2: #1c2333;
+  --border: #30363d;
+  --text: #e6edf3;
+  --muted: #8b949e;
+  --accent: #58a6ff;
+  --accent-dim: #1f6feb33;
+  --green: #3fb950;
+  --green-dim: #23863633;
+  --yellow: #d29922;
+  --yellow-dim: #d2992233;
+  --red: #f85149;
+  --red-dim: #f8514933;
+  --purple: #bc8cff;
+  --purple-dim: #bc8cff22;
+  --orange: #f0883e;
+  --orange-dim: #f0883e22;
+  --code-bg: #0d1117;
+  --sidebar-w: 300px;
+  --font-mono: 'SF Mono', 'Cascadia Code', 'Fira Code', Consolas, monospace;
+  --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+  --radius: 8px;
+  --shadow: 0 1px 3px rgba(0,0,0,0.4);
+}
+
+[data-theme="light"] {
+  --bg: #ffffff;
+  --surface1: #f6f8fa;
+  --surface2: #f0f3f6;
+  --border: #d0d7de;
+  --text: #1f2328;
+  --muted: #656d76;
+  --accent: #0969da;
+  --accent-dim: #0969da1a;
+  --green: #1a7f37;
+  --green-dim: #1a7f3718;
+  --yellow: #9a6700;
+  --yellow-dim: #9a670018;
+  --red: #cf222e;
+  --red-dim: #cf222e18;
+  --purple: #8250df;
+  --purple-dim: #8250df18;
+  --orange: #bc4c00;
+  --orange-dim: #bc4c0018;
+  --code-bg: #f6f8fa;
+  --shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+/* ===== Reset & Base ===== */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: var(--font-sans);
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.7;
+  font-size: 15px;
+  transition: background 0.2s, color 0.2s;
+}
+
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+/* ===== Theme Toggle ===== */
+#theme-toggle {
+  position: fixed;
+  top: 16px;
+  right: 20px;
+  z-index: 1000;
+  background: var(--surface1);
+  border: 1px solid var(--border);
+  color: var(--text);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+  box-shadow: var(--shadow);
+}
+#theme-toggle:hover { background: var(--surface2); border-color: var(--accent); }
+
+/* ===== Sidebar ===== */
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: var(--sidebar-w);
+  height: 100vh;
+  background: var(--surface1);
+  border-right: 1px solid var(--border);
+  overflow-y: auto;
+  padding: 20px 0;
+  z-index: 100;
+  transition: transform 0.3s;
+}
+
+.sidebar-header {
+  padding: 0 20px 16px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 12px;
+}
+
+.sidebar-header h2 {
+  font-size: 16px;
+  color: var(--text);
+  font-weight: 700;
+}
+
+.sidebar-header .subtitle {
+  font-size: 12px;
+  color: var(--muted);
+  margin-top: 2px;
+}
+
+.sidebar-section {
+  margin-bottom: 8px;
+}
+
+.sidebar-section-title {
+  padding: 6px 20px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+}
+
+.sidebar-link {
+  display: block;
+  padding: 5px 20px 5px 28px;
+  font-size: 13px;
+  color: var(--muted);
+  text-decoration: none;
+  border-left: 2px solid transparent;
+  transition: all 0.15s;
+  line-height: 1.4;
+}
+
+.sidebar-link:hover {
+  color: var(--text);
+  background: var(--accent-dim);
+  border-left-color: var(--accent);
+  text-decoration: none;
+}
+
+.sidebar-link.active {
+  color: var(--accent);
+  border-left-color: var(--accent);
+  background: var(--accent-dim);
+}
+
+/* ===== Mobile sidebar toggle ===== */
+#sidebar-toggle {
+  display: none;
+  position: fixed;
+  top: 16px;
+  left: 16px;
+  z-index: 200;
+  background: var(--surface1);
+  border: 1px solid var(--border);
+  color: var(--text);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 20px;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--shadow);
+}
+
+/* ===== Main Content ===== */
+.main {
+  margin-left: var(--sidebar-w);
+  padding: 40px 48px 80px;
+  max-width: calc(860px + var(--sidebar-w) + 96px);
+}
+
+.page-title {
+  font-size: 32px;
+  font-weight: 800;
+  margin-bottom: 4px;
+  color: var(--text);
+}
+
+.page-subtitle {
+  font-size: 15px;
+  color: var(--muted);
+  margin-bottom: 36px;
+}
+
+/* ===== Sections ===== */
+.section {
+  margin-bottom: 48px;
+}
+
+.section-label {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  padding: 3px 10px;
+  border-radius: 4px;
+  margin-bottom: 12px;
+}
+
+.section-label.review { background: var(--yellow-dim); color: var(--yellow); }
+.section-label.new { background: var(--green-dim); color: var(--green); }
+
+.section-title {
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 24px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--border);
+}
+
+/* ===== Concept Cards ===== */
+.concept {
+  background: var(--surface1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 28px;
+  margin-bottom: 28px;
+  box-shadow: var(--shadow);
+}
+
+.concept-header {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  margin-bottom: 6px;
+  flex-wrap: wrap;
+}
+
+.concept h3 {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.concept-meta {
+  font-size: 12px;
+  color: var(--muted);
+  background: var(--surface2);
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
+.concept h4 {
+  font-size: 15px;
+  font-weight: 600;
+  margin: 20px 0 8px;
+  color: var(--text);
+}
+
+.concept p, .concept li {
+  color: var(--text);
+  line-height: 1.7;
+}
+
+.concept ul, .concept ol {
+  padding-left: 22px;
+  margin: 8px 0;
+}
+
+.concept li {
+  margin-bottom: 4px;
+}
+
+/* ===== Code Blocks ===== */
+pre {
+  background: var(--code-bg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 16px 18px;
+  overflow-x: auto;
+  margin: 10px 0 14px;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--text);
+  position: relative;
+}
+
+code {
+  font-family: var(--font-mono);
+  font-size: 0.9em;
+}
+
+:not(pre) > code {
+  background: var(--surface2);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.88em;
+}
+
+/* ===== Good/Bad Examples ===== */
+.do-dont {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin: 10px 0;
+}
+
+.do-box, .dont-box {
+  border-radius: 6px;
+  padding: 14px;
+  border: 1px solid;
+}
+
+.do-box {
+  background: var(--green-dim);
+  border-color: var(--green);
+}
+
+.dont-box {
+  background: var(--red-dim);
+  border-color: var(--red);
+}
+
+.do-box .label, .dont-box .label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 6px;
+}
+
+.do-box .label { color: var(--green); }
+.dont-box .label { color: var(--red); }
+
+.do-box pre, .dont-box pre {
+  margin: 0;
+  border: none;
+  background: transparent;
+  padding: 0;
+  font-size: 12.5px;
+}
+
+/* ===== Key Rules ===== */
+.rules-list {
+  list-style: none;
+  padding: 0;
+  margin: 8px 0;
+}
+
+.rules-list li {
+  padding: 6px 0 6px 24px;
+  position: relative;
+}
+
+.rules-list li::before {
+  content: "\2192";
+  position: absolute;
+  left: 2px;
+  color: var(--accent);
+  font-weight: 700;
+}
+
+/* ===== Exercises ===== */
+.exercise {
+  background: var(--purple-dim);
+  border: 1px solid var(--purple);
+  border-radius: 6px;
+  padding: 14px 18px;
+  margin: 8px 0;
+}
+
+.exercise .exercise-label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--purple);
+  margin-bottom: 4px;
+}
+
+/* ===== Challenge (Review) ===== */
+.challenge {
+  background: var(--orange-dim);
+  border: 1px solid var(--orange);
+  border-radius: 6px;
+  padding: 14px 18px;
+  margin: 10px 0;
+}
+
+.challenge .challenge-label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--orange);
+  margin-bottom: 4px;
+}
+
+/* ===== Pitfall ===== */
+.pitfall {
+  background: var(--red-dim);
+  border-left: 3px solid var(--red);
+  border-radius: 0 6px 6px 0;
+  padding: 10px 14px;
+  margin: 10px 0;
+  font-size: 14px;
+}
+
+.pitfall strong {
+  color: var(--red);
+}
+
+/* ===== Connection ===== */
+.connection {
+  background: var(--accent-dim);
+  border-left: 3px solid var(--accent);
+  border-radius: 0 6px 6px 0;
+  padding: 10px 14px;
+  margin: 10px 0;
+  font-size: 14px;
+  color: var(--muted);
+}
+
+/* ===== Footer ===== */
+.footer {
+  margin-top: 60px;
+  padding: 24px 0;
+  border-top: 1px solid var(--border);
+}
+
+.footer h4 {
+  font-size: 14px;
+  color: var(--muted);
+  margin-bottom: 10px;
+}
+
+.footer ul {
+  list-style: none;
+  padding: 0;
+}
+
+.footer li {
+  margin-bottom: 4px;
+  font-size: 14px;
+}
+
+.footer li a { color: var(--accent); }
+.footer .current { color: var(--green); font-weight: 600; }
+
+/* ===== Responsive ===== */
+@media (max-width: 900px) {
+  .sidebar {
+    transform: translateX(-100%);
+  }
+  .sidebar.open {
+    transform: translateX(0);
+    box-shadow: 4px 0 20px rgba(0,0,0,0.5);
+  }
+  #sidebar-toggle {
+    display: flex;
+  }
+  .main {
+    margin-left: 0;
+    padding: 60px 20px 60px;
+    max-width: 100%;
+  }
+  .do-dont {
+    grid-template-columns: 1fr;
+  }
+  #theme-toggle {
+    right: 14px;
+    top: 16px;
+  }
+}
+</style>
+</head>
+<body>
+
+<!-- Theme Toggle -->
+<button id="theme-toggle" aria-label="Toggle theme" title="Toggle light/dark theme">&#9789;</button>
+
+<!-- Mobile Sidebar Toggle -->
+<button id="sidebar-toggle" aria-label="Toggle sidebar">&#9776;</button>
+
+<!-- Sidebar -->
+<nav class="sidebar" id="sidebar">
+  <div class="sidebar-header">
+    <h2>Python Guide</h2>
+    <div class="subtitle">Day 4 &mdash; 2026-05-31</div>
+  </div>
+
+  <div class="sidebar-section">
+    <div class="sidebar-section-title">Review (6 concepts)</div>
+    <a href="#review-fstrings" class="sidebar-link">F-String Power Features</a>
+    <a href="#review-unpacking" class="sidebar-link">Unpacking &amp; Star Expressions</a>
+    <a href="#review-counter" class="sidebar-link">Counter</a>
+    <a href="#review-closures" class="sidebar-link">Closures &amp; nonlocal</a>
+    <a href="#review-itertools" class="sidebar-link">itertools</a>
+    <a href="#review-decorators" class="sidebar-link">Function Decorators &amp; @wraps</a>
+  </div>
+
+  <div class="sidebar-section">
+    <div class="sidebar-section-title">Type System (2 concepts)</div>
+    <a href="#type-hints-basic" class="sidebar-link">Type Hints &mdash; Basic Annotations</a>
+    <a href="#type-hints-optional" class="sidebar-link">Type Hints &mdash; Optional, Union &amp; Modern Syntax</a>
+  </div>
+
+  <div class="sidebar-section">
+    <div class="sidebar-section-title">Data Modeling (2 concepts)</div>
+    <a href="#enum" class="sidebar-link">Enum</a>
+    <a href="#dataclasses" class="sidebar-link">Dataclasses</a>
+  </div>
+
+  <div class="sidebar-section">
+    <div class="sidebar-section-title">OOP (2 concepts)</div>
+    <a href="#classes-init-repr-str" class="sidebar-link">Classes &mdash; __init__, __repr__, __str__</a>
+    <a href="#classes-eq-hash" class="sidebar-link">Classes &mdash; __eq__ and __hash__</a>
+  </div>
+</nav>
+
+<!-- Main Content -->
+<div class="main">
+
+<h1 class="page-title">Python Daily Study Guide</h1>
+<p class="page-subtitle">Day 4 &mdash; Saturday, May 31, 2026 &bull; Type Hints, Enums, Dataclasses, and Classes</p>
+
+<!-- ============================================================ -->
+<!-- REVIEW SECTION -->
+<!-- ============================================================ -->
+<div class="section">
+  <span class="section-label review">Review</span>
+  <h2 class="section-title">Review &mdash; 6 Concepts</h2>
+
+  <!-- Review 1: F-String Power Features -->
+  <div class="concept" id="review-fstrings">
+    <div class="concept-header">
+      <h3>F-String Power Features</h3>
+      <span class="concept-meta">Strings &bull; 3 days since last review &bull; rep 1</span>
+    </div>
+
+    <h4>Quick Reminder</h4>
+    <p>F-strings support <code>=</code> for debugging (<code>f"{x=}"</code>), format specs (<code>f"{pi:.2f}"</code>), and inline expressions (<code>f"{len(items)}"</code>).</p>
+
+    <h4>Key Pattern</h4>
+<pre>name = "Alice"
+print(f"{name=}, {len(name)=}")
+# Output: name='Alice', len(name)=5</pre>
+
+    <div class="challenge">
+      <div class="challenge-label">Challenge</div>
+      <p>Write a function that takes a list of floats and returns a formatted string showing each value with 3 decimal places and its index, like <code>"[0] 3.142, [1] 2.718"</code>.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>#1 Pitfall:</strong> Forgetting that <code>=</code> includes the expression text AND the value &mdash; <code>f"{x+1=}"</code> prints <code>x+1=6</code>, not just <code>6</code>.
+    </div>
+  </div>
+
+  <!-- Review 2: Unpacking & Star Expressions -->
+  <div class="concept" id="review-unpacking">
+    <div class="concept-header">
+      <h3>Unpacking &amp; Star Expressions</h3>
+      <span class="concept-meta">Unpacking &bull; 3 days since last review &bull; rep 1</span>
+    </div>
+
+    <h4>Quick Reminder</h4>
+    <p><code>*rest</code> captures remaining items. <code>a, *mid, z = [1,2,3,4,5]</code> gives <code>mid=[2,3,4]</code>. Works in function args, assignments, and for loops.</p>
+
+    <h4>Key Pattern</h4>
+<pre>first, *rest = [1, 2, 3, 4]
+print(first)  # 1
+print(rest)   # [2, 3, 4]</pre>
+
+    <div class="challenge">
+      <div class="challenge-label">Challenge</div>
+      <p>Given a list of (name, *scores) tuples like <code>[("Alice", 90, 85, 92), ("Bob", 78, 88)]</code>, unpack each to compute the average score per person. Return a dict of <code>{name: avg}</code>.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>#1 Pitfall:</strong> <code>*rest</code> always produces a list, even for a single remaining element &mdash; <code>a, *b = [1, 2]</code> gives <code>b=[2]</code> not <code>b=2</code>.
+    </div>
+  </div>
+
+  <!-- Review 3: Counter -->
+  <div class="concept" id="review-counter">
+    <div class="concept-header">
+      <h3>Counter</h3>
+      <span class="concept-meta">Collections &bull; 3 days since last review &bull; rep 1</span>
+    </div>
+
+    <h4>Quick Reminder</h4>
+    <p><code>Counter</code> counts hashable objects. Supports <code>most_common(n)</code>, arithmetic (<code>+</code>, <code>-</code>, <code>&amp;</code>, <code>|</code>), and iteration.</p>
+
+    <h4>Key Pattern</h4>
+<pre>from collections import Counter
+
+counts = Counter("mississippi")
+print(counts.most_common(2))
+# Output: [('s', 4), ('i', 4)]</pre>
+
+    <div class="challenge">
+      <div class="challenge-label">Challenge</div>
+      <p>Given two strings, use Counter to determine if one is an anagram of the other, then find which characters need to be added/removed to transform one into the other.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>#1 Pitfall:</strong> <code>Counter</code> subtraction drops zero/negative counts &mdash; use <code>subtract()</code> method to keep them.
+    </div>
+  </div>
+
+  <!-- Review 4: Closures & nonlocal -->
+  <div class="concept" id="review-closures">
+    <div class="concept-header">
+      <h3>Closures &amp; nonlocal</h3>
+      <span class="concept-meta">Functions &bull; 1 day since last review &bull; rep 0</span>
+    </div>
+
+    <h4>Quick Reminder</h4>
+    <p>A closure captures variables from its enclosing scope. Use <code>nonlocal</code> to modify (not just read) an enclosed variable.</p>
+
+    <h4>Key Pattern</h4>
+<pre>def make_counter():
+    count = 0
+    def inc():
+        nonlocal count
+        count += 1
+        return count
+    return inc
+
+c = make_counter()
+print(c())  # 1
+print(c())  # 2</pre>
+
+    <div class="challenge">
+      <div class="challenge-label">Challenge</div>
+      <p>Write a <code>make_accumulator()</code> factory that returns a function. Each call to the returned function adds its argument to a running total and returns the new total. E.g., <code>acc = make_accumulator(); acc(5) -> 5; acc(3) -> 8; acc(10) -> 18</code>.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>#1 Pitfall:</strong> Without <code>nonlocal</code>, assigning to a variable creates a NEW local variable instead of modifying the enclosed one, causing <code>UnboundLocalError</code>.
+    </div>
+  </div>
+
+  <!-- Review 5: itertools -->
+  <div class="concept" id="review-itertools">
+    <div class="concept-header">
+      <h3>itertools</h3>
+      <span class="concept-meta">Iteration &bull; 1 day since last review &bull; rep 0</span>
+    </div>
+
+    <h4>Quick Reminder</h4>
+    <p><code>itertools</code> provides lazy iteration tools: <code>chain</code> (concatenate), <code>islice</code> (slice iterators), <code>groupby</code> (group consecutive), <code>product</code> (cartesian), <code>combinations</code>/<code>permutations</code>, <code>accumulate</code> (running totals).</p>
+
+    <h4>Key Pattern</h4>
+<pre>from itertools import chain, islice
+
+result = list(islice(chain([1, 2], [3, 4], [5, 6]), 4))
+print(result)
+# Output: [1, 2, 3, 4]</pre>
+
+    <div class="challenge">
+      <div class="challenge-label">Challenge</div>
+      <p>Using <code>itertools.groupby</code>, take a sorted list of (category, item) tuples and produce a dict mapping each category to its list of items. E.g., <code>[("fruit","apple"),("fruit","banana"),("veg","carrot")]</code> becomes <code>{"fruit":["apple","banana"],"veg":["carrot"]}</code>.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>#1 Pitfall:</strong> <code>groupby</code> only groups CONSECUTIVE equal elements &mdash; data must be sorted by the key first.
+    </div>
+  </div>
+
+  <!-- Review 6: Function Decorators & @wraps -->
+  <div class="concept" id="review-decorators">
+    <div class="concept-header">
+      <h3>Function Decorators &amp; @wraps</h3>
+      <span class="concept-meta">Decorators &bull; 1 day since last review &bull; rep 1</span>
+    </div>
+
+    <h4>Quick Reminder</h4>
+    <p>A decorator wraps a function, adding behavior before/after. Use <code>@functools.wraps(func)</code> to preserve the original function's <code>__name__</code>, <code>__doc__</code>, etc.</p>
+
+    <h4>Key Pattern</h4>
+<pre>import functools
+
+def timer(func):
+    @functools.wraps(func)
+    def wrapper(*args, **kwargs):
+        import time
+        start = time.perf_counter()
+        result = func(*args, **kwargs)
+        elapsed = time.perf_counter() - start
+        print(f"{func.__name__} took {elapsed:.4f}s")
+        return result
+    return wrapper</pre>
+
+    <div class="challenge">
+      <div class="challenge-label">Challenge</div>
+      <p>Write a <code>@retry(max_attempts=3)</code> parameterized decorator that retries a function up to N times if it raises an exception, with a 1-second delay between attempts.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>#1 Pitfall:</strong> Forgetting <code>@wraps(func)</code> means the decorated function loses its name and docstring &mdash; <code>help()</code> and debugging tools show the wrapper's info instead.
+    </div>
+  </div>
+
+</div><!-- end review section -->
+
+
+<!-- ============================================================ -->
+<!-- NEW CONCEPTS SECTION 1: Type System -->
+<!-- ============================================================ -->
+<div class="section">
+  <span class="section-label new">New</span>
+  <h2 class="section-title">Type System</h2>
+
+  <!-- Concept 1: Type Hints Basic -->
+  <div class="concept" id="type-hints-basic">
+    <div class="concept-header">
+      <h3>Type Hints &mdash; Basic Annotations</h3>
+      <span class="concept-meta">Type System &bull; New</span>
+    </div>
+
+    <h4>Why It Matters</h4>
+    <p>Type hints make code self-documenting, enable IDE autocompletion, and catch bugs via <code>mypy</code> or <code>pyright</code> before runtime. They communicate intent to both tools and humans.</p>
+
+    <h4>Progressive Explanation</h4>
+    <p><strong>Simple function annotations:</strong> Add types to parameters and return values.</p>
+<pre>def greet(name: str) -> str:
+    return f"Hello, {name}"</pre>
+
+    <p><strong>Variable annotations:</strong></p>
+<pre>count: int = 0
+names: list[str] = []
+active: bool = True</pre>
+
+    <p><strong>Collection types:</strong> Specify what the container holds.</p>
+<pre>scores: dict[str, int] = {"alice": 95, "bob": 87}
+pairs: list[tuple[str, int]] = [("alice", 95)]
+unique_ids: set[float] = {1.0, 2.5}</pre>
+
+    <p><strong>None returns:</strong> Functions that don't return a value.</p>
+<pre>def log(msg: str) -> None:
+    print(msg)</pre>
+
+    <h4>Code Examples</h4>
+
+    <p><strong>Example 1: Basic types</strong></p>
+<pre>def calculate_bmi(weight_kg: float, height_m: float) -> float:
+    """Calculate Body Mass Index."""
+    return weight_kg / (height_m ** 2)
+
+def is_healthy(bmi: float) -> bool:
+    return 18.5 <= bmi <= 24.9
+
+bmi = calculate_bmi(70.0, 1.75)
+print(f"BMI: {bmi:.1f}, Healthy: {is_healthy(bmi)}")
+# Output: BMI: 22.9, Healthy: True</pre>
+
+    <p><strong>Example 2: Collection types</strong></p>
+<pre>def summarize_scores(scores: dict[str, list[int]]) -> dict[str, float]:
+    """Compute average score per student."""
+    return {
+        name: sum(grades) / len(grades)
+        for name, grades in scores.items()
+    }
+
+data = {"Alice": [90, 85, 92], "Bob": [78, 88, 95]}
+print(summarize_scores(data))
+# Output: {'Alice': 89.0, 'Bob': 87.0}</pre>
+
+    <p><strong>Example 3: Class with typed attributes</strong></p>
+<pre>class Rectangle:
+    width: float
+    height: float
+
+    def __init__(self, width: float, height: float) -> None:
+        self.width = width
+        self.height = height
+
+    def area(self) -> float:
+        return self.width * self.height
+
+    def perimeter(self) -> float:
+        return 2 * (self.width + self.height)
+
+r = Rectangle(5.0, 3.0)
+print(f"Area: {r.area()}, Perimeter: {r.perimeter()}")
+# Output: Area: 15.0, Perimeter: 16.0</pre>
+
+    <p><strong>Example 4: Real-world &mdash; processing CSV-like data</strong></p>
+<pre>def filter_records(
+    records: list[dict[str, str]],
+    key: str,
+    value: str
+) -> list[dict[str, str]]:
+    """Filter records where key matches value."""
+    return [r for r in records if r.get(key) == value]
+
+def extract_column(
+    records: list[dict[str, str]],
+    column: str
+) -> list[str]:
+    """Extract a single column from all records."""
+    return [r[column] for r in records if column in r]
+
+records = [
+    {"name": "Alice", "dept": "Eng"},
+    {"name": "Bob", "dept": "Sales"},
+    {"name": "Carol", "dept": "Eng"},
+]
+eng = filter_records(records, "dept", "Eng")
+names = extract_column(eng, "name")
+print(names)
+# Output: ['Alice', 'Carol']</pre>
+
+    <h4>Common Mistakes</h4>
+    <div class="do-dont">
+      <div class="dont-box">
+        <div class="label">Don't</div>
+<pre>def foo(items: list):
+    ...
+# Too vague -- what's IN the list?</pre>
+      </div>
+      <div class="do-box">
+        <div class="label">Do</div>
+<pre>def foo(items: list[str]):
+    ...
+# Specific element type</pre>
+      </div>
+    </div>
+
+    <div class="do-dont">
+      <div class="dont-box">
+        <div class="label">Don't (Python 3.9+)</div>
+<pre>from typing import List, Dict
+def bar(x: List[str]) -> Dict[str, int]:
+    ...</pre>
+      </div>
+      <div class="do-box">
+        <div class="label">Do (Python 3.9+)</div>
+<pre>def bar(x: list[str]) -> dict[str, int]:
+    ...
+# Use lowercase built-in generics</pre>
+      </div>
+    </div>
+
+    <h4>Key Rules</h4>
+    <ul class="rules-list">
+      <li>Type hints are NOT enforced at runtime &mdash; they are for tools (mypy, pyright) and humans.</li>
+      <li>Use lowercase built-in generics (<code>list</code>, <code>dict</code>, <code>set</code>, <code>tuple</code>) in Python 3.9+.</li>
+      <li>Always annotate public function signatures; internal helpers are optional.</li>
+    </ul>
+
+    <h4>Exercises</h4>
+    <div class="exercise">
+      <div class="exercise-label">Exercise 1</div>
+      <p>Add type hints to: <code>def find_longest(words): return max(words, key=len)</code></p>
+    </div>
+    <div class="exercise">
+      <div class="exercise-label">Exercise 2</div>
+      <p>Write a fully typed function <code>merge_dicts(d1, d2)</code> that merges two <code>str -> int</code> dicts, summing values for shared keys.</p>
+    </div>
+
+    <div class="connection">
+      <strong>Connections:</strong> Foundation for Optional/Union (next concept). Used by dataclasses (later today).
+    </div>
+  </div>
+
+  <!-- Concept 2: Type Hints Optional/Union -->
+  <div class="concept" id="type-hints-optional">
+    <div class="concept-header">
+      <h3>Type Hints &mdash; Optional, Union &amp; Modern Syntax</h3>
+      <span class="concept-meta">Type System &bull; New</span>
+    </div>
+
+    <h4>Why It Matters</h4>
+    <p>Real code has values that might be <code>None</code> or could be multiple types. <code>Optional</code> and <code>Union</code> (or the <code>X | Y</code> syntax) express these patterns clearly.</p>
+
+    <h4>Progressive Explanation</h4>
+    <p><strong><code>Optional[str]</code></strong> means <code>str | None</code> &mdash; the value might be None.</p>
+<pre>from typing import Optional
+
+def find_user(user_id: int) -> Optional[str]:
+    users = {1: "Alice", 2: "Bob"}
+    return users.get(user_id)  # Returns str or None</pre>
+
+    <p><strong><code>Union[int, str]</code></strong> means either <code>int</code> or <code>str</code>.</p>
+<pre>from typing import Union
+
+def stringify(val: Union[int, float, str]) -> str:
+    return str(val)</pre>
+
+    <p><strong>Python 3.10+ syntax:</strong> Use <code>|</code> directly &mdash; cleaner and more Pythonic.</p>
+<pre># Python 3.10+
+def find_user(user_id: int) -> str | None:
+    ...
+
+def stringify(val: int | float | str) -> str:
+    return str(val)</pre>
+
+    <p><strong>Backporting:</strong> <code>from __future__ import annotations</code> enables the <code>|</code> syntax in Python 3.7&ndash;3.9.</p>
+
+    <h4>Code Examples</h4>
+
+    <p><strong>Example 1: Function returning Optional</strong></p>
+<pre>def find_user(user_id: int) -> str | None:
+    """Look up a user by ID; returns None if not found."""
+    database = {1: "Alice", 2: "Bob", 3: "Carol"}
+    return database.get(user_id)
+
+result = find_user(2)
+print(result)   # Output: Bob
+
+result = find_user(99)
+print(result)   # Output: None</pre>
+
+    <p><strong>Example 2: Function accepting Union</strong></p>
+<pre>def format_value(val: int | float | str) -> str:
+    """Convert any supported type to a display string."""
+    if isinstance(val, float):
+        return f"{val:.2f}"
+    return str(val)
+
+print(format_value(42))       # Output: 42
+print(format_value(3.14159))  # Output: 3.14
+print(format_value("hello"))  # Output: hello</pre>
+
+    <p><strong>Example 3: Default None pattern</strong></p>
+<pre>def connect(
+    host: str,
+    port: int = 8080,
+    timeout: float | None = None
+) -> str:
+    """Simulate a connection with optional timeout."""
+    msg = f"Connecting to {host}:{port}"
+    if timeout is not None:
+        msg += f" (timeout={timeout}s)"
+    return msg
+
+print(connect("localhost"))
+# Output: Connecting to localhost:8080
+print(connect("db.example.com", 5432, timeout=30.0))
+# Output: Connecting to db.example.com:5432 (timeout=30.0s)</pre>
+
+    <p><strong>Example 4: Real-world database lookup</strong></p>
+<pre>def get_setting(
+    settings: dict[str, str],
+    key: str,
+    default: str | None = None
+) -> str | None:
+    """Retrieve a setting, with optional default."""
+    return settings.get(key, default)
+
+config = {"theme": "dark", "lang": "en"}
+print(get_setting(config, "theme"))          # Output: dark
+print(get_setting(config, "missing"))        # Output: None
+print(get_setting(config, "missing", "N/A")) # Output: N/A</pre>
+
+    <h4>Common Mistakes</h4>
+    <div class="do-dont">
+      <div class="dont-box">
+        <div class="label">Don't</div>
+<pre>def foo() -> str:
+    return None
+# Lying about the return type!</pre>
+      </div>
+      <div class="do-box">
+        <div class="label">Do</div>
+<pre>def foo() -> str | None:
+    return None
+# Honest Optional return</pre>
+      </div>
+    </div>
+
+    <div class="do-dont">
+      <div class="dont-box">
+        <div class="label">Don't</div>
+<pre># Optional doesn't mean "has a default"
+name: Optional[str] = "default"
+# Misleading -- Optional is about TYPE</pre>
+      </div>
+      <div class="do-box">
+        <div class="label">Do</div>
+<pre># Optional means "could be str or None"
+name: str | None = None
+# Clear: the type can be None</pre>
+      </div>
+    </div>
+
+    <h4>Key Rules</h4>
+    <ul class="rules-list">
+      <li><code>Optional[X]</code> is EXACTLY <code>X | None</code> &mdash; nothing more.</li>
+      <li>Prefer <code>X | Y</code> syntax (3.10+) over <code>Union[X, Y]</code> &mdash; cleaner and more Pythonic.</li>
+      <li>If a function NEVER returns None, don't use Optional in its return type.</li>
+    </ul>
+
+    <h4>Exercises</h4>
+    <div class="exercise">
+      <div class="exercise-label">Exercise 1</div>
+      <p>Type a function <code>safe_divide(a, b)</code> that returns the result or <code>None</code> if <code>b</code> is zero. Add full type annotations.</p>
+    </div>
+    <div class="exercise">
+      <div class="exercise-label">Exercise 2</div>
+      <p>Write a typed function <code>first_match(items, predicate)</code> that returns the first item matching a predicate, or <code>None</code> if no match.</p>
+    </div>
+
+    <div class="connection">
+      <strong>Connections:</strong> Builds on basic annotations. <code>Optional</code> is crucial for dataclasses with default None fields.
+    </div>
+  </div>
+
+</div><!-- end Type System section -->
+
+
+<!-- ============================================================ -->
+<!-- NEW CONCEPTS SECTION 2: Data Modeling -->
+<!-- ============================================================ -->
+<div class="section">
+  <span class="section-label new">New</span>
+  <h2 class="section-title">Data Modeling</h2>
+
+  <!-- Concept 3: Enum -->
+  <div class="concept" id="enum">
+    <div class="concept-header">
+      <h3>Enum</h3>
+      <span class="concept-meta">Data Modeling &bull; New</span>
+    </div>
+
+    <h4>Why It Matters</h4>
+    <p>Enums define a fixed set of named constants &mdash; more readable than magic strings or numbers, with IDE support and type safety.</p>
+
+    <h4>Progressive Explanation</h4>
+    <p><strong>Basic enum:</strong></p>
+<pre>from enum import Enum
+
+class Color(Enum):
+    RED = 1
+    GREEN = 2
+    BLUE = 3</pre>
+
+    <p><strong>Accessing members:</strong></p>
+<pre>print(Color.RED)        # Color.RED
+print(Color.RED.name)   # RED
+print(Color.RED.value)  # 1</pre>
+
+    <p><strong>Iteration:</strong></p>
+<pre>for c in Color:
+    print(c.name, c.value)
+# RED 1
+# GREEN 2
+# BLUE 3</pre>
+
+    <p><strong><code>IntEnum</code> for integer comparisons, <code>auto()</code> for auto-numbering:</strong></p>
+<pre>from enum import IntEnum, auto
+
+class Priority(IntEnum):
+    LOW = auto()     # 1
+    MEDIUM = auto()  # 2
+    HIGH = auto()    # 3
+
+print(Priority.HIGH > Priority.LOW)  # True</pre>
+
+    <p><strong>String enum for serializable values:</strong></p>
+<pre>class Status(str, Enum):
+    ACTIVE = "active"
+    INACTIVE = "inactive"
+    PENDING = "pending"
+
+import json
+print(json.dumps({"status": Status.ACTIVE}))
+# Output: {"status": "active"}</pre>
+
+    <h4>Code Examples</h4>
+
+    <p><strong>Example 1: Basic enum definition and access</strong></p>
+<pre>from enum import Enum
+
+class Season(Enum):
+    SPRING = 1
+    SUMMER = 2
+    AUTUMN = 3
+    WINTER = 4
+
+current = Season.SUMMER
+print         # Season.SUMMER
+print    # SUMMER
+print   # 2
+print(Season(3))       # Season.AUTUMN  (lookup by value)
+print(Season["WINTER"])# Season.WINTER  (lookup by name)</pre>
+
+    <p><strong>Example 2: Using enum in conditionals</strong></p>
+<pre>from enum import Enum
+
+class TrafficLight(Enum):
+    RED = "stop"
+    YELLOW = "caution"
+    GREEN = "go"
+
+def action(light: TrafficLight) -> str:
+    if light == TrafficLight.RED:
+        return "Stop immediately"
+    elif light == TrafficLight.YELLOW:
+        return "Slow down"
+    elif light == TrafficLight.GREEN:
+        return "Proceed"
+    return "Unknown"
+
+print(action(TrafficLight.GREEN))
+# Output: Proceed</pre>
+
+    <p><strong>Example 3: String enum for API status codes</strong></p>
+<pre>from enum import Enum
+
+class HttpStatus(str, Enum):
+    OK = "200 OK"
+    NOT_FOUND = "404 Not Found"
+    SERVER_ERROR = "500 Internal Server Error"
+
+def make_response(status: HttpStatus, body: str) -> dict:
+    return {"status": status.value, "body": body}
+
+resp = make_response(HttpStatus.OK, "Hello!")
+print(resp)
+# Output: {'status': '200 OK', 'body': 'Hello!'}</pre>
+
+    <p><strong>Example 4: HTTP method enum with dispatch</strong></p>
+<pre>from enum import Enum
+
+class HttpMethod(str, Enum):
+    GET = "GET"
+    POST = "POST"
+    PUT = "PUT"
+    DELETE = "DELETE"
+
+def handle_request(method: HttpMethod, path: str) -> str:
+    handlers = {
+        HttpMethod.GET: f"Fetching {path}",
+        HttpMethod.POST: f"Creating at {path}",
+        HttpMethod.PUT: f"Updating {path}",
+        HttpMethod.DELETE: f"Deleting {path}",
+    }
+    return handlers.get(method, "Unknown method")
+
+print(handle_request(HttpMethod.DELETE, "/users/42"))
+# Output: Deleting /users/42</pre>
+
+    <h4>Common Mistakes</h4>
+    <div class="do-dont">
+      <div class="dont-box">
+        <div class="label">Don't</div>
+<pre># Magic strings scattered through code
+if status == "active":
+    ...
+if status == "actve":  # typo!
+    ...</pre>
+      </div>
+      <div class="do-box">
+        <div class="label">Do</div>
+<pre>if status == Status.ACTIVE:
+    ...
+# Centralized, typo-proof, IDE-completable</pre>
+      </div>
+    </div>
+
+    <div class="do-dont">
+      <div class="dont-box">
+        <div class="label">Don't</div>
+<pre># Comparing enum to raw value
+color = Color.RED
+if color == 1:  # Works only with IntEnum!
+    ...</pre>
+      </div>
+      <div class="do-box">
+        <div class="label">Do</div>
+<pre># Compare enum to enum
+color = Color.RED
+if color == Color.RED:
+    ...</pre>
+      </div>
+    </div>
+
+    <h4>Key Rules</h4>
+    <ul class="rules-list">
+      <li>Use <code>Enum</code> when you have a fixed, known set of values.</li>
+      <li>Use <code>str, Enum</code> mixin when enum values need to serialize as strings (JSON, APIs).</li>
+      <li>Don't use Enum for open-ended sets (e.g., user names).</li>
+    </ul>
+
+    <h4>Exercises</h4>
+    <div class="exercise">
+      <div class="exercise-label">Exercise 1</div>
+      <p>Create a <code>Direction</code> enum (NORTH, SOUTH, EAST, WEST) and write a function that returns the opposite direction.</p>
+    </div>
+    <div class="exercise">
+      <div class="exercise-label">Exercise 2</div>
+      <p>Create a <code>Priority</code> enum (LOW=1, MEDIUM=2, HIGH=3) that supports comparison (use IntEnum).</p>
+    </div>
+
+    <div class="connection">
+      <strong>Connections:</strong> Enums pair well with pattern matching (Week 7). Used in dataclass fields for constrained values.
+    </div>
+  </div>
+
+  <!-- Concept 4: Dataclasses -->
+  <div class="concept" id="dataclasses">
+    <div class="concept-header">
+      <h3>Dataclasses</h3>
+      <span class="concept-meta">Data Modeling &bull; New</span>
+    </div>
+
+    <h4>Why It Matters</h4>
+    <p><code>@dataclass</code> auto-generates <code>__init__</code>, <code>__repr__</code>, <code>__eq__</code>, and more &mdash; eliminating boilerplate for data-holding classes.</p>
+
+    <h4>Progressive Explanation</h4>
+    <p><strong>Basic dataclass:</strong></p>
+<pre>from dataclasses import dataclass
+
+@dataclass
+class Point:
+    x: float
+    y: float
+
+p = Point(3.0, 4.0)
+print(p)  # Point(x=3.0, y=4.0)</pre>
+
+    <p><strong>With defaults:</strong></p>
+<pre>@dataclass
+class Config:
+    debug: bool = False
+    retries: int = 3
+    verbose: bool = True</pre>
+
+    <p><strong><code>field()</code> for mutable defaults:</strong></p>
+<pre>from dataclasses import dataclass, field
+
+@dataclass
+class ShoppingCart:
+    items: list[str] = field(default_factory=list)
+    quantities: dict[str, int] = field(default_factory=dict)</pre>
+
+    <p><strong>Frozen (immutable):</strong></p>
+<pre>@dataclass(frozen=True)
+class Coord:
+    lat: float
+    lon: float
+
+c = Coord(40.7128, -74.0060)
+# c.lat = 0  # FrozenInstanceError!</pre>
+
+    <p><strong>Post-init processing:</strong></p>
+<pre>@dataclass
+class User:
+    first_name: str
+    last_name: str
+    full_name: str = field(init=False)
+
+    def __post_init__(self):
+        self.full_name = f"{self.first_name} {self.last_name}"</pre>
+
+    <p><strong>Serialization with <code>asdict()</code>:</strong></p>
+<pre>from dataclasses import asdict, astuple
+
+p = Point(3.0, 4.0)
+print(asdict(p))    # {'x': 3.0, 'y': 4.0}
+print(astuple(p))   # (3.0, 4.0)</pre>
+
+    <h4>Code Examples</h4>
+
+    <p><strong>Example 1: Dataclass vs manual class (boilerplate savings)</strong></p>
+<pre># Manual -- 12 lines of boilerplate
+class PointManual:
+    def __init__(self, x: float, y: float):
+        self.x = x
+        self.y = y
+    def __repr__(self):
+        return f"PointManual(x={self.x}, y={self.y})"
+    def __eq__(self, other):
+        if not isinstance(other, PointManual):
+            return NotImplemented
+        return self.x == other.x and self.y == other.y
+
+# Dataclass -- 4 lines, same functionality
+from dataclasses import dataclass
+
+@dataclass
+class PointDC:
+    x: float
+    y: float
+
+p1 = PointDC(1.0, 2.0)
+p2 = PointDC(1.0, 2.0)
+print(p1)        # PointDC(x=1.0, y=2.0)
+print(p1 == p2)  # True</pre>
+
+    <p><strong>Example 2: Defaults and field()</strong></p>
+<pre>from dataclasses import dataclass, field
+
+@dataclass
+class Task:
+    title: str
+    priority: int = 1
+    tags: list[str] = field(default_factory=list)
+    metadata: dict[str, str] = field(default_factory=dict)
+
+t1 = Task("Write report")
+t2 = Task("Fix bug", priority=3, tags=["urgent"])
+print(t1)  # Task(title='Write report', priority=1, tags=[], metadata={})
+print(t2)  # Task(title='Fix bug', priority=3, tags=['urgent'], metadata={})</pre>
+
+    <p><strong>Example 3: Frozen dataclass as dict key</strong></p>
+<pre>from dataclasses import dataclass
+
+@dataclass(frozen=True)
+class Tile:
+    row: int
+    col: int
+
+visited: set[Tile] = set()
+visited.add(Tile(0, 0))
+visited.add(Tile(1, 2))
+visited.add(Tile(0, 0))  # duplicate, ignored
+print(len(visited))  # 2
+print(Tile(0, 0) in visited)  # True</pre>
+
+    <p><strong>Example 4: Post-init validation</strong></p>
+<pre>from dataclasses import dataclass
+
+@dataclass
+class Percentage:
+    value: float
+
+    def __post_init__(self):
+        if not 0 <= self.value <= 100:
+            raise ValueError(f"Percentage must be 0-100, got {self.value}")
+
+p = Percentage(85.5)
+print(p)  # Percentage(value=85.5)
+
+try:
+    bad = Percentage(150)
+except ValueError as e:
+    print(e)  # Percentage must be 0-100, got 150</pre>
+
+    <p><strong>Example 5: API response model with nested dataclasses</strong></p>
+<pre>from dataclasses import dataclass, field, asdict
+
+@dataclass
+class Address:
+    street: str
+    city: str
+    zip_code: str
+
+@dataclass
+class User:
+    name: str
+    email: str
+    address: Address
+    roles: list[str] = field(default_factory=list)
+
+addr = Address("123 Main St", "Springfield", "62704")
+user = User("Alice", "alice@example.com", addr, roles=["admin"])
+print(user)
+# User(name='Alice', email='alice@example.com',
+#   address=Address(street='123 Main St', city='Springfield',
+#   zip_code='62704'), roles=['admin'])
+print(asdict(user))
+# {'name': 'Alice', 'email': 'alice@example.com',
+#  'address': {'street': '123 Main St', 'city': 'Springfield',
+#   'zip_code': '62704'}, 'roles': ['admin']}</pre>
+
+    <h4>Common Mistakes</h4>
+    <div class="do-dont">
+      <div class="dont-box">
+        <div class="label">Don't</div>
+<pre>@dataclass
+class Bad:
+    items: list = []
+# Shared mutable default across ALL instances!</pre>
+      </div>
+      <div class="do-box">
+        <div class="label">Do</div>
+<pre>@dataclass
+class Good:
+    items: list = field(default_factory=list)
+# Each instance gets its own list</pre>
+      </div>
+    </div>
+
+    <div class="do-dont">
+      <div class="dont-box">
+        <div class="label">Don't</div>
+<pre>@dataclass
+class Wrong:
+    name: str = "default"
+    age: int          # Error! Non-default after default</pre>
+      </div>
+      <div class="do-box">
+        <div class="label">Do</div>
+<pre>@dataclass
+class Right:
+    age: int          # Non-default fields first
+    name: str = "default"</pre>
+      </div>
+    </div>
+
+    <h4>Key Rules</h4>
+    <ul class="rules-list">
+      <li>ALWAYS use <code>field(default_factory=...)</code> for mutable defaults (list, dict, set).</li>
+      <li>Use <code>frozen=True</code> when instances should be immutable (safer, hashable).</li>
+      <li>Dataclasses generate <code>__eq__</code> by default &mdash; two instances with same field values are equal.</li>
+    </ul>
+
+    <h4>Exercises</h4>
+    <div class="exercise">
+      <div class="exercise-label">Exercise 1</div>
+      <p>Create a <code>Student</code> dataclass with <code>name</code> (str), <code>grades</code> (list[int]), and a <code>@property</code> for average grade.</p>
+    </div>
+    <div class="exercise">
+      <div class="exercise-label">Exercise 2</div>
+      <p>Create a frozen <code>Color</code> dataclass with <code>r</code>, <code>g</code>, <code>b</code> (int) fields and a <code>__post_init__</code> that validates each is 0&ndash;255.</p>
+    </div>
+
+    <div class="connection">
+      <strong>Connections:</strong> Dataclasses use type hints (Concepts 1&ndash;2 today). Compare to namedtuple (Day 2) &mdash; dataclasses are more flexible. Foundation for classes deep-dive next.
+    </div>
+  </div>
+
+</div><!-- end Data Modeling section -->
+
+
+<!-- ============================================================ -->
+<!-- NEW CONCEPTS SECTION 3: OOP -->
+<!-- ============================================================ -->
+<div class="section">
+  <span class="section-label new">New</span>
+  <h2 class="section-title">OOP</h2>
+
+  <!-- Concept 5: Classes __init__, __repr__, __str__ -->
+  <div class="concept" id="classes-init-repr-str">
+    <div class="concept-header">
+      <h3>Classes &mdash; __init__, __repr__, __str__</h3>
+      <span class="concept-meta">OOP &bull; New</span>
+    </div>
+
+    <h4>Why It Matters</h4>
+    <p>These three dunder methods define how objects are created and displayed. Every class you write should have at least <code>__init__</code> and <code>__repr__</code>.</p>
+
+    <h4>Progressive Explanation</h4>
+    <p><strong><code>__init__</code>:</strong> The constructor &mdash; initializes instance attributes.</p>
+<pre>class Dog:
+    def __init__(self, name: str, breed: str):
+        self.name = name
+        self.breed = breed</pre>
+
+    <p><strong><code>__repr__</code>:</strong> The unambiguous, developer-facing representation. Used by <code>repr()</code>, the debugger, and the REPL.</p>
+<pre>def __repr__(self) -> str:
+    return f"Dog(name={self.name!r}, breed={self.breed!r})"</pre>
+
+    <p><strong><code>__str__</code>:</strong> The human-friendly display. Used by <code>print()</code>, <code>str()</code>, and f-strings.</p>
+<pre>def __str__(self) -> str:
+    return f"{self.name} the {self.breed}"</pre>
+
+    <p><strong>Fallback rule:</strong> If only <code>__repr__</code> is defined, it is used as the fallback for <code>str()</code> too.</p>
+
+    <h4>Code Examples</h4>
+
+    <p><strong>Example 1: Basic class with __init__</strong></p>
+<pre>class Person:
+    def __init__(self, name: str, age: int):
+        self.name = name
+        self.age = age
+
+p = Person("Alice", 30)
+print(p.name, p.age)
+# Output: Alice 30
+
+print(p)
+# Output: &lt;__main__.Person object at 0x...&gt;  (not helpful!)</pre>
+
+    <p><strong>Example 2: Adding __repr__</strong></p>
+<pre>class Person:
+    def __init__(self, name: str, age: int):
+        self.name = name
+        self.age = age
+
+    def __repr__(self) -> str:
+        return f"Person(name={self.name!r}, age={self.age!r})"
+
+p = Person("Alice", 30)
+print(repr(p))  # Person(name='Alice', age=30)
+print(p)        # Person(name='Alice', age=30)  (fallback)
+
+# Works in collections too:
+people = [Person("Alice", 30), Person("Bob", 25)]
+print(people)
+# [Person(name='Alice', age=30), Person(name='Bob', age=25)]</pre>
+
+    <p><strong>Example 3: Adding __str__</strong></p>
+<pre>class Person:
+    def __init__(self, name: str, age: int):
+        self.name = name
+        self.age = age
+
+    def __repr__(self) -> str:
+        return f"Person(name={self.name!r}, age={self.age!r})"
+
+    def __str__(self) -> str:
+        return f"{self.name}, age {self.age}"
+
+p = Person("Alice", 30)
+print(str(p))     # Alice, age 30
+print(repr(p))    # Person(name='Alice', age=30)
+print(f"Hi {p}")  # Hi Alice, age 30</pre>
+
+    <p><strong>Example 4: Real-world &mdash; Money class</strong></p>
+<pre>class Money:
+    def __init__(self, amount: float, currency: str = "USD"):
+        self.amount = round(amount, 2)
+        self.currency = currency
+
+    def __repr__(self) -> str:
+        return f"Money(amount={self.amount}, currency={self.currency!r})"
+
+    def __str__(self) -> str:
+        symbols = {"USD": "$", "EUR": "€", "GBP": "£"}
+        symbol = symbols.get(self.currency, self.currency + " ")
+        return f"{symbol}{self.amount:,.2f}"
+
+price = Money(1234.5, "USD")
+print(repr(price))  # Money(amount=1234.5, currency='USD')
+print(price)        # $1,234.50
+print(f"Total: {price}")  # Total: $1,234.50
+
+cost = Money(99.999, "EUR")
+print(repr(cost))   # Money(amount=100.0, currency='EUR')
+print(cost)         # €100.00</pre>
+
+    <h4>Common Mistakes</h4>
+    <div class="do-dont">
+      <div class="dont-box">
+        <div class="label">Don't</div>
+<pre>def __repr__(self):
+    return "Point"
+# Not enough info -- which point?</pre>
+      </div>
+      <div class="do-box">
+        <div class="label">Do</div>
+<pre>def __repr__(self):
+    return f"Point(x={self.x}, y={self.y})"
+# Ideally eval-able back to an object</pre>
+      </div>
+    </div>
+
+    <div class="do-dont">
+      <div class="dont-box">
+        <div class="label">Don't</div>
+<pre># Defining __str__ without __repr__
+class Bad:
+    def __str__(self):
+        return "pretty"
+    # No __repr__! Debuggers get nothing</pre>
+      </div>
+      <div class="do-box">
+        <div class="label">Do</div>
+<pre># Always define __repr__ first
+class Good:
+    def __repr__(self):
+        return "Good(...)"  # dev-facing
+    def __str__(self):
+        return "pretty"     # user-facing</pre>
+      </div>
+    </div>
+
+    <h4>Key Rules</h4>
+    <ul class="rules-list">
+      <li><code>__repr__</code> should ideally return a string that could recreate the object: <code>Point(x=3, y=4)</code>.</li>
+      <li><code>__str__</code> is for end users, <code>__repr__</code> is for developers.</li>
+      <li>If you only define one, define <code>__repr__</code> &mdash; it is the fallback for <code>str()</code> too.</li>
+    </ul>
+
+    <h4>Exercises</h4>
+    <div class="exercise">
+      <div class="exercise-label">Exercise 1</div>
+      <p>Write a <code>Book</code> class with title, author, pages. Implement <code>__repr__</code> (shows all fields) and <code>__str__</code> (shows "Title by Author").</p>
+    </div>
+    <div class="exercise">
+      <div class="exercise-label">Exercise 2</div>
+      <p>Write a <code>Temperature</code> class that stores Celsius. <code>__repr__</code> shows <code>Temperature(celsius=100)</code>, <code>__str__</code> shows <code>100&deg;C</code>.</p>
+    </div>
+
+    <div class="connection">
+      <strong>Connections:</strong> <code>@dataclass</code> (Concept 4) generates these automatically. Foundation for <code>__eq__</code> / <code>__hash__</code> next.
+    </div>
+  </div>
+
+  <!-- Concept 6: Classes __eq__ and __hash__ -->
+  <div class="concept" id="classes-eq-hash">
+    <div class="concept-header">
+      <h3>Classes &mdash; __eq__ and __hash__</h3>
+      <span class="concept-meta">OOP &bull; New</span>
+    </div>
+
+    <h4>Why It Matters</h4>
+    <p>Without <code>__eq__</code>, two objects with identical data are not "equal." Without <code>__hash__</code>, objects cannot be used in sets or as dict keys. These methods define object identity vs. equality.</p>
+
+    <h4>Progressive Explanation</h4>
+    <p><strong>Default behavior:</strong> <code>==</code> checks identity (same object in memory), identical to <code>is</code>.</p>
+<pre>class Point:
+    def __init__(self, x, y):
+        self.x = x
+        self.y = y
+
+p1 = Point(1, 2)
+p2 = Point(1, 2)
+print(p1 == p2)  # False! (different objects)
+print(p1 is p2)  # False</pre>
+
+    <p><strong><code>__eq__</code>:</strong> Define what "equal" means for your objects.</p>
+<pre>def __eq__(self, other):
+    if not isinstance(other, Point):
+        return NotImplemented
+    return self.x == other.x and self.y == other.y</pre>
+
+    <p><strong><code>__hash__</code>:</strong> Required for sets/dict keys. Must be consistent with <code>__eq__</code>.</p>
+<pre>def __hash__(self):
+    return hash((self.x, self.y))</pre>
+
+    <p><strong>The golden rule:</strong> If <code>a == b</code>, then <code>hash(a) == hash(b)</code> must be true (but not vice versa).</p>
+
+    <p><strong>Critical side effect:</strong> Defining <code>__eq__</code> without <code>__hash__</code> makes instances unhashable (Python sets <code>__hash__</code> to <code>None</code>).</p>
+
+    <h4>Code Examples</h4>
+
+    <p><strong>Example 1: Default behavior &mdash; same data, not equal</strong></p>
+<pre>class Coord:
+    def __init__(self, x: int, y: int):
+        self.x = x
+        self.y = y
+    def __repr__(self):
+        return f"Coord({self.x}, {self.y})"
+
+a = Coord(3, 4)
+b = Coord(3, 4)
+print(a == b)    # False -- different objects in memory
+print(a is b)    # False
+print(id(a) == id(b))  # False</pre>
+
+    <p><strong>Example 2: Adding __eq__ &mdash; value-based equality</strong></p>
+<pre>class Coord:
+    def __init__(self, x: int, y: int):
+        self.x = x
+        self.y = y
+
+    def __repr__(self):
+        return f"Coord({self.x}, {self.y})"
+
+    def __eq__(self, other):
+        if not isinstance(other, Coord):
+            return NotImplemented
+        return self.x == other.x and self.y == other.y
+
+a = Coord(3, 4)
+b = Coord(3, 4)
+c = Coord(5, 6)
+print(a == b)  # True  (same values)
+print(a == c)  # False (different values)
+print(a == (3, 4))  # NotImplemented -> False</pre>
+
+    <p><strong>Example 3: The unhashable problem</strong></p>
+<pre>class Coord:
+    def __init__(self, x: int, y: int):
+        self.x = x
+        self.y = y
+    def __eq__(self, other):
+        if not isinstance(other, Coord):
+            return NotImplemented
+        return self.x == other.x and self.y == other.y
+
+a = Coord(3, 4)
+try:
+    s = {a}  # TypeError!
+except TypeError as e:
+    print(e)
+    # Output: unhashable type: 'Coord'
+
+# Defining __eq__ makes Python set __hash__ = None
+print(Coord.__hash__)  # None</pre>
+
+    <p><strong>Example 4: Implementing __hash__ correctly</strong></p>
+<pre>class Coord:
+    def __init__(self, x: int, y: int):
+        self.x = x
+        self.y = y
+
+    def __repr__(self):
+        return f"Coord({self.x}, {self.y})"
+
+    def __eq__(self, other):
+        if not isinstance(other, Coord):
+            return NotImplemented
+        return self.x == other.x and self.y == other.y
+
+    def __hash__(self):
+        return hash((self.x, self.y))
+
+# Now we can use Coords in sets and as dict keys
+points = {Coord(0, 0), Coord(1, 1), Coord(0, 0)}
+print(points)      # {Coord(0, 0), Coord(1, 1)}
+print(len(points)) # 2 (duplicate removed)
+
+distances = {Coord(0, 0): 0.0, Coord(3, 4): 5.0}
+print(distances[Coord(3, 4)])  # 5.0</pre>
+
+    <h4>Common Mistakes</h4>
+    <div class="do-dont">
+      <div class="dont-box">
+        <div class="label">Don't</div>
+<pre># Mutable + hashable = disaster
+class Bad:
+    def __init__(self, items):
+        self.items = items  # mutable list!
+    def __eq__(self, other):
+        return self.items == other.items
+    def __hash__(self):
+        return hash(tuple(self.items))
+
+b = Bad([1, 2])
+s = {b}
+b.items.append(3)  # hash changed!
+print(b in s)  # False -- can't find it!</pre>
+      </div>
+      <div class="do-box">
+        <div class="label">Do</div>
+<pre># Only hash immutable objects
+class Good:
+    def __init__(self, x: int, y: int):
+        self.x = x  # immutable fields
+        self.y = y
+    def __eq__(self, other):
+        if not isinstance(other, Good):
+            return NotImplemented
+        return self.x == other.x and self.y == other.y
+    def __hash__(self):
+        return hash((self.x, self.y))</pre>
+      </div>
+    </div>
+
+    <div class="do-dont">
+      <div class="dont-box">
+        <div class="label">Don't</div>
+<pre># __hash__ doesn't match __eq__
+def __eq__(self, other):
+    return self.x == other.x  # compares x only
+def __hash__(self):
+    return hash((self.x, self.y))  # uses x AND y
+# Two objects can be == but have different hashes!</pre>
+      </div>
+      <div class="do-box">
+        <div class="label">Do</div>
+<pre># Use the SAME fields in both
+def __eq__(self, other):
+    return (self.x, self.y) == (other.x, other.y)
+def __hash__(self):
+    return hash((self.x, self.y))</pre>
+      </div>
+    </div>
+
+    <h4>Key Rules</h4>
+    <ul class="rules-list">
+      <li>If you define <code>__eq__</code>, Python sets <code>__hash__</code> to <code>None</code> (makes objects unhashable).</li>
+      <li>Only add <code>__hash__</code> if your objects are immutable (or you will not mutate hashed fields).</li>
+      <li><code>@dataclass(frozen=True)</code> handles both <code>__eq__</code> and <code>__hash__</code> correctly.</li>
+    </ul>
+
+    <h4>Exercises</h4>
+    <div class="exercise">
+      <div class="exercise-label">Exercise 1</div>
+      <p>Write a <code>Card</code> class (suit, rank) with <code>__eq__</code> and <code>__hash__</code> so cards can be stored in a set.</p>
+    </div>
+    <div class="exercise">
+      <div class="exercise-label">Exercise 2</div>
+      <p>Create a <code>CacheKey</code> class with <code>(url: str, params: frozenset)</code> that can be used as a dictionary key. Verify that two CacheKeys with the same data are treated as the same key.</p>
+    </div>
+
+    <div class="connection">
+      <strong>Connections:</strong> Builds directly on __init__/__repr__/__str__ (Concept 5). <code>frozen=True</code> dataclasses (Concept 4) get this for free. Foundation for properties and slots (Day 5).
+    </div>
+  </div>
+
+</div><!-- end OOP section -->
+
+
+<!-- ============================================================ -->
+<!-- FOOTER -->
+<!-- ============================================================ -->
+<div class="footer">
+  <h4>All Python Study Guides</h4>
+    <ul>
+    <li><a href="python-guides/python-guide-2026-07-09.html">2026-07-09</a> (Day 39)</li>
+    <li><a href="python-guides/python-guide-2026-07-08.html">2026-07-08</a> (Day 38)</li>
+    <li><a href="python-guides/python-guide-2026-07-07.html">2026-07-07</a> (Day 37)</li>
+    <li><a href="python-guides/python-guide-2026-07-06.html">2026-07-06</a> (Day 36)</li>
+    <li><a href="python-guides/python-guide-2026-07-05.html">2026-07-05</a> (Day 35)</li>
+    <li><a href="python-guides/python-guide-2026-07-04.html">2026-07-04</a> (Day 34)</li>
+    <li><a href="python-guides/python-guide-2026-07-03.html">2026-07-03</a> (Day 33)</li>
+    <li><a href="python-guides/python-guide-2026-07-02.html">2026-07-02</a> (Day 32)</li>
+    <li><a href="python-guides/python-guide-2026-07-01.html">2026-07-01</a> (Day 31)</li>
+    <li><a href="python-guides/python-guide-2026-06-30.html">2026-06-30</a> (Day 30)</li>
+    <li><a href="python-guides/python-guide-2026-06-29.html">2026-06-29</a> (Day 29)</li>
+    <li><a href="python-guides/python-guide-2026-06-28.html">2026-06-28</a> (Day 28)</li>
+    <li><a href="python-guides/python-guide-2026-06-27.html">2026-06-27</a> (Day 27)</li>
+    <li><a href="python-guides/python-guide-2026-06-26.html">2026-06-26</a> (Day 26)</li>
+    <li><a href="python-guides/python-guide-2026-06-25.html">2026-06-25</a> (Day 25)</li>
+    <li><a href="python-guides/python-guide-2026-06-24.html">2026-06-24</a> (Day 24)</li>
+    <li><a href="python-guides/python-guide-2026-06-23.html">2026-06-23</a> (Day 23)</li>
+    <li><a href="python-guides/python-guide-2026-06-22.html">2026-06-22</a> (Day 22)</li>
+    <li><a href="python-guides/python-guide-2026-06-21.html">2026-06-21</a> (Day 21)</li>
+    <li><a href="python-guides/python-guide-2026-06-19.html">2026-06-19</a> (Day 20)</li>
+    <li><a href="python-guides/python-guide-2026-06-18.html">2026-06-18</a> (Day 19)</li>
+    <li><a href="python-guides/python-guide-2026-06-17.html">2026-06-17</a> (Day 18)</li>
+    <li><a href="python-guides/python-guide-2026-06-15.html">2026-06-15</a> (Day 17)</li>
+    <li><a href="python-guides/python-guide-2026-06-13.html">2026-06-13</a> (Day 16)</li>
+    <li><a href="python-guides/python-guide-2026-06-12.html">2026-06-12</a> (Day 15)</li>
+    <li><a href="python-guides/python-guide-2026-06-11.html">2026-06-11</a> (Day 14)</li>
+    <li><a href="python-guides/python-guide-2026-06-10.html">2026-06-10</a> (Day 13)</li>
+    <li><a href="python-guides/python-guide-2026-06-09.html">2026-06-09</a> (Day 12)</li>
+    <li><a href="python-guides/python-guide-2026-06-08.html">2026-06-08</a> (Day 11)</li>
+    <li><a href="python-guides/python-guide-2026-06-07.html">2026-06-07</a> (Day 10)</li>
+    <li><a href="python-guides/python-guide-2026-06-05.html">2026-06-05</a> (Day 9)</li>
+    <li><a href="python-guides/python-guide-2026-06-04.html">2026-06-04</a> (Day 8)</li>
+    <li><a href="python-guides/python-guide-2026-06-03.html">2026-06-03</a> (Day 7)</li>
+    <li><a href="python-guides/python-guide-2026-06-02.html">2026-06-02</a> (Day 6)</li>
+    <li><a href="python-guides/python-guide-2026-06-01.html">2026-06-01</a> (Day 5)</li>
+    <li class="current"><a href="python-guides/python-guide-2026-05-31.html">2026-05-31</a> </li>
+    <li><a href="python-guides/python-guide-2026-05-30.html">2026-05-30</a> (Day 3)</li>
+    <li><a href="python-guides/python-guide-2026-05-29.html">2026-05-29</a> (Day 2)</li>
+    <li><a href="python-guides/python-guide-2026-05-28.html">2026-05-28</a> (Day 1)</li>
+  </ul>
+</div>
+
+</div><!-- end main -->
+
+<script>
+(function() {
+  // ===== Theme Toggle =====
+  const THEME_KEY = 'lc-pyguide-theme';
+  const toggle = document.getElementById('theme-toggle');
+  const html = document.documentElement;
+
+  function setTheme(theme) {
+    html.setAttribute('data-theme', theme);
+    localStorage.setItem(THEME_KEY, theme);
+    toggle.textContent = theme === 'dark' ? '☽' : '☀';
+    toggle.title = theme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme';
+  }
+
+  const saved = localStorage.getItem(THEME_KEY) || 'dark';
+  setTheme(saved);
+
+  toggle.addEventListener('click', function() {
+    const current = html.getAttribute('data-theme');
+    setTheme;
+  });
+
+  // ===== Mobile Sidebar Toggle =====
+  const sidebarToggle = document.getElementById('sidebar-toggle');
+  const sidebar = document.getElementById('sidebar');
+
+  sidebarToggle.addEventListener('click', function() {
+    sidebar.classList.toggle('open');
+  });
+
+  // Close sidebar when clicking a link on mobile
+  sidebar.querySelectorAll('.sidebar-link').forEach(function(link) {
+    link.addEventListener('click', function() {
+      if (window.innerWidth <= 900) {
+        sidebar.classList.remove('open');
+      }
+    });
+  });
+
+  // ===== Active Sidebar Link on Scroll =====
+  const links = document.querySelectorAll('.sidebar-link');
+  const sections = [];
+
+  links.forEach(function(link) {
+    const id = link.getAttribute('href').slice(1);
+    const el = document.getElementById(id);
+    if (el) sections.push({ id: id, el: el, link: link });
+  });
+
+  function updateActive() {
+    let current = null;
+    const scrollY = window.scrollY + 100;
+
+    for (let i = sections.length - 1; i >= 0; i--) {
+      if (sections[i].el.offsetTop <= scrollY) {
+        current = sections[i];
+        break;
+      }
+    }
+
+    links.forEach(function(l) { l.classList.remove('active'); });
+    if  current.link.classList.add('active');
+  }
+
+  window.addEventListener('scroll', updateActive, { passive: true });
+  updateActive();
+})();
+</script>
+
+</body>
+</html>

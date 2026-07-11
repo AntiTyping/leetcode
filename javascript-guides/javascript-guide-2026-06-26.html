@@ -1,0 +1,1036 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JavaScript Daily Guide — 2026-06-26 (Day 15)</title>
+<style>
+:root {
+  --bg: #0d1117;
+  --surface: #161b22;
+  --surface2: #1c2128;
+  --border: #30363d;
+  --text: #e6edf3;
+  --text-dim: #9da7b3;
+  --accent: #58a6ff;
+  --blue-tint-bg: rgba(56,139,253,0.12);
+  --blue-tint-border: rgba(56,139,253,0.4);
+  --purple-tint-bg: rgba(163,113,247,0.10);
+  --purple-tint-border: rgba(163,113,247,0.4);
+  --warn-bg: rgba(187,128,9,0.12);
+  --warn-border: rgba(187,128,9,0.4);
+  --green: #3fb950;
+  --red: #f85149;
+  --output-bg: #0a0e13;
+}
+[data-theme="light"] {
+  --bg: #ffffff;
+  --surface: #f6f8fa;
+  --surface2: #eef1f4;
+  --border: #d0d7de;
+  --text: #1f2328;
+  --text-dim: #57606a;
+  --accent: #0969da;
+  --blue-tint-bg: rgba(9,105,218,0.08);
+  --blue-tint-border: rgba(9,105,218,0.3);
+  --purple-tint-bg: rgba(130,80,223,0.07);
+  --purple-tint-border: rgba(130,80,223,0.3);
+  --warn-bg: rgba(154,103,0,0.08);
+  --warn-border: rgba(154,103,0,0.3);
+  --green: #1a7f37;
+  --red: #cf222e;
+  --output-bg: #f0f3f6;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+  font-size: 16px;
+  line-height: 1.7;
+  background: var(--bg);
+  color: var(--text);
+}
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+code, pre { font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace; }
+
+/* Sidebar */
+.sidebar {
+  position: fixed;
+  top: 0; left: 0; bottom: 0;
+  width: 300px;
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+  overflow-y: auto;
+  padding: 20px 16px;
+}
+.sidebar h3 {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-dim);
+  margin: 18px 0 8px;
+}
+.sidebar h3:first-child { margin-top: 0; }
+.sidebar a {
+  display: block;
+  padding: 4px 8px;
+  border-radius: 6px;
+  color: var(--text);
+  font-size: 14px;
+}
+.sidebar a:hover { background: var(--surface2); text-decoration: none; }
+.sidebar .review-link { color: #d2a8ff; }
+
+.content {
+  margin-left: 300px;
+  padding: 32px 40px 80px;
+}
+.inner { max-width: 860px; margin: 0 auto; }
+
+/* Header */
+header.main-header { margin-bottom: 24px; }
+header.main-header h1 { font-size: 30px; margin: 0 0 4px; }
+.date { color: var(--text-dim); font-size: 15px; }
+.count-badge {
+  display: inline-block;
+  margin-top: 10px;
+  background: var(--blue-tint-bg);
+  border: 1px solid var(--blue-tint-border);
+  border-radius: 20px;
+  padding: 3px 14px;
+  font-size: 13px;
+  color: var(--accent);
+}
+
+.theme-toggle {
+  position: fixed;
+  top: 16px; right: 20px;
+  z-index: 10;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  color: var(--text);
+  border-radius: 8px;
+  padding: 7px 12px;
+  cursor: pointer;
+  font-size: 13px;
+}
+
+.howto {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 14px 20px;
+  margin-bottom: 28px;
+}
+.howto strong { color: var(--accent); }
+.howto ol { margin: 8px 0 0; padding-left: 20px; }
+
+h2.section-title {
+  font-size: 22px;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 6px;
+  margin-top: 44px;
+}
+.section-sub { color: var(--text-dim); font-size: 14px; margin-top: -6px; }
+
+/* Concept cards */
+.concept-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 22px 24px;
+  margin: 22px 0;
+}
+.review-card {
+  background: var(--purple-tint-bg);
+  border-color: var(--purple-tint-border);
+}
+.concept-header { display: flex; align-items: center; flex-wrap: wrap; gap: 10px; margin-bottom: 8px; }
+.concept-title { font-size: 20px; font-weight: 700; }
+.ttag {
+  background: var(--blue-tint-bg);
+  border: 1px solid var(--blue-tint-border);
+  color: var(--accent);
+  border-radius: 20px;
+  padding: 1px 11px;
+  font-size: 12px;
+  font-weight: 600;
+}
+.days-since {
+  margin-left: auto;
+  font-size: 12px;
+  color: var(--text-dim);
+  font-style: italic;
+}
+.why-matters {
+  background: var(--blue-tint-bg);
+  border-left: 3px solid var(--accent);
+  padding: 8px 14px;
+  border-radius: 0 6px 6px 0;
+  margin: 12px 0;
+  font-size: 15px;
+}
+.explanation { margin: 14px 0; }
+.explanation p { margin: 10px 0; }
+.step {
+  display: inline-block;
+  background: var(--accent);
+  color: var(--bg);
+  font-weight: 700;
+  font-size: 12px;
+  width: 20px; height: 20px;
+  line-height: 20px;
+  text-align: center;
+  border-radius: 50%;
+  margin-right: 6px;
+}
+
+.code-example, .key-pattern { margin: 16px 0; }
+.lang-badge {
+  display: inline-block;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-bottom: none;
+  border-radius: 6px 6px 0 0;
+  padding: 2px 12px;
+  font-size: 11px;
+  color: var(--text-dim);
+  font-weight: 600;
+}
+pre {
+  margin: 0;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 0 8px 8px 8px;
+  padding: 14px 16px;
+  overflow-x: auto;
+  font-size: 13.5px;
+  line-height: 1.55;
+}
+.output {
+  background: var(--output-bg);
+  border: 1px solid var(--border);
+  border-top: none;
+  border-radius: 0 0 8px 8px;
+  padding: 10px 16px;
+  font-family: ui-monospace, monospace;
+  font-size: 13px;
+  color: var(--text-dim);
+  white-space: pre-wrap;
+}
+.output::before {
+  content: "output";
+  display: block;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-dim);
+  opacity: 0.7;
+  margin-bottom: 4px;
+}
+
+.callout-warning {
+  background: var(--warn-bg);
+  border: 1px solid var(--warn-border);
+  border-radius: 8px;
+  padding: 12px 16px;
+  margin: 16px 0;
+}
+.mistake { color: var(--red); margin: 8px 0; font-family: ui-monospace, monospace; font-size: 13px; white-space: pre-wrap; }
+.correct { color: var(--green); margin: 8px 0; font-family: ui-monospace, monospace; font-size: 13px; white-space: pre-wrap; }
+
+.key-rules {
+  background: var(--surface2);
+  border-radius: 8px;
+  padding: 10px 16px;
+  margin: 16px 0;
+}
+.key-rules ul { margin: 6px 0; padding-left: 20px; }
+
+.exercises { margin: 16px 0; }
+.exercise {
+  border: 1px dashed var(--blue-tint-border);
+  border-radius: 8px;
+  padding: 10px 14px 10px 44px;
+  margin: 10px 0 10px 8px;
+  position: relative;
+  background: var(--blue-tint-bg);
+}
+.exercises { counter-reset: ex; }
+.exercise::before {
+  counter-increment: ex;
+  content: counter(ex);
+  position: absolute;
+  left: 12px; top: 10px;
+  background: var(--accent);
+  color: var(--bg);
+  width: 22px; height: 22px;
+  line-height: 22px;
+  text-align: center;
+  border-radius: 50%;
+  font-weight: 700;
+  font-size: 12px;
+}
+.connections {
+  font-size: 14px;
+  color: var(--text-dim);
+  border-top: 1px solid var(--border);
+  padding-top: 10px;
+  margin-top: 16px;
+}
+.connections strong { color: var(--text); }
+.reminder { margin: 10px 0; font-size: 15px; }
+
+footer.guide-footer {
+  margin-left: 300px;
+  padding: 30px 40px 60px;
+  border-top: 1px solid var(--border);
+  color: var(--text-dim);
+}
+footer.guide-footer ul { list-style: none; padding: 0; columns: 2; }
+footer.guide-footer li { margin: 3px 0; }
+.cross-links { margin-top: 20px; }
+.cross-links a { margin-right: 16px; }
+
+@media (max-width: 900px) {
+  .sidebar { display: none; }
+  .content, footer.guide-footer { margin-left: 0; }
+  .content { padding: 24px 18px 60px; }
+}
+</style>
+</head>
+<body data-theme="dark">
+
+<button class="theme-toggle" onclick="toggleTheme()">☀ / ☾ Theme</button>
+
+<!-- ===================== SIDEBAR ===================== -->
+<nav class="sidebar">
+  <h3>Review (Due Today)</h3>
+  <a class="review-link" href="#r-console">Console &amp; Debugging</a>
+  <a class="review-link" href="#r-regexp">RegExp Advanced</a>
+  <a class="review-link" href="#r-patterns">Observer / Strategy / Command</a>
+  <a class="review-link" href="#r-memory">Memory Management &amp; GC</a>
+  <a class="review-link" href="#r-v8">V8 Internals</a>
+  <a class="review-link" href="#r-childproc">child_process</a>
+
+  <h3>Newer Array, Object &amp; String Methods</h3>
+  <a href="#findlast">findLast &amp; findLastIndex</a>
+  <a href="#hasown">Object.hasOwn</a>
+  <a href="#wellformed">Well-Formed Strings</a>
+
+  <h3>Numbers, Globals &amp; Modules</h3>
+  <a href="#bigint">BigInt</a>
+  <a href="#tla">Top-Level await</a>
+</nav>
+
+<div class="content">
+<div class="inner">
+
+<header class="main-header">
+  <h1>JavaScript Daily Guide</h1>
+  <div class="date">June 26, 2026 &mdash; Day 15</div>
+  <span class="count-badge">11 concepts &middot; 6 review + 5 new</span>
+</header>
+
+<div class="howto">
+  <strong>How to use this guide</strong>
+  <ol>
+    <li>Start with the <em>Review</em> section. For each card, read the reminder, then attempt the challenge from memory before peeking.</li>
+    <li>For new concepts, read the explanation and run every example yourself (Node 22+ or a modern browser console).</li>
+    <li>Study the <em>Common Mistakes</em> — anti-patterns stick better than rules.</li>
+    <li>Attempt the practice exercises <strong>without</strong> looking back at the examples. Solutions are intentionally omitted.</li>
+  </ol>
+</div>
+
+<!-- ===================== REVIEW SECTION ===================== -->
+<h2 class="section-title">🔁 Review Section</h2>
+<p class="section-sub">Six tooling, language-internals and Node concepts are due for retrieval practice today. Recall first, verify second.</p>
+
+<div class="concept-card review-card" id="r-console">
+  <div class="concept-header">
+    <span class="concept-title">Console Advanced &amp; Debugging</span>
+    <span class="ttag">Testing &amp; Quality</span>
+    <span class="days-since">9 days since review</span>
+  </div>
+  <div class="reminder">The <code>console</code> object is far more than <code>.log</code>: <code>.table</code> renders arrays/objects as a grid, <code>.group</code>/<code>.groupEnd</code> nest output, <code>.dir</code> shows an object's property tree, <code>.assert(cond, ...)</code> logs only when the condition is false, <code>.count</code>/<code>.countReset</code> tally labels, <code>.time</code>/<code>.timeEnd</code> measure spans, and <code>%c</code> applies CSS in browsers. In Node, <code>.error</code>/<code>.warn</code> go to <em>stderr</em>, the rest to stdout.</div>
+  <div class="key-pattern">
+    <div class="lang-badge">JavaScript</div>
+<pre><code>console.table([{ id: 1, name: 'ada' }, { id: 2, name: 'lin' }]);
+
+console.group('request');
+console.log('method', 'GET');
+console.assert(1 + 1 === 3, 'math broke');   // logs an Assertion failed
+console.groupEnd();
+
+console.time('work');
+for (let i = 0; i &lt; 1e6; i++) {}
+console.timeEnd('work');                     // work: 1.2ms
+
+for (const x of ['a', 'a', 'b']) console.count(x);  // a:1 a:2 b:1</code></pre>
+  </div>
+  <div class="exercises">
+    <strong>Challenge:</strong>
+    <div class="exercise">Write a <code>trace(label, fn)</code> helper that wraps a synchronous call with <code>console.group(label)</code>, logs the arguments and return value inside the group, times it with <code>console.time</code>/<code>timeEnd</code>, and uses <code>console.assert</code> to flag when the result is <code>undefined</code>. Make nested <code>trace</code> calls indent correctly.</div>
+  </div>
+  <div class="callout-warning">
+    <strong>#1 Pitfall:</strong> Logging an object logs a <em>live reference</em> — when you expand it later in DevTools you see its <em>current</em> state, not the state at log time. To snapshot, log <code>structuredClone(obj)</code> or <code>JSON.parse(JSON.stringify(obj))</code>. Also, leaving <code>console.log</code> in hot loops is a real performance and memory cost.
+  </div>
+</div>
+
+<div class="concept-card review-card" id="r-regexp">
+  <div class="concept-header">
+    <span class="concept-title">Regular Expressions Advanced</span>
+    <span class="ttag">Data &amp; Collections</span>
+    <span class="days-since">8 days since review</span>
+  </div>
+  <div class="reminder">Beyond the basics: <strong>named groups</strong> <code>(?&lt;year&gt;\d{4})</code> surface on <code>match.groups</code>; <strong>lookbehind</strong> <code>(?&lt;=\$)</code> / <code>(?&lt;!\$)</code> mirror lookahead; the <code>s</code> (dotAll) flag lets <code>.</code> match newlines; the <code>u</code> flag enables <code>\p{...}</code> Unicode property escapes; the sticky <code>y</code> flag anchors at <code>lastIndex</code>; and <code>str.matchAll(/.../g)</code> yields every match with its groups.</div>
+  <div class="key-pattern">
+    <div class="lang-badge">JavaScript</div>
+<pre><code>const re = /(?&lt;y&gt;\d{4})-(?&lt;m&gt;\d{2})-(?&lt;d&gt;\d{2})/;
+const { groups } = '2026-06-26'.match(re);
+console.log(groups.y, groups.m, groups.d);    // 2026 06 26
+
+const price = '$42 and €9'.match(/(?&lt;=\$)\d+/);
+console.log(price[0]);                         // 42  (only the dollar amount)
+
+for (const m of 'a1b2c3'.matchAll(/(?&lt;ch&gt;[a-z])(?&lt;n&gt;\d)/g)) {
+  console.log(m.groups.ch, m.groups.n);
+}
+console.log(/\p{Emoji_Presentation}/u.test('🎯'));  // true</code></pre>
+  </div>
+  <div class="exercises">
+    <strong>Challenge:</strong>
+    <div class="exercise">Write <code>template(str, data)</code> that replaces <code>{{name}}</code> placeholders using a named-group regex and <code>replaceAll</code> with a replacer function, leaving unknown keys untouched. Then write a tokenizer that uses a single sticky (<code>y</code>) regex in a loop over <code>lastIndex</code> to split <code>"12 + 34 * 5"</code> into number/operator tokens.</div>
+  </div>
+  <div class="callout-warning">
+    <strong>#1 Pitfall:</strong> A regex with the <code>g</code> or <code>y</code> flag is <em>stateful</em> — it carries <code>lastIndex</code> between calls. Reusing one shared <code>/.../g</code> across <code>.test</code>/<code>.exec</code> calls gives intermittent, position-dependent failures. Create a fresh regex per scan, or reset <code>lastIndex = 0</code>.
+  </div>
+</div>
+
+<div class="concept-card review-card" id="r-patterns">
+  <div class="concept-header">
+    <span class="concept-title">Design Patterns: Observer, Strategy, Command</span>
+    <span class="ttag">Modules &amp; Patterns</span>
+    <span class="days-since">8 days since review</span>
+  </div>
+  <div class="reminder"><strong>Observer</strong>: a subject keeps a list of subscribers and notifies them on change (push). <strong>Strategy</strong>: swap an algorithm at runtime by passing a function/object that implements a shared interface. <strong>Command</strong>: wrap an action (and its inverse) as an object so it can be queued, logged, undone, or replayed.</div>
+  <div class="key-pattern">
+    <div class="lang-badge">JavaScript</div>
+<pre><code>// Strategy: behavior chosen at call time
+const sorters = {
+  asc:  (a, b) =&gt; a - b,
+  desc: (a, b) =&gt; b - a,
+};
+const sort = (arr, how) =&gt; [...arr].sort(sorters[how]);
+console.log(sort([3, 1, 2], 'desc'));   // [3, 2, 1]
+
+// Command: action + undo, ready to queue
+function makeAdd(list, item) {
+  return { do: () =&gt; list.push(item),
+           undo: () =&gt; { list.splice(list.indexOf(item), 1); } };
+}
+const xs = [], cmd = makeAdd(xs, 'a');
+cmd.do(); console.log(xs);   // ['a']
+cmd.undo(); console.log(xs); // []</code></pre>
+  </div>
+  <div class="exercises">
+    <strong>Challenge:</strong>
+    <div class="exercise">Build an <code>Observable</code> with <code>subscribe(fn)</code> (returns an unsubscribe function) and <code>set(value)</code> that notifies all subscribers. Then build a <code>CommandStack</code> with <code>execute(cmd)</code>, <code>undo()</code>, and <code>redo()</code> backed by two arrays, where each <code>cmd</code> has <code>do</code>/<code>undo</code>. Wire them together so undoing a command re-notifies observers.</div>
+  </div>
+  <div class="callout-warning">
+    <strong>#1 Pitfall:</strong> Observer leaks. If <code>subscribe</code> doesn't return (and callers don't call) an unsubscribe, dead listeners pile up — especially in UIs where components mount/unmount. Always hand back a disposer, and remove listeners on teardown.
+  </div>
+</div>
+
+<div class="concept-card review-card" id="r-memory">
+  <div class="concept-header">
+    <span class="concept-title">Memory Management &amp; Garbage Collection</span>
+    <span class="ttag">Performance &amp; Security</span>
+    <span class="days-since">8 days since review</span>
+  </div>
+  <div class="reminder">JS uses a tracing GC: objects reachable from <em>roots</em> (the global object, the current call stack, active closures) survive; everything else is reclaimed (mark-and-sweep, generational in V8). You don't free memory — you make it <em>unreachable</em>. The classic leaks: detached DOM nodes still referenced by JS, forgotten <code>setInterval</code>s, closures capturing a large scope, and unbounded caches / module-level arrays that only grow.</div>
+  <div class="key-pattern">
+    <div class="lang-badge">JavaScript</div>
+<pre><code>// LEAK: every call keeps `huge` alive via the returned closure
+function makeLeaky() {
+  const huge = new Array(1e6).fill('*');
+  return () =&gt; huge.length;        // closure pins the whole array
+}
+
+// FIX: capture only what you need
+function makeLean() {
+  const huge = new Array(1e6).fill('*');
+  const len = huge.length;         // keep the number, drop the array
+  return () =&gt; len;
+}
+
+// WeakMap: entries vanish when the key object is collected
+const meta = new WeakMap();
+let node = { id: 1 };
+meta.set(node, { seen: Date.now() });
+node = null;                       // entry becomes eligible for GC</code></pre>
+  </div>
+  <div class="exercises">
+    <strong>Challenge:</strong>
+    <div class="exercise">Identify and fix the leak in a "cache" implemented as a plain <code>Map</code> keyed by request objects that is never pruned. Rewrite it two ways: (a) an LRU with a max size that evicts the oldest entry, and (b) a <code>WeakMap</code> keyed by the request object so entries drop automatically. Explain which one you can iterate and why.</div>
+  </div>
+  <div class="callout-warning">
+    <strong>#1 Pitfall:</strong> Closures that capture far more than they use. A handler returned from a big function pins <em>every</em> variable in that scope, not just the ones it references in obvious cases — and a single retained closure can hold megabytes. Null out large locals you no longer need, or factor them out of the closed-over scope.
+  </div>
+</div>
+
+<div class="concept-card review-card" id="r-v8">
+  <div class="concept-header">
+    <span class="concept-title">V8 Internals: Hidden Classes, Inline Caching &amp; JIT</span>
+    <span class="ttag">Engine Internals</span>
+    <span class="days-since">8 days since review</span>
+  </div>
+  <div class="reminder">V8 gives each object a <strong>hidden class</strong> (a "shape"/Map) describing its property layout. Objects built with the <em>same properties in the same order</em> share a shape, so property access compiles to a fixed offset. A call site that always sees one shape is <strong>monomorphic</strong> and gets an <strong>inline cache</strong>; seeing many shapes makes it polymorphic/megamorphic and slow. Small integers (SMIs) are tagged inline; mixing types or changing shapes triggers <strong>deoptimization</strong>.</div>
+  <div class="key-pattern">
+    <div class="lang-badge">JavaScript</div>
+<pre><code>// SAME shape: both objects share one hidden class -> fast property access
+function Point(x, y) { this.x = x; this.y = y; }
+const a = new Point(1, 2);
+const b = new Point(3, 4);
+
+// SHAPE DIVERGENCE: adding a property later forks the hidden class
+const c = new Point(5, 6);
+c.z = 7;                 // c now has a different hidden class than a, b
+
+// DEOPT: a function specialized for numbers gets a string
+function add(p) { return p.x + p.y; }
+add(a); add(b);          // optimized for the Point shape (monomorphic)
+add({ x: '1', y: '2' }); // different shape + string add -> deopt</code></pre>
+  </div>
+  <div class="exercises">
+    <strong>Challenge:</strong>
+    <div class="exercise">Write two versions of a function that builds 1,000,000 record objects: one that initializes all fields in the constructor in a fixed order, and one that conditionally adds fields afterward (so shapes diverge). Sum a numeric field across each set and compare timings with <code>performance.now()</code>. Explain the gap in terms of hidden classes and inline caches.</div>
+  </div>
+  <div class="callout-warning">
+    <strong>#1 Pitfall:</strong> Treating objects like dictionaries — adding properties in varying orders, or using <code>delete</code> — forces V8 out of fast shapes into slow dictionary mode and deoptimizes call sites that touch them. Initialize every property up front (even to <code>null</code>) and keep types stable per property.
+  </div>
+</div>
+
+<div class="concept-card review-card" id="r-childproc">
+  <div class="concept-header">
+    <span class="concept-title">Node.js child_process: exec, spawn &amp; fork</span>
+    <span class="ttag">Node.js Runtime</span>
+    <span class="days-since">8 days since review</span>
+  </div>
+  <div class="reminder"><code>exec</code> runs a command <em>through a shell</em> and <strong>buffers</strong> all output into a callback (handy for short output, dangerous with untrusted input). <code>execFile</code> runs a binary directly with an args array — no shell. <code>spawn</code> <strong>streams</strong> stdout/stderr, ideal for large or long-running output. <code>fork</code> is <code>spawn</code> specialized for a child Node process with an <strong>IPC channel</strong> (<code>child.send</code> / <code>process.on('message')</code>).</div>
+  <div class="key-pattern">
+    <div class="lang-badge">JavaScript</div>
+<pre><code>import { spawn, execFile } from 'node:child_process';
+
+// stream output line by line, no shell:
+const ls = spawn('ls', ['-la'], { shell: false });
+ls.stdout.on('data', (chunk) =&gt; process.stdout.write(chunk));
+ls.on('close', (code) =&gt; console.log('exit', code));
+
+// safe: args passed as an array, never concatenated into a shell string:
+execFile('git', ['log', '-1', '--format=%H'], (err, stdout) =&gt; {
+  if (!err) console.log(stdout.trim());
+});</code></pre>
+  </div>
+  <div class="exercises">
+    <strong>Challenge:</strong>
+    <div class="exercise">Write <code>run(cmd, args)</code> that wraps <code>spawn</code> in a Promise resolving to <code>{ code, stdout, stderr }</code>, collecting the streamed chunks. Then build a parent/child pair using <code>fork</code> where the parent sends numbers and the child replies with their squares over IPC, and the parent resolves once it has all answers.</div>
+  </div>
+  <div class="callout-warning">
+    <strong>#1 Pitfall:</strong> Shell injection. <code>exec(`convert ${userInput} out.png`)</code> hands user input to a shell — input like <code>; rm -rf ~</code> executes. Prefer <code>execFile</code>/<code>spawn</code> with an <em>args array</em> and <code>shell: false</code> so arguments are never re-parsed by a shell.
+  </div>
+</div>
+
+<!-- ===================== NEW: SECTION 1 ===================== -->
+<h2 class="section-title">🆕 Newer Array, Object &amp; String Methods</h2>
+<p class="section-sub">Recent additions (ES2022–ES2024) that replace error-prone idioms with safe, intention-revealing one-liners.</p>
+
+<!-- FINDLAST -->
+<div class="concept-card" id="findlast">
+  <div class="concept-header">
+    <span class="concept-title"><code>findLast</code> &amp; <code>findLastIndex</code></span>
+    <span class="ttag">Data &amp; Collections</span>
+  </div>
+  <p class="why-matters">Searching an array from the end used to mean <code>reverse()</code> (which mutates, or forces a copy) plus an index flip, or a manual backwards <code>for</code> loop. ES2023's <code>findLast</code>/<code>findLastIndex</code> scan from the right directly — no copy, no mutation, and they short-circuit on the first match from the end.</p>
+
+  <div class="explanation">
+    <p><span class="step">1</span><strong>Find the last matching element / its index.</strong> Same callback signature as <code>find</code>/<code>findIndex</code>, but iteration starts at the last element.</p>
+  </div>
+  <div class="code-example">
+    <div class="lang-badge">JavaScript</div>
+<pre><code>const nums = [1, 8, 3, 10, 5, 6];
+
+console.log(nums.findLast(n =&gt; n % 2 === 0));      // 6  (last even)
+console.log(nums.findLastIndex(n =&gt; n % 2 === 0)); // 5
+console.log(nums.findLast(n =&gt; n &gt; 100));          // undefined
+console.log(nums.findLastIndex(n =&gt; n &gt; 100));     // -1</code></pre>
+    <div class="output">6
+5
+undefined
+-1</div>
+  </div>
+
+  <div class="explanation">
+    <p><span class="step">2</span><strong>Why not <code>filter().pop()</code>.</strong> <code>filter</code> walks the <em>whole</em> array and builds an intermediate array just to take one element; <code>findLast</code> stops at the first hit from the end and allocates nothing.</p>
+  </div>
+  <div class="code-example">
+    <div class="lang-badge">JavaScript</div>
+<pre><code>const log = [
+  { level: 'info',  msg: 'start' },
+  { level: 'error', msg: 'boom' },
+  { level: 'info',  msg: 'retry' },
+  { level: 'error', msg: 'gave up' },
+];
+
+// the most recent error, without copying or scanning past it:
+const lastError = log.findLast(e =&gt; e.level === 'error');
+console.log(lastError.msg);        // 'gave up'
+
+// also available on typed arrays:
+console.log(Int8Array.from([5, 4, 9, 2]).findLastIndex(n =&gt; n &gt; 3));  // 2</code></pre>
+    <div class="output">gave up
+2</div>
+  </div>
+
+  <div class="callout-warning">
+    <strong>Common Mistakes:</strong>
+    <div class="mistake">❌ Reversing to search from the end — mutates and flips indices:
+   const i = arr.reverse().findIndex(pred);  // arr is now reversed in place!
+   const realIndex = arr.length - 1 - i;     // easy to get wrong</div>
+    <div class="correct">✅ Search from the end directly, no mutation:
+   const item = arr.findLast(pred);
+   const i = arr.findLastIndex(pred);   // -1 if none, like findIndex</div>
+  </div>
+
+  <div class="key-rules">
+    <strong>Key Rules:</strong>
+    <ul>
+      <li>Identical callback to <code>find</code>/<code>findIndex</code> — <code>(element, index, array)</code> — only the direction changes (right to left).</li>
+      <li><code>findLast</code> returns the element or <code>undefined</code>; <code>findLastIndex</code> returns the index or <code>-1</code>.</li>
+      <li>Available on <code>Array</code> and all <code>TypedArray</code>s. Prefer it over <code>reverse()</code> tricks or <code>filter().pop()</code> when you want a single match from the end.</li>
+    </ul>
+  </div>
+
+  <div class="exercises">
+    <strong>Practice Exercises:</strong>
+    <div class="exercise">Given an array of <code>{ ts, status }</code> events sorted by time, write <code>lastSuccessBefore(events, cutoff)</code> that returns the most recent event with <code>status === 'ok'</code> and <code>ts &lt; cutoff</code>, using <code>findLast</code>.</div>
+    <div class="exercise">Implement <code>trimTrailing(arr, pred)</code> that removes trailing elements matching <code>pred</code> (e.g. trailing zeros) by finding the last non-matching index with <code>findLastIndex</code> and slicing — without reversing the array.</div>
+    <div class="exercise">Write your own <code>findLast</code> polyfill with a single backwards <code>for</code> loop and confirm it matches the native method (including the <code>undefined</code> result and early exit) on a few inputs.</div>
+  </div>
+
+  <div class="connections">
+    <strong>Connections:</strong> These round out the <code>find</code>/<code>findIndex</code> family and complement the copy-based array methods (<a href="#">toSorted / toReversed / with</a>) from a recent guide. Reaching from the end relates to <a href="#">relative indexing with <code>at(-1)</code></a>.
+  </div>
+</div>
+
+<!-- OBJECT.HASOWN -->
+<div class="concept-card" id="hasown">
+  <div class="concept-header">
+    <span class="concept-title"><code>Object.hasOwn</code></span>
+    <span class="ttag">Core Language</span>
+  </div>
+  <p class="why-matters"><code>obj.hasOwnProperty(key)</code> is unsafe: it breaks on objects with a <code>null</code> prototype (no method to call) and on objects that <em>shadow</em> <code>hasOwnProperty</code> with their own property. The defensive idiom <code>Object.prototype.hasOwnProperty.call(obj, key)</code> is verbose and easy to forget. ES2022's <code>Object.hasOwn(obj, key)</code> is the safe, readable replacement.</p>
+
+  <div class="explanation">
+    <p><span class="step">1</span><strong>The safe own-property check.</strong> A static method, so the object never needs to inherit anything.</p>
+  </div>
+  <div class="code-example">
+    <div class="lang-badge">JavaScript</div>
+<pre><code>const o = { a: 1, b: undefined };
+
+console.log(Object.hasOwn(o, 'a'));   // true
+console.log(Object.hasOwn(o, 'b'));   // true  (own, even though value is undefined)
+console.log(Object.hasOwn(o, 'c'));   // false
+console.log(Object.hasOwn(o, 'toString'));  // false (inherited, not own)</code></pre>
+    <div class="output">true
+true
+false
+false</div>
+  </div>
+
+  <div class="explanation">
+    <p><span class="step">2</span><strong>Works where <code>hasOwnProperty</code> throws or lies.</strong> Null-prototype objects (like the result of <code>Object.groupBy</code>) and objects that override the method name are handled correctly.</p>
+  </div>
+  <div class="code-example">
+    <div class="lang-badge">JavaScript</div>
+<pre><code>const bag = Object.create(null);   // no prototype, no methods
+bag.x = 1;
+// bag.hasOwnProperty('x');        // TypeError: not a function
+console.log(Object.hasOwn(bag, 'x'));   // true
+
+const tricky = { hasOwnProperty: () =&gt; 'lol' };
+console.log(tricky.hasOwnProperty('z'));   // 'lol'  (shadowed — wrong!)
+console.log(Object.hasOwn(tricky, 'z'));   // false  (correct)</code></pre>
+    <div class="output">true
+lol
+false</div>
+  </div>
+
+  <div class="explanation">
+    <p><span class="step">3</span><strong><code>hasOwn</code> vs the <code>in</code> operator.</strong> <code>in</code> also walks the prototype chain; <code>Object.hasOwn</code> checks <em>only</em> own properties — use the one that matches your intent.</p>
+  </div>
+  <div class="code-example">
+    <div class="lang-badge">JavaScript</div>
+<pre><code>const arr = [10, 20];
+console.log('length' in arr);            // true  (inherited/own intrinsic)
+console.log(Object.hasOwn(arr, 'push')); // false (push is on the prototype)
+console.log('push' in arr);              // true  (found up the chain)
+console.log(Object.hasOwn(arr, 0));      // true  (index 0 is an own property)</code></pre>
+    <div class="output">true
+false
+true
+true</div>
+  </div>
+
+  <div class="callout-warning">
+    <strong>Common Mistakes:</strong>
+    <div class="mistake">❌ Calling hasOwnProperty directly off an arbitrary object:
+   if (data.hasOwnProperty('id')) ...   // throws on null-proto, lies if shadowed</div>
+    <div class="correct">✅ Use the static, prototype-independent check:
+   if (Object.hasOwn(data, 'id')) ...   // safe regardless of prototype</div>
+  </div>
+
+  <div class="key-rules">
+    <strong>Key Rules:</strong>
+    <ul>
+      <li><code>Object.hasOwn(obj, key)</code> returns <code>true</code> only for <em>own</em> properties (including those whose value is <code>undefined</code>); inherited keys are <code>false</code>.</li>
+      <li>It is the drop-in replacement for <code>Object.prototype.hasOwnProperty.call(obj, key)</code> — use it for null-prototype objects and untrusted data.</li>
+      <li>Use <code>in</code> when you intentionally want to include inherited properties; use <code>hasOwn</code> when you mean "is this the object's own key".</li>
+    </ul>
+  </div>
+
+  <div class="exercises">
+    <strong>Practice Exercises:</strong>
+    <div class="exercise">Write <code>pick(obj, keys)</code> that returns a new object containing only the <code>keys</code> that are <em>own</em> properties of <code>obj</code>, using <code>Object.hasOwn</code> so inherited keys are never copied.</div>
+    <div class="exercise">Given a null-prototype config object from <code>Object.groupBy</code>, write <code>countKeys(o)</code> that safely reports how many of a candidate list of keys are present, and show that <code>o.hasOwnProperty</code> would have thrown.</div>
+    <div class="exercise">Demonstrate the difference between <code>Object.hasOwn(obj, 'x')</code> and <code>'x' in obj</code> for a value that is <code>undefined</code> versus genuinely absent versus inherited from the prototype.</div>
+  </div>
+
+  <div class="connections">
+    <strong>Connections:</strong> The null-prototype gotcha is the same one from <a href="#">Object.groupBy</a>'s result and ties back to <a href="#">prototypes &amp; the prototype chain</a>. It pairs with <code>Object.keys</code>/<code>entries</code> when iterating untrusted data safely.
+  </div>
+</div>
+
+<!-- WELL-FORMED STRINGS -->
+<div class="concept-card" id="wellformed">
+  <div class="concept-header">
+    <span class="concept-title">Well-Formed Strings: <code>isWellFormed</code> &amp; <code>toWellFormed</code></span>
+    <span class="ttag">Core Language</span>
+  </div>
+  <p class="why-matters">JS strings are UTF-16 and can contain <em>lone surrogates</em> — half of a surrogate pair with no partner. Those break <code>encodeURIComponent</code> (it throws), corrupt <code>fetch</code> bodies, and fail to clone across <code>postMessage</code>. ES2024's <code>String.prototype.isWellFormed</code> detects them and <code>toWellFormed</code> sanitizes them, so you can guard the boundary before encoding or sending data over the wire.</p>
+
+  <div class="explanation">
+    <p><span class="step">1</span><strong>Detect lone surrogates.</strong> <code>isWellFormed()</code> returns <code>false</code> if the string contains an unpaired surrogate (code units in <code>0xD800–0xDFFF</code> without a partner).</p>
+  </div>
+  <div class="code-example">
+    <div class="lang-badge">JavaScript</div>
+<pre><code>const ok   = 'hello 🎯';            // 🎯 is a valid surrogate PAIR
+const bad  = 'hi \uD83D';           // a lone high surrogate
+
+console.log(ok.isWellFormed());     // true
+console.log(bad.isWellFormed());    // false</code></pre>
+    <div class="output">true
+false</div>
+  </div>
+
+  <div class="explanation">
+    <p><span class="step">2</span><strong>Sanitize with <code>toWellFormed</code>.</strong> It returns a copy with every lone surrogate replaced by the Unicode replacement character <code>U+FFFD</code> (�), leaving valid text untouched.</p>
+  </div>
+  <div class="code-example">
+    <div class="lang-badge">JavaScript</div>
+<pre><code>const bad = 'price: 100\uD83D';
+const fixed = bad.toWellFormed();
+console.log(fixed);                 // "price: 100�"
+console.log(fixed.isWellFormed());  // true</code></pre>
+    <div class="output">price: 100�
+true</div>
+  </div>
+
+  <div class="explanation">
+    <p><span class="step">3</span><strong>Guard the boundary.</strong> <code>encodeURIComponent</code> throws on lone surrogates; sanitize (or reject) first so a single bad byte from user input can't crash your request building.</p>
+  </div>
+  <div class="code-example">
+    <div class="lang-badge">JavaScript</div>
+<pre><code>const raw = 'q=\uD83D';
+
+try {
+  encodeURIComponent(raw);          // throws URIError
+} catch (e) {
+  console.log(e.name);              // URIError
+}
+
+// safe: clean it first
+console.log(encodeURIComponent(raw.toWellFormed()));  // q%3D%EF%BF%BD</code></pre>
+    <div class="output">URIError
+q%3D%EF%BF%BD</div>
+  </div>
+
+  <div class="callout-warning">
+    <strong>Common Mistakes:</strong>
+    <div class="mistake">❌ Assuming any JS string is safe to encode or send:
+   const url = base + '?q=' + encodeURIComponent(userText); // throws on lone surrogate</div>
+    <div class="correct">✅ Validate or sanitize at the boundary:
+   if (!userText.isWellFormed()) userText = userText.toWellFormed();
+   const url = base + '?q=' + encodeURIComponent(userText);</div>
+  </div>
+
+  <div class="key-rules">
+    <strong>Key Rules:</strong>
+    <ul>
+      <li><code>isWellFormed()</code> → boolean; <code>toWellFormed()</code> → a new string with lone surrogates replaced by <code>U+FFFD</code> (never mutates).</li>
+      <li>Run them at I/O boundaries: before <code>encodeURIComponent</code>, building request bodies, <code>postMessage</code>/<code>structuredClone</code>, or persisting text.</li>
+      <li>Valid surrogate <em>pairs</em> (real emoji/astral characters) are well-formed and pass through unchanged — only unpaired halves are flagged.</li>
+    </ul>
+  </div>
+
+  <div class="exercises">
+    <strong>Practice Exercises:</strong>
+    <div class="exercise">Write <code>safeQuery(params)</code> that builds a query string from an object, sanitizing each value with <code>toWellFormed</code> before <code>encodeURIComponent</code>, and returns both the string and a list of keys that needed fixing.</div>
+    <div class="exercise">Construct a string with a lone <em>low</em> surrogate (<code>\uDC00</code>) and a valid pair, confirm <code>isWellFormed</code> is <code>false</code>, then verify <code>toWellFormed</code> fixes exactly one position and leaves the pair intact.</div>
+    <div class="exercise">Without using <code>isWellFormed</code>, write a checker that scans <code>charCodeAt</code> values to detect an unpaired surrogate, then validate it against the native method on several inputs.</div>
+  </div>
+
+  <div class="connections">
+    <strong>Connections:</strong> This complements <a href="#">JSON Advanced</a> and structured-clone semantics (lone surrogates also trip up serialization) and the Unicode-aware side of <a href="#r-regexp">regular expressions</a> (<code>\p{...}</code>, the <code>u</code> flag).
+  </div>
+</div>
+
+<!-- ===================== NEW: SECTION 2 ===================== -->
+<h2 class="section-title">🆕 Numbers, Globals &amp; Modules</h2>
+<p class="section-sub">Two foundational features for correctness and module initialization: arbitrary-precision integers, and awaiting at module scope.</p>
+
+<!-- BIGINT -->
+<div class="concept-card" id="bigint">
+  <div class="concept-header">
+    <span class="concept-title"><code>BigInt</code></span>
+    <span class="ttag">Core Language</span>
+  </div>
+  <p class="why-matters">JS <code>Number</code> is an IEEE-754 double, so it can only represent integers exactly up to <code>2^53 − 1</code> (<code>Number.MAX_SAFE_INTEGER</code>). Past that, arithmetic silently loses precision — a real problem for database <code>bigint</code> IDs, nanosecond timestamps, snowflake IDs, and big factorials. <code>BigInt</code> (ES2020) is an arbitrary-precision integer type that never loses digits.</p>
+
+  <div class="explanation">
+    <p><span class="step">1</span><strong>Where <code>Number</code> breaks, and the fix.</strong> Create a BigInt with the <code>n</code> literal suffix or the <code>BigInt()</code> function.</p>
+  </div>
+  <div class="code-example">
+    <div class="lang-badge">JavaScript</div>
+<pre><code>console.log(Number.MAX_SAFE_INTEGER);     // 9007199254740991
+console.log(9007199254740991 + 2);        // 9007199254740992  ❌ wrong (should be ...993)
+
+console.log(9007199254740991n + 2n);      // 9007199254740993n  ✅ exact
+console.log(BigInt('123456789012345678901234567890') * 2n);
+// 246913578024691357802469135780n</code></pre>
+    <div class="output">9007199254740991
+9007199254740992
+9007199254740993n
+246913578024691357802469135780n</div>
+  </div>
+
+  <div class="explanation">
+    <p><span class="step">2</span><strong>No mixing with <code>Number</code> in arithmetic.</strong> <code>1n + 1</code> throws — convert explicitly. Division truncates toward zero (integers only), and there is no <code>Math</code> support.</p>
+  </div>
+  <div class="code-example">
+    <div class="lang-badge">JavaScript</div>
+<pre><code>// 1n + 1;                 // TypeError: Cannot mix BigInt and other types
+console.log(1n + BigInt(1));     // 2n
+console.log(Number(10n) + 1);    // 11
+
+console.log(7n / 2n);            // 3n   (truncated, no fraction)
+console.log(7n % 2n);            // 1n
+console.log(typeof 10n);         // "bigint"</code></pre>
+    <div class="output">2n
+11
+3n
+1n
+bigint</div>
+  </div>
+
+  <div class="explanation">
+    <p><span class="step">3</span><strong>Comparison vs serialization.</strong> Loose equality and ordering work <em>across</em> types (<code>10n == 10</code>), but strict equality does not (<code>10n !== 10</code>). <code>JSON.stringify</code> throws on BigInt — serialize as a string.</p>
+  </div>
+  <div class="code-example">
+    <div class="lang-badge">JavaScript</div>
+<pre><code>console.log(10n == 10);          // true   (loose, cross-type)
+console.log(10n === 10);         // false  (different types)
+console.log(5n &lt; 10);            // true   (ordering is cross-type)
+
+// JSON.stringify({ id: 10n });  // TypeError: Do not know how to serialize a BigInt
+console.log(JSON.stringify({ id: 10n.toString() }));   // {"id":"10"}</code></pre>
+    <div class="output">true
+false
+true
+{"id":"10"}</div>
+  </div>
+
+  <div class="callout-warning">
+    <strong>Common Mistakes:</strong>
+    <div class="mistake">❌ Mixing types or JSON-stringifying a BigInt:
+   total = bigCount + 1;            // TypeError if bigCount is a BigInt
+   JSON.stringify({ id: userId });  // TypeError when userId is 10n</div>
+    <div class="correct">✅ Convert at the boundary, serialize as string:
+   total = bigCount + 1n;                    // stay in BigInt
+   JSON.stringify({ id: userId.toString() }); // and parse with BigInt() on read</div>
+  </div>
+
+  <div class="key-rules">
+    <strong>Key Rules:</strong>
+    <ul>
+      <li>Use BigInt for exact integers beyond <code>2^53 − 1</code> (DB ids, counters, crypto, nanosecond time). It is integer-only — no decimals, no <code>Math</code>.</li>
+      <li>Never mix BigInt and Number in arithmetic; convert with <code>BigInt(x)</code> or <code>Number(x)</code> first (mind precision loss going to Number).</li>
+      <li><code>==</code>/ordering are cross-type; <code>===</code> is not. <code>JSON</code> can't serialize BigInt — store/transmit it as a string.</li>
+    </ul>
+  </div>
+
+  <div class="exercises">
+    <strong>Practice Exercises:</strong>
+    <div class="exercise">Write <code>factorial(n)</code> using BigInt and compute <code>50!</code> exactly; confirm the same function with <code>Number</code> loses precision well before that.</div>
+    <div class="exercise">Implement a <code>jsonReplacer</code>/<code>jsonReviver</code> pair so that objects containing BigInt round-trip through <code>JSON.stringify</code>/<code>parse</code> (e.g. encode as <code>{ "$bigint": "10" }</code>).</div>
+    <div class="exercise">Write <code>parseId(value)</code> that accepts a number or numeric string and returns a BigInt, throwing if the input would have lost precision as a Number (hint: compare against <code>Number.MAX_SAFE_INTEGER</code>).</div>
+  </div>
+
+  <div class="connections">
+    <strong>Connections:</strong> BigInt is the precision counterpart to floating-point <code>Number</code> and underpins <code>BigInt64Array</code> in <a href="#">typed arrays</a>. The non-serializability gotcha ties back to <a href="#">JSON Advanced</a>'s replacer/reviver hooks.
+  </div>
+</div>
+
+<!-- TOP-LEVEL AWAIT -->
+<div class="concept-card" id="tla">
+  <div class="concept-header">
+    <span class="concept-title">Top-Level <code>await</code></span>
+    <span class="ttag">Async Mastery</span>
+  </div>
+  <p class="why-matters">Before ES2022, <code>await</code> was only legal inside an <code>async</code> function, so module initialization that needed async work (load config, connect a DB, conditional dynamic <code>import</code>) had to be wrapped in an IIFE — which meant the module's exports weren't ready when importers used them. Top-level <code>await</code> lets an ES module <code>await</code> directly at module scope, and importers transparently wait for it.</p>
+
+  <div class="explanation">
+    <p><span class="step">1</span><strong>Await at module scope.</strong> In an ES module (<code>.mjs</code>, or <code>"type": "module"</code>), you can <code>await</code> directly — the module becomes asynchronous.</p>
+  </div>
+  <div class="code-example">
+    <div class="lang-badge">JavaScript</div>
+<pre><code>// config.mjs
+const res = await fetch('https://example.com/config.json');
+export const config = await res.json();   // exports are ready only after this settles
+
+// app.mjs
+import { config } from './config.mjs';
+console.log(config.featureFlag);          // importer waited for config.mjs to finish</code></pre>
+  </div>
+
+  <div class="explanation">
+    <p><span class="step">2</span><strong>Conditional / dynamic dependencies.</strong> Pick a dependency at load time and await its dynamic <code>import</code> — impossible to express cleanly with static imports alone.</p>
+  </div>
+  <div class="code-example">
+    <div class="lang-badge">JavaScript</div>
+<pre><code>const strings = await import(
+  navigator.language.startsWith('fr') ? './fr.mjs' : './en.mjs'
+);
+export const t = strings.translate;
+
+// fall back to a polyfill only when needed:
+if (!('structuredClone' in globalThis)) {
+  await import('./structured-clone-polyfill.mjs');
+}</code></pre>
+  </div>
+
+  <div class="explanation">
+    <p><span class="step">3</span><strong>It blocks the module graph.</strong> A module with top-level <code>await</code> delays every module that depends on it until it resolves. That's the point — but it also means a slow top-level <code>await</code> stalls startup, and the feature only exists in modules.</p>
+  </div>
+  <div class="code-example">
+    <div class="lang-badge">JavaScript</div>
+<pre><code>// db.mjs — connection established once, before any importer runs
+import { connect } from './driver.mjs';
+export const db = await connect(process.env.DATABASE_URL);
+
+// any module that imports { db } is guaranteed a live connection,
+// with NO need for an async init() call or a "ready" promise to await later</code></pre>
+  </div>
+
+  <div class="callout-warning">
+    <strong>Common Mistakes:</strong>
+    <div class="mistake">❌ Using top-level await in a CommonJS file or a classic script:
+   // require()-based .js / &lt;script&gt; (no type=module): SyntaxError
+   const data = await fetch(url);</div>
+    <div class="correct">✅ Use it only in ES modules; keep it fast, or defer heavy work:
+   // .mjs / type=module / &lt;script type="module"&gt;
+   export const data = await (await fetch(url)).json();</div>
+  </div>
+
+  <div class="key-rules">
+    <strong>Key Rules:</strong>
+    <ul>
+      <li>Only valid in ES modules (<code>.mjs</code>, <code>"type": "module"</code>, <code>&lt;script type="module"&gt;</code>) — never in CommonJS or classic scripts.</li>
+      <li>A module's top-level <code>await</code> suspends every importer until it settles; the dependency graph awaits it for you (no manual "ready" promise).</li>
+      <li>Keep it short — heavy top-level awaits slow startup, and cyclic dependencies that both top-level-await each other can deadlock.</li>
+    </ul>
+  </div>
+
+  <div class="exercises">
+    <strong>Practice Exercises:</strong>
+    <div class="exercise">Build a <code>config.mjs</code> that loads settings from a (mocked async) source with top-level <code>await</code> and exports them, plus an <code>app.mjs</code> that imports and uses them — confirm the importer sees fully-loaded config without any init call.</div>
+    <div class="exercise">Write a module that conditionally <code>await import()</code>s one of two locale modules based on an environment value and re-exports a unified <code>translate</code> function.</div>
+    <div class="exercise">Demonstrate the blocking behavior: create <code>slow.mjs</code> with <code>await new Promise(r =&gt; setTimeout(r, 200))</code> before its export, import it from a module that logs timestamps, and observe that the importer's code runs only after the 200ms.</div>
+  </div>
+
+  <div class="connections">
+    <strong>Connections:</strong> Top-level <code>await</code> builds on <a href="#">ES Modules</a> evaluation order and the same promise machinery as <a href="#">async/await patterns</a>. It pairs with dynamic <code>import()</code> and the <code>globalThis</code> feature-detection idiom shown above.
+  </div>
+</div>
+
+</div><!-- /inner -->
+</div><!-- /content -->
+
+<!-- ===================== FOOTER ===================== -->
+<footer class="guide-footer">
+  <h2>All Guides</h2>
+      <ul>
+    <li><a href="javascript-guides/javascript-guide-2026-07-09.html">2026-07-09</a> (Day 28)</li>
+    <li><a href="javascript-guides/javascript-guide-2026-07-08.html">2026-07-08</a> (current &mdash; Day 27)</li>
+    <li><a href="javascript-guides/javascript-guide-2026-07-07.html">2026-07-07</a> (Day 26)</li>
+    <li><a href="javascript-guides/javascript-guide-2026-07-06.html">2026-07-06</a> (Day 25)</li>
+    <li><a href="javascript-guides/javascript-guide-2026-07-05.html">2026-07-05</a> (Day 24)</li>
+    <li><a href="javascript-guides/javascript-guide-2026-07-04.html">2026-07-04</a> (Day 23)</li>
+    <li><a href="javascript-guides/javascript-guide-2026-07-03.html">2026-07-03</a> (Day 22)</li>
+    <li><a href="javascript-guides/javascript-guide-2026-07-02.html">2026-07-02</a> (Day 21)</li>
+    <li><a href="javascript-guides/javascript-guide-2026-07-01.html">2026-07-01</a> (Day 20)</li>
+    <li><a href="javascript-guides/javascript-guide-2026-06-30.html">2026-06-30</a> (Day 19)</li>
+    <li><a href="javascript-guides/javascript-guide-2026-06-29.html">2026-06-29</a> (Day 18)</li>
+    <li><a href="javascript-guides/javascript-guide-2026-06-28.html">2026-06-28</a> (Day 17)</li>
+    <li><a href="javascript-guides/javascript-guide-2026-06-27.html">2026-06-27</a> (Day 16)</li>
+    <li><a href="javascript-guides/javascript-guide-2026-06-26.html">2026-06-26</a> (Day 15)</li>
+    <li><a href="javascript-guides/javascript-guide-2026-06-25.html">2026-06-25</a> (Day 14)</li>
+    <li><a href="javascript-guides/javascript-guide-2026-06-24.html">2026-06-24</a> (Day 13)</li>
+    <li><a href="javascript-guides/javascript-guide-2026-06-23.html">2026-06-23</a> (Day 12)</li>
+    <li><a href="javascript-guides/javascript-guide-2026-06-22.html">2026-06-22</a> (Day 11)</li>
+    <li><a href="javascript-guides/javascript-guide-2026-06-19.html">2026-06-19</a> (Day 10)</li>
+    <li><a href="javascript-guides/javascript-guide-2026-06-18.html">2026-06-18</a> (Day 9)</li>
+    <li><a href="javascript-guides/javascript-guide-2026-06-17.html">2026-06-17</a> (Day 8)</li>
+    <li><a href="javascript-guides/javascript-guide-2026-06-15.html">2026-06-15</a> (Day 7)</li>
+    <li><a href="javascript-guides/javascript-guide-2026-06-13.html">2026-06-13</a> (Day 6)</li>
+    <li><a href="javascript-guides/javascript-guide-2026-06-12.html">2026-06-12</a> (Day 5)</li>
+    <li><a href="javascript-guides/javascript-guide-2026-06-11.html">2026-06-11</a> (Day 4)</li>
+    <li><a href="javascript-guides/javascript-guide-2026-06-10.html">2026-06-10</a> (Day 3)</li>
+    <li><a href="javascript-guides/javascript-guide-2026-06-09.html">2026-06-09</a> (Day 2)</li>
+    <li><a href="javascript-guides/javascript-guide-2026-06-08.html">2026-06-08</a> (Day 1)</li>
+  </ul>
+
+  <div class="cross-links">
+    <strong>Other Guides</strong>
+    <a href="guide.html">LeetCode Guide</a>
+    <a href="lang-guide.html">Multi-Language</a>
+    <a href="python-guide.html">Python</a>
+    <a href="typescript-guide.html">TypeScript</a>
+  </div>
+</footer>
+
+<script>
+function toggleTheme() {
+  const b = document.body;
+  const next = b.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+  b.setAttribute('data-theme', next);
+  localStorage.setItem('lc-jsguide-theme', next);
+}
+(function () {
+  const saved = localStorage.getItem('lc-jsguide-theme') || 'dark';
+  document.body.setAttribute('data-theme', saved);
+})();
+</script>
+</body>
+</html>

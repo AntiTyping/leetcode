@@ -1,0 +1,3022 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LeetCode Study Guide &mdash; Day 26 (2026-06-21)</title>
+  <style>
+    /* ===================================================================
+       CSS Variables &mdash; Dark theme (default) and Light theme
+       =================================================================== */
+    :root, [data-theme="dark"] {
+      --bg: #0d1117;
+      --surface1: #161b22;
+      --surface2: #1c2129;
+      --border: #30363d;
+      --text: #e6edf3;
+      --text-muted: #8b949e;
+      --accent-blue: #58a6ff;
+      --accent-green: #3fb950;
+      --accent-red: #f85149;
+      --accent-yellow: #d29922;
+      --accent-purple: #bc8cff;
+    }
+
+    [data-theme="light"] {
+      --bg: #ffffff;
+      --surface1: #f6f8fa;
+      --surface2: #eaeef2;
+      --border: #d0d7de;
+      --text: #1f2328;
+      --text-muted: #656d76;
+      --accent-blue: #0969da;
+      --accent-green: #1a7f37;
+      --accent-red: #cf222e;
+      --accent-yellow: #9a6700;
+      --accent-purple: #8250df;
+    }
+
+    /* ===================================================================
+       Reset
+       =================================================================== */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    /* ===================================================================
+       Base Typography
+       =================================================================== */
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+      font-size: 16px; line-height: 1.7; color: var(--text); background: var(--bg);
+      transition: background 0.2s, color 0.2s;
+    }
+
+    a { color: var(--accent-blue); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    /* ===================================================================
+       Theme Toggle Button
+       =================================================================== */
+    .theme-toggle {
+      position: fixed; top: 16px; right: 16px; z-index: 1000;
+      background: var(--surface1); border: 1px solid var(--border); color: var(--text);
+      padding: 8px 12px; border-radius: 8px; cursor: pointer; font-size: 14px;
+      transition: background 0.2s, border-color 0.2s;
+    }
+    .theme-toggle:hover { background: var(--surface2); }
+
+    /* ===================================================================
+       Sidebar Navigation
+       =================================================================== */
+    .sidebar {
+      position: fixed; top: 0; left: 0; width: 300px; height: 100vh;
+      background: var(--surface1); border-right: 1px solid var(--border);
+      overflow-y: auto; padding: 20px 0; z-index: 900; transition: transform 0.3s;
+    }
+    .sidebar h3 { font-size: 13px; text-transform: uppercase; letter-spacing: 1px; color: var(--text-muted); padding: 16px 20px 8px; margin: 0; }
+    .sidebar .section-review { background: rgba(188, 140, 255, 0.06); border-bottom: 1px solid var(--border); padding-bottom: 8px; margin-bottom: 4px; }
+    .sidebar .section-review h3 { color: var(--accent-purple); }
+    .sidebar .nav-link { display: flex; align-items: center; gap: 8px; padding: 6px 20px; font-size: 14px; color: var(--text); text-decoration: none; transition: background 0.15s; }
+    .sidebar .nav-link:hover { background: var(--surface2); text-decoration: none; }
+    .sidebar .nav-link .problem-num { color: var(--text-muted); font-size: 12px; min-width: 32px; }
+    .sidebar .nav-link .problem-title { flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+    /* ===================================================================
+       Difficulty Badges
+       =================================================================== */
+    .diff-E { display: inline-block; font-size: 11px; font-weight: 600; padding: 1px 6px; border-radius: 4px; background: rgba(63, 185, 80, 0.15); color: var(--accent-green); }
+    .diff-M { display: inline-block; font-size: 11px; font-weight: 600; padding: 1px 6px; border-radius: 4px; background: rgba(210, 153, 34, 0.15); color: var(--accent-yellow); }
+    .diff-H { display: inline-block; font-size: 11px; font-weight: 600; padding: 1px 6px; border-radius: 4px; background: rgba(248, 81, 73, 0.15); color: var(--accent-red); }
+
+    /* ===================================================================
+       Topic Tags
+       =================================================================== */
+    .ttag { display: inline-block; font-size: 11px; font-weight: 500; padding: 2px 8px; border-radius: 4px; background: rgba(88, 166, 255, 0.1); color: var(--accent-blue); margin-right: 4px; }
+
+    /* ===================================================================
+       Language Badges
+       =================================================================== */
+    .lang-badge { display: inline-block; font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 4px; margin-right: 4px; margin-bottom: 4px; }
+    .lang-badge.python { background: rgba(53, 114, 165, 0.15); color: #3572a5; }
+    .lang-badge.go { background: rgba(0, 173, 216, 0.15); color: #00add8; }
+    .lang-badge.typescript { background: rgba(49, 120, 198, 0.15); color: #3178c6; }
+    .lang-badge.rust { background: rgba(222, 165, 96, 0.15); color: #dea584; }
+    .lang-badge.cpp { background: rgba(137, 89, 168, 0.15); color: #8959a8; }
+
+    /* ===================================================================
+       Main Content Area
+       =================================================================== */
+    .main-content { margin-left: 300px; padding: 40px 48px 60px; max-width: 960px; }
+
+    /* ===================================================================
+       Guide Header
+       =================================================================== */
+    .guide-header { text-align: center; padding-bottom: 32px; border-bottom: 1px solid var(--border); margin-bottom: 32px; }
+    .guide-header h1 { font-size: 36px; font-weight: 700; margin-bottom: 8px; background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+    .guide-header .description { font-size: 16px; color: var(--text-muted); margin-bottom: 4px; }
+    .guide-header .date { font-size: 14px; color: var(--text-muted); }
+
+    /* ===================================================================
+       Language Toggle Bar
+       =================================================================== */
+    .lang-toggle-bar { display: flex; justify-content: center; gap: 8px; padding: 12px 0; margin-bottom: 32px; flex-wrap: wrap; }
+    .lang-toggle-btn { padding: 6px 16px; border-radius: 20px; border: 1px solid var(--border); background: var(--surface1); color: var(--text-muted); font-size: 13px; font-weight: 500; cursor: pointer; transition: all 0.15s; }
+    .lang-toggle-btn:hover { background: var(--surface2); color: var(--text); }
+    .lang-toggle-btn.active { background: var(--accent-blue); color: #fff; border-color: var(--accent-blue); }
+
+    /* ===================================================================
+       How To Use Box
+       =================================================================== */
+    .how-to-use { background: var(--surface1); border: 1px solid var(--border); border-radius: 8px; padding: 20px 24px; margin-bottom: 40px; }
+    .how-to-use h2 { font-size: 18px; margin-bottom: 12px; }
+    .how-to-use ol { padding-left: 20px; }
+    .how-to-use li { margin-bottom: 6px; color: var(--text-muted); }
+    .how-to-use li strong { color: var(--text); }
+
+    /* ===================================================================
+       Section Headers
+       =================================================================== */
+    .section-header { font-size: 26px; font-weight: 700; margin: 48px 0 8px; padding-bottom: 8px; border-bottom: 2px solid var(--border); }
+    .section-header.review-header { border-bottom-color: var(--accent-purple); }
+    .section-intro { color: var(--text-muted); font-size: 15px; margin-bottom: 24px; line-height: 1.6; }
+
+    /* ===================================================================
+       Problem Cards
+       =================================================================== */
+    .problem-card { background: var(--surface1); border: 1px solid var(--border); border-radius: 8px; padding: 24px; margin-bottom: 24px; }
+
+    /* ===================================================================
+       Review Cards (purple accent)
+       =================================================================== */
+    .review-card { background: var(--surface1); border: 1px solid var(--border); border-left: 4px solid var(--accent-purple); border-radius: 8px; padding: 24px; margin-bottom: 24px; background: linear-gradient(90deg, rgba(188, 140, 255, 0.03) 0%, transparent 40%); }
+    .problem-card h3, .review-card h3 { font-size: 20px; margin-bottom: 4px; }
+
+    /* ===================================================================
+       Problem Meta
+       =================================================================== */
+    .problem-meta { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; flex-wrap: wrap; }
+    .review-days { font-size: 13px; color: var(--accent-purple); font-weight: 500; }
+
+    /* ===================================================================
+       Insight / Warning / Why-Works Boxes
+       =================================================================== */
+    .insight-box { border-left: 4px solid var(--accent-blue); background: rgba(88, 166, 255, 0.05); padding: 12px 16px; border-radius: 0 6px 6px 0; margin: 12px 0; }
+    .insight-box strong { color: var(--accent-blue); }
+    .warning-box { border-left: 4px solid var(--accent-red); background: rgba(248, 81, 73, 0.05); padding: 12px 16px; border-radius: 0 6px 6px 0; margin: 12px 0; }
+    .warning-box strong { color: var(--accent-red); }
+    .why-works-box { border-left: 4px solid var(--accent-green); background: rgba(63, 185, 80, 0.05); padding: 12px 16px; border-radius: 0 6px 6px 0; margin: 12px 0; }
+    .why-works-box strong { color: var(--accent-green); }
+
+    /* ===================================================================
+       Brute Force Collapsible
+       =================================================================== */
+    .brute-force { border-left: 4px solid var(--accent-yellow); background: rgba(210, 153, 34, 0.05); padding: 0; border-radius: 0 6px 6px 0; margin: 12px 0; }
+    .brute-force summary { padding: 12px 16px; cursor: pointer; font-weight: 600; color: var(--accent-yellow); }
+    .brute-force .bf-content { padding: 0 16px 12px; }
+
+    /* ===================================================================
+       Previous Solution Collapsible
+       =================================================================== */
+    details.prev-solution { border-left: 4px solid var(--accent-purple); background: rgba(188, 140, 255, 0.04); border-radius: 0 6px 6px 0; margin: 12px 0; }
+    details.prev-solution summary { padding: 12px 16px; cursor: pointer; font-weight: 600; color: var(--accent-purple); }
+    details.prev-solution > div { padding: 0 16px 12px; }
+
+    /* ===================================================================
+       Optimal Solution Collapsible
+       =================================================================== */
+    details.optimal-solution { border-left: 4px solid var(--accent-green); background: rgba(63, 185, 80, 0.04); border-radius: 0 6px 6px 0; margin: 12px 0; }
+    details.optimal-solution summary { padding: 12px 16px; cursor: pointer; font-weight: 600; color: var(--accent-green); }
+    details.optimal-solution > div { padding: 0 16px 12px; }
+
+    /* ===================================================================
+       Examples
+       =================================================================== */
+    .examples { background: var(--surface2); border: 1px solid var(--border); border-radius: 6px; padding: 12px 16px; margin: 12px 0; font-family: 'SF Mono', 'Fira Code', Consolas, monospace; font-size: 13px; line-height: 1.6; }
+    .examples p { margin-bottom: 4px; }
+    .examples strong { color: var(--text); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif; }
+
+    /* ===================================================================
+       Complexity Boxes
+       =================================================================== */
+    .complexity-box { display: inline-flex; align-items: center; gap: 8px; background: var(--surface2); border: 1px solid var(--border); border-radius: 6px; padding: 6px 12px; font-size: 13px; font-family: 'SF Mono', 'Fira Code', Consolas, monospace; margin: 8px 0; }
+    .complexity-box .arrow { color: var(--accent-green); font-weight: 700; }
+
+    .complexity-transition { display: flex; align-items: center; gap: 12px; background: var(--surface2); border: 1px solid var(--border); border-radius: 6px; padding: 10px 16px; font-size: 13px; font-family: 'SF Mono', 'Fira Code', Consolas, monospace; margin: 12px 0; flex-wrap: wrap; }
+    .complexity-transition .brute-complexity { color: var(--accent-yellow); }
+    .complexity-transition .arrow { color: var(--accent-green); font-weight: 700; font-size: 16px; }
+    .complexity-transition .optimal-complexity { color: var(--accent-green); }
+
+    /* ===================================================================
+       Code Blocks
+       =================================================================== */
+    pre { background: var(--surface2); border: 1px solid var(--border); border-radius: 6px; padding: 14px 16px; overflow-x: auto; margin: 8px 0; }
+    pre code { font-family: 'SF Mono', 'Fira Code', Consolas, monospace; font-size: 13px; line-height: 1.5; color: var(--text); }
+
+    /* ===================================================================
+       Steps (numbered list with circles)
+       =================================================================== */
+    .steps ol { counter-reset: step-counter; list-style: none; padding-left: 0; }
+    .steps ol li { counter-increment: step-counter; position: relative; padding-left: 36px; margin-bottom: 10px; }
+    .steps ol li::before { content: counter(step-counter); position: absolute; left: 0; top: 2px; width: 24px; height: 24px; border-radius: 50%; background: var(--accent-blue); color: #fff; font-size: 12px; font-weight: 700; display: flex; align-items: center; justify-content: center; }
+
+    /* ===================================================================
+       Language Features
+       =================================================================== */
+    .lang-features { margin: 12px 0; }
+    .lang-features h4 { font-size: 15px; margin-bottom: 8px; }
+    .lang-features ul { list-style: disc; padding-left: 20px; }
+    .lang-features li { margin-bottom: 4px; font-size: 14px; color: var(--text-muted); }
+    .lang-features li strong { color: var(--text); }
+
+    /* ===================================================================
+       Connections
+       =================================================================== */
+    .connections { background: var(--surface2); border: 1px solid var(--border); border-radius: 6px; padding: 12px 16px; margin: 12px 0; }
+    .connections strong { color: var(--accent-blue); }
+    .connections ul { list-style: disc; padding-left: 20px; margin-top: 6px; }
+    .connections li { font-size: 14px; color: var(--text-muted); margin-bottom: 4px; }
+
+    /* ===================================================================
+       Responsive
+       =================================================================== */
+    @media (max-width: 900px) {
+      .sidebar { transform: translateX(-100%); }
+      .main-content { margin-left: 0; padding: 24px 16px 40px; }
+    }
+
+    /* ===================================================================
+       Misc
+       =================================================================== */
+    details summary { user-select: none; }
+    details summary::-webkit-details-marker { color: var(--text-muted); }
+    h4 { font-size: 16px; margin: 16px 0 8px; }
+    p { margin-bottom: 8px; }
+
+    /* ===================================================================
+       Challenge Box
+       =================================================================== */
+    .challenge-box { background: rgba(188, 140, 255, 0.06); border: 1px dashed var(--accent-purple); border-radius: 6px; padding: 12px 16px; margin: 12px 0; }
+    .challenge-box strong { color: var(--accent-purple); }
+
+    /* ===================================================================
+       Footer
+       =================================================================== */
+    footer { margin-top: 64px; padding-top: 24px; border-top: 1px solid var(--border); color: var(--text-muted); font-size: 13px; }
+    footer h3 { font-size: 14px; margin-bottom: 8px; color: var(--text); }
+    footer ul { list-style: none; padding: 0; display: flex; flex-wrap: wrap; gap: 8px 16px; margin-bottom: 12px; }
+    footer li a { font-size: 13px; }
+
+    /* ===================================================================
+       Progress Summary Box
+       =================================================================== */
+    .progress-summary { background: var(--surface1); border: 1px solid var(--border); border-radius: 8px; padding: 20px 24px; margin-bottom: 40px; }
+    .progress-summary h2 { font-size: 18px; margin-bottom: 12px; }
+    .progress-summary .stat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; margin-top: 12px; }
+    .progress-summary .stat-item { background: var(--surface2); border: 1px solid var(--border); border-radius: 6px; padding: 12px; text-align: center; }
+    .progress-summary .stat-item .stat-value { font-size: 24px; font-weight: 700; color: var(--accent-blue); }
+    .progress-summary .stat-item .stat-label { font-size: 12px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; }
+
+    /* ===================================================================
+       Complexity Cheat Sheet Table
+       =================================================================== */
+    .cheat-table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 13px; }
+    .cheat-table th { background: var(--surface2); padding: 10px 12px; text-align: left; border: 1px solid var(--border); font-weight: 600; }
+    .cheat-table td { padding: 8px 12px; border: 1px solid var(--border); font-family: 'SF Mono', 'Fira Code', Consolas, monospace; }
+    .cheat-table tr:nth-child(even) { background: rgba(88, 166, 255, 0.02); }
+
+    /* ===================================================================
+       Study Strategy Box
+       =================================================================== */
+    .study-strategy { background: var(--surface1); border: 1px solid var(--border); border-radius: 8px; padding: 20px 24px; margin-top: 32px; margin-bottom: 32px; }
+    .study-strategy h2 { font-size: 18px; margin-bottom: 12px; }
+    .study-strategy ul { list-style: disc; padding-left: 20px; }
+    .study-strategy li { margin-bottom: 6px; color: var(--text-muted); }
+    .study-strategy li strong { color: var(--text); }
+  </style>
+</head>
+<body>
+<button class="theme-toggle" onclick="toggleTheme()">Light Mode</button>
+<script>
+(function() {
+  var saved = localStorage.getItem('lc-guide-theme');
+  if (saved) document.documentElement.setAttribute('data-theme', saved);
+})();
+
+function toggleTheme() {
+  var html = document.documentElement;
+  var current = html.getAttribute('data-theme');
+  var next = current === 'dark' ? 'light' : 'dark';
+  html.setAttribute('data-theme', next);
+  localStorage.setItem('lc-guide-theme', next);
+  var btn = document.querySelector('.theme-toggle');
+  btn.textContent = next === 'dark' ? 'Light Mode' : 'Dark Mode';
+}
+
+function setLang(lang) {
+  localStorage.setItem('lc-guide-lang', lang);
+  document.querySelectorAll('.lang-toggle-btn').forEach(function(btn) {
+    btn.classList.toggle('active', btn.dataset.lang === lang);
+  });
+  document.querySelectorAll('pre[data-lang]').forEach(function(block) {
+    if (lang === 'all') {
+      block.style.display = '';
+    } else {
+      block.style.display = block.dataset.lang === lang ? '' : 'none';
+    }
+  });
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+  var savedLang = localStorage.getItem('lc-guide-lang') || 'all';
+  setLang(savedLang);
+  var theme = document.documentElement.getAttribute('data-theme');
+  var btn = document.querySelector('.theme-toggle');
+  if (btn) btn.textContent = theme === 'dark' ? 'Light Mode' : 'Dark Mode';
+});
+</script>
+<nav class="sidebar">
+  <div class="section-review">
+    <h3>&#128260; Review &mdash; Spaced Repetition</h3>
+    <a class="nav-link" href="#r198"><span class="problem-num">198</span><span class="problem-title">House Robber</span><span class="diff-M">M</span></a>
+    <a class="nav-link" href="#r295"><span class="problem-num">295</span><span class="problem-title">Find Median from Data Stream</span><span class="diff-H">H</span></a>
+    <a class="nav-link" href="#r139"><span class="problem-num">139</span><span class="problem-title">Word Break</span><span class="diff-M">M</span></a>
+    <a class="nav-link" href="#r208"><span class="problem-num">208</span><span class="problem-title">Implement Trie</span><span class="diff-M">M</span></a>
+    <a class="nav-link" href="#r84"><span class="problem-num">84</span><span class="problem-title">Largest Rectangle in Histogram</span><span class="diff-H">H</span></a>
+    <a class="nav-link" href="#r239"><span class="problem-num">239</span><span class="problem-title">Sliding Window Maximum</span><span class="diff-H">H</span></a>
+    <a class="nav-link" href="#r72"><span class="problem-num">72</span><span class="problem-title">Edit Distance</span><span class="diff-H">H</span></a>
+  </div>
+
+  <h3>Monotonic Stack</h3>
+  <a class="nav-link" href="#p907"><span class="problem-num">907</span><span class="problem-title">Sum of Subarray Minimums</span><span class="diff-M">M</span></a>
+  <a class="nav-link" href="#p1019"><span class="problem-num">1019</span><span class="problem-title">Next Greater Node in List</span><span class="diff-M">M</span></a>
+  <h3>Binary Search</h3>
+  <a class="nav-link" href="#p540"><span class="problem-num">540</span><span class="problem-title">Single Element in Sorted Array</span><span class="diff-M">M</span></a>
+  <a class="nav-link" href="#p1095"><span class="problem-num">1095</span><span class="problem-title">Find in Mountain Array</span><span class="diff-H">H</span></a>
+  <h3>Greedy</h3>
+  <a class="nav-link" href="#p135"><span class="problem-num">135</span><span class="problem-title">Candy</span><span class="diff-H">H</span></a>
+  <a class="nav-link" href="#p678"><span class="problem-num">678</span><span class="problem-title">Valid Parenthesis String</span><span class="diff-M">M</span></a>
+  <h3>Dynamic Programming</h3>
+  <a class="nav-link" href="#p279"><span class="problem-num">279</span><span class="problem-title">Perfect Squares</span><span class="diff-M">M</span></a>
+  <a class="nav-link" href="#p377"><span class="problem-num">377</span><span class="problem-title">Combination Sum IV</span><span class="diff-M">M</span></a>
+  <h3>Array — Boyer-Moore Voting</h3>
+  <a class="nav-link" href="#p169"><span class="problem-num">169</span><span class="problem-title">Majority Element</span><span class="diff-E">E</span></a>
+  <a class="nav-link" href="#p229"><span class="problem-num">229</span><span class="problem-title">Majority Element II</span><span class="diff-M">M</span></a>
+  <h3>Tree</h3>
+  <a class="nav-link" href="#p572"><span class="problem-num">572</span><span class="problem-title">Subtree of Another Tree</span><span class="diff-E">E</span></a>
+  <a class="nav-link" href="#p437"><span class="problem-num">437</span><span class="problem-title">Path Sum III</span><span class="diff-M">M</span></a>
+  <h3>Two Pointers</h3>
+  <a class="nav-link" href="#p16"><span class="problem-num">16</span><span class="problem-title">3Sum Closest</span><span class="diff-M">M</span></a>
+  <h3>Graph</h3>
+  <a class="nav-link" href="#p332"><span class="problem-num">332</span><span class="problem-title">Reconstruct Itinerary</span><span class="diff-H">H</span></a>
+  <h3>Backtracking</h3>
+  <a class="nav-link" href="#p131"><span class="problem-num">131</span><span class="problem-title">Palindrome Partitioning</span><span class="diff-M">M</span></a>
+  <h3>Design</h3>
+  <a class="nav-link" href="#p621"><span class="problem-num">621</span><span class="problem-title">Task Scheduler</span><span class="diff-M">M</span></a>
+</nav>
+
+<main class="main-content">
+  <header class="guide-header">
+    <h1>LeetCode Study Guide</h1>
+    <p class="description">Master patterns through guided problem-solving &mdash; Python, Go, TypeScript, Rust &amp; C++</p>
+    <p class="date">Day 26 &middot; Generated 2026-06-21</p>
+  </header>
+
+  <div class="lang-toggle-bar">
+    <button class="lang-toggle-btn active" data-lang="all" onclick="setLang('all')">All</button>
+    <button class="lang-toggle-btn" data-lang="python" onclick="setLang('python')">Python</button>
+    <button class="lang-toggle-btn" data-lang="go" onclick="setLang('go')">Go</button>
+    <button class="lang-toggle-btn" data-lang="typescript" onclick="setLang('typescript')">TypeScript</button>
+    <button class="lang-toggle-btn" data-lang="rust" onclick="setLang('rust')">Rust</button>
+    <button class="lang-toggle-btn" data-lang="cpp" onclick="setLang('cpp')">C++</button>
+  </div>
+
+  <div class="how-to-use">
+    <h2>How to Use This Guide</h2>
+    <ol>
+      <li>Start with the <strong>Review Section</strong> &mdash; re-solve these from memory <em>before</em> looking at any hint or your previous solution. Retrieval practice beats re-reading.</li>
+      <li>Read the section for the next new problem on your list &mdash; absorb the <strong>Key Insight</strong> and <strong>How to Think About It</strong> steps.</li>
+      <li>Close the guide and open LeetCode &mdash; attempt the problem for at least 20 minutes before peeking.</li>
+      <li>If stuck, re-read the <strong>Key Insight</strong> box &mdash; it holds the conceptual breakthrough that unlocks the optimal solution.</li>
+      <li>After solving (or after 40 minutes), compare your approach to the thinking steps and check the <strong>Watch Out</strong> pitfalls.</li>
+      <li>After solving, ask yourself: <strong>&ldquo;Why does this algorithm work?&rdquo;</strong> &mdash; articulate the correctness argument out loud.</li>
+      <li>Move to the next problem &mdash; problems within each section build on each other.</li>
+    </ol>
+  </div>
+
+  <h2 class="section-header review-header" id="review">Review &mdash; Spaced Repetition</h2>
+  <p class="section-intro">These are problems you have solved before that are due for review based on the forgetting curve. Re-solve them from scratch <strong>without</strong> looking at your previous solution. This retrieval practice is the most effective way to build long-term retention. Schedule: Day 1 &rarr; Day 6 &rarr; Day 15 &rarr; Day 37 &rarr; Day 90.</p>
+
+  <div class="review-card" id="r198">
+    <h3>#198 &middot; House Robber</h3>
+    <div class="problem-meta"><span class="diff-M">Medium</span><span class="ttag">dynamic-programming</span><span class="ttag">array</span><span class="review-days">20 days since last review &amp;middot; rep 3</span></div>
+    <p><strong>The Problem.</strong> Given an array of house values along a street, determine the maximum money you can rob without robbing two adjacent houses.</p>
+    <div class="insight-box"><strong>Quick Reminder.</strong> Classic DP. At each house choose max(skip, rob + best-non-adjacent). A two-variable bottom-up sweep is the cleanest form.</div>
+    <div class="insight-box"><strong>Key Insight.</strong> The choice at house i only depends on the best from i-1 (skip) versus i-2 + current (rob). This collapses the whole table into two rolling variables.</div>
+    <div class="complexity-box">O(n) time, O(1) space</div>
+    <div class="examples">
+      <p><strong>Input:</strong> nums = [1,2,3,1]</p>
+      <p><strong>Output:</strong> 4</p>
+      <p><strong>Explanation:</strong> Rob house 0 (1) and house 2 (3) = 4.</p>
+      <hr style="border:none;border-top:1px dotted var(--border);margin:6px 0;">
+      <p><strong>Input:</strong> nums = [2,7,9,3,1]</p>
+      <p><strong>Output:</strong> 12</p>
+      <p><strong>Explanation:</strong> Rob houses 0, 2, 4 = 2+9+1 = 12.</p>
+      <hr style="border:none;border-top:1px dotted var(--border);margin:6px 0;">
+      <p><strong>Input:</strong> nums = [0]</p>
+      <p><strong>Output:</strong> 0</p>
+      <p><strong>Explanation:</strong> Single house with value 0.</p>
+      <hr style="border:none;border-top:1px dotted var(--border);margin:6px 0;">
+    </div>
+    <div class="challenge-box"><strong>Try to recall.</strong> Can you write the O(1)-space two-variable version in under 8 minutes? What two states do you carry?</div>
+    <details class="prev-solution"><summary>Previous Solution &mdash; click to reveal (try without it first)</summary><div>
+      <pre data-lang="python"><span class="lang-badge python">Python</span><code>class Solution:
+    def rob(self, nums):
+        memo = {}
+        def dp(i):
+            if i == 0: return nums[0]
+            if i == 1: return max(nums[0], nums[1])
+            if i not in memo:
+                memo[i] = max(dp(i-1), nums[i] + dp(i-2))
+            return memo[i]
+        return dp(len(nums) - 1)</code></pre>
+      <pre data-lang="go"><span class="lang-badge go">Go</span><code>func rob(nums []int) int {
+    memo := make(map[int]int)
+    var dp func(int) int
+    dp = func(i int) int {
+        if i == 0 { return nums[0] }
+        if i == 1 { return slices.Max(nums[:2]) }
+        if _, ok := memo[i]; !ok {
+            memo[i] = slices.Max([]int{dp(i-1), dp(i-2)+nums[i]})
+        }
+        return memo[i]
+    }
+    return dp(len(nums)-1)
+}</code></pre>
+    </div></details>
+    <details class="optimal-solution"><summary>Optimal Solution (reference) &mdash; click to reveal</summary><div>
+      <pre data-lang="python"><span class="lang-badge python">Python — Optimal</span><code>class Solution:
+    def rob(self, nums):
+        prev2, prev1 = 0, 0
+        for n in nums:
+            prev2, prev1 = prev1, max(prev1, prev2 + n)
+        return prev1</code></pre>
+      <pre data-lang="go"><span class="lang-badge go">Go — Optimal</span><code>func rob(nums []int) int {
+    prev2, prev1 := 0, 0
+    for _, n := range nums {
+        prev2, prev1 = prev1, max(prev1, prev2+n)
+    }
+    return prev1
+}</code></pre>
+      <pre data-lang="typescript"><span class="lang-badge typescript">TypeScript — Optimal</span><code>function rob(nums: number[]): number {
+    let [p2, p1] = [0, 0];
+    for (const n of nums) {
+        [p2, p1] = [p1, Math.max(p1, p2 + n)];
+    }
+    return p1;
+}</code></pre>
+      <pre data-lang="rust"><span class="lang-badge rust">Rust — Optimal</span><code>impl Solution {
+    pub fn rob(nums: Vec&lt;i32&gt;) -&gt; i32 {
+        let (mut p2, mut p1) = (0, 0);
+        for &amp;n in &amp;nums {
+            let t = p1;
+            p1 = p1.max(p2 + n);
+            p2 = t;
+        }
+        p1
+    }
+}</code></pre>
+      <pre data-lang="cpp"><span class="lang-badge cpp">C++ — Optimal</span><code>class Solution {
+public:
+    int rob(vector&lt;int&gt;&amp; nums) {
+        int p2 = 0, p1 = 0;
+        for (int n : nums) {
+            int t = p1;
+            p1 = max(p1, p2 + n);
+            p2 = t;
+        }
+        return p1;
+    }
+};</code></pre>
+    </div></details>
+  </div>
+
+  <div class="review-card" id="r295">
+    <h3>#295 &middot; Find Median from Data Stream</h3>
+    <div class="problem-meta"><span class="diff-H">Hard</span><span class="ttag">heap</span><span class="ttag">design</span><span class="ttag">two-heaps</span><span class="review-days">20 days since last review &amp;middot; rep 3</span></div>
+    <p><strong>The Problem.</strong> Design a class supporting addNum(int) to ingest a stream of numbers and findMedian() to return the median of all numbers seen so far.</p>
+    <div class="insight-box"><strong>Quick Reminder.</strong> Two heaps: a max-heap for the lower half and a min-heap for the upper half. Keep their sizes balanced to within 1.</div>
+    <div class="insight-box"><strong>Key Insight.</strong> If the smaller half lives in a max-heap and the larger half in a min-heap, the median is always at the top of one heap (odd count) or straddles both tops (even count).</div>
+    <div class="complexity-box">O(log n) add, O(1) find</div>
+    <div class="examples">
+      <p><strong>Input:</strong> addNum(1), addNum(2), findMedian()</p>
+      <p><strong>Output:</strong> 1.5</p>
+      <p><strong>Explanation:</strong> Two elements; median is the average of the two heap tops.</p>
+      <hr style="border:none;border-top:1px dotted var(--border);margin:6px 0;">
+      <p><strong>Input:</strong> addNum(3), findMedian()</p>
+      <p><strong>Output:</strong> 2.0</p>
+      <p><strong>Explanation:</strong> Now [1,2,3]; the lower max-heap top (2) is the median.</p>
+      <hr style="border:none;border-top:1px dotted var(--border);margin:6px 0;">
+      <p><strong>Input:</strong> addNum(1), findMedian() (single element)</p>
+      <p><strong>Output:</strong> 1.0</p>
+      <p><strong>Explanation:</strong> One element; it is the median.</p>
+      <hr style="border:none;border-top:1px dotted var(--border);margin:6px 0;">
+    </div>
+    <div class="challenge-box"><strong>Try to recall.</strong> Can you re-derive the balancing rules from scratch? What invariant keeps the two heaps within 1 of each other?</div>
+    <details class="prev-solution"><summary>Previous Solution &mdash; click to reveal (try without it first)</summary><div>
+      <pre data-lang="python"><span class="lang-badge python">Python</span><code>class MedianFinder(object):
+    def __init__(self):
+        self.small, self.large = [], []   # small is a max-heap (negated)
+    def addNum(self, num):
+        heapq.heappush(self.small, -num)
+        if self.small and self.large and -self.small[0] &gt; self.large[0]:
+            heapq.heappush(self.large, -heapq.heappop(self.small))
+        if len(self.small) &gt; len(self.large) + 1:
+            heapq.heappush(self.large, -heapq.heappop(self.small))
+        if len(self.small) + 1 &lt; len(self.large):
+            heapq.heappush(self.small, -heapq.heappop(self.large))
+    def findMedian(self):
+        if len(self.small) &gt; len(self.large): return -self.small[0]
+        if len(self.small) &lt; len(self.large): return self.large[0]
+        return (-self.small[0] + self.large[0]) / float(2)</code></pre>
+    </div></details>
+    <details class="optimal-solution"><summary>Optimal Solution (reference) &mdash; click to reveal</summary><div>
+      <pre data-lang="python"><span class="lang-badge python">Python — Optimal</span><code>class MedianFinder:
+    def __init__(self):
+        self.lo, self.hi = [], []      # lo: max-heap (neg), hi: min-heap
+    def addNum(self, num):
+        heapq.heappush(self.lo, -heapq.heappushpop(self.hi, num))
+        if len(self.lo) &gt; len(self.hi):
+            heapq.heappush(self.hi, -heapq.heappop(self.lo))
+    def findMedian(self):
+        if len(self.hi) &gt; len(self.lo):
+            return float(self.hi[0])
+        return (self.hi[0] - self.lo[0]) / 2.0</code></pre>
+      <pre data-lang="go"><span class="lang-badge go">Go — Optimal</span><code>type MedianFinder struct{ lo, hi *IntHeap } // lo max-heap, hi min-heap
+func Constructor() MedianFinder {
+    return MedianFinder{&amp;IntHeap{max: true}, &amp;IntHeap{}}
+}
+func (m *MedianFinder) AddNum(num int) {
+    heap.Push(m.lo, num)
+    heap.Push(m.hi, heap.Pop(m.lo))
+    if m.hi.Len() &gt; m.lo.Len() {
+        heap.Push(m.lo, heap.Pop(m.hi))
+    }
+}
+func (m *MedianFinder) FindMedian() float64 {
+    if m.lo.Len() &gt; m.hi.Len() { return float64(m.lo.Peek()) }
+    return float64(m.lo.Peek()+m.hi.Peek()) / 2
+}</code></pre>
+      <pre data-lang="typescript"><span class="lang-badge typescript">TypeScript — Optimal</span><code>// uses a MinHeap/MaxHeap helper class
+class MedianFinder {
+    lo = new MaxHeap(); hi = new MinHeap();
+    addNum(num: number): void {
+        this.lo.push(num);
+        this.hi.push(this.lo.pop()!);
+        if (this.hi.size() &gt; this.lo.size()) this.lo.push(this.hi.pop()!);
+    }
+    findMedian(): number {
+        if (this.lo.size() &gt; this.hi.size()) return this.lo.top();
+        return (this.lo.top() + this.hi.top()) / 2;
+    }
+}</code></pre>
+      <pre data-lang="rust"><span class="lang-badge rust">Rust — Optimal</span><code>use std::collections::BinaryHeap;
+use std::cmp::Reverse;
+struct MedianFinder { lo: BinaryHeap&lt;i32&gt;, hi: BinaryHeap&lt;Reverse&lt;i32&gt;&gt; }
+impl MedianFinder {
+    fn new() -&gt; Self { Self { lo: BinaryHeap::new(), hi: BinaryHeap::new() } }
+    fn add_num(&amp;mut self, num: i32) {
+        self.lo.push(num);
+        self.hi.push(Reverse(self.lo.pop().unwrap()));
+        if self.hi.len() &gt; self.lo.len() {
+            self.lo.push(self.hi.pop().unwrap().0);
+        }
+    }
+    fn find_median(&amp;self) -&gt; f64 {
+        if self.lo.len() &gt; self.hi.len() { *self.lo.peek().unwrap() as f64 }
+        else { (*self.lo.peek().unwrap() + self.hi.peek().unwrap().0) as f64 / 2.0 }
+    }
+}</code></pre>
+      <pre data-lang="cpp"><span class="lang-badge cpp">C++ — Optimal</span><code>class MedianFinder {
+    priority_queue&lt;int&gt; lo;                              // max-heap
+    priority_queue&lt;int, vector&lt;int&gt;, greater&lt;int&gt;&gt; hi;   // min-heap
+public:
+    void addNum(int num) {
+        lo.push(num);
+        hi.push(lo.top()); lo.pop();
+        if (hi.size() &gt; lo.size()) { lo.push(hi.top()); hi.pop(); }
+    }
+    double findMedian() {
+        if (lo.size() &gt; hi.size()) return lo.top();
+        return (lo.top() + hi.top()) / 2.0;
+    }
+};</code></pre>
+    </div></details>
+  </div>
+
+  <div class="review-card" id="r139">
+    <h3>#139 &middot; Word Break</h3>
+    <div class="problem-meta"><span class="diff-M">Medium</span><span class="ttag">dynamic-programming</span><span class="ttag">string</span><span class="review-days">3 days since last review &amp;middot; rep 3</span></div>
+    <p><strong>The Problem.</strong> Given a string s and a dictionary of words, return true if s can be segmented into a space-separated sequence of one or more dictionary words.</p>
+    <div class="insight-box"><strong>Quick Reminder.</strong> Bottom-up DP: dp[i] is true if s[:i] is segmentable. For each i, check every word that could end at i.</div>
+    <div class="insight-box"><strong>Key Insight.</strong> Position i is reachable if there exists a dictionary word w with dp[i-len(w)] true and s[i-len(w):i] == w. Reuse of subproblem answers avoids the exponential re-splitting of brute force.</div>
+    <div class="complexity-box">O(n*m*k) time, O(n) space  (n=len(s), m=words, k=avg word len)</div>
+    <div class="examples">
+      <p><strong>Input:</strong> s = "leetcode", wordDict = ["leet","code"]</p>
+      <p><strong>Output:</strong> true</p>
+      <p><strong>Explanation:</strong> "leet" + "code".</p>
+      <hr style="border:none;border-top:1px dotted var(--border);margin:6px 0;">
+      <p><strong>Input:</strong> s = "applepenapple", wordDict = ["apple","pen"]</p>
+      <p><strong>Output:</strong> true</p>
+      <p><strong>Explanation:</strong> "apple" + "pen" + "apple" (words reusable).</p>
+      <hr style="border:none;border-top:1px dotted var(--border);margin:6px 0;">
+      <p><strong>Input:</strong> s = "catsandog", wordDict = ["cats","dog","sand","and","cat"]</p>
+      <p><strong>Output:</strong> false</p>
+      <p><strong>Explanation:</strong> No segmentation covers the whole string.</p>
+      <hr style="border:none;border-top:1px dotted var(--border);margin:6px 0;">
+    </div>
+    <div class="challenge-box"><strong>Try to recall.</strong> Can you write the dp[] array version (forward fill) instead of memoized recursion? What is dp[0]?</div>
+    <details class="prev-solution"><summary>Previous Solution &mdash; click to reveal (try without it first)</summary><div>
+      <pre data-lang="python"><span class="lang-badge python">Python</span><code>class Solution:
+    def wordBreak(self, s, wordDict):
+        memo = {}
+        def dp(i):
+            if i &gt;= len(s): return True
+            for word in wordDict:
+                if (word, i) not in memo:
+                    if s[i:i+len(word)] == word:
+                        memo[(word, i)] = dp(i + len(word))
+                if (word, i) in memo and memo[(word, i)]:
+                    return True
+            return False
+        return dp(0)</code></pre>
+    </div></details>
+    <details class="optimal-solution"><summary>Optimal Solution (reference) &mdash; click to reveal</summary><div>
+      <pre data-lang="python"><span class="lang-badge python">Python — Optimal</span><code>class Solution:
+    def wordBreak(self, s, wordDict):
+        words = set(wordDict)
+        dp = [True] + [False] * len(s)
+        for i in range(1, len(s) + 1):
+            for j in range(i):
+                if dp[j] and s[j:i] in words:
+                    dp[i] = True
+                    break
+        return dp[-1]</code></pre>
+      <pre data-lang="go"><span class="lang-badge go">Go — Optimal</span><code>func wordBreak(s string, wordDict []string) bool {
+    words := map[string]bool{}
+    for _, w := range wordDict { words[w] = true }
+    dp := make([]bool, len(s)+1)
+    dp[0] = true
+    for i := 1; i &lt;= len(s); i++ {
+        for j := 0; j &lt; i; j++ {
+            if dp[j] &amp;&amp; words[s[j:i]] { dp[i] = true; break }
+        }
+    }
+    return dp[len(s)]
+}</code></pre>
+      <pre data-lang="typescript"><span class="lang-badge typescript">TypeScript — Optimal</span><code>function wordBreak(s: string, wordDict: string[]): boolean {
+    const words = new Set(wordDict);
+    const dp = new Array(s.length + 1).fill(false);
+    dp[0] = true;
+    for (let i = 1; i &lt;= s.length; i++) {
+        for (let j = 0; j &lt; i; j++) {
+            if (dp[j] &amp;&amp; words.has(s.slice(j, i))) { dp[i] = true; break; }
+        }
+    }
+    return dp[s.length];
+}</code></pre>
+      <pre data-lang="rust"><span class="lang-badge rust">Rust — Optimal</span><code>use std::collections::HashSet;
+impl Solution {
+    pub fn word_break(s: String, word_dict: Vec&lt;String&gt;) -&gt; bool {
+        let words: HashSet&lt;&amp;str&gt; = word_dict.iter().map(|w| w.as_str()).collect();
+        let n = s.len();
+        let mut dp = vec![false; n + 1];
+        dp[0] = true;
+        for i in 1..=n {
+            for j in 0..i {
+                if dp[j] &amp;&amp; words.contains(&amp;s[j..i]) { dp[i] = true; break; }
+            }
+        }
+        dp[n]
+    }
+}</code></pre>
+      <pre data-lang="cpp"><span class="lang-badge cpp">C++ — Optimal</span><code>class Solution {
+public:
+    bool wordBreak(string s, vector&lt;string&gt;&amp; wordDict) {
+        unordered_set&lt;string&gt; words(wordDict.begin(), wordDict.end());
+        int n = s.size();
+        vector&lt;bool&gt; dp(n + 1, false);
+        dp[0] = true;
+        for (int i = 1; i &lt;= n; i++)
+            for (int j = 0; j &lt; i; j++)
+                if (dp[j] &amp;&amp; words.count(s.substr(j, i - j))) { dp[i] = true; break; }
+        return dp[n];
+    }
+};</code></pre>
+    </div></details>
+  </div>
+
+  <div class="review-card" id="r208">
+    <h3>#208 &middot; Implement Trie (Prefix Tree)</h3>
+    <div class="problem-meta"><span class="diff-M">Medium</span><span class="ttag">trie</span><span class="ttag">design</span><span class="ttag">string</span><span class="review-days">8 days since last review &amp;middot; rep 2</span></div>
+    <p><strong>The Problem.</strong> Implement a trie (prefix tree) supporting insert(word), search(word) (exact word present), and startsWith(prefix) (any word with this prefix).</p>
+    <div class="insight-box"><strong>Quick Reminder.</strong> A tree of nodes, each with a children map and an isEnd flag. insert walks/creates nodes; search walks and checks isEnd; startsWith walks and returns whether the path exists.</div>
+    <div class="insight-box"><strong>Key Insight.</strong> Each node holds a dictionary of children keyed by character. A dedicated end-of-word marker distinguishes a complete word from a mere prefix on the same path.</div>
+    <div class="complexity-box">O(L) per operation, O(total chars) space  (L = word length)</div>
+    <div class="examples">
+      <p><strong>Input:</strong> insert("apple"), search("apple")</p>
+      <p><strong>Output:</strong> true</p>
+      <p><strong>Explanation:</strong> Exact word was inserted.</p>
+      <hr style="border:none;border-top:1px dotted var(--border);margin:6px 0;">
+      <p><strong>Input:</strong> search("app")</p>
+      <p><strong>Output:</strong> false</p>
+      <p><strong>Explanation:</strong> "app" is only a prefix, not an inserted word.</p>
+      <hr style="border:none;border-top:1px dotted var(--border);margin:6px 0;">
+      <p><strong>Input:</strong> startsWith("app"), then insert("app"), search("app")</p>
+      <p><strong>Output:</strong> true, then true</p>
+      <p><strong>Explanation:</strong> After inserting "app", it becomes a complete word.</p>
+      <hr style="border:none;border-top:1px dotted var(--border);margin:6px 0;">
+    </div>
+    <div class="challenge-box"><strong>Try to recall.</strong> Can you implement all three methods sharing a single walk helper? Where exactly do you set the end flag?</div>
+    <details class="prev-solution"><summary>Previous Solution &mdash; click to reveal (try without it first)</summary><div>
+      <pre data-lang="python"><span class="lang-badge python">Python</span><code>class Trie(object):
+    def __init__(self):
+        self.trie = {}
+    def insert(self, word):
+        t = self.trie
+        for i in range(len(word)):
+            if i &lt; len(word) - 1:
+                if word[i] not in t: t[word[i]] = {}
+                t = t[word[i]]
+            else:
+                t[word[i] + "="] = None
+    def search(self, word):
+        t = self.trie
+        for i in range(len(word)):
+            if i &lt; len(word) - 1:
+                if word[i] in t: t = t[word[i]]
+                else: return False
+            else:
+                return word[i] + "=" in t
+    def startsWith(self, prefix):
+        t = self.trie
+        for i in range(len(prefix)):
+            if i &lt; len(prefix) - 1:
+                if prefix[i] in t: t = t[prefix[i]]
+                else: return False
+            else:
+                return prefix[i] in t or prefix[i] + "=" in t</code></pre>
+    </div></details>
+    <details class="optimal-solution"><summary>Optimal Solution (reference) &mdash; click to reveal</summary><div>
+      <pre data-lang="python"><span class="lang-badge python">Python — Optimal</span><code>class TrieNode:
+    def __init__(self):
+        self.children = {}
+        self.is_end = False
+class Trie:
+    def __init__(self):
+        self.root = TrieNode()
+    def insert(self, word):
+        node = self.root
+        for c in word:
+            node = node.children.setdefault(c, TrieNode())
+        node.is_end = True
+    def _find(self, word):
+        node = self.root
+        for c in word:
+            if c not in node.children: return None
+            node = node.children[c]
+        return node
+    def search(self, word):
+        node = self._find(word)
+        return node is not None and node.is_end
+    def startsWith(self, prefix):
+        return self._find(prefix) is not None</code></pre>
+      <pre data-lang="go"><span class="lang-badge go">Go — Optimal</span><code>type Trie struct {
+    children [26]*Trie
+    isEnd    bool
+}
+func Constructor() Trie { return Trie{} }
+func (t *Trie) Insert(word string) {
+    node := t
+    for _, c := range word {
+        if node.children[c-'a'] == nil { node.children[c-'a'] = &amp;Trie{} }
+        node = node.children[c-'a']
+    }
+    node.isEnd = true
+}
+func (t *Trie) find(word string) *Trie {
+    node := t
+    for _, c := range word {
+        if node.children[c-'a'] == nil { return nil }
+        node = node.children[c-'a']
+    }
+    return node
+}
+func (t *Trie) Search(word string) bool { n := t.find(word); return n != nil &amp;&amp; n.isEnd }
+func (t *Trie) StartsWith(p string) bool { return t.find(p) != nil }</code></pre>
+      <pre data-lang="typescript"><span class="lang-badge typescript">TypeScript — Optimal</span><code>class TrieNode {
+    children: Map&lt;string, TrieNode&gt; = new Map();
+    isEnd = false;
+}
+class Trie {
+    root = new TrieNode();
+    insert(word: string): void {
+        let node = this.root;
+        for (const c of word) {
+            if (!node.children.has(c)) node.children.set(c, new TrieNode());
+            node = node.children.get(c)!;
+        }
+        node.isEnd = true;
+    }
+    private find(word: string): TrieNode | null {
+        let node = this.root;
+        for (const c of word) {
+            const nxt = node.children.get(c);
+            if (!nxt) return null;
+            node = nxt;
+        }
+        return node;
+    }
+    search(word: string): boolean { const n = this.find(word); return !!n &amp;&amp; n.isEnd; }
+    startsWith(p: string): boolean { return this.find(p) !== null; }
+}</code></pre>
+      <pre data-lang="rust"><span class="lang-badge rust">Rust — Optimal</span><code>use std::collections::HashMap;
+#[derive(Default)]
+struct Trie { children: HashMap&lt;char, Trie&gt;, is_end: bool }
+impl Trie {
+    fn new() -&gt; Self { Default::default() }
+    fn insert(&amp;mut self, word: String) {
+        let mut node = self;
+        for c in word.chars() {
+            node = node.children.entry(c).or_default();
+        }
+        node.is_end = true;
+    }
+    fn find(&amp;self, word: &amp;str) -&gt; Option&lt;&amp;Trie&gt; {
+        let mut node = self;
+        for c in word.chars() {
+            node = node.children.get(&amp;c)?;
+        }
+        Some(node)
+    }
+    fn search(&amp;self, word: String) -&gt; bool {
+        self.find(&amp;word).map_or(false, |n| n.is_end)
+    }
+    fn starts_with(&amp;self, prefix: String) -&gt; bool { self.find(&amp;prefix).is_some() }
+}</code></pre>
+      <pre data-lang="cpp"><span class="lang-badge cpp">C++ — Optimal</span><code>class Trie {
+    struct Node { Node* ch[26] = {}; bool isEnd = false; };
+    Node* root = new Node();
+    Node* find(const string&amp; w) {
+        Node* node = root;
+        for (char c : w) {
+            if (!node-&gt;ch[c - 'a']) return nullptr;
+            node = node-&gt;ch[c - 'a'];
+        }
+        return node;
+    }
+public:
+    void insert(string word) {
+        Node* node = root;
+        for (char c : word) {
+            if (!node-&gt;ch[c - 'a']) node-&gt;ch[c - 'a'] = new Node();
+            node = node-&gt;ch[c - 'a'];
+        }
+        node-&gt;isEnd = true;
+    }
+    bool search(string word) { Node* n = find(word); return n &amp;&amp; n-&gt;isEnd; }
+    bool startsWith(string prefix) { return find(prefix) != nullptr; }
+};</code></pre>
+    </div></details>
+  </div>
+
+  <div class="review-card" id="r84">
+    <h3>#84 &middot; Largest Rectangle in Histogram</h3>
+    <div class="problem-meta"><span class="diff-H">Hard</span><span class="ttag">stack</span><span class="ttag">monotonic-stack</span><span class="review-days">12 days overdue &amp;middot; rep 2</span></div>
+    <p><strong>The Problem.</strong> Given an array of bar heights (each bar width 1), find the area of the largest rectangle that fits entirely within the histogram.</p>
+    <div class="insight-box"><strong>Quick Reminder.</strong> Monotonic increasing stack of indices. When a shorter bar appears, pop taller bars and compute the rectangle each one bounds.</div>
+    <div class="insight-box"><strong>Key Insight.</strong> For any bar, the widest rectangle using it as the shortest bar extends left to the first strictly shorter bar and right to the first strictly shorter bar. A monotonic stack discovers both boundaries in a single pass.</div>
+    <div class="complexity-box">O(n) time, O(n) space</div>
+    <div class="examples">
+      <p><strong>Input:</strong> heights = [2,1,5,6,2,3]</p>
+      <p><strong>Output:</strong> 10</p>
+      <p><strong>Explanation:</strong> Bars at index 2 and 3 (heights 5,6): min height 5 over width 2 = 10.</p>
+      <hr style="border:none;border-top:1px dotted var(--border);margin:6px 0;">
+      <p><strong>Input:</strong> heights = [2,4]</p>
+      <p><strong>Output:</strong> 4</p>
+      <p><strong>Explanation:</strong> Bar of height 4 alone, width 1; or height 2 over width 2 = 4.</p>
+      <hr style="border:none;border-top:1px dotted var(--border);margin:6px 0;">
+      <p><strong>Input:</strong> heights = [2]</p>
+      <p><strong>Output:</strong> 2</p>
+      <p><strong>Explanation:</strong> Single bar.</p>
+      <hr style="border:none;border-top:1px dotted var(--border);margin:6px 0;">
+    </div>
+    <div class="challenge-box"><strong>Try to recall.</strong> Can you handle the leftover stack after the loop ends? What sentinel makes the cleanup loop unnecessary?</div>
+    <details class="optimal-solution"><summary>Optimal Solution (reference) &mdash; click to reveal</summary><div>
+      <pre data-lang="python"><span class="lang-badge python">Python — Optimal</span><code>class Solution:
+    def largestRectangleArea(self, heights):
+        stack = []           # indices of increasing bars
+        best = 0
+        for i, h in enumerate(heights + [0]):
+            while stack and heights[stack[-1]] &gt;= h:
+                height = heights[stack.pop()]
+                left = stack[-1] if stack else -1
+                best = max(best, height * (i - left - 1))
+            stack.append(i)
+        return best</code></pre>
+      <pre data-lang="go"><span class="lang-badge go">Go — Optimal</span><code>func largestRectangleArea(heights []int) int {
+    heights = append(heights, 0)
+    stack := []int{}
+    best := 0
+    for i, h := range heights {
+        for len(stack) &gt; 0 &amp;&amp; heights[stack[len(stack)-1]] &gt;= h {
+            height := heights[stack[len(stack)-1]]
+            stack = stack[:len(stack)-1]
+            left := -1
+            if len(stack) &gt; 0 { left = stack[len(stack)-1] }
+            if a := height * (i - left - 1); a &gt; best { best = a }
+        }
+        stack = append(stack, i)
+    }
+    return best
+}</code></pre>
+      <pre data-lang="typescript"><span class="lang-badge typescript">TypeScript — Optimal</span><code>function largestRectangleArea(heights: number[]): number {
+    const h = [...heights, 0];
+    const stack: number[] = [];
+    let best = 0;
+    for (let i = 0; i &lt; h.length; i++) {
+        while (stack.length &amp;&amp; h[stack[stack.length - 1]] &gt;= h[i]) {
+            const height = h[stack.pop()!];
+            const left = stack.length ? stack[stack.length - 1] : -1;
+            best = Math.max(best, height * (i - left - 1));
+        }
+        stack.push(i);
+    }
+    return best;
+}</code></pre>
+      <pre data-lang="rust"><span class="lang-badge rust">Rust — Optimal</span><code>impl Solution {
+    pub fn largest_rectangle_area(heights: Vec&lt;i32&gt;) -&gt; i32 {
+        let mut h = heights;
+        h.push(0);
+        let mut stack: Vec&lt;usize&gt; = Vec::new();
+        let mut best = 0;
+        for i in 0..h.len() {
+            while let Some(&amp;top) = stack.last() {
+                if h[top] &lt; h[i] { break; }
+                let height = h[stack.pop().unwrap()];
+                let left = stack.last().map_or(-1, |&amp;l| l as i32);
+                best = best.max(height * (i as i32 - left - 1));
+            }
+            stack.push(i);
+        }
+        best
+    }
+}</code></pre>
+      <pre data-lang="cpp"><span class="lang-badge cpp">C++ — Optimal</span><code>class Solution {
+public:
+    int largestRectangleArea(vector&lt;int&gt;&amp; heights) {
+        heights.push_back(0);
+        stack&lt;int&gt; st;
+        int best = 0;
+        for (int i = 0; i &lt; (int)heights.size(); i++) {
+            while (!st.empty() &amp;&amp; heights[st.top()] &gt;= heights[i]) {
+                int height = heights[st.top()]; st.pop();
+                int left = st.empty() ? -1 : st.top();
+                best = max(best, height * (i - left - 1));
+            }
+            st.push(i);
+        }
+        return best;
+    }
+};</code></pre>
+    </div></details>
+  </div>
+
+  <div class="review-card" id="r239">
+    <h3>#239 &middot; Sliding Window Maximum</h3>
+    <div class="problem-meta"><span class="diff-H">Hard</span><span class="ttag">deque</span><span class="ttag">sliding-window</span><span class="ttag">monotonic</span><span class="review-days">11 days overdue &amp;middot; rep 2</span></div>
+    <p><strong>The Problem.</strong> Given an array nums and a window size k, return an array of the maximum value within each sliding window as it moves from left to right.</p>
+    <div class="insight-box"><strong>Quick Reminder.</strong> Monotonic decreasing deque of indices. The front always holds the current window maximum; expired indices leave the front, smaller values leave the back.</div>
+    <div class="insight-box"><strong>Key Insight.</strong> A deque holding indices in decreasing order of value lets the front always be the window max. When sliding right, expired indices drop off the front and new elements evict every smaller index from the back &amp;mdash; each index enters and leaves once, giving O(n).</div>
+    <div class="complexity-box">O(n) time, O(k) space</div>
+    <div class="examples">
+      <p><strong>Input:</strong> nums = [1,3,-1,-3,5,3,6,7], k = 3</p>
+      <p><strong>Output:</strong> [3,3,5,5,6,7]</p>
+      <p><strong>Explanation:</strong> Each window of size 3 reports its max.</p>
+      <hr style="border:none;border-top:1px dotted var(--border);margin:6px 0;">
+      <p><strong>Input:</strong> nums = [1], k = 1</p>
+      <p><strong>Output:</strong> [1]</p>
+      <p><strong>Explanation:</strong> Single element.</p>
+      <hr style="border:none;border-top:1px dotted var(--border);margin:6px 0;">
+      <p><strong>Input:</strong> nums = [9,8,7,6], k = 2</p>
+      <p><strong>Output:</strong> [9,8,7]</p>
+      <p><strong>Explanation:</strong> Strictly decreasing; each window max is its left element.</p>
+      <hr style="border:none;border-top:1px dotted var(--border);margin:6px 0;">
+    </div>
+    <div class="challenge-box"><strong>Try to recall.</strong> Can you store indices (not values) so you can detect window expiry? When do you pop the front?</div>
+    <details class="optimal-solution"><summary>Optimal Solution (reference) &mdash; click to reveal</summary><div>
+      <pre data-lang="python"><span class="lang-badge python">Python — Optimal</span><code>from collections import deque
+class Solution:
+    def maxSlidingWindow(self, nums, k):
+        dq, out = deque(), []
+        for i, n in enumerate(nums):
+            while dq and nums[dq[-1]] &lt;= n:
+                dq.pop()
+            dq.append(i)
+            if dq[0] == i - k:
+                dq.popleft()
+            if i &gt;= k - 1:
+                out.append(nums[dq[0]])
+        return out</code></pre>
+      <pre data-lang="go"><span class="lang-badge go">Go — Optimal</span><code>func maxSlidingWindow(nums []int, k int) []int {
+    dq := []int{}            // indices, decreasing values
+    out := []int{}
+    for i, n := range nums {
+        for len(dq) &gt; 0 &amp;&amp; nums[dq[len(dq)-1]] &lt;= n {
+            dq = dq[:len(dq)-1]
+        }
+        dq = append(dq, i)
+        if dq[0] == i-k { dq = dq[1:] }
+        if i &gt;= k-1 { out = append(out, nums[dq[0]]) }
+    }
+    return out
+}</code></pre>
+      <pre data-lang="typescript"><span class="lang-badge typescript">TypeScript — Optimal</span><code>function maxSlidingWindow(nums: number[], k: number): number[] {
+    const dq: number[] = [];   // indices
+    const out: number[] = [];
+    for (let i = 0; i &lt; nums.length; i++) {
+        while (dq.length &amp;&amp; nums[dq[dq.length - 1]] &lt;= nums[i]) dq.pop();
+        dq.push(i);
+        if (dq[0] === i - k) dq.shift();
+        if (i &gt;= k - 1) out.push(nums[dq[0]]);
+    }
+    return out;
+}</code></pre>
+      <pre data-lang="rust"><span class="lang-badge rust">Rust — Optimal</span><code>use std::collections::VecDeque;
+impl Solution {
+    pub fn max_sliding_window(nums: Vec&lt;i32&gt;, k: i32) -&gt; Vec&lt;i32&gt; {
+        let k = k as usize;
+        let mut dq: VecDeque&lt;usize&gt; = VecDeque::new();
+        let mut out = Vec::new();
+        for i in 0..nums.len() {
+            while let Some(&amp;b) = dq.back() {
+                if nums[b] &lt;= nums[i] { dq.pop_back(); } else { break; }
+            }
+            dq.push_back(i);
+            if *dq.front().unwrap() + k == i { dq.pop_front(); }
+            if i + 1 &gt;= k { out.push(nums[*dq.front().unwrap()]); }
+        }
+        out
+    }
+}</code></pre>
+      <pre data-lang="cpp"><span class="lang-badge cpp">C++ — Optimal</span><code>class Solution {
+public:
+    vector&lt;int&gt; maxSlidingWindow(vector&lt;int&gt;&amp; nums, int k) {
+        deque&lt;int&gt; dq;          // indices
+        vector&lt;int&gt; out;
+        for (int i = 0; i &lt; (int)nums.size(); i++) {
+            while (!dq.empty() &amp;&amp; nums[dq.back()] &lt;= nums[i]) dq.pop_back();
+            dq.push_back(i);
+            if (dq.front() == i - k) dq.pop_front();
+            if (i &gt;= k - 1) out.push_back(nums[dq.front()]);
+        }
+        return out;
+    }
+};</code></pre>
+    </div></details>
+  </div>
+
+  <div class="review-card" id="r72">
+    <h3>#72 &middot; Edit Distance</h3>
+    <div class="problem-meta"><span class="diff-H">Hard</span><span class="ttag">dynamic-programming</span><span class="ttag">string</span><span class="review-days">11 days overdue &amp;middot; rep 2</span></div>
+    <p><strong>The Problem.</strong> Given two strings word1 and word2, return the minimum number of operations (insert, delete, replace one character) to convert word1 into word2.</p>
+    <div class="insight-box"><strong>Quick Reminder.</strong> 2D DP where dp[i][j] = min ops to turn word1[:i] into word2[:j]. Matching chars inherit the diagonal; otherwise 1 + min of three neighbors.</div>
+    <div class="insight-box"><strong>Key Insight.</strong> At each (i,j): if the current characters match, the cost equals the diagonal dp[i-1][j-1]. Otherwise it is 1 + min(diagonal=replace, left=insert, above=delete). The base row/column encode converting to/from the empty string.</div>
+    <div class="complexity-box">O(mn) time, O(mn) space (or O(n) with a rolling row)</div>
+    <div class="examples">
+      <p><strong>Input:</strong> word1 = "horse", word2 = "ros"</p>
+      <p><strong>Output:</strong> 3</p>
+      <p><strong>Explanation:</strong> horse-&gt;rorse (replace h)-&gt;rose (delete r)-&gt;ros (delete e).</p>
+      <hr style="border:none;border-top:1px dotted var(--border);margin:6px 0;">
+      <p><strong>Input:</strong> word1 = "intention", word2 = "execution"</p>
+      <p><strong>Output:</strong> 5</p>
+      <p><strong>Explanation:</strong> Five edits transform one into the other.</p>
+      <hr style="border:none;border-top:1px dotted var(--border);margin:6px 0;">
+      <p><strong>Input:</strong> word1 = "", word2 = "abc"</p>
+      <p><strong>Output:</strong> 3</p>
+      <p><strong>Explanation:</strong> Three inserts from empty string.</p>
+      <hr style="border:none;border-top:1px dotted var(--border);margin:6px 0;">
+    </div>
+    <div class="challenge-box"><strong>Try to recall.</strong> Can you set up the base cases dp[i][0] and dp[0][j] correctly? What do they represent?</div>
+    <details class="optimal-solution"><summary>Optimal Solution (reference) &mdash; click to reveal</summary><div>
+      <pre data-lang="python"><span class="lang-badge python">Python — Optimal</span><code>class Solution:
+    def minDistance(self, w1, w2):
+        m, n = len(w1), len(w2)
+        dp = [[0]*(n+1) for _ in range(m+1)]
+        for i in range(m+1): dp[i][0] = i
+        for j in range(n+1): dp[0][j] = j
+        for i in range(1, m+1):
+            for j in range(1, n+1):
+                if w1[i-1] == w2[j-1]:
+                    dp[i][j] = dp[i-1][j-1]
+                else:
+                    dp[i][j] = 1 + min(dp[i-1][j-1], dp[i-1][j], dp[i][j-1])
+        return dp[m][n]</code></pre>
+      <pre data-lang="go"><span class="lang-badge go">Go — Optimal</span><code>func minDistance(w1, w2 string) int {
+    m, n := len(w1), len(w2)
+    dp := make([][]int, m+1)
+    for i := range dp { dp[i] = make([]int, n+1); dp[i][0] = i }
+    for j := 0; j &lt;= n; j++ { dp[0][j] = j }
+    for i := 1; i &lt;= m; i++ {
+        for j := 1; j &lt;= n; j++ {
+            if w1[i-1] == w2[j-1] {
+                dp[i][j] = dp[i-1][j-1]
+            } else {
+                dp[i][j] = 1 + min(dp[i-1][j-1], min(dp[i-1][j], dp[i][j-1]))
+            }
+        }
+    }
+    return dp[m][n]
+}</code></pre>
+      <pre data-lang="typescript"><span class="lang-badge typescript">TypeScript — Optimal</span><code>function minDistance(w1: string, w2: string): number {
+    const m = w1.length, n = w2.length;
+    const dp = Array.from({length: m+1}, (_, i) =&gt;
+        Array.from({length: n+1}, (_, j) =&gt; i === 0 ? j : j === 0 ? i : 0));
+    for (let i = 1; i &lt;= m; i++)
+        for (let j = 1; j &lt;= n; j++)
+            dp[i][j] = w1[i-1] === w2[j-1]
+                ? dp[i-1][j-1]
+                : 1 + Math.min(dp[i-1][j-1], dp[i-1][j], dp[i][j-1]);
+    return dp[m][n];
+}</code></pre>
+      <pre data-lang="rust"><span class="lang-badge rust">Rust — Optimal</span><code>impl Solution {
+    pub fn min_distance(w1: String, w2: String) -&gt; i32 {
+        let (a, b) = (w1.as_bytes(), w2.as_bytes());
+        let (m, n) = (a.len(), b.len());
+        let mut dp = vec![vec![0; n + 1]; m + 1];
+        for i in 0..=m { dp[i][0] = i as i32; }
+        for j in 0..=n { dp[0][j] = j as i32; }
+        for i in 1..=m {
+            for j in 1..=n {
+                dp[i][j] = if a[i-1] == b[j-1] {
+                    dp[i-1][j-1]
+                } else {
+                    1 + dp[i-1][j-1].min(dp[i-1][j]).min(dp[i][j-1])
+                };
+            }
+        }
+        dp[m][n]
+    }
+}</code></pre>
+      <pre data-lang="cpp"><span class="lang-badge cpp">C++ — Optimal</span><code>class Solution {
+public:
+    int minDistance(string w1, string w2) {
+        int m = w1.size(), n = w2.size();
+        vector&lt;vector&lt;int&gt;&gt; dp(m + 1, vector&lt;int&gt;(n + 1));
+        for (int i = 0; i &lt;= m; i++) dp[i][0] = i;
+        for (int j = 0; j &lt;= n; j++) dp[0][j] = j;
+        for (int i = 1; i &lt;= m; i++)
+            for (int j = 1; j &lt;= n; j++)
+                dp[i][j] = (w1[i-1] == w2[j-1])
+                    ? dp[i-1][j-1]
+                    : 1 + min({dp[i-1][j-1], dp[i-1][j], dp[i][j-1]});
+        return dp[m][n];
+    }
+};</code></pre>
+    </div></details>
+  </div>
+
+  <h2 class="section-header" id="sec-monotonic">Monotonic Stack <span style="font-size:14px;font-weight:500;color:var(--accent-purple);">&middot; Blocked Practice</span></h2>
+  <p class="section-intro">Building on your work with #739 Daily Temperatures and #496 Next Greater Element I, these problems deepen your fluency with monotonic stacks — one of the most powerful patterns for subarray min/max problems.</p>
+
+  <div class="problem-card" id="p907">
+    <h3>#907 &middot; Sum of Subarray Minimums</h3>
+    <div class="problem-meta"><span class="diff-M">Medium</span><span class="ttag">monotonic-stack</span><span class="ttag">dynamic-programming</span><span class="ttag">math</span></div>
+    <p><strong>The Problem.</strong> Given an array arr, compute the sum of min(b) over every contiguous subarray b. Because the total can be huge, return it modulo 10^9 + 7.</p>
+    <details class="brute-force"><summary>Brute Force &mdash; O(n²) time, O(1) space</summary><div class="bf-content">
+      <p>Enumerate every subarray, track the running minimum, and add it to the total.</p>
+      <pre data-lang="python"><span class="lang-badge python">Python</span><code>MOD = 10**9 + 7
+def sumSubarrayMins(arr):
+    total = 0
+    for i in range(len(arr)):
+        m = arr[i]
+        for j in range(i, len(arr)):
+            m = min(m, arr[j])
+            total += m
+    return total % MOD</code></pre>
+      <pre data-lang="go"><span class="lang-badge go">Go</span><code>func sumSubarrayMins(arr []int) int {
+    const MOD = 1000000007
+    total := 0
+    for i := range arr {
+        m := arr[i]
+        for j := i; j &lt; len(arr); j++ {
+            if arr[j] &lt; m { m = arr[j] }
+            total = (total + m) % MOD
+        }
+    }
+    return total
+}</code></pre>
+      <pre data-lang="typescript"><span class="lang-badge typescript">TypeScript</span><code>function sumSubarrayMins(arr: number[]): number {
+    const MOD = 1_000_000_007;
+    let total = 0;
+    for (let i = 0; i &lt; arr.length; i++) {
+        let m = arr[i];
+        for (let j = i; j &lt; arr.length; j++) {
+            m = Math.min(m, arr[j]);
+            total = (total + m) % MOD;
+        }
+    }
+    return total;
+}</code></pre>
+      <pre data-lang="rust"><span class="lang-badge rust">Rust</span><code>impl Solution {
+    pub fn sum_subarray_mins(arr: Vec&lt;i32&gt;) -&gt; i32 {
+        const MOD: i64 = 1_000_000_007;
+        let mut total: i64 = 0;
+        for i in 0..arr.len() {
+            let mut m = arr[i];
+            for j in i..arr.len() {
+                m = m.min(arr[j]);
+                total = (total + m as i64) % MOD;
+            }
+        }
+        total as i32
+    }
+}</code></pre>
+      <pre data-lang="cpp"><span class="lang-badge cpp">C++</span><code>class Solution {
+public:
+    int sumSubarrayMins(vector&lt;int&gt;&amp; arr) {
+        const long MOD = 1e9 + 7;
+        long total = 0;
+        for (int i = 0; i &lt; (int)arr.size(); i++) {
+            int m = arr[i];
+            for (int j = i; j &lt; (int)arr.size(); j++) {
+                m = min(m, arr[j]);
+                total = (total + m) % MOD;
+            }
+        }
+        return total;
+    }
+};</code></pre>
+      <p><strong>Why optimize?</strong> With n up to 3×10⁴, the O(n²) double loop is ~10⁹ operations — over the time limit. You need to stop re-scanning subarrays.</p>
+    </div></details>
+    <div class="insight-box"><strong>Key Insight.</strong> Instead of summing per subarray, sum per element: count how many subarrays have arr[i] as their minimum. A monotonic stack finds, for each i, the distance to the Previous Less Element (left) and Next Less Element (right). Then arr[i] contributes arr[i] * left * right.</div>
+    <h4>How to Think About It</h4>
+    <div class="steps"><ol>
+      <li>For element i, let left[i] = number of consecutive positions ending at i where arr[i] is the minimum (distance to the previous strictly-less element).</li>
+      <li>Let right[i] = number of consecutive positions starting at i where arr[i] is the minimum (distance to the next less-or-equal element).</li>
+      <li>The count of subarrays in which arr[i] is the minimum is left[i] * right[i] — choose any valid left endpoint and any valid right endpoint.</li>
+      <li>Use a monotonic increasing stack to compute the boundaries: when the incoming value is smaller, pop and record spans.</li>
+      <li>Sum arr[i] * left[i] * right[i] over all i, taking the result modulo 10^9+7.</li>
+    </ol></div>
+    <div class="why-works-box"><strong>Why This Works.</strong> Partitioning all subarrays by the index of their minimum element covers every subarray exactly once (with the strict/non-strict tie-break ensuring no subarray is counted under two different minima). The stack computes each boundary in amortized O(1), so the total work is linear.</div>
+    <div class="warning-box"><strong>Watch Out.</strong> Use strict &lt; on one side and &lt;= on the other for the less-element comparisons. If both sides use the same strictness, subarrays whose minimum repeats get counted twice (or zero times).</div>
+    <ul style="padding-left:20px;color:var(--text-muted);">
+      <li>Forgetting the modulo on the running sum lets it overflow (especially in C++/Go with int).</li>
+      <li>Mixing up which side uses strict &lt; versus &lt;= — this is what prevents double-counting equal elements.</li>
+    </ul>
+    <h4>Python Features That Help</h4>
+    <pre data-lang="python"><span class="lang-badge python">Python</span><code>for i, v in enumerate(arr):   # index + value together
+    while stack and arr[stack[-1]] &gt;= v:  # pop on &gt;= for one side
+        stack.pop()
+prev = stack[-1] if stack else -1   # sentinel boundary
+total = (total + contribution) % (10**9 + 7)</code></pre>
+    <h4>Go Features That Help</h4>
+    <pre data-lang="go"><span class="lang-badge go">Go</span><code>stack := []int{}                 // slice as stack
+stack = append(stack, i)
+top := stack[len(stack)-1]       // peek
+stack = stack[:len(stack)-1]     // pop
+total = (total + c) % 1000000007</code></pre>
+    <h4>TypeScript Features That Help</h4>
+    <pre data-lang="typescript"><span class="lang-badge typescript">TypeScript</span><code>const stack: number[] = [];
+stack.push(i);
+const top = stack[stack.length - 1];   // peek
+stack.pop();
+total = (total + c) % 1_000_000_007;</code></pre>
+    <h4>Rust Features That Help</h4>
+    <pre data-lang="rust"><span class="lang-badge rust">Rust</span><code>let mut stack: Vec&lt;usize&gt; = Vec::new();
+while let Some(&amp;top) = stack.last() {   // peek without moving
+    if arr[top] &gt;= v { stack.pop(); } else { break; }
+}
+let prev = stack.last().map_or(-1, |&amp;x| x as i64);</code></pre>
+    <h4>C++ Features That Help</h4>
+    <pre data-lang="cpp"><span class="lang-badge cpp">C++</span><code>stack&lt;int&gt; st;                   // or vector&lt;int&gt;
+st.push(i);
+int top = st.top(); st.pop();
+const long MOD = 1e9 + 7;
+total = (total + 1L * arr[i] * left * right) % MOD;</code></pre>
+    <div class="complexity-transition"><span class="brute-complexity">Brute: O(n²)</span><span class="arrow">&rarr;</span><span class="optimal-complexity">Optimal: O(n)</span></div>
+    <div class="connections"><strong>Connections.</strong> Extends the boundary-finding technique behind #84 Largest Rectangle in Histogram and the Next-Greater pattern of #739/#496. The same 'contribution counting' idea appears in #2104 Sum of Subarray Ranges.</div>
+  </div>
+
+  <div class="problem-card" id="p1019">
+    <h3>#1019 &middot; Next Greater Node In Linked List</h3>
+    <div class="problem-meta"><span class="diff-M">Medium</span><span class="ttag">monotonic-stack</span><span class="ttag">linked-list</span></div>
+    <p><strong>The Problem.</strong> Given the head of a singly linked list of integers, return an integer array answer where answer[i] is the value of the next node (after node i) whose value is strictly greater than node i's value, or 0 if no such node exists.</p>
+    <details class="brute-force"><summary>Brute Force &mdash; O(n²) time, O(n) space</summary><div class="bf-content">
+      <p>Convert the list to an array; for each node scan forward to the first strictly greater value.</p>
+      <pre data-lang="python"><span class="lang-badge python">Python</span><code>def nextLargerNodes(head):
+    vals = []
+    while head:
+        vals.append(head.val); head = head.next
+    ans = [0] * len(vals)
+    for i in range(len(vals)):
+        for j in range(i + 1, len(vals)):
+            if vals[j] &gt; vals[i]:
+                ans[i] = vals[j]; break
+    return ans</code></pre>
+      <pre data-lang="go"><span class="lang-badge go">Go</span><code>func nextLargerNodes(head *ListNode) []int {
+    vals := []int{}
+    for n := head; n != nil; n = n.Next { vals = append(vals, n.Val) }
+    ans := make([]int, len(vals))
+    for i := range vals {
+        for j := i + 1; j &lt; len(vals); j++ {
+            if vals[j] &gt; vals[i] { ans[i] = vals[j]; break }
+        }
+    }
+    return ans
+}</code></pre>
+      <pre data-lang="typescript"><span class="lang-badge typescript">TypeScript</span><code>function nextLargerNodes(head: ListNode | null): number[] {
+    const vals: number[] = [];
+    for (let n = head; n; n = n.next) vals.push(n.val);
+    const ans = new Array(vals.length).fill(0);
+    for (let i = 0; i &lt; vals.length; i++)
+        for (let j = i + 1; j &lt; vals.length; j++)
+            if (vals[j] &gt; vals[i]) { ans[i] = vals[j]; break; }
+    return ans;
+}</code></pre>
+      <pre data-lang="rust"><span class="lang-badge rust">Rust</span><code>pub fn next_larger_nodes(head: Option&lt;Box&lt;ListNode&gt;&gt;) -&gt; Vec&lt;i32&gt; {
+    let mut vals = vec![];
+    let mut cur = &amp;head;
+    while let Some(n) = cur { vals.push(n.val); cur = &amp;n.next; }
+    let mut ans = vec![0; vals.len()];
+    for i in 0..vals.len() {
+        for j in i + 1..vals.len() {
+            if vals[j] &gt; vals[i] { ans[i] = vals[j]; break; }
+        }
+    }
+    ans
+}</code></pre>
+      <pre data-lang="cpp"><span class="lang-badge cpp">C++</span><code>vector&lt;int&gt; nextLargerNodes(ListNode* head) {
+    vector&lt;int&gt; vals;
+    for (auto n = head; n; n = n-&gt;next) vals.push_back(n-&gt;val);
+    vector&lt;int&gt; ans(vals.size(), 0);
+    for (int i = 0; i &lt; (int)vals.size(); i++)
+        for (int j = i + 1; j &lt; (int)vals.size(); j++)
+            if (vals[j] &gt; vals[i]) { ans[i] = vals[j]; break; }
+    return ans;
+}</code></pre>
+      <p><strong>Why optimize?</strong> With up to 10⁴ nodes, the O(n²) forward scan is ~10⁸ operations and re-walks the tail repeatedly. A single monotonic pass removes the redundancy.</p>
+    </div></details>
+    <div class="insight-box"><strong>Key Insight.</strong> This is exactly #496/#739 once you flatten the list into an array. Walk the array keeping a monotonic decreasing stack of indices whose answers are still pending; when a larger value arrives, it resolves every smaller pending index on the stack at once.</div>
+    <h4>How to Think About It</h4>
+    <div class="steps"><ol>
+      <li>First traverse the linked list once, copying values into an array (linked lists give no random access, so this enables index math).</li>
+      <li>Iterate the array left to right with a stack holding indices of unresolved nodes.</li>
+      <li>When the current value exceeds the value at the stack top, pop and set that index's answer to the current value — repeat while the stack top is smaller.</li>
+      <li>Push the current index (its answer is still unknown).</li>
+      <li>Any indices left on the stack at the end keep their default answer of 0.</li>
+    </ol></div>
+    <div class="why-works-box"><strong>Why This Works.</strong> Each index is pushed once and popped at most once, so the total stack operations are O(n). The stack stays decreasing, so the first value that exceeds a pending index is genuinely its next greater value — nothing between them was larger or that pending index would already have been resolved.</div>
+    <div class="warning-box"><strong>Watch Out.</strong> The condition must be strictly greater . Using &gt;= would treat an equal node as the 'next greater', producing wrong answers for arrays with duplicates.</div>
+    <ul style="padding-left:20px;color:var(--text-muted);">
+      <li>Storing values instead of indices on the stack makes it impossible to write into the answer array.</li>
+      <li>Using &gt;= instead of &gt; resolves nodes on equal values, which is wrong — the problem wants strictly greater.</li>
+    </ul>
+    <h4>Python Features That Help</h4>
+    <pre data-lang="python"><span class="lang-badge python">Python</span><code>while head:                    # walk the list
+    vals.append(head.val); head = head.next
+while stack and vals[stack[-1]] &lt; cur:
+    ans[stack.pop()] = cur     # resolve pending index</code></pre>
+    <h4>Go Features That Help</h4>
+    <pre data-lang="go"><span class="lang-badge go">Go</span><code>for n := head; n != nil; n = n.Next { vals = append(vals, n.Val) }
+for len(stack) &gt; 0 &amp;&amp; vals[stack[len(stack)-1]] &lt; cur {
+    ans[stack[len(stack)-1]] = cur
+    stack = stack[:len(stack)-1]
+}</code></pre>
+    <h4>TypeScript Features That Help</h4>
+    <pre data-lang="typescript"><span class="lang-badge typescript">TypeScript</span><code>for (let n = head; n; n = n.next) vals.push(n.val);
+while (stack.length &amp;&amp; vals[stack[stack.length-1]] &lt; cur)
+    ans[stack.pop()!] = cur;</code></pre>
+    <h4>Rust Features That Help</h4>
+    <pre data-lang="rust"><span class="lang-badge rust">Rust</span><code>let mut cur = &amp;head;            // borrow, don't consume
+while let Some(n) = cur { vals.push(n.val); cur = &amp;n.next; }
+while let Some(&amp;t) = stack.last() {
+    if vals[t] &lt; v { ans[stack.pop().unwrap()] = v; } else { break; }
+}</code></pre>
+    <h4>C++ Features That Help</h4>
+    <pre data-lang="cpp"><span class="lang-badge cpp">C++</span><code>for (auto n = head; n; n = n-&gt;next) vals.push_back(n-&gt;val);
+while (!st.empty() &amp;&amp; vals[st.top()] &lt; cur) {
+    ans[st.top()] = cur; st.pop();
+}</code></pre>
+    <div class="complexity-transition"><span class="brute-complexity">Brute: O(n²)</span><span class="arrow">&rarr;</span><span class="optimal-complexity">Optimal: O(n)</span></div>
+    <div class="connections"><strong>Connections.</strong> A direct application of #496 Next Greater Element I and #739 Daily Temperatures to a linked-list input. The only new wrinkle is the initial list-to-array traversal.</div>
+  </div>
+
+  <h2 class="section-header" id="sec-binary">Binary Search <span style="font-size:14px;font-weight:500;color:var(--accent-purple);">&middot; Interleaved</span></h2>
+  <p class="section-intro">You have built strong binary search foundations with #704, #33, #35, and #153. These problems test variations — searching by a parity pattern and navigating mountain-shaped arrays.</p>
+
+  <div class="problem-card" id="p540">
+    <h3>#540 &middot; Single Element in a Sorted Array</h3>
+    <div class="problem-meta"><span class="diff-M">Medium</span><span class="ttag">binary-search</span></div>
+    <p><strong>The Problem.</strong> You are given a sorted array where every element appears exactly twice except for one element that appears once. Find that single element in O(log n) time and O(1) space.</p>
+    <details class="brute-force"><summary>Brute Force &mdash; O(n) time, O(1) space</summary><div class="bf-content">
+      <p>XOR every element together; pairs cancel and the single element remains. Or linear-scan comparing adjacent pairs.</p>
+      <pre data-lang="python"><span class="lang-badge python">Python</span><code>def singleNonDuplicate(nums):
+    x = 0
+    for n in nums:
+        x ^= n
+    return x</code></pre>
+      <pre data-lang="go"><span class="lang-badge go">Go</span><code>func singleNonDuplicate(nums []int) int {
+    x := 0
+    for _, n := range nums { x ^= n }
+    return x
+}</code></pre>
+      <pre data-lang="typescript"><span class="lang-badge typescript">TypeScript</span><code>function singleNonDuplicate(nums: number[]): number {
+    return nums.reduce((a, b) =&gt; a ^ b, 0);
+}</code></pre>
+      <pre data-lang="rust"><span class="lang-badge rust">Rust</span><code>impl Solution {
+    pub fn single_non_duplicate(nums: Vec&lt;i32&gt;) -&gt; i32 {
+        nums.iter().fold(0, |a, &amp;b| a ^ b)
+    }
+}</code></pre>
+      <pre data-lang="cpp"><span class="lang-badge cpp">C++</span><code>class Solution {
+public:
+    int singleNonDuplicate(vector&lt;int&gt;&amp; nums) {
+        int x = 0;
+        for (int n : nums) x ^= n;
+        return x;
+    }
+};</code></pre>
+      <p><strong>Why optimize?</strong> The XOR scan is O(n), but the problem explicitly demands O(log n). With a sorted array you can do far better by exploiting structure rather than reading every element.</p>
+    </div></details>
+    <div class="insight-box"><strong>Key Insight.</strong> Before the single element, each pair occupies (even, odd) indices: nums[0]==nums[1], nums[2]==nums[3], and so on. After the single element, this parity flips and pairs start at odd indices. Binary search on which side still has the 'even-index-starts-a-pair' property.</div>
+    <h4>How to Think About It</h4>
+    <div class="steps"><ol>
+      <li>Binary search on indices, but always look at an even index mid (force mid to be even by clearing its low bit).</li>
+      <li>If nums[mid] == nums[mid+1], the single element is to the right — the pairs are still aligned up to here, so move lo = mid + 2.</li>
+      <li>Otherwise the misalignment starts at or before mid, so the single element is at mid or to the left — move hi = mid.</li>
+      <li>Continue until lo == hi; that index is the single element.</li>
+      <li>No need for a separate equality check — the loop converges on the unique unpaired position.</li>
+    </ol></div>
+    <div class="why-works-box"><strong>Why This Works.</strong> In the prefix before the answer, every pair starts on an even index, so an even mid with nums[mid]==nums[mid+1] proves the anomaly is to the right. Past the answer, that equality fails at even indices. Binary search discards a balanced half each step, preserving the O(log n) elimination guarantee on the well-defined parity boundary.</div>
+    <div class="warning-box"><strong>Watch Out.</strong> Always normalize mid to an even index before comparing. If mid lands on an odd index, the 'compare with mid+1' logic no longer matches the even-starts-a-pair invariant and the search drifts to the wrong half.</div>
+    <ul style="padding-left:20px;color:var(--text-muted);">
+      <li>Letting mid be odd breaks the parity invariant; round mid down to even with mid -= mid &amp; 1 (or mid &amp; ~1).</li>
+      <li>Using lo = mid + 1 instead of mid + 2 can skip the answer or loop incorrectly.</li>
+    </ul>
+    <h4>Python Features That Help</h4>
+    <pre data-lang="python"><span class="lang-badge python">Python</span><code>mid = (lo + hi) // 2
+mid -= mid &amp; 1                 # force mid even
+if nums[mid] == nums[mid + 1]:
+    lo = mid + 2
+else:
+    hi = mid</code></pre>
+    <h4>Go Features That Help</h4>
+    <pre data-lang="go"><span class="lang-badge go">Go</span><code>mid := (lo + hi) / 2
+mid -= mid &amp; 1                 // clear low bit -&gt; even
+if nums[mid] == nums[mid+1] { lo = mid + 2 } else { hi = mid }</code></pre>
+    <h4>TypeScript Features That Help</h4>
+    <pre data-lang="typescript"><span class="lang-badge typescript">TypeScript</span><code>let mid = (lo + hi) &gt;&gt; 1;
+mid -= mid &amp; 1;                // even mid
+if (nums[mid] === nums[mid + 1]) lo = mid + 2; else hi = mid;</code></pre>
+    <h4>Rust Features That Help</h4>
+    <pre data-lang="rust"><span class="lang-badge rust">Rust</span><code>let mut mid = lo + (hi - lo) / 2;
+mid -= mid &amp; 1;                // even index
+if nums[mid] == nums[mid + 1] { lo = mid + 2; } else { hi = mid; }</code></pre>
+    <h4>C++ Features That Help</h4>
+    <pre data-lang="cpp"><span class="lang-badge cpp">C++</span><code>int mid = lo + (hi - lo) / 2;
+mid -= mid &amp; 1;                // make even
+if (nums[mid] == nums[mid + 1]) lo = mid + 2; else hi = mid;</code></pre>
+    <div class="complexity-transition"><span class="brute-complexity">Brute: O(n)</span><span class="arrow">&rarr;</span><span class="optimal-complexity">Optimal: O(log n)</span></div>
+    <div class="connections"><strong>Connections.</strong> Uses the binary-search-on-a-property template from #704, but the predicate is a parity check rather than a direct value comparison — the same idea powers #278 First Bad Version.</div>
+  </div>
+
+  <div class="problem-card" id="p1095">
+    <h3>#1095 &middot; Find in Mountain Array</h3>
+    <div class="problem-meta"><span class="diff-H">Hard</span><span class="ttag">binary-search</span><span class="ttag">interactive</span></div>
+    <p><strong>The Problem.</strong> A mountain array strictly increases then strictly decreases. You may only access it via mountainArr.get(index) and mountainArr.length(), and you must use at most 100 calls to get(). Return the minimum index whose value equals target, or -1.</p>
+    <details class="brute-force"><summary>Brute Force &mdash; O(n) time and O(n) get() calls</summary><div class="bf-content">
+      <p>Call get() on every index and compare to target — but the API budget makes a full linear scan impossible for large arrays.</p>
+      <pre data-lang="python"><span class="lang-badge python">Python</span><code>def findInMountainArray(target, mountainArr):
+    n = mountainArr.length()
+    for i in range(n):
+        if mountainArr.get(i) == target:
+            return i
+    return -1</code></pre>
+      <pre data-lang="go"><span class="lang-badge go">Go</span><code>func findInMountainArray(target int, mountainArr *MountainArray) int {
+    n := mountainArr.length()
+    for i := 0; i &lt; n; i++ {
+        if mountainArr.get(i) == target { return i }
+    }
+    return -1
+}</code></pre>
+      <pre data-lang="typescript"><span class="lang-badge typescript">TypeScript</span><code>function findInMountainArray(target: number, m: MountainArray): number {
+    const n = m.length();
+    for (let i = 0; i &lt; n; i++)
+        if (m.get(i) === target) return i;
+    return -1;
+}</code></pre>
+      <pre data-lang="rust"><span class="lang-badge rust">Rust</span><code>fn find_in_mountain_array(target: i32, m: &amp;MountainArray) -&gt; i32 {
+    let n = m.length();
+    for i in 0..n {
+        if m.get(i) == target { return i; }
+    }
+    -1
+}</code></pre>
+      <pre data-lang="cpp"><span class="lang-badge cpp">C++</span><code>int findInMountainArray(int target, MountainArray &amp;m) {
+    int n = m.length();
+    for (int i = 0; i &lt; n; i++)
+        if (m.get(i) == target) return i;
+    return -1;
+}</code></pre>
+      <p><strong>Why optimize?</strong> With arrays up to 10⁴ long but only 100 allowed get() calls, a linear scan blows the API budget immediately. Each access is expensive, so you must use O(log n) calls.</p>
+    </div></details>
+    <div class="insight-box"><strong>Key Insight.</strong> Decompose into three binary searches: (1) find the peak index where the array turns from increasing to decreasing; (2) binary-search the ascending left half for target; (3) if not found there, binary-search the descending right half. Returning the left-side result first guarantees the minimum index.</div>
+    <h4>How to Think About It</h4>
+    <div class="steps"><ol>
+      <li>Find the peak: binary-search where get(mid) &lt; get(mid+1) means the peak is to the right, else to the left. This locates the single maximum.</li>
+      <li>Binary-search the ascending segment [0, peak] using the standard increasing-order comparison.</li>
+      <li>If the target is found in the ascending half, return that index immediately — it is the smallest valid index.</li>
+      <li>Otherwise binary-search the descending segment [peak+1, n-1], remembering that comparisons are reversed (larger target means go left).</li>
+      <li>Cache get() results where possible and keep total calls comfortably under 100 (about 3 log n ≈ 45).</li>
+    </ol></div>
+    <div class="why-works-box"><strong>Why This Works.</strong> The peak splits the array into one strictly increasing and one strictly decreasing run, each of which is a sorted sequence where binary search is valid. Searching ascending first ensures the smallest index wins, since any match there precedes every index on the descending side.</div>
+    <div class="warning-box"><strong>Watch Out.</strong> On the descending half the order is reversed: if get(mid) &gt; target you move right, not left. Copy-pasting the ascending binary search without flipping the comparison is the most common bug here.</div>
+    <ul style="padding-left:20px;color:var(--text-muted);">
+      <li>Reversing the comparison direction wrong on the descending half sends the search the opposite way.</li>
+      <li>Off-by-one at the peak: decide explicitly whether the peak belongs to the ascending or descending search range so it is not skipped.</li>
+    </ul>
+    <h4>Python Features That Help</h4>
+    <pre data-lang="python"><span class="lang-badge python">Python</span><code># peak: classic 'find the turning point'
+while lo &lt; hi:
+    mid = (lo + hi) // 2
+    if arr.get(mid) &lt; arr.get(mid + 1): lo = mid + 1
+    else: hi = mid
+# descending search flips the comparison:
+if v &gt; target: lo = mid + 1
+else: hi = mid - 1</code></pre>
+    <h4>Go Features That Help</h4>
+    <pre data-lang="go"><span class="lang-badge go">Go</span><code>mid := (lo + hi) / 2
+if arr.get(mid) &lt; arr.get(mid+1) { lo = mid + 1 } else { hi = mid }
+// descending half: reverse the inequality
+if v &gt; target { lo = mid + 1 } else { hi = mid - 1 }</code></pre>
+    <h4>TypeScript Features That Help</h4>
+    <pre data-lang="typescript"><span class="lang-badge typescript">TypeScript</span><code>let mid = (lo + hi) &gt;&gt; 1;
+if (m.get(mid) &lt; m.get(mid + 1)) lo = mid + 1; else hi = mid;
+// reversed comparison on descending side
+if (v &gt; target) lo = mid + 1; else hi = mid - 1;</code></pre>
+    <h4>Rust Features That Help</h4>
+    <pre data-lang="rust"><span class="lang-badge rust">Rust</span><code>let mid = (lo + hi) / 2;
+if m.get(mid) &lt; m.get(mid + 1) { lo = mid + 1; } else { hi = mid; }
+// descending: flip
+if v &gt; target { lo = mid + 1; } else { hi = mid - 1; }</code></pre>
+    <h4>C++ Features That Help</h4>
+    <pre data-lang="cpp"><span class="lang-badge cpp">C++</span><code>int mid = (lo + hi) / 2;
+if (m.get(mid) &lt; m.get(mid + 1)) lo = mid + 1; else hi = mid;
+// descending half flips the test
+if (v &gt; target) lo = mid + 1; else hi = mid - 1;</code></pre>
+    <div class="complexity-transition"><span class="brute-complexity">Brute: O(n) calls</span><span class="arrow">&rarr;</span><span class="optimal-complexity">Optimal: O(log n) calls</span></div>
+    <div class="connections"><strong>Connections.</strong> Combines the peak-finding binary search of #852 Find Peak Element with the standard search template of #704, applied twice. The 'find the turning point' step mirrors the pivot search in #153 Find Minimum in Rotated Sorted Array.</div>
+  </div>
+
+  <h2 class="section-header" id="sec-greedy">Greedy <span style="font-size:14px;font-weight:500;color:var(--accent-purple);">&middot; Blocked Practice</span></h2>
+  <p class="section-intro">Greedy algorithms make a locally optimal choice at each step. These two problems show how greedy reasoning handles distribution constraints and the validation of an ambiguous string.</p>
+
+  <div class="problem-card" id="p135">
+    <h3>#135 &middot; Candy</h3>
+    <div class="problem-meta"><span class="diff-H">Hard</span><span class="ttag">greedy</span><span class="ttag">array</span></div>
+    <p><strong>The Problem.</strong> There are n children in a line, each with a rating. Distribute candies so that every child gets at least one and any child with a higher rating than an immediate neighbor gets strictly more candies than that neighbor. Return the minimum total candies.</p>
+    <details class="brute-force"><summary>Brute Force &mdash; O(n²) time worst case, O(n) space</summary><div class="bf-content">
+      <p>Give everyone 1 candy, then repeatedly sweep the array bumping any child who violates a neighbor constraint, until a full pass makes no changes.</p>
+      <pre data-lang="python"><span class="lang-badge python">Python</span><code>def candy(ratings):
+    n = len(ratings)
+    c = [1] * n
+    changed = True
+    while changed:
+        changed = False
+        for i in range(n):
+            if i and ratings[i] &gt; ratings[i-1] and c[i] &lt;= c[i-1]:
+                c[i] = c[i-1] + 1; changed = True
+            if i + 1 &lt; n and ratings[i] &gt; ratings[i+1] and c[i] &lt;= c[i+1]:
+                c[i] = c[i+1] + 1; changed = True
+    return sum(c)</code></pre>
+      <pre data-lang="go"><span class="lang-badge go">Go</span><code>func candy(ratings []int) int {
+    n := len(ratings)
+    c := make([]int, n)
+    for i := range c { c[i] = 1 }
+    for changed := true; changed; {
+        changed = false
+        for i := 0; i &lt; n; i++ {
+            if i &gt; 0 &amp;&amp; ratings[i] &gt; ratings[i-1] &amp;&amp; c[i] &lt;= c[i-1] { c[i] = c[i-1] + 1; changed = true }
+            if i+1 &lt; n &amp;&amp; ratings[i] &gt; ratings[i+1] &amp;&amp; c[i] &lt;= c[i+1] { c[i] = c[i+1] + 1; changed = true }
+        }
+    }
+    sum := 0
+    for _, x := range c { sum += x }
+    return sum
+}</code></pre>
+      <pre data-lang="typescript"><span class="lang-badge typescript">TypeScript</span><code>function candy(ratings: number[]): number {
+    const n = ratings.length, c = new Array(n).fill(1);
+    let changed = true;
+    while (changed) {
+        changed = false;
+        for (let i = 0; i &lt; n; i++) {
+            if (i &amp;&amp; ratings[i] &gt; ratings[i-1] &amp;&amp; c[i] &lt;= c[i-1]) { c[i] = c[i-1]+1; changed = true; }
+            if (i+1 &lt; n &amp;&amp; ratings[i] &gt; ratings[i+1] &amp;&amp; c[i] &lt;= c[i+1]) { c[i] = c[i+1]+1; changed = true; }
+        }
+    }
+    return c.reduce((a, b) =&gt; a + b, 0);
+}</code></pre>
+      <pre data-lang="rust"><span class="lang-badge rust">Rust</span><code>impl Solution {
+    pub fn candy(ratings: Vec&lt;i32&gt;) -&gt; i32 {
+        let n = ratings.len();
+        let mut c = vec![1; n];
+        let mut changed = true;
+        while changed {
+            changed = false;
+            for i in 0..n {
+                if i &gt; 0 &amp;&amp; ratings[i] &gt; ratings[i-1] &amp;&amp; c[i] &lt;= c[i-1] { c[i] = c[i-1]+1; changed = true; }
+                if i+1 &lt; n &amp;&amp; ratings[i] &gt; ratings[i+1] &amp;&amp; c[i] &lt;= c[i+1] { c[i] = c[i+1]+1; changed = true; }
+            }
+        }
+        c.iter().sum()
+    }
+}</code></pre>
+      <pre data-lang="cpp"><span class="lang-badge cpp">C++</span><code>class Solution {
+public:
+    int candy(vector&lt;int&gt;&amp; r) {
+        int n = r.size();
+        vector&lt;int&gt; c(n, 1);
+        bool changed = true;
+        while (changed) {
+            changed = false;
+            for (int i = 0; i &lt; n; i++) {
+                if (i &amp;&amp; r[i] &gt; r[i-1] &amp;&amp; c[i] &lt;= c[i-1]) { c[i] = c[i-1]+1; changed = true; }
+                if (i+1 &lt; n &amp;&amp; r[i] &gt; r[i+1] &amp;&amp; c[i] &lt;= c[i+1]) { c[i] = c[i+1]+1; changed = true; }
+            }
+        }
+        return accumulate(c.begin(), c.end(), 0);
+    }
+};</code></pre>
+      <p><strong>Why optimize?</strong> The repeated stabilization sweeps can run O(n) times on adversarial ratings, giving O(n²). With n up to 2×10⁴ that is ~4×10⁸ — a clean two-pass solution is far better.</p>
+    </div></details>
+    <div class="insight-box"><strong>Key Insight.</strong> Each child's candy count is governed by two independent constraints: their left neighbor and their right neighbor. Satisfy them separately. A left-to-right pass enforces 'higher than left neighbor gets more'; a right-to-left pass enforces 'higher than right neighbor gets more'. Taking the max at each index satisfies both at once.</div>
+    <h4>How to Think About It</h4>
+    <div class="steps"><ol>
+      <li>Initialize every child to 1 candy.</li>
+      <li>Left-to-right: if ratings[i] &gt; ratings[i-1], set left[i] = left[i-1] + 1; otherwise left[i] = 1.</li>
+      <li>Right-to-left: if ratings[i] &gt; ratings[i+1], set right[i] = right[i+1] + 1; otherwise right[i] = 1.</li>
+      <li>The final candy for child i is max(left[i], right[i]) — the tighter of the two constraints.</li>
+      <li>Sum the maxima for the answer. You can keep a single rolling 'right' counter to use O(1) extra space.</li>
+    </ol></div>
+    <div class="why-works-box"><strong>Why This Works.</strong> The left pass guarantees every up-slope from the left is strictly increasing; the right pass does the same from the right. Taking the maximum at each index satisfies both neighbor constraints simultaneously, and because each pass only ever increments by 1 over a smaller neighbor, no candy count is larger than necessary — hence the total is minimal.</div>
+    <div class="warning-box"><strong>Watch Out.</strong> At each index the answer is max(left[i], right[i]), not left[i] + right[i]. Adding the two passes is the classic mistake — it violates minimality and over-counts the shared baseline of 1.</div>
+    <ul style="padding-left:20px;color:var(--text-muted);">
+      <li>Resetting to 1 only when the rating is not greater than the neighbor is essential; carrying the previous count forward over a 'valley' over-allocates.</li>
+      <li>Summing left and right instead of taking their max double-counts.</li>
+    </ul>
+    <h4>Python Features That Help</h4>
+    <pre data-lang="python"><span class="lang-badge python">Python</span><code>left = [1] * n
+if ratings[i] &gt; ratings[i-1]:
+    left[i] = left[i-1] + 1     # carry up-slope
+total += max(left[i], right)    # combine both directions</code></pre>
+    <h4>Go Features That Help</h4>
+    <pre data-lang="go"><span class="lang-badge go">Go</span><code>left := make([]int, n)
+if ratings[i] &gt; ratings[i-1] { left[i] = left[i-1] + 1 } else { left[i] = 1 }
+total += max(left[i], right)</code></pre>
+    <h4>TypeScript Features That Help</h4>
+    <pre data-lang="typescript"><span class="lang-badge typescript">TypeScript</span><code>const left = new Array(n).fill(1);
+left[i] = ratings[i] &gt; ratings[i-1] ? left[i-1] + 1 : 1;
+total += Math.max(left[i], right);</code></pre>
+    <h4>Rust Features That Help</h4>
+    <pre data-lang="rust"><span class="lang-badge rust">Rust</span><code>let mut left = vec![1; n];
+if ratings[i] &gt; ratings[i-1] { left[i] = left[i-1] + 1; }
+total += left[i].max(right);</code></pre>
+    <h4>C++ Features That Help</h4>
+    <pre data-lang="cpp"><span class="lang-badge cpp">C++</span><code>vector&lt;int&gt; left(n, 1);
+if (r[i] &gt; r[i-1]) left[i] = left[i-1] + 1;
+total += max(left[i], right);</code></pre>
+    <div class="complexity-transition"><span class="brute-complexity">Brute: O(n²)</span><span class="arrow">&rarr;</span><span class="optimal-complexity">Optimal: O(n)</span></div>
+    <div class="connections"><strong>Connections.</strong> A canonical 'two independent passes, take the max' greedy, structurally similar to #42 Trapping Rain Water (left-max and right-max passes combined per index).</div>
+  </div>
+
+  <div class="problem-card" id="p678">
+    <h3>#678 &middot; Valid Parenthesis String</h3>
+    <div class="problem-meta"><span class="diff-M">Medium</span><span class="ttag">greedy</span><span class="ttag">string</span><span class="ttag">stack</span></div>
+    <p><strong>The Problem.</strong> Given a string containing only '(', ')', and '*', where '*' may be treated as '(', ')', or an empty string, determine whether the string can be a valid parenthesization.</p>
+    <details class="brute-force"><summary>Brute Force &mdash; O(3^n) time, O(n) recursion depth</summary><div class="bf-content">
+      <p>Try every interpretation of each '*' (3 choices) and check if any assignment yields a balanced string — exponential branching.</p>
+      <pre data-lang="python"><span class="lang-badge python">Python</span><code>def checkValidString(s):
+    def ok(i, bal):
+        if bal &lt; 0: return False
+        if i == len(s): return bal == 0
+        c = s[i]
+        if c == '(': return ok(i+1, bal+1)
+        if c == ')': return ok(i+1, bal-1)
+        return ok(i+1, bal+1) or ok(i+1, bal-1) or ok(i+1, bal)
+    return ok(0, 0)</code></pre>
+      <pre data-lang="go"><span class="lang-badge go">Go</span><code>func checkValidString(s string) bool {
+    var ok func(i, bal int) bool
+    ok = func(i, bal int) bool {
+        if bal &lt; 0 { return false }
+        if i == len(s) { return bal == 0 }
+        switch s[i] {
+        case '(': return ok(i+1, bal+1)
+        case ')': return ok(i+1, bal-1)
+        default: return ok(i+1, bal+1) || ok(i+1, bal-1) || ok(i+1, bal)
+        }
+    }
+    return ok(0, 0)
+}</code></pre>
+      <pre data-lang="typescript"><span class="lang-badge typescript">TypeScript</span><code>function checkValidString(s: string): boolean {
+    const ok = (i: number, bal: number): boolean =&gt; {
+        if (bal &lt; 0) return false;
+        if (i === s.length) return bal === 0;
+        const c = s[i];
+        if (c === '(') return ok(i+1, bal+1);
+        if (c === ')') return ok(i+1, bal-1);
+        return ok(i+1, bal+1) || ok(i+1, bal-1) || ok(i+1, bal);
+    };
+    return ok(0, 0);
+}</code></pre>
+      <pre data-lang="rust"><span class="lang-badge rust">Rust</span><code>impl Solution {
+    pub fn check_valid_string(s: String) -&gt; bool {
+        fn ok(b: &amp;[u8], i: usize, bal: i32) -&gt; bool {
+            if bal &lt; 0 { return false; }
+            if i == b.len() { return bal == 0; }
+            match b[i] {
+                b'(' =&gt; ok(b, i+1, bal+1),
+                b')' =&gt; ok(b, i+1, bal-1),
+                _ =&gt; ok(b, i+1, bal+1) || ok(b, i+1, bal-1) || ok(b, i+1, bal),
+            }
+        }
+        ok(s.as_bytes(), 0, 0)
+    }
+}</code></pre>
+      <pre data-lang="cpp"><span class="lang-badge cpp">C++</span><code>class Solution {
+    bool ok(const string&amp; s, int i, int bal) {
+        if (bal &lt; 0) return false;
+        if (i == (int)s.size()) return bal == 0;
+        if (s[i] == '(') return ok(s, i+1, bal+1);
+        if (s[i] == ')') return ok(s, i+1, bal-1);
+        return ok(s, i+1, bal+1) || ok(s, i+1, bal-1) || ok(s, i+1, bal);
+    }
+public:
+    bool checkValidString(string s) { return ok(s, 0, 0); }
+};</code></pre>
+      <p><strong>Why optimize?</strong> Each '*' triples the branching, so with n up to 100 the recursion explodes to 3^100. You need to track all possible balances at once instead of trying each path.</p>
+    </div></details>
+    <div class="insight-box"><strong>Key Insight.</strong> Instead of committing to one meaning per '*', track the range [lo, hi] of possible open-paren counts. lo is the count if every '*' so far were ')' or empty (minimum opens); hi is the count if every '*' were '(' (maximum opens). The string is valid if hi never goes negative and lo can reach 0 at the end.</div>
+    <h4>How to Think About It</h4>
+    <div class="steps"><ol>
+      <li>Maintain two counters: lo (minimum possible open parens) and hi (maximum possible open parens), both starting at 0.</li>
+      <li>On '(': increment both lo and hi. On ')': decrement both.</li>
+      <li>On '*': decrement lo (treat as ')') and increment hi (treat as '(') — this widens the range.</li>
+      <li>If hi &lt; 0 at any point, even the most generous interpretation has too many ')' — return false immediately.</li>
+      <li>Clamp lo to 0 (it can never sensibly go below 0, since extra ')' beyond balance is just invalid for that branch).</li>
+      <li>At the end, return whether lo == 0 — meaning some interpretation balanced perfectly.</li>
+    </ol></div>
+    <div class="why-works-box"><strong>Why This Works.</strong> lo and hi bound the interval of achievable open-paren counts under all '*' assignments. If hi ever drops below 0, every assignment is already unbalanced. Clamping lo at 0 discards branches that already had unmatched ')'. If at the end 0 lies within the final [lo, hi] interval (i.e., lo == 0), a valid assignment exists.</div>
+    <div class="warning-box"><strong>Watch Out.</strong> Bail out only when hi &lt; 0, never when lo &lt; 0. A negative lo simply means one over-eager interpretation died; clamp lo back to 0 and keep going. Bailing on lo &lt; 0 rejects valid strings.</div>
+    <ul style="padding-left:20px;color:var(--text-muted);">
+      <li>Forgetting to clamp lo to 0 lets it go negative, which corrupts the final lo == 0 test.</li>
+      <li>Checking lo &lt; 0 to bail early is wrong — only hi &lt; 0 proves invalidity; lo going negative just means that branch is dead, not the whole string.</li>
+    </ul>
+    <h4>Python Features That Help</h4>
+    <pre data-lang="python"><span class="lang-badge python">Python</span><code>lo = hi = 0
+for c in s:
+    lo += 1 if c == '(' else -1   # '*' or ')' lowers lo
+    hi += 1 if c != ')' else -1   # '*' or '(' raises hi
+    if hi &lt; 0: return False
+    lo = max(lo, 0)               # clamp
+return lo == 0</code></pre>
+    <h4>Go Features That Help</h4>
+    <pre data-lang="go"><span class="lang-badge go">Go</span><code>lo, hi := 0, 0
+for _, c := range s {
+    if c == '(' { lo++ } else { lo-- }
+    if c != ')' { hi++ } else { hi-- }
+    if hi &lt; 0 { return false }
+    if lo &lt; 0 { lo = 0 }
+}
+return lo == 0</code></pre>
+    <h4>TypeScript Features That Help</h4>
+    <pre data-lang="typescript"><span class="lang-badge typescript">TypeScript</span><code>let lo = 0, hi = 0;
+for (const c of s) {
+    lo += c === '(' ? 1 : -1;
+    hi += c !== ')' ? 1 : -1;
+    if (hi &lt; 0) return false;
+    lo = Math.max(lo, 0);
+}
+return lo === 0;</code></pre>
+    <h4>Rust Features That Help</h4>
+    <pre data-lang="rust"><span class="lang-badge rust">Rust</span><code>let (mut lo, mut hi) = (0i32, 0i32);
+for c in s.chars() {
+    lo += if c == '(' { 1 } else { -1 };
+    hi += if c != ')' { 1 } else { -1 };
+    if hi &lt; 0 { return false; }
+    lo = lo.max(0);
+}
+lo == 0</code></pre>
+    <h4>C++ Features That Help</h4>
+    <pre data-lang="cpp"><span class="lang-badge cpp">C++</span><code>int lo = 0, hi = 0;
+for (char c : s) {
+    lo += (c == '(') ? 1 : -1;
+    hi += (c != ')') ? 1 : -1;
+    if (hi &lt; 0) return false;
+    lo = max(lo, 0);
+}
+return lo == 0;</code></pre>
+    <div class="complexity-transition"><span class="brute-complexity">Brute: O(3^n)</span><span class="arrow">&rarr;</span><span class="optimal-complexity">Optimal: O(n)</span></div>
+    <div class="connections"><strong>Connections.</strong> A greedy interval-tracking refinement of the stack approach in #20 Valid Parentheses; the same 'track a feasible range' idea recurs in problems with wildcard matching like #44 Wildcard Matching.</div>
+  </div>
+
+  <h2 class="section-header" id="sec-dynamic">Dynamic Programming <span style="font-size:14px;font-weight:500;color:var(--accent-purple);">&middot; Interleaved</span></h2>
+  <p class="section-intro">Extending your strong DP foundations (#198, #322, #139), these problems apply DP to number theory and ordered counting — and sharpen the distinction between combinations and permutations.</p>
+
+  <div class="problem-card" id="p279">
+    <h3>#279 &middot; Perfect Squares</h3>
+    <div class="problem-meta"><span class="diff-M">Medium</span><span class="ttag">dynamic-programming</span><span class="ttag">math</span><span class="ttag">bfs</span></div>
+    <p><strong>The Problem.</strong> Given an integer n, return the least number of perfect-square numbers (1, 4, 9, 16, ...) that sum to n.</p>
+    <details class="brute-force"><summary>Brute Force &mdash; O(exponential) time without memo</summary><div class="bf-content">
+      <p>Recursively try subtracting every square ≤ the remainder and take the minimum count — exponential without memoization.</p>
+      <pre data-lang="python"><span class="lang-badge python">Python</span><code>def numSquares(n):
+    def f(rem):
+        if rem == 0: return 0
+        best = float('inf')
+        j = 1
+        while j*j &lt;= rem:
+            best = min(best, 1 + f(rem - j*j))
+            j += 1
+        return best
+    return f(n)</code></pre>
+      <pre data-lang="go"><span class="lang-badge go">Go</span><code>func numSquares(n int) int {
+    var f func(rem int) int
+    f = func(rem int) int {
+        if rem == 0 { return 0 }
+        best := math.MaxInt
+        for j := 1; j*j &lt;= rem; j++ {
+            if c := 1 + f(rem-j*j); c &lt; best { best = c }
+        }
+        return best
+    }
+    return f(n)
+}</code></pre>
+      <pre data-lang="typescript"><span class="lang-badge typescript">TypeScript</span><code>function numSquares(n: number): number {
+    const f = (rem: number): number =&gt; {
+        if (rem === 0) return 0;
+        let best = Infinity;
+        for (let j = 1; j*j &lt;= rem; j++)
+            best = Math.min(best, 1 + f(rem - j*j));
+        return best;
+    };
+    return f(n);
+}</code></pre>
+      <pre data-lang="rust"><span class="lang-badge rust">Rust</span><code>impl Solution {
+    pub fn num_squares(n: i32) -&gt; i32 {
+        fn f(rem: i32) -&gt; i32 {
+            if rem == 0 { return 0; }
+            let mut best = i32::MAX;
+            let mut j = 1;
+            while j*j &lt;= rem { best = best.min(1 + f(rem - j*j)); j += 1; }
+            best
+        }
+        f(n)
+    }
+}</code></pre>
+      <pre data-lang="cpp"><span class="lang-badge cpp">C++</span><code>class Solution {
+    int f(int rem) {
+        if (rem == 0) return 0;
+        int best = INT_MAX;
+        for (int j = 1; j*j &lt;= rem; j++) best = min(best, 1 + f(rem - j*j));
+        return best;
+    }
+public:
+    int numSquares(int n) { return f(n); }
+};</code></pre>
+      <p><strong>Why optimize?</strong> The naive recursion recomputes the same remainders exponentially many times. With n up to 10⁴ it is hopeless — you must cache subproblem answers (DP) or do a level-order BFS.</p>
+    </div></details>
+    <div class="insight-box"><strong>Key Insight.</strong> This is an unbounded-coin problem where the coins are perfect squares and you want the minimum count. dp[i] = 1 + min over all squares j*j ≤ i of dp[i - j*j]. Equivalently, BFS from n where each edge subtracts a square; the first time you reach 0, the level number is the answer.</div>
+    <h4>How to Think About It</h4>
+    <div class="steps"><ol>
+      <li>Define dp[i] = fewest squares summing to i, with dp[0] = 0.</li>
+      <li>For each i from 1 to n, try every square j*j ≤ i and set dp[i] = min(dp[i], dp[i - j*j] + 1).</li>
+      <li>Build dp bottom-up so each dp[i - j*j] is already computed.</li>
+      <li>Return dp[n].</li>
+      <li>Alternative: BFS treating each number as a node; subtract each square to find neighbors. The level at which you first hit 0 is the minimum count — BFS naturally finds the shortest path.</li>
+    </ol></div>
+    <div class="why-works-box"><strong>Why This Works.</strong> Every way to write i as a sum of squares ends with some final square j*j, leaving i - j*j to be formed optimally. Taking the minimum over all valid final squares gives the optimal substructure, and bottom-up evaluation guarantees each dependency is solved first. BFS works for the same reason: the shortest sequence of square-subtractions is a shortest path in an unweighted graph.</div>
+    <div class="warning-box"><strong>Watch Out.</strong> Initialize dp[i] for i &gt;= 1 to a large value (infinity), not 0. If you leave them at 0, the min(dp[i-j*j]+1) comparison never improves and you get wrong (zero) answers.</div>
+    <ul style="padding-left:20px;color:var(--text-muted);">
+      <li>Off-by-one in the square loop — the condition is j*j &lt;= i, and j starts at 1, not 0.</li>
+      <li>Initializing dp with 0 instead of a large sentinel makes the min meaningless; use infinity for i &gt;= 1.</li>
+    </ul>
+    <h4>Python Features That Help</h4>
+    <pre data-lang="python"><span class="lang-badge python">Python</span><code>dp = [0] + [float('inf')] * n   # sentinel for unreached
+for i in range(1, n + 1):
+    j = 1
+    while j*j &lt;= i:
+        dp[i] = min(dp[i], dp[i - j*j] + 1)
+        j += 1
+from collections import deque    # BFS alternative
+q = deque([n])</code></pre>
+    <h4>Go Features That Help</h4>
+    <pre data-lang="go"><span class="lang-badge go">Go</span><code>dp := make([]int, n+1)
+for i := 1; i &lt;= n; i++ { dp[i] = math.MaxInt }
+for j := 1; j*j &lt;= i; j++ {
+    dp[i] = min(dp[i], dp[i-j*j]+1)
+}</code></pre>
+    <h4>TypeScript Features That Help</h4>
+    <pre data-lang="typescript"><span class="lang-badge typescript">TypeScript</span><code>const dp = new Array(n + 1).fill(Infinity);
+dp[0] = 0;
+for (let j = 1; j*j &lt;= i; j++)
+    dp[i] = Math.min(dp[i], dp[i - j*j] + 1);</code></pre>
+    <h4>Rust Features That Help</h4>
+    <pre data-lang="rust"><span class="lang-badge rust">Rust</span><code>let mut dp = vec![i32::MAX; (n + 1) as usize];
+dp[0] = 0;
+let mut j = 1;
+while j*j &lt;= i { dp[i] = dp[i].min(dp[i - j*j] + 1); j += 1; }</code></pre>
+    <h4>C++ Features That Help</h4>
+    <pre data-lang="cpp"><span class="lang-badge cpp">C++</span><code>vector&lt;int&gt; dp(n + 1, INT_MAX);
+dp[0] = 0;
+for (int j = 1; j*j &lt;= i; j++)
+    dp[i] = min(dp[i], dp[i - j*j] + 1);</code></pre>
+    <div class="complexity-transition"><span class="brute-complexity">Brute: O(exp)</span><span class="arrow">&rarr;</span><span class="optimal-complexity">Optimal: O(n√n)</span></div>
+    <div class="connections"><strong>Connections.</strong> Structurally identical to #322 Coin Change (minimum coins) with squares as the coin set; the BFS view connects it to shortest-path problems like #127 Word Ladder.</div>
+  </div>
+
+  <div class="problem-card" id="p377">
+    <h3>#377 &middot; Combination Sum IV</h3>
+    <div class="problem-meta"><span class="diff-M">Medium</span><span class="ttag">dynamic-programming</span></div>
+    <p><strong>The Problem.</strong> Given an array of distinct positive integers and a target, return the number of ordered combinations (sequences) of array elements that sum to the target. Different orderings count as different combinations.</p>
+    <details class="brute-force"><summary>Brute Force &mdash; O(exponential) time without memo</summary><div class="bf-content">
+      <p>Recursively try every number at every position and count sequences reaching the target exactly — exponential.</p>
+      <pre data-lang="python"><span class="lang-badge python">Python</span><code>def combinationSum4(nums, target):
+    def f(rem):
+        if rem == 0: return 1
+        if rem &lt; 0: return 0
+        return sum(f(rem - n) for n in nums)
+    return f(target)</code></pre>
+      <pre data-lang="go"><span class="lang-badge go">Go</span><code>func combinationSum4(nums []int, target int) int {
+    var f func(rem int) int
+    f = func(rem int) int {
+        if rem == 0 { return 1 }
+        if rem &lt; 0 { return 0 }
+        total := 0
+        for _, n := range nums { total += f(rem - n) }
+        return total
+    }
+    return f(target)
+}</code></pre>
+      <pre data-lang="typescript"><span class="lang-badge typescript">TypeScript</span><code>function combinationSum4(nums: number[], target: number): number {
+    const f = (rem: number): number =&gt; {
+        if (rem === 0) return 1;
+        if (rem &lt; 0) return 0;
+        return nums.reduce((s, n) =&gt; s + f(rem - n), 0);
+    };
+    return f(target);
+}</code></pre>
+      <pre data-lang="rust"><span class="lang-badge rust">Rust</span><code>impl Solution {
+    pub fn combination_sum4(nums: Vec&lt;i32&gt;, target: i32) -&gt; i32 {
+        fn f(nums: &amp;[i32], rem: i32) -&gt; i32 {
+            if rem == 0 { return 1; }
+            if rem &lt; 0 { return 0; }
+            nums.iter().map(|&amp;n| f(nums, rem - n)).sum()
+        }
+        f(&amp;nums, target)
+    }
+}</code></pre>
+      <pre data-lang="cpp"><span class="lang-badge cpp">C++</span><code>class Solution {
+    int f(vector&lt;int&gt;&amp; nums, int rem) {
+        if (rem == 0) return 1;
+        if (rem &lt; 0) return 0;
+        int total = 0;
+        for (int n : nums) total += f(nums, rem - n);
+        return total;
+    }
+public:
+    int combinationSum4(vector&lt;int&gt;&amp; nums, int target) { return f(nums, target); }
+};</code></pre>
+      <p><strong>Why optimize?</strong> The same remainder is recomputed exponentially often. With target up to 1000 you must memoize on the remaining sum, collapsing it to a 1D DP.</p>
+    </div></details>
+    <div class="insight-box"><strong>Key Insight.</strong> Because order matters, this counts sequences, not sets. dp[t] = number of ordered ways to reach t. To build t, the sequence ends in some num, preceded by an ordered way to reach t - num. So dp[t] = sum over num of dp[t - num], with target as the OUTER loop (this is what makes order matter, unlike Coin Change II).</div>
+    <h4>How to Think About It</h4>
+    <div class="steps"><ol>
+      <li>Define dp[0] = 1 (one empty way to reach 0) and dp[t] = 0 for t &gt; 0 initially.</li>
+      <li>Loop t from 1 to target (the OUTER loop is the target).</li>
+      <li>For each t, add dp[t - num] for every num &lt;= t — each num can be the LAST element of the sequence.</li>
+      <li>Return dp[target].</li>
+      <li>Key distinction: iterating target outer / nums inner counts ordered sequences (permutations); swapping the loops (nums outer) would count unordered combinations instead.</li>
+    </ol></div>
+    <div class="why-works-box"><strong>Why This Works.</strong> Any ordered sequence summing to t has a well-defined last element num; removing it yields an ordered sequence summing to t - num, counted by dp[t - num]. Summing over all possible last elements counts every ordered sequence exactly once. Putting target in the outer loop ensures every ordering is generated, because each num is considered as the final step for every t.</div>
+    <div class="warning-box"><strong>Watch Out.</strong> Loop order is the entire problem. target-outer / nums-inner counts permutations (what this problem wants); nums-outer / target-inner counts combinations (#518). Get this backwards and every test with reorderable elements fails.</div>
+    <ul style="padding-left:20px;color:var(--text-muted);">
+      <li>Swapping the loop order (nums outer, target inner) silently switches you to counting combinations, not permutations — the #518 Coin Change II behavior.</li>
+      <li>The answer can overflow 32-bit ints for some inputs even though the problem guarantees it fits in a signed int; use a wide accumulator in C++/Go to be safe.</li>
+    </ul>
+    <h4>Python Features That Help</h4>
+    <pre data-lang="python"><span class="lang-badge python">Python</span><code>dp = [0] * (target + 1)
+dp[0] = 1                       # empty sequence
+for t in range(1, target + 1):  # target OUTER -&gt; order matters
+    for n in nums:
+        if n &lt;= t:
+            dp[t] += dp[t - n]</code></pre>
+    <h4>Go Features That Help</h4>
+    <pre data-lang="go"><span class="lang-badge go">Go</span><code>dp := make([]int, target+1)
+dp[0] = 1
+for t := 1; t &lt;= target; t++ {   // outer target
+    for _, n := range nums {
+        if n &lt;= t { dp[t] += dp[t-n] }
+    }
+}</code></pre>
+    <h4>TypeScript Features That Help</h4>
+    <pre data-lang="typescript"><span class="lang-badge typescript">TypeScript</span><code>const dp = new Array(target + 1).fill(0);
+dp[0] = 1;
+for (let t = 1; t &lt;= target; t++)      // target outer
+    for (const n of nums)
+        if (n &lt;= t) dp[t] += dp[t - n];</code></pre>
+    <h4>Rust Features That Help</h4>
+    <pre data-lang="rust"><span class="lang-badge rust">Rust</span><code>let mut dp = vec![0u64; (target + 1) as usize];
+dp[0] = 1;
+for t in 1..=target as usize {          // outer target
+    for &amp;n in &amp;nums {
+        if (n as usize) &lt;= t { dp[t] += dp[t - n as usize]; }
+    }
+}</code></pre>
+    <h4>C++ Features That Help</h4>
+    <pre data-lang="cpp"><span class="lang-badge cpp">C++</span><code>vector&lt;unsigned long long&gt; dp(target + 1, 0);
+dp[0] = 1;
+for (int t = 1; t &lt;= target; t++)       // target outer
+    for (int n : nums)
+        if (n &lt;= t) dp[t] += dp[t - n];</code></pre>
+    <div class="complexity-transition"><span class="brute-complexity">Brute: O(exp)</span><span class="arrow">&rarr;</span><span class="optimal-complexity">Optimal: O(n·target)</span></div>
+    <div class="connections"><strong>Connections.</strong> The mirror image of #518 Coin Change II: same recurrence, opposite loop nesting. Compare with #322 Coin Change (min count) to internalize how loop order encodes order-sensitivity.</div>
+  </div>
+
+  <h2 class="section-header" id="sec-array">Array — Boyer-Moore Voting <span style="font-size:14px;font-weight:500;color:var(--accent-purple);">&middot; Blocked Practice</span></h2>
+  <p class="section-intro">Boyer-Moore voting is an elegant O(1)-space technique for finding majority elements. These two problems introduce the pattern and then generalize it to the n/3 threshold.</p>
+
+  <div class="problem-card" id="p169">
+    <h3>#169 &middot; Majority Element</h3>
+    <div class="problem-meta"><span class="diff-E">Easy</span><span class="ttag">array</span><span class="ttag">hash-map</span><span class="ttag">sorting</span><span class="ttag">voting</span></div>
+    <p><strong>The Problem.</strong> Given an array of size n, return the element that appears more than n/2 times. You may assume such a majority element always exists.</p>
+    <details class="brute-force"><summary>Brute Force &mdash; O(n) time, O(n) space</summary><div class="bf-content">
+      <p>Count occurrences with a hash map and return the key whose count exceeds n/2. (Or sort and return the middle element.)</p>
+      <pre data-lang="python"><span class="lang-badge python">Python</span><code>def majorityElement(nums):
+    from collections import Counter
+    counts = Counter(nums)
+    return max(counts, key=counts.get)</code></pre>
+      <pre data-lang="go"><span class="lang-badge go">Go</span><code>func majorityElement(nums []int) int {
+    counts := map[int]int{}
+    for _, n := range nums {
+        counts[n]++
+        if counts[n] &gt; len(nums)/2 { return n }
+    }
+    return -1
+}</code></pre>
+      <pre data-lang="typescript"><span class="lang-badge typescript">TypeScript</span><code>function majorityElement(nums: number[]): number {
+    const counts = new Map&lt;number, number&gt;();
+    for (const n of nums) {
+        counts.set(n, (counts.get(n) ?? 0) + 1);
+        if (counts.get(n)! &gt; nums.length / 2) return n;
+    }
+    return -1;
+}</code></pre>
+      <pre data-lang="rust"><span class="lang-badge rust">Rust</span><code>use std::collections::HashMap;
+impl Solution {
+    pub fn majority_element(nums: Vec&lt;i32&gt;) -&gt; i32 {
+        let mut counts = HashMap::new();
+        for &amp;n in &amp;nums {
+            let c = counts.entry(n).or_insert(0);
+            *c += 1;
+            if *c &gt; nums.len() / 2 { return n; }
+        }
+        -1
+    }
+}</code></pre>
+      <pre data-lang="cpp"><span class="lang-badge cpp">C++</span><code>class Solution {
+public:
+    int majorityElement(vector&lt;int&gt;&amp; nums) {
+        unordered_map&lt;int,int&gt; counts;
+        for (int n : nums)
+            if (++counts[n] &gt; (int)nums.size() / 2) return n;
+        return -1;
+    }
+};</code></pre>
+      <p><strong>Why optimize?</strong> The hash-map count is fast but uses O(n) extra memory. Boyer-Moore achieves the same result in O(1) space, which matters when memory is constrained.</p>
+    </div></details>
+    <div class="insight-box"><strong>Key Insight.</strong> Maintain a single candidate and a count. When the count hits 0, adopt the current element as the new candidate. Increment when the element matches the candidate, decrement otherwise. Because the majority element appears more than n/2 times, every cancellation pairs it with a non-majority element — it can never be fully cancelled out, so it survives as the final candidate.</div>
+    <h4>How to Think About It</h4>
+    <div class="steps"><ol>
+      <li>Initialize candidate = None and count = 0.</li>
+      <li>For each element: if count == 0, set candidate = element.</li>
+      <li>If element == candidate, increment count; otherwise decrement count.</li>
+      <li>After one pass, candidate holds the majority element (guaranteed to exist).</li>
+      <li>No verification pass is needed when the problem guarantees a majority exists.</li>
+    </ol></div>
+    <div class="why-works-box"><strong>Why This Works.</strong> Think of each non-majority element cancelling out one majority element. Since the majority element occurs more than n/2 times, after all possible cancellations at least one of it remains. The count-to-zero reset means whenever the running tally is balanced, the candidate is reset, but the true majority's surplus guarantees it ends as the survivor.</div>
+    <div class="warning-box"><strong>Watch Out.</strong> Update the candidate ONLY when count == 0, before adjusting count. Reassigning the candidate on every non-matching element destroys the voting invariant and yields wrong results.</div>
+    <ul style="padding-left:20px;color:var(--text-muted);">
+      <li>Resetting the candidate only when count is exactly 0 is essential — resetting on every mismatch breaks the algorithm.</li>
+      <li>If the problem did NOT guarantee a majority, you would need a second pass to verify the candidate.</li>
+    </ul>
+    <h4>Python Features That Help</h4>
+    <pre data-lang="python"><span class="lang-badge python">Python</span><code>candidate, count = None, 0
+for n in nums:
+    if count == 0:
+        candidate = n        # adopt new candidate
+    count += 1 if n == candidate else -1</code></pre>
+    <h4>Go Features That Help</h4>
+    <pre data-lang="go"><span class="lang-badge go">Go</span><code>candidate, count := 0, 0
+for _, n := range nums {
+    if count == 0 { candidate = n }
+    if n == candidate { count++ } else { count-- }
+}</code></pre>
+    <h4>TypeScript Features That Help</h4>
+    <pre data-lang="typescript"><span class="lang-badge typescript">TypeScript</span><code>let candidate = 0, count = 0;
+for (const n of nums) {
+    if (count === 0) candidate = n;
+    count += n === candidate ? 1 : -1;
+}</code></pre>
+    <h4>Rust Features That Help</h4>
+    <pre data-lang="rust"><span class="lang-badge rust">Rust</span><code>let (mut candidate, mut count) = (0, 0);
+for &amp;n in &amp;nums {
+    if count == 0 { candidate = n; }
+    count += if n == candidate { 1 } else { -1 };
+}</code></pre>
+    <h4>C++ Features That Help</h4>
+    <pre data-lang="cpp"><span class="lang-badge cpp">C++</span><code>int candidate = 0, count = 0;
+for (int n : nums) {
+    if (count == 0) candidate = n;
+    count += (n == candidate) ? 1 : -1;
+}</code></pre>
+    <div class="complexity-transition"><span class="brute-complexity">Brute: O(n) space</span><span class="arrow">&rarr;</span><span class="optimal-complexity">Optimal: O(1) space</span></div>
+    <div class="connections"><strong>Connections.</strong> The foundation for #229 Majority Element II, which tracks two candidates for the n/3 threshold. The cancellation idea also underlies #1150 Check If a Number Is Majority Element.</div>
+  </div>
+
+  <div class="problem-card" id="p229">
+    <h3>#229 &middot; Majority Element II</h3>
+    <div class="problem-meta"><span class="diff-M">Medium</span><span class="ttag">array</span><span class="ttag">voting</span></div>
+    <p><strong>The Problem.</strong> Given an integer array of size n, return all elements that appear more than n/3 times. There can be at most two such elements.</p>
+    <details class="brute-force"><summary>Brute Force &mdash; O(n) time, O(n) space</summary><div class="bf-content">
+      <p>Count every element with a hash map and collect those whose count exceeds n/3.</p>
+      <pre data-lang="python"><span class="lang-badge python">Python</span><code>def majorityElement(nums):
+    from collections import Counter
+    c = Counter(nums)
+    return [k for k, v in c.items() if v &gt; len(nums) // 3]</code></pre>
+      <pre data-lang="go"><span class="lang-badge go">Go</span><code>func majorityElement(nums []int) []int {
+    c := map[int]int{}
+    for _, n := range nums { c[n]++ }
+    res := []int{}
+    for k, v := range c {
+        if v &gt; len(nums)/3 { res = append(res, k) }
+    }
+    return res
+}</code></pre>
+      <pre data-lang="typescript"><span class="lang-badge typescript">TypeScript</span><code>function majorityElement(nums: number[]): number[] {
+    const c = new Map&lt;number, number&gt;();
+    for (const n of nums) c.set(n, (c.get(n) ?? 0) + 1);
+    return [...c].filter(([, v]) =&gt; v &gt; nums.length / 3).map(([k]) =&gt; k);
+}</code></pre>
+      <pre data-lang="rust"><span class="lang-badge rust">Rust</span><code>use std::collections::HashMap;
+impl Solution {
+    pub fn majority_element(nums: Vec&lt;i32&gt;) -&gt; Vec&lt;i32&gt; {
+        let mut c = HashMap::new();
+        for &amp;n in &amp;nums { *c.entry(n).or_insert(0) += 1; }
+        c.into_iter().filter(|&amp;(_, v)| v &gt; nums.len() / 3).map(|(k, _)| k).collect()
+    }
+}</code></pre>
+      <pre data-lang="cpp"><span class="lang-badge cpp">C++</span><code>class Solution {
+public:
+    vector&lt;int&gt; majorityElement(vector&lt;int&gt;&amp; nums) {
+        unordered_map&lt;int,int&gt; c;
+        for (int n : nums) c[n]++;
+        vector&lt;int&gt; res;
+        for (auto&amp; [k, v] : c) if (v &gt; (int)nums.size() / 3) res.push_back(k);
+        return res;
+    }
+};</code></pre>
+      <p><strong>Why optimize?</strong> The hash-map approach is O(n) memory. The follow-up explicitly asks for O(1) space, which generalizing Boyer-Moore achieves.</p>
+    </div></details>
+    <div class="insight-box"><strong>Key Insight.</strong> At most two elements can exceed n/3 (three such would already exceed n). So track TWO candidates with TWO counts. Each new element either matches a candidate (increment), fills an empty slot (count == 0), or causes BOTH counts to decrement (a 'three-way cancellation'). A final verification pass confirms the survivors actually exceed n/3.</div>
+    <h4>How to Think About It</h4>
+    <div class="steps"><ol>
+      <li>Keep candidate1, count1, candidate2, count2 — two independent voting slots.</li>
+      <li>For each n: if it equals candidate1 increment count1; else if it equals candidate2 increment count2.</li>
+      <li>Else if count1 == 0 set candidate1 = n, count1 = 1; else if count2 == 0 set candidate2 = n, count2 = 1.</li>
+      <li>Otherwise decrement BOTH count1 and count2 (this n cancels one of each candidate).</li>
+      <li>After the pass, do a SECOND pass counting the actual occurrences of candidate1 and candidate2, and output only those exceeding n/3 — the verification is mandatory here.</li>
+    </ol></div>
+    <div class="why-works-box"><strong>Why This Works.</strong> With a threshold of n/3, at most two elements qualify. The two-candidate voting cancels groups of three distinct values at a time; any element appearing more than n/3 times cannot be fully cancelled by the others. Because the survivors are only guaranteed candidates (not guaranteed to qualify), the verification pass is required to reject false positives.</div>
+    <div class="warning-box"><strong>Watch Out.</strong> You MUST verify both candidates in a second pass. Unlike #169 where a majority is guaranteed, here a candidate can survive voting without truly exceeding n/3 (e.g., [1,2,3]). Output only verified survivors.</div>
+    <ul style="padding-left:20px;color:var(--text-muted);">
+      <li>Checking candidate equality BEFORE the count == 0 slot-filling matters; reversing the order can wrongly create a duplicate candidate.</li>
+      <li>Skipping the verification pass is a real bug here (unlike #169) — candidates may not actually exceed n/3.</li>
+    </ul>
+    <h4>Python Features That Help</h4>
+    <pre data-lang="python"><span class="lang-badge python">Python</span><code>c1, c2, n1, n2 = None, None, 0, 0
+for x in nums:
+    if x == c1: n1 += 1
+    elif x == c2: n2 += 1
+    elif n1 == 0: c1, n1 = x, 1
+    elif n2 == 0: c2, n2 = x, 1
+    else: n1 -= 1; n2 -= 1      # three-way cancel
+return [v for v in (c1, c2) if v is not None and nums.count(v) &gt; len(nums)//3]</code></pre>
+    <h4>Go Features That Help</h4>
+    <pre data-lang="go"><span class="lang-badge go">Go</span><code>if x == c1 { n1++ } else if x == c2 { n2++ } else if n1 == 0 {
+    c1, n1 = x, 1
+} else if n2 == 0 {
+    c2, n2 = x, 1
+} else { n1--; n2-- }</code></pre>
+    <h4>TypeScript Features That Help</h4>
+    <pre data-lang="typescript"><span class="lang-badge typescript">TypeScript</span><code>if (x === c1) n1++;
+else if (x === c2) n2++;
+else if (n1 === 0) { c1 = x; n1 = 1; }
+else if (n2 === 0) { c2 = x; n2 = 1; }
+else { n1--; n2--; }</code></pre>
+    <h4>Rust Features That Help</h4>
+    <pre data-lang="rust"><span class="lang-badge rust">Rust</span><code>if Some(x) == c1 { n1 += 1; }
+else if Some(x) == c2 { n2 += 1; }
+else if n1 == 0 { c1 = Some(x); n1 = 1; }
+else if n2 == 0 { c2 = Some(x); n2 = 1; }
+else { n1 -= 1; n2 -= 1; }</code></pre>
+    <h4>C++ Features That Help</h4>
+    <pre data-lang="cpp"><span class="lang-badge cpp">C++</span><code>if (x == c1) n1++;
+else if (x == c2) n2++;
+else if (n1 == 0) { c1 = x; n1 = 1; }
+else if (n2 == 0) { c2 = x; n2 = 1; }
+else { n1--; n2--; }</code></pre>
+    <div class="complexity-transition"><span class="brute-complexity">Brute: O(n) space</span><span class="arrow">&rarr;</span><span class="optimal-complexity">Optimal: O(1) space</span></div>
+    <div class="connections"><strong>Connections.</strong> Directly generalizes #169 Majority Element from one candidate (n/2) to two candidates (n/3). The pattern extends to k candidates for the 'more than n/k' family.</div>
+  </div>
+
+  <h2 class="section-header" id="sec-tree">Tree <span style="font-size:14px;font-weight:500;color:var(--accent-purple);">&middot; Interleaved</span></h2>
+  <p class="section-intro">Building on your tree-traversal skills (#104, #102, #94, #257), these problems combine tree recursion with structural matching and the prefix-sum trick from arrays.</p>
+
+  <div class="problem-card" id="p572">
+    <h3>#572 &middot; Subtree of Another Tree</h3>
+    <div class="problem-meta"><span class="diff-E">Easy</span><span class="ttag">tree</span><span class="ttag">dfs</span><span class="ttag">recursion</span></div>
+    <p><strong>The Problem.</strong> Given the roots of two binary trees root and subRoot, return true if there is a node in root such that the subtree rooted at that node is identical (same structure and values) to subRoot.</p>
+    <details class="brute-force"><summary>Brute Force &mdash; O(m·n) time, O(m+n) space</summary><div class="bf-content">
+      <p>At every node of root, run a full identical-tree check against subRoot. The identical check itself recurses over both trees.</p>
+      <pre data-lang="python"><span class="lang-badge python">Python</span><code>def isSubtree(root, subRoot):
+    def same(a, b):
+        if not a and not b: return True
+        if not a or not b or a.val != b.val: return False
+        return same(a.left, b.left) and same(a.right, b.right)
+    if not root: return False
+    if same(root, subRoot): return True
+    return isSubtree(root.left, subRoot) or isSubtree(root.right, subRoot)</code></pre>
+      <pre data-lang="go"><span class="lang-badge go">Go</span><code>func isSubtree(root, subRoot *TreeNode) bool {
+    var same func(a, b *TreeNode) bool
+    same = func(a, b *TreeNode) bool {
+        if a == nil &amp;&amp; b == nil { return true }
+        if a == nil || b == nil || a.Val != b.Val { return false }
+        return same(a.Left, b.Left) &amp;&amp; same(a.Right, b.Right)
+    }
+    if root == nil { return false }
+    if same(root, subRoot) { return true }
+    return isSubtree(root.Left, subRoot) || isSubtree(root.Right, subRoot)
+}</code></pre>
+      <pre data-lang="typescript"><span class="lang-badge typescript">TypeScript</span><code>function isSubtree(root: TreeNode | null, subRoot: TreeNode | null): boolean {
+    const same = (a: TreeNode | null, b: TreeNode | null): boolean =&gt; {
+        if (!a &amp;&amp; !b) return true;
+        if (!a || !b || a.val !== b.val) return false;
+        return same(a.left, b.left) &amp;&amp; same(a.right, b.right);
+    };
+    if (!root) return false;
+    if (same(root, subRoot)) return true;
+    return isSubtree(root.left, subRoot) || isSubtree(root.right, subRoot);
+}</code></pre>
+      <pre data-lang="rust"><span class="lang-badge rust">Rust</span><code>// using Option&lt;Rc&lt;RefCell&lt;TreeNode&gt;&gt;&gt; nodes
+fn is_subtree(root: Link, sub: Link) -&gt; bool {
+    fn same(a: &amp;Link, b: &amp;Link) -&gt; bool {
+        match (a, b) {
+            (None, None) =&gt; true,
+            (Some(x), Some(y)) =&gt; {
+                let (x, y) = (x.borrow(), y.borrow());
+                x.val == y.val &amp;&amp; same(&amp;x.left, &amp;y.left) &amp;&amp; same(&amp;x.right, &amp;y.right)
+            }
+            _ =&gt; false,
+        }
+    }
+    match &amp;root {
+        None =&gt; false,
+        Some(r) =&gt; same(&amp;root, &amp;sub)
+            || is_subtree(r.borrow().left.clone(), sub.clone())
+            || is_subtree(r.borrow().right.clone(), sub.clone()),
+    }
+}</code></pre>
+      <pre data-lang="cpp"><span class="lang-badge cpp">C++</span><code>class Solution {
+    bool same(TreeNode* a, TreeNode* b) {
+        if (!a &amp;&amp; !b) return true;
+        if (!a || !b || a-&gt;val != b-&gt;val) return false;
+        return same(a-&gt;left, b-&gt;left) &amp;&amp; same(a-&gt;right, b-&gt;right);
+    }
+public:
+    bool isSubtree(TreeNode* root, TreeNode* subRoot) {
+        if (!root) return false;
+        if (same(root, subRoot)) return true;
+        return isSubtree(root-&gt;left, subRoot) || isSubtree(root-&gt;right, subRoot);
+    }
+};</code></pre>
+      <p><strong>Why optimize?</strong> The brute force IS the standard approach for small trees, but with up to ~2000 nodes each, the O(m·n) comparison can be improved to O(m+n) by serializing both trees and using string/hash matching.</p>
+    </div></details>
+    <div class="insight-box"><strong>Key Insight.</strong> Reduce 'is this a subtree' to repeated 'are these two trees identical' (isSameTree). Walk root; at each node test identity against subRoot, and recurse into children. An advanced optimization serializes both trees to strings with explicit null markers and checks if subRoot's serialization is a substring of root's — turning it into O(m+n) string search.</div>
+    <h4>How to Think About It</h4>
+    <div class="steps"><ol>
+      <li>Write an isSameTree(a, b) helper: both null is true; one null or value mismatch is false; otherwise recurse on left and right pairs.</li>
+      <li>In the main function, if root is null return false (subRoot is non-empty by constraint).</li>
+      <li>If isSameTree(root, subRoot) is true, you found it.</li>
+      <li>Otherwise recurse: return isSubtree(left) OR isSubtree(right).</li>
+      <li>For the O(m+n) version: serialize each tree with delimiters and null sentinels (e.g., '#'), then run a substring search of subRoot's serialization within root's.</li>
+    </ol></div>
+    <div class="why-works-box"><strong>Why This Works.</strong> A subtree match exists iff some node in root anchors a tree identical to subRoot. Checking identity at every node is exhaustive and therefore correct. The serialization trick works because a properly delimited preorder with null markers uniquely encodes tree shape, so substring containment is equivalent to subtree containment — provided delimiters prevent value-prefix collisions.</div>
+    <div class="warning-box"><strong>Watch Out.</strong> If you use the serialization optimization, you MUST include null markers AND a separator (like a leading caret per value). Without them, value 2 can spuriously match inside value 12, yielding wrong results.</div>
+    <ul style="padding-left:20px;color:var(--text-muted);">
+      <li>In the serialization approach, omitting null markers or delimiters causes false matches (e.g., 12 matching inside 123).</li>
+      <li>Treating an empty subRoot specially — the constraints say subRoot is non-empty, but defensive code should decide its convention.</li>
+    </ul>
+    <h4>Python Features That Help</h4>
+    <pre data-lang="python"><span class="lang-badge python">Python</span><code>def same(a, b):                 # identical-tree helper
+    if not a and not b: return True
+    if not a or not b: return False
+    return a.val == b.val and same(a.left, b.left) and same(a.right, b.right)
+return isSubtree(root.left, subRoot) or isSubtree(root.right, subRoot)</code></pre>
+    <h4>Go Features That Help</h4>
+    <pre data-lang="go"><span class="lang-badge go">Go</span><code>if a == nil &amp;&amp; b == nil { return true }    // both empty
+if a == nil || b == nil { return false }   // structure mismatch
+return same(a.Left, b.Left) &amp;&amp; same(a.Right, b.Right)</code></pre>
+    <h4>TypeScript Features That Help</h4>
+    <pre data-lang="typescript"><span class="lang-badge typescript">TypeScript</span><code>const same = (a, b) =&gt;
+    (!a &amp;&amp; !b) ? true :
+    (!a || !b || a.val !== b.val) ? false :
+    same(a.left, b.left) &amp;&amp; same(a.right, b.right);</code></pre>
+    <h4>Rust Features That Help</h4>
+    <pre data-lang="rust"><span class="lang-badge rust">Rust</span><code>match (a, b) {                 // pattern-match both options
+    (None, None) =&gt; true,
+    (Some(x), Some(y)) =&gt; /* compare */ true,
+    _ =&gt; false,
+}</code></pre>
+    <h4>C++ Features That Help</h4>
+    <pre data-lang="cpp"><span class="lang-badge cpp">C++</span><code>bool same(TreeNode* a, TreeNode* b) {
+    if (!a &amp;&amp; !b) return true;
+    if (!a || !b) return false;
+    return a-&gt;val == b-&gt;val &amp;&amp; same(a-&gt;left,b-&gt;left) &amp;&amp; same(a-&gt;right,b-&gt;right);
+}</code></pre>
+    <div class="complexity-transition"><span class="brute-complexity">Brute: O(m·n)</span><span class="arrow">&rarr;</span><span class="optimal-complexity">Optimal: O(m+n) (serialize)</span></div>
+    <div class="connections"><strong>Connections.</strong> The isSameTree helper is exactly #100 Same Tree. The serialization optimization connects to #297 Serialize/Deserialize Binary Tree and string matching (#28 strStr / KMP).</div>
+  </div>
+
+  <div class="problem-card" id="p437">
+    <h3>#437 &middot; Path Sum III</h3>
+    <div class="problem-meta"><span class="diff-M">Medium</span><span class="ttag">tree</span><span class="ttag">prefix-sum</span><span class="ttag">dfs</span></div>
+    <p><strong>The Problem.</strong> Given the root of a binary tree and an integer targetSum, count the number of downward paths (any start node to any descendant, following parent-to-child links) whose node values sum to targetSum.</p>
+    <details class="brute-force"><summary>Brute Force &mdash; O(n²) time worst case, O(h) space</summary><div class="bf-content">
+      <p>From every node, start a fresh downward DFS summing values and counting paths that hit targetSum. This re-walks subtrees from each starting node.</p>
+      <pre data-lang="python"><span class="lang-badge python">Python</span><code>def pathSum(root, targetSum):
+    def down(node, remaining):
+        if not node: return 0
+        cnt = 1 if node.val == remaining else 0
+        return cnt + down(node.left, remaining - node.val) + down(node.right, remaining - node.val)
+    if not root: return 0
+    return down(root, targetSum) + pathSum(root.left, targetSum) + pathSum(root.right, targetSum)</code></pre>
+      <pre data-lang="go"><span class="lang-badge go">Go</span><code>func pathSum(root *TreeNode, targetSum int) int {
+    var down func(n *TreeNode, rem int) int
+    down = func(n *TreeNode, rem int) int {
+        if n == nil { return 0 }
+        cnt := 0
+        if n.Val == rem { cnt = 1 }
+        return cnt + down(n.Left, rem-n.Val) + down(n.Right, rem-n.Val)
+    }
+    if root == nil { return 0 }
+    return down(root, targetSum) + pathSum(root.Left, targetSum) + pathSum(root.Right, targetSum)
+}</code></pre>
+      <pre data-lang="typescript"><span class="lang-badge typescript">TypeScript</span><code>function pathSum(root: TreeNode | null, targetSum: number): number {
+    const down = (n: TreeNode | null, rem: number): number =&gt; {
+        if (!n) return 0;
+        const cnt = n.val === rem ? 1 : 0;
+        return cnt + down(n.left, rem - n.val) + down(n.right, rem - n.val);
+    };
+    if (!root) return 0;
+    return down(root, targetSum) + pathSum(root.left, targetSum) + pathSum(root.right, targetSum);
+}</code></pre>
+      <pre data-lang="rust"><span class="lang-badge rust">Rust</span><code>fn path_sum(root: Link, target: i64) -&gt; i32 {
+    fn down(n: &amp;Link, rem: i64) -&gt; i32 {
+        match n {
+            None =&gt; 0,
+            Some(x) =&gt; {
+                let x = x.borrow();
+                let c = if x.val as i64 == rem { 1 } else { 0 };
+                c + down(&amp;x.left, rem - x.val as i64) + down(&amp;x.right, rem - x.val as i64)
+            }
+        }
+    }
+    match &amp;root {
+        None =&gt; 0,
+        Some(x) =&gt; down(&amp;root, target)
+            + path_sum(x.borrow().left.clone(), target)
+            + path_sum(x.borrow().right.clone(), target),
+    }
+}</code></pre>
+      <pre data-lang="cpp"><span class="lang-badge cpp">C++</span><code>class Solution {
+    int down(TreeNode* n, long rem) {
+        if (!n) return 0;
+        int cnt = (n-&gt;val == rem) ? 1 : 0;
+        return cnt + down(n-&gt;left, rem - n-&gt;val) + down(n-&gt;right, rem - n-&gt;val);
+    }
+public:
+    int pathSum(TreeNode* root, int targetSum) {
+        if (!root) return 0;
+        return down(root, targetSum) + pathSum(root-&gt;left, targetSum) + pathSum(root-&gt;right, targetSum);
+    }
+};</code></pre>
+      <p><strong>Why optimize?</strong> The doubly-recursive brute force re-walks each subtree from every node, giving O(n²) on skewed trees (up to ~10⁶ ops at n=1000). A prefix-sum hash map cuts it to O(n).</p>
+    </div></details>
+    <div class="insight-box"><strong>Key Insight.</strong> Adapt the array prefix-sum trick (#560 Subarray Sum Equals K) to a root-to-current-node path. Track the running prefix sum down the path and a hash map of how many times each prefix sum has occurred. A path ending at the current node sums to target iff  appeared earlier on the path.</div>
+    <h4>How to Think About It</h4>
+    <div class="steps"><ol>
+      <li>DFS from the root carrying a running sum (prefix sum from root to the current node).</li>
+      <li>Keep a hash map mapping each prefix-sum value to its count among ancestors on the current path; initialize {0: 1} for paths starting at the root.</li>
+      <li>At each node, the number of valid paths ending here is map[currentPrefix - targetSum].</li>
+      <li>Add the current prefix to the map before recursing into children, then DECREMENT it after returning (backtracking) so sibling branches do not see this node's contribution.</li>
+      <li>Sum the per-node counts for the total.</li>
+    </ol></div>
+    <div class="why-works-box"><strong>Why This Works.</strong> Any downward path ending at the current node corresponds to two prefix sums on the root-to-node chain whose difference is targetSum. The hash map records how many earlier prefix sums equal currentPrefix - targetSum, which is exactly the number of valid start points. Backtracking the map entry on return keeps the counts scoped to the current path, ensuring correctness across branches.</div>
+    <div class="warning-box"><strong>Watch Out.</strong> You must remove (decrement) the current prefix sum from the map AFTER recursing into both children. Skip this backtracking step and a node's prefix leaks into unrelated branches, inflating the count.</div>
+    <ul style="padding-left:20px;color:var(--text-muted);">
+      <li>Forgetting to seed the map with {0: 1} misses paths that start at the root.</li>
+      <li>Not decrementing (backtracking) the prefix-sum count after visiting a node leaks counts into sibling subtrees and overcounts.</li>
+      <li>Sums can exceed 32-bit range; use a 64-bit accumulator.</li>
+    </ul>
+    <h4>Python Features That Help</h4>
+    <pre data-lang="python"><span class="lang-badge python">Python</span><code>from collections import defaultdict
+prefix = defaultdict(int)
+prefix[0] = 1                  # seed: empty prefix
+count += prefix[cur - target]  # paths ending here
+prefix[cur] += 1               # add, then recurse, then:
+prefix[cur] -= 1               # backtrack</code></pre>
+    <h4>Go Features That Help</h4>
+    <pre data-lang="go"><span class="lang-badge go">Go</span><code>prefix := map[int]int{0: 1}
+count += prefix[cur-target]
+prefix[cur]++
+// recurse...
+prefix[cur]--                  // backtrack</code></pre>
+    <h4>TypeScript Features That Help</h4>
+    <pre data-lang="typescript"><span class="lang-badge typescript">TypeScript</span><code>const prefix = new Map&lt;number, number&gt;([[0, 1]]);
+count += prefix.get(cur - target) ?? 0;
+prefix.set(cur, (prefix.get(cur) ?? 0) + 1);
+// recurse, then backtrack:
+prefix.set(cur, prefix.get(cur)! - 1);</code></pre>
+    <h4>Rust Features That Help</h4>
+    <pre data-lang="rust"><span class="lang-badge rust">Rust</span><code>use std::collections::HashMap;
+let mut prefix: HashMap&lt;i64, i32&gt; = HashMap::new();
+prefix.insert(0, 1);           // seed
+count += *prefix.get(&amp;(cur - target)).unwrap_or(&amp;0);
+*prefix.entry(cur).or_insert(0) += 1;  // ... then -= 1 to backtrack</code></pre>
+    <h4>C++ Features That Help</h4>
+    <pre data-lang="cpp"><span class="lang-badge cpp">C++</span><code>unordered_map&lt;long,int&gt; prefix{{0, 1}};
+count += prefix.count(cur - target) ? prefix[cur - target] : 0;
+prefix[cur]++;
+// recurse, then:
+prefix[cur]--;                 // backtrack</code></pre>
+    <div class="complexity-transition"><span class="brute-complexity">Brute: O(n²)</span><span class="arrow">&rarr;</span><span class="optimal-complexity">Optimal: O(n)</span></div>
+    <div class="connections"><strong>Connections.</strong> Lifts the prefix-sum-plus-hashmap technique of #560 Subarray Sum Equals K from a 1D array onto a root-to-node tree path. The backtracking-on-return pattern is shared with many DFS state problems.</div>
+  </div>
+
+  <h2 class="section-header" id="sec-two">Two Pointers <span style="font-size:14px;font-weight:500;color:var(--accent-purple);">&middot; Interleaved</span></h2>
+  <p class="section-intro">You have solved #15 3Sum and #11 Container With Most Water. This problem reuses the sort-plus-two-pointer scan but optimizes toward a target rather than an exact match.</p>
+
+  <div class="problem-card" id="p16">
+    <h3>#16 &middot; 3Sum Closest</h3>
+    <div class="problem-meta"><span class="diff-M">Medium</span><span class="ttag">two-pointers</span><span class="ttag">sorting</span><span class="ttag">array</span></div>
+    <p><strong>The Problem.</strong> Given an integer array nums and an integer target, find three integers in nums whose sum is closest to target and return that sum. Each input has exactly one such closest sum.</p>
+    <details class="brute-force"><summary>Brute Force &mdash; O(n³) time, O(1) space</summary><div class="bf-content">
+      <p>Check all triples, tracking the sum with the smallest absolute distance to target.</p>
+      <pre data-lang="python"><span class="lang-badge python">Python</span><code>def threeSumClosest(nums, target):
+    best = float('inf')
+    n = len(nums)
+    for i in range(n):
+        for j in range(i+1, n):
+            for k in range(j+1, n):
+                s = nums[i] + nums[j] + nums[k]
+                if abs(s - target) &lt; abs(best - target):
+                    best = s
+    return best</code></pre>
+      <pre data-lang="go"><span class="lang-badge go">Go</span><code>func threeSumClosest(nums []int, target int) int {
+    best, n := math.MaxInt, len(nums)
+    for i := 0; i &lt; n; i++ {
+        for j := i + 1; j &lt; n; j++ {
+            for k := j + 1; k &lt; n; k++ {
+                s := nums[i] + nums[j] + nums[k]
+                if abs(s-target) &lt; abs(best-target) { best = s }
+            }
+        }
+    }
+    return best
+}</code></pre>
+      <pre data-lang="typescript"><span class="lang-badge typescript">TypeScript</span><code>function threeSumClosest(nums: number[], target: number): number {
+    let best = Infinity;
+    const n = nums.length;
+    for (let i = 0; i &lt; n; i++)
+        for (let j = i+1; j &lt; n; j++)
+            for (let k = j+1; k &lt; n; k++) {
+                const s = nums[i] + nums[j] + nums[k];
+                if (Math.abs(s - target) &lt; Math.abs(best - target)) best = s;
+            }
+    return best;
+}</code></pre>
+      <pre data-lang="rust"><span class="lang-badge rust">Rust</span><code>impl Solution {
+    pub fn three_sum_closest(nums: Vec&lt;i32&gt;, target: i32) -&gt; i32 {
+        let mut best = i32::MAX;
+        let n = nums.len();
+        for i in 0..n { for j in i+1..n { for k in j+1..n {
+            let s = nums[i] + nums[j] + nums[k];
+            if (s - target).abs() &lt; (best - target).abs() { best = s; }
+        }}}
+        best
+    }
+}</code></pre>
+      <pre data-lang="cpp"><span class="lang-badge cpp">C++</span><code>class Solution {
+public:
+    int threeSumClosest(vector&lt;int&gt;&amp; nums, int target) {
+        int best = INT_MAX, n = nums.size();
+        for (int i = 0; i &lt; n; i++)
+            for (int j = i+1; j &lt; n; j++)
+                for (int k = j+1; k &lt; n; k++) {
+                    int s = nums[i] + nums[j] + nums[k];
+                    if (abs(s - target) &lt; abs(best - target)) best = s;
+                }
+        return best;
+    }
+};</code></pre>
+      <p><strong>Why optimize?</strong> Three nested loops are O(n³); with n up to 500 that is ~1.25×10⁸ — borderline, and the pattern fails outright on larger variants. Sorting plus two pointers brings it to O(n²).</p>
+    </div></details>
+    <div class="insight-box"><strong>Key Insight.</strong> Sort the array, fix the first element, and run two pointers (left/right) on the remainder — the same skeleton as #15 3Sum. Instead of seeking an exact zero, compute each triple's sum, update the best-so-far whenever its distance to target shrinks, and move the pointers based on whether the current sum is below or above target.</div>
+    <h4>How to Think About It</h4>
+    <div class="steps"><ol>
+      <li>Sort nums ascending so the two-pointer monotonicity holds.</li>
+      <li>For each index i, set left = i+1 and right = n-1.</li>
+      <li>Compute s = nums[i] + nums[left] + nums[right]; if |s - target| &lt; |best - target|, update best = s.</li>
+      <li>If s &lt; target, move left right (need a larger sum); if s &gt; target, move right left (need a smaller sum).</li>
+      <li>If s == target, return immediately — distance 0 is optimal.</li>
+      <li>Continue until left meets right, then advance i.</li>
+    </ol></div>
+    <div class="why-works-box"><strong>Why This Works.</strong> After sorting, for a fixed i the remaining two-pointer search covers all pairs in O(n) because the sum is monotonic in the pointer positions: increasing left only increases the sum, decreasing right only decreases it. Moving the pointer that reduces the gap never skips a closer pair, so scanning each i gives the global closest sum.</div>
+    <div class="warning-box"><strong>Watch Out.</strong> Update best by comparing absolute distances to target, not the sums themselves. Tracking 'closest' means minimizing |s - target|; comparing s directly gives the largest or smallest sum, not the nearest.</div>
+    <ul style="padding-left:20px;color:var(--text-muted);">
+      <li>Comparing raw sums instead of |sum - target| picks the wrong winner.</li>
+      <li>Forgetting to sort breaks the two-pointer direction logic entirely.</li>
+      <li>Not initializing best with the first valid triple (or a sentinel) can leave it uninitialized.</li>
+    </ul>
+    <h4>Python Features That Help</h4>
+    <pre data-lang="python"><span class="lang-badge python">Python</span><code>nums.sort()                    # enable two pointers
+left, right = i + 1, len(nums) - 1
+if abs(s - target) &lt; abs(best - target):
+    best = s                   # closest by distance
+left += 1 if s &lt; target else 0  # move toward target</code></pre>
+    <h4>Go Features That Help</h4>
+    <pre data-lang="go"><span class="lang-badge go">Go</span><code>sort.Ints(nums)
+left, right := i+1, len(nums)-1
+if abs(s-target) &lt; abs(best-target) { best = s }
+if s &lt; target { left++ } else { right-- }</code></pre>
+    <h4>TypeScript Features That Help</h4>
+    <pre data-lang="typescript"><span class="lang-badge typescript">TypeScript</span><code>nums.sort((a, b) =&gt; a - b);     // numeric sort!
+let [left, right] = [i + 1, nums.length - 1];
+if (Math.abs(s - target) &lt; Math.abs(best - target)) best = s;
+s &lt; target ? left++ : right--;</code></pre>
+    <h4>Rust Features That Help</h4>
+    <pre data-lang="rust"><span class="lang-badge rust">Rust</span><code>nums.sort();
+let (mut left, mut right) = (i + 1, nums.len() - 1);
+if (s - target).abs() &lt; (best - target).abs() { best = s; }
+if s &lt; target { left += 1; } else { right -= 1; }</code></pre>
+    <h4>C++ Features That Help</h4>
+    <pre data-lang="cpp"><span class="lang-badge cpp">C++</span><code>sort(nums.begin(), nums.end());
+int left = i + 1, right = nums.size() - 1;
+if (abs(s - target) &lt; abs(best - target)) best = s;
+s &lt; target ? left++ : right--;</code></pre>
+    <div class="complexity-transition"><span class="brute-complexity">Brute: O(n³)</span><span class="arrow">&rarr;</span><span class="optimal-complexity">Optimal: O(n²)</span></div>
+    <div class="connections"><strong>Connections.</strong> A near-clone of #15 3Sum: same sort-and-two-pointer template, but the inner test minimizes distance to target rather than hunting for exactly zero. Compare with #18 4Sum for one more nesting level.</div>
+  </div>
+
+  <h2 class="section-header" id="sec-graph">Graph <span style="font-size:14px;font-weight:500;color:var(--accent-purple);">&middot; Interleaved</span></h2>
+  <p class="section-intro">Beyond your topological-sort and BFS/DFS work (#207, #133, #743), this problem introduces the Eulerian path — using every edge exactly once — via Hierholzer's algorithm.</p>
+
+  <div class="problem-card" id="p332">
+    <h3>#332 &middot; Reconstruct Itinerary</h3>
+    <div class="problem-meta"><span class="diff-H">Hard</span><span class="ttag">graph</span><span class="ttag">dfs</span><span class="ttag">eulerian-path</span></div>
+    <p><strong>The Problem.</strong> Given a list of airline tickets [from, to], reconstruct the itinerary that uses every ticket exactly once, starting from "JFK". If multiple valid itineraries exist, return the lexicographically smallest one.</p>
+    <details class="brute-force"><summary>Brute Force &mdash; O(E!) time worst case</summary><div class="bf-content">
+      <p>Backtracking: try each unused ticket from the current airport in lexicographic order, recurse, and undo if the path fails to use all tickets. Exponential in the worst case.</p>
+      <pre data-lang="python"><span class="lang-badge python">Python</span><code>def findItinerary(tickets):
+    from collections import defaultdict
+    graph = defaultdict(list)
+    for a, b in sorted(tickets): graph[a].append(b)
+    used = {a: [False]*len(v) for a, v in graph.items()}
+    route = ["JFK"]
+    def dfs(node):
+        if len(route) == len(tickets) + 1: return True
+        for i, nxt in enumerate(graph[node]):
+            if not used[node][i]:
+                used[node][i] = True; route.append(nxt)
+                if dfs(nxt): return True
+                used[node][i] = False; route.pop()
+        return False
+    dfs("JFK")
+    return route</code></pre>
+      <pre data-lang="go"><span class="lang-badge go">Go</span><code>// backtracking sketch: sort adjacency, try each unused edge
+func findItinerary(tickets [][]string) []string {
+    graph := map[string][]string{}
+    for _, t := range tickets { graph[t[0]] = append(graph[t[0]], t[1]) }
+    for k := range graph { sort.Strings(graph[k]) }
+    // ... recurse trying each unused edge, backtrack on failure
+    return nil
+}</code></pre>
+      <pre data-lang="typescript"><span class="lang-badge typescript">TypeScript</span><code>function findItinerary(tickets: string[][]): string[] {
+    const graph = new Map&lt;string, string[]&gt;();
+    for (const [a, b] of [...tickets].sort()) {
+        (graph.get(a) ?? graph.set(a, []).get(a)!).push(b);
+    }
+    // backtracking: try each unused destination in order, undo on dead end
+    return [];
+}</code></pre>
+      <pre data-lang="rust"><span class="lang-badge rust">Rust</span><code>// backtracking sketch
+fn find_itinerary(tickets: Vec&lt;Vec&lt;String&gt;&gt;) -&gt; Vec&lt;String&gt; {
+    use std::collections::BTreeMap;
+    let mut graph: BTreeMap&lt;String, Vec&lt;String&gt;&gt; = BTreeMap::new();
+    for t in &amp;tickets { graph.entry(t[0].clone()).or_default().push(t[1].clone()); }
+    // recurse trying each unused edge, backtrack on failure
+    vec![]
+}</code></pre>
+      <pre data-lang="cpp"><span class="lang-badge cpp">C++</span><code>// backtracking sketch
+vector&lt;string&gt; findItinerary(vector&lt;vector&lt;string&gt;&gt;&amp; tickets) {
+    map&lt;string, vector&lt;string&gt;&gt; graph;
+    for (auto&amp; t : tickets) graph[t[0]].push_back(t[1]);
+    for (auto&amp; [k, v] : graph) sort(v.begin(), v.end());
+    // recurse trying each unused edge, backtrack on dead ends
+    return {};
+}</code></pre>
+      <p><strong>Why optimize?</strong> Naive backtracking can explore a factorial number of orderings before finding the valid one. With up to 300 tickets that is intractable — Hierholzer's algorithm finds the Eulerian path in O(E log E).</p>
+    </div></details>
+    <div class="insight-box"><strong>Key Insight.</strong> This is an Eulerian path problem: a trail using every edge exactly once. Hierholzer's algorithm builds it greedily: from each node, always take the lexicographically smallest unused outgoing edge; when a node has no more edges, prepend it to the result (post-order). Because you append on the way back, dead-end airports settle at the end of the route, and the final reversed order is a valid Eulerian path.</div>
+    <h4>How to Think About It</h4>
+    <div class="steps"><ol>
+      <li>Build an adjacency map from airport to a sorted (or min-heap) list of destinations so you always pick the lexicographically smallest next edge.</li>
+      <li>Start a DFS at "JFK".</li>
+      <li>Greedily consume the smallest unused edge out of the current node, recursing into the destination.</li>
+      <li>When the current node has no remaining outgoing edges, it is a dead end — add it to the FRONT of the route (post-order append, then reverse at the end).</li>
+      <li>When the recursion fully unwinds, the route built in reverse post-order is the lexicographically smallest Eulerian path.</li>
+      <li>Use a pointer/index per adjacency list (or pop from a heap) so each edge is consumed exactly once in O(E log E).</li>
+    </ol></div>
+    <div class="why-works-box"><strong>Why This Works.</strong> Hierholzer's algorithm works because a connected graph with the right degree balance has an Eulerian path, and greedily following edges always extends the trail until it gets stuck only at the path's true endpoint. Post-order insertion places stuck nodes at the tail; reversing yields a valid traversal. Choosing the smallest edge first makes the result lexicographically minimal without backtracking.</div>
+    <div class="warning-box"><strong>Watch Out.</strong> Add a node to the result only AFTER its outgoing edges are exhausted (post-order), then reverse at the end. Building the route in forward/pre-order order produces wrong itineraries whenever the greedy choice dead-ends before consuming all tickets.</div>
+    <ul style="padding-left:20px;color:var(--text-muted);">
+      <li>Appending in pre-order instead of post-order produces an invalid route when a branch dead-ends early.</li>
+      <li>Not consuming edges exactly once (e.g., re-using a ticket) breaks the Eulerian guarantee.</li>
+      <li>Using a plain sorted list and removing from the front is O(n) per removal — use an index pointer or heap.</li>
+    </ul>
+    <h4>Python Features That Help</h4>
+    <pre data-lang="python"><span class="lang-badge python">Python</span><code>from collections import defaultdict
+graph = defaultdict(list)
+for a, b in sorted(tickets):   # pre-sort for lexicographic order
+    graph[a].append(b)
+# post-order: append node when its edges are exhausted, reverse at end
+route.append(node)             # then return route[::-1]</code></pre>
+    <h4>Go Features That Help</h4>
+    <pre data-lang="go"><span class="lang-badge go">Go</span><code>for k := range graph { sort.Strings(graph[k]) }  // lexicographic
+// consume via an index pointer so each edge used once
+route = append(route, node)    // post-order; reverse at the end</code></pre>
+    <h4>TypeScript Features That Help</h4>
+    <pre data-lang="typescript"><span class="lang-badge typescript">TypeScript</span><code>const tickets2 = [...tickets].sort();   // lexicographic order
+graph.get(node)!.shift();      // take smallest (or use index pointer)
+route.push(node);              // post-order, then route.reverse()</code></pre>
+    <h4>Rust Features That Help</h4>
+    <pre data-lang="rust"><span class="lang-badge rust">Rust</span><code>use std::collections::BTreeMap;       // keeps keys sorted
+let dests = graph.get_mut(node).unwrap();
+dests.sort();                  // smallest first
+route.push(node.clone());      // post-order; reverse at the end</code></pre>
+    <h4>C++ Features That Help</h4>
+    <pre data-lang="cpp"><span class="lang-badge cpp">C++</span><code>map&lt;string, multiset&lt;string&gt;&gt; graph;  // multiset keeps sorted
+auto it = graph[node].begin();        // smallest unused edge
+graph[node].erase(it);
+route.push_back(node);                // post-order, then reverse</code></pre>
+    <div class="complexity-transition"><span class="brute-complexity">Brute: O(E!)</span><span class="arrow">&rarr;</span><span class="optimal-complexity">Optimal: O(E log E)</span></div>
+    <div class="connections"><strong>Connections.</strong> Introduces the Eulerian-path / Hierholzer pattern, distinct from the topological sort of #207 Course Schedule. The post-order-then-reverse trick echoes how #210 builds a topological order.</div>
+  </div>
+
+  <h2 class="section-header" id="sec-backtracking">Backtracking <span style="font-size:14px;font-weight:500;color:var(--accent-purple);">&middot; Interleaved</span></h2>
+  <p class="section-intro">You have practiced subset and permutation generation (#46, #78). This problem layers a palindrome check on top of the backtracking skeleton to enumerate every valid partition.</p>
+
+  <div class="problem-card" id="p131">
+    <h3>#131 &middot; Palindrome Partitioning</h3>
+    <div class="problem-meta"><span class="diff-M">Medium</span><span class="ttag">backtracking</span><span class="ttag">string</span><span class="ttag">dynamic-programming</span></div>
+    <p><strong>The Problem.</strong> Given a string s, partition it so that every contiguous substring in the partition is a palindrome. Return all possible such partitionings.</p>
+    <details class="brute-force"><summary>Brute Force &mdash; O(2^n · n) time, O(n) space per candidate</summary><div class="bf-content">
+      <p>Generate every possible way to cut the string (2^(n-1) cut patterns), then keep only those where all pieces are palindromes.</p>
+      <pre data-lang="python"><span class="lang-badge python">Python</span><code>def partition(s):
+    res = []
+    n = len(s)
+    def is_pal(t): return t == t[::-1]
+    for mask in range(1 &lt;&lt; (n - 1)):
+        parts, prev = [], 0
+        for i in range(n - 1):
+            if mask &amp; (1 &lt;&lt; i):
+                parts.append(s[prev:i+1]); prev = i + 1
+        parts.append(s[prev:])
+        if all(is_pal(p) for p in parts):
+            res.append(parts)
+    return res</code></pre>
+      <pre data-lang="go"><span class="lang-badge go">Go</span><code>func partition(s string) [][]string {
+    n, res := len(s), [][]string{}
+    isPal := func(t string) bool {
+        for i, j := 0, len(t)-1; i &lt; j; i, j = i+1, j-1 {
+            if t[i] != t[j] { return false }
+        }
+        return true
+    }
+    for mask := 0; mask &lt; 1&lt;&lt;(n-1); mask++ {
+        parts, prev := []string{}, 0
+        for i := 0; i &lt; n-1; i++ {
+            if mask&amp;(1&lt;&lt;i) != 0 { parts = append(parts, s[prev:i+1]); prev = i + 1 }
+        }
+        parts = append(parts, s[prev:])
+        ok := true
+        for _, p := range parts { if !isPal(p) { ok = false; break } }
+        if ok { res = append(res, parts) }
+    }
+    return res
+}</code></pre>
+      <pre data-lang="typescript"><span class="lang-badge typescript">TypeScript</span><code>function partition(s: string): string[][] {
+    const n = s.length, res: string[][] = [];
+    const isPal = (t: string) =&gt; t === [...t].reverse().join('');
+    for (let mask = 0; mask &lt; (1 &lt;&lt; (n - 1)); mask++) {
+        const parts: string[] = []; let prev = 0;
+        for (let i = 0; i &lt; n - 1; i++)
+            if (mask &amp; (1 &lt;&lt; i)) { parts.push(s.slice(prev, i + 1)); prev = i + 1; }
+        parts.push(s.slice(prev));
+        if (parts.every(isPal)) res.push(parts);
+    }
+    return res;
+}</code></pre>
+      <pre data-lang="rust"><span class="lang-badge rust">Rust</span><code>impl Solution {
+    pub fn partition(s: String) -&gt; Vec&lt;Vec&lt;String&gt;&gt; {
+        let b = s.as_bytes(); let n = b.len();
+        let is_pal = |t: &amp;[u8]| t.iter().eq(t.iter().rev());
+        let mut res = vec![];
+        for mask in 0..(1u32 &lt;&lt; (n - 1)) {
+            let (mut parts, mut prev) = (vec![], 0usize);
+            for i in 0..n - 1 {
+                if mask &amp; (1 &lt;&lt; i) != 0 { parts.push(&amp;b[prev..=i]); prev = i + 1; }
+            }
+            parts.push(&amp;b[prev..]);
+            if parts.iter().all(|p| is_pal(p)) {
+                res.push(parts.iter().map(|p| String::from_utf8_lossy(p).into_owned()).collect());
+            }
+        }
+        res
+    }
+}</code></pre>
+      <pre data-lang="cpp"><span class="lang-badge cpp">C++</span><code>class Solution {
+    bool isPal(const string&amp; t) {
+        for (int i = 0, j = t.size()-1; i &lt; j; i++, j--)
+            if (t[i] != t[j]) return false;
+        return true;
+    }
+public:
+    vector&lt;vector&lt;string&gt;&gt; partition(string s) {
+        int n = s.size(); vector&lt;vector&lt;string&gt;&gt; res;
+        for (int mask = 0; mask &lt; (1 &lt;&lt; (n-1)); mask++) {
+            vector&lt;string&gt; parts; int prev = 0;
+            for (int i = 0; i &lt; n-1; i++)
+                if (mask &amp; (1 &lt;&lt; i)) { parts.push_back(s.substr(prev, i+1-prev)); prev = i+1; }
+            parts.push_back(s.substr(prev));
+            bool ok = true;
+            for (auto&amp; p : parts) if (!isPal(p)) { ok = false; break; }
+            if (ok) res.push_back(parts);
+        }
+        return res;
+    }
+};</code></pre>
+      <p><strong>Why optimize?</strong> Enumerating all 2^(n-1) cut patterns and validating each is wasteful: it builds many partitions only to discard them. Backtracking that only extends with valid palindrome prefixes prunes the search dramatically.</p>
+    </div></details>
+    <div class="insight-box"><strong>Key Insight.</strong> Backtrack over partition points instead of enumerating all cuts. At position start, try every end such that s[start:end] is a palindrome; if it is, add it to the current path and recurse from end. When start reaches the string's length, the current path is a complete valid partition. Pruning on the palindrome check avoids exploring impossible branches.</div>
+    <h4>How to Think About It</h4>
+    <div class="steps"><ol>
+      <li>Maintain a current path (list of chosen palindrome pieces) and a start index.</li>
+      <li>If start == len(s), the path is complete — record a copy of it.</li>
+      <li>Otherwise, for each end from start+1 to len(s), check if s[start:end] is a palindrome.</li>
+      <li>If it is, push that substring, recurse with start = end, then pop it (backtrack) to try the next length.</li>
+      <li>Optionally precompute an n×n palindrome table (DP) so each palindrome check is O(1) instead of O(n).</li>
+    </ol></div>
+    <div class="why-works-box"><strong>Why This Works.</strong> Every valid partition is a sequence of palindrome prefixes: pick the first palindrome piece, then recursively partition the rest. By only recursing when the current prefix is a palindrome, the search constructs exactly the set of valid partitions and nothing else. The backtracking (push/recurse/pop) ensures each branch explores one choice at a time without corrupting siblings.</div>
+    <div class="warning-box"><strong>Watch Out.</strong> When recording a completed partition, store a COPY of the current path, not the path itself. Appending the live list means subsequent pops/pushes mutate your saved results, leaving the output corrupted.</div>
+    <ul style="padding-left:20px;color:var(--text-muted);">
+      <li>Appending the path by reference instead of a copy means later mutations corrupt already-recorded results.</li>
+      <li>Forgetting to backtrack (pop) after the recursive call mixes pieces across branches.</li>
+      <li>Recomputing palindrome checks naively makes each O(n); a precomputed DP table or two-pointer expansion helps.</li>
+    </ul>
+    <h4>Python Features That Help</h4>
+    <pre data-lang="python"><span class="lang-badge python">Python</span><code>path = []
+def backtrack(start):
+    if start == len(s):
+        res.append(path[:])      # COPY, not reference
+        return
+    for end in range(start + 1, len(s) + 1):
+        sub = s[start:end]
+        if sub == sub[::-1]:     # palindrome prune
+            path.append(sub); backtrack(end); path.pop()</code></pre>
+    <h4>Go Features That Help</h4>
+    <pre data-lang="go"><span class="lang-badge go">Go</span><code>func backtrack(start int) {
+    if start == len(s) {
+        cp := make([]string, len(path)); copy(cp, path)  // copy!
+        res = append(res, cp); return
+    }
+    // try each palindrome prefix, then path = path[:len(path)-1]
+}</code></pre>
+    <h4>TypeScript Features That Help</h4>
+    <pre data-lang="typescript"><span class="lang-badge typescript">TypeScript</span><code>const backtrack = (start: number) =&gt; {
+    if (start === s.length) { res.push([...path]); return; }  // spread copy
+    for (let end = start + 1; end &lt;= s.length; end++) {
+        const sub = s.slice(start, end);
+        if (sub === [...sub].reverse().join('')) {
+            path.push(sub); backtrack(end); path.pop();
+        }
+    }
+};</code></pre>
+    <h4>Rust Features That Help</h4>
+    <pre data-lang="rust"><span class="lang-badge rust">Rust</span><code>fn backtrack(start: usize, path: &amp;mut Vec&lt;String&gt;, res: &amp;mut Vec&lt;Vec&lt;String&gt;&gt;) {
+    if start == n { res.push(path.clone()); return; }  // clone to copy
+    // for each palindrome prefix: path.push(..); recurse; path.pop();
+}</code></pre>
+    <h4>C++ Features That Help</h4>
+    <pre data-lang="cpp"><span class="lang-badge cpp">C++</span><code>void backtrack(int start) {
+    if (start == (int)s.size()) { res.push_back(path); return; }  // value copy
+    for (int end = start + 1; end &lt;= (int)s.size(); end++)
+        if (isPal(s.substr(start, end - start))) {
+            path.push_back(s.substr(start, end - start));
+            backtrack(end); path.pop_back();
+        }
+}</code></pre>
+    <div class="complexity-transition"><span class="brute-complexity">Brute: O(2^n·n)</span><span class="arrow">&rarr;</span><span class="optimal-complexity">Optimal: O(2^n·n) pruned</span></div>
+    <div class="connections"><strong>Connections.</strong> Builds on the backtracking skeleton of #46 Permutations and #78 Subsets, adding the palindrome check from #5 Longest Palindromic Substring as the pruning condition. The optional palindrome DP table connects to #647 Palindromic Substrings.</div>
+  </div>
+
+  <h2 class="section-header" id="sec-design">Design <span style="font-size:14px;font-weight:500;color:var(--accent-purple);">&middot; Interleaved</span></h2>
+  <p class="section-intro">Combining greedy reasoning, frequency counting, and a touch of combinatorial math, this scheduling problem rewards finding the closed-form answer rather than simulating step by step.</p>
+
+  <div class="problem-card" id="p621">
+    <h3>#621 &middot; Task Scheduler</h3>
+    <div class="problem-meta"><span class="diff-M">Medium</span><span class="ttag">greedy</span><span class="ttag">heap</span><span class="ttag">math</span><span class="ttag">design</span></div>
+    <p><strong>The Problem.</strong> Given a list of task labels and an integer n (the cooldown), where the same task must be separated by at least n intervals, return the minimum number of intervals (including idles) needed to finish all tasks. Each task takes one interval.</p>
+    <details class="brute-force"><summary>Brute Force &mdash; O(total · log 26) time, O(26) space</summary><div class="bf-content">
+      <p>Simulate the schedule: at each tick, pick the available task with the highest remaining count that is off cooldown (use a heap and a waiting queue); count idles when nothing is available.</p>
+      <pre data-lang="python"><span class="lang-badge python">Python</span><code>def leastInterval(tasks, n):
+    import heapq
+    from collections import Counter, deque
+    heap = [-c for c in Counter(tasks).values()]
+    heapq.heapify(heap)
+    time = 0
+    wait = deque()   # (ready_time, count)
+    while heap or wait:
+        time += 1
+        if heap:
+            c = heapq.heappop(heap) + 1
+            if c &lt; 0: wait.append((time + n, c))
+        if wait and wait[0][0] == time:
+            heapq.heappush(heap, wait.popleft()[1])
+    return time</code></pre>
+      <pre data-lang="go"><span class="lang-badge go">Go</span><code>// simulate with a max-heap of counts and a waiting queue
+func leastInterval(tasks []byte, n int) int {
+    counts := map[byte]int{}
+    for _, t := range tasks { counts[t]++ }
+    // push counts into a max-heap; pop the largest each tick,
+    // hold cooling tasks in a queue keyed by ready time
+    return 0
+}</code></pre>
+      <pre data-lang="typescript"><span class="lang-badge typescript">TypeScript</span><code>function leastInterval(tasks: string[], n: number): number {
+    const counts = new Map&lt;string, number&gt;();
+    for (const t of tasks) counts.set(t, (counts.get(t) ?? 0) + 1);
+    // max-heap of counts + waiting queue of [readyTime, count]
+    return 0;
+}</code></pre>
+      <pre data-lang="rust"><span class="lang-badge rust">Rust</span><code>use std::collections::{BinaryHeap, VecDeque, HashMap};
+fn least_interval(tasks: Vec&lt;char&gt;, n: i32) -&gt; i32 {
+    let mut counts = HashMap::new();
+    for t in &amp;tasks { *counts.entry(*t).or_insert(0) += 1; }
+    let mut heap: BinaryHeap&lt;i32&gt; = counts.values().cloned().collect();
+    // pop largest each tick, queue cooling tasks; count idles
+    0
+}</code></pre>
+      <pre data-lang="cpp"><span class="lang-badge cpp">C++</span><code>int leastInterval(vector&lt;char&gt;&amp; tasks, int n) {
+    unordered_map&lt;char,int&gt; counts;
+    for (char t : tasks) counts[t]++;
+    priority_queue&lt;int&gt; heap;       // max-heap of counts
+    for (auto&amp; [k, v] : counts) heap.push(v);
+    queue&lt;pair&lt;int,int&gt;&gt; wait;      // {readyTime, remaining}
+    // simulate ticks, counting idles
+    return 0;
+}</code></pre>
+      <p><strong>Why optimize?</strong> Tick-by-tick simulation works but is verbose and can be slow when total tasks are large. A closed-form formula computes the answer in O(total) with no simulation.</p>
+    </div></details>
+    <div class="insight-box"><strong>Key Insight.</strong> The most frequent task dictates the schedule's skeleton. If its count is maxFreq, it creates (maxFreq - 1) gaps, each needing n+1 slots (the task plus n cooldown). Other tasks fill the idle slots. The answer is max(len(tasks), (maxFreq - 1) * (n + 1) + numTasksWithMaxFreq) — the max guards against the case where there are so many distinct tasks that no idling is ever needed.</div>
+    <h4>How to Think About It</h4>
+    <div class="steps"><ol>
+      <li>Count the frequency of each task; find maxFreq, the largest frequency.</li>
+      <li>Count how many tasks share that maxFreq (call it numMax).</li>
+      <li>Build the skeleton from the most frequent task: (maxFreq - 1) blocks of size (n + 1), then a final block holding the numMax most-frequent tasks: (maxFreq - 1) * (n + 1) + numMax.</li>
+      <li>If there are many distinct tasks, the gaps fill up completely and there are no idles — in that case the answer is simply len(tasks).</li>
+      <li>Return max(len(tasks), (maxFreq - 1) * (n + 1) + numMax).</li>
+    </ol></div>
+    <div class="why-works-box"><strong>Why This Works.</strong> The schedule length is lower-bounded by both the total number of tasks (every task needs a slot) and by the cooldown structure of the most frequent task, which forces (maxFreq - 1) gaps of size n+1 plus a trailing block for all tasks tied at maxFreq. When enough distinct tasks exist, those gaps are entirely filled by real tasks (no idles), so the total collapses to len(tasks). Taking the max captures both regimes exactly.</div>
+    <div class="warning-box"><strong>Watch Out.</strong> The final answer is max(len(tasks), (maxFreq - 1) * (n + 1) + numMax). Dropping the max() guard breaks every case where distinct tasks fully pack the cooldown gaps and zero idles are needed.</div>
+    <ul style="padding-left:20px;color:var(--text-muted);">
+      <li>Forgetting the trailing + numMax term undercounts when several tasks share the maximum frequency.</li>
+      <li>Omitting the max(len(tasks), ...) guard overcounts when there are no idle slots (many distinct tasks).</li>
+      <li>Using (maxFreq - 1) * n instead of (maxFreq - 1) * (n + 1) forgets that each block includes the task itself plus n cooldown slots.</li>
+    </ul>
+    <h4>Python Features That Help</h4>
+    <pre data-lang="python"><span class="lang-badge python">Python</span><code>from collections import Counter
+counts = Counter(tasks)
+max_freq = max(counts.values())               # the bottleneck task
+num_max = sum(1 for v in counts.values() if v == max_freq)
+return max(len(tasks), (max_freq - 1) * (n + 1) + num_max)</code></pre>
+    <h4>Go Features That Help</h4>
+    <pre data-lang="go"><span class="lang-badge go">Go</span><code>counts := map[byte]int{}
+for _, t := range tasks { counts[t]++ }
+maxFreq, numMax := 0, 0
+for _, v := range counts { if v &gt; maxFreq { maxFreq = v } }
+// then count numMax, apply the formula with max(len(tasks), ...)</code></pre>
+    <h4>TypeScript Features That Help</h4>
+    <pre data-lang="typescript"><span class="lang-badge typescript">TypeScript</span><code>const counts = new Map&lt;string, number&gt;();
+for (const t of tasks) counts.set(t, (counts.get(t) ?? 0) + 1);
+const maxFreq = Math.max(...counts.values());
+const numMax = [...counts.values()].filter(v =&gt; v === maxFreq).length;
+return Math.max(tasks.length, (maxFreq - 1) * (n + 1) + numMax);</code></pre>
+    <h4>Rust Features That Help</h4>
+    <pre data-lang="rust"><span class="lang-badge rust">Rust</span><code>use std::collections::HashMap;
+let mut counts = HashMap::new();
+for t in &amp;tasks { *counts.entry(*t).or_insert(0) += 1; }
+let max_freq = *counts.values().max().unwrap();
+let num_max = counts.values().filter(|&amp;&amp;v| v == max_freq).count() as i32;</code></pre>
+    <h4>C++ Features That Help</h4>
+    <pre data-lang="cpp"><span class="lang-badge cpp">C++</span><code>unordered_map&lt;char,int&gt; counts;
+for (char t : tasks) counts[t]++;
+int maxFreq = 0;
+for (auto&amp; [k, v] : counts) maxFreq = max(maxFreq, v);
+// numMax = tasks tied at maxFreq; return max((int)tasks.size(), ...)</code></pre>
+    <div class="complexity-transition"><span class="brute-complexity">Brute: O(total·log26)</span><span class="arrow">&rarr;</span><span class="optimal-complexity">Optimal: O(total)</span></div>
+    <div class="connections"><strong>Connections.</strong> The greedy/heap simulation generalizes the priority-queue scheduling seen in problems like #767 Reorganize String; the closed-form math view is a hallmark of 'find the bottleneck and fill the gaps' counting arguments.</div>
+  </div>
+
+  <footer>
+    <h3>Spaced Repetition Schedule</h3>
+    <p style="margin-bottom:16px;color:var(--text-muted);">Each review resets retention toward 100% and flattens the forgetting curve: Day 1 &rarr; Day 6 &rarr; Day 15 &rarr; Day 37 &rarr; Day 90.</p>
+    <h3>All Guides</h3>
+    <ul>
+<li><a href="guides/guide-2026-07-09.html">2026-07-09</a></li>
+<li><a href="guides/guide-2026-07-08.html">2026-07-08</a></li>
+<li><a href="guides/guide-2026-07-07.html">2026-07-07</a></li>
+<li><a href="guides/guide-2026-07-06.html">2026-07-06</a></li>
+<li><a href="guides/guide-2026-07-05.html">2026-07-05</a></li>
+<li><a href="guides/guide-2026-07-04.html">2026-07-04</a></li>
+<li><a href="guides/guide-2026-07-03.html">2026-07-03</a> (Day 38)</li>
+<li><a href="guides/guide-2026-07-02.html">2026-07-02</a> (Day 37)</li>
+<li><a href="guides/guide-2026-07-01.html">2026-07-01</a> (Day 36)</li>
+<li><a href="guides/guide-2026-06-30.html">2026-06-30</a></li>
+<li><a href="guides/guide-2026-06-29.html">2026-06-29</a></li>
+<li><a href="guides/guide-2026-06-28.html">2026-06-28</a></li>
+<li><a href="guides/guide-2026-06-27.html">2026-06-27</a> (Day 31)</li>
+<li><a href="guides/guide-2026-06-26.html">2026-06-26</a></li>
+<li><a href="guides/guide-2026-06-25.html">2026-06-25</a></li>
+<li><a href="guides/guide-2026-06-24.html">2026-06-24</a></li>
+<li><a href="guides/guide-2026-06-23.html">2026-06-23</a> (Day 28)</li>
+<li><a href="guides/guide-2026-06-22.html">2026-06-22</a> (Day 27)</li>
+    <li><a href="guides/guide-2026-06-21.html">2026-06-21</a> </li>
+<li><a href="guides/guide-2026-06-19.html">2026-06-19</a></li>
+<li><a href="guides/guide-2026-06-18.html">2026-06-18</a></li>
+<li><a href="guides/guide-2026-06-17.html">2026-06-17</a></li>
+<li><a href="guides/guide-2026-06-15.html">2026-06-15</a></li>
+<li><a href="guides/guide-2026-06-13.html">2026-06-13</a></li>
+<li><a href="guides/guide-2026-06-12.html">2026-06-12</a></li>
+<li><a href="guides/guide-2026-06-11.html">2026-06-11</a></li>
+<li><a href="guides/guide-2026-06-10.html">2026-06-10</a></li>
+<li><a href="guides/guide-2026-06-09.html">2026-06-09</a></li>
+<li><a href="guides/guide-2026-06-08.html">2026-06-08</a></li>
+<li><a href="guides/guide-2026-06-07.html">2026-06-07</a></li>
+<li><a href="guides/guide-2026-06-05.html">2026-06-05</a></li>
+<li><a href="guides/guide-2026-06-04.html">2026-06-04</a></li>
+<li><a href="guides/guide-2026-06-03.html">2026-06-03</a></li>
+<li><a href="guides/guide-2026-06-02.html">2026-06-02</a></li>
+<li><a href="guides/guide-2026-06-01.html">2026-06-01</a></li>
+<li><a href="guides/guide-2026-05-31.html">2026-05-31</a></li>
+<li><a href="guides/guide-2026-05-30.html">2026-05-30</a></li>
+<li><a href="guides/guide-2026-05-29.html">2026-05-29</a></li>
+<li><a href="guides/guide-2026-05-28.html">2026-05-28</a></li>
+<li><a href="guides/guide-2026-05-27.html">2026-05-27</a></li>
+<li><a href="guides/guide-2026-05-26.html">2026-05-26</a></li>
+<li><a href="guides/guide-2026-05-25.html">2026-05-25</a></li>
+<li><a href="guides/guide-2026-05-23.html">2026-05-23</a></li>
+<li><a href="guides/guide-2026-05-22.html">2026-05-22</a></li>
+    </ul>
+    <p>LeetCode Study Guide &mdash; generated 2026-06-21 (Day 26). 7 review problems, 16 new problems across Monotonic Stack, Binary Search, Greedy, Dynamic Programming, Boyer-Moore Voting, Tree, Two Pointers, Graph, Backtracking &amp; Design.</p>
+  </footer>
+</main>
+</body>
+</html>

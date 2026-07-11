@@ -1,0 +1,1116 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TypeScript Daily Guide — 2026-06-26 (Day 23)</title>
+<style>
+:root {
+  --bg: #0d1117;
+  --surface: #161b22;
+  --surface2: #1c2129;
+  --border: #30363d;
+  --text: #e6edf3;
+  --text-muted: #8b949e;
+  --accent: #58a6ff;
+  --accent-bg: rgba(56,139,253,0.15);
+  --green: #3fb950;
+  --green-bg: rgba(63,185,80,0.08);
+  --red: #f85149;
+  --red-bg: rgba(248,81,73,0.08);
+  --yellow: #d29922;
+  --yellow-bg: rgba(210,153,34,0.1);
+  --orange: #db6d28;
+  --purple: #bc8cff;
+  --purple-bg: rgba(188,140,255,0.08);
+  --purple-border: rgba(188,140,255,0.2);
+  --link: #58a6ff;
+  --code-bg: #1c2129;
+  --output-bg: #0e1c0e;
+  --output-border: #1a3a1a;
+  --sidebar-bg: #161b22;
+  --sidebar-active: rgba(56,139,253,0.15);
+  --exercise-border: #30363d;
+}
+[data-theme="light"] {
+  --bg: #ffffff;
+  --surface: #f6f8fa;
+  --surface2: #eef1f5;
+  --border: #d0d7de;
+  --text: #1f2328;
+  --text-muted: #656d76;
+  --accent: #0969da;
+  --accent-bg: rgba(9,105,218,0.1);
+  --green: #1a7f37;
+  --green-bg: rgba(26,127,55,0.06);
+  --red: #cf222e;
+  --red-bg: rgba(207,34,46,0.06);
+  --yellow: #9a6700;
+  --yellow-bg: rgba(154,103,0,0.06);
+  --orange: #bc4c00;
+  --purple: #8250df;
+  --purple-bg: rgba(130,80,223,0.06);
+  --purple-border: rgba(130,80,223,0.15);
+  --link: #0969da;
+  --code-bg: #eef1f5;
+  --output-bg: #f0faf0;
+  --output-border: #c6e6c6;
+  --sidebar-bg: #f6f8fa;
+  --sidebar-active: rgba(9,105,218,0.1);
+  --exercise-border: #d0d7de;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;font-size:16px;line-height:1.7;color:var(--text);background:var(--bg);display:flex;min-height:100vh}
+a{color:var(--link);text-decoration:none}
+a:hover{text-decoration:underline}
+
+/* Sidebar */
+.sidebar{position:fixed;top:0;left:0;width:300px;height:100vh;background:var(--sidebar-bg);border-right:1px solid var(--border);overflow-y:auto;padding:20px 0;z-index:100}
+.sidebar-header{padding:16px 20px;border-bottom:1px solid var(--border);margin-bottom:12px}
+.sidebar-header h2{font-size:15px;font-weight:600;color:var(--text)}
+.sidebar-header .date{font-size:13px;color:var(--text-muted);margin-top:2px}
+.sidebar-section{padding:8px 20px 4px;font-size:12px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px}
+.sidebar-section.review-label{color:var(--purple)}
+.sidebar-nav{list-style:none;padding:0}
+.sidebar-nav li a{display:block;padding:6px 20px 6px 28px;font-size:14px;color:var(--text-muted);transition:all 0.15s}
+.sidebar-nav li a:hover,.sidebar-nav li a.active{color:var(--accent);background:var(--sidebar-active);text-decoration:none}
+.sidebar-nav li a .nav-id{font-size:11px;color:var(--text-muted);opacity:0.6;margin-left:6px}
+
+/* Main */
+.main{margin-left:300px;flex:1;padding:40px;max-width:1160px}
+.content{max-width:860px;margin:0 auto}
+
+/* Theme Toggle */
+.theme-toggle{position:fixed;top:16px;right:20px;z-index:200;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:8px 12px;cursor:pointer;color:var(--text);font-size:18px;line-height:1;transition:all 0.15s}
+.theme-toggle:hover{border-color:var(--accent)}
+
+/* Header */
+.guide-header{text-align:center;padding:32px 0 40px;border-bottom:1px solid var(--border);margin-bottom:40px}
+.guide-header h1{font-size:28px;font-weight:700;margin-bottom:8px}
+.guide-header .meta{font-size:15px;color:var(--text-muted)}
+.guide-header .meta span{margin:0 8px}
+.badge{display:inline-block;padding:2px 10px;border-radius:12px;font-size:13px;font-weight:500}
+.badge-blue{background:var(--accent-bg);color:var(--accent)}
+.badge-purple{background:var(--purple-bg);color:var(--purple)}
+
+/* How To Use */
+.how-to-use{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:24px 28px;margin-bottom:40px}
+.how-to-use h2{font-size:18px;margin-bottom:12px}
+.how-to-use ol{padding-left:24px}
+.how-to-use li{margin-bottom:6px;color:var(--text-muted)}
+
+/* Review Section */
+.review-section{margin-bottom:48px}
+.review-section-header{font-size:22px;font-weight:700;padding-bottom:12px;border-bottom:2px solid var(--purple);margin-bottom:28px;display:flex;align-items:center;gap:12px;color:var(--purple)}
+
+/* Review Card */
+.review-card{background:var(--purple-bg);border:1px solid var(--purple-border);border-left:4px solid var(--purple);border-radius:10px;padding:28px;margin-bottom:24px}
+.review-card .review-header{display:flex;align-items:center;gap:12px;margin-bottom:12px;flex-wrap:wrap}
+.review-card .review-title{font-size:18px;font-weight:700;color:var(--purple)}
+.review-card .review-meta{font-size:13px;color:var(--text-muted)}
+.review-card .review-reminder{color:var(--text-muted);font-style:italic;margin-bottom:16px;padding-left:14px;border-left:3px solid var(--purple)}
+.review-card .review-pattern{margin-bottom:16px}
+.review-card .review-pattern strong{display:block;margin-bottom:8px;font-size:14px;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px}
+.review-card .review-challenge{margin-bottom:12px}
+.review-card .review-challenge strong{display:block;margin-bottom:8px;font-size:14px;color:var(--yellow);text-transform:uppercase;letter-spacing:0.5px}
+.review-card .review-challenge p{line-height:1.6}
+.review-card .review-pitfall{background:var(--red-bg);border:1px solid rgba(248,81,73,0.15);border-radius:6px;padding:12px 16px;font-size:14px;line-height:1.6}
+.review-card .review-pitfall strong{color:var(--red);margin-right:4px}
+.review-card code{background:var(--code-bg);padding:2px 6px;border-radius:4px;font-family:'SF Mono','Fira Code','Consolas',monospace;font-size:13px}
+
+/* Topic Section */
+.topic-section{margin-bottom:48px}
+.topic-section-header{font-size:22px;font-weight:700;padding-bottom:12px;border-bottom:2px solid var(--accent);margin-bottom:28px;display:flex;align-items:center;gap:12px}
+.topic-section-header .section-num{background:var(--accent);color:#fff;width:32px;height:32px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:15px;font-weight:700;flex-shrink:0}
+
+/* Concept Card */
+.concept-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:28px;margin-bottom:32px}
+.concept-header{display:flex;align-items:center;gap:12px;margin-bottom:16px;flex-wrap:wrap}
+.concept-title{font-size:20px;font-weight:700}
+.ttag{display:inline-block;padding:2px 10px;border-radius:12px;font-size:12px;font-weight:500;background:var(--accent-bg);color:var(--accent)}
+
+.why-matters{color:var(--text-muted);font-style:italic;margin-bottom:20px;padding-left:14px;border-left:3px solid var(--accent)}
+.explanation{margin-bottom:20px;line-height:1.8}
+.explanation p{margin-bottom:12px}
+.explanation ul,.explanation ol{padding-left:24px;margin-bottom:12px}
+.explanation li{margin-bottom:4px}
+.explanation code{background:var(--code-bg);padding:2px 6px;border-radius:4px;font-family:'SF Mono','Fira Code','Consolas',monospace;font-size:14px}
+.step{display:flex;gap:12px;margin-bottom:10px;align-items:flex-start}
+.step-num{background:var(--accent-bg);color:var(--accent);width:24px;height:24px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;margin-top:3px}
+
+/* Code Examples */
+.code-example{margin-bottom:20px;border:1px solid var(--border);border-radius:8px;overflow:hidden}
+.lang-badge{background:var(--surface2);color:var(--text-muted);font-size:12px;font-weight:600;padding:6px 14px;border-bottom:1px solid var(--border);font-family:'SF Mono','Fira Code','Consolas',monospace}
+pre{margin:0;padding:16px;overflow-x:auto;background:var(--code-bg);font-family:'SF Mono','Fira Code','Consolas',monospace;font-size:13.5px;line-height:1.6;white-space:pre-wrap}
+pre code{background:none;padding:0;font-size:inherit}
+.output{background:var(--output-bg);border-top:1px solid var(--output-border);padding:12px 16px;font-family:'SF Mono','Fira Code','Consolas',monospace;font-size:13px;color:var(--green);white-space:pre-wrap}
+.output::before{content:"Output:";display:block;font-size:11px;font-weight:600;color:var(--text-muted);margin-bottom:4px;text-transform:uppercase;letter-spacing:0.5px}
+.type-result{background:var(--output-bg);border-top:1px solid var(--output-border);padding:12px 16px;font-family:'SF Mono','Fira Code','Consolas',monospace;font-size:13px;color:var(--green);white-space:pre-wrap}
+.type-result::before{content:"Type Result:";display:block;font-size:11px;font-weight:600;color:var(--text-muted);margin-bottom:4px;text-transform:uppercase;letter-spacing:0.5px}
+.type-error{background:var(--red-bg);border-top:1px solid rgba(248,81,73,0.2);padding:12px 16px;font-family:'SF Mono','Fira Code','Consolas',monospace;font-size:13px;color:var(--red);white-space:pre-wrap}
+.type-error::before{content:"Type Error:";display:block;font-size:11px;font-weight:600;color:var(--red);margin-bottom:4px;text-transform:uppercase;letter-spacing:0.5px}
+
+/* Callouts */
+.callout-warning{background:var(--yellow-bg);border:1px solid rgba(210,153,34,0.2);border-radius:8px;padding:20px;margin-bottom:20px}
+.callout-warning strong{color:var(--yellow);display:block;margin-bottom:12px;font-size:16px}
+.mistake,.correct{padding:10px 14px;border-radius:6px;margin-bottom:10px;font-size:14px;line-height:1.6}
+.mistake{background:var(--red-bg);border-left:3px solid var(--red)}
+.mistake code,.correct code{background:var(--code-bg);padding:2px 6px;border-radius:4px;font-family:'SF Mono','Fira Code','Consolas',monospace;font-size:13px}
+.correct{background:var(--green-bg);border-left:3px solid var(--green)}
+
+/* Key Rules */
+.key-rules{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:20px;margin-bottom:20px}
+.key-rules strong{display:block;margin-bottom:10px;font-size:16px}
+.key-rules ul{padding-left:20px}
+.key-rules li{margin-bottom:6px}
+.key-rules code{background:var(--code-bg);padding:2px 6px;border-radius:4px;font-family:'SF Mono','Fira Code','Consolas',monospace;font-size:13px}
+
+/* Exercises */
+.exercises{border:2px dashed var(--exercise-border);border-radius:8px;padding:20px;margin-bottom:20px;margin-left:12px}
+.exercises strong{display:block;margin-bottom:14px;font-size:16px;color:var(--purple)}
+.exercise{margin-bottom:14px;padding-left:38px;position:relative;line-height:1.6}
+.exercise:last-child{margin-bottom:0}
+.exercise-num{position:absolute;left:0;top:2px;background:var(--purple);color:#fff;width:24px;height:24px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:12px;font-weight:700}
+.exercise code{background:var(--code-bg);padding:2px 6px;border-radius:4px;font-family:'SF Mono','Fira Code','Consolas',monospace;font-size:13px}
+
+/* Connections */
+.connections{background:var(--accent-bg);border:1px solid rgba(56,139,253,0.2);border-radius:8px;padding:16px 20px;font-size:14px;color:var(--text-muted)}
+.connections strong{color:var(--accent);margin-right:6px}
+
+/* Cross-links */
+.cross-links{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:20px 24px;margin-bottom:40px;text-align:center}
+.cross-links a{margin:0 10px;font-weight:500}
+
+/* Footer */
+.guide-footer{border-top:1px solid var(--border);padding-top:32px;margin-top:48px}
+.guide-footer h2{font-size:18px;margin-bottom:16px}
+.guide-footer ul{list-style:none;padding:0}
+.guide-footer li{padding:6px 0}
+.guide-footer li a{font-weight:500}
+
+/* Responsive */
+@media(max-width:900px){
+  .sidebar{display:none}
+  .main{margin-left:0}
+  .theme-toggle{top:12px;right:12px}
+}
+</style>
+</head>
+<body>
+
+<!-- Theme Toggle -->
+<button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">&#x1F319;</button>
+
+<!-- Sidebar -->
+<nav class="sidebar">
+  <div class="sidebar-header">
+    <h2>TypeScript Daily Guide</h2>
+    <div class="date">2026-06-26 &mdash; Day 23</div>
+  </div>
+
+  <div class="sidebar-section review-label">Review (6 concepts)</div>
+  <ul class="sidebar-nav">
+    <li><a href="#review_node">Node.js + TypeScript <span class="nav-id">R1</span></a></li>
+    <li><a href="#review_trpc">API Typing: tRPC &amp; OpenAPI <span class="nav-id">R2</span></a></li>
+    <li><a href="#review_eslint">Custom ESLint Rules <span class="nav-id">R3</span></a></li>
+    <li><a href="#review_project_refs">Project References <span class="nav-id">R4</span></a></li>
+    <li><a href="#review_state">State Management Typing <span class="nav-id">R5</span></a></li>
+    <li><a href="#review_db">Database Typing: Prisma &amp; Drizzle <span class="nav-id">R6</span></a></li>
+  </ul>
+
+  <div class="sidebar-section">Object &amp; Value-Level Type Safety</div>
+  <ul class="sidebar-nav">
+    <li><a href="#object_keys">Type-Safe Object.keys / entries <span class="nav-id">#1</span></a></li>
+    <li><a href="#excess_props">Excess Property Checks <span class="nav-id">#2</span></a></li>
+    <li><a href="#typeof_queries">typeof Type Queries <span class="nav-id">#3</span></a></li>
+  </ul>
+
+  <div class="sidebar-section">Indexing &amp; Template Typing</div>
+  <ul class="sidebar-nav">
+    <li><a href="#index_signatures">Index Signatures &amp; noUncheckedIndexedAccess <span class="nav-id">#4</span></a></li>
+    <li><a href="#tagged_templates">Tagged Template Literal Typing <span class="nav-id">#5</span></a></li>
+  </ul>
+</nav>
+
+<!-- Main Content -->
+<div class="main">
+<div class="content">
+
+<!-- Header -->
+<header class="guide-header">
+  <h1>TypeScript Daily Guide &mdash; Day 23</h1>
+  <div class="meta">
+    <span>2026-06-26</span>
+    <span>&middot;</span>
+    <span>Day 23 of 24</span>
+    <span>&middot;</span>
+    <span class="badge badge-purple">6 reviews</span>
+    <span class="badge badge-blue">5 new concepts</span>
+  </div>
+</header>
+
+<!-- How to Use -->
+<div class="how-to-use">
+  <h2>How to Use This Guide</h2>
+  <ol>
+    <li><strong>Review first</strong> &mdash; scan each purple review card; if the concept feels solid, move on; if fuzzy, re-read the code pattern</li>
+    <li><strong>Attempt the challenge exercise</strong> on any review card that felt shaky &mdash; this is your best reinforcement signal</li>
+    <li><strong>Work through new concepts</strong> top to bottom &mdash; each builds on the previous</li>
+    <li><strong>Type every code example</strong> yourself in a .ts file &mdash; hover over types in your editor to build intuition</li>
+    <li><strong>Do at least 2 exercises per concept</strong> before moving to the next one</li>
+  </ol>
+</div>
+
+<!-- Cross-links -->
+<div class="cross-links">
+  <a href="guide.html">LeetCode Guide</a>
+  <a href="lang-guide.html">Lang Guide</a>
+  <a href="python-guide.html">Python Guide</a>
+  <a href="golang-guide.html">Go Guide</a>
+  <a href="javascript-guide.html">JS Guide</a>
+  <a href="report.html">Report</a>
+</div>
+
+<!-- ============================================================ -->
+<!-- REVIEW SECTION                                                -->
+<!-- ============================================================ -->
+<div class="review-section">
+<div class="review-section-header">Review &mdash; 6 Concepts</div>
+
+<!-- R1: Node.js + TypeScript -->
+<div class="review-card" id="review_node">
+  <div class="review-header">
+    <span class="review-title">R1. Node.js + TypeScript</span>
+    <span class="badge badge-purple">Node.js &amp; APIs</span>
+    <span class="review-meta">overdue &middot; rep 1 &rarr; 2</span>
+  </div>
+  <div class="review-reminder">A TS Node project is <code>@types/node</code> for the runtime globals plus a module decision: with <code>"type": "module"</code> you write ESM, lose <code>__dirname</code>/<code>require</code>, and rebuild them from <code>import.meta.url</code>. <code>process.env</code> values are typed <code>string | undefined</code> &mdash; the boundary is untyped input you must check, not trust.</div>
+
+  <div class="review-pattern">
+    <strong>Key Pattern</strong>
+    <div class="code-example">
+<pre><code>import { fileURLToPath } from "node:url";
+import { dirname, join } from "node:path";
+import { readFile } from "node:fs/promises";
+
+// ESM has no __dirname &mdash; reconstruct it
+const __dirname = dirname(fileURLToPath(import.meta.url));
+
+// process.env is Record&lt;string, string | undefined&gt;
+const port = Number(process.env.PORT ?? "3000");   // guard the undefined
+
+const raw = await readFile(join(__dirname, "config.json"), "utf8");</code></pre>
+<div class="type-result">process.env.PORT: string | undefined; readFile resolves to string</div>
+    </div>
+  </div>
+
+  <div class="review-challenge">
+    <strong>Challenge Exercise</strong>
+    <p>Write a typed <code>loadEnv()</code> that reads <code>PORT</code> (number), <code>NODE_ENV</code> (<code>"dev" | "prod"</code>), and <code>DEBUG</code> (boolean) from <code>process.env</code>, throwing a descriptive error for each missing or malformed value, and returns a fully typed <code>{ port: number; env: "dev" | "prod"; debug: boolean }</code>. Confirm the return type has no <code>undefined</code> left in it.</p>
+  </div>
+
+  <div class="review-pitfall">
+    <strong>Pitfall:</strong> Treating <code>process.env.X</code> as a guaranteed <code>string</code>. With the standard <code>@types/node</code> typings each value is <code>string | undefined</code>, so <code>Number(process.env.PORT)</code> on a missing var silently becomes <code>NaN</code>. Parse and validate env once at startup (a small schema or hand-written checks), and remember ESM modules don&rsquo;t get <code>__dirname</code>/<code>require</code> for free.
+  </div>
+</div>
+
+<!-- R2: tRPC & OpenAPI -->
+<div class="review-card" id="review_trpc">
+  <div class="review-header">
+    <span class="review-title">R2. API Typing: tRPC &amp; OpenAPI</span>
+    <span class="badge badge-purple">Node.js &amp; APIs</span>
+    <span class="review-meta">overdue &middot; rep 1 &rarr; 2</span>
+  </div>
+  <div class="review-reminder">tRPC needs no codegen: the client is typed by importing the server router&rsquo;s <em>type</em> and inferring each procedure&rsquo;s input/output (inputs validated by Zod, outputs from the resolver&rsquo;s return). OpenAPI goes the other way &mdash; a spec is the source of truth and a generator (e.g. <code>openapi-typescript</code>) emits the types. Both still validate untrusted bytes at runtime.</div>
+
+  <div class="review-pattern">
+    <strong>Key Pattern</strong>
+    <div class="code-example">
+<pre><code>// server.ts
+const appRouter = router({
+  getUser: publicProcedure
+    .input(z.object({ id: z.string() }))
+    .query(({ input }) =&gt; db.user(input.id)),   // returns User
+});
+export type AppRouter = typeof appRouter;       // export the TYPE only
+
+// client.ts
+import type { AppRouter } from "./server";
+const trpc = createTRPCClient&lt;AppRouter&gt;({ /* links */ });
+const user = await trpc.getUser.query({ id: "1" });  // user: User, input checked
+
+type Outputs = inferRouterOutputs&lt;AppRouter&gt;;   // { getUser: User; ... }</code></pre>
+<div class="type-result">client call is end-to-end typed from the server router type</div>
+    </div>
+  </div>
+
+  <div class="review-challenge">
+    <strong>Challenge Exercise</strong>
+    <p>Add a <code>createPost</code> mutation with a Zod input <code>{ title: string; body: string }</code> returning <code>{ id: string }</code>. On the client, derive its output type with <code>inferRouterOutputs&lt;AppRouter&gt;["createPost"]</code> and its input with <code>inferRouterInputs</code>. Confirm calling <code>trpc.createPost.mutate({ title: 1 })</code> is a compile error.</p>
+  </div>
+
+  <div class="review-pitfall">
+    <strong>Pitfall:</strong> Importing the server router as a <em>value</em> into the client (<code>import { appRouter }</code>) instead of <code>import type</code> &mdash; that drags server-only code (db drivers, secrets) into the browser bundle. For OpenAPI, the opposite trap: trusting generated types as if they validate responses. The generator only describes the shape; you still parse the payload at runtime before believing it.
+  </div>
+</div>
+
+<!-- R3: Custom ESLint Rules -->
+<div class="review-card" id="review_eslint">
+  <div class="review-header">
+    <span class="review-title">R3. Custom ESLint Rules with TypeScript</span>
+    <span class="badge badge-purple">Tooling &amp; Quality</span>
+    <span class="review-meta">overdue &middot; rep 0 &rarr; 1</span>
+  </div>
+  <div class="review-reminder">A custom rule is an object with a <code>create(context)</code> returning AST-visitor functions. The superpower of <em>typescript-eslint</em> is type-aware rules: through <code>context.sourceCode.parserServices</code> (or <code>ESLintUtils.getParserServices</code>) you reach the real <code>TypeChecker</code> and ask for the type at a node &mdash; impossible with syntax alone.</div>
+
+  <div class="review-pattern">
+    <strong>Key Pattern</strong>
+    <div class="code-example">
+<pre><code>import { ESLintUtils } from "@typescript-eslint/utils";
+
+const createRule = ESLintUtils.RuleCreator(name =&gt; `https://docs/${name}`);
+
+export const noAnyCast = createRule({
+  name: "no-any-cast",
+  meta: { type: "problem", messages: { banned: "Avoid `as any`." }, schema: [] },
+  defaultOptions: [],
+  create(context) {
+    return {
+      TSAsExpression(node) {
+        if (node.typeAnnotation.type === "TSAnyKeyword") {
+          context.report({ node, messageId: "banned" });
+        }
+      },
+    };
+  },
+});</code></pre>
+<div class="type-result">visitor fires on each `x as any`, reporting a lint error</div>
+    </div>
+  </div>
+
+  <div class="review-challenge">
+    <strong>Challenge Exercise</strong>
+    <p>Write a <em>type-aware</em> rule <code>no-floating-promises-lite</code>: on an <code>ExpressionStatement</code> whose expression is a call, use <code>getParserServices(context)</code> + <code>checker.getTypeAtLocation</code> to detect a <code>Promise</code> return type that is neither awaited nor <code>void</code>-ed, and report it. Note in a comment why this needs <code>parserOptions.project</code> set.</p>
+  </div>
+
+  <div class="review-pitfall">
+    <strong>Pitfall:</strong> Writing a type-aware rule without <code>parserOptions.project</code> (or <code>projectService</code>) configured &mdash; <code>getTypeAtLocation</code> then has no program and every type comes back as <code>any</code>. Also weigh cost: type-aware rules build a full <code>Program</code>, so they&rsquo;re far slower than syntax-only rules &mdash; reserve them for checks that genuinely need type information.
+  </div>
+</div>
+
+<!-- R4: Project References -->
+<div class="review-card" id="review_project_refs">
+  <div class="review-header">
+    <span class="review-title">R4. Project References</span>
+    <span class="badge badge-purple">Modules &amp; Project Structure</span>
+    <span class="review-meta">overdue &middot; rep 2 &rarr; 3</span>
+  </div>
+  <div class="review-reminder">Project references split a codebase into independently-typecheckable units. Each referenced project sets <code>composite: true</code> (which forces <code>declaration</code> output and a <code>.tsbuildinfo</code>), and consumers list it under <code>references</code>. <code>tsc -b</code> (build mode) walks the dependency graph, builds in order, and skips anything unchanged.</div>
+
+  <div class="review-pattern">
+    <strong>Key Pattern</strong>
+    <div class="code-example">
+<pre><code>// packages/shared/tsconfig.json
+{ "compilerOptions": { "composite": true, "declaration": true, "outDir": "dist" } }
+
+// packages/app/tsconfig.json
+{
+  "compilerOptions": { "outDir": "dist" },
+  "references": [{ "path": "../shared" }]    // depends on shared
+}
+
+// root tsconfig.json
+{ "files": [], "references": [{ "path": "./packages/shared" }, { "path": "./packages/app" }] }</code></pre>
+<div class="output">$ tsc -b        # builds shared, then app; reuses cache on rebuild</div>
+    </div>
+  </div>
+
+  <div class="review-challenge">
+    <strong>Challenge Exercise</strong>
+    <p>Set up a two-package workspace where <code>app</code> imports a <code>formatDate</code> function from <code>shared</code>. Give <code>shared</code> <code>composite: true</code>, reference it from <code>app</code>, and verify <code>tsc -b</code> builds both in order. Then touch only <code>app</code> and confirm the rebuild skips <code>shared</code>. Finally, break <code>shared</code>&rsquo;s exported type and watch the error surface at <code>app</code>&rsquo;s call site.</p>
+  </div>
+
+  <div class="review-pitfall">
+    <strong>Pitfall:</strong> Importing across packages with only <code>paths</code> aliases and no <code>references</code> entry &mdash; plain <code>tsc</code> may resolve it, but <code>tsc -b</code> won&rsquo;t build the dependency, and editors lose go-to-def across the boundary. A referenced project must be <code>composite</code> and emit declarations; consumers import the built <code>.d.ts</code>, not the source.
+  </div>
+</div>
+
+<!-- R5: State Management Typing -->
+<div class="review-card" id="review_state">
+  <div class="review-header">
+    <span class="review-title">R5. State Management Typing: Redux Toolkit &amp; Zustand</span>
+    <span class="badge badge-purple">Ecosystem</span>
+    <span class="review-meta">overdue &middot; rep 1 &rarr; 2</span>
+  </div>
+  <div class="review-reminder">RTK infers action and state types from <code>createSlice</code> and you export <code>RootState</code>/<code>AppDispatch</code> once. Zustand infers from the store creator, but the moment you add middleware you must use the <em>curried</em> <code>create&lt;T&gt;()(...)</code> form so the explicit state type survives. <code>StateCreator</code> is how you type composable slices.</div>
+
+  <div class="review-pattern">
+    <strong>Key Pattern</strong>
+    <div class="code-example">
+<pre><code>interface BearState {
+  bears: number;
+  add: (by: number) =&gt; void;
+}
+
+// note the CURRIED create&lt;T&gt;()(...) form &mdash; required with middleware
+const useBearStore = create&lt;BearState&gt;()((set) =&gt; ({
+  bears: 0,
+  add: (by) =&gt; set((s) =&gt; ({ bears: s.bears + by })),
+}));
+
+const bears = useBearStore((s) =&gt; s.bears);   // number, selector typed</code></pre>
+<div class="type-result">store + selector fully typed from the BearState interface</div>
+    </div>
+  </div>
+
+  <div class="review-challenge">
+    <strong>Challenge Exercise</strong>
+    <p>Split the store into two slices typed with <code>StateCreator&lt;Store, [], [], BearSlice&gt;</code> and <code>...FishSlice</code>, then combine them in one <code>create&lt;Store&gt;()((...a) =&gt; ({ ...bear(...a), ...fish(...a) }))</code>. Confirm cross-slice access (a bear action reading fish state) stays typed, and that the non-curried <code>create&lt;Store&gt;(...)</code> form fails once you add <code>persist</code> middleware.</p>
+  </div>
+
+  <div class="review-pitfall">
+    <strong>Pitfall:</strong> Calling <code>create&lt;BearState&gt;((set) =&gt; ...)</code> (the non-curried overload) and then wrapping with middleware like <code>devtools</code>/<code>persist</code> &mdash; the type argument no longer threads through and you get cryptic errors or a widened store. Always reach for <code>create&lt;T&gt;()(...)</code> when middleware is involved; on the RTK side, never re-derive <code>RootState</code> by hand.
+  </div>
+</div>
+
+<!-- R6: Database Typing -->
+<div class="review-card" id="review_db">
+  <div class="review-header">
+    <span class="review-title">R6. Database Typing: Prisma &amp; Drizzle</span>
+    <span class="badge badge-purple">Ecosystem</span>
+    <span class="review-meta">overdue &middot; rep 1 &rarr; 2</span>
+  </div>
+  <div class="review-reminder">Prisma generates a typed client from <code>schema.prisma</code>, and a query&rsquo;s result type <em>narrows to the fields you select</em> &mdash; <code>select</code>/<code>include</code> change the return type. Drizzle defines the schema in TypeScript itself and you read row types straight off the table with <code>$inferSelect</code>/<code>$inferInsert</code>, no generation step.</div>
+
+  <div class="review-pattern">
+    <strong>Key Pattern</strong>
+    <div class="code-example">
+<pre><code>// Prisma: the select drives the result type
+const u = await prisma.user.findUnique({
+  where: { id },
+  select: { id: true, email: true },
+});
+// u: { id: number; email: string } | null   &mdash; NOT the full User
+
+// reusable payload type for that exact selection
+type UserEmail = Prisma.UserGetPayload&lt;{ select: { id: true; email: true } }&gt;;
+
+// Drizzle: types inferred from the TS table definition
+const users = pgTable("users", { id: serial("id").primaryKey(), name: text("name") });
+type Row = typeof users.$inferSelect;   // { id: number; name: string }</code></pre>
+<div class="type-result">Prisma result is the selected subset; Drizzle Row from $inferSelect</div>
+    </div>
+  </div>
+
+  <div class="review-challenge">
+    <strong>Challenge Exercise</strong>
+    <p>Write a Prisma helper <code>getUserCard(id)</code> that selects only <code>{ id, name, avatarUrl }</code> and whose return type is expressed with <code>Prisma.UserGetPayload</code> (no hand-written interface). Then do the Drizzle equivalent: define a <code>posts</code> table and a function returning <code>typeof posts.$inferInsert</code> for the create path. Confirm reading an unselected field is a compile error.</p>
+  </div>
+
+  <div class="review-pitfall">
+    <strong>Pitfall:</strong> Casting a <code>select</code>-ed Prisma result back to the full model (<code>as User</code>) so you can read fields you didn&rsquo;t fetch &mdash; they&rsquo;re <code>undefined</code> at runtime. Let the narrowed type stand and widen the <code>select</code> if you truly need more. With Drizzle, don&rsquo;t hand-maintain a parallel row interface; derive it with <code>$inferSelect</code> so it can&rsquo;t drift from the schema.
+  </div>
+</div>
+
+</div><!-- end review-section -->
+
+<!-- ============================================================ -->
+<!-- TOPIC SECTION 1: Object & Value-Level Type Safety             -->
+<!-- ============================================================ -->
+<div class="topic-section">
+<div class="topic-section-header"><span class="section-num">1</span>Object &amp; Value-Level Type Safety</div>
+
+<!-- Concept 1: Type-Safe Object.keys / entries -->
+<div class="concept-card" id="object_keys">
+  <div class="concept-header">
+    <span class="concept-title">1. Type-Safe <code>Object.keys</code> / <code>Object.entries</code></span>
+    <span class="ttag">Value &harr; Type</span>
+  </div>
+
+  <div class="why-matters">Everyone hits this: <code>Object.keys(obj)</code> is typed <code>string[]</code>, not <code>(keyof T)[]</code>, so you can&rsquo;t loop the keys and index back into the object without a cast. It&rsquo;s not a bug &mdash; it&rsquo;s a deliberate soundness choice &mdash; and understanding <em>why</em> tells you exactly when a typed wrapper is safe and when it would lie.</div>
+
+  <div class="explanation">
+    <p>Because TypeScript is <em>structurally</em> typed, a value annotated <code>T</code> may carry <em>more</em> properties than <code>T</code> declares (a subtype with extra keys is still a <code>T</code>). If <code>Object.keys</code> returned <code>(keyof T)[]</code>, code relying on that would miss those extra keys &mdash; so the standard library widens to <code>string[]</code> on purpose. The same reasoning applies to <code>Object.entries</code> and to <code>for...in</code>, where the loop variable is always <code>string</code>.</p>
+    <p>When you <em>do</em> control the object&rsquo;s exact shape, a thin generic wrapper that asserts <code>as (keyof T)[]</code> recovers ergonomics. Treat the assertion as a promise you&rsquo;re making to the compiler: it&rsquo;s sound only if no wider object ever flows in. For entries, a mapped type produces the precise <code>[K, T[K]]</code> union; for building objects, a typed <code>fromEntries</code> recovers the key/value types that the built-in throws away.</p>
+    <div class="step"><span class="step-num">1</span><div><code>Object.keys</code>/<code>entries</code> widen to <code>string</code> keys because subtypes may add properties.</div></div>
+    <div class="step"><span class="step-num">2</span><div>A generic helper can assert <code>(keyof T)[]</code> &mdash; sound only when you own the object&rsquo;s shape.</div></div>
+    <div class="step"><span class="step-num">3</span><div>Type <code>entries</code>/<code>fromEntries</code> with a mapped type so the key&rarr;value pairing survives.</div></div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 1 of 4 &mdash; the default widening</div>
+<pre><code>const user = { id: 1, name: "Ada" };
+
+const keys = Object.keys(user);     // string[]   (not ("id" | "name")[])
+// user[keys[0]];                    // Error: implicit any &mdash; string can't index user
+
+for (const k in user) {
+  // k: string &mdash; not "id" | "name"
+}</code></pre>
+<div class="type-result">keys: string[]; for-in key: string</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 2 of 4 &mdash; why it must widen (extra props are legal)</div>
+<pre><code>interface Named { name: string }
+
+function shout(o: Named) {
+  // if keys were ("name")[], the extra runtime key would be invisible
+  return Object.keys(o);            // string[]
+}
+
+// a wider object is still a Named &mdash; structural typing
+shout({ name: "Ada", role: "admin" });   // ok: carries an extra "role" key</code></pre>
+<div class="type-result">Object.keys can't promise the keys are exactly keyof Named</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 3 of 4 &mdash; typed wrappers you control</div>
+<pre><code>function objectKeys&lt;T extends object&gt;(o: T): (keyof T)[] {
+  return Object.keys(o) as (keyof T)[];
+}
+
+function objectEntries&lt;T extends object&gt;(
+  o: T,
+): { [K in keyof T]: [K, T[K]] }[keyof T][] {
+  return Object.entries(o) as { [K in keyof T]: [K, T[K]] }[keyof T][];
+}
+
+const e = objectEntries({ id: 1, name: "Ada" });
+// e: (["id", number] | ["name", string])[]
+for (const [k, v] of e) { /* k: "id" | "name"; v: number | string */ }</code></pre>
+<div class="type-result">objectEntries yields ["id", number] | ["name", string]</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 4 of 4 &mdash; a typed fromEntries</div>
+<pre><code>// built-in loses the keys
+const wide = Object.fromEntries([["a", 1], ["b", 2]]);   // { [k: string]: number }
+
+function fromEntries&lt;K extends PropertyKey, V&gt;(
+  es: readonly (readonly [K, V])[],
+): Record&lt;K, V&gt; {
+  return Object.fromEntries(es) as Record&lt;K, V&gt;;
+}
+
+const o = fromEntries([["a", 1], ["b", 2]] as const);    // Record&lt;"a" | "b", 1 | 2&gt;</code></pre>
+<div class="type-result">o: Record&lt;"a" | "b", 1 | 2&gt; (keys preserved via as const)</div>
+  </div>
+
+  <div class="callout-warning">
+    <strong>Common Mistakes:</strong>
+    <div class="mistake">&#10060; Casting <code>Object.keys(o) as string[]</code> and then indexing <code>o[k]</code> &mdash; you still get an implicit-<code>any</code> / not-indexable error because <code>string</code> isn&rsquo;t <code>keyof o</code>.</div>
+    <div class="correct">&#9989; Use a generic <code>objectKeys&lt;T&gt;(o): (keyof T)[]</code> so the loop variable indexes the object cleanly.</div>
+    <div class="mistake">&#10060; Applying the wrapper to an object you received from elsewhere (a parameter typed <code>T</code>), which may have extra runtime keys &mdash; the asserted <code>keyof T</code> then under-reports.</div>
+    <div class="correct">&#9989; Only assert <code>keyof T</code> when you constructed the object locally; otherwise iterate <code>Object.values</code> or accept <code>string</code> keys.</div>
+  </div>
+
+  <div class="key-rules">
+    <strong>Key Rules:</strong>
+    <ul>
+    <li><a href="typescript-guides/typescript-guide-2026-07-04.html">2026-07-04</a> (Day 31)</li>
+      <li><code>Object.keys</code>/<code>entries</code> return <code>string</code> keys by design &mdash; structural subtypes may add properties.</li>
+      <li>A generic wrapper asserting <code>(keyof T)[]</code> is ergonomic but only <em>sound</em> for objects you own.</li>
+      <li>Type <code>entries</code> with the mapped type <code>{ [K in keyof T]: [K, T[K]] }[keyof T]</code>.</li>
+      <li>Pair <code>fromEntries</code> with <code>as const</code> inputs to keep literal keys and values.</li>
+    </ul>
+  </div>
+
+  <div class="exercises">
+    <strong>Practice Exercises:</strong>
+    <div class="exercise"><span class="exercise-num">1</span>Write <code>mapValues&lt;T, R&gt;(o: T, fn: (v: T[keyof T], k: keyof T) =&gt; R): Record&lt;keyof T, R&gt;</code> using your typed <code>objectEntries</code>/<code>fromEntries</code>.</div>
+    <div class="exercise"><span class="exercise-num">2</span>Write <code>typedForIn&lt;T&gt;(o: T, fn: (k: keyof T) =&gt; void)</code> and explain in a comment when it&rsquo;s unsound versus a locally-built object.</div>
+    <div class="exercise"><span class="exercise-num">3</span>Build <code>invert&lt;T extends Record&lt;string, PropertyKey&gt;&gt;(o: T)</code> that swaps keys and values, with the return type computed via a mapped type and key remapping.</div>
+  </div>
+
+  <div class="connections"><strong>Connections:</strong> This is the practical face of <em>structural typing</em> (and why <em>Excess Property Checks</em>, Concept 2, exist as a counter-measure). The wrappers lean on <em>keyof &amp; Indexed Access</em> and the mapped type from <em>Key Selection by Value</em> (Day 22). <code>fromEntries</code> with <code>as const</code> previews <em>typeof Type Queries</em> (Concept 3).</div>
+</div>
+
+<!-- Concept 2: Excess Property Checks -->
+<div class="concept-card" id="excess_props">
+  <div class="concept-header">
+    <span class="concept-title">2. Excess Property Checks &amp; Object Literal Freshness</span>
+    <span class="ttag">Assignability</span>
+  </div>
+
+  <div class="why-matters">TypeScript normally lets a value with extra properties satisfy a narrower type (structural typing) &mdash; yet <code>const o: { a: number } = { a: 1, b: 2 }</code> errors. The difference is <em>freshness</em>: an object literal assigned directly gets an extra typo-catching check. Knowing the rule explains a whole class of &ldquo;why does this error here but not there&rdquo; confusion.</div>
+
+  <div class="explanation">
+    <p>When a <em>fresh</em> object literal is assigned to a typed target &mdash; or passed directly as an argument &mdash; TypeScript runs an <strong>excess property check</strong>: any property not present in the target type is flagged. This is a heuristic specifically to catch misspellings and stray keys at the point you wrote them. It is <em>not</em> the normal assignability rule.</p>
+    <p>The literal loses its &ldquo;freshness&rdquo; the moment it&rsquo;s stored in a variable, so assigning through an intermediate variable falls back to plain structural compatibility and the extra property is allowed. Spreads also discard freshness. With <em>union</em> targets the check loosens further: a property that exists in <em>some</em> member is accepted, only a property in <em>no</em> member errors. None of this is a loophole to abuse &mdash; it&rsquo;s the system deliberately checking literals strictly while keeping structural flexibility everywhere else.</p>
+    <div class="step"><span class="step-num">1</span><div>Fresh literal &rarr; typed target triggers an excess property check (unknown keys error).</div></div>
+    <div class="step"><span class="step-num">2</span><div>Store the literal in a variable first &mdash; freshness is lost, structural rules apply.</div></div>
+    <div class="step"><span class="step-num">3</span><div>Spreads drop freshness; union targets only reject keys absent from every member.</div></div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 1 of 4 &mdash; the typo-catching check</div>
+<pre><code>interface Options { width: number; height?: number }
+
+const a: Options = { width: 10, heigth: 5 };
+// Error: Object literal may only specify known properties,
+//        but 'heigth' does not exist in type 'Options'. Did you mean 'height'?</code></pre>
+<div class="type-error">'heigth' does not exist in type 'Options' — typo caught at the literal</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 2 of 4 &mdash; a variable bypasses the check</div>
+<pre><code>const tmp = { width: 10, heigth: 5 };   // inferred shape, fully fine
+const b: Options = tmp;                  // OK! freshness lost &mdash; structural only
+
+// b only needs to be assignable: it has `width: number`, so it qualifies,
+// and the extra `heigth` is simply ignored by the type system.</code></pre>
+<div class="type-result">b: Options accepted — extra key tolerated once it's in a variable</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 3 of 4 &mdash; arguments, and opting in to extra keys</div>
+<pre><code>function render(o: Options) {}
+render({ width: 10, color: "red" });   // Error: 'color' is excess
+
+// deliberately allow unknown keys with an index signature
+interface OpenOptions { width: number; [extra: string]: unknown }
+function render2(o: OpenOptions) {}
+render2({ width: 10, color: "red" });  // OK &mdash; index signature absorbs it</code></pre>
+<div class="type-result">excess check applies to direct args; an index signature opts out</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 4 of 4 &mdash; spreads and union targets</div>
+<pre><code>// spreading produces a non-fresh object => no excess check
+const c: Options = { ...{ width: 10 }, heigth: 5 };   // no error (heigth slips in)
+
+type Shape = { circle: number } | { square: number };
+const ok: Shape = { square: 4 };
+const mixed: Shape = { circle: 1, square: 2 };  // allowed: each key exists in SOME member
+// const bad: Shape = { triangle: 3 };          // Error: in NO member</code></pre>
+<div class="type-result">spread + union targets weaken the excess check (key-in-some-member rule)</div>
+  </div>
+
+  <div class="callout-warning">
+    <strong>Common Mistakes:</strong>
+    <div class="mistake">&#10060; Believing TypeScript always rejects extra properties &mdash; it only checks <em>fresh literals</em>; a variable of the same shape assigns fine.</div>
+    <div class="correct">&#9989; Keep config/options as inline literals at the call site so you still get the typo protection the freshness check provides.</div>
+    <div class="mistake">&#10060; Adding <code>[k: string]: unknown</code> just to silence an &ldquo;excess property&rdquo; error, which then permits <em>any</em> misspelling forever.</div>
+    <div class="correct">&#9989; Model the genuinely-optional extras explicitly (a wider type or a real index signature you intend), don&rsquo;t blanket-disable the check.</div>
+  </div>
+
+  <div class="key-rules">
+    <strong>Key Rules:</strong>
+    <ul>
+      <li>Excess property checks fire on <em>fresh object literals</em> assigned/passed to a typed target.</li>
+      <li>Assigning through a variable (or spreading) loses freshness &rarr; only structural compatibility is checked.</li>
+      <li>Union targets accept a key present in any member; reject only keys present in none.</li>
+      <li>An index signature legitimately opts a type out of the check &mdash; use it intentionally, not to mute typos.</li>
+    </ul>
+  </div>
+
+  <div class="exercises">
+    <strong>Practice Exercises:</strong>
+    <div class="exercise"><span class="exercise-num">1</span>Write a function <code>configure(o: { mode: "a" | "b"; retries?: number })</code> and demonstrate three call sites: one that errors on a typo, one that passes via an intermediate variable, and one that passes via a spread.</div>
+    <div class="exercise"><span class="exercise-num">2</span>Write a generic <code>Exact&lt;T, Shape&gt;</code> helper type that rejects extra properties even through a variable (hint: map over <code>keyof T</code> and force unknown keys to <code>never</code>).</div>
+    <div class="exercise"><span class="exercise-num">3</span>Given <code>type Theme = { color: string } | { gradient: string }</code>, predict and then verify which of <code>{ color: "x", gradient: "y" }</code> and <code>{ shadow: "z" }</code> the compiler accepts, and explain why.</div>
+  </div>
+
+  <div class="connections"><strong>Connections:</strong> Freshness is the counterweight to the <em>structural typing</em> that makes <em>Object.keys</em> (Concept 1) widen. The <code>Exact&lt;T&gt;</code> exercise reuses key-remapping and the non-distributive equality tricks from <em>Distributive Conditional Types</em> (Day 24). Index signatures here lead directly into Concept 4.</div>
+</div>
+
+<!-- Concept 3: typeof Type Queries -->
+<div class="concept-card" id="typeof_queries">
+  <div class="concept-header">
+    <span class="concept-title">3. <code>typeof</code> Type Queries &amp; Deriving Types from Values</span>
+    <span class="ttag">Inference</span>
+  </div>
+
+  <div class="why-matters">The single source of truth should be the <em>value</em> &mdash; a default config, a const list of roles, an action map &mdash; with the type <em>derived</em> from it, never hand-duplicated. The <code>typeof</code> type query (plus <code>as const</code>, <code>keyof</code>, and indexed access) is the toolkit that turns a runtime value into a type that can never drift out of sync.</div>
+
+  <div class="explanation">
+    <p>In a <em>type position</em>, <code>typeof x</code> is the type query operator: it yields the static type of the binding <code>x</code> &mdash; completely distinct from the runtime <code>typeof</code> operator that returns a string like <code>"object"</code>. Combine it with <code>as const</code> to capture literal types instead of widened <code>string</code>/<code>number</code>, with <code>keyof typeof x</code> to get the union of keys, and with <code>(typeof arr)[number]</code> to get an array&rsquo;s element-type union.</p>
+    <p>This is the backbone of &ldquo;define once, derive everywhere.&rdquo; A const object becomes both runtime data <em>and</em> the type of its keys/values; a const tuple becomes an enum-like union without an actual <code>enum</code>. For classes, <code>typeof Cls</code> is the constructor type while <code>InstanceType&lt;typeof Cls&gt;</code> is the instance; for whole modules, <code>typeof import("...")</code> gives the module&rsquo;s shape.</p>
+    <div class="step"><span class="step-num">1</span><div>Type-position <code>typeof x</code> reads the static type of a value binding.</div></div>
+    <div class="step"><span class="step-num">2</span><div>Add <code>as const</code> to freeze literals; <code>keyof typeof x</code> gives the key union.</div></div>
+    <div class="step"><span class="step-num">3</span><div><code>(typeof arr)[number]</code> extracts element types; <code>InstanceType&lt;typeof Cls&gt;</code> the instance.</div></div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 1 of 4 &mdash; const object &rarr; keys and values</div>
+<pre><code>const ROLES = { admin: 0, editor: 1, viewer: 2 } as const;
+
+type Roles    = typeof ROLES;             // { readonly admin: 0; readonly editor: 1; readonly viewer: 2 }
+type RoleName = keyof typeof ROLES;       // "admin" | "editor" | "viewer"
+type RoleId   = (typeof ROLES)[RoleName]; // 0 | 1 | 2</code></pre>
+<div class="type-result">RoleName = "admin" | "editor" | "viewer"; RoleId = 0 | 1 | 2</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 2 of 4 &mdash; const tuple &rarr; element union (enum-free)</div>
+<pre><code>const METHODS = ["GET", "POST", "PUT", "DELETE"] as const;
+
+type Method = (typeof METHODS)[number];   // "GET" | "POST" | "PUT" | "DELETE"
+
+function request(m: Method, url: string) {}
+request("GET", "/x");      // ok
+// request("PATCH", "/x"); // Error: not assignable to Method</code></pre>
+<div class="type-result">Method = "GET" | "POST" | "PUT" | "DELETE" derived from the array</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 3 of 4 &mdash; derive a config type from its default</div>
+<pre><code>const defaultConfig = { retries: 3, timeout: 1000, verbose: false };
+
+type Config = typeof defaultConfig;
+// { retries: number; timeout: number; verbose: boolean }
+
+function init(overrides: Partial&lt;Config&gt;): Config {
+  return { ...defaultConfig, ...overrides };
+}
+init({ timeout: 5000 });   // type-checked against the derived Config</code></pre>
+<div class="type-result">Config tracks defaultConfig automatically — no duplicated interface</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 4 of 4 &mdash; classes and modules</div>
+<pre><code>class Service { constructor(public name: string) {} }
+
+type Ctor     = typeof Service;                 // new (name: string) =&gt; Service
+type Instance = InstanceType&lt;typeof Service&gt;;   // Service
+
+function makeAll(C: typeof Service, names: string[]) {
+  return names.map((n) =&gt; new C(n));            // Service[]
+}
+
+// whole-module shape, types only:
+// type Lib = typeof import("./lib");</code></pre>
+<div class="type-result">Ctor is the constructor; InstanceType&lt;typeof Service&gt; is Service</div>
+  </div>
+
+  <div class="callout-warning">
+    <strong>Common Mistakes:</strong>
+    <div class="mistake">&#10060; Confusing the two <code>typeof</code>s: writing <code>typeof x</code> in an expression returns a runtime string (<code>"number"</code>), it does not give you a type.</div>
+    <div class="correct">&#9989; Use <code>typeof x</code> only in <em>type</em> positions (after <code>:</code>, in <code>type</code>/<code>keyof</code>); use runtime <code>typeof</code> solely for narrowing.</div>
+    <div class="mistake">&#10060; Forgetting <code>as const</code>, so <code>typeof ROLES</code> widens values to <code>number</code> and <code>(typeof METHODS)[number]</code> collapses to <code>string</code>.</div>
+    <div class="correct">&#9989; Add <code>as const</code> to the value to preserve literal types before querying them.</div>
+  </div>
+
+  <div class="key-rules">
+    <strong>Key Rules:</strong>
+    <ul>
+      <li>Type-position <code>typeof value</code> yields the value&rsquo;s static type (distinct from runtime <code>typeof</code>).</li>
+      <li><code>as const</code> + <code>keyof typeof</code> + indexed access turn a value into key/value unions.</li>
+      <li><code>(typeof arr)[number]</code> is the idiom for a const array&rsquo;s element union (an enum substitute).</li>
+      <li><code>typeof Class</code> is the constructor; <code>InstanceType&lt;typeof Class&gt;</code> is the instance type.</li>
+    </ul>
+  </div>
+
+  <div class="exercises">
+    <strong>Practice Exercises:</strong>
+    <div class="exercise"><span class="exercise-num">1</span>Define <code>const EVENTS = { click: ..., hover: ... } as const</code> and derive an <code>EventName</code> union and an <code>EventHandlerMap</code> type purely with <code>typeof</code>/<code>keyof</code>.</div>
+    <div class="exercise"><span class="exercise-num">2</span>Build a <code>const PALETTE</code> object and a function <code>color(name: keyof typeof PALETTE)</code> so callers autocomplete the names and a typo fails to compile.</div>
+    <div class="exercise"><span class="exercise-num">3</span>Combine <code>satisfies</code> with <code>typeof</code>: write <code>const routes = {...} satisfies Record&lt;string, Handler&gt;</code> and derive a <code>RouteKey</code> union that keeps the literal keys.</div>
+  </div>
+
+  <div class="connections"><strong>Connections:</strong> This is the everyday application of <em>Literal Types &amp; const Assertions</em> and <em>keyof &amp; Indexed Access</em>, and it pairs naturally with the <em>satisfies</em> operator (derive a type while still validating the value). The const-array&rarr;union pattern is the type-safe alternative explored in <em>Const Enum Alternatives</em>.</div>
+</div>
+
+</div><!-- end topic-section 1 -->
+
+<!-- ============================================================ -->
+<!-- TOPIC SECTION 2: Indexing & Template Typing                   -->
+<!-- ============================================================ -->
+<div class="topic-section">
+<div class="topic-section-header"><span class="section-num">2</span>Indexing &amp; Template Typing</div>
+
+<!-- Concept 4: Index Signatures & noUncheckedIndexedAccess -->
+<div class="concept-card" id="index_signatures">
+  <div class="concept-header">
+    <span class="concept-title">4. Index Signatures, <code>Record</code>, &amp; <code>noUncheckedIndexedAccess</code></span>
+    <span class="ttag">Indexing</span>
+  </div>
+
+  <div class="why-matters">Dictionaries are everywhere &mdash; <code>{ [k: string]: V }</code> and <code>Record&lt;K, V&gt;</code> &mdash; but by default TypeScript assumes every key lookup succeeds: <code>dict[k]</code> is typed <code>V</code> even when the key is absent. That single unsoundness is behind a huge share of &ldquo;cannot read property of undefined&rdquo; crashes, and the <code>noUncheckedIndexedAccess</code> flag closes it.</div>
+
+  <div class="explanation">
+    <p>An <em>index signature</em> says &ldquo;any key of this kind maps to <code>V</code>.&rdquo; <code>Record&lt;K, V&gt;</code> is the same idea, and when <code>K</code> is a finite union the keys become <em>required</em>; when <code>K</code> is <code>string</code>/<code>number</code> it behaves like an open index signature. The hole: indexing always yields <code>V</code>, never <code>V | undefined</code>, so a missing key is invisible to the checker even though it&rsquo;s <code>undefined</code> at runtime. The same applies to array element access by number.</p>
+    <p>Turning on <code>noUncheckedIndexedAccess</code> in <code>tsconfig.json</code> makes every index access (and array index) return <code>V | undefined</code>, forcing you to narrow before use. It&rsquo;s more verbose, but it converts a class of runtime crashes into compile errors. Note it only affects <em>index</em> access &mdash; access to declared, named properties stays exactly as precise as before.</p>
+    <div class="step"><span class="step-num">1</span><div><code>{ [k: string]: V }</code> and <code>Record&lt;string, V&gt;</code> model open dictionaries of <code>V</code>.</div></div>
+    <div class="step"><span class="step-num">2</span><div>By default a lookup is typed <code>V</code> even for missing keys &mdash; an unsound convenience.</div></div>
+    <div class="step"><span class="step-num">3</span><div><code>noUncheckedIndexedAccess</code> makes lookups <code>V | undefined</code>, requiring a guard.</div></div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 1 of 4 &mdash; index signature and Record are equivalent</div>
+<pre><code>type Scores  = { [name: string]: number };
+type Scores2 = Record&lt;string, number&gt;;     // same thing
+
+const s: Scores = { ada: 10, lin: 7 };
+const known = s.ada;                        // number
+s["grace"] = 9;                             // any string key is writable</code></pre>
+<div class="type-result">Scores and Record&lt;string, number&gt; are interchangeable</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 2 of 4 &mdash; the default unsoundness</div>
+<pre><code>const s: Record&lt;string, number&gt; = { ada: 10 };
+
+const v = s["bob"];   // typed number &mdash; but actually undefined at runtime
+v.toFixed(2);          // compiles fine... throws "Cannot read properties of undefined"</code></pre>
+<div class="type-result">v: number (a lie) — missing key crashes at runtime</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 3 of 4 &mdash; with noUncheckedIndexedAccess: true</div>
+<pre><code>// tsconfig.json: "compilerOptions": { "noUncheckedIndexedAccess": true }
+const s: Record&lt;string, number&gt; = { ada: 10 };
+
+const v = s["bob"];        // now: number | undefined
+// v.toFixed(2);            // Error: 'v' is possibly 'undefined'
+if (v !== undefined) v.toFixed(2);   // ok after narrowing
+const safe = s["bob"] ?? 0;          // or default it</code></pre>
+<div class="type-result">v: number | undefined — the missing key is now visible to the compiler</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 4 of 4 &mdash; finite-key Record stays required; arrays too</div>
+<pre><code>type Flags = Record&lt;"a" | "b", boolean&gt;;
+const f: Flags = { a: true, b: false };   // both keys REQUIRED (no | undefined on f.a)
+const fa = f.a;                            // boolean &mdash; named/known key, always precise
+
+const arr = [10, 20, 30];
+const x = arr[99];   // with the flag: number | undefined (out-of-range is honest)</code></pre>
+<div class="type-result">declared keys stay precise; open index + array access gain | undefined</div>
+  </div>
+
+  <div class="callout-warning">
+    <strong>Common Mistakes:</strong>
+    <div class="mistake">&#10060; Treating <code>dict[key]</code> as guaranteed present and chaining off it (<code>dict[key].method()</code>) &mdash; a typo&rsquo;d or absent key is a runtime crash the default typings hide.</div>
+    <div class="correct">&#9989; Enable <code>noUncheckedIndexedAccess</code>, then narrow with <code>if</code>, <code>?.</code>, or <code>??</code> before using an indexed result.</div>
+    <div class="mistake">&#10060; Reaching for <code>Record&lt;string, T&gt;</code> when the keys are actually a known, finite set &mdash; you lose required-key checking and exhaustiveness.</div>
+    <div class="correct">&#9989; Use a finite key union (<code>Record&lt;"a" | "b", T&gt;</code>) so all keys are required and missing ones are compile errors.</div>
+  </div>
+
+  <div class="key-rules">
+    <strong>Key Rules:</strong>
+    <ul>
+      <li>Index signatures and <code>Record&lt;string, V&gt;</code> describe open dictionaries; access is typed <code>V</code> by default.</li>
+      <li>That default is unsound for missing keys &mdash; the value is really <code>V | undefined</code> at runtime.</li>
+      <li><code>noUncheckedIndexedAccess</code> adds <code>| undefined</code> to index/array access, forcing a guard.</li>
+      <li>Named/declared property access is unaffected; a finite-key <code>Record</code> keeps keys required.</li>
+    </ul>
+  </div>
+
+  <div class="exercises">
+    <strong>Practice Exercises:</strong>
+    <div class="exercise"><span class="exercise-num">1</span>Turn on <code>noUncheckedIndexedAccess</code> and write a <code>groupBy&lt;T&gt;(items, keyFn): Record&lt;string, T[]&gt;</code>; fix every place the compiler now complains about possibly-undefined buckets.</div>
+    <div class="exercise"><span class="exercise-num">2</span>Write a <code>getOr&lt;T&gt;(dict: Record&lt;string, T&gt;, key: string, fallback: T): T</code> helper that absorbs the <code>| undefined</code> so call sites stay clean.</div>
+    <div class="exercise"><span class="exercise-num">3</span>Compare <code>Record&lt;Day, number&gt;</code> (with <code>Day = "mon" | ... | "sun"</code>) against <code>Record&lt;string, number&gt;</code>: show one bug the finite version catches that the open one does not.</div>
+  </div>
+
+  <div class="connections"><strong>Connections:</strong> <code>Record</code> is itself a mapped type (<em>Mapped Type Modifiers</em>, Day 24), and the &ldquo;always narrow indexed results&rdquo; discipline is the same boundary stance as <em>Type-Safe localStorage</em> and <em>Type-Safe Configuration</em>. Finite-key Records connect back to <em>keyof &amp; Indexed Access</em> and the <code>typeof</code>-derived unions of Concept 3.</div>
+</div>
+
+<!-- Concept 5: Tagged Template Literal Typing -->
+<div class="concept-card" id="tagged_templates">
+  <div class="concept-header">
+    <span class="concept-title">5. Tagged Template Literal Function Typing</span>
+    <span class="ttag">Functions</span>
+  </div>
+
+  <div class="why-matters">Tagged templates power some of the most ubiquitous DSLs &mdash; <code>styled.div\`...\`</code>, <code>sql\`...\`</code>, <code>gql\`...\`</code>, i18n keys. Typing the tag function precisely (the <code>TemplateStringsArray</code> first parameter, constrained interpolations, and a meaningful return type) is the difference between a type-safe embedded language and an <code>any</code>-shaped string blob.</div>
+
+  <div class="explanation">
+    <p>A tag is just a function called with a special argument shape: <code>(strings: TemplateStringsArray, ...values: V[])</code>. The <code>strings</code> parameter is a <code>readonly string[]</code> with one extra property, <code>.raw</code> (the un-escaped source segments). The <code>values</code> are the interpolated expressions, in order; there is always exactly one more string segment than there are values.</p>
+    <p>You get to choose how strict to be. Constrain <code>...values</code> (e.g. <code>(string | number)[]</code>) to reject illegal interpolations; make the tag <em>generic</em> over a result type so the DSL can carry a row/result shape (a branded query, a typed style object); and, for no-interpolation tags, capture the literal text as a string-literal type to feed template-literal <em>types</em>. The return type is whatever your runtime produces &mdash; the point is to make it concrete, never <code>any</code>.</p>
+    <div class="step"><span class="step-num">1</span><div>First param is <code>TemplateStringsArray</code> (a <code>readonly string[]</code> with <code>.raw</code>).</div></div>
+    <div class="step"><span class="step-num">2</span><div>Constrain <code>...values</code> to control what interpolations are legal.</div></div>
+    <div class="step"><span class="step-num">3</span><div>Give a precise (often generic) return type so downstream code stays typed.</div></div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 1 of 4 &mdash; the basic tag signature</div>
+<pre><code>function tag(strings: TemplateStringsArray, ...values: unknown[]): string {
+  return strings.reduce(
+    (acc, s, i) =&gt; acc + s + (i &lt; values.length ? String(values[i]) : ""),
+    "",
+  );
+}
+
+const name = "Ada";
+const out = tag`Hello ${name}, you have ${3} messages`;   // out: string</code></pre>
+<div class="output">Hello Ada, you have 3 messages</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 2 of 4 &mdash; constraining the interpolations</div>
+<pre><code>function css(strings: TemplateStringsArray, ...values: (string | number)[]): string {
+  return strings.reduce((a, s, i) =&gt; a + s + (values[i] ?? ""), "");
+}
+
+css`width: ${10}px; color: ${"red"};`;   // ok &mdash; number and string allowed
+// css`content: ${{ x: 1 }};`             // Error: object not assignable to string | number</code></pre>
+<div class="type-result">only string|number interpolations compile; objects are rejected</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 3 of 4 &mdash; a generic, result-carrying tag</div>
+<pre><code>interface Query&lt;Row&gt; { text: string; params: unknown[]; __row?: Row }
+
+function sql&lt;Row = unknown&gt;(
+  strings: TemplateStringsArray,
+  ...params: unknown[]
+): Query&lt;Row&gt; {
+  return { text: strings.join("?"), params };
+}
+
+const q = sql&lt;{ id: number; email: string }&gt;`
+  SELECT id, email FROM users WHERE id = ${42}
+`;
+// q: Query&lt;{ id: number; email: string }&gt; &mdash; the row type rides along</code></pre>
+<div class="type-result">q: Query&lt;{ id: number; email: string }&gt;</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 4 of 4 &mdash; cooked vs raw, and literal capture</div>
+<pre><code>function inspect(strings: TemplateStringsArray) {
+  return { cooked: strings[0], raw: strings.raw[0] };
+}
+inspect`line\nbreak`;
+// { cooked: "line\nbreak" (real newline), raw: "line\\nbreak" (literal backslash-n) }
+
+// capture the literal text of a no-interpolation tag as a string-literal type
+function name&lt;S extends string&gt;(strings: readonly [S]): S {
+  return strings[0];
+}
+const route = name`/users/:id`;   // route: "/users/:id"  (literal type, not string)</code></pre>
+<div class="type-result">raw preserves escapes; literal capture yields "/users/:id"</div>
+  </div>
+
+  <div class="callout-warning">
+    <strong>Common Mistakes:</strong>
+    <div class="mistake">&#10060; Typing the first parameter as <code>string[]</code> &mdash; you lose the <code>.raw</code> property and the <code>readonly</code> guarantee that <code>TemplateStringsArray</code> provides.</div>
+    <div class="correct">&#9989; Always type it as <code>TemplateStringsArray</code>; reach for <code>.raw</code> when you need the un-escaped source (e.g. regex/path DSLs).</div>
+    <div class="mistake">&#10060; Returning <code>any</code> (or a bare <code>string</code> when the DSL carries structure), erasing all downstream type information from the template result.</div>
+    <div class="correct">&#9989; Make the tag generic over its result type (a branded <code>Query&lt;Row&gt;</code>, a typed style object) so callers keep precise types.</div>
+  </div>
+
+  <div class="key-rules">
+    <strong>Key Rules:</strong>
+    <ul>
+      <li>A tag function is <code>(strings: TemplateStringsArray, ...values: V[]) =&gt; R</code>.</li>
+      <li><code>TemplateStringsArray</code> is a <code>readonly string[]</code> plus <code>.raw</code>; there&rsquo;s always one more string than value.</li>
+      <li>Constrain <code>...values</code> to reject illegal interpolations at compile time.</li>
+      <li>Use a generic return type to carry DSL results (rows, styles) instead of collapsing to <code>any</code>.</li>
+    </ul>
+  </div>
+
+  <div class="exercises">
+    <strong>Practice Exercises:</strong>
+    <div class="exercise"><span class="exercise-num">1</span>Write a <code>html</code> tag that accepts only <code>string | number</code> interpolations and HTML-escapes them, returning a branded <code>{ __html: string }</code>.</div>
+    <div class="exercise"><span class="exercise-num">2</span>Write a generic <code>gql&lt;Data, Vars&gt;</code> tag returning <code>TypedDocument&lt;Data, Vars&gt;</code> and show a query call site where both type parameters flow into a <code>request</code> function.</div>
+    <div class="exercise"><span class="exercise-num">3</span>Using <code>infer ... extends</code> from Day 24, parse a no-interpolation route tag (<code>route\`/user/:id\`</code>) into a <code>{ id: string }</code> params type at the type level.</div>
+  </div>
+
+  <div class="connections"><strong>Connections:</strong> The literal-capture trick connects straight to <em>Template Literal Types &mdash; Advanced</em> and the <code>infer ... extends</code> parsing of Day 24; the branded <code>Query&lt;Row&gt;</code> reuses <em>Branded/Opaque Types</em>. Tag functions are the runtime entry point for the type-safe <em>SQL Query Builders</em> and i18n patterns seen earlier in the series.</div>
+</div>
+
+</div><!-- end topic-section 2 -->
+
+<!-- Footer -->
+<footer class="guide-footer">
+  <h2>All Guides</h2>
+  <ul>
+    <li><a href="typescript-guides/typescript-guide-2026-07-09.html">2026-07-09</a> (Day 36)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-07-08.html">2026-07-08</a> (Day 35)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-07-07.html">2026-07-07</a> (Day 34)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-07-06.html">2026-07-06</a> (Day 33)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-07-05.html">2026-07-05</a> (Day 32)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-07-04.html">2026-07-04</a> (Day 31)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-07-03.html">2026-07-03</a> (Day 30)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-07-02.html">2026-07-02</a> (Day 29)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-07-01.html">2026-07-01</a> (Day 28)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-30.html">2026-06-30</a> (Day 27)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-29.html">2026-06-29</a> (Day 26)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-28.html">2026-06-28</a> (Day 25)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-27.html">2026-06-27</a> (Day 24)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-26.html">2026-06-26</a> (Day 23)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-25.html">2026-06-25</a> (Day 22)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-24.html">2026-06-24</a> (Day 21)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-23.html">2026-06-23</a> (Day 20)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-22.html">2026-06-22</a> (Day 19)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-21.html">2026-06-21</a> (Day 18)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-19.html">2026-06-19</a> (Day 17)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-18.html">2026-06-18</a> (Day 16)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-17.html">2026-06-17</a> (Day 15)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-15.html">2026-06-15</a> (Day 14)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-13.html">2026-06-13</a> (Day 13)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-12.html">2026-06-12</a> (Day 12)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-11.html">2026-06-11</a> (Day 11)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-10.html">2026-06-10</a> (Day 10)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-09.html">2026-06-09</a> (Day 9)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-08.html">2026-06-08</a> (Day 8)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-07.html">2026-06-07</a> (Day 7)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-05.html">2026-06-05</a> (Day 6)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-04.html">2026-06-04</a> (Day 5)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-03.html">2026-06-03</a> (Day 4)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-02.html">2026-06-02</a> (Day 3)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-01.html">2026-06-01</a> (Day 2)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-05-31.html">2026-05-31</a> (Day 1)</li>
+  </ul>
+</footer>
+
+</div><!-- end content -->
+</div><!-- end main -->
+
+<script>
+// Theme toggle
+(function() {
+  var toggle = document.getElementById('themeToggle');
+  var html = document.documentElement;
+  var STORAGE_KEY = 'lc-tsguide-theme';
+
+  function setTheme(theme) {
+    html.setAttribute('data-theme', theme);
+    toggle.textContent = theme === 'dark' ? '\u{1F319}' : '\u{2600}\u{FE0F}';
+    try { localStorage.setItem(STORAGE_KEY, theme); } catch(e) {}
+  }
+
+  try {
+    var saved = localStorage.getItem(STORAGE_KEY);
+    if (saved) setTheme(saved);
+  } catch(e) {}
+
+  toggle.addEventListener('click', function() {
+    var current = html.getAttribute('data-theme') || 'dark';
+    setTheme(current === 'dark' ? 'light' : 'dark');
+  });
+})();
+
+// Sidebar active link tracking
+(function() {
+  var links = document.querySelectorAll('.sidebar-nav a');
+  var sections = [];
+  links.forEach(function(link) {
+    var id = link.getAttribute('href').replace('#', '');
+    var el = document.getElementById(id);
+    if (el) sections.push({ link: link, el: el });
+  });
+
+  function updateActive() {
+    var current = null;
+    var scrollY = window.scrollY + 120;
+    for (var i = sections.length - 1; i >= 0; i--) {
+      if (sections[i].el.offsetTop <= scrollY) {
+        current = sections[i];
+        break;
+      }
+    }
+    links.forEach(function(l) { l.classList.remove('active'); });
+    if (current) current.link.classList.add('active');
+  }
+
+  window.addEventListener('scroll', updateActive);
+  updateActive();
+})();
+</script>
+
+</body>
+</html>

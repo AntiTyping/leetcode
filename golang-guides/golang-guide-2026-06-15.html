@@ -1,0 +1,2055 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Go Study Guide &mdash; Day 12 (2026-06-15)</title>
+<style>
+/* ===== CSS Variables ===== */
+:root {
+  --bg: #0d1117;
+  --surface1: #161b22;
+  --surface2: #1c2333;
+  --border: #30363d;
+  --text: #e6edf3;
+  --muted: #8b949e;
+  --accent: #58a6ff;
+  --accent-dim: #1f6feb33;
+  --green: #3fb950;
+  --green-dim: #23863633;
+  --yellow: #d29922;
+  --yellow-dim: #d2992233;
+  --red: #f85149;
+  --red-dim: #f8514933;
+  --purple: #bc8cff;
+  --purple-dim: #bc8cff22;
+  --orange: #f0883e;
+  --orange-dim: #f0883e22;
+  --code-bg: #0d1117;
+  --sidebar-w: 300px;
+  --font-mono: 'SF Mono', 'Cascadia Code', 'Fira Code', Consolas, monospace;
+  --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+  --radius: 8px;
+  --shadow: 0 1px 3px rgba(0,0,0,0.4);
+}
+
+[data-theme="light"] {
+  --bg: #ffffff;
+  --surface1: #f6f8fa;
+  --surface2: #f0f3f6;
+  --border: #d0d7de;
+  --text: #1f2328;
+  --muted: #656d76;
+  --accent: #0969da;
+  --accent-dim: #0969da1a;
+  --green: #1a7f37;
+  --green-dim: #1a7f3718;
+  --yellow: #9a6700;
+  --yellow-dim: #9a670018;
+  --red: #cf222e;
+  --red-dim: #cf222e18;
+  --purple: #8250df;
+  --purple-dim: #8250df18;
+  --orange: #bc4c00;
+  --orange-dim: #bc4c0018;
+  --code-bg: #f6f8fa;
+  --shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+/* ===== Reset & Base ===== */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: var(--font-sans);
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.7;
+  font-size: 16px;
+  transition: background 0.2s, color 0.2s;
+}
+
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+/* ===== Theme Toggle ===== */
+#theme-toggle {
+  position: fixed;
+  top: 16px;
+  right: 20px;
+  z-index: 1000;
+  background: var(--surface1);
+  border: 1px solid var(--border);
+  color: var(--text);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+  box-shadow: var(--shadow);
+}
+#theme-toggle:hover { background: var(--surface2); border-color: var(--accent); }
+
+/* ===== Sidebar ===== */
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: var(--sidebar-w);
+  height: 100vh;
+  background: var(--surface1);
+  border-right: 1px solid var(--border);
+  overflow-y: auto;
+  padding: 20px 0;
+  z-index: 100;
+  transition: transform 0.3s;
+}
+
+.sidebar-header {
+  padding: 0 20px 16px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 12px;
+}
+
+.sidebar-header h2 {
+  font-size: 16px;
+  color: var(--text);
+  font-weight: 700;
+}
+
+.sidebar-header .subtitle {
+  font-size: 12px;
+  color: var(--muted);
+  margin-top: 2px;
+}
+
+.sidebar-section {
+  margin-bottom: 8px;
+}
+
+.sidebar-section-title {
+  padding: 6px 20px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+}
+
+.sidebar-link {
+  display: block;
+  padding: 5px 20px 5px 28px;
+  font-size: 13px;
+  color: var(--muted);
+  text-decoration: none;
+  border-left: 2px solid transparent;
+  transition: all 0.15s;
+  line-height: 1.4;
+}
+
+.sidebar-link:hover {
+  color: var(--text);
+  background: var(--accent-dim);
+  border-left-color: var(--accent);
+  text-decoration: none;
+}
+
+.sidebar-link.active {
+  color: var(--accent);
+  border-left-color: var(--accent);
+  background: var(--accent-dim);
+}
+
+/* ===== Mobile sidebar toggle ===== */
+#sidebar-toggle {
+  display: none;
+  position: fixed;
+  top: 16px;
+  left: 16px;
+  z-index: 200;
+  background: var(--surface1);
+  border: 1px solid var(--border);
+  color: var(--text);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 20px;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--shadow);
+}
+
+/* ===== Main Content ===== */
+.main {
+  margin-left: var(--sidebar-w);
+  padding: 40px 48px 80px;
+  max-width: calc(860px + var(--sidebar-w) + 96px);
+}
+
+.page-title {
+  font-size: 32px;
+  font-weight: 800;
+  margin-bottom: 4px;
+  color: var(--text);
+}
+
+.page-subtitle {
+  font-size: 15px;
+  color: var(--muted);
+  margin-bottom: 36px;
+}
+
+/* ===== Sections ===== */
+.section {
+  margin-bottom: 48px;
+}
+
+.section-label {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  padding: 3px 10px;
+  border-radius: 4px;
+  margin-bottom: 12px;
+}
+
+.section-label.review { background: var(--yellow-dim); color: var(--yellow); }
+.section-label.new { background: var(--green-dim); color: var(--green); }
+
+.section-title {
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 24px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--border);
+}
+
+/* ===== How To Use ===== */
+.how-to-use {
+  background: var(--surface1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px 24px;
+  margin-bottom: 36px;
+}
+
+.how-to-use h3 {
+  font-size: 16px;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.how-to-use ul {
+  padding-left: 22px;
+  margin: 0;
+}
+
+.how-to-use li {
+  font-size: 14px;
+  color: var(--muted);
+  margin-bottom: 4px;
+}
+
+/* ===== Concept Cards ===== */
+.concept {
+  background: var(--surface1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 28px;
+  margin-bottom: 28px;
+  box-shadow: var(--shadow);
+}
+
+.concept-header {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  margin-bottom: 6px;
+  flex-wrap: wrap;
+}
+
+.concept h3 {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.concept-meta {
+  font-size: 12px;
+  color: var(--muted);
+  background: var(--surface2);
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
+.concept h4 {
+  font-size: 15px;
+  font-weight: 600;
+  margin: 20px 0 8px;
+  color: var(--text);
+}
+
+.concept p, .concept li {
+  color: var(--text);
+  line-height: 1.7;
+}
+
+.concept ul, .concept ol {
+  padding-left: 22px;
+  margin: 8px 0;
+}
+
+.concept li {
+  margin-bottom: 4px;
+}
+
+/* ===== Code Blocks ===== */
+pre {
+  background: var(--code-bg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 16px 18px;
+  overflow-x: auto;
+  margin: 10px 0 14px;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--text);
+  position: relative;
+}
+
+pre::after {
+  content: 'Go';
+  position: absolute;
+  top: 6px;
+  right: 10px;
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  opacity: 0.6;
+}
+
+code {
+  font-family: var(--font-mono);
+  font-size: 0.9em;
+}
+
+:not(pre) > code {
+  background: var(--surface2);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.88em;
+}
+
+/* ===== Output Blocks ===== */
+.output {
+  background: var(--green-dim);
+  border: 1px solid var(--green);
+  border-radius: 6px;
+  padding: 12px 16px;
+  margin: 6px 0 14px;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--text);
+  white-space: pre-wrap;
+}
+
+.output::after { content: none; }
+
+.output-label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--green);
+  margin-bottom: 4px;
+}
+
+/* ===== Good/Bad Examples ===== */
+.do-dont {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin: 10px 0;
+}
+
+.do-box, .dont-box {
+  border-radius: 6px;
+  padding: 14px;
+  border: 1px solid;
+}
+
+.do-box {
+  background: var(--green-dim);
+  border-color: var(--green);
+}
+
+.dont-box {
+  background: var(--red-dim);
+  border-color: var(--red);
+}
+
+.do-box .label, .dont-box .label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 6px;
+}
+
+.do-box .label { color: var(--green); }
+.dont-box .label { color: var(--red); }
+
+.do-box pre, .dont-box pre {
+  margin: 0;
+  border: none;
+  background: transparent;
+  padding: 0;
+  font-size: 12.5px;
+}
+
+.do-box pre::after, .dont-box pre::after { content: none; }
+
+/* ===== Key Rules ===== */
+.rules-list {
+  list-style: none;
+  padding: 0;
+  margin: 8px 0;
+}
+
+.rules-list li {
+  padding: 6px 0 6px 24px;
+  position: relative;
+}
+
+.rules-list li::before {
+  content: "\2192";
+  position: absolute;
+  left: 2px;
+  color: var(--accent);
+  font-weight: 700;
+}
+
+/* ===== Exercises ===== */
+.exercise {
+  background: var(--purple-dim);
+  border: 1px solid var(--purple);
+  border-radius: 6px;
+  padding: 14px 18px;
+  margin: 8px 0;
+}
+
+.exercise .exercise-label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--purple);
+  margin-bottom: 4px;
+}
+
+/* ===== Pitfall ===== */
+.pitfall {
+  background: var(--red-dim);
+  border-left: 3px solid var(--red);
+  border-radius: 0 6px 6px 0;
+  padding: 10px 14px;
+  margin: 10px 0;
+  font-size: 14px;
+}
+
+.pitfall strong {
+  color: var(--red);
+}
+
+/* ===== Connection ===== */
+.connection {
+  background: var(--accent-dim);
+  border-left: 3px solid var(--accent);
+  border-radius: 0 6px 6px 0;
+  padding: 10px 14px;
+  margin: 10px 0;
+  font-size: 14px;
+  color: var(--muted);
+}
+
+/* ===== Review Cards ===== */
+.review-card {
+  background: var(--surface1);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--purple);
+  border-radius: var(--radius);
+  padding: 20px 24px;
+  margin-bottom: 16px;
+  box-shadow: var(--shadow);
+}
+
+.review-card .review-header {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  margin-bottom: 6px;
+  flex-wrap: wrap;
+}
+
+.review-card h3 {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.review-card .review-meta {
+  font-size: 12px;
+  color: var(--muted);
+  background: var(--surface2);
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
+.review-card h4 {
+  font-size: 14px;
+  font-weight: 600;
+  margin: 14px 0 6px;
+  color: var(--text);
+}
+
+.review-card p, .review-card li {
+  color: var(--text);
+  line-height: 1.6;
+  font-size: 14px;
+}
+
+.review-card pre {
+  font-size: 12.5px;
+  padding: 12px 14px;
+  margin: 6px 0 10px;
+}
+
+.review-card .pitfall {
+  font-size: 13px;
+  padding: 8px 12px;
+}
+
+/* ===== Topic Badge ===== */
+.topic-badge {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 2px 8px;
+  border-radius: 4px;
+  background: var(--accent-dim);
+  color: var(--accent);
+  margin-left: 4px;
+}
+
+/* ===== Footer ===== */
+.footer {
+  margin-top: 60px;
+  padding: 24px 0;
+  border-top: 1px solid var(--border);
+}
+
+.footer h4 {
+  font-size: 14px;
+  color: var(--muted);
+  margin-bottom: 10px;
+}
+
+.footer ul {
+  list-style: none;
+  padding: 0;
+}
+
+.footer li {
+  margin-bottom: 4px;
+  font-size: 14px;
+}
+
+.footer li a { color: var(--accent); }
+.footer .current { color: var(--green); font-weight: 600; }
+
+/* ===== Bash code blocks ===== */
+pre.bash::after {
+  content: 'Bash';
+}
+
+/* ===== HTML code blocks ===== */
+pre.html-code::after {
+  content: 'HTML';
+}
+
+/* ===== Responsive ===== */
+@media (max-width: 900px) {
+  .sidebar {
+    transform: translateX(-100%);
+  }
+  .sidebar.open {
+    transform: translateX(0);
+    box-shadow: 4px 0 20px rgba(0,0,0,0.5);
+  }
+  #sidebar-toggle {
+    display: flex;
+  }
+  .main {
+    margin-left: 0;
+    padding: 60px 20px 60px;
+    max-width: 100%;
+  }
+  .do-dont {
+    grid-template-columns: 1fr;
+  }
+  #theme-toggle {
+    right: 14px;
+    top: 16px;
+  }
+}
+</style>
+</head>
+<body>
+
+<!-- Theme Toggle -->
+<button id="theme-toggle" aria-label="Toggle theme" title="Toggle light/dark theme">&#9789;</button>
+
+<!-- Mobile Sidebar Toggle -->
+<button id="sidebar-toggle" aria-label="Toggle sidebar">&#9776;</button>
+
+<!-- Sidebar -->
+<nav class="sidebar" id="sidebar">
+  <div class="sidebar-header">
+    <h2>Go Guide</h2>
+    <div class="subtitle">Day 12 &mdash; 2026-06-15</div>
+  </div>
+
+  <div class="sidebar-section">
+    <div class="sidebar-section-title">Review (6 concepts)</div>
+    <a href="#review-errgroup" class="sidebar-link">errgroup</a>
+    <a href="#review-mocking" class="sidebar-link">Mocking: Interfaces for Testability</a>
+    <a href="#review-govet-staticcheck" class="sidebar-link">go vet &amp; staticcheck</a>
+    <a href="#review-maps" class="sidebar-link">Maps</a>
+    <a href="#review-strings-runes" class="sidebar-link">Strings &amp; Runes</a>
+    <a href="#review-structs-methods" class="sidebar-link">Structs &amp; Methods</a>
+  </div>
+
+  <div class="sidebar-section">
+    <div class="sidebar-section-title">Templates &amp; Crypto (2)</div>
+    <a href="#text-html-template" class="sidebar-link">text/template &amp; html/template</a>
+    <a href="#crypto-tls" class="sidebar-link">crypto Package &amp; TLS</a>
+  </div>
+
+  <div class="sidebar-section">
+    <div class="sidebar-section-title">Advanced Runtime (3)</div>
+    <a href="#sync-atomic" class="sidebar-link">sync/atomic</a>
+    <a href="#cgo" class="sidebar-link">cgo &mdash; Calling C from Go</a>
+    <a href="#go-ast-parser" class="sidebar-link">go/ast &amp; go/parser</a>
+  </div>
+</nav>
+
+<!-- Main Content -->
+<div class="main">
+
+<h1 class="page-title">Go Daily Guide</h1>
+<p class="page-subtitle">Day 12 &mdash; Sunday, June 15, 2026 &bull; 11 concepts (6 review + 5 new)</p>
+
+<!-- How to Use -->
+<div class="how-to-use">
+  <h3>How to Use This Guide</h3>
+  <ul>
+    <li>Start with the <strong>Review</strong> section &mdash; try to recall each concept before reading the refresher</li>
+    <li>Complete the challenge exercise for each review card without looking back at previous days</li>
+    <li>Then work through the <strong>New Concepts</strong> section, typing out every code example yourself</li>
+    <li>Pay special attention to the common mistakes sections (they highlight real Go gotchas)</li>
+    <li>Complete the exercises at the bottom of each concept without looking at solutions</li>
+    <li>Use <code>go run main.go</code> to test your code locally, or use the <a href="https://go.dev/play/" target="_blank">Go Playground</a></li>
+  </ul>
+</div>
+
+<!-- ============================================================ -->
+<!-- REVIEW SECTION -->
+<!-- ============================================================ -->
+<div class="section">
+  <span class="section-label review">Review</span>
+  <h2 class="section-title">Spaced Repetition Review &mdash; 6 Concepts</h2>
+
+  <!-- Review 1: errgroup -->
+  <div class="review-card" id="review-errgroup">
+    <div class="review-header">
+      <h3>errgroup</h3>
+      <span class="review-meta">Concurrency &bull; 7 days ago &bull; rep 1</span>
+    </div>
+
+    <h4>Quick Reminder</h4>
+    <p><code>errgroup.Group</code> manages a group of goroutines. If any returns an error, <code>g.Wait()</code> returns the first error. Combine with <code>errgroup.WithContext</code> for automatic cancellation on first failure.</p>
+
+    <h4>Key Pattern</h4>
+<pre>g, ctx := errgroup.WithContext(context.Background())
+for _, url := range urls {
+    url := url
+    g.Go(func() error {
+        req, _ := http.NewRequestWithContext(ctx, "GET", url, nil)
+        resp, err := http.DefaultClient.Do(req)
+        if err != nil { return err }
+        defer resp.Body.Close()
+        return nil
+    })
+}
+if err := g.Wait(); err != nil {
+    log.Fatal(err)
+}</pre>
+
+    <div class="exercise">
+      <div class="exercise-label">Challenge Exercise</div>
+      <p>Write a function that fetches N URLs concurrently using errgroup with a limit of 3 concurrent goroutines (<code>g.SetLimit(3)</code>). Return the first error encountered.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>#1 Pitfall:</strong> Not using the context from <code>errgroup.WithContext</code> &mdash; other goroutines keep running even after one fails.
+    </div>
+  </div>
+
+  <!-- Review 2: Mocking: Interfaces for Testability -->
+  <div class="review-card" id="review-mocking">
+    <div class="review-header">
+      <h3>Mocking: Interfaces for Testability</h3>
+      <span class="review-meta">Testing &amp; Tooling &bull; 7 days ago &bull; rep 0</span>
+    </div>
+
+    <h4>Quick Reminder</h4>
+    <p>Define small interfaces at the point of use. In production, pass the real implementation; in tests, pass a mock struct that satisfies the interface. No mocking framework needed.</p>
+
+    <h4>Key Pattern</h4>
+<pre>type UserStore interface {
+    GetUser(id string) (*User, error)
+}
+
+type userService struct { store UserStore }
+
+// In test:
+type mockStore struct { users map[string]*User }
+func (m *mockStore) GetUser(id string) (*User, error) {
+    u, ok := m.users[id]
+    if !ok { return nil, ErrNotFound }
+    return u, nil
+}</pre>
+
+    <div class="exercise">
+      <div class="exercise-label">Challenge Exercise</div>
+      <p>Define a <code>Cache</code> interface with <code>Get(key string) (string, bool)</code> and <code>Set(key, value string)</code>. Write a service that uses it, then create a mock implementation for testing that tracks call counts.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>#1 Pitfall:</strong> Defining interfaces in the package that implements them (Java-style). In Go, define interfaces where they're consumed.
+    </div>
+  </div>
+
+  <!-- Review 3: go vet & staticcheck -->
+  <div class="review-card" id="review-govet-staticcheck">
+    <div class="review-header">
+      <h3>go vet &amp; staticcheck</h3>
+      <span class="review-meta">Testing &amp; Tooling &bull; 7 days ago &bull; rep 0</span>
+    </div>
+
+    <h4>Quick Reminder</h4>
+    <p><code>go vet</code> catches common errors (printf format mismatches, unreachable code, struct tag errors). <code>staticcheck</code> and <code>golangci-lint</code> catch more subtle issues (unused parameters, inefficient string concat, deprecated API usage).</p>
+
+    <h4>Key Pattern</h4>
+<pre class="bash">go vet ./...
+staticcheck ./...
+golangci-lint run</pre>
+
+    <div class="exercise">
+      <div class="exercise-label">Challenge Exercise</div>
+      <p>Name 5 specific checks that <code>go vet</code> catches (e.g., Printf format mismatches, unreachable code, etc.) without looking them up.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>#1 Pitfall:</strong> Ignoring <code>go vet</code> warnings &mdash; they're almost always real bugs, not style issues.
+    </div>
+  </div>
+
+  <!-- Review 4: Maps -->
+  <div class="review-card" id="review-maps">
+    <div class="review-header">
+      <h3>Maps</h3>
+      <span class="review-meta">Go Foundations &bull; 11 days ago &bull; rep 2</span>
+    </div>
+
+    <h4>Quick Reminder</h4>
+    <p><code>map[K]V</code> provides O(1) lookup. Iteration order is random. Use comma-ok to check existence. Maps are not safe for concurrent access &mdash; use <code>sync.Map</code> or a mutex.</p>
+
+    <h4>Key Pattern</h4>
+<pre>m := map[string]int{"a": 1, "b": 2}
+if v, ok := m["c"]; ok {
+    fmt.Println(v)
+} else {
+    fmt.Println("not found")
+}
+delete(m, "a")</pre>
+
+    <div class="exercise">
+      <div class="exercise-label">Challenge Exercise</div>
+      <p>Write a <code>WordFrequency(text string) map[string]int</code> function that counts word frequencies (case-insensitive), then return the top 3 most frequent words.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>#1 Pitfall:</strong> Concurrent reads/writes to a map cause a fatal panic &mdash; always protect shared maps with <code>sync.RWMutex</code>.
+    </div>
+  </div>
+
+  <!-- Review 5: Strings & Runes -->
+  <div class="review-card" id="review-strings-runes">
+    <div class="review-header">
+      <h3>Strings &amp; Runes</h3>
+      <span class="review-meta">Go Foundations &bull; 11 days ago &bull; rep 2</span>
+    </div>
+
+    <h4>Quick Reminder</h4>
+    <p>Go strings are UTF-8 encoded byte slices. <code>len(s)</code> gives byte count, not character count. Use <code>[]rune(s)</code> or <code>utf8.RuneCountInString(s)</code> for character count. <code>strings.Builder</code> for efficient concatenation.</p>
+
+    <h4>Key Pattern</h4>
+<pre>s := "Hello, &#19990;&#30028;"
+fmt.Println(len(s))                    // 13 (bytes)
+fmt.Println(utf8.RuneCountInString(s)) // 9 (characters)
+for i, r := range s {
+    fmt.Printf("%d: %c\n", i, r)
+}
+var b strings.Builder
+b.WriteString("Hello")
+b.WriteString(" World")
+fmt.Println(b.String())</pre>
+
+    <div class="exercise">
+      <div class="exercise-label">Challenge Exercise</div>
+      <p>Write a function <code>ReverseString(s string) string</code> that correctly reverses a UTF-8 string (not just bytes). <code>"Hello, &#19990;&#30028;"</code> &rarr; <code>"&#30028;&#19990; ,olleH"</code>.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>#1 Pitfall:</strong> Using <code>s[i]</code> gives a byte, not a character &mdash; use <code>[]rune(s)</code> for character access.
+    </div>
+  </div>
+
+  <!-- Review 6: Structs & Methods -->
+  <div class="review-card" id="review-structs-methods">
+    <div class="review-header">
+      <h3>Structs &amp; Methods</h3>
+      <span class="review-meta">Go Foundations &bull; 11 days ago &bull; rep 2</span>
+    </div>
+
+    <h4>Quick Reminder</h4>
+    <p>Use value receivers for read-only methods on small structs. Use pointer receivers when you need to mutate or the struct is large. Embedding promotes methods.</p>
+
+    <h4>Key Pattern</h4>
+<pre>type Circle struct { Radius float64 }
+func (c Circle) Area() float64 { return math.Pi * c.Radius * c.Radius }
+func (c *Circle) Scale(factor float64) { c.Radius *= factor }
+
+type Shape struct {
+    Circle // embedding
+    Color string
+}
+s := Shape{Circle{5}, "red"}
+fmt.Println(s.Area()) // promoted method</pre>
+
+    <div class="exercise">
+      <div class="exercise-label">Challenge Exercise</div>
+      <p>Create a <code>Stack[T any]</code> generic struct with <code>Push</code>, <code>Pop</code>, <code>Peek</code>, <code>Len</code>, and <code>IsEmpty</code> methods. Use pointer receivers for mutations.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>#1 Pitfall:</strong> Defining a method with a value receiver that tries to mutate the struct &mdash; the change is lost because it modifies a copy.
+    </div>
+  </div>
+
+</div><!-- end review section -->
+
+
+<!-- ============================================================ -->
+<!-- NEW CONCEPTS SECTION 1: Templates & Crypto -->
+<!-- ============================================================ -->
+<div class="section">
+  <span class="section-label new">New</span>
+  <h2 class="section-title">Templates &amp; Crypto</h2>
+
+  <!-- Concept 1: text/template & html/template -->
+  <div class="concept" id="text-html-template">
+    <div class="concept-header">
+      <h3>text/template &amp; html/template</h3>
+      <span class="topic-badge">Standard Library</span>
+    </div>
+    <p>Go's template packages power config generation, email templates, and HTML rendering. <code>html/template</code> auto-escapes to prevent XSS &mdash; crucial for web apps.</p>
+
+    <h4>Example 1 &mdash; Basic text template</h4>
+<pre>package main
+
+import (
+    "os"
+    "text/template"
+)
+
+func main() {
+    tmpl := template.Must(template.New("greeting").Parse(
+        "Hello, {{.Name}}! You have {{.Count}} messages.\n"))
+
+    data := struct {
+        Name  string
+        Count int
+    }{"Alice", 5}
+
+    tmpl.Execute(os.Stdout, data)
+}</pre>
+    <div class="output-label">Output</div>
+    <div class="output">Hello, Alice! You have 5 messages.</div>
+
+    <h4>Example 2 &mdash; Conditionals, loops, and pipelines</h4>
+<pre>package main
+
+import (
+    "os"
+    "strings"
+    "text/template"
+)
+
+func main() {
+    funcMap := template.FuncMap{
+        "upper": strings.ToUpper,
+    }
+
+    tmpl := template.Must(template.New("report").Funcs(funcMap).Parse(`
+{{- range .Items}}
+- {{.Name | upper}}: ${{printf "%.2f" .Price}}
+{{- end}}
+{{if gt (len .Items) 3}}(and more...){{end}}
+Total: {{len .Items}} items
+`))
+
+    data := struct {
+        Items []struct{ Name string; Price float64 }
+    }{
+        Items: []struct{ Name string; Price float64 }{
+            {"Widget", 9.99},
+            {"Gadget", 24.50},
+        },
+    }
+    tmpl.Execute(os.Stdout, data)
+}</pre>
+    <div class="output-label">Output</div>
+    <div class="output">- WIDGET: $9.99
+- GADGET: $24.50
+Total: 2 items</div>
+
+    <h4>Example 3 &mdash; html/template for safe HTML</h4>
+<pre>package main
+
+import (
+    "html/template"
+    "os"
+)
+
+func main() {
+    tmpl := template.Must(template.New("page").Parse(`
+&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;body&gt;
+    &lt;h1&gt;{{.Title}}&lt;/h1&gt;
+    &lt;p&gt;{{.Content}}&lt;/p&gt;
+    &lt;a href="/user/{{.UserID}}"&gt;Profile&lt;/a&gt;
+&lt;/body&gt;
+&lt;/html&gt;`))
+
+    data := struct {
+        Title   string
+        Content string
+        UserID  string
+    }{
+        Title:   "Welcome",
+        Content: "&lt;script&gt;alert('xss')&lt;/script&gt;",  // auto-escaped!
+        UserID:  "42",
+    }
+    tmpl.Execute(os.Stdout, data)
+}</pre>
+    <div class="output-label">Output</div>
+    <div class="output html-code">&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;body&gt;
+    &lt;h1&gt;Welcome&lt;/h1&gt;
+    &lt;p&gt;&amp;lt;script&amp;gt;alert(&amp;#39;xss&amp;#39;)&amp;lt;/script&amp;gt;&lt;/p&gt;
+    &lt;a href="/user/42"&gt;Profile&lt;/a&gt;
+&lt;/body&gt;
+&lt;/html&gt;</div>
+
+    <h4>Example 4 &mdash; Nested templates and blocks</h4>
+<pre>package main
+
+import (
+    "os"
+    "text/template"
+)
+
+func main() {
+    base := `{{define "base"}}Header
+{{template "content" .}}
+Footer{{end}}`
+
+    page := `{{define "content"}}Page: {{.Title}}{{end}}`
+
+    tmpl := template.Must(template.New("").Parse(base))
+    template.Must(tmpl.Parse(page))
+
+    tmpl.ExecuteTemplate(os.Stdout, "base", struct{ Title string }{"Home"})
+}</pre>
+    <div class="output-label">Output</div>
+    <div class="output">Header
+Page: Home
+Footer</div>
+
+    <h4>Common Mistakes</h4>
+    <div class="do-dont">
+      <div class="dont-box">
+        <div class="label">Don't: text/template for HTML</div>
+<pre>// No XSS protection!
+import "text/template"
+tmpl.Execute(w, userInput)</pre>
+      </div>
+      <div class="do-box">
+        <div class="label">Do: html/template for HTML</div>
+<pre>// Auto-escapes by context
+import "html/template"
+tmpl.Execute(w, userInput)</pre>
+      </div>
+    </div>
+    <div class="do-dont">
+      <div class="dont-box">
+        <div class="label">Don't: Ignore parse errors</div>
+<pre>tmpl, _ := template.New("x").Parse(s)
+// silent failure on bad template</pre>
+      </div>
+      <div class="do-box">
+        <div class="label">Do: Use template.Must</div>
+<pre>tmpl := template.Must(
+    template.New("x").Parse(s))
+// panics early on bad templates</pre>
+      </div>
+    </div>
+    <div class="do-dont">
+      <div class="dont-box">
+        <div class="label">Don't: Ignore Execute error</div>
+<pre>tmpl.Execute(w, data)
+// partial output already written</pre>
+      </div>
+      <div class="do-box">
+        <div class="label">Do: Execute to buffer first</div>
+<pre>var buf bytes.Buffer
+if err := tmpl.Execute(&amp;buf, data); err != nil {
+    http.Error(w, "error", 500)
+    return
+}
+buf.WriteTo(w)</pre>
+      </div>
+    </div>
+
+    <h4>Key Rules</h4>
+    <ul class="rules-list">
+      <li>Use <code>html/template</code> for all HTML output &mdash; it auto-escapes by context (HTML, JS, URL, CSS).</li>
+      <li>Use <code>template.FuncMap</code> to add custom functions &mdash; register before <code>Parse()</code>.</li>
+      <li>Use <code>{{- }}</code> and <code>{{ -}}</code> to trim whitespace around template actions.</li>
+    </ul>
+
+    <h4>Exercises</h4>
+    <div class="exercise">
+      <div class="exercise-label">Exercise 1</div>
+      <p>Create a text template that generates a Markdown table from a slice of structs <code>[]struct{ Name string; Score int }</code>.</p>
+    </div>
+    <div class="exercise">
+      <div class="exercise-label">Exercise 2</div>
+      <p>Build an HTML template with a base layout (<code>{{define "base"}}</code>) and a content block. Render a page that shows a list of users.</p>
+    </div>
+    <div class="exercise">
+      <div class="exercise-label">Exercise 3</div>
+      <p>Write a template with a custom <code>FuncMap</code> function <code>pluralize(count int, singular, plural string) string</code> and use it in a template.</p>
+    </div>
+
+    <div class="connection">
+      <strong>Connections:</strong> Relates to <code>net/http</code> (serving HTML), <code>encoding/json</code> (data for templates), and <code>io</code> package (template output to writers).
+    </div>
+  </div>
+
+  <!-- Concept 2: crypto Package & TLS -->
+  <div class="concept" id="crypto-tls">
+    <div class="concept-header">
+      <h3>crypto Package &amp; TLS</h3>
+      <span class="topic-badge">Security</span>
+    </div>
+    <p>Every production Go service needs cryptographic operations &mdash; hashing passwords, generating tokens, signing data, and configuring TLS. Go's crypto packages are battle-tested and used by the standard <code>net/http</code> server.</p>
+
+    <h4>Example 1 &mdash; Hashing with crypto/sha256</h4>
+<pre>package main
+
+import (
+    "crypto/sha256"
+    "encoding/hex"
+    "fmt"
+)
+
+func main() {
+    data := []byte("hello world")
+    hash := sha256.Sum256(data)
+    fmt.Println(hex.EncodeToString(hash[:]))
+    // a591a6d40bf420404a011733cfb7b190d62c65bf0bcda32b57b277d9ad9f146e
+
+    // Incremental hashing for large data
+    h := sha256.New()
+    h.Write([]byte("hello "))
+    h.Write([]byte("world"))
+    fmt.Println(hex.EncodeToString(h.Sum(nil)))
+    // same hash
+}</pre>
+
+    <h4>Example 2 &mdash; Secure random with crypto/rand</h4>
+<pre>package main
+
+import (
+    "crypto/rand"
+    "encoding/base64"
+    "encoding/hex"
+    "fmt"
+    "math/big"
+)
+
+func main() {
+    // Random bytes
+    token := make([]byte, 32)
+    rand.Read(token)
+    fmt.Println(hex.EncodeToString(token))
+
+    // URL-safe token
+    fmt.Println(base64.URLEncoding.EncodeToString(token))
+
+    // Random integer in [0, max)
+    n, _ := rand.Int(rand.Reader, big.NewInt(100))
+    fmt.Println("Random 0-99:", n)
+}</pre>
+
+    <h4>Example 3 &mdash; HMAC for message authentication</h4>
+<pre>package main
+
+import (
+    "crypto/hmac"
+    "crypto/sha256"
+    "encoding/hex"
+    "fmt"
+)
+
+func sign(key, message []byte) string {
+    mac := hmac.New(sha256.New, key)
+    mac.Write(message)
+    return hex.EncodeToString(mac.Sum(nil))
+}
+
+func verify(key, message []byte, signature string) bool {
+    expected := sign(key, message)
+    return hmac.Equal([]byte(expected), []byte(signature))
+}
+
+func main() {
+    key := []byte("my-secret-key")
+    msg := []byte("transfer $100 to Alice")
+
+    sig := sign(key, msg)
+    fmt.Println("Signature:", sig)
+    fmt.Println("Valid:", verify(key, msg, sig))       // true
+    fmt.Println("Tampered:", verify(key, []byte("transfer $1000"), sig)) // false
+}</pre>
+
+    <h4>Example 4 &mdash; TLS configuration for HTTP server</h4>
+<pre>package main
+
+import (
+    "crypto/tls"
+    "fmt"
+    "net/http"
+)
+
+func main() {
+    tlsConfig := &amp;tls.Config{
+        MinVersion: tls.VersionTLS13,
+        CurvePreferences: []tls.CurveID{
+            tls.X25519,
+            tls.CurveP256,
+        },
+    }
+
+    server := &amp;http.Server{
+        Addr:      ":8443",
+        TLSConfig: tlsConfig,
+        Handler: http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+            fmt.Fprintln(w, "Hello, TLS!")
+        }),
+    }
+
+    // In production: server.ListenAndServeTLS("cert.pem", "key.pem")
+    fmt.Println("Server configured with TLS 1.3+")
+}</pre>
+
+    <h4>Common Mistakes</h4>
+    <div class="do-dont">
+      <div class="dont-box">
+        <div class="label">Don't: math/rand for security</div>
+<pre>import "math/rand"
+token := rand.Intn(1000000)
+// predictable!</pre>
+      </div>
+      <div class="do-box">
+        <div class="label">Do: crypto/rand for security</div>
+<pre>import "crypto/rand"
+token := make([]byte, 32)
+rand.Read(token)
+// cryptographically secure</pre>
+      </div>
+    </div>
+    <div class="do-dont">
+      <div class="dont-box">
+        <div class="label">Don't: Compare HMACs with ==</div>
+<pre>if computedMAC == expectedMAC {
+    // timing attack!
+}</pre>
+      </div>
+      <div class="do-box">
+        <div class="label">Do: Use hmac.Equal()</div>
+<pre>if hmac.Equal(computedMAC, expectedMAC) {
+    // constant-time comparison
+}</pre>
+      </div>
+    </div>
+    <div class="do-dont">
+      <div class="dont-box">
+        <div class="label">Don't: Allow old TLS</div>
+<pre>tlsConfig := &amp;tls.Config{
+    // MinVersion defaults to TLS 1.0
+}</pre>
+      </div>
+      <div class="do-box">
+        <div class="label">Do: Require TLS 1.3</div>
+<pre>tlsConfig := &amp;tls.Config{
+    MinVersion: tls.VersionTLS13,
+}</pre>
+      </div>
+    </div>
+
+    <h4>Key Rules</h4>
+    <ul class="rules-list">
+      <li><code>crypto/rand</code> for all security-critical randomness. <code>math/rand</code> only for non-security use.</li>
+      <li>Use <code>hmac.Equal()</code> instead of <code>==</code> for constant-time comparison.</li>
+      <li>Set <code>MinVersion: tls.VersionTLS13</code> in production TLS configs.</li>
+    </ul>
+
+    <h4>Exercises</h4>
+    <div class="exercise">
+      <div class="exercise-label">Exercise 1</div>
+      <p>Write a <code>GenerateToken(n int) string</code> function that produces a URL-safe base64 token of n random bytes.</p>
+    </div>
+    <div class="exercise">
+      <div class="exercise-label">Exercise 2</div>
+      <p>Implement <code>HashFile(path string) (string, error)</code> that returns the SHA-256 hex digest of a file, reading in 4KB chunks.</p>
+    </div>
+    <div class="exercise">
+      <div class="exercise-label">Exercise 3</div>
+      <p>Create a signed cookie system: <code>SignCookie(key []byte, name, value string) string</code> and <code>VerifyCookie(key []byte, name, signed string) (string, bool)</code> using HMAC.</p>
+    </div>
+
+    <div class="connection">
+      <strong>Connections:</strong> Relates to <code>net/http</code> (TLS for servers), <code>io</code> package (streaming hash), and the hashlib/secrets concept from the Python guide.
+    </div>
+  </div>
+
+</div><!-- end Templates & Crypto section -->
+
+
+<!-- ============================================================ -->
+<!-- NEW CONCEPTS SECTION 2: Advanced Runtime -->
+<!-- ============================================================ -->
+<div class="section">
+  <span class="section-label new">New</span>
+  <h2 class="section-title">Advanced Runtime</h2>
+
+  <!-- Concept 3: sync/atomic -->
+  <div class="concept" id="sync-atomic">
+    <div class="concept-header">
+      <h3>sync/atomic &mdash; Atomic Operations</h3>
+      <span class="topic-badge">Concurrency</span>
+    </div>
+    <p>Atomic operations provide lock-free thread safety for simple counters, flags, and pointers. They're much faster than mutexes for single-value operations and are the building block for lock-free data structures.</p>
+
+    <h4>Example 1 &mdash; Atomic counter</h4>
+<pre>package main
+
+import (
+    "fmt"
+    "sync"
+    "sync/atomic"
+)
+
+func main() {
+    var counter atomic.Int64
+    var wg sync.WaitGroup
+
+    for i := 0; i &lt; 1000; i++ {
+        wg.Add(1)
+        go func() {
+            defer wg.Done()
+            counter.Add(1)
+        }()
+    }
+
+    wg.Wait()
+    fmt.Println("Counter:", counter.Load()) // always 1000
+}</pre>
+    <div class="output-label">Output</div>
+    <div class="output">Counter: 1000</div>
+
+    <h4>Example 2 &mdash; Atomic bool for shutdown flag</h4>
+<pre>package main
+
+import (
+    "fmt"
+    "sync/atomic"
+    "time"
+)
+
+func main() {
+    var shutdown atomic.Bool
+
+    // Worker goroutine
+    go func() {
+        for !shutdown.Load() {
+            fmt.Println("Working...")
+            time.Sleep(100 * time.Millisecond)
+        }
+        fmt.Println("Worker stopped")
+    }()
+
+    time.Sleep(350 * time.Millisecond)
+    shutdown.Store(true)
+    time.Sleep(150 * time.Millisecond)
+}</pre>
+    <div class="output-label">Output</div>
+    <div class="output">Working...
+Working...
+Working...
+Worker stopped</div>
+
+    <h4>Example 3 &mdash; atomic.Value for config hot-reload</h4>
+<pre>package main
+
+import (
+    "fmt"
+    "sync/atomic"
+)
+
+type Config struct {
+    MaxConns int
+    Debug    bool
+}
+
+func main() {
+    var config atomic.Value
+    config.Store(&amp;Config{MaxConns: 100, Debug: false})
+
+    // Read (concurrent-safe, lock-free)
+    cfg := config.Load().(*Config)
+    fmt.Printf("MaxConns: %d, Debug: %v\n", cfg.MaxConns, cfg.Debug)
+
+    // Hot reload &mdash; store a whole new config
+    config.Store(&amp;Config{MaxConns: 200, Debug: true})
+
+    cfg2 := config.Load().(*Config)
+    fmt.Printf("MaxConns: %d, Debug: %v\n", cfg2.MaxConns, cfg2.Debug)
+}</pre>
+    <div class="output-label">Output</div>
+    <div class="output">MaxConns: 100, Debug: false
+MaxConns: 200, Debug: true</div>
+
+    <h4>Example 4 &mdash; CompareAndSwap for lock-free patterns</h4>
+<pre>package main
+
+import (
+    "fmt"
+    "sync"
+    "sync/atomic"
+)
+
+func main() {
+    var max atomic.Int64
+    max.Store(0)
+
+    var wg sync.WaitGroup
+    values := []int64{5, 3, 9, 1, 7, 8, 2, 6, 4, 10}
+
+    for _, v := range values {
+        v := v
+        wg.Add(1)
+        go func() {
+            defer wg.Done()
+            for {
+                old := max.Load()
+                if v &lt;= old { return }
+                if max.CompareAndSwap(old, v) { return }
+            }
+        }()
+    }
+
+    wg.Wait()
+    fmt.Println("Max:", max.Load()) // 10
+}</pre>
+
+    <h4>Common Mistakes</h4>
+    <div class="do-dont">
+      <div class="dont-box">
+        <div class="label">Don't: Atomic for multi-field updates</div>
+<pre>var x, y atomic.Int64
+// Can't atomically update both
+x.Store(1)
+y.Store(2) // not atomic together</pre>
+      </div>
+      <div class="do-box">
+        <div class="label">Do: Mutex for related values</div>
+<pre>var mu sync.Mutex
+mu.Lock()
+x = 1
+y = 2 // both updated atomically
+mu.Unlock()</pre>
+      </div>
+    </div>
+    <div class="do-dont">
+      <div class="dont-box">
+        <div class="label">Don't: Store nil in atomic.Value</div>
+<pre>var v atomic.Value
+v.Store(nil) // panics!</pre>
+      </div>
+      <div class="do-box">
+        <div class="label">Do: Store typed nil pointer</div>
+<pre>var v atomic.Value
+v.Store((*Config)(nil)) // OK</pre>
+      </div>
+    </div>
+    <div class="do-dont">
+      <div class="dont-box">
+        <div class="label">Don't: Mix atomic and non-atomic</div>
+<pre>var counter int64
+atomic.AddInt64(&amp;counter, 1)
+fmt.Println(counter) // data race!</pre>
+      </div>
+      <div class="do-box">
+        <div class="label">Do: All access must be atomic</div>
+<pre>var counter atomic.Int64
+counter.Add(1)
+fmt.Println(counter.Load()) // safe</pre>
+      </div>
+    </div>
+
+    <h4>Key Rules</h4>
+    <ul class="rules-list">
+      <li>Use atomic types (<code>atomic.Int64</code>, <code>atomic.Bool</code>, <code>atomic.Pointer[T]</code>) for single-value concurrent access &mdash; faster than Mutex.</li>
+      <li>Use <code>atomic.Value</code> for swapping entire structs (config reload, cache replacement).</li>
+      <li>Use Mutex when you need to atomically update multiple related fields.</li>
+    </ul>
+
+    <h4>Exercises</h4>
+    <div class="exercise">
+      <div class="exercise-label">Exercise 1</div>
+      <p>Implement a concurrent-safe <code>Stats</code> struct with <code>atomic.Int64</code> fields for <code>requests</code>, <code>errors</code>, and <code>bytesProcessed</code>. Add <code>Record(bytes int64, isError bool)</code> and <code>Snapshot() (int64, int64, int64)</code> methods.</p>
+    </div>
+    <div class="exercise">
+      <div class="exercise-label">Exercise 2</div>
+      <p>Use <code>atomic.Value</code> to implement a hot-reloadable rate limiter that reads the current rate config without locking.</p>
+    </div>
+    <div class="exercise">
+      <div class="exercise-label">Exercise 3</div>
+      <p>Implement a lock-free stack using <code>atomic.Pointer[Node]</code> with <code>Push</code> and <code>Pop</code> operations using CompareAndSwap.</p>
+    </div>
+
+    <div class="connection">
+      <strong>Connections:</strong> Extends <code>sync</code> package (mutex vs atomics trade-off). Relates to memory management (lock-free is allocation-friendly). Used internally by <code>sync.WaitGroup</code> and <code>sync.Once</code>.
+    </div>
+  </div>
+
+  <!-- Concept 4: cgo -->
+  <div class="concept" id="cgo">
+    <div class="concept-header">
+      <h3>cgo &mdash; Calling C from Go</h3>
+      <span class="topic-badge">Interop</span>
+    </div>
+    <p>cgo lets Go programs call C libraries &mdash; essential for wrapping existing C/C++ libraries (SQLite, OpenSSL, system APIs). Understanding cgo trade-offs helps decide when to use it vs. pure Go alternatives.</p>
+
+    <h4>Example 1 &mdash; Basic cgo</h4>
+<pre>package main
+
+/*
+#include &lt;stdio.h&gt;
+#include &lt;stdlib.h&gt;
+
+void greet(const char* name) {
+    printf("Hello from C, %s!\n", name);
+}
+*/
+import "C"
+import (
+    "fmt"
+    "unsafe"
+)
+
+func main() {
+    name := C.CString("Alice")
+    defer C.free(unsafe.Pointer(name))
+
+    C.greet(name)
+
+    // C arithmetic
+    result := C.int(40) + C.int(2)
+    fmt.Println("C says:", int(result))
+}</pre>
+    <div class="output-label">Output</div>
+    <div class="output">Hello from C, Alice!
+C says: 42</div>
+
+    <h4>Example 2 &mdash; Passing data between Go and C</h4>
+<pre>package main
+
+/*
+#include &lt;stdlib.h&gt;
+#include &lt;string.h&gt;
+
+int sum_array(int* arr, int len) {
+    int total = 0;
+    for (int i = 0; i &lt; len; i++) {
+        total += arr[i];
+    }
+    return total;
+}
+
+char* reverse_string(const char* s) {
+    int len = strlen(s);
+    char* result = (char*)malloc(len + 1);
+    for (int i = 0; i &lt; len; i++) {
+        result[i] = s[len - 1 - i];
+    }
+    result[len] = '\0';
+    return result;
+}
+*/
+import "C"
+import (
+    "fmt"
+    "unsafe"
+)
+
+func main() {
+    // Pass a Go slice to C
+    goSlice := []C.int{10, 20, 30, 40, 50}
+    total := C.sum_array(&amp;goSlice[0], C.int(len(goSlice)))
+    fmt.Println("Sum:", int(total)) // 150
+
+    // Get a C string back, free it when done
+    input := C.CString("Hello, Go!")
+    defer C.free(unsafe.Pointer(input))
+
+    reversed := C.reverse_string(input)
+    defer C.free(unsafe.Pointer(reversed))
+    fmt.Println("Reversed:", C.GoString(reversed)) // !oG ,olleH
+}</pre>
+
+    <h4>Example 3 &mdash; Wrapping a C library (math)</h4>
+<pre>package main
+
+/*
+#cgo LDFLAGS: -lm
+#include &lt;math.h&gt;
+*/
+import "C"
+import "fmt"
+
+func main() {
+    // Call C math functions
+    result := C.sqrt(C.double(144))
+    fmt.Printf("sqrt(144) = %.0f\n", float64(result)) // 12
+
+    result2 := C.pow(C.double(2), C.double(10))
+    fmt.Printf("2^10 = %.0f\n", float64(result2)) // 1024
+}</pre>
+
+    <h4>Common Mistakes</h4>
+    <div class="do-dont">
+      <div class="dont-box">
+        <div class="label">Don't: Forget to free C.CString</div>
+<pre>name := C.CString("Alice")
+C.greet(name)
+// memory leak!</pre>
+      </div>
+      <div class="do-box">
+        <div class="label">Do: Defer C.free immediately</div>
+<pre>name := C.CString("Alice")
+defer C.free(unsafe.Pointer(name))
+C.greet(name)</pre>
+      </div>
+    </div>
+    <div class="do-dont">
+      <div class="dont-box">
+        <div class="label">Don't: Blank line before import "C"</div>
+<pre>/*
+#include &lt;stdio.h&gt;
+*/
+
+import "C"  // cgo won't see the C code!</pre>
+      </div>
+      <div class="do-box">
+        <div class="label">Do: Comment and import contiguous</div>
+<pre>/*
+#include &lt;stdio.h&gt;
+*/
+import "C"  // no blank line between</pre>
+      </div>
+    </div>
+    <div class="do-dont">
+      <div class="dont-box">
+        <div class="label">Don't: cgo when pure Go exists</div>
+<pre>// mattn/go-sqlite3 uses cgo
+// disables cross-compilation
+import _ "github.com/mattn/go-sqlite3"</pre>
+      </div>
+      <div class="do-box">
+        <div class="label">Do: Prefer pure Go</div>
+<pre>// modernc.org/sqlite is pure Go
+// cross-compiles, no cgo needed
+import _ "modernc.org/sqlite"</pre>
+      </div>
+    </div>
+
+    <h4>Key Rules</h4>
+    <ul class="rules-list">
+      <li>cgo has significant overhead per call (~100ns vs ~5ns for Go calls) &mdash; avoid it in hot paths.</li>
+      <li>cgo disables cross-compilation (<code>CGO_ENABLED=0</code> for static builds). Consider the deployment impact.</li>
+      <li>Always free C-allocated memory. Use <code>defer C.free(unsafe.Pointer(...))</code> immediately after allocation.</li>
+    </ul>
+
+    <h4>Exercises</h4>
+    <div class="exercise">
+      <div class="exercise-label">Exercise 1</div>
+      <p>Write a cgo program that calls C's <code>strlen()</code> on a Go string and prints the length. Remember to convert with <code>C.CString</code> and free.</p>
+    </div>
+    <div class="exercise">
+      <div class="exercise-label">Exercise 2</div>
+      <p>Create a C function <code>int fibonacci(int n)</code> and call it from Go. Compare its output with a pure Go implementation.</p>
+    </div>
+    <div class="exercise">
+      <div class="exercise-label">Exercise 3</div>
+      <p>Use <code>#cgo LDFLAGS: -lm</code> to link the C math library and write Go wrappers for <code>sin</code>, <code>cos</code>, and <code>atan2</code> that take and return <code>float64</code>.</p>
+    </div>
+
+    <div class="connection">
+      <strong>Connections:</strong> Relates to <code>unsafe</code> package (pointer conversions), memory management (heap allocations), and cross-compilation (cgo disables it).
+    </div>
+  </div>
+
+  <!-- Concept 5: go/ast & go/parser -->
+  <div class="concept" id="go-ast-parser">
+    <div class="concept-header">
+      <h3>go/ast &amp; go/parser &mdash; Analyzing Go Code</h3>
+      <span class="topic-badge">Tooling</span>
+    </div>
+    <p>Go's standard library includes packages for parsing Go source code into ASTs. This powers custom linters, code generators, refactoring tools, and IDE features &mdash; all without third-party dependencies.</p>
+
+    <h4>Example 1 &mdash; Parsing a Go file</h4>
+<pre>package main
+
+import (
+    "fmt"
+    "go/ast"
+    "go/parser"
+    "go/token"
+)
+
+func main() {
+    src := `
+package example
+
+import "fmt"
+
+func Hello(name string) string {
+    return fmt.Sprintf("Hello, %s!", name)
+}
+
+func Add(a, b int) int {
+    return a + b
+}
+`
+    fset := token.NewFileSet()
+    file, err := parser.ParseFile(fset, "example.go", src, parser.ParseComments)
+    if err != nil { panic(err) }
+
+    fmt.Println("Package:", file.Name.Name)
+    for _, decl := range file.Decls {
+        if fn, ok := decl.(*ast.FuncDecl); ok {
+            fmt.Printf("Function: %s (line %d)\n",
+                fn.Name.Name, fset.Position(fn.Pos()).Line)
+        }
+    }
+}</pre>
+    <div class="output-label">Output</div>
+    <div class="output">Package: example
+Function: Hello (line 6)
+Function: Add (line 10)</div>
+
+    <h4>Example 2 &mdash; Walking the AST with ast.Inspect</h4>
+<pre>package main
+
+import (
+    "fmt"
+    "go/ast"
+    "go/parser"
+    "go/token"
+)
+
+func main() {
+    src := `package main
+func main() {
+    x := 10
+    if x &gt; 5 {
+        for i := 0; i &lt; x; i++ {
+            fmt.Println(i)
+        }
+    }
+}`
+    fset := token.NewFileSet()
+    file, _ := parser.ParseFile(fset, "", src, 0)
+
+    counts := map[string]int{}
+    ast.Inspect(file, func(n ast.Node) bool {
+        switch n.(type) {
+        case *ast.IfStmt:
+            counts["if"]++
+        case *ast.ForStmt:
+            counts["for"]++
+        case *ast.RangeStmt:
+            counts["range"]++
+        case *ast.CallExpr:
+            counts["call"]++
+        }
+        return true
+    })
+
+    for kind, count := range counts {
+        fmt.Printf("%s: %d\n", kind, count)
+    }
+}</pre>
+    <div class="output-label">Output</div>
+    <div class="output">if: 1
+for: 1
+call: 1</div>
+
+    <h4>Example 3 &mdash; Extracting struct fields and tags</h4>
+<pre>package main
+
+import (
+    "fmt"
+    "go/ast"
+    "go/parser"
+    "go/token"
+    "strings"
+)
+
+func main() {
+    src := `package models
+type User struct {
+    ID    int    ` + "`" + `json:"id" db:"user_id"` + "`" + `
+    Name  string ` + "`" + `json:"name" db:"full_name"` + "`" + `
+    Email string ` + "`" + `json:"email"` + "`" + `
+}
+`
+    fset := token.NewFileSet()
+    file, _ := parser.ParseFile(fset, "", src, parser.ParseComments)
+
+    ast.Inspect(file, func(n ast.Node) bool {
+        ts, ok := n.(*ast.TypeSpec)
+        if !ok { return true }
+
+        st, ok := ts.Type.(*ast.StructType)
+        if !ok { return true }
+
+        fmt.Printf("Struct: %s\n", ts.Name.Name)
+        for _, field := range st.Fields.List {
+            name := field.Names[0].Name
+            tag := ""
+            if field.Tag != nil {
+                tag = strings.Trim(field.Tag.Value, "`")
+            }
+            fmt.Printf("  %s: %s\n", name, tag)
+        }
+        return true
+    })
+}</pre>
+    <div class="output-label">Output</div>
+    <div class="output">Struct: User
+  ID: json:"id" db:"user_id"
+  Name: json:"name" db:"full_name"
+  Email: json:"email"</div>
+
+    <h4>Example 4 &mdash; Finding function complexity (counting branches)</h4>
+<pre>package main
+
+import (
+    "fmt"
+    "go/ast"
+    "go/parser"
+    "go/token"
+)
+
+func cyclomaticComplexity(fn *ast.FuncDecl) int {
+    complexity := 1
+    ast.Inspect(fn.Body, func(n ast.Node) bool {
+        switch n.(type) {
+        case *ast.IfStmt, *ast.ForStmt, *ast.RangeStmt,
+             *ast.CaseClause, *ast.CommClause:
+            complexity++
+        case *ast.BinaryExpr:
+            if be, ok := n.(*ast.BinaryExpr); ok {
+                if be.Op.String() == "&amp;&amp;" || be.Op.String() == "||" {
+                    complexity++
+                }
+            }
+        }
+        return true
+    })
+    return complexity
+}
+
+func main() {
+    src := `package main
+func process(x int) string {
+    if x &lt; 0 { return "negative" }
+    if x == 0 { return "zero" }
+    for i := 0; i &lt; x; i++ {
+        if i%2 == 0 &amp;&amp; i &gt; 5 { return "special" }
+    }
+    return "positive"
+}`
+    fset := token.NewFileSet()
+    file, _ := parser.ParseFile(fset, "", src, 0)
+
+    for _, decl := range file.Decls {
+        if fn, ok := decl.(*ast.FuncDecl); ok {
+            fmt.Printf("%s: complexity = %d\n",
+                fn.Name.Name, cyclomaticComplexity(fn))
+        }
+    }
+}</pre>
+    <div class="output-label">Output</div>
+    <div class="output">process: complexity = 5</div>
+
+    <h4>Common Mistakes</h4>
+    <div class="do-dont">
+      <div class="dont-box">
+        <div class="label">Don't: Skip token.NewFileSet()</div>
+<pre>file, _ := parser.ParseFile(nil, "", src, 0)
+// positions will be wrong!</pre>
+      </div>
+      <div class="do-box">
+        <div class="label">Do: Always create a FileSet</div>
+<pre>fset := token.NewFileSet()
+file, _ := parser.ParseFile(fset, "", src, 0)
+// positions are correct</pre>
+      </div>
+    </div>
+    <div class="do-dont">
+      <div class="dont-box">
+        <div class="label">Don't: Modify AST during Inspect</div>
+<pre>ast.Inspect(file, func(n ast.Node) bool {
+    if id, ok := n.(*ast.Ident); ok {
+        id.Name = "renamed" // subtle bugs!
+    }
+    return true
+})</pre>
+      </div>
+      <div class="do-box">
+        <div class="label">Do: Collect changes, apply after</div>
+<pre>var renames []*ast.Ident
+ast.Inspect(file, func(n ast.Node) bool {
+    if id, ok := n.(*ast.Ident); ok {
+        renames = append(renames, id)
+    }
+    return true
+})
+for _, id := range renames {
+    id.Name = "renamed"
+}</pre>
+      </div>
+    </div>
+    <div class="do-dont">
+      <div class="dont-box">
+        <div class="label">Don't: Forget ParseComments flag</div>
+<pre>file, _ := parser.ParseFile(fset, "", src, 0)
+// file.Comments is nil</pre>
+      </div>
+      <div class="do-box">
+        <div class="label">Do: Include flag when needed</div>
+<pre>file, _ := parser.ParseFile(fset, "", src,
+    parser.ParseComments)
+// doc comments available</pre>
+      </div>
+    </div>
+
+    <h4>Key Rules</h4>
+    <ul class="rules-list">
+      <li><code>go/parser</code> + <code>go/ast</code> work on syntax only &mdash; no type information. For types, use <code>go/types</code> and <code>golang.org/x/tools/go/packages</code>.</li>
+      <li>Use <code>ast.Inspect</code> for simple read-only analysis. Use <code>ast.Walk</code> with a custom visitor for more control.</li>
+      <li>The AST matches Go's grammar closely &mdash; each construct has a corresponding <code>ast.*</code> type.</li>
+    </ul>
+
+    <h4>Exercises</h4>
+    <div class="exercise">
+      <div class="exercise-label">Exercise 1</div>
+      <p>Write a program that parses a Go file and prints all exported function names (functions starting with an uppercase letter).</p>
+    </div>
+    <div class="exercise">
+      <div class="exercise-label">Exercise 2</div>
+      <p>Build a linter that finds all <code>fmt.Println</code> calls in a Go source string and reports their line numbers.</p>
+    </div>
+    <div class="exercise">
+      <div class="exercise-label">Exercise 3</div>
+      <p>Create a tool that extracts all struct types with their field names and JSON tags from a Go source file.</p>
+    </div>
+
+    <div class="connection">
+      <strong>Connections:</strong> Relates to code generation (generating code from AST), <code>reflect</code> package (runtime vs compile-time inspection), and <code>go vet</code>/<code>staticcheck</code> (which use these packages internally).
+    </div>
+  </div>
+
+</div><!-- end Advanced Runtime section -->
+
+
+<!-- ============================================================ -->
+<!-- FOOTER -->
+<!-- ============================================================ -->
+<footer class="footer">
+  <h4>All Guides</h4>
+  <ul>
+    <li><a href="golang-guides/golang-guide-2026-07-09.html">2026-07-09</a> (Day 34)</li>
+    <li><a href="golang-guides/golang-guide-2026-07-08.html">2026-07-08</a> (Day 33)</li>
+    <li><a href="golang-guides/golang-guide-2026-07-07.html">2026-07-07</a> (Day 32)</li>
+    <li><a href="golang-guides/golang-guide-2026-07-06.html">2026-07-06</a> (Day 31)</li>
+    <li><a href="golang-guides/golang-guide-2026-07-05.html">2026-07-05</a> (Day 30)</li>
+    <li><a href="golang-guides/golang-guide-2026-07-04.html">2026-07-04</a> (Day 29)</li>
+    <li><a href="golang-guides/golang-guide-2026-07-03.html">2026-07-03</a> (Day 28)</li>
+    <li><a href="golang-guides/golang-guide-2026-07-02.html">2026-07-02</a> (Day 27)</li>
+    <li><a href="golang-guides/golang-guide-2026-07-01.html">2026-07-01</a> (Day 26)</li>
+    <li><a href="golang-guides/golang-guide-2026-06-30.html">2026-06-30</a> (Day 25)</li>
+    <li><a href="golang-guides/golang-guide-2026-06-29.html">2026-06-29</a> (Day 24)</li>
+    <li><a href="golang-guides/golang-guide-2026-06-28.html">2026-06-28</a> (Day 23)</li>
+    <li><a href="golang-guides/golang-guide-2026-06-27.html">2026-06-27</a> (Day 22)</li>
+    <li><a href="golang-guides/golang-guide-2026-06-26.html">2026-06-26</a> (Day 21)</li>
+    <li><a href="golang-guides/golang-guide-2026-06-25.html">2026-06-25</a> (Day 20)</li>
+    <li><a href="golang-guides/golang-guide-2026-06-24.html">2026-06-24</a> (Day 19)</li>
+    <li><a href="golang-guides/golang-guide-2026-06-23.html">2026-06-23</a> (Day 18)</li>
+    <li><a href="golang-guides/golang-guide-2026-06-22.html">2026-06-22</a> (Day 17)</li>
+    <li><a href="golang-guides/golang-guide-2026-06-19.html">2026-06-19</a> (Day 15)</li>
+    <li><a href="golang-guides/golang-guide-2026-06-18.html">2026-06-18</a> (Day 14)</li>
+    <li><a href="golang-guides/golang-guide-2026-06-17.html">2026-06-17</a> (Day 13)</li>
+    <li><a href="golang-guides/golang-guide-2026-06-15.html">2026-06-15</a> (Day 12)</li>
+    <li><a href="golang-guides/golang-guide-2026-06-13.html">2026-06-13</a> (Day 11)</li>
+    <li><a href="golang-guides/golang-guide-2026-06-12.html">2026-06-12</a> (Day 10)</li>
+    <li><a href="golang-guides/golang-guide-2026-06-11.html">2026-06-11</a> (Day 9)</li>
+    <li><a href="golang-guides/golang-guide-2026-06-10.html">2026-06-10</a> (Day 8)</li>
+    <li><a href="golang-guides/golang-guide-2026-06-09.html">2026-06-09</a> (Day 7)</li>
+    <li><a href="golang-guides/golang-guide-2026-06-08.html">2026-06-08</a> (Day 6)</li>
+    <li><a href="golang-guides/golang-guide-2026-06-07.html">2026-06-07</a> (Day 5)</li>
+    <li><a href="golang-guides/golang-guide-2026-06-05.html">2026-06-05</a> (Day 4)</li>
+    <li><a href="golang-guides/golang-guide-2026-06-04.html">2026-06-04</a> (Day 3)</li>
+    <li><a href="golang-guides/golang-guide-2026-06-03.html">2026-06-03</a> (Day 2)</li>
+    <li><a href="golang-guides/golang-guide-2026-06-02.html">2026-06-02</a> (Day 1)</li>
+  </ul>
+</footer>
+
+</div><!-- end main -->
+
+<script>
+// ===== Theme Toggle =====
+(function() {
+  const KEY = 'lc-goguide-theme';
+  const toggle = document.getElementById('theme-toggle');
+  const html = document.documentElement;
+
+  function setTheme(theme) {
+    html.setAttribute('data-theme', theme);
+    localStorage.setItem(KEY, theme);
+    toggle.textContent = theme === 'dark' ? '☽' : '☀';
+  }
+
+  const saved = localStorage.getItem(KEY) || 'dark';
+  setTheme(saved);
+
+  toggle.addEventListener('click', function() {
+    setTheme(html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
+  });
+})();
+
+// ===== Mobile Sidebar Toggle =====
+(function() {
+  const btn = document.getElementById('sidebar-toggle');
+  const sidebar = document.getElementById('sidebar');
+
+  btn.addEventListener('click', function() {
+    sidebar.classList.toggle('open');
+  });
+
+  // Close sidebar when clicking a link (mobile)
+  sidebar.querySelectorAll('.sidebar-link').forEach(function(link) {
+    link.addEventListener('click', function() {
+      if (window.innerWidth <= 900) {
+        sidebar.classList.remove('open');
+      }
+    });
+  });
+})();
+
+// ===== Active Sidebar Link on Scroll =====
+(function() {
+  const links = document.querySelectorAll('.sidebar-link');
+  const sections = [];
+
+  links.forEach(function(link) {
+    var id = link.getAttribute('href').replace('#', '');
+    var el = document.getElementById(id);
+    if (el) sections.push({ id: id, el: el, link: link });
+  });
+
+  function onScroll() {
+    var scrollTop = window.scrollY + 120;
+    var current = null;
+
+    for (var i = sections.length - 1; i >= 0; i--) {
+      if (sections[i].el.offsetTop <= scrollTop) {
+        current = sections[i];
+        break;
+      }
+    }
+
+    links.forEach(function(l) { l.classList.remove('active'); });
+    if  current.link.classList.add('active');
+  }
+
+  window.addEventListener('scroll', onScroll);
+  onScroll();
+})();
+</script>
+</body>
+</html>

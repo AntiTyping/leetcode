@@ -1,0 +1,1899 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Go Study Guide &mdash; Day 14 (2026-06-18)</title>
+<style>
+/* ===== CSS Variables ===== */
+:root {
+  --bg: #0d1117;
+  --surface1: #161b22;
+  --surface2: #1c2333;
+  --border: #30363d;
+  --text: #e6edf3;
+  --muted: #8b949e;
+  --accent: #58a6ff;
+  --accent-dim: #1f6feb33;
+  --green: #3fb950;
+  --green-dim: #23863633;
+  --yellow: #d29922;
+  --yellow-dim: #d2992233;
+  --red: #f85149;
+  --red-dim: #f8514933;
+  --purple: #bc8cff;
+  --purple-dim: #bc8cff22;
+  --orange: #f0883e;
+  --orange-dim: #f0883e22;
+  --code-bg: #0d1117;
+  --sidebar-w: 300px;
+  --font-mono: 'SF Mono', 'Cascadia Code', 'Fira Code', Consolas, monospace;
+  --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+  --radius: 8px;
+  --shadow: 0 1px 3px rgba(0,0,0,0.4);
+}
+
+[data-theme="light"] {
+  --bg: #ffffff;
+  --surface1: #f6f8fa;
+  --surface2: #f0f3f6;
+  --border: #d0d7de;
+  --text: #1f2328;
+  --muted: #656d76;
+  --accent: #0969da;
+  --accent-dim: #0969da1a;
+  --green: #1a7f37;
+  --green-dim: #1a7f3718;
+  --yellow: #9a6700;
+  --yellow-dim: #9a670018;
+  --red: #cf222e;
+  --red-dim: #cf222e18;
+  --purple: #8250df;
+  --purple-dim: #8250df18;
+  --orange: #bc4c00;
+  --orange-dim: #bc4c0018;
+  --code-bg: #f6f8fa;
+  --shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+/* ===== Reset & Base ===== */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: var(--font-sans);
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.7;
+  font-size: 16px;
+  transition: background 0.2s, color 0.2s;
+}
+
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+/* ===== Theme Toggle ===== */
+#theme-toggle {
+  position: fixed;
+  top: 16px;
+  right: 20px;
+  z-index: 1000;
+  background: var(--surface1);
+  border: 1px solid var(--border);
+  color: var(--text);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+  box-shadow: var(--shadow);
+}
+#theme-toggle:hover { background: var(--surface2); border-color: var(--accent); }
+
+/* ===== Sidebar ===== */
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: var(--sidebar-w);
+  height: 100vh;
+  background: var(--surface1);
+  border-right: 1px solid var(--border);
+  overflow-y: auto;
+  padding: 20px 0;
+  z-index: 100;
+  transition: transform 0.3s;
+}
+
+.sidebar-header {
+  padding: 0 20px 16px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 12px;
+}
+
+.sidebar-header h2 {
+  font-size: 16px;
+  color: var(--text);
+  font-weight: 700;
+}
+
+.sidebar-header .subtitle {
+  font-size: 12px;
+  color: var(--muted);
+  margin-top: 2px;
+}
+
+.sidebar-section {
+  margin-bottom: 8px;
+}
+
+.sidebar-section-title {
+  padding: 6px 20px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+}
+
+.sidebar-link {
+  display: block;
+  padding: 5px 20px 5px 28px;
+  font-size: 13px;
+  color: var(--muted);
+  text-decoration: none;
+  border-left: 2px solid transparent;
+  transition: all 0.15s;
+  line-height: 1.4;
+}
+
+.sidebar-link:hover {
+  color: var(--text);
+  background: var(--accent-dim);
+  border-left-color: var(--accent);
+  text-decoration: none;
+}
+
+.sidebar-link.active {
+  color: var(--accent);
+  border-left-color: var(--accent);
+  background: var(--accent-dim);
+}
+
+/* ===== Mobile sidebar toggle ===== */
+#sidebar-toggle {
+  display: none;
+  position: fixed;
+  top: 16px;
+  left: 16px;
+  z-index: 200;
+  background: var(--surface1);
+  border: 1px solid var(--border);
+  color: var(--text);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 20px;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--shadow);
+}
+
+/* ===== Main Content ===== */
+.main {
+  margin-left: var(--sidebar-w);
+  padding: 40px 48px 80px;
+  max-width: calc(860px + var(--sidebar-w) + 96px);
+}
+
+.page-title {
+  font-size: 32px;
+  font-weight: 800;
+  margin-bottom: 4px;
+  color: var(--text);
+}
+
+.page-subtitle {
+  font-size: 15px;
+  color: var(--muted);
+  margin-bottom: 36px;
+}
+
+/* ===== Sections ===== */
+.section {
+  margin-bottom: 48px;
+}
+
+.section-label {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  padding: 3px 10px;
+  border-radius: 4px;
+  margin-bottom: 12px;
+}
+
+.section-label.review { background: var(--yellow-dim); color: var(--yellow); }
+.section-label.new { background: var(--green-dim); color: var(--green); }
+
+.section-title {
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 24px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--border);
+}
+
+/* ===== How To Use ===== */
+.how-to-use {
+  background: var(--surface1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px 24px;
+  margin-bottom: 36px;
+}
+
+.how-to-use h3 {
+  font-size: 16px;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.how-to-use ul {
+  padding-left: 22px;
+  margin: 0;
+}
+
+.how-to-use li {
+  font-size: 14px;
+  color: var(--muted);
+  margin-bottom: 4px;
+}
+
+/* ===== Concept Cards ===== */
+.concept {
+  background: var(--surface1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 28px;
+  margin-bottom: 28px;
+  box-shadow: var(--shadow);
+}
+
+.concept-header {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  margin-bottom: 6px;
+  flex-wrap: wrap;
+}
+
+.concept h3 {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.concept-meta {
+  font-size: 12px;
+  color: var(--muted);
+  background: var(--surface2);
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
+.concept h4 {
+  font-size: 15px;
+  font-weight: 600;
+  margin: 20px 0 8px;
+  color: var(--text);
+}
+
+.concept p, .concept li {
+  color: var(--text);
+  line-height: 1.7;
+}
+
+.concept ul, .concept ol {
+  padding-left: 22px;
+  margin: 8px 0;
+}
+
+.concept li {
+  margin-bottom: 4px;
+}
+
+/* ===== Code Blocks ===== */
+pre {
+  background: var(--code-bg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 16px 18px;
+  overflow-x: auto;
+  margin: 10px 0 14px;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--text);
+  position: relative;
+}
+
+pre::after {
+  content: 'Go';
+  position: absolute;
+  top: 6px;
+  right: 10px;
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  opacity: 0.6;
+}
+
+code {
+  font-family: var(--font-mono);
+  font-size: 0.9em;
+}
+
+:not(pre) > code {
+  background: var(--surface2);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.88em;
+}
+
+/* ===== Output Blocks ===== */
+.output {
+  background: var(--green-dim);
+  border: 1px solid var(--green);
+  border-radius: 6px;
+  padding: 12px 16px;
+  margin: 6px 0 14px;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--text);
+  white-space: pre-wrap;
+}
+
+.output::after { content: none; }
+
+.output-label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--green);
+  margin-bottom: 4px;
+}
+
+/* ===== Good/Bad Examples ===== */
+.do-dont {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin: 10px 0;
+}
+
+.do-box, .dont-box {
+  border-radius: 6px;
+  padding: 14px;
+  border: 1px solid;
+}
+
+.do-box {
+  background: var(--green-dim);
+  border-color: var(--green);
+}
+
+.dont-box {
+  background: var(--red-dim);
+  border-color: var(--red);
+}
+
+.do-box .label, .dont-box .label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 6px;
+}
+
+.do-box .label { color: var(--green); }
+.dont-box .label { color: var(--red); }
+
+.do-box pre, .dont-box pre {
+  margin: 0;
+  border: none;
+  background: transparent;
+  padding: 0;
+  font-size: 12.5px;
+}
+
+.do-box pre::after, .dont-box pre::after { content: none; }
+
+/* ===== Key Rules ===== */
+.rules-list {
+  list-style: none;
+  padding: 0;
+  margin: 8px 0;
+}
+
+.rules-list li {
+  padding: 6px 0 6px 24px;
+  position: relative;
+}
+
+.rules-list li::before {
+  content: "\2192";
+  position: absolute;
+  left: 2px;
+  color: var(--accent);
+  font-weight: 700;
+}
+
+/* ===== Exercises ===== */
+.exercise {
+  background: var(--purple-dim);
+  border: 1px solid var(--purple);
+  border-radius: 6px;
+  padding: 14px 18px;
+  margin: 8px 0;
+}
+
+.exercise .exercise-label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--purple);
+  margin-bottom: 4px;
+}
+
+/* ===== Pitfall ===== */
+.pitfall {
+  background: var(--red-dim);
+  border-left: 3px solid var(--red);
+  border-radius: 0 6px 6px 0;
+  padding: 10px 14px;
+  margin: 10px 0;
+  font-size: 14px;
+}
+
+.pitfall strong {
+  color: var(--red);
+}
+
+/* ===== Connection ===== */
+.connection {
+  background: var(--accent-dim);
+  border-left: 3px solid var(--accent);
+  border-radius: 0 6px 6px 0;
+  padding: 10px 14px;
+  margin: 10px 0;
+  font-size: 14px;
+  color: var(--muted);
+}
+
+/* ===== Review Cards ===== */
+.review-card {
+  background: var(--surface1);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--purple);
+  border-radius: var(--radius);
+  padding: 20px 24px;
+  margin-bottom: 16px;
+  box-shadow: var(--shadow);
+}
+
+.review-card .review-header {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  margin-bottom: 6px;
+  flex-wrap: wrap;
+}
+
+.review-card h3 {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.review-card .review-meta {
+  font-size: 12px;
+  color: var(--muted);
+  background: var(--surface2);
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
+.review-card h4 {
+  font-size: 14px;
+  font-weight: 600;
+  margin: 14px 0 6px;
+  color: var(--text);
+}
+
+.review-card p, .review-card li {
+  color: var(--text);
+  line-height: 1.6;
+  font-size: 14px;
+}
+
+.review-card pre {
+  font-size: 12.5px;
+  padding: 12px 14px;
+  margin: 6px 0 10px;
+}
+
+.review-card .pitfall {
+  font-size: 13px;
+  padding: 8px 12px;
+}
+
+/* ===== Topic Badge ===== */
+.topic-badge {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 2px 8px;
+  border-radius: 4px;
+  background: var(--accent-dim);
+  color: var(--accent);
+  margin-left: 4px;
+}
+
+/* ===== Footer ===== */
+.footer {
+  margin-top: 60px;
+  padding: 24px 0;
+  border-top: 1px solid var(--border);
+}
+
+.footer h4 {
+  font-size: 14px;
+  color: var(--muted);
+  margin-bottom: 10px;
+}
+
+.footer ul {
+  list-style: none;
+  padding: 0;
+}
+
+.footer li {
+  margin-bottom: 4px;
+  font-size: 14px;
+}
+
+.footer li a { color: var(--accent); }
+.footer .current { color: var(--green); font-weight: 600; }
+
+/* ===== Bash code blocks ===== */
+pre.bash::after {
+  content: 'Bash';
+}
+
+/* ===== JSON code blocks ===== */
+pre.json-code::after {
+  content: 'JSON';
+}
+
+/* ===== Responsive ===== */
+@media (max-width: 900px) {
+  .sidebar {
+    transform: translateX(-100%);
+  }
+  .sidebar.open {
+    transform: translateX(0);
+    box-shadow: 4px 0 20px rgba(0,0,0,0.5);
+  }
+  #sidebar-toggle {
+    display: flex;
+  }
+  .main {
+    margin-left: 0;
+    padding: 60px 20px 60px;
+    max-width: 100%;
+  }
+  .do-dont {
+    grid-template-columns: 1fr;
+  }
+  #theme-toggle {
+    right: 14px;
+    top: 16px;
+  }
+}
+</style>
+</head>
+<body>
+
+<!-- Theme Toggle -->
+<button id="theme-toggle" aria-label="Toggle theme" title="Toggle light/dark theme">&#9789;</button>
+
+<!-- Mobile Sidebar Toggle -->
+<button id="sidebar-toggle" aria-label="Toggle sidebar">&#9776;</button>
+
+<!-- Sidebar -->
+<nav class="sidebar" id="sidebar">
+  <div class="sidebar-header">
+    <h2>Go Guide</h2>
+    <div class="subtitle">Day 14 &mdash; 2026-06-18</div>
+  </div>
+
+  <div class="sidebar-section">
+    <div class="sidebar-section-title">Review (6 concepts)</div>
+    <a href="#review-errors" class="sidebar-link">Error Handling</a>
+    <a href="#review-firstclass" class="sidebar-link">First-class Functions</a>
+    <a href="#review-defer" class="sidebar-link">Defer, Panic, Recover</a>
+    <a href="#review-os" class="sidebar-link">os &amp; filepath</a>
+    <a href="#review-http" class="sidebar-link">net/http</a>
+    <a href="#review-sort" class="sidebar-link">sort Package</a>
+  </div>
+
+  <div class="sidebar-section">
+    <div class="sidebar-section-title">Production Patterns (3)</div>
+    <a href="#singleflight" class="sidebar-link">Singleflight</a>
+    <a href="#health-checks" class="sidebar-link">Health Checks &amp; Probes</a>
+    <a href="#graceful-degradation" class="sidebar-link">Graceful Degradation</a>
+  </div>
+
+  <div class="sidebar-section">
+    <div class="sidebar-section-title">Advanced Testing (2)</div>
+    <a href="#benchmark-allocations" class="sidebar-link">Benchmarks &amp; Allocations</a>
+    <a href="#plugin-architecture" class="sidebar-link">Plugin Architecture</a>
+  </div>
+</nav>
+
+<!-- Main Content -->
+<div class="main">
+
+<h1 class="page-title">Go Daily Guide</h1>
+<p class="page-subtitle">Day 14 &mdash; Thursday, June 18, 2026 &bull; 11 concepts (6 review + 5 new)</p>
+
+<!-- How to Use -->
+<div class="how-to-use">
+  <h3>How to Use This Guide</h3>
+  <ul>
+    <li>Start with the <strong>Review</strong> section &mdash; try to recall each concept before reading the refresher</li>
+    <li>Complete the challenge exercise for each review card without looking back at previous days</li>
+    <li>Then work through the <strong>New Concepts</strong> section, typing out every code example yourself</li>
+    <li>Pay special attention to the common mistakes sections (they highlight real Go gotchas)</li>
+    <li>Complete the exercises at the bottom of each concept without looking at solutions</li>
+    <li>Use <code>go run main.go</code> to test your code locally, or use the <a href="https://go.dev/play/" target="_blank">Go Playground</a></li>
+  </ul>
+</div>
+
+<!-- ============================================================ -->
+<!-- REVIEW SECTION -->
+<!-- ============================================================ -->
+<div class="section">
+  <span class="section-label review">Review</span>
+  <h2 class="section-title">Spaced Repetition Review &mdash; 6 Concepts</h2>
+
+  <!-- Review 1: Error Handling -->
+  <div class="review-card" id="review-errors">
+    <div class="review-header">
+      <h3>Error Handling</h3>
+      <span class="review-meta">Go Foundations &bull; 13 days since review</span>
+    </div>
+
+    <h4>Quick Reminder</h4>
+    <p>Go uses explicit error returns &mdash; no exceptions. The <code>error</code> interface has one method: <code>Error() string</code>. Wrap errors with <code>fmt.Errorf("context: %w", err)</code> to preserve the chain. Check with <code>errors.Is(err, target)</code> for sentinel errors and <code>errors.As(err, &amp;target)</code> for typed errors.</p>
+
+    <h4>Key Pattern</h4>
+<pre>if err := doSomething(); err != nil {
+    if errors.Is(err, ErrNotFound) {
+        return defaultValue, nil
+    }
+    return zero, fmt.Errorf("doSomething failed: %w", err)
+}</pre>
+
+    <div class="exercise">
+      <div class="exercise-label">Challenge Exercise</div>
+      <p>Create a custom <code>ValidationError</code> type that holds multiple field errors. Implement <code>Error()</code>, make it work with <code>errors.As</code>, and wrap it to preserve the chain through multiple layers.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>Pitfall:</strong> Using <code>%v</code> instead of <code>%w</code> in <code>fmt.Errorf</code> &mdash; this wraps the message but breaks the error chain, so <code>errors.Is</code>/<code>errors.As</code> won't match the original error.
+    </div>
+  </div>
+
+  <!-- Review 2: First-class Functions -->
+  <div class="review-card" id="review-firstclass">
+    <div class="review-header">
+      <h3>First-class Functions</h3>
+      <span class="review-meta">Functions &amp; Control Flow &bull; 10 days since review</span>
+    </div>
+
+    <h4>Quick Reminder</h4>
+    <p>Functions in Go are values &mdash; store them in variables, pass as arguments, return from functions. Function types are declared as <code>type Transformer func(int) int</code>. Closures capture variables from the enclosing scope by reference.</p>
+
+    <h4>Key Pattern</h4>
+<pre>type Predicate[T any] func(T) bool
+
+func Filter[T any](items []T, pred Predicate[T]) []T {
+    var result []T
+    for _, item := range items {
+        if pred(item) {
+            result = append(result, item)
+        }
+    }
+    return result
+}
+
+evens := Filter(nums, func(n int) bool { return n%2 == 0 })</pre>
+
+    <div class="exercise">
+      <div class="exercise-label">Challenge Exercise</div>
+      <p>Implement a <code>Compose</code> function that takes two functions <code>f: B&rarr;C</code> and <code>g: A&rarr;B</code> and returns <code>A&rarr;C</code>. Then chain three transformations: trim whitespace, lowercase, and remove punctuation.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>Pitfall:</strong> Closure over loop variables &mdash; in Go &lt; 1.22, <code>for _, v := range items { go func() { use(v) }() }</code> captures the same <code>v</code>. Fix: <code>go func(v T) { use(v) }(v)</code> or use Go 1.22+ which scopes per-iteration.
+    </div>
+  </div>
+
+  <!-- Review 3: Defer, Panic, Recover -->
+  <div class="review-card" id="review-defer">
+    <div class="review-header">
+      <h3>Defer, Panic, Recover</h3>
+      <span class="review-meta">Functions &amp; Control Flow &bull; 10 days since review</span>
+    </div>
+
+    <h4>Quick Reminder</h4>
+    <p><code>defer</code> schedules a call for when the function returns (LIFO order). <code>panic</code> unwinds the stack; <code>recover()</code> in a deferred function catches it. Named returns + defer can modify return values. Common: <code>defer f.Close()</code>, <code>defer mu.Unlock()</code>.</p>
+
+    <h4>Key Pattern</h4>
+<pre>func safeDiv(a, b float64) (result float64, err error) {
+    defer func() {
+        if r := recover(); r != nil {
+            err = fmt.Errorf("panic: %v", r)
+        }
+    }()
+    return a / b, nil
+}</pre>
+
+    <div class="exercise">
+      <div class="exercise-label">Challenge Exercise</div>
+      <p>Write a <code>WithLock</code> helper that takes a <code>sync.Locker</code> and a function, locks before calling, and guarantees unlock via defer even if the function panics.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>Pitfall:</strong> <code>defer f.Close()</code> ignores the error from <code>Close</code> &mdash; for writable files, use <code>defer func() { err = f.Close() }()</code> with a named return to capture write-flush errors.
+    </div>
+  </div>
+
+  <!-- Review 4: os & filepath -->
+  <div class="review-card" id="review-os">
+    <div class="review-header">
+      <h3>os &amp; filepath</h3>
+      <span class="review-meta">Standard Library &bull; 9 days since review</span>
+    </div>
+
+    <h4>Quick Reminder</h4>
+    <p><code>os</code> provides OS interaction: file I/O, env vars, process info. <code>filepath</code> handles cross-platform paths. Key: <code>os.ReadFile</code>/<code>os.WriteFile</code> for simple I/O, <code>filepath.Walk</code>/<code>filepath.WalkDir</code> for traversal, <code>filepath.Join</code> for path construction (never use string concat).</p>
+
+    <h4>Key Pattern</h4>
+<pre>entries, _ := os.ReadDir(".")
+for _, e := range entries {
+    info, _ := e.Info()
+    fmt.Printf("%s %d bytes\n", e.Name(), info.Size())
+}
+
+// Walk directory tree
+filepath.WalkDir(".", func(path string, d fs.DirEntry, err error) error {
+    if err != nil { return err }
+    if filepath.Ext(path) == ".go" { fmt.Println(path) }
+    return nil
+})</pre>
+
+    <div class="exercise">
+      <div class="exercise-label">Challenge Exercise</div>
+      <p>Write a function that finds all duplicate files in a directory tree (by content hash), returning a map of hash &rarr; list of paths. Use <code>filepath.WalkDir</code> and <code>crypto/sha256</code>.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>Pitfall:</strong> Using <code>filepath.Walk</code> instead of <code>filepath.WalkDir</code> &mdash; Walk calls <code>os.Lstat</code> on every file (slower). WalkDir is more efficient and should be preferred.
+    </div>
+  </div>
+
+  <!-- Review 5: net/http -->
+  <div class="review-card" id="review-http">
+    <div class="review-header">
+      <h3>net/http</h3>
+      <span class="review-meta">Standard Library &bull; 8 days since review</span>
+    </div>
+
+    <h4>Quick Reminder</h4>
+    <p><code>http.Handler</code> interface: <code>ServeHTTP(w ResponseWriter, r *Request)</code>. <code>http.HandlerFunc</code> adapts functions. <code>http.ServeMux</code> routes requests. <code>http.Client</code> with timeouts for outbound requests. Always set timeouts on both server and client.</p>
+
+    <h4>Key Pattern</h4>
+<pre>mux := http.NewServeMux()
+mux.HandleFunc("GET /users/{id}", getUser)
+mux.HandleFunc("POST /users", createUser)
+srv := &amp;http.Server{Addr: ":8080", Handler: mux, ReadTimeout: 5 * time.Second}
+
+// Middleware
+func logging(next http.Handler) http.Handler {
+    return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+        start := time.Now()
+        next.ServeHTTP(w, r)
+        log.Printf("%s %s %v", r.Method, r.URL.Path, time.Since(start))
+    })
+}</pre>
+
+    <div class="exercise">
+      <div class="exercise-label">Challenge Exercise</div>
+      <p>Build a REST API with <code>/items</code> (GET list, POST create) and <code>/items/{id}</code> (GET one, DELETE). Include a logging middleware and a 10-second request timeout.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>Pitfall:</strong> Not setting <code>http.Client</code> timeout &mdash; the default client has no timeout, so a slow server can hang your goroutine forever. Always: <code>client := &amp;http.Client{Timeout: 10 * time.Second}</code>.
+    </div>
+  </div>
+
+  <!-- Review 6: sort Package -->
+  <div class="review-card" id="review-sort">
+    <div class="review-header">
+      <h3>sort Package</h3>
+      <span class="review-meta">Standard Library &bull; 8 days since review</span>
+    </div>
+
+    <h4>Quick Reminder</h4>
+    <p><code>sort.Slice(s, less)</code> sorts a slice with a custom comparator. <code>sort.SliceStable</code> preserves equal-element order. <code>sort.Search(n, f)</code> does binary search. For repeated sorting, implement <code>sort.Interface</code> (<code>Len</code>, <code>Less</code>, <code>Swap</code>).</p>
+
+    <h4>Key Pattern</h4>
+<pre>// Sort by age, then name
+sort.Slice(people, func(i, j int) bool {
+    if people[i].Age != people[j].Age {
+        return people[i].Age &lt; people[j].Age
+    }
+    return people[i].Name &lt; people[j].Name
+})
+
+// Binary search
+idx := sort.Search(len(sorted), func(i int) bool {
+    return sorted[i] &gt;= target
+})</pre>
+
+    <div class="exercise">
+      <div class="exercise-label">Challenge Exercise</div>
+      <p>Implement a <code>TopK</code> function using <code>sort.Slice</code> that returns the k largest elements from an unsorted slice. Then implement a more efficient version using a min-heap (<code>container/heap</code>).</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>Pitfall:</strong> <code>sort.Search</code> returns the insertion point, not the index of the found element. You must check <code>if idx &lt; len(s) &amp;&amp; s[idx] == target</code> after search.
+    </div>
+  </div>
+
+</div><!-- end Review section -->
+
+
+<!-- ============================================================ -->
+<!-- NEW CONCEPTS: PRODUCTION PATTERNS -->
+<!-- ============================================================ -->
+<div class="section">
+  <span class="section-label new">New &mdash; Group 1</span>
+  <h2 class="section-title">Production Patterns &mdash; 3 Concepts</h2>
+
+  <!-- Concept 1: Singleflight -->
+  <div class="concept" id="singleflight">
+    <div class="concept-header">
+      <h3>Singleflight: Deduplicating Concurrent Requests</h3>
+      <span class="concept-meta">Concurrency Patterns</span>
+    </div>
+
+    <h4>Why It Matters</h4>
+    <p>When many goroutines request the same resource simultaneously (cache miss, expensive computation), <strong>singleflight</strong> ensures only one executes while others wait for the result. This prevents <em>thundering herd</em> / <em>cache stampede</em> problems where a popular key expiring triggers thousands of identical database queries at once.</p>
+
+    <h4>The API</h4>
+    <ul>
+      <li><code>golang.org/x/sync/singleflight</code> &mdash; the package (install with <code>go get golang.org/x/sync</code>)</li>
+      <li><code>Do(key, fn)</code> &mdash; deduplicates by key, returns the shared result <code>(v interface{}, err error, shared bool)</code></li>
+      <li><code>DoChan(key, fn)</code> &mdash; non-blocking, returns a channel that delivers the result</li>
+      <li><code>Forget(key)</code> &mdash; removes a key from the in-flight map so the next call re-executes</li>
+      <li>When to use: cache population, expensive lookups, API request deduplication</li>
+    </ul>
+
+    <h4>Example 1 &mdash; Basic: Only One Goroutine Executes</h4>
+<pre>package main
+
+import (
+    "fmt"
+    "sync"
+    "sync/atomic"
+    "time"
+
+    "golang.org/x/sync/singleflight"
+)
+
+func main() {
+    var g singleflight.Group
+    var calls int64
+
+    fetch := func() (interface{}, error) {
+        atomic.AddInt64(&amp;calls, 1)
+        time.Sleep(100 * time.Millisecond) // simulate slow work
+        return "result-for-user-42", nil
+    }
+
+    var wg sync.WaitGroup
+    for i := 0; i &lt; 10; i++ {
+        wg.Add(1)
+        go func(id int) {
+            defer wg.Done()
+            v, err, shared := g.Do("user-42", fetch)
+            fmt.Printf("goroutine %d got %v (shared=%v err=%v)\n", id, v, shared, err)
+        }(i)
+    }
+    wg.Wait()
+
+    fmt.Printf("fetch was actually called %d time(s)\n", atomic.LoadInt64(&amp;calls))
+}</pre>
+    <div class="output-label">Output</div>
+    <div class="output">goroutine 3 got result-for-user-42 (shared=true err=&lt;nil&gt;)
+goroutine 0 got result-for-user-42 (shared=true err=&lt;nil&gt;)
+... (all 10 goroutines receive the same value)
+fetch was actually called 1 time(s)</div>
+    <p>All ten goroutines block on the same key. Only the first runs <code>fetch</code>; the rest wait and receive a copy of the result. The <code>shared</code> flag is <code>true</code> when more than one caller received this value.</p>
+
+    <h4>Example 2 &mdash; Intermediate: Cache-Miss Handler</h4>
+<pre>type Cache struct {
+    mu    sync.RWMutex
+    data  map[string]string
+    group singleflight.Group
+    db    func(key string) (string, error)
+}
+
+func (c *Cache) Get(key string) (string, error) {
+    c.mu.RLock()
+    if v, ok := c.data[key]; ok {
+        c.mu.RUnlock()
+        return v, nil
+    }
+    c.mu.RUnlock()
+
+    // Cache miss: dedupe the expensive DB lookup across goroutines.
+    v, err, _ := c.group.Do(key, func() (interface{}, error) {
+        val, err := c.db(key)
+        if err != nil {
+            return "", err
+        }
+        c.mu.Lock()
+        c.data[key] = val
+        c.mu.Unlock()
+        return val, nil
+    })
+    if err != nil {
+        return "", err
+    }
+    return v.(string), nil
+}</pre>
+    <p>On a miss, a hundred concurrent <code>Get("popular")</code> calls collapse into a single DB query. The first writes the cache; the rest read the deduplicated return value.</p>
+
+    <h4>Example 3 &mdash; Advanced: DoChan with a Timeout</h4>
+<pre>func GetWithTimeout(g *singleflight.Group, key string,
+    fn func() (interface{}, error), d time.Duration) (interface{}, error) {
+
+    ch := g.DoChan(key, fn)
+    select {
+    case res := &lt;-ch:
+        return res.Val, res.Err
+    case &lt;-time.After(d):
+        // We stop waiting, but fn keeps running for other callers.
+        g.Forget(key) // optional: let the next caller restart
+        return nil, fmt.Errorf("singleflight timed out after %v", d)
+    }
+}</pre>
+    <p><code>DoChan</code> returns a channel so you can <code>select</code> against a timeout. Note that abandoning the wait does not cancel <code>fn</code> &mdash; it keeps running for any other waiters. Calling <code>Forget</code> lets the next caller start fresh instead of joining the slow in-flight call.</p>
+
+    <h4>Example 4 &mdash; Real-World: HTTP Handler Deduping Identical Calls</h4>
+<pre>type API struct {
+    group  singleflight.Group
+    client *http.Client
+}
+
+func (a *API) handleQuote(w http.ResponseWriter, r *http.Request) {
+    symbol := r.PathValue("symbol")
+
+    v, err, shared := a.group.Do("quote:"+symbol, func() (interface{}, error) {
+        // Expensive upstream call, deduplicated per symbol.
+        resp, err := a.client.Get("https://upstream/quote/" + symbol)
+        if err != nil {
+            return nil, err
+        }
+        defer resp.Body.Close()
+        return io.ReadAll(resp.Body)
+    })
+    if err != nil {
+        http.Error(w, err.Error(), http.StatusBadGateway)
+        return
+    }
+    w.Header().Set("X-Cache-Shared", strconv.FormatBool(shared))
+    w.Write(v.([]byte))
+}</pre>
+    <p>If 500 clients ask for <code>AAPL</code> in the same instant, only one upstream request goes out. The <code>X-Cache-Shared</code> header lets you observe deduplication in practice.</p>
+
+    <h4>Common Mistakes</h4>
+    <div class="do-dont">
+      <div class="dont-box">
+        <div class="label">Don't</div>
+<pre>// Side effects in Do: a write is
+// run once but N callers think
+// they each performed it.
+g.Do(orderID, func() (any, error) {
+    return chargeCard(orderID) // !!
+})</pre>
+      </div>
+      <div class="do-box">
+        <div class="label">Do</div>
+<pre>// Only deduplicate idempotent,
+// read-only work.
+g.Do("price:"+sym, func() (any, error) {
+    return fetchPrice(sym)
+})</pre>
+      </div>
+    </div>
+    <ul>
+      <li>Not handling errors properly &mdash; <strong>all</strong> waiters receive the same error, so a single transient failure fails every concurrent caller.</li>
+      <li>Using singleflight for operations with side effects (writes, charges, emails) &mdash; the operation runs once but every caller believes it succeeded for them.</li>
+      <li>Keeping stale results too long &mdash; without <code>Forget</code>, a result is cached only for the in-flight window, but a slow <code>fn</code> can serve outdated data to a burst of callers.</li>
+    </ul>
+
+    <h4>Key Rules</h4>
+    <ul class="rules-list">
+      <li>Use singleflight for read-only / idempotent operations only.</li>
+      <li>Always handle the <code>shared</code> return value &mdash; it tells you whether the result was deduplicated.</li>
+      <li>Consider <code>Forget(key)</code> for time-sensitive data so the next caller re-fetches.</li>
+      <li>Errors propagate to all waiters &mdash; design for the fact that one failure fails the whole group.</li>
+    </ul>
+
+    <div class="exercise">
+      <div class="exercise-label">Exercise 1</div>
+      <p>Implement a cache with singleflight protection: concurrent gets for the same key should trigger only one DB lookup. Verify with an atomic counter that the lookup ran exactly once under 50 concurrent goroutines.</p>
+    </div>
+    <div class="exercise">
+      <div class="exercise-label">Exercise 2</div>
+      <p>Add a timeout: if the singleflight call takes more than 2 seconds, cancel the wait and return an error to that caller while leaving the in-flight call running for others. Use <code>DoChan</code> and <code>select</code>.</p>
+    </div>
+
+    <div class="connection">
+      <strong>Connections:</strong> Singleflight builds on <strong>goroutines</strong>, <strong>channels</strong> (via <code>DoChan</code>), and <strong>sync.Mutex</strong> internally. It pairs naturally with the <strong>cache-aside</strong> pattern and the <strong>graceful degradation</strong> concept later in this guide &mdash; dedupe the primary lookup, fall back when it fails.
+    </div>
+  </div>
+
+  <!-- Concept 2: Health Checks -->
+  <div class="concept" id="health-checks">
+    <div class="concept-header">
+      <h3>Health Checks &amp; Readiness Probes</h3>
+      <span class="concept-meta">Production Patterns</span>
+    </div>
+
+    <h4>Why It Matters</h4>
+    <p>Kubernetes uses health endpoints to decide a pod's lifecycle. A <strong>liveness</strong> probe verifies the process isn't deadlocked &mdash; if it fails, the pod is restarted. A <strong>readiness</strong> probe verifies the service can actually handle traffic (DB connected, dependencies reachable) &mdash; if it fails, the pod is removed from the load balancer but not killed.</p>
+
+    <h4>What to Cover</h4>
+    <ul>
+      <li><code>/healthz</code> (liveness) vs <code>/readyz</code> (readiness) endpoints</li>
+      <li>Dependency checking: DB ping, Redis ping, external API check</li>
+      <li>Response format: JSON with per-component statuses</li>
+      <li>Concurrent dependency checks with a timeout</li>
+      <li>Graceful degradation when non-critical dependencies fail</li>
+    </ul>
+
+    <h4>Example 1 &mdash; Basic: Liveness Always Returns 200</h4>
+<pre>func healthz(w http.ResponseWriter, r *http.Request) {
+    // Liveness only checks "is this process alive and serving?"
+    // It must NOT depend on external services.
+    w.WriteHeader(http.StatusOK)
+    w.Write([]byte("ok"))
+}
+
+mux := http.NewServeMux()
+mux.HandleFunc("GET /healthz", healthz)</pre>
+
+    <h4>Example 2 &mdash; Intermediate: Readiness Checks DB and Cache</h4>
+<pre>type Server struct {
+    db    *sql.DB
+    cache *redis.Client
+}
+
+func (s *Server) readyz(w http.ResponseWriter, r *http.Request) {
+    ctx, cancel := context.WithTimeout(r.Context(), 2*time.Second)
+    defer cancel()
+
+    if err := s.db.PingContext(ctx); err != nil {
+        http.Error(w, "db down: "+err.Error(), http.StatusServiceUnavailable)
+        return
+    }
+    if err := s.cache.Ping(ctx).Err(); err != nil {
+        http.Error(w, "cache down: "+err.Error(), http.StatusServiceUnavailable)
+        return
+    }
+    w.WriteHeader(http.StatusOK)
+    w.Write([]byte("ready"))
+}</pre>
+    <p>Readiness returns <code>503</code> when a required dependency is unreachable, so Kubernetes pulls the pod out of rotation until the DB recovers &mdash; without restarting a perfectly healthy process.</p>
+
+    <h4>Example 3 &mdash; Advanced: Concurrent Checks with Partial Failure</h4>
+<pre>type Check struct {
+    Name     string
+    Critical bool
+    Probe    func(context.Context) error
+}
+
+type HealthChecker struct {
+    checks []Check
+}
+
+type componentStatus struct {
+    Status string `json:"status"`           // "up" or "down"
+    Error  string `json:"error,omitempty"`
+}
+
+func (h *HealthChecker) Run(ctx context.Context) (int, map[string]componentStatus) {
+    ctx, cancel := context.WithTimeout(ctx, 2*time.Second)
+    defer cancel()
+
+    type result struct {
+        name     string
+        critical bool
+        err      error
+    }
+    results := make(chan result, len(h.checks))
+
+    for _, c := range h.checks {
+        go func(c Check) {
+            results &lt;- result{c.Name, c.Critical, c.Probe(ctx)}
+        }(c)
+    }
+
+    statuses := make(map[string]componentStatus, len(h.checks))
+    code := http.StatusOK
+    for range h.checks {
+        r := &lt;-results
+        if r.err != nil {
+            statuses[r.name] = componentStatus{Status: "down", Error: r.err.Error()}
+            if r.critical {
+                code = http.StatusServiceUnavailable // any critical failure =&gt; 503
+            }
+        } else {
+            statuses[r.name] = componentStatus{Status: "up"}
+        }
+    }
+    return code, statuses
+}</pre>
+    <p>All probes run concurrently and share one 2-second deadline. A non-critical failure (say, a metrics sink) is reported as <code>down</code> but still returns <code>200</code>; a critical failure forces <code>503</code>.</p>
+
+    <h4>Example 4 &mdash; Real-World: Structured Response with Version</h4>
+<pre>func (h *HealthChecker) Handler(version string) http.HandlerFunc {
+    return func(w http.ResponseWriter, r *http.Request) {
+        code, statuses := h.Run(r.Context())
+        resp := map[string]any{
+            "status":     map[bool]string{true: "ready", false: "degraded"}[code == http.StatusOK],
+            "version":    version,
+            "components": statuses,
+        }
+        w.Header().Set("Content-Type", "application/json")
+        w.WriteHeader(code)
+        json.NewEncoder(w).Encode(resp)
+    }
+}</pre>
+    <div class="output-label">Sample /readyz response (503)</div>
+    <div class="output">{
+  "status": "degraded",
+  "version": "1.4.2",
+  "components": {
+    "postgres": {"status": "up"},
+    "redis":    {"status": "down", "error": "dial tcp: timeout"}
+  }
+}</div>
+
+    <h4>Common Mistakes</h4>
+    <div class="do-dont">
+      <div class="dont-box">
+        <div class="label">Don't</div>
+<pre>// Liveness depends on the DB.
+// If the DB blips, K8s RESTARTS
+// every healthy pod -&gt; outage.
+func healthz(w, r) {
+    db.Ping() // wrong probe!
+}</pre>
+      </div>
+      <div class="do-box">
+        <div class="label">Do</div>
+<pre>// Liveness = process alive.
+// Dependency checks belong in
+// the readiness probe instead.
+func healthz(w, r) {
+    w.WriteHeader(200)
+}</pre>
+      </div>
+    </div>
+    <ul>
+      <li>A liveness check that depends on external services &mdash; a transient DB outage then restarts every pod simultaneously, turning a blip into an outage.</li>
+      <li>A health check that's too expensive &mdash; probes run every few seconds; a heavy query adds constant load.</li>
+      <li>Not setting timeouts shorter than the Kubernetes probe timeout &mdash; the probe times out before your handler returns.</li>
+    </ul>
+
+    <h4>Key Rules</h4>
+    <ul class="rules-list">
+      <li>Liveness = process alive. Readiness = can serve traffic. Keep them distinct.</li>
+      <li>Keep liveness cheap and dependency-free.</li>
+      <li>Set check timeouts shorter than the Kubernetes probe timeout.</li>
+      <li>Distinguish critical from non-critical dependencies for graceful degradation.</li>
+    </ul>
+
+    <div class="exercise">
+      <div class="exercise-label">Exercise 1</div>
+      <p>Create <code>/healthz</code> and <code>/readyz</code> handlers. <code>/healthz</code> always returns 200. <code>/readyz</code> checks a DB ping with a 2-second timeout and returns 503 if the ping fails.</p>
+    </div>
+    <div class="exercise">
+      <div class="exercise-label">Exercise 2</div>
+      <p>Build a <code>HealthChecker</code> that runs multiple dependency checks concurrently, returns 503 if any critical check fails, and 200 with warnings if only non-critical checks fail. Render the result as the structured JSON shown above.</p>
+    </div>
+
+    <div class="connection">
+      <strong>Connections:</strong> Health checks combine <strong>net/http</strong> (handlers, mux routing), <strong>context</strong> (per-probe timeouts), <strong>goroutines + channels</strong> (concurrent probes), and <strong>encoding/json</strong> (structured response). The critical/non-critical split is the entry point to the <strong>graceful degradation</strong> concept that follows.
+    </div>
+  </div>
+
+  <!-- Concept 3: Graceful Degradation -->
+  <div class="concept" id="graceful-degradation">
+    <div class="concept-header">
+      <h3>Graceful Degradation &amp; Fallbacks</h3>
+      <span class="concept-meta">Production Patterns</span>
+    </div>
+
+    <h4>Why It Matters</h4>
+    <p>In distributed systems, dependencies fail. Instead of returning <code>500</code> to users, a resilient service serves stale data, uses defaults, or disables non-critical features. Combined with circuit breakers and retries, graceful degradation keeps a service useful even when parts of it are broken.</p>
+
+    <h4>What to Cover</h4>
+    <ul>
+      <li>Fallback chains: try primary &rarr; try cache &rarr; return default</li>
+      <li>Stale-while-revalidate pattern</li>
+      <li>Feature flags for degraded mode</li>
+      <li>Timeout-based fallback (serve cached if primary is slow)</li>
+      <li>Combining with a circuit breaker</li>
+    </ul>
+
+    <h4>Example 1 &mdash; Basic: Try Primary, Return Cached on Error</h4>
+<pre>func (s *Service) GetProfile(id string) (Profile, error) {
+    p, err := s.primary.Fetch(id)
+    if err != nil {
+        log.Printf("primary failed for %s, serving cache: %v", id, err)
+        if cached, ok := s.cache.Get(id); ok {
+            return cached, nil // degraded but usable
+        }
+        return Profile{}, err
+    }
+    s.cache.Set(id, p)
+    return p, nil
+}</pre>
+    <p>Note the log line: a fallback that happens silently is invisible degradation. Always record when you fall back.</p>
+
+    <h4>Example 2 &mdash; Intermediate: Timeout-Based Fallback</h4>
+<pre>func (s *Service) GetWithDeadline(ctx context.Context, id string) Profile {
+    ctx, cancel := context.WithTimeout(ctx, 500*time.Millisecond)
+    defer cancel()
+
+    type res struct {
+        p   Profile
+        err error
+    }
+    ch := make(chan res, 1)
+    go func() {
+        p, err := s.primary.FetchContext(ctx, id)
+        ch &lt;- res{p, err}
+    }()
+
+    select {
+    case r := &lt;-ch:
+        if r.err == nil {
+            s.cache.Set(id, r.p)
+            return r.p
+        }
+    case &lt;-ctx.Done():
+        log.Printf("primary too slow for %s, serving stale", id)
+    }
+    if cached, ok := s.cache.Get(id); ok {
+        return cached
+    }
+    return defaultProfile
+}</pre>
+    <p>If the primary doesn't respond within 500ms, we stop waiting and serve stale cache. The user sees a fast (if slightly old) response instead of a hung request.</p>
+
+    <h4>Example 3 &mdash; Advanced: Fallback Chain with Context</h4>
+<pre>type Source[T any] func(ctx context.Context) (T, error)
+
+func FirstSuccess[T any](ctx context.Context, sources ...Source[T]) (T, error) {
+    var lastErr error
+    for i, src := range sources {
+        if err := ctx.Err(); err != nil {
+            var zero T
+            return zero, err // caller cancelled the whole chain
+        }
+        v, err := src(ctx)
+        if err == nil {
+            return v, nil
+        }
+        log.Printf("source %d failed: %v", i, err)
+        lastErr = err
+    }
+    var zero T
+    return zero, fmt.Errorf("all sources failed: %w", lastErr)
+}
+
+// Usage: try live API, then read replica, then static default.
+profile, err := FirstSuccess(ctx,
+    fromLiveAPI(id),
+    fromReadReplica(id),
+    fromStaticDefault(id),
+)</pre>
+    <p>Each source is tried in order; the first success wins. Context cancellation short-circuits the chain so a cancelled request doesn't keep probing dead backends.</p>
+
+    <h4>Example 4 &mdash; Real-World: Feature Degradation by Dependency</h4>
+<pre>type Page struct {
+    Articles      []Article
+    Recommended   []Article // optional, degrades gracefully
+    Degraded      bool
+}
+
+func (s *Site) Home(ctx context.Context) Page {
+    page := Page{Articles: s.mustArticles(ctx)} // critical
+
+    recs, err := s.recommender.For(ctx, "home")
+    if err != nil {
+        // Non-critical: hide the section, mark degraded, keep serving.
+        log.Printf("recommendations unavailable: %v", err)
+        page.Degraded = true
+        return page
+    }
+    page.Recommended = recs
+    return page
+}</pre>
+    <p>The article list is critical &mdash; if it fails, the page fails. Recommendations are a bonus; when the recommender is down, the section disappears and the page still renders.</p>
+
+    <h4>Common Mistakes</h4>
+    <div class="do-dont">
+      <div class="dont-box">
+        <div class="label">Don't</div>
+<pre>// Silent fallback: nobody knows
+// the service is degraded.
+if v, ok := cache.Get(id); ok {
+    return v // no log, no metric
+}</pre>
+      </div>
+      <div class="do-box">
+        <div class="label">Do</div>
+<pre>// Observable fallback.
+if v, ok := cache.Get(id); ok {
+    fallbackRate.Inc()
+    log.Printf("serving stale %s", id)
+    return v
+}</pre>
+      </div>
+    </div>
+    <ul>
+      <li>Not logging fallback activation &mdash; invisible degradation means you find out from users, not dashboards.</li>
+      <li>The fallback itself failing with no fallback for the fallback &mdash; always have a final default.</li>
+      <li>Not monitoring the degradation rate &mdash; a slowly climbing fallback rate is an early warning you'll miss without a metric.</li>
+    </ul>
+
+    <h4>Key Rules</h4>
+    <ul class="rules-list">
+      <li>Always log when you fall back.</li>
+      <li>Monitor fallback rate as a metric, not just an error.</li>
+      <li>Test fallback paths regularly &mdash; an untested fallback is a latent bug.</li>
+      <li>Set aggressive timeouts on the primary path when a fallback is available.</li>
+    </ul>
+
+    <div class="exercise">
+      <div class="exercise-label">Exercise 1</div>
+      <p>Implement a <code>WithFallback[T any](primary, fallback func() (T, error)) (T, error)</code> function that tries <code>primary</code> first and falls back on error. Log which path served the result.</p>
+    </div>
+    <div class="exercise">
+      <div class="exercise-label">Exercise 2</div>
+      <p>Create a cache-aware fetcher: try the primary with a 500ms timeout, return stale cache on timeout, and refresh the cache in the background on a successful primary fetch.</p>
+    </div>
+
+    <div class="connection">
+      <strong>Connections:</strong> Graceful degradation builds on <strong>context</strong> (timeouts, cancellation), <strong>goroutines + channels</strong> (timeout races), and <strong>generics</strong> (reusable fallback chains). It complements <strong>singleflight</strong> (dedupe the primary), <strong>health checks</strong> (the critical/non-critical split), and the circuit-breaker / retry patterns from Day 13.
+    </div>
+  </div>
+
+</div><!-- end Production Patterns section -->
+
+
+<!-- ============================================================ -->
+<!-- NEW CONCEPTS: ADVANCED TESTING -->
+<!-- ============================================================ -->
+<div class="section">
+  <span class="section-label new">New &mdash; Group 2</span>
+  <h2 class="section-title">Advanced Testing &mdash; 2 Concepts</h2>
+
+  <!-- Concept 4: Benchmark Allocations -->
+  <div class="concept" id="benchmark-allocations">
+    <div class="concept-header">
+      <h3>Table-Driven Benchmarks &amp; Allocation Tracking</h3>
+      <span class="concept-meta">Testing</span>
+    </div>
+
+    <h4>Why It Matters</h4>
+    <p>Go's <code>testing.B</code> includes allocation tracking built in. <code>b.ReportAllocs()</code> shows allocations per operation. Sub-benchmarks with table-driven patterns let you compare approaches side-by-side. This is critical for hot-path optimization, where a single avoidable allocation per call multiplies across millions of requests.</p>
+
+    <h4>What to Cover</h4>
+    <ul>
+      <li><code>b.ReportAllocs()</code> for per-op allocation stats</li>
+      <li><code>b.ResetTimer()</code> after expensive setup</li>
+      <li>Table-driven benchmarks with <code>b.Run</code></li>
+      <li><code>testing.AllocsPerRun()</code> for exact allocation counting</li>
+      <li>Comparing implementations: string concat vs <code>strings.Builder</code> vs <code>bytes.Buffer</code></li>
+    </ul>
+
+    <h4>Example 1 &mdash; Basic: Benchmark with ReportAllocs</h4>
+<pre>// file: build_test.go
+package main
+
+import (
+    "strings"
+    "testing"
+)
+
+func joinBuilder(parts []string) string {
+    var b strings.Builder
+    for _, p := range parts {
+        b.WriteString(p)
+    }
+    return b.String()
+}
+
+var parts = []string{"a", "b", "c", "d", "e", "f", "g", "h"}
+
+func BenchmarkJoinBuilder(b *testing.B) {
+    b.ReportAllocs()
+    for i := 0; i &lt; b.N; i++ {
+        _ = joinBuilder(parts)
+    }
+}</pre>
+    <div class="output-label">go test -bench=. -benchmem</div>
+    <div class="output">BenchmarkJoinBuilder-8   12000000   96.3 ns/op   24 B/op   2 allocs/op</div>
+    <p><code>-benchmem</code> (or <code>b.ReportAllocs()</code>) adds the <code>B/op</code> and <code>allocs/op</code> columns &mdash; the bytes and number of heap allocations per single operation.</p>
+
+    <h4>Example 2 &mdash; Intermediate: Table-Driven Comparison</h4>
+<pre>func concatPlus(parts []string) string {
+    s := ""
+    for _, p := range parts {
+        s += p
+    }
+    return s
+}
+
+func concatBuffer(parts []string) string {
+    var buf bytes.Buffer
+    for _, p := range parts {
+        buf.WriteString(p)
+    }
+    return buf.String()
+}
+
+func BenchmarkConcat(b *testing.B) {
+    impls := map[string]func([]string) string{
+        "Plus":    concatPlus,
+        "Builder": joinBuilder,
+        "Buffer":  concatBuffer,
+    }
+    for name, fn := range impls {
+        b.Run(name, func(b *testing.B) {
+            b.ReportAllocs()
+            for i := 0; i &lt; b.N; i++ {
+                _ = fn(parts)
+            }
+        })
+    }
+}</pre>
+    <div class="output-label">Comparison output</div>
+    <div class="output">BenchmarkConcat/Plus-8       4000000   305 ns/op   120 B/op   7 allocs/op
+BenchmarkConcat/Builder-8   12000000    96 ns/op    24 B/op   2 allocs/op
+BenchmarkConcat/Buffer-8     9000000   128 ns/op    64 B/op   2 allocs/op</div>
+    <p>The <code>+</code> operator allocates a fresh string every iteration (7 allocs); <code>strings.Builder</code> grows one backing array (2 allocs). Sub-benchmarks named via <code>b.Run</code> show up as <code>BenchmarkConcat/Plus</code> etc., perfect for side-by-side comparison.</p>
+
+    <h4>Example 3 &mdash; Advanced: Setup with ResetTimer</h4>
+<pre>func BenchmarkLookup(b *testing.B) {
+    // Expensive setup that must NOT count toward the benchmark.
+    m := make(map[int]string, 1_000_000)
+    for i := 0; i &lt; 1_000_000; i++ {
+        m[i] = strconv.Itoa(i)
+    }
+
+    b.ResetTimer()   // discard setup time and allocations
+    b.ReportAllocs()
+    for i := 0; i &lt; b.N; i++ {
+        _ = m[i%1_000_000]
+    }
+}</pre>
+    <p>Without <code>b.ResetTimer()</code>, the one-second map build would be averaged into every reported <code>ns/op</code>, wildly inflating the number. Reset right before the measured loop.</p>
+
+    <h4>Example 4 &mdash; Real-World: Exact Allocation Counting</h4>
+<pre>func TestMarshalAllocations(t *testing.T) {
+    u := User{ID: 1, Name: "Ada", Email: "ada@example.com"}
+
+    // testing.AllocsPerRun returns the average allocations per call.
+    avg := testing.AllocsPerRun(1000, func() {
+        b, _ := json.Marshal(u)
+        _ = b
+    })
+    t.Logf("json.Marshal allocates %.0f times per call", avg)
+    if avg &gt; 5 {
+        t.Errorf("regression: %.0f allocs/op exceeds budget of 5", avg)
+    }
+}</pre>
+    <p><code>testing.AllocsPerRun</code> gives an exact average (not a benchmark estimate), so you can assert an allocation budget in a regular test and fail CI if a change regresses it.</p>
+
+    <h4>Common Mistakes</h4>
+    <div class="do-dont">
+      <div class="dont-box">
+        <div class="label">Don't</div>
+<pre>func BenchmarkX(b *testing.B) {
+    setup() // counted!
+    for i := 0; i &lt; b.N; i++ {
+        result := f()  // compiler may
+                       // discard this
+    }
+}</pre>
+      </div>
+      <div class="do-box">
+        <div class="label">Do</div>
+<pre>var sink Result
+func BenchmarkX(b *testing.B) {
+    setup()
+    b.ResetTimer()
+    for i := 0; i &lt; b.N; i++ {
+        sink = f() // escapes -&gt; kept
+    }
+}</pre>
+      </div>
+    </div>
+    <ul>
+      <li>Not using <code>b.ResetTimer()</code> &mdash; setup time leaks into the benchmark and skews <code>ns/op</code>.</li>
+      <li>Benchmarking with too-small input &mdash; tiny inputs are dominated by loop overhead and give misleading rankings.</li>
+      <li>The compiler optimizing away unused results &mdash; assign to a package-level <code>sink</code> var so the work can't be eliminated.</li>
+    </ul>
+
+    <h4>Key Rules</h4>
+    <ul class="rules-list">
+      <li>Always <code>b.ReportAllocs()</code> for performance-sensitive code.</li>
+      <li>Use <code>b.ResetTimer()</code> after any non-trivial setup.</li>
+      <li>Assign the result to a package-level var to prevent compiler elimination.</li>
+      <li>Use <code>testing.AllocsPerRun</code> when you need an exact, assertable allocation count.</li>
+    </ul>
+
+    <div class="exercise">
+      <div class="exercise-label">Exercise 1</div>
+      <p>Write benchmarks comparing three ways to concatenate N strings: the <code>+</code> operator, <code>strings.Builder</code>, and <code>bytes.Buffer</code>. Report allocations and explain the difference in <code>allocs/op</code>.</p>
+    </div>
+    <div class="exercise">
+      <div class="exercise-label">Exercise 2</div>
+      <p>Benchmark JSON marshaling with a typed struct vs a <code>map[string]interface{}</code> and compare allocations. Add an <code>AllocsPerRun</code> test that fails if the struct path exceeds a budget you choose.</p>
+    </div>
+
+    <div class="connection">
+      <strong>Connections:</strong> Benchmarking ties into <strong>strings.Builder</strong> / <strong>bytes.Buffer</strong> (the implementations under test), <strong>encoding/json</strong> (a common hot path), and escape analysis. <code>AllocsPerRun</code> bridges benchmarks and ordinary <strong>table-driven tests</strong>, letting you assert performance budgets in CI.
+    </div>
+  </div>
+
+  <!-- Concept 5: Plugin Architecture -->
+  <div class="concept" id="plugin-architecture">
+    <div class="concept-header">
+      <h3>Plugin Architecture with Interfaces</h3>
+      <span class="concept-meta">Architecture</span>
+    </div>
+
+    <h4>Why It Matters</h4>
+    <p>Go's interfaces enable plugin-style architectures where components can be swapped without changing core logic. Storage backends, auth providers, notification channels &mdash; all benefit from interface-based pluggability. The result is code that's open for extension (add a new backend) but closed for modification (the core never changes).</p>
+
+    <h4>What to Cover</h4>
+    <ul>
+      <li>Define narrow interfaces for extension points</li>
+      <li>Registry pattern: a map of name &rarr; implementation</li>
+      <li>Factory functions and constructors</li>
+      <li>Config-driven plugin selection</li>
+      <li>Init-time registration with <code>init()</code></li>
+    </ul>
+
+    <h4>Example 1 &mdash; Basic: Storage Interface with Two Implementations</h4>
+<pre>// The consumer package defines the narrow interface it needs.
+type Storage interface {
+    Get(key string) ([]byte, error)
+    Put(key string, data []byte) error
+}
+
+type FileStorage struct{ dir string }
+
+func (f *FileStorage) Get(key string) ([]byte, error) {
+    return os.ReadFile(filepath.Join(f.dir, key))
+}
+func (f *FileStorage) Put(key string, data []byte) error {
+    return os.WriteFile(filepath.Join(f.dir, key), data, 0o644)
+}
+
+type S3Storage struct{ bucket string /* ... client ... */ }
+
+func (s *S3Storage) Get(key string) ([]byte, error) { /* ... */ return nil, nil }
+func (s *S3Storage) Put(key string, data []byte) error { /* ... */ return nil }
+
+// Core logic depends only on the interface, never the concrete type.
+func Save(s Storage, key string, data []byte) error {
+    return s.Put(key, data)
+}</pre>
+
+    <h4>Example 2 &mdash; Intermediate: Registry with Register/Get</h4>
+<pre>type Factory func(config map[string]string) (Storage, error)
+
+var (
+    registryMu sync.RWMutex
+    registry   = map[string]Factory{}
+)
+
+func Register(name string, f Factory) {
+    registryMu.Lock()
+    defer registryMu.Unlock()
+    if _, dup := registry[name]; dup {
+        panic("storage: duplicate registration for " + name)
+    }
+    registry[name] = f
+}
+
+func New(name string, config map[string]string) (Storage, error) {
+    registryMu.RLock()
+    f, ok := registry[name]
+    registryMu.RUnlock()
+    if !ok {
+        return nil, fmt.Errorf("storage: unknown backend %q", name)
+    }
+    return f(config)
+}</pre>
+    <p>The registry decouples the caller from concrete types entirely &mdash; you select a backend by string name, exactly like <code>sql.Open("postgres", ...)</code> does in the standard library.</p>
+
+    <h4>Example 3 &mdash; Advanced: Config-Driven Selection at Startup</h4>
+<pre>type Config struct {
+    Backend string            `json:"backend"` // "file" or "s3"
+    Options map[string]string `json:"options"`
+}
+
+func BuildStorage(cfg Config) (Storage, error) {
+    s, err := New(cfg.Backend, cfg.Options)
+    if err != nil {
+        return nil, fmt.Errorf("build storage: %w", err)
+    }
+    return s, nil
+}
+
+// init() in each backend's file registers it automatically.
+func init() {
+    Register("file", func(c map[string]string) (Storage, error) {
+        dir := c["dir"]
+        if dir == "" {
+            return nil, errors.New("file backend requires 'dir'")
+        }
+        return &amp;FileStorage{dir: dir}, nil
+    })
+}</pre>
+    <p>Each backend registers itself in its own <code>init()</code>. Importing the package (even with a blank <code>_ "myapp/storage/s3"</code> import) is enough to make it selectable &mdash; the core never references the concrete type.</p>
+
+    <h4>Example 4 &mdash; Real-World: Notification System</h4>
+<pre>type Notifier interface {
+    Notify(ctx context.Context, msg string) error
+}
+
+type EmailNotifier struct{ to string }
+func (e *EmailNotifier) Notify(ctx context.Context, msg string) error { /* ... */ return nil }
+
+type SlackNotifier struct{ webhook string }
+func (s *SlackNotifier) Notify(ctx context.Context, msg string) error { /* ... */ return nil }
+
+type WebhookNotifier struct{ url string }
+func (w *WebhookNotifier) Notify(ctx context.Context, msg string) error { /* ... */ return nil }
+
+// Fan out to every configured channel; collect failures.
+func NotifyAll(ctx context.Context, msg string, channels ...Notifier) error {
+    var errs []error
+    for _, ch := range channels {
+        if err := ch.Notify(ctx, msg); err != nil {
+            errs = append(errs, err)
+        }
+    }
+    return errors.Join(errs...)
+}</pre>
+    <p>Adding a new channel (PagerDuty, SMS) means writing one type that satisfies <code>Notifier</code> &mdash; no change to <code>NotifyAll</code> or any caller. <code>errors.Join</code> aggregates partial failures.</p>
+
+    <h4>Common Mistakes</h4>
+    <div class="do-dont">
+      <div class="dont-box">
+        <div class="label">Don't</div>
+<pre>// God interface: forces every
+// backend to implement methods
+// it doesn't need.
+type Storage interface {
+    Get(k string) ([]byte, error)
+    Put(k string, d []byte) error
+    List() ([]string, error)
+    Backup() error
+    Migrate() error
+}</pre>
+      </div>
+      <div class="do-box">
+        <div class="label">Do</div>
+<pre>// Small interfaces, composed.
+type Getter interface {
+    Get(k string) ([]byte, error)
+}
+type Putter interface {
+    Put(k string, d []byte) error
+}
+type Storage interface {
+    Getter
+    Putter
+}</pre>
+      </div>
+    </div>
+    <ul>
+      <li>Defining interfaces too wide (God interfaces) &mdash; every implementer is forced to stub methods it doesn't use.</li>
+      <li>Putting the interface definition in the implementation package &mdash; it belongs in the <em>consumer</em> package so the consumer owns its requirements.</li>
+      <li>Tight coupling through concrete types in function signatures &mdash; accept the interface, not <code>*S3Storage</code>.</li>
+    </ul>
+
+    <h4>Key Rules</h4>
+    <ul class="rules-list">
+      <li>Define interfaces where they're used, not where they're implemented.</li>
+      <li>Keep interfaces small &mdash; ideally 1&ndash;3 methods.</li>
+      <li>Accept interfaces, return structs.</li>
+      <li>Register implementations at init time so adding a backend never touches core code.</li>
+    </ul>
+
+    <div class="exercise">
+      <div class="exercise-label">Exercise 1</div>
+      <p>Design a <code>Logger</code> interface with <code>Info</code>, <code>Error</code>, and <code>WithField</code> methods. Implement <code>ConsoleLogger</code> and <code>JSONLogger</code>. Write a function that accepts a <code>Logger</code> and works with either.</p>
+    </div>
+    <div class="exercise">
+      <div class="exercise-label">Exercise 2</div>
+      <p>Build a plugin registry for cache backends: define a <code>Cache</code> interface, implement <code>MemoryCache</code> and <code>RedisCache</code>, register each via <code>init()</code>, and select the backend via a config string.</p>
+    </div>
+
+    <div class="connection">
+      <strong>Connections:</strong> Plugin architecture rests on <strong>interfaces</strong> (the whole foundation), <strong>interface composition</strong> (small interfaces combined), <strong>init() ordering</strong>, and <strong>sync.RWMutex</strong> (concurrent-safe registry). The pattern mirrors how <strong>net/http</strong> middleware, <strong>database/sql</strong> drivers, and the <strong>Notifier</strong> fan-out all achieve pluggability.
+    </div>
+  </div>
+
+</div><!-- end Advanced Testing section -->
+
+
+<!-- ============================================================ -->
+<!-- FOOTER -->
+<!-- ============================================================ -->
+<footer class="footer">
+  <h4>All Go Guides</h4>
+  <ul>
+    <li><a href="golang-guides/golang-guide-2026-07-09.html">Day 34 &mdash; 2026-07-09</a></li>
+    <li><a href="golang-guides/golang-guide-2026-07-08.html">Day 33 &mdash; 2026-07-08</a></li>
+    <li><a href="golang-guides/golang-guide-2026-07-07.html">Day 32 &mdash; 2026-07-07</a></li>
+    <li><a href="golang-guides/golang-guide-2026-07-06.html">Day 31 &mdash; 2026-07-06</a></li>
+    <li><a href="golang-guides/golang-guide-2026-07-05.html">Day 30 &mdash; 2026-07-05</a></li>
+    <li><a href="golang-guides/golang-guide-2026-07-04.html">Day 29 &mdash; 2026-07-04</a></li>
+    <li><a href="golang-guides/golang-guide-2026-07-03.html">Day 28 &mdash; 2026-07-03</a></li>
+    <li><a href="golang-guides/golang-guide-2026-07-02.html">Day 27 &mdash; 2026-07-02</a></li>
+    <li><a href="golang-guides/golang-guide-2026-07-01.html">Day 26 &mdash; 2026-07-01</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-30.html">Day 25 &mdash; 2026-06-30</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-29.html">Day 24 &mdash; 2026-06-29</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-28.html">Day 23 &mdash; 2026-06-28</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-27.html">2026-06-27</a> (Day 22)</li>
+    <li><a href="golang-guides/golang-guide-2026-06-26.html">2026-06-26</a> (Day 21)</li>
+    <li><a href="golang-guides/golang-guide-2026-06-25.html">2026-06-25</a> (Day 20)</li>
+    <li><a href="golang-guides/golang-guide-2026-06-24.html">2026-06-24</a> (Day 19)</li>
+    <li><a href="golang-guides/golang-guide-2026-06-23.html">2026-06-23</a> (Day 18)</li>
+    <li><a href="golang-guides/golang-guide-2026-06-22.html">2026-06-22</a> (Day 17)</li>
+    <li><a href="golang-guides/golang-guide-2026-06-19.html">Day 15 &mdash; 2026-06-19</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-18.html">Day 14 &mdash; 2026-06-18</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-17.html">Day 13 &mdash; 2026-06-17</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-15.html">Day 12 &mdash; 2026-06-15</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-13.html">Day 11 &mdash; 2026-06-13</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-12.html">Day 10 &mdash; 2026-06-12</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-11.html">Day 9 &mdash; 2026-06-11</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-10.html">Day 8 &mdash; 2026-06-10</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-09.html">Day 7 &mdash; 2026-06-09</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-08.html">Day 6 &mdash; 2026-06-08</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-07.html">Day 5 &mdash; 2026-06-07</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-05.html">Day 4 &mdash; 2026-06-05</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-04.html">Day 3 &mdash; 2026-06-04</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-03.html">Day 2 &mdash; 2026-06-03</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-02.html">Day 1 &mdash; 2026-06-02</a></li>
+  </ul>
+</footer>
+
+</div><!-- end main -->
+
+<script>
+// ===== Theme Toggle =====
+(function() {
+  var KEY = 'lc-goguide-theme';
+  var toggle = document.getElementById('theme-toggle');
+  var html = document.documentElement;
+
+  function setTheme(theme) {
+    html.setAttribute('data-theme', theme);
+    localStorage.setItem(KEY, theme);
+    toggle.textContent = theme === 'dark' ? '☽' : '☀';
+  }
+
+  var saved = localStorage.getItem(KEY) || 'dark';
+  setTheme(saved);
+
+  toggle.addEventListener('click', function() {
+    setTheme(html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
+  });
+})();
+
+// ===== Mobile Sidebar Toggle =====
+(function() {
+  var btn = document.getElementById('sidebar-toggle');
+  var sidebar = document.getElementById('sidebar');
+
+  btn.addEventListener('click', function() {
+    sidebar.classList.toggle('open');
+  });
+
+  // Close sidebar when clicking a link (mobile)
+  sidebar.querySelectorAll('.sidebar-link').forEach(function(link) {
+    link.addEventListener('click', function() {
+      if (window.innerWidth <= 900) {
+        sidebar.classList.remove('open');
+      }
+    });
+  });
+})();
+
+// ===== Active Sidebar Link on Scroll =====
+(function() {
+  var links = document.querySelectorAll('.sidebar-link');
+  var sections = [];
+
+  links.forEach(function(link) {
+    var id = link.getAttribute('href').replace('#', '');
+    var el = document.getElementById(id);
+    if (el) sections.push({ id: id, el: el, link: link });
+  });
+
+  function onScroll() {
+    var scrollTop = window.scrollY + 120;
+    var current = null;
+
+    for (var i = sections.length - 1; i >= 0; i--) {
+      if (sections[i].el.offsetTop <= scrollTop) {
+        current = sections[i];
+        break;
+      }
+    }
+
+    links.forEach(function(l) { l.classList.remove('active'); });
+    if  current.link.classList.add('active');
+  }
+
+  window.addEventListener('scroll', onScroll);
+  onScroll();
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,1658 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Go Study Guide &mdash; Day 31 (2026-07-06)</title>
+<style>
+/* ===== CSS Variables ===== */
+:root {
+  --bg: #0d1117;
+  --surface1: #161b22;
+  --surface2: #1c2129;
+  --border: #30363d;
+  --text: #e6edf3;
+  --muted: #8b949e;
+  --accent: #58a6ff;
+  --accent-dim: #1f6feb33;
+  --green: #3fb950;
+  --green-dim: #23863633;
+  --yellow: #d29922;
+  --yellow-dim: #d2992233;
+  --red: #f85149;
+  --red-dim: #f8514933;
+  --purple: #bc8cff;
+  --purple-dim: #bc8cff22;
+  --orange: #f0883e;
+  --orange-dim: #f0883e22;
+  --code-bg: #0d1117;
+  --sidebar-w: 300px;
+  --font-mono: 'SF Mono', 'Cascadia Code', 'Fira Code', Consolas, monospace;
+  --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+  --radius: 8px;
+  --shadow: 0 1px 3px rgba(0,0,0,0.4);
+}
+
+[data-theme="light"] {
+  --bg: #ffffff;
+  --surface1: #f6f8fa;
+  --surface2: #f0f3f6;
+  --border: #d0d7de;
+  --text: #1f2328;
+  --muted: #656d76;
+  --accent: #0969da;
+  --accent-dim: #0969da1a;
+  --green: #1a7f37;
+  --green-dim: #1a7f3718;
+  --yellow: #9a6700;
+  --yellow-dim: #9a670018;
+  --red: #cf222e;
+  --red-dim: #cf222e18;
+  --purple: #8250df;
+  --purple-dim: #8250df18;
+  --orange: #bc4c00;
+  --orange-dim: #bc4c0018;
+  --code-bg: #f6f8fa;
+  --shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+/* ===== Reset & Base ===== */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: var(--font-sans);
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.7;
+  font-size: 16px;
+  transition: background 0.2s, color 0.2s;
+}
+
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+/* ===== Theme Toggle ===== */
+#theme-toggle {
+  position: fixed;
+  top: 16px;
+  right: 20px;
+  z-index: 1000;
+  background: var(--surface1);
+  border: 1px solid var(--border);
+  color: var(--text);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+  box-shadow: var(--shadow);
+}
+#theme-toggle:hover { background: var(--surface2); border-color: var(--accent); }
+
+/* ===== Sidebar ===== */
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: var(--sidebar-w);
+  height: 100vh;
+  background: var(--surface1);
+  border-right: 1px solid var(--border);
+  overflow-y: auto;
+  padding: 20px 0;
+  z-index: 100;
+  transition: transform 0.3s;
+}
+
+.sidebar-header {
+  padding: 0 20px 16px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 12px;
+}
+
+.sidebar-header h2 {
+  font-size: 16px;
+  color: var(--text);
+  font-weight: 700;
+}
+
+.sidebar-header .subtitle {
+  font-size: 12px;
+  color: var(--muted);
+  margin-top: 2px;
+}
+
+.sidebar-section {
+  margin-bottom: 8px;
+}
+
+.sidebar-section-title {
+  padding: 6px 20px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+}
+
+.sidebar-link {
+  display: block;
+  padding: 5px 20px 5px 28px;
+  font-size: 13px;
+  color: var(--muted);
+  text-decoration: none;
+  border-left: 2px solid transparent;
+  transition: all 0.15s;
+  line-height: 1.4;
+}
+
+.sidebar-link:hover {
+  color: var(--text);
+  background: var(--accent-dim);
+  border-left-color: var(--accent);
+  text-decoration: none;
+}
+
+.sidebar-link.active {
+  color: var(--accent);
+  border-left-color: var(--accent);
+  background: var(--accent-dim);
+}
+
+/* ===== Mobile sidebar toggle ===== */
+#sidebar-toggle {
+  display: none;
+  position: fixed;
+  top: 16px;
+  left: 16px;
+  z-index: 200;
+  background: var(--surface1);
+  border: 1px solid var(--border);
+  color: var(--text);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 20px;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--shadow);
+}
+
+/* ===== Main Content ===== */
+.main {
+  margin-left: var(--sidebar-w);
+  padding: 40px 48px 80px;
+  max-width: calc(860px + var(--sidebar-w) + 96px);
+}
+
+.page-title {
+  font-size: 32px;
+  font-weight: 800;
+  margin-bottom: 4px;
+  color: var(--text);
+}
+
+.page-subtitle {
+  font-size: 15px;
+  color: var(--muted);
+  margin-bottom: 36px;
+}
+
+/* ===== Sections ===== */
+.section {
+  margin-bottom: 48px;
+}
+
+.section-label {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  padding: 3px 10px;
+  border-radius: 4px;
+  margin-bottom: 12px;
+}
+
+.section-label.review { background: var(--yellow-dim); color: var(--yellow); }
+.section-label.new { background: var(--green-dim); color: var(--green); }
+
+.section-title {
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 24px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--border);
+}
+
+/* ===== How To Use ===== */
+.how-to-use {
+  background: var(--surface1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px 24px;
+  margin-bottom: 36px;
+}
+
+.how-to-use h3 {
+  font-size: 16px;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.how-to-use ul {
+  padding-left: 22px;
+  margin: 0;
+}
+
+.how-to-use li {
+  font-size: 14px;
+  color: var(--muted);
+  margin-bottom: 4px;
+}
+
+/* ===== Concept Cards ===== */
+.concept {
+  background: var(--surface1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 28px;
+  margin-bottom: 28px;
+  box-shadow: var(--shadow);
+}
+
+.concept-header {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  margin-bottom: 6px;
+  flex-wrap: wrap;
+}
+
+.concept h3 {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.concept-meta {
+  font-size: 12px;
+  color: var(--muted);
+  background: var(--surface2);
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
+.concept h4 {
+  font-size: 15px;
+  font-weight: 600;
+  margin: 20px 0 8px;
+  color: var(--text);
+}
+
+.concept p, .concept li {
+  color: var(--text);
+  line-height: 1.7;
+}
+
+.concept ul, .concept ol {
+  padding-left: 22px;
+  margin: 8px 0;
+}
+
+.concept li {
+  margin-bottom: 4px;
+}
+
+.concept .why-matters {
+  font-style: italic;
+  color: var(--muted);
+  margin: 6px 0 16px;
+  font-size: 15px;
+}
+
+/* ===== Code Blocks ===== */
+pre {
+  background: var(--code-bg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 16px 18px;
+  overflow-x: auto;
+  margin: 10px 0 14px;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--text);
+  position: relative;
+}
+
+pre::after {
+  content: 'Go';
+  position: absolute;
+  top: 6px;
+  right: 10px;
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  opacity: 0.6;
+}
+
+code {
+  font-family: var(--font-mono);
+  font-size: 0.9em;
+}
+
+:not(pre) > code {
+  background: var(--surface2);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.88em;
+}
+
+/* ===== Output Blocks ===== */
+.output {
+  background: var(--green-dim);
+  border: 1px solid var(--green);
+  border-radius: 6px;
+  padding: 12px 16px;
+  margin: 6px 0 14px;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--text);
+  white-space: pre-wrap;
+}
+
+.output::after { content: none; }
+
+.output-label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--green);
+  margin-bottom: 4px;
+}
+
+/* ===== Good/Bad Examples ===== */
+.do-dont {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin: 10px 0;
+}
+
+.do-box, .dont-box {
+  border-radius: 6px;
+  padding: 14px;
+  border: 1px solid;
+}
+
+.do-box {
+  background: var(--green-dim);
+  border-color: var(--green);
+}
+
+.dont-box {
+  background: var(--red-dim);
+  border-color: var(--red);
+}
+
+.do-box .label, .dont-box .label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 6px;
+}
+
+.do-box .label { color: var(--green); }
+.dont-box .label { color: var(--red); }
+
+.do-box pre, .dont-box pre {
+  margin: 0;
+  border: none;
+  background: transparent;
+  padding: 0;
+  font-size: 12.5px;
+}
+
+.do-box pre::after, .dont-box pre::after { content: none; }
+
+/* ===== Key Rules ===== */
+.rules-list {
+  list-style: none;
+  padding: 0;
+  margin: 8px 0;
+}
+
+.rules-list li {
+  padding: 6px 0 6px 24px;
+  position: relative;
+}
+
+.rules-list li::before {
+  content: "\2192";
+  position: absolute;
+  left: 2px;
+  color: var(--accent);
+  font-weight: 700;
+}
+
+/* ===== Exercises ===== */
+.exercise {
+  background: var(--purple-dim);
+  border: 1px solid var(--purple);
+  border-radius: 6px;
+  padding: 14px 18px;
+  margin: 8px 0;
+}
+
+.exercise .exercise-label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--purple);
+  margin-bottom: 4px;
+}
+
+/* ===== Pitfall ===== */
+.pitfall {
+  background: var(--red-dim);
+  border-left: 3px solid var(--red);
+  border-radius: 0 6px 6px 0;
+  padding: 10px 14px;
+  margin: 10px 0;
+  font-size: 14px;
+}
+
+.pitfall strong {
+  color: var(--red);
+}
+
+/* ===== Connection ===== */
+.connection {
+  background: var(--accent-dim);
+  border-left: 3px solid var(--accent);
+  border-radius: 0 6px 6px 0;
+  padding: 10px 14px;
+  margin: 10px 0;
+  font-size: 14px;
+  color: var(--muted);
+}
+
+/* ===== Review Cards ===== */
+.review-card {
+  background: var(--surface1);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--purple);
+  border-radius: var(--radius);
+  padding: 20px 24px;
+  margin-bottom: 16px;
+  box-shadow: var(--shadow);
+}
+
+.review-card .review-header {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  margin-bottom: 6px;
+  flex-wrap: wrap;
+}
+
+.review-card h3 {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.review-card .review-meta {
+  font-size: 12px;
+  color: var(--muted);
+  background: var(--surface2);
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
+.review-card h4 {
+  font-size: 14px;
+  font-weight: 600;
+  margin: 14px 0 6px;
+  color: var(--text);
+}
+
+.review-card p, .review-card li {
+  color: var(--text);
+  line-height: 1.6;
+  font-size: 14px;
+}
+
+.review-card pre {
+  font-size: 12.5px;
+  padding: 12px 14px;
+  margin: 6px 0 10px;
+}
+
+.review-card .pitfall {
+  font-size: 13px;
+  padding: 8px 12px;
+}
+
+/* ===== Topic Badge ===== */
+.topic-badge {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 2px 8px;
+  border-radius: 4px;
+  background: var(--accent-dim);
+  color: var(--accent);
+  margin-left: 4px;
+}
+
+/* ===== Footer ===== */
+.footer {
+  margin-top: 60px;
+  padding: 24px 0;
+  border-top: 1px solid var(--border);
+}
+
+.footer h4 {
+  font-size: 14px;
+  color: var(--muted);
+  margin-bottom: 10px;
+}
+
+.footer ul {
+  list-style: none;
+  padding: 0;
+}
+
+.footer li {
+  margin-bottom: 4px;
+  font-size: 14px;
+}
+
+.footer li a { color: var(--accent); }
+.footer .current { color: var(--green); font-weight: 600; }
+
+/* ===== Bash code blocks ===== */
+pre.bash::after {
+  content: 'Bash';
+}
+
+/* ===== Responsive ===== */
+@media (max-width: 900px) {
+  .sidebar {
+    transform: translateX(-100%);
+  }
+  .sidebar.open {
+    transform: translateX(0);
+    box-shadow: 4px 0 20px rgba(0,0,0,0.5);
+  }
+  #sidebar-toggle {
+    display: flex;
+  }
+  .main {
+    margin-left: 0;
+    padding: 60px 20px 60px;
+    max-width: 100%;
+  }
+  .do-dont {
+    grid-template-columns: 1fr;
+  }
+  #theme-toggle {
+    right: 14px;
+    top: 16px;
+  }
+}
+</style>
+</head>
+<body>
+
+<!-- Theme Toggle -->
+<button id="theme-toggle" aria-label="Toggle theme" title="Toggle light/dark theme">&#9789;</button>
+
+<!-- Mobile Sidebar Toggle -->
+<button id="sidebar-toggle" aria-label="Toggle sidebar">&#9776;</button>
+
+<!-- Sidebar -->
+<nav class="sidebar" id="sidebar">
+  <div class="sidebar-header">
+    <h2>Go Guide</h2>
+    <div class="subtitle">Day 31 &mdash; 2026-07-06</div>
+  </div>
+
+  <div class="sidebar-section">
+    <div class="sidebar-section-title">Review (6 concepts)</div>
+    <a href="#module_management" class="sidebar-link">Module Management</a>
+    <a href="#cross_compilation" class="sidebar-link">Cross-Compilation &amp; Build Tags</a>
+    <a href="#websocket_go" class="sidebar-link">WebSocket in Go</a>
+    <a href="#profiling_pprof" class="sidebar-link">Profiling with pprof</a>
+    <a href="#otel_tracing" class="sidebar-link">OpenTelemetry &amp; Tracing</a>
+    <a href="#go_embed" class="sidebar-link">Embedding &amp; go:embed</a>
+  </div>
+
+  <div class="sidebar-section">
+    <div class="sidebar-section-title">Binary, Numbers &amp; Paths (3)</div>
+    <a href="#encoding_binary" class="sidebar-link">encoding/binary</a>
+    <a href="#math_package" class="sidebar-link">math: Floats, Inf &amp; NaN</a>
+    <a href="#path_package" class="sidebar-link">path: Slash Paths</a>
+  </div>
+
+  <div class="sidebar-section">
+    <div class="sidebar-section-title">Concurrency &amp; Networking (2)</div>
+    <a href="#sync_cond" class="sidebar-link">sync.Cond</a>
+    <a href="#net_dialer" class="sidebar-link">net.Dialer &amp; net.Resolver</a>
+  </div>
+</nav>
+
+<!-- Main Content -->
+<div class="main">
+
+<h1 class="page-title">Go Daily Guide &mdash; 2026-07-06 (Day 31)</h1>
+<p class="page-subtitle">Day 31 &mdash; Monday, July 6, 2026 &bull; 11 concepts (6 review + 5 new)</p>
+
+<!-- How to Use -->
+<div class="how-to-use">
+  <h3>How to Use This Guide</h3>
+  <ul>
+    <li>Start with the <strong>Review</strong> section &mdash; try to recall each concept before reading the refresher</li>
+    <li>Complete the challenge exercise for each review card without looking back at previous days</li>
+    <li>Then work through the <strong>New Concepts</strong> section, typing out every code example yourself</li>
+    <li>Pay special attention to the common mistakes sections (they highlight real Go gotchas)</li>
+    <li>Complete the exercises at the bottom of each concept without looking at solutions</li>
+    <li>Use <code>go run main.go</code> to test your code locally, or use the <a href="https://go.dev/play/" target="_blank">Go Playground</a></li>
+  </ul>
+</div>
+
+<!-- ============================================================ -->
+<!-- REVIEW SECTION -->
+<!-- ============================================================ -->
+<div class="section">
+  <span class="section-label review">Review</span>
+  <h2 class="section-title">Spaced Repetition Review &mdash; 6 Concepts</h2>
+
+  <!-- Review 1: Module Management -->
+  <div class="review-card" id="module_management">
+    <div class="review-header">
+      <h3>Module Management: go.mod, Workspaces &amp; Versioning</h3>
+      <span class="review-meta">Production Go &bull; due today &bull; rep 1</span>
+    </div>
+
+    <h4>Quick Reminder</h4>
+    <p>A module is a versioned set of packages rooted at a <code>go.mod</code> file (module path + dependency requirements). <code>go get</code> adds/updates a requirement, <code>go mod tidy</code> prunes unused ones and syncs <code>go.sum</code> checksums. Semantic Import Versioning puts the major in the path for <code>v2+</code> (<code>.../v2</code>). For local multi-module work, a <code>go.work</code> file (Go 1.18+) joins several modules without touching each <code>go.mod</code> or using <code>replace</code>.</p>
+
+    <h4>Key Pattern</h4>
+<pre class="bash"># module lifecycle
+go mod init example.com/app          # create go.mod
+go get github.com/google/uuid@v1.6.0 # pin a version
+go mod tidy                          # sync require + go.sum
+go list -m all                       # full dependency graph
+
+# a workspace over two local modules (go.work, git-ignored)
+go work init ./app ./lib
+go work use ./newmod</pre>
+
+    <div class="exercise">
+      <div class="exercise-label">Challenge Exercise</div>
+      <p>Publish a library at <code>v1.2.0</code>, then make a breaking change and cut <code>v2</code>: update the module path to end in <code>/v2</code>, tag <code>v2.0.0</code>, and fix an importing app so both a <code>v1</code> and a <code>v2</code> of the same library can coexist in one build. Use <code>go mod graph</code> and <code>go mod why</code> to explain how a transitive dependency got pulled in. Finally, contrast a committed <code>replace</code> directive against a local <code>go.work</code> file, and state when each is the right tool.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>#1 Pitfall:</strong> Committing a <code>go.work</code> file to a shared repo &mdash; it silently overrides everyone's module resolution and breaks CI expecting tagged versions. Keep it local (git-ignore it). Also, forgetting the <code>/v2</code> suffix on a major bump makes Go treat it as the <em>same</em> module and produces baffling "ambiguous import" errors.
+    </div>
+  </div>
+
+  <!-- Review 2: Cross-Compilation & Build Tags -->
+  <div class="review-card" id="cross_compilation">
+    <div class="review-header">
+      <h3>Cross-Compilation &amp; Build Tags</h3>
+      <span class="review-meta">Production Go &bull; due today &bull; rep 1</span>
+    </div>
+
+    <h4>Quick Reminder</h4>
+    <p>Go cross-compiles to any target by setting <code>GOOS</code>/<code>GOARCH</code> &mdash; no cross toolchain needed as long as you stay pure Go (<code>CGO_ENABLED=0</code>). Build <em>constraints</em> pick which files compile for a target: a filename suffix (<code>_windows.go</code>, <code>_linux.go</code>) or a <code>//go:build</code> line at the top of a file. That's how OS-specific code stays isolated while you still ship one binary per target.</p>
+
+    <h4>Key Pattern</h4>
+<pre>//go:build linux || darwin
+
+package app
+// Compiled only on Linux/macOS. A sibling file with
+// "//go:build windows" holds the Windows version.</pre>
+<pre class="bash"># static Linux arm64 binary from any host
+CGO_ENABLED=0 GOOS=linux GOARCH=arm64 go build -o app .
+go tool dist list        # every supported GOOS/GOARCH pair
+go build -tags prod .     # enable files gated by //go:build prod</pre>
+
+    <div class="exercise">
+      <div class="exercise-label">Challenge Exercise</div>
+      <p>Write a <code>ConfigDir()</code> split across <code>config_windows.go</code> and <code>config_unix.go</code> using <code>//go:build</code> constraints so it returns <code>%APPDATA%</code> on Windows and <code>$XDG_CONFIG_HOME</code> (falling back to <code>~/.config</code>) elsewhere. Add a <code>debug</code> tag that enables extra logging only under <code>-tags debug</code>. Cross-compile for <code>linux/amd64</code>, <code>darwin/arm64</code>, and <code>windows/amd64</code>, verify each with <code>file</code>, and explain why <code>CGO_ENABLED=0</code> makes cross-builds painless.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>#1 Pitfall:</strong> Leaving <code>CGO_ENABLED=1</code> while cross-compiling &mdash; the build then needs a target C cross-compiler and often fails or yields a dynamically-linked binary that won't run in a scratch container. Also, a malformed <code>//go:build</code> line (or the old <code>// +build</code> without a trailing blank line) is silently ignored, so the file compiles <em>everywhere</em> unexpectedly.
+    </div>
+  </div>
+
+  <!-- Review 3: WebSocket in Go -->
+  <div class="review-card" id="websocket_go">
+    <div class="review-header">
+      <h3>WebSocket in Go</h3>
+      <span class="review-meta">Advanced Networking &bull; due today &bull; rep 1</span>
+    </div>
+
+    <h4>Quick Reminder</h4>
+    <p>WebSockets upgrade an HTTP request into a persistent, full-duplex TCP connection so both sides can push messages any time. The standard library has no WebSocket server, so you use <code>github.com/coder/websocket</code> (formerly nhooyr) or <code>gorilla/websocket</code>. Inside an <code>http.HandlerFunc</code> you call <code>Accept</code> to complete the upgrade, then read and write typed (text/binary) frames until either side closes.</p>
+
+    <h4>Key Pattern</h4>
+<pre>func echo(w http.ResponseWriter, r *http.Request) {
+    c, err := websocket.Accept(w, r, nil) // upgrade
+    if err != nil {
+        return
+    }
+    defer c.Close(websocket.StatusInternalError, "bye")
+
+    ctx, cancel := context.WithTimeout(r.Context(), time.Minute)
+    defer cancel()
+    for {
+        typ, data, err := c.Read(ctx) // blocks for next frame
+        if err != nil {
+            return // client closed or timed out
+        }
+        c.Write(ctx, typ, data) // echo it back
+    }
+}</pre>
+
+    <div class="exercise">
+      <div class="exercise-label">Challenge Exercise</div>
+      <p>Build a broadcast chat hub: one central goroutine owns the set of connections and fans each incoming message out to every client through a buffered per-client send channel, so one slow reader can't stall everyone. Add ping/keepalive and drop clients that miss a pong deadline. Handle graceful shutdown by closing all connections with <code>websocket.StatusGoingAway</code>. Explain why you must never write to a single connection from two goroutines at once.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>#1 Pitfall:</strong> Writing to one WebSocket connection from multiple goroutines simultaneously &mdash; frames interleave and corrupt the stream. Funnel all writes for a connection through a single owner goroutine or send channel. Skipping an origin check or a read deadline also opens you to cross-site hijacking and slow-loris resource exhaustion.
+    </div>
+  </div>
+
+  <!-- Review 4: Profiling with pprof -->
+  <div class="review-card" id="profiling_pprof">
+    <div class="review-header">
+      <h3>Profiling with pprof</h3>
+      <span class="review-meta">Observability &amp; Profiling &bull; due today &bull; rep 1</span>
+    </div>
+
+    <h4>Quick Reminder</h4>
+    <p><code>pprof</code> collects and visualizes CPU, heap, goroutine, block, and mutex profiles. In a server, blank-import <code>net/http/pprof</code> to expose profiles under <code>/debug/pprof/</code>; for one-off runs, use the benchmark flags <code>-cpuprofile</code>/<code>-memprofile</code>. Analyze with <code>go tool pprof</code>: <code>top</code> finds the hottest functions, <code>list Func</code> gives line-level cost, and <code>-http=:0</code> opens an interactive flame graph.</p>
+
+    <h4>Key Pattern</h4>
+<pre>import _ "net/http/pprof" // registers /debug/pprof/ handlers
+
+func main() {
+    // profiles at http://localhost:6060/debug/pprof/
+    go http.ListenAndServe("localhost:6060", nil)
+    // ... rest of the server ...
+}</pre>
+<pre class="bash"># 30s CPU profile from a live server, then a flame graph
+go tool pprof -http=:0 \
+    http://localhost:6060/debug/pprof/profile?seconds=30
+
+# heap profile from a benchmark
+go test -bench=. -memprofile=mem.out
+go tool pprof -http=:0 mem.out   # (pprof) top10 ; list MyFunc</pre>
+
+    <div class="exercise">
+      <div class="exercise-label">Challenge Exercise</div>
+      <p>Write a deliberately wasteful function (string concatenation in a loop plus needless allocations), expose <code>net/http/pprof</code>, and drive load from a goroutine. Capture a CPU and a heap profile, use <code>top</code> and <code>list</code> to find the hot line, fix it (<code>strings.Builder</code>, preallocation), and confirm the profile improved. Then take a goroutine profile while goroutines block on a channel and explain how it reveals a leak. Note why block/mutex profiles need <code>runtime.SetBlockProfileRate</code>/<code>SetMutexProfileFraction</code>.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>#1 Pitfall:</strong> Exposing <code>/debug/pprof/</code> on a public interface &mdash; profiles leak internals and let anyone trigger expensive captures (a DoS vector). Bind it to <code>localhost</code> or an internal port. Also, profiling an unrepresentative workload (too short, no load) gives noise; profile under realistic traffic long enough to gather meaningful samples.
+    </div>
+  </div>
+
+  <!-- Review 5: OpenTelemetry & Tracing -->
+  <div class="review-card" id="otel_tracing">
+    <div class="review-header">
+      <h3>OpenTelemetry &amp; Tracing</h3>
+      <span class="review-meta">Observability &amp; Profiling &bull; due today &bull; rep 1</span>
+    </div>
+
+    <h4>Quick Reminder</h4>
+    <p>Distributed tracing follows one request across services as a <em>trace</em> of nested <em>spans</em>. OpenTelemetry is the vendor-neutral standard: configure a <code>TracerProvider</code> with an exporter (OTLP, Jaeger, stdout for dev), get a <code>Tracer</code>, and wrap work with <code>tracer.Start(ctx, "name")</code>. The returned <code>context.Context</code> carries the active span, so propagating <code>ctx</code> down the call chain (and across HTTP/gRPC via propagators) is what stitches spans into one trace.</p>
+
+    <h4>Key Pattern</h4>
+<pre>func handleOrder(ctx context.Context, id string) error {
+    ctx, span := otel.Tracer("orders").Start(ctx, "handleOrder")
+    defer span.End() // always end the span
+
+    span.SetAttributes(attribute.String("order.id", id))
+    if err := charge(ctx, id); err != nil { // child span sees ctx
+        span.RecordError(err)
+        span.SetStatus(codes.Error, err.Error())
+        return err
+    }
+    return nil
+}</pre>
+
+    <div class="exercise">
+      <div class="exercise-label">Challenge Exercise</div>
+      <p>Set up a <code>TracerProvider</code> with the stdout exporter and instrument a two-function chain so the second span nests under the first &mdash; prove nesting by threading <code>ctx</code> through. Add attributes and an event, and record an error path with <code>span.RecordError</code> + <code>span.SetStatus</code>. Then wrap an <code>http.Handler</code> with <code>otelhttp</code> and its matching client transport so trace context propagates across a real HTTP call. Explain why forgetting <code>defer span.End()</code> leaks unfinished spans.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>#1 Pitfall:</strong> Not propagating <code>ctx</code> &mdash; calling the next function with <code>context.Background()</code> instead of the span-carrying context starts a brand-new trace and severs the parent/child link. Also, forgetting <code>defer span.End()</code> means spans never flush, and a span per trivial call floods the backend &mdash; match span granularity to meaningful units of work.
+    </div>
+  </div>
+
+  <!-- Review 6: Embedding & go:embed -->
+  <div class="review-card" id="go_embed">
+    <div class="review-header">
+      <h3>Embedding &amp; go:embed</h3>
+      <span class="review-meta">Observability &amp; Profiling &bull; overdue (23d) &bull; rep 0</span>
+    </div>
+
+    <h4>Quick Reminder</h4>
+    <p>The <code>//go:embed</code> directive bakes files or whole directories into the compiled binary at build time &mdash; no runtime file I/O, single self-contained artifact. The directive comment must sit <em>directly above</em> a package-level variable of type <code>string</code>, <code>[]byte</code>, or <code>embed.FS</code>, and you must import <code>embed</code> (blank import <code>_ "embed"</code> is enough when embedding into <code>string</code>/<code>[]byte</code>). Paths are relative to the <code>.go</code> file, always use forward slashes, and cannot escape the module with <code>..</code>.</p>
+
+    <h4>Key Pattern</h4>
+<pre>import "embed"
+
+//go:embed templates/*.html
+var tmplFS embed.FS   // a read-only fs.FS of matched files
+
+//go:embed version.txt
+var version string    // file contents as a string
+
+func main() {
+    b, _ := tmplFS.ReadFile("templates/index.html")
+    _ = b
+    fmt.Println("version:", version)
+}</pre>
+
+    <div class="exercise">
+      <div class="exercise-label">Challenge Exercise</div>
+      <p>Embed a directory of static assets into an <code>embed.FS</code> and serve it with <code>http.FileServer(http.FS(assets))</code>; embed a set of HTML templates and parse them with <code>template.ParseFS</code>. Then embed a build version string and print it at startup. Explain why <code>//go:embed</code> paths must use forward slashes even on Windows (tie this to today's <code>path</code> vs <code>path/filepath</code> concept), and describe the difference between embedding into a <code>string</code>/<code>[]byte</code> versus an <code>embed.FS</code>.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>#1 Pitfall:</strong> A blank line or another comment between the <code>//go:embed</code> directive and the <code>var</code> declaration &mdash; the directive is then ignored or rejected at compile time; it must be immediately adjacent. Also, embedding with a <code>..</code> or absolute path is disallowed, and forgetting to import <code>embed</code> when using <code>embed.FS</code> fails to compile.
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- NEW CONCEPTS SECTION -->
+<!-- ============================================================ -->
+<div class="section">
+  <span class="section-label new">New</span>
+  <h2 class="section-title">New Concepts &mdash; 5 in 2 Sections</h2>
+
+  <h3 style="font-size:18px;margin:8px 0 18px;color:var(--muted);">Section 1 &mdash; Binary, Numbers &amp; Paths</h3>
+
+  <!-- New 1: encoding/binary -->
+  <div class="concept" id="encoding_binary">
+    <div class="concept-header">
+      <h3>encoding/binary: Byte Order &amp; Binary Framing</h3>
+      <span class="topic-badge">Wire Formats</span>
+    </div>
+    <p class="why-matters">Why it matters: network protocols, file formats, and on-disk records need a <em>fixed, agreed</em> byte layout &mdash; not Go's self-describing <code>gob</code> or JSON. <code>encoding/binary</code> reads and writes fixed-width numeric values in a chosen byte order, and encodes compact variable-length integers (varints). It's how you build a custom TCP protocol, parse a binary file header, or length-prefix messages on a stream.</p>
+
+    <h4>Fixed-width values with an explicit byte order</h4>
+    <p><code>binary.Write</code>/<code>binary.Read</code> serialize fixed-size values through a <code>ByteOrder</code>. Use <code>BigEndian</code> (network order) or <code>LittleEndian</code> &mdash; both ends must agree.</p>
+<pre>package main
+
+import (
+    "bytes"
+    "encoding/binary"
+    "fmt"
+)
+
+func main() {
+    var buf bytes.Buffer
+    binary.Write(&amp;buf, binary.BigEndian, uint16(1000))  // 2 bytes
+    binary.Write(&amp;buf, binary.BigEndian, uint32(70000)) // 4 bytes
+    fmt.Printf("% x\n", buf.Bytes())
+
+    var a uint16
+    var b uint32
+    binary.Read(&amp;buf, binary.BigEndian, &amp;a)
+    binary.Read(&amp;buf, binary.BigEndian, &amp;b)
+    fmt.Println(a, b)
+}</pre>
+    <div class="output-label">Output</div>
+    <div class="output">03 e8 00 01 11 70
+1000 70000</div>
+
+    <h4>Packing a fixed-layout struct</h4>
+    <p>A struct of fixed-size fields serializes field-by-field in order &mdash; perfect for a binary header. <code>binary.Size</code> reports the encoded length.</p>
+<pre>package main
+
+import (
+    "bytes"
+    "encoding/binary"
+    "fmt"
+)
+
+type header struct {
+    Magic   uint32
+    Version uint16
+    Flags   uint16
+}
+
+func main() {
+    h := header{Magic: 0xCAFEBABE, Version: 2, Flags: 0x0001}
+    var buf bytes.Buffer
+    binary.Write(&amp;buf, binary.BigEndian, h)
+    fmt.Printf("% x\n", buf.Bytes())
+    fmt.Println("size:", binary.Size(h))
+}</pre>
+    <div class="output-label">Output</div>
+    <div class="output">ca fe ba be 00 02 00 01
+size: 8</div>
+
+    <h4>Compact integers with varints</h4>
+    <p>When most values are small, a <em>varint</em> uses fewer bytes than a fixed width. <code>binary.AppendUvarint</code> encodes, <code>binary.Uvarint</code> decodes and returns how many bytes it consumed.</p>
+<pre>package main
+
+import (
+    "encoding/binary"
+    "fmt"
+)
+
+func main() {
+    buf := make([]byte, 0, 8)
+    for _, v := range []uint64{1, 300, 70000} {
+        buf = binary.AppendUvarint(buf, v)
+    }
+    fmt.Printf("% x\n", buf)
+
+    rest := buf
+    for len(rest) > 0 {
+        v, n := binary.Uvarint(rest)
+        fmt.Print(v, " ")
+        rest = rest[n:]
+    }
+    fmt.Println()
+}</pre>
+    <div class="output-label">Output</div>
+    <div class="output">01 ac 02 f0 a2 04
+1 300 70000 </div>
+
+    <h4>Common Mistakes</h4>
+    <div class="do-dont">
+      <div class="dont-box">
+        <div class="label">Wrong</div>
+<pre>type rec struct {
+    ID   int      // platform-sized: rejected
+    Name string   // variable length: rejected
+}
+var buf bytes.Buffer
+// Returns an error you might ignore -> nothing written.
+binary.Write(&amp;buf, binary.BigEndian, rec{1, "x"})</pre>
+      </div>
+      <div class="do-box">
+        <div class="label">Right</div>
+<pre>type rec struct {
+    ID uint64      // fixed width
+}
+var buf bytes.Buffer
+binary.Write(&amp;buf, binary.BigEndian, rec{ID: 1})
+// Encode strings yourself: length prefix + raw bytes.
+binary.Write(&amp;buf, binary.BigEndian, uint16(len(name)))
+buf.WriteString(name)</pre>
+      </div>
+    </div>
+
+    <h4>Key Rules</h4>
+    <ul class="rules-list">
+      <li><code>binary.Write</code>/<code>Read</code> handle only <em>fixed-size</em> data: fixed-width numeric types, arrays, and structs of those &mdash; never <code>int</code>, <code>string</code>, <code>slice</code>, or <code>map</code>.</li>
+      <li>Always choose an explicit <code>ByteOrder</code>: <code>BigEndian</code> for on-the-wire/network formats, <code>LittleEndian</code> for most CPU-native file formats &mdash; and use the same on both ends.</li>
+      <li>For small, self-delimiting integers use <code>Uvarint</code> (unsigned) or <code>Varint</code> (zig-zag signed) instead of a fixed width.</li>
+      <li><code>binary.Size(v)</code> returns the encoded byte length, or <code>-1</code> for a non-fixed type &mdash; use it to preallocate buffers.</li>
+    </ul>
+
+    <div class="exercise">
+      <div class="exercise-label">Practice Exercise</div>
+      <p>Implement length-prefixed framing: a writer that emits a <code>uint32</code> big-endian length followed by the payload, and a reader that decodes one frame at a time from an <code>io.Reader</code> until <code>io.EOF</code>. Then define a fixed-layout record struct, round-trip it through <code>binary.Write</code>/<code>Read</code>, and add a varint-encoded variant &mdash; compare the byte sizes for small vs large values. Finally, explain when you'd choose big-endian over little-endian and why passing a struct with an <code>int</code> field to <code>binary.Write</code> fails.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>Pitfall:</strong> Passing a non-fixed-size type (a struct containing <code>int</code>, <code>string</code>, or a slice) to <code>binary.Write</code> returns an error rather than encoding &mdash; <code>int</code> is rejected because its width is platform-dependent. Ignoring that error means you silently write nothing. Use explicit widths (<code>int32</code>/<code>uint64</code>) and length-prefix any variable data yourself.
+    </div>
+
+    <div class="connection">
+      <strong>Connections:</strong> The fixed-layout counterpart to self-describing <code>encoding/gob</code> and text-based JSON/hex; builds on <code>bytes.Buffer</code>, <code>io.Reader</code>/<code>Writer</code>, and <code>bufio</code>; it's the foundation for custom TCP protocols (from the TCP servers day) and for parsing binary file headers.
+    </div>
+  </div>
+
+  <!-- New 2: math package -->
+  <div class="concept" id="math_package">
+    <div class="concept-header">
+      <h3>math: Floating-Point, Inf, NaN &amp; Rounding</h3>
+      <span class="topic-badge">Numbers</span>
+    </div>
+    <p class="why-matters">Why it matters: any numeric code beyond integer arithmetic &mdash; geometry, statistics, scoring, graphics &mdash; leans on <code>math</code> for constants, roots, powers, rounding modes, and the IEEE-754 special values <em>infinity</em> and <em>NaN</em>. Handling those specials correctly (you cannot compare NaN with <code>==</code>) separates code that quietly produces garbage from code that stays correct.</p>
+
+    <h4>Constants and common functions</h4>
+    <p><code>math</code> provides <code>Pi</code>, <code>E</code>, <code>Sqrt</code>, <code>Pow</code>, <code>Abs</code>, and <code>Max</code>/<code>Min</code> (which operate on <code>float64</code> and propagate NaN, unlike the Go 1.21 builtins).</p>
+<pre>package main
+
+import (
+    "fmt"
+    "math"
+)
+
+func main() {
+    fmt.Println(math.Sqrt(144))                 // 12
+    fmt.Println(math.Pow(2, 10))                // 1024
+    fmt.Printf("%.4f\n", math.Pi)               // 3.1416
+    fmt.Println(math.Max(3, 9), math.Min(3, 9)) // 9 3
+    fmt.Println(math.Abs(-4.5))                 // 4.5
+}</pre>
+    <div class="output-label">Output</div>
+    <div class="output">12
+1024
+3.1416
+9 3
+4.5</div>
+
+    <h4>Rounding modes matter</h4>
+    <p>There is no single "round" &mdash; pick the mode deliberately. <code>Round</code> goes half away from zero; <code>RoundToEven</code> is banker's rounding; <code>Floor</code>/<code>Ceil</code>/<code>Trunc</code> are directional.</p>
+<pre>package main
+
+import (
+    "fmt"
+    "math"
+)
+
+func main() {
+    fmt.Println(math.Floor(2.5), math.Ceil(2.5))       // 2 3
+    fmt.Println(math.Round(2.5), math.Round(-2.5))     // 3 -3
+    fmt.Println(math.Trunc(2.9))                        // 2
+    fmt.Println(math.RoundToEven(2.5), math.RoundToEven(3.5)) // 2 4
+}</pre>
+    <div class="output-label">Output</div>
+    <div class="output">2 3
+3 -3
+2
+2 4</div>
+
+    <h4>Inf and NaN: detect, never compare</h4>
+    <p>Dividing a nonzero float by zero yields &plusmn;Inf; <code>0.0/0.0</code> (via variables) yields NaN. NaN is not equal to anything &mdash; even itself &mdash; so you must use <code>math.IsNaN</code>/<code>math.IsInf</code>.</p>
+<pre>package main
+
+import (
+    "fmt"
+    "math"
+)
+
+func main() {
+    zero := 0.0
+    fmt.Println(math.IsInf(1/zero, 1)) // true  (+Inf)
+
+    n := math.NaN()
+    fmt.Println(n == n)         // false! NaN != NaN
+    fmt.Println(math.IsNaN(n))  // true
+    fmt.Println(math.MaxInt64)  // 9223372036854775807
+}</pre>
+    <div class="output-label">Output</div>
+    <div class="output">true
+false
+true
+9223372036854775807</div>
+
+    <h4>Common Mistakes</h4>
+    <div class="do-dont">
+      <div class="dont-box">
+        <div class="label">Wrong</div>
+<pre>// NaN never equals anything, so this misses it:
+if result == math.NaN() { /* never true */ }
+
+// Exact equality on computed floats is fragile:
+if a*b == 0.06 { /* often false */ }</pre>
+      </div>
+      <div class="do-box">
+        <div class="label">Right</div>
+<pre>if math.IsNaN(result) { /* handle it */ }
+
+// Compare within a tolerance:
+const eps = 1e-9
+if math.Abs(a*b-0.06) < eps { /* close enough */ }</pre>
+      </div>
+    </div>
+
+    <h4>Key Rules</h4>
+    <ul class="rules-list">
+      <li>Detect specials with <code>math.IsNaN</code> and <code>math.IsInf</code> &mdash; never <code>==</code>, since NaN compares <code>false</code> to everything including itself.</li>
+      <li><code>math.Round</code> rounds half away from zero; <code>math.RoundToEven</code> does banker's rounding &mdash; choose deliberately for money/statistics.</li>
+      <li><code>math.Max</code>/<code>Min</code> take and return <code>float64</code> with NaN semantics; for ordered non-float types prefer the Go 1.21 builtins <code>min</code>/<code>max</code>.</li>
+      <li>Floats are binary approximations: never use <code>==</code> on computed results &mdash; compare within an epsilon, and use integers or a decimal library for currency.</li>
+    </ul>
+
+    <div class="exercise">
+      <div class="exercise-label">Practice Exercise</div>
+      <p>Write <code>nearlyEqual(a, b, eps float64) bool</code> using <code>math.Abs</code>, and a <code>classify(x float64) string</code> that returns "nan", "+inf", "-inf", "zero", or "normal" using the <code>math</code> predicates. Then implement a numerically careful mean of a slice that returns an error (not NaN) for an empty slice, and detect integer overflow of a running sum against <code>math.MaxInt64</code>. Finally, print why <code>0.1 + 0.2 != 0.3</code> in Go and how you'd test that sum safely.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>Pitfall:</strong> Comparing a result to <code>math.NaN()</code> with <code>==</code> (always false, so the branch never runs) or relying on exact <code>==</code> for computed floats. Also assuming <code>math.Max</code>/<code>Min</code> behave like the integer builtins &mdash; they're <code>float64</code>-only and treat NaN specially. Use the predicates and an epsilon, and reach for the builtins on integers.
+    </div>
+
+    <div class="connection">
+      <strong>Connections:</strong> Complements <code>math/bits</code> (integer bit ops), <code>math/big</code> (arbitrary precision), and <code>math/rand/v2</code>; pairs with the Go 1.21 builtins <code>min</code>/<code>max</code>/<code>clear</code> and with <code>fmt</code> float verbs (<code>%f</code>, <code>%g</code>, <code>%e</code>) for formatting.
+    </div>
+  </div>
+
+  <!-- New 3: path package -->
+  <div class="concept" id="path_package">
+    <div class="concept-header">
+      <h3>path: Slash-Separated Path Manipulation</h3>
+      <span class="topic-badge">Std Lib</span>
+    </div>
+    <p class="why-matters">Why it matters: URLs, <code>io/fs</code> and <code>embed.FS</code> keys, and import-style paths are always slash-separated &mdash; on every OS. The <code>path</code> package manipulates <em>those</em> forward-slash paths, distinct from <code>path/filepath</code>, which adapts to the local OS separator. Using <code>filepath</code> to build a URL or an <code>fs.FS</code> key works on Unix but silently breaks on Windows (backslashes).</p>
+
+    <h4>Core operations</h4>
+    <p><code>Base</code>, <code>Dir</code>, <code>Ext</code>, <code>Join</code>, and <code>Clean</code> all operate lexically on slash paths &mdash; no filesystem access.</p>
+<pre>package main
+
+import (
+    "fmt"
+    "path"
+)
+
+func main() {
+    fmt.Println(path.Base("/a/b/c.txt"))        // c.txt
+    fmt.Println(path.Dir("/a/b/c.txt"))         // /a/b
+    fmt.Println(path.Ext("/a/b/c.txt"))         // .txt
+    fmt.Println(path.Join("a", "b", "..", "c")) // a/c
+    fmt.Println(path.Clean("/a//b/../c/"))      // /a/c
+}</pre>
+    <div class="output-label">Output</div>
+    <div class="output">c.txt
+/a/b
+.txt
+a/c
+/a/c</div>
+
+    <h4>Split, IsAbs, and glob matching</h4>
+    <p><code>Split</code> divides into dir + final element; <code>IsAbs</code> tests a leading slash; <code>Match</code> does shell-style globbing on a single path element.</p>
+<pre>package main
+
+import (
+    "fmt"
+    "path"
+)
+
+func main() {
+    dir, file := path.Split("/images/logo.png")
+    fmt.Printf("%q %q\n", dir, file)                 // "/images/" "logo.png"
+    fmt.Println(path.IsAbs("/x"), path.IsAbs("x"))   // true false
+    ok, _ := path.Match("*.png", "logo.png")
+    fmt.Println(ok)                                  // true
+}</pre>
+    <div class="output-label">Output</div>
+    <div class="output">"/images/" "logo.png"
+true false
+true</div>
+
+    <h4>path vs path/filepath</h4>
+    <p>Same call, different rule: <code>path</code> always uses <code>/</code>; <code>filepath</code> uses the OS separator (<code>\</code> on Windows). Pick by <em>what the path represents</em>, not where your code runs.</p>
+<pre>package main
+
+import (
+    "fmt"
+    "path"
+    "path/filepath"
+)
+
+func main() {
+    // For URLs and io/fs / embed keys, ALWAYS use path:
+    fmt.Println(path.Join("static", "css", "app.css"))
+    // -> static/css/app.css  (every OS)
+
+    // For real local files, use filepath (OS-specific):
+    fmt.Println(filepath.Join("static", "css", "app.css"))
+    // -> static/css/app.css on Unix, static\css\app.css on Windows
+}</pre>
+    <div class="output-label">Output</div>
+    <div class="output">static/css/app.css
+static/css/app.css</div>
+
+    <h4>Common Mistakes</h4>
+    <div class="do-dont">
+      <div class="dont-box">
+        <div class="label">Wrong</div>
+<pre>// Building an fs.FS / embed key with filepath:
+key := filepath.Join("templates", name)
+// "templates\index.html" on Windows -> lookup fails
+tmplFS.ReadFile(key)</pre>
+      </div>
+      <div class="do-box">
+        <div class="label">Right</div>
+<pre>// fs.FS keys are always slash paths:
+key := path.Join("templates", name)
+// "templates/index.html" everywhere
+tmplFS.ReadFile(key)</pre>
+      </div>
+    </div>
+
+    <h4>Key Rules</h4>
+    <ul class="rules-list">
+      <li>Use <code>path</code> for slash-separated virtual paths: URLs, <code>io/fs</code> / <code>embed.FS</code> keys, and import-like paths &mdash; always forward slashes on every OS.</li>
+      <li>Use <code>path/filepath</code> for the local filesystem &mdash; it adapts to the platform separator. Never mix the two.</li>
+      <li><code>path.Clean</code>/<code>Join</code> resolve <code>.</code> and <code>..</code> lexically without touching disk &mdash; useful to sanitize untrusted URL paths (but still validate against a root).</li>
+      <li>There's no <code>path.Abs</code> or volume handling &mdash; "absolute" and drive letters are OS concepts that live in <code>filepath</code>.</li>
+    </ul>
+
+    <div class="exercise">
+      <div class="exercise-label">Practice Exercise</div>
+      <p>Write a handler that takes an untrusted URL path, runs <code>path.Clean</code>, and rejects anything that would escape a served root (a directory-traversal guard) &mdash; then serve the file from an <code>embed.FS</code> using <code>path.Join</code> keys. Contrast it with a local disk walker built on <code>filepath</code>. Finally, show what <code>path.Join("a", "..", "..")</code> returns and explain why lexical cleaning alone is not a complete traversal defense.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>Pitfall:</strong> Using <code>filepath</code> to construct keys for <code>embed.FS</code> or <code>io/fs</code> (which require forward slashes) &mdash; it works on Unix and silently fails on Windows. And remember <code>path.Clean</code> is purely lexical: it collapses <code>..</code> but won't stop a cleaned <code>../../etc/passwd</code> from escaping if you concatenate onto a root instead of validating the result stays within it.
+    </div>
+
+    <div class="connection">
+      <strong>Connections:</strong> The slash-path sibling of <code>path/filepath</code> (the OS filesystem days); essential for <code>io/fs</code>, <code>go:embed</code> (today's review), <code>net/url</code> paths, and <code>http.FileServer</code>/<code>http.FS</code> serving.
+    </div>
+  </div>
+
+  <h3 style="font-size:18px;margin:28px 0 18px;color:var(--muted);">Section 2 &mdash; Concurrency &amp; Networking</h3>
+
+  <!-- New 4: sync.Cond -->
+  <div class="concept" id="sync_cond">
+    <div class="concept-header">
+      <h3>sync.Cond: Condition Variables</h3>
+      <span class="topic-badge">Concurrency</span>
+    </div>
+    <p class="why-matters">Why it matters: sometimes goroutines must <em>wait for a shared state to change</em> &mdash; a queue becomes non-empty, a resource frees up, a "start" flag flips &mdash; without burning CPU on a polling loop. A <code>sync.Cond</code> pairs a mutex with a wait/notify mechanism: waiters sleep until another goroutine signals a change. It's the classic tool when many waiters observe complex shared state that doesn't map cleanly onto a single channel.</p>
+
+    <h4>Wait and Signal</h4>
+    <p><code>cond.Wait()</code> atomically unlocks the mutex, blocks, and re-locks before returning. <code>Signal</code> wakes one waiter. Always guard the predicate in a <em>for</em> loop.</p>
+<pre>package main
+
+import (
+    "fmt"
+    "sync"
+)
+
+func main() {
+    var mu sync.Mutex
+    cond := sync.NewCond(&amp;mu)
+    ready := false
+
+    go func() {
+        mu.Lock()
+        ready = true
+        cond.Signal() // wake one waiter
+        mu.Unlock()
+    }()
+
+    mu.Lock()
+    for !ready {      // re-check in a loop, not an if
+        cond.Wait()   // unlocks, sleeps, re-locks on wake
+    }
+    mu.Unlock()
+    fmt.Println("ready:", ready)
+}</pre>
+    <div class="output-label">Output</div>
+    <div class="output">ready: true</div>
+
+    <h4>Broadcast to many waiters</h4>
+    <p><code>Broadcast</code> wakes <em>all</em> waiting goroutines &mdash; ideal for a one-shot "start gate" that releases a pool of workers at once.</p>
+<pre>package main
+
+import (
+    "fmt"
+    "sync"
+)
+
+func main() {
+    var mu sync.Mutex
+    cond := sync.NewCond(&amp;mu)
+    started := false
+    var wg sync.WaitGroup
+
+    for i := 0; i < 3; i++ {
+        wg.Add(1)
+        go func(id int) {
+            defer wg.Done()
+            mu.Lock()
+            for !started {
+                cond.Wait()
+            }
+            mu.Unlock()
+            fmt.Println("worker", id, "started")
+        }(i)
+    }
+
+    mu.Lock()
+    started = true
+    cond.Broadcast() // release ALL workers
+    mu.Unlock()
+    wg.Wait()
+}</pre>
+    <div class="output-label">Output</div>
+    <div class="output">worker 0 started
+worker 2 started
+worker 1 started
+(order varies between runs)</div>
+
+    <h4>Common Mistakes</h4>
+    <div class="do-dont">
+      <div class="dont-box">
+        <div class="label">Wrong</div>
+<pre>mu.Lock()
+if !ready {      // if, not for: proceeds on a stale wake
+    cond.Wait()
+}
+mu.Unlock()
+
+// Or calling Wait without holding cond.L -> undefined.
+cond.Wait() // panic / corruption</pre>
+      </div>
+      <div class="do-box">
+        <div class="label">Right</div>
+<pre>mu.Lock()
+for !ready {     // re-check after every wake
+    cond.Wait()  // must hold the lock here
+}
+// ... use the guarded state ...
+mu.Unlock()</pre>
+      </div>
+    </div>
+
+    <h4>Key Rules</h4>
+    <ul class="rules-list">
+      <li>Always hold <code>cond.L</code> (the mutex) when calling <code>Wait</code>; it atomically unlocks, blocks, and re-locks before returning.</li>
+      <li>Re-check the predicate in a <code>for</code> loop, never a single <code>if</code> &mdash; after <code>Broadcast</code> every waiter runs but the condition may already be consumed by another.</li>
+      <li><code>Signal</code> wakes one waiter, <code>Broadcast</code> wakes all; mutate the guarded state <em>under the lock</em> before signaling to avoid a missed wakeup.</li>
+      <li>Prefer channels for simple hand-offs; reach for <code>sync.Cond</code> when many goroutines wait on non-trivial shared state and channels get awkward.</li>
+    </ul>
+
+    <div class="exercise">
+      <div class="exercise-label">Practice Exercise</div>
+      <p>Implement a bounded blocking queue with a single <code>sync.Cond</code>: <code>Put</code> waits while the buffer is full, <code>Get</code> waits while it is empty, and each mutation broadcasts so waiters re-check. Then build a one-shot start gate that releases N workers simultaneously with <code>Broadcast</code>. Deliberately swap the <code>for</code> guard for an <code>if</code> and show how a spurious/lost wake corrupts the queue. Finally, rewrite the bounded queue using buffered channels and explain which version you'd ship and why.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>Pitfall:</strong> Guarding <code>Wait</code> with <code>if</code> instead of <code>for</code> &mdash; after a <code>Broadcast</code> all waiters wake, but only one may still satisfy the condition; the rest must loop and wait again. Also calling <code>Wait</code> without the lock held, or signaling <em>before</em> updating the guarded state (a missed-wakeup race where the signal is lost before a waiter parks).
+    </div>
+
+    <div class="connection">
+      <strong>Connections:</strong> Extends the <code>sync</code> package (<code>Mutex</code>, <code>WaitGroup</code>, <code>Once</code>) into wait/notify territory; an alternative to channel- and <code>select</code>-based signaling. The bounded-queue pattern underlies worker pools and backpressure from the concurrency-patterns days.
+    </div>
+  </div>
+
+  <!-- New 5: net.Dialer & net.Resolver -->
+  <div class="concept" id="net_dialer">
+    <div class="concept-header">
+      <h3>net.Dialer &amp; net.Resolver: Custom Dialing &amp; DNS</h3>
+      <span class="topic-badge">Networking</span>
+    </div>
+    <p class="why-matters">Why it matters: the default HTTP client and raw <code>net.Dial</code> hide connection behavior, but production code needs bounded timeouts, TCP keep-alives, context cancellation, and sometimes custom DNS. <code>net.Dialer</code> configures how outbound connections are made; <code>net.Resolver</code> controls name resolution. Wiring a tuned dialer into <code>http.Transport</code> is how you stop a single hung server from leaking goroutines forever.</p>
+
+    <h4>A dialer with timeout and context</h4>
+    <p><code>DialContext</code> honors both the dialer's own <code>Timeout</code> and the caller's context deadline &mdash; prefer it over <code>Dial</code>.</p>
+<pre>package main
+
+import (
+    "context"
+    "fmt"
+    "net"
+    "time"
+)
+
+func main() {
+    d := net.Dialer{
+        Timeout:   3 * time.Second,  // cap DNS + connect
+        KeepAlive: 30 * time.Second, // TCP keep-alive probes
+    }
+    ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
+    defer cancel()
+
+    conn, err := d.DialContext(ctx, "tcp", "example.com:80")
+    if err != nil {
+        fmt.Println("dial failed:", err)
+        return
+    }
+    defer conn.Close()
+    fmt.Println("connected to", conn.RemoteAddr())
+}</pre>
+    <div class="output-label">Output (representative &mdash; remote IP varies)</div>
+    <div class="output">connected to 93.184.216.34:80</div>
+
+    <h4>A custom resolver</h4>
+    <p>A <code>net.Resolver</code> with <code>PreferGo</code> and a custom <code>Dial</code> forces DNS through a chosen server &mdash; useful for testing, split-horizon DNS, or pinning a resolver.</p>
+<pre>r := &amp;net.Resolver{
+    PreferGo: true, // use Go's resolver, not cgo
+    Dial: func(ctx context.Context, network, address string) (net.Conn, error) {
+        d := net.Dialer{Timeout: 2 * time.Second}
+        return d.DialContext(ctx, network, "1.1.1.1:53") // force Cloudflare DNS
+    },
+}
+ips, err := r.LookupHost(context.Background(), "example.com")
+fmt.Println(ips, err)</pre>
+
+    <h4>Plugging the dialer into http.Transport</h4>
+    <p>Reuse one <code>*http.Client</code> with a tuned <code>Transport</code>: bound every layer &mdash; dial, TLS handshake, idle connections, and the overall request.</p>
+<pre>package main
+
+import (
+    "fmt"
+    "net"
+    "net/http"
+    "time"
+)
+
+func main() {
+    tr := &amp;http.Transport{
+        DialContext: (&amp;net.Dialer{
+            Timeout:   5 * time.Second,
+            KeepAlive: 30 * time.Second,
+        }).DialContext,
+        MaxIdleConns:        100,
+        IdleConnTimeout:     90 * time.Second,
+        TLSHandshakeTimeout: 5 * time.Second,
+    }
+    client := &amp;http.Client{Transport: tr, Timeout: 10 * time.Second}
+    _ = client
+    fmt.Println("client configured with custom dialer")
+}</pre>
+    <div class="output-label">Output</div>
+    <div class="output">client configured with custom dialer</div>
+
+    <h4>Common Mistakes</h4>
+    <div class="do-dont">
+      <div class="dont-box">
+        <div class="label">Wrong</div>
+<pre>// No timeout: one hung server blocks forever.
+resp, _ := http.Get(url) // uses DefaultClient (Timeout: 0)
+
+// New client per request: defeats connection pooling.
+for _, url := range urls {
+    c := &amp;http.Client{}
+    c.Get(url)
+}</pre>
+      </div>
+      <div class="do-box">
+        <div class="label">Right</div>
+<pre>// One shared, fully-bounded client, reused everywhere.
+var client = &amp;http.Client{
+    Timeout: 10 * time.Second,
+    Transport: &amp;http.Transport{
+        DialContext: (&amp;net.Dialer{Timeout: 5 * time.Second}).DialContext,
+        TLSHandshakeTimeout: 5 * time.Second,
+    },
+}
+req, _ := http.NewRequestWithContext(ctx, "GET", url, nil)
+resp, err := client.Do(req)</pre>
+      </div>
+    </div>
+
+    <h4>Key Rules</h4>
+    <ul class="rules-list">
+      <li>Never use <code>http.DefaultClient</code>/<code>http.Get</code> in production without a <code>Timeout</code> &mdash; the default waits forever. Give it a bounded <code>Timeout</code> and a <code>Transport</code> with a configured <code>net.Dialer</code>.</li>
+      <li>Prefer <code>DialContext</code> over <code>Dial</code> so dials honor the caller's cancellation and deadline.</li>
+      <li><code>Dialer.Timeout</code> bounds a single dial (DNS + connect); <code>http.Client.Timeout</code> bounds the whole request including reading the body &mdash; set both, plus <code>TLSHandshakeTimeout</code>.</li>
+      <li>Reuse one <code>*http.Client</code>/<code>Transport</code> across goroutines (they're safe and pool connections); use a custom <code>net.Resolver</code> to control DNS.</li>
+    </ul>
+
+    <div class="exercise">
+      <div class="exercise-label">Practice Exercise</div>
+      <p>Build an <code>http.Client</code> with a fully bounded lifecycle &mdash; dial timeout, TLS handshake timeout, response-header timeout, and overall <code>Timeout</code> &mdash; and prove a deliberately slow endpoint returns a deadline error instead of hanging (use <code>httptest</code> with a handler that sleeps). Wrap the dialer to log each connection's target and latency. Then configure a <code>net.Resolver</code> pointing at an unreachable DNS server and observe the resolution error. Explain why sharing a single client across goroutines is both correct and preferred.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>Pitfall:</strong> Creating a fresh <code>http.Client</code> per request (defeats connection pooling and can exhaust sockets under load) or using one with no timeout (a single unresponsive host stalls goroutines indefinitely, a classic production outage). Configure timeouts at <em>every</em> layer &mdash; dial, TLS, headers, overall &mdash; and reuse one client.
+    </div>
+
+    <div class="connection">
+      <strong>Connections:</strong> Builds on the TCP servers and <code>net/http</code> handler/client days; <code>DialContext</code> ties into <code>context</code> cancellation and deadlines; pairs with <code>net/netip</code> addresses, <code>crypto/tls</code>, and the retry-with-backoff and circuit-breaker production patterns.
+    </div>
+  </div>
+
+</div><!-- end New Concepts section -->
+
+
+<!-- ============================================================ -->
+<!-- FOOTER -->
+<!-- ============================================================ -->
+<footer class="footer">
+  <h4>All Go Guides</h4>
+  <ul>
+    <li><a href="golang-guides/golang-guide-2026-07-09.html">Day 34 &mdash; 2026-07-09</a></li>
+    <li><a href="golang-guides/golang-guide-2026-07-08.html">Day 33 &mdash; 2026-07-08</a></li>
+    <li><a href="golang-guides/golang-guide-2026-07-07.html">Day 32 &mdash; 2026-07-07</a></li>
+    <li class="current">Day 31 &mdash; 2026-07-06 (current)</li>
+    <li><a href="golang-guides/golang-guide-2026-07-05.html">Day 30 &mdash; 2026-07-05</a></li>
+    <li><a href="golang-guides/golang-guide-2026-07-04.html">Day 29 &mdash; 2026-07-04</a></li>
+    <li><a href="golang-guides/golang-guide-2026-07-03.html">Day 28 &mdash; 2026-07-03</a></li>
+    <li><a href="golang-guides/golang-guide-2026-07-02.html">Day 27 &mdash; 2026-07-02</a></li>
+    <li><a href="golang-guides/golang-guide-2026-07-01.html">Day 26 &mdash; 2026-07-01</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-30.html">Day 25 &mdash; 2026-06-30</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-29.html">Day 24 &mdash; 2026-06-29</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-28.html">Day 23 &mdash; 2026-06-28</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-27.html">Day 22 &mdash; 2026-06-27</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-26.html">Day 21 &mdash; 2026-06-26</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-25.html">Day 20 &mdash; 2026-06-25</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-24.html">Day 19 &mdash; 2026-06-24</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-23.html">Day 18 &mdash; 2026-06-23</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-22.html">Day 17 &mdash; 2026-06-22</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-21.html">Day 16 &mdash; 2026-06-21</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-19.html">Day 15 &mdash; 2026-06-19</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-18.html">Day 14 &mdash; 2026-06-18</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-17.html">Day 13 &mdash; 2026-06-17</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-15.html">Day 12 &mdash; 2026-06-15</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-13.html">Day 11 &mdash; 2026-06-13</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-12.html">Day 10 &mdash; 2026-06-12</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-11.html">Day 9 &mdash; 2026-06-11</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-10.html">Day 8 &mdash; 2026-06-10</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-09.html">Day 7 &mdash; 2026-06-09</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-08.html">Day 6 &mdash; 2026-06-08</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-07.html">Day 5 &mdash; 2026-06-07</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-05.html">Day 4 &mdash; 2026-06-05</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-04.html">Day 3 &mdash; 2026-06-04</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-03.html">Day 2 &mdash; 2026-06-03</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-02.html">Day 1 &mdash; 2026-06-02</a></li>
+  </ul>
+
+  <h4 style="margin-top: 20px;">All Guides</h4>
+  <ul>
+    <li><a href="guide.html">LeetCode Study Guide</a></li>
+    <li><a href="lang-guide.html">Multi-Language Guide</a></li>
+    <li><a href="python-guide.html">Python Guide</a></li>
+    <li><a href="typescript-guide.html">TypeScript Guide</a></li>
+    <li><a href="javascript-guide.html">JavaScript Guide</a></li>
+    <li><a href="golang-guide.html">Go Guide (current)</a></li>
+    <li><a href="report.html">Performance Report</a></li>
+  </ul>
+</footer>
+
+</div><!-- end main -->
+
+<script>
+// ===== Theme Toggle =====
+(function() {
+  var KEY = 'lc-goguide-theme';
+  var toggle = document.getElementById('theme-toggle');
+  var html = document.documentElement;
+
+  function setTheme(theme) {
+    html.setAttribute('data-theme', theme);
+    localStorage.setItem(KEY, theme);
+    toggle.textContent = theme === 'dark' ? '☽' : '☀';
+  }
+
+  var saved = localStorage.getItem(KEY) || 'dark';
+  setTheme(saved);
+
+  toggle.addEventListener('click', function() {
+    setTheme(html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
+  });
+})();
+
+// ===== Mobile Sidebar Toggle =====
+(function() {
+  var btn = document.getElementById('sidebar-toggle');
+  var sidebar = document.getElementById('sidebar');
+
+  btn.addEventListener('click', function() {
+    sidebar.classList.toggle('open');
+  });
+
+  // Close sidebar when clicking a link (mobile)
+  sidebar.querySelectorAll('.sidebar-link').forEach(function(link) {
+    link.addEventListener('click', function() {
+      if (window.innerWidth <= 900) {
+        sidebar.classList.remove('open');
+      }
+    });
+  });
+})();
+
+// ===== Active Sidebar Link on Scroll =====
+(function() {
+  var links = document.querySelectorAll('.sidebar-link');
+  var sections = [];
+
+  links.forEach(function(link) {
+    var id = link.getAttribute('href').replace('#', '');
+    var el = document.getElementById(id);
+    if (el) sections.push({ id: id, el: el, link: link });
+  });
+
+  function onScroll() {
+    var scrollTop = window.scrollY + 120;
+    var current = null;
+
+    for (var i = sections.length - 1; i >= 0; i--) {
+      if (sections[i].el.offsetTop <= scrollTop) {
+        current = sections[i];
+        break;
+      }
+    }
+
+    links.forEach(function(l) { l.classList.remove('active'); });
+    if (current) current.link.classList.add('active');
+  }
+
+  window.addEventListener('scroll', onScroll);
+  onScroll();
+})();
+</script>
+</body>
+</html>

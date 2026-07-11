@@ -1,0 +1,1702 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Go Study Guide &mdash; Day 19 (2026-06-24)</title>
+<style>
+/* ===== CSS Variables ===== */
+:root {
+  --bg: #0d1117;
+  --surface1: #161b22;
+  --surface2: #1c2129;
+  --border: #30363d;
+  --text: #e6edf3;
+  --muted: #8b949e;
+  --accent: #58a6ff;
+  --accent-dim: #1f6feb33;
+  --green: #3fb950;
+  --green-dim: #23863633;
+  --yellow: #d29922;
+  --yellow-dim: #d2992233;
+  --red: #f85149;
+  --red-dim: #f8514933;
+  --purple: #bc8cff;
+  --purple-dim: #bc8cff22;
+  --orange: #f0883e;
+  --orange-dim: #f0883e22;
+  --code-bg: #0d1117;
+  --sidebar-w: 300px;
+  --font-mono: 'SF Mono', 'Cascadia Code', 'Fira Code', Consolas, monospace;
+  --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+  --radius: 8px;
+  --shadow: 0 1px 3px rgba(0,0,0,0.4);
+}
+
+[data-theme="light"] {
+  --bg: #ffffff;
+  --surface1: #f6f8fa;
+  --surface2: #f0f3f6;
+  --border: #d0d7de;
+  --text: #1f2328;
+  --muted: #656d76;
+  --accent: #0969da;
+  --accent-dim: #0969da1a;
+  --green: #1a7f37;
+  --green-dim: #1a7f3718;
+  --yellow: #9a6700;
+  --yellow-dim: #9a670018;
+  --red: #cf222e;
+  --red-dim: #cf222e18;
+  --purple: #8250df;
+  --purple-dim: #8250df18;
+  --orange: #bc4c00;
+  --orange-dim: #bc4c0018;
+  --code-bg: #f6f8fa;
+  --shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+/* ===== Reset & Base ===== */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: var(--font-sans);
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.7;
+  font-size: 16px;
+  transition: background 0.2s, color 0.2s;
+}
+
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+/* ===== Theme Toggle ===== */
+#theme-toggle {
+  position: fixed;
+  top: 16px;
+  right: 20px;
+  z-index: 1000;
+  background: var(--surface1);
+  border: 1px solid var(--border);
+  color: var(--text);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+  box-shadow: var(--shadow);
+}
+#theme-toggle:hover { background: var(--surface2); border-color: var(--accent); }
+
+/* ===== Sidebar ===== */
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: var(--sidebar-w);
+  height: 100vh;
+  background: var(--surface1);
+  border-right: 1px solid var(--border);
+  overflow-y: auto;
+  padding: 20px 0;
+  z-index: 100;
+  transition: transform 0.3s;
+}
+
+.sidebar-header {
+  padding: 0 20px 16px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 12px;
+}
+
+.sidebar-header h2 {
+  font-size: 16px;
+  color: var(--text);
+  font-weight: 700;
+}
+
+.sidebar-header .subtitle {
+  font-size: 12px;
+  color: var(--muted);
+  margin-top: 2px;
+}
+
+.sidebar-section {
+  margin-bottom: 8px;
+}
+
+.sidebar-section-title {
+  padding: 6px 20px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+}
+
+.sidebar-link {
+  display: block;
+  padding: 5px 20px 5px 28px;
+  font-size: 13px;
+  color: var(--muted);
+  text-decoration: none;
+  border-left: 2px solid transparent;
+  transition: all 0.15s;
+  line-height: 1.4;
+}
+
+.sidebar-link:hover {
+  color: var(--text);
+  background: var(--accent-dim);
+  border-left-color: var(--accent);
+  text-decoration: none;
+}
+
+.sidebar-link.active {
+  color: var(--accent);
+  border-left-color: var(--accent);
+  background: var(--accent-dim);
+}
+
+/* ===== Mobile sidebar toggle ===== */
+#sidebar-toggle {
+  display: none;
+  position: fixed;
+  top: 16px;
+  left: 16px;
+  z-index: 200;
+  background: var(--surface1);
+  border: 1px solid var(--border);
+  color: var(--text);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 20px;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--shadow);
+}
+
+/* ===== Main Content ===== */
+.main {
+  margin-left: var(--sidebar-w);
+  padding: 40px 48px 80px;
+  max-width: calc(860px + var(--sidebar-w) + 96px);
+}
+
+.page-title {
+  font-size: 32px;
+  font-weight: 800;
+  margin-bottom: 4px;
+  color: var(--text);
+}
+
+.page-subtitle {
+  font-size: 15px;
+  color: var(--muted);
+  margin-bottom: 36px;
+}
+
+/* ===== Sections ===== */
+.section {
+  margin-bottom: 48px;
+}
+
+.section-label {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  padding: 3px 10px;
+  border-radius: 4px;
+  margin-bottom: 12px;
+}
+
+.section-label.review { background: var(--yellow-dim); color: var(--yellow); }
+.section-label.new { background: var(--green-dim); color: var(--green); }
+
+.section-title {
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 24px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--border);
+}
+
+/* ===== How To Use ===== */
+.how-to-use {
+  background: var(--surface1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px 24px;
+  margin-bottom: 36px;
+}
+
+.how-to-use h3 {
+  font-size: 16px;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.how-to-use ul {
+  padding-left: 22px;
+  margin: 0;
+}
+
+.how-to-use li {
+  font-size: 14px;
+  color: var(--muted);
+  margin-bottom: 4px;
+}
+
+/* ===== Concept Cards ===== */
+.concept {
+  background: var(--surface1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 28px;
+  margin-bottom: 28px;
+  box-shadow: var(--shadow);
+}
+
+.concept-header {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  margin-bottom: 6px;
+  flex-wrap: wrap;
+}
+
+.concept h3 {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.concept-meta {
+  font-size: 12px;
+  color: var(--muted);
+  background: var(--surface2);
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
+.concept h4 {
+  font-size: 15px;
+  font-weight: 600;
+  margin: 20px 0 8px;
+  color: var(--text);
+}
+
+.concept p, .concept li {
+  color: var(--text);
+  line-height: 1.7;
+}
+
+.concept ul, .concept ol {
+  padding-left: 22px;
+  margin: 8px 0;
+}
+
+.concept li {
+  margin-bottom: 4px;
+}
+
+.concept .why-matters {
+  font-style: italic;
+  color: var(--muted);
+  margin: 6px 0 16px;
+  font-size: 15px;
+}
+
+/* ===== Code Blocks ===== */
+pre {
+  background: var(--code-bg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 16px 18px;
+  overflow-x: auto;
+  margin: 10px 0 14px;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--text);
+  position: relative;
+}
+
+pre::after {
+  content: 'Go';
+  position: absolute;
+  top: 6px;
+  right: 10px;
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  opacity: 0.6;
+}
+
+code {
+  font-family: var(--font-mono);
+  font-size: 0.9em;
+}
+
+:not(pre) > code {
+  background: var(--surface2);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.88em;
+}
+
+/* ===== Output Blocks ===== */
+.output {
+  background: var(--green-dim);
+  border: 1px solid var(--green);
+  border-radius: 6px;
+  padding: 12px 16px;
+  margin: 6px 0 14px;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--text);
+  white-space: pre-wrap;
+}
+
+.output::after { content: none; }
+
+.output-label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--green);
+  margin-bottom: 4px;
+}
+
+/* ===== Good/Bad Examples ===== */
+.do-dont {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin: 10px 0;
+}
+
+.do-box, .dont-box {
+  border-radius: 6px;
+  padding: 14px;
+  border: 1px solid;
+}
+
+.do-box {
+  background: var(--green-dim);
+  border-color: var(--green);
+}
+
+.dont-box {
+  background: var(--red-dim);
+  border-color: var(--red);
+}
+
+.do-box .label, .dont-box .label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 6px;
+}
+
+.do-box .label { color: var(--green); }
+.dont-box .label { color: var(--red); }
+
+.do-box pre, .dont-box pre {
+  margin: 0;
+  border: none;
+  background: transparent;
+  padding: 0;
+  font-size: 12.5px;
+}
+
+.do-box pre::after, .dont-box pre::after { content: none; }
+
+/* ===== Key Rules ===== */
+.rules-list {
+  list-style: none;
+  padding: 0;
+  margin: 8px 0;
+}
+
+.rules-list li {
+  padding: 6px 0 6px 24px;
+  position: relative;
+}
+
+.rules-list li::before {
+  content: "\2192";
+  position: absolute;
+  left: 2px;
+  color: var(--accent);
+  font-weight: 700;
+}
+
+/* ===== Exercises ===== */
+.exercise {
+  background: var(--purple-dim);
+  border: 1px solid var(--purple);
+  border-radius: 6px;
+  padding: 14px 18px;
+  margin: 8px 0;
+}
+
+.exercise .exercise-label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--purple);
+  margin-bottom: 4px;
+}
+
+/* ===== Pitfall ===== */
+.pitfall {
+  background: var(--red-dim);
+  border-left: 3px solid var(--red);
+  border-radius: 0 6px 6px 0;
+  padding: 10px 14px;
+  margin: 10px 0;
+  font-size: 14px;
+}
+
+.pitfall strong {
+  color: var(--red);
+}
+
+/* ===== Connection ===== */
+.connection {
+  background: var(--accent-dim);
+  border-left: 3px solid var(--accent);
+  border-radius: 0 6px 6px 0;
+  padding: 10px 14px;
+  margin: 10px 0;
+  font-size: 14px;
+  color: var(--muted);
+}
+
+/* ===== Review Cards ===== */
+.review-card {
+  background: var(--surface1);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--purple);
+  border-radius: var(--radius);
+  padding: 20px 24px;
+  margin-bottom: 16px;
+  box-shadow: var(--shadow);
+}
+
+.review-card .review-header {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  margin-bottom: 6px;
+  flex-wrap: wrap;
+}
+
+.review-card h3 {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.review-card .review-meta {
+  font-size: 12px;
+  color: var(--muted);
+  background: var(--surface2);
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
+.review-card h4 {
+  font-size: 14px;
+  font-weight: 600;
+  margin: 14px 0 6px;
+  color: var(--text);
+}
+
+.review-card p, .review-card li {
+  color: var(--text);
+  line-height: 1.6;
+  font-size: 14px;
+}
+
+.review-card pre {
+  font-size: 12.5px;
+  padding: 12px 14px;
+  margin: 6px 0 10px;
+}
+
+.review-card .pitfall {
+  font-size: 13px;
+  padding: 8px 12px;
+}
+
+/* ===== Topic Badge ===== */
+.topic-badge {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 2px 8px;
+  border-radius: 4px;
+  background: var(--accent-dim);
+  color: var(--accent);
+  margin-left: 4px;
+}
+
+/* ===== Footer ===== */
+.footer {
+  margin-top: 60px;
+  padding: 24px 0;
+  border-top: 1px solid var(--border);
+}
+
+.footer h4 {
+  font-size: 14px;
+  color: var(--muted);
+  margin-bottom: 10px;
+}
+
+.footer ul {
+  list-style: none;
+  padding: 0;
+}
+
+.footer li {
+  margin-bottom: 4px;
+  font-size: 14px;
+}
+
+.footer li a { color: var(--accent); }
+.footer .current { color: var(--green); font-weight: 600; }
+
+/* ===== Bash code blocks ===== */
+pre.bash::after {
+  content: 'Bash';
+}
+
+/* ===== YAML code blocks ===== */
+pre.yaml-code::after {
+  content: 'YAML';
+}
+
+/* ===== Responsive ===== */
+@media (max-width: 900px) {
+  .sidebar {
+    transform: translateX(-100%);
+  }
+  .sidebar.open {
+    transform: translateX(0);
+    box-shadow: 4px 0 20px rgba(0,0,0,0.5);
+  }
+  #sidebar-toggle {
+    display: flex;
+  }
+  .main {
+    margin-left: 0;
+    padding: 60px 20px 60px;
+    max-width: 100%;
+  }
+  .do-dont {
+    grid-template-columns: 1fr;
+  }
+  #theme-toggle {
+    right: 14px;
+    top: 16px;
+  }
+}
+</style>
+</head>
+<body>
+
+<!-- Theme Toggle -->
+<button id="theme-toggle" aria-label="Toggle theme" title="Toggle light/dark theme">&#9789;</button>
+
+<!-- Mobile Sidebar Toggle -->
+<button id="sidebar-toggle" aria-label="Toggle sidebar">&#9776;</button>
+
+<!-- Sidebar -->
+<nav class="sidebar" id="sidebar">
+  <div class="sidebar-header">
+    <h2>Go Guide</h2>
+    <div class="subtitle">Day 19 &mdash; 2026-06-24</div>
+  </div>
+
+  <div class="sidebar-section">
+    <div class="sidebar-section-title">Review (6 concepts)</div>
+    <a href="#os_filepath" class="sidebar-link">os &amp; filepath</a>
+    <a href="#net_http" class="sidebar-link">net/http</a>
+    <a href="#sort_package" class="sidebar-link">sort Package</a>
+    <a href="#graceful_shutdown" class="sidebar-link">Graceful Shutdown</a>
+    <a href="#config_management" class="sidebar-link">Configuration Management</a>
+    <a href="#escape_analysis" class="sidebar-link">Escape Analysis</a>
+  </div>
+
+  <div class="sidebar-section">
+    <div class="sidebar-section-title">Go Performance &amp; Optimization (3)</div>
+    <a href="#pgo_optimization" class="sidebar-link">Profile-Guided Optimization</a>
+    <a href="#gc_tuning" class="sidebar-link">GC Tuning: GOGC &amp; GOMEMLIMIT</a>
+    <a href="#string_optimization" class="sidebar-link">String Performance</a>
+  </div>
+
+  <div class="sidebar-section">
+    <div class="sidebar-section-title">Advanced Generic Patterns (2)</div>
+    <a href="#generic_data_structures" class="sidebar-link">Generic Data Structures</a>
+    <a href="#type_switch_generics" class="sidebar-link">Type Switches &amp; any</a>
+  </div>
+</nav>
+
+<!-- Main Content -->
+<div class="main">
+
+<h1 class="page-title">Go Daily Guide &mdash; 2026-06-24 (Day 19)</h1>
+<p class="page-subtitle">Day 19 &mdash; Wednesday, June 24, 2026 &bull; 11 concepts (6 review + 5 new)</p>
+
+<!-- How to Use -->
+<div class="how-to-use">
+  <h3>How to Use This Guide</h3>
+  <ul>
+    <li>Start with the <strong>Review</strong> section &mdash; try to recall each concept before reading the refresher</li>
+    <li>Complete the challenge exercise for each review card without looking back at previous days</li>
+    <li>Then work through the <strong>New Concepts</strong> section, typing out every code example yourself</li>
+    <li>Pay special attention to the common mistakes sections (they highlight real Go gotchas)</li>
+    <li>Complete the exercises at the bottom of each concept without looking at solutions</li>
+    <li>Use <code>go run main.go</code> to test your code locally, or use the <a href="https://go.dev/play/" target="_blank">Go Playground</a></li>
+  </ul>
+</div>
+
+<!-- ============================================================ -->
+<!-- REVIEW SECTION -->
+<!-- ============================================================ -->
+<div class="section">
+  <span class="section-label review">Review</span>
+  <h2 class="section-title">Spaced Repetition Review &mdash; 6 Concepts</h2>
+
+  <!-- Review 1: os & filepath -->
+  <div class="review-card" id="os_filepath">
+    <div class="review-header">
+      <h3>os &amp; filepath</h3>
+      <span class="review-meta">Standard Library Mastery &bull; due today &bull; rep 2</span>
+    </div>
+
+    <h4>Quick Reminder</h4>
+    <p>For simple whole-file I/O, reach for <code>os.ReadFile</code> and <code>os.WriteFile</code> &mdash; no manual open/close needed. Build paths with <code>filepath.Join</code> so they use the right separator on every OS. Walk directory trees with <code>filepath.WalkDir</code> (faster than the older <code>Walk</code> because it avoids a <code>Stat</code> per entry).</p>
+
+    <h4>Key Pattern</h4>
+<pre>package main
+
+import (
+    "fmt"
+    "io/fs"
+    "path/filepath"
+)
+
+func main() {
+    root := filepath.Join("some", "dir") // OS-correct separator
+    _ = root
+
+    err := filepath.WalkDir(".", func(path string, d fs.DirEntry, err error) error {
+        if err != nil {
+            return err // surface permission / I/O errors
+        }
+        if !d.IsDir() &amp;&amp; filepath.Ext(path) == ".go" {
+            fmt.Println(path)
+        }
+        return nil
+    })
+    if err != nil {
+        fmt.Println("walk failed:", err)
+    }
+}</pre>
+    <div class="output-label">Output (example)</div>
+    <div class="output">main.go
+internal/util/util.go</div>
+
+    <div class="exercise">
+      <div class="exercise-label">Challenge Exercise</div>
+      <p>Write <code>dirSize(root string) (int64, error)</code> that returns the total byte size of all regular files under <code>root</code>, using <code>filepath.WalkDir</code>. Call <code>d.Info()</code> to get the file size, and make sure you skip directories. Bonus: build the input path portably with <code>filepath.Join</code> and verify it works whether the caller passes a trailing slash or not.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>Pitfall:</strong> Building paths with string concatenation (<code>dir + "/" + name</code>) breaks on Windows and double-slashes when <code>dir</code> already ends in a separator. Always use <code>filepath.Join</code>, which cleans the result and uses the OS separator.
+    </div>
+  </div>
+
+  <!-- Review 2: net/http -->
+  <div class="review-card" id="net_http">
+    <div class="review-header">
+      <h3>net/http: Handlers, ServeMux, Middleware, Client</h3>
+      <span class="review-meta">Standard Library Mastery &bull; due today &bull; rep 2</span>
+    </div>
+
+    <h4>Quick Reminder</h4>
+    <p>An <code>http.Handler</code> is anything with <code>ServeHTTP(w, r)</code>; <code>http.HandlerFunc</code> adapts a plain function to that interface. Since Go 1.22, <code>http.ServeMux</code> supports method-and-pattern routing like <code>"GET /api/{id}"</code> with <code>r.PathValue("id")</code>. On the client side, always construct an <code>http.Client</code> with an explicit <code>Timeout</code>.</p>
+
+    <h4>Key Pattern</h4>
+<pre>package main
+
+import (
+    "fmt"
+    "net/http"
+    "time"
+)
+
+func main() {
+    mux := http.NewServeMux()
+    mux.HandleFunc("GET /api/{id}", func(w http.ResponseWriter, r *http.Request) {
+        fmt.Fprintf(w, "id = %s\n", r.PathValue("id"))
+    })
+
+    // Client with an explicit timeout
+    client := &amp;http.Client{Timeout: 5 * time.Second}
+    _ = client
+    _ = mux
+
+    fmt.Println("routes registered")
+}</pre>
+    <div class="output-label">Output</div>
+    <div class="output">routes registered</div>
+
+    <div class="exercise">
+      <div class="exercise-label">Challenge Exercise</div>
+      <p>Write a <code>logging</code> middleware with signature <code>func(http.Handler) http.Handler</code> that records the method, path, status code, and duration of each request. Wrap <code>http.ResponseWriter</code> in a small struct that captures the status passed to <code>WriteHeader</code> (default 200). Register it around a mux that has a <code>GET /health</code> route.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>Pitfall:</strong> Using <code>http.Get</code> or a bare <code>&amp;http.Client{}</code> with no <code>Timeout</code>. The zero-value client has <em>no</em> timeout &mdash; a slow or hung server can block your goroutine forever. Always set <code>Timeout</code> (or use a per-request <code>context</code> deadline).
+    </div>
+  </div>
+
+  <!-- Review 3: sort Package -->
+  <div class="review-card" id="sort_package">
+    <div class="review-header">
+      <h3>sort Package</h3>
+      <span class="review-meta">Standard Library Mastery &bull; due today &bull; rep 2</span>
+    </div>
+
+    <h4>Quick Reminder</h4>
+    <p><code>sort.Slice(s, less)</code> sorts in place with a custom comparator; <code>sort.SliceStable</code> preserves the relative order of equal elements. <code>sort.Search(n, f)</code> does a binary search and returns the smallest index where <code>f</code> is true &mdash; an <em>insertion point</em>, not necessarily a match. (In Go 1.21+ the generic <code>slices.Sort</code> / <code>slices.SortFunc</code> are often cleaner for ordered types.)</p>
+
+    <h4>Key Pattern</h4>
+<pre>package main
+
+import (
+    "fmt"
+    "sort"
+)
+
+func main() {
+    nums := []int{5, 2, 9, 1, 7}
+    sort.Slice(nums, func(i, j int) bool { return nums[i] &lt; nums[j] })
+    fmt.Println(nums)
+
+    // Binary search: first index where nums[i] >= 6
+    i := sort.Search(len(nums), func(i int) bool { return nums[i] &gt;= 6 })
+    fmt.Printf("insertion point for 6: index %d (value %d)\n", i, nums[i])
+}</pre>
+    <div class="output-label">Output</div>
+    <div class="output">[1 2 5 7 9]
+insertion point for 6: index 3 (value 7)</div>
+
+    <div class="exercise">
+      <div class="exercise-label">Challenge Exercise</div>
+      <p>Given a sorted <code>[]int</code> and a target, write <code>contains(s []int, target int) bool</code> using <code>sort.Search</code>. Remember that <code>Search</code> returns where the target <em>would</em> go &mdash; you must then check that <code>i &lt; len(s) &amp;&amp; s[i] == target</code>. Then sort a slice of structs by two fields (primary ascending, tiebreak descending) with <code>sort.Slice</code>.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>Pitfall:</strong> Treating <code>sort.Search</code>'s return value as "found index." It returns the insertion point even when the element is absent (possibly <code>len(s)</code>). You must verify <code>i &lt; len(s) &amp;&amp; s[i] == target</code> before trusting it &mdash; otherwise you risk an out-of-range index or a false positive.
+    </div>
+  </div>
+
+  <!-- Review 4: Graceful Shutdown -->
+  <div class="review-card" id="graceful_shutdown">
+    <div class="review-header">
+      <h3>Graceful Shutdown</h3>
+      <span class="review-meta">Production Go &bull; due today &bull; rep 1</span>
+    </div>
+
+    <h4>Quick Reminder</h4>
+    <p>Catch OS signals with <code>signal.NotifyContext</code>, which returns a context that is cancelled on <code>SIGINT</code>/<code>SIGTERM</code>. On cancellation, call <code>server.Shutdown(ctx)</code> &mdash; it stops accepting new connections and drains in-flight requests, returning when they finish or <code>ctx</code> expires. Always wrap <code>Shutdown</code> with its own timeout context.</p>
+
+    <h4>Key Pattern</h4>
+<pre>package main
+
+import (
+    "context"
+    "fmt"
+    "net/http"
+    "os/signal"
+    "syscall"
+    "time"
+)
+
+func main() {
+    ctx, stop := signal.NotifyContext(context.Background(),
+        syscall.SIGINT, syscall.SIGTERM)
+    defer stop()
+
+    srv := &amp;http.Server{Addr: ":8080"}
+    go func() { _ = srv.ListenAndServe() }()
+
+    &lt;-ctx.Done() // wait for signal
+    fmt.Println("shutting down...")
+
+    shutdownCtx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+    defer cancel()
+    if err := srv.Shutdown(shutdownCtx); err != nil {
+        fmt.Println("forced shutdown:", err)
+    }
+    fmt.Println("done")
+}</pre>
+    <div class="output-label">Output (after Ctrl-C)</div>
+    <div class="output">shutting down...
+done</div>
+
+    <div class="exercise">
+      <div class="exercise-label">Challenge Exercise</div>
+      <p>Extend the pattern so that, in addition to the HTTP server, you also gracefully stop a background worker goroutine that reads from a job channel. The worker should finish its current job, then exit when the shutdown context is cancelled. Use a <code>sync.WaitGroup</code> to ensure <code>main</code> does not return until both the server and the worker have fully stopped.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>Pitfall:</strong> Calling <code>srv.Shutdown(context.Background())</code> with no timeout. <code>Shutdown</code> blocks until <em>every</em> in-flight connection closes &mdash; a single slow client (or a hijacked/streaming connection) can hang shutdown indefinitely. Always pass a context with a deadline.
+    </div>
+  </div>
+
+  <!-- Review 5: Configuration Management -->
+  <div class="review-card" id="config_management">
+    <div class="review-header">
+      <h3>Configuration Management</h3>
+      <span class="review-meta">Production Go &bull; due today &bull; rep 1</span>
+    </div>
+
+    <h4>Quick Reminder</h4>
+    <p>Load config once, eagerly, at startup into a typed struct, then validate it. A common layering is <em>defaults &lt; flags &lt; environment</em>. Read env vars with <code>os.Getenv</code> / <code>os.LookupEnv</code> (the latter distinguishes "unset" from "empty"), or a library like <code>envconfig</code> driven by struct tags. Fail fast if a required value is missing.</p>
+
+    <h4>Key Pattern</h4>
+<pre>package main
+
+import (
+    "fmt"
+    "os"
+)
+
+type Config struct {
+    Port    string
+    DBURL   string
+    Verbose bool
+}
+
+func Load() (Config, error) {
+    cfg := Config{Port: "8080"} // default
+    if v, ok := os.LookupEnv("PORT"); ok {
+        cfg.Port = v
+    }
+    cfg.DBURL = os.Getenv("DATABASE_URL")
+    cfg.Verbose = os.Getenv("VERBOSE") == "true"
+
+    if cfg.DBURL == "" {
+        return cfg, fmt.Errorf("DATABASE_URL is required")
+    }
+    return cfg, nil
+}
+
+func main() {
+    cfg, err := Load()
+    if err != nil {
+        fmt.Println("config error:", err)
+        return
+    }
+    fmt.Printf("%+v\n", cfg)
+}</pre>
+    <div class="output-label">Output (with DATABASE_URL=postgres://... PORT=9090)</div>
+    <div class="output">{Port:9090 DBURL:postgres://... Verbose:false}</div>
+
+    <div class="exercise">
+      <div class="exercise-label">Challenge Exercise</div>
+      <p>Add a <code>Validate()</code> method to <code>Config</code> that checks the port is numeric and in range 1&ndash;65535, and that <code>DBURL</code> starts with <code>postgres://</code>. Then add a <code>flag</code>-based override layer so that a <code>-port</code> command-line flag beats the environment variable, which beats the default. Verify all three precedence levels with manual test runs.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>Pitfall:</strong> Reading config lazily at request time (e.g., calling <code>os.Getenv</code> inside a handler). This hides a missing/invalid variable until traffic arrives instead of at boot, and repeats the parse cost on every request. Load and validate everything once at startup, then pass the struct around.
+    </div>
+  </div>
+
+  <!-- Review 6: Escape Analysis -->
+  <div class="review-card" id="escape_analysis">
+    <div class="review-header">
+      <h3>Escape Analysis &amp; Stack vs Heap</h3>
+      <span class="review-meta">Memory &amp; Performance &bull; due today &bull; rep 1</span>
+    </div>
+
+    <h4>Quick Reminder</h4>
+    <p>The compiler decides whether a value lives on the (cheap, auto-freed) stack or the (GC-managed) heap. A value <em>escapes</em> to the heap when its lifetime outlives the function &mdash; most commonly when you return a pointer to a local, or store it in an interface. Inspect the decisions with <code>go build -gcflags="-m"</code>.</p>
+
+    <h4>Key Pattern</h4>
+<pre>package main
+
+import "fmt"
+
+// x escapes: a pointer to it is returned
+func newCounter() *int {
+    x := 42
+    return &amp;x
+}
+
+// stays on the stack: never leaves the function
+func sum(a, b int) int {
+    total := a + b
+    return total
+}
+
+func main() {
+    c := newCounter()
+    fmt.Println(*c, sum(2, 3)) // fmt.Println also forces escapes
+}</pre>
+    <div class="output-label">go build -gcflags="-m" (excerpt)</div>
+    <div class="output">./main.go:6:2: moved to heap: x
+./main.go:18:14: ... argument does not escape
+42 5</div>
+
+    <div class="exercise">
+      <div class="exercise-label">Challenge Exercise</div>
+      <p>Write two versions of a function that builds and returns a 1024-byte buffer: one that returns <code>[]byte</code> (the backing array escapes) and one that accepts a caller-provided <code>buf []byte</code> and writes into it (no escape). Run <code>go build -gcflags="-m"</code> on both and explain, in a comment, which lines escape and why. Then benchmark both to see the allocation difference.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>Pitfall:</strong> Assuming passing a value to <code>fmt.Println</code> (or any <code>...any</code> function) is free. Converting a concrete value to an <code>interface{}</code> argument forces it to the heap, so even small ints "escape" when printed. Don't micro-optimize blindly &mdash; profile and read the <code>-m</code> output before reacting.
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- NEW CONCEPTS SECTION -->
+<!-- ============================================================ -->
+<div class="section">
+  <span class="section-label new">New</span>
+  <h2 class="section-title">New Concepts &mdash; 5 in 2 Sections</h2>
+
+  <h3 style="font-size:18px;margin:8px 0 18px;color:var(--muted);">Section 1 &mdash; Go Performance &amp; Optimization</h3>
+
+  <!-- New 1: PGO -->
+  <div class="concept" id="pgo_optimization">
+    <div class="concept-header">
+      <h3>Profile-Guided Optimization (PGO)</h3>
+      <span class="topic-badge">Performance</span>
+    </div>
+    <p class="why-matters">Why it matters: Since Go 1.21, you can feed a real CPU profile back into the compiler. It uses that data to make smarter inlining and devirtualization choices on your actual hot paths &mdash; typically a 2&ndash;7% speedup for free, no code changes.</p>
+
+    <h4>What PGO actually does</h4>
+    <p>Normally the compiler optimizes with static heuristics. PGO adds <em>dynamic</em> evidence: a profile that says "this branch runs 90% of the time" or "this interface call almost always dispatches to type <code>*Foo</code>." Armed with that, it inlines hotter functions more aggressively and turns hot interface calls into direct (devirtualized) calls.</p>
+
+    <h4>Step 1 &mdash; Collect a CPU profile</h4>
+    <p>Use <code>runtime/pprof</code> for a one-shot binary, or <code>net/http/pprof</code> for a running server. The goal is a profile that reflects a <em>representative</em> production workload.</p>
+<pre>package main
+
+import (
+    "os"
+    "runtime/pprof"
+)
+
+func main() {
+    f, _ := os.Create("default.pgo")
+    defer f.Close()
+
+    pprof.StartCPUProfile(f)
+    defer pprof.StopCPUProfile()
+
+    hotWork() // exercise the real, representative workload
+}
+
+func hotWork() {
+    sum := 0
+    for i := 0; i &lt; 50_000_000; i++ {
+        sum += i % 7
+    }
+    _ = sum
+}</pre>
+    <div class="output-label">Result</div>
+    <div class="output">writes a CPU profile to ./default.pgo</div>
+
+    <h4>Step 2 &mdash; Build with the profile</h4>
+    <p>Point the build at the profile explicitly, or let auto-PGO find it.</p>
+<pre class="bash">$ go build -pgo=default.pgo -o app .
+
+# Auto-PGO: if a file named default.pgo sits next to
+# the main package, `go build` uses it automatically:
+$ ls
+default.pgo  main.go
+$ go build -o app .   # PGO applied automatically</pre>
+    <div class="output-label">Output</div>
+    <div class="output">build uses default.pgo for profile-guided inlining &amp; devirtualization</div>
+
+    <h4>Step 3 &mdash; Measure</h4>
+    <p>Compare benchmarks with and without the profile to confirm a real win. The iterate-and-repeat loop matters: collect on the PGO-built binary, rebuild, and the profile stays stable.</p>
+<pre class="bash">$ go test -bench=. -count=10 &gt; old.txt          # no PGO
+$ go test -bench=. -count=10 -pgo=default.pgo &gt; new.txt
+$ benchstat old.txt new.txt</pre>
+    <div class="output-label">benchstat (example)</div>
+    <div class="output">name        old time/op  new time/op  delta
+Process-8    1.42ms       1.34ms      -5.6%  (p=0.000 n=10)</div>
+
+    <h4>Common Mistakes</h4>
+    <div class="do-dont">
+      <div class="dont-box">
+        <div class="label">Wrong</div>
+<pre>// Profile a synthetic micro-benchmark,
+// then ship that PGO build to prod.
+// The hot paths don't match real traffic.
+go build -pgo=bench.pgo</pre>
+      </div>
+      <div class="do-box">
+        <div class="label">Right</div>
+<pre>// Profile representative production load,
+// commit default.pgo to the main package.
+go build -pgo=default.pgo
+// rebuild periodically as workload shifts</pre>
+      </div>
+    </div>
+
+    <h4>Key Rules</h4>
+    <ul class="rules-list">
+      <li>PGO is available in Go 1.21+ and is opt-in via <code>-pgo</code> or an auto-detected <code>default.pgo</code>.</li>
+      <li>The profile must come from a workload that matches production, or you optimize the wrong paths.</li>
+      <li>PGO is iterative: collect &rarr; build &rarr; deploy &rarr; collect again. The build is stable across iterations.</li>
+      <li>Typical gains are modest (2&ndash;7%); treat it as a free top-up, not a substitute for algorithmic fixes.</li>
+    </ul>
+
+    <div class="exercise">
+      <div class="exercise-label">Practice Exercise</div>
+      <p>Take a CPU-bound program (e.g., a JSON parser over a large file, or a hash-heavy loop). Collect a profile with <code>runtime/pprof</code>, commit it as <code>default.pgo</code>, and use <code>benchstat</code> over 10 runs to quantify the speedup. Then deliberately profile a <em>different</em> workload and observe how the measured benefit changes &mdash; record both numbers.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>Pitfall:</strong> Reusing a stale or mismatched profile. A profile captured from a different workload steers the compiler toward paths your production traffic doesn't take, and can even slightly regress the real hot paths. Re-collect whenever your traffic mix changes.
+    </div>
+
+    <div class="connection">
+      <strong>Connections:</strong> PGO consumes the same profiles you gather for <a href="#escape_analysis">performance investigation</a> and pairs with <a href="#gc_tuning">GC tuning</a> &mdash; together they cover compile-time and runtime performance knobs.
+    </div>
+  </div>
+
+  <!-- New 2: GC Tuning -->
+  <div class="concept" id="gc_tuning">
+    <div class="concept-header">
+      <h3>Garbage Collector Tuning: GOGC &amp; GOMEMLIMIT</h3>
+      <span class="topic-badge">Performance</span>
+    </div>
+    <p class="why-matters">Why it matters: GC pauses and throughput are tunable. <code>GOMEMLIMIT</code> (Go 1.19+) is a game-changer for containers because it lets the GC respect a hard memory ceiling instead of only reacting to heap growth percentage.</p>
+
+    <h4>GOGC &mdash; the classic knob</h4>
+    <p><code>GOGC=100</code> (the default) means the GC triggers a cycle once the live heap has grown 100% since the last collection. Lower it for less memory at the cost of more frequent GC; raise it for more throughput at the cost of memory.</p>
+<pre>package main
+
+import (
+    "fmt"
+    "runtime/debug"
+)
+
+func main() {
+    old := debug.SetGCPercent(50) // GC twice as often, lower peak heap
+    fmt.Println("previous GOGC:", old)
+    debug.SetGCPercent(off()) // disable percentage trigger (see below)
+}
+
+func off() int { return -1 } // GOGC=off equivalent</pre>
+    <div class="output-label">Output</div>
+    <div class="output">previous GOGC: 100</div>
+
+    <h4>GOMEMLIMIT &mdash; a soft memory ceiling</h4>
+    <p>Set a total-memory target; the GC will run more aggressively as the heap approaches it, trading CPU to avoid blowing the limit. The common container recipe is <code>GOGC=off</code> + <code>GOMEMLIMIT</code> just under the cgroup limit.</p>
+<pre class="bash"># Leave ~10% headroom under a 1 GiB container limit:
+$ GOGC=off GOMEMLIMIT=900MiB ./app
+
+# Or set it at runtime (bytes):
+# debug.SetMemoryLimit(900 &lt;&lt; 20)</pre>
+    <div class="output-label">Effect</div>
+    <div class="output">GC paces itself to keep total memory near 900 MiB instead of OOM-killing</div>
+
+    <h4>Inspecting GC behavior</h4>
+    <p><code>runtime.ReadMemStats</code> exposes live stats; for a cheap continuous view, run with <code>GODEBUG=gctrace=1</code>.</p>
+<pre>package main
+
+import (
+    "fmt"
+    "runtime"
+)
+
+func main() {
+    var m runtime.MemStats
+    runtime.ReadMemStats(&amp;m)
+    fmt.Printf("HeapAlloc=%d KiB  NumGC=%d\n", m.HeapAlloc/1024, m.NumGC)
+}</pre>
+    <div class="output-label">Output (example)</div>
+    <div class="output">HeapAlloc=312 KiB  NumGC=0</div>
+
+    <h4>Common Mistakes</h4>
+    <div class="do-dont">
+      <div class="dont-box">
+        <div class="label">Wrong</div>
+<pre>// GOMEMLIMIT equal to the container limit.
+// No headroom -> the OOM killer wins the
+// race before the GC can react.
+GOMEMLIMIT=1GiB  # container limit is 1GiB</pre>
+      </div>
+      <div class="do-box">
+        <div class="label">Right</div>
+<pre>// Leave ~10% headroom so the GC has room
+// to do its work under pressure.
+GOMEMLIMIT=900MiB  # container limit is 1GiB</pre>
+      </div>
+    </div>
+
+    <h4>Key Rules</h4>
+    <ul class="rules-list">
+      <li><code>GOGC</code> is a <em>percentage</em> trigger; <code>GOMEMLIMIT</code> is a <em>soft byte ceiling</em> &mdash; they can be combined.</li>
+      <li>In containers, prefer <code>GOMEMLIMIT</code> set below the cgroup limit, with ~10% headroom.</li>
+      <li>Adjust at runtime with <code>debug.SetGCPercent</code> and <code>debug.SetMemoryLimit</code>.</li>
+      <li><code>GOMEMLIMIT</code> is a <em>soft</em> limit: the GC will burn CPU to honor it but cannot magically free unreachable-but-live memory.</li>
+    </ul>
+
+    <div class="exercise">
+      <div class="exercise-label">Practice Exercise</div>
+      <p>Write a program that allocates a growing slice of slices in a loop and prints <code>runtime.MemStats.NumGC</code> each iteration. Run it three times: default <code>GOGC=100</code>, <code>GOGC=20</code>, and <code>GOGC=off GOMEMLIMIT=64MiB</code>. Record how <code>NumGC</code> and peak <code>HeapAlloc</code> differ across the three runs and explain the trade-off you observe.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>Pitfall:</strong> Setting <code>GOMEMLIMIT</code> too close to (or above) the container's hard memory limit. Because it is a <em>soft</em> limit and accounts for more than just the Go heap (stacks, runtime metadata), leaving no headroom means the OOM killer fires before the GC can rescue you.
+    </div>
+
+    <div class="connection">
+      <strong>Connections:</strong> GC tuning works alongside <a href="#escape_analysis">escape analysis</a> (fewer heap allocations = less GC pressure) and the allocation-reduction techniques in <a href="#string_optimization">string performance</a>.
+    </div>
+  </div>
+
+  <!-- New 3: String Optimization -->
+  <div class="concept" id="string_optimization">
+    <div class="concept-header">
+      <h3>String Performance: Builders, Interning &amp; Conversions</h3>
+      <span class="topic-badge">Performance</span>
+    </div>
+    <p class="why-matters">Why it matters: String operations are one of the most common hidden sources of allocations in Go. Knowing exactly where copies happen &mdash; and where the compiler avoids them &mdash; lets you cut garbage without contorting your code.</p>
+
+    <h4>strings.Builder &mdash; build without re-allocating</h4>
+    <p>Concatenating with <code>+</code> in a loop allocates a fresh string every iteration. <code>strings.Builder</code> accumulates into a growable buffer and hands you the final string once, with zero extra copies. Use <code>Grow(n)</code> when you can estimate the size.</p>
+<pre>package main
+
+import (
+    "fmt"
+    "strings"
+)
+
+func main() {
+    var b strings.Builder
+    b.Grow(32) // pre-allocate to avoid reallocations
+
+    for i := 0; i &lt; 3; i++ {
+        b.WriteString("go")
+        b.WriteByte('-')
+    }
+    fmt.Println(b.String())
+}</pre>
+    <div class="output-label">Output</div>
+    <div class="output">go-go-go-</div>
+
+    <h4>Conversion costs &amp; the map-lookup optimization</h4>
+    <p>Converting <code>[]byte</code> to <code>string</code> normally <em>copies</em> the data. But the compiler recognizes a special case: <code>m[string(b)]</code> as a map key does <em>not</em> allocate &mdash; it looks up using the bytes directly.</p>
+<pre>package main
+
+import "fmt"
+
+func main() {
+    counts := map[string]int{"hello": 1}
+    key := []byte("hello")
+
+    // No allocation: string(key) used directly as a map key
+    fmt.Println(counts[string(key)])
+}</pre>
+    <div class="output-label">Output</div>
+    <div class="output">1</div>
+
+    <h4>strings.Clone &amp; comparisons</h4>
+    <p>A substring shares the backing array of its parent. <code>strings.Clone(s)</code> makes a minimal independent copy so a tiny piece doesn't pin a huge string in memory. For case-insensitive comparison, <code>strings.EqualFold</code> avoids the two allocations that <code>ToLower(a) == ToLower(b)</code> would cost.</p>
+<pre>package main
+
+import (
+    "fmt"
+    "strings"
+)
+
+func main() {
+    huge := strings.Repeat("x", 1&lt;&lt;20) + "tail"
+    small := strings.Clone(huge[len(huge)-4:]) // detach "tail"
+
+    fmt.Println(small)
+    fmt.Println(strings.EqualFold("Go-LANG", "golang")) // no allocs
+}</pre>
+    <div class="output-label">Output</div>
+    <div class="output">tail
+true</div>
+
+    <h4>Common Mistakes</h4>
+    <div class="do-dont">
+      <div class="dont-box">
+        <div class="label">Wrong</div>
+<pre>// O(n^2) allocations: each += builds
+// a brand-new string.
+s := ""
+for _, p := range parts {
+    s += p
+}</pre>
+      </div>
+      <div class="do-box">
+        <div class="label">Right</div>
+<pre>var b strings.Builder
+b.Grow(estimatedLen)
+for _, p := range parts {
+    b.WriteString(p)
+}
+s := b.String()</pre>
+      </div>
+    </div>
+
+    <h4>Key Rules</h4>
+    <ul class="rules-list">
+      <li>Use <code>strings.Builder</code> (with <code>Grow</code>) for any non-trivial concatenation; never <code>+=</code> in a loop.</li>
+      <li><code>[]byte</code>&harr;<code>string</code> copies &mdash; except <code>m[string(b)]</code> map lookups, which the compiler optimizes to zero allocation.</li>
+      <li><code>strings.Clone</code> detaches a small substring so it stops pinning a large backing array.</li>
+      <li><code>strings.EqualFold</code> beats <code>ToLower</code>+<code>==</code> for case-insensitive equality &mdash; no allocations.</li>
+      <li><code>unsafe.String</code> / <code>unsafe.StringData</code> give zero-copy conversion, but are advanced and easy to misuse &mdash; reach for them rarely.</li>
+    </ul>
+
+    <div class="exercise">
+      <div class="exercise-label">Practice Exercise</div>
+      <p>Write two functions that join a <code>[]string</code> into a single comma-separated string: one using <code>+=</code> in a loop and one using <code>strings.Builder</code> with <code>Grow</code>. Benchmark both with <code>-benchmem</code> over a 10,000-element slice and report <code>allocs/op</code> for each. Then demonstrate the substring-pinning problem: hold a 4-byte slice of a 1 MiB string with and without <code>strings.Clone</code>, and reason about which one keeps the megabyte alive.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>Pitfall:</strong> Holding a small substring of a large string keeps the <em>entire</em> backing array alive. If you parse one short token out of a multi-megabyte response and stash it in a long-lived map, you may unintentionally pin megabytes of memory. Use <code>strings.Clone</code> to detach it.
+    </div>
+
+    <div class="connection">
+      <strong>Connections:</strong> Reducing string allocations directly lowers <a href="#gc_tuning">GC pressure</a>, and the copy-vs-no-copy behavior is exactly what <a href="#escape_analysis">escape analysis</a> surfaces. Builders also pair well with buffered I/O.
+    </div>
+  </div>
+
+  <h3 style="font-size:18px;margin:28px 0 18px;color:var(--muted);">Section 2 &mdash; Advanced Generic Patterns</h3>
+
+  <!-- New 4: Generic Data Structures -->
+  <div class="concept" id="generic_data_structures">
+    <div class="concept-header">
+      <h3>Generic Data Structures: Stack, Queue, Set</h3>
+      <span class="topic-badge">Generics</span>
+    </div>
+    <p class="why-matters">Why it matters: Go's generics let you build type-safe, reusable containers without the runtime boxing and per-call type assertions that <code>interface{}</code>-based structures required. You get one implementation that works for every element type.</p>
+
+    <h4>A generic Stack[T]</h4>
+    <p>The type parameter <code>T any</code> threads through every method, so a <code>Stack[int]</code> and a <code>Stack[string]</code> are distinct, fully type-checked types.</p>
+<pre>package main
+
+import "fmt"
+
+type Stack[T any] struct {
+    items []T
+}
+
+func (s *Stack[T]) Push(v T) { s.items = append(s.items, v) }
+
+func (s *Stack[T]) Pop() (T, bool) {
+    var zero T
+    if len(s.items) == 0 {
+        return zero, false
+    }
+    v := s.items[len(s.items)-1]
+    s.items = s.items[:len(s.items)-1]
+    return v, true
+}
+
+func main() {
+    var s Stack[int]
+    s.Push(1)
+    s.Push(2)
+    v, ok := s.Pop()
+    fmt.Println(v, ok)
+}</pre>
+    <div class="output-label">Output</div>
+    <div class="output">2 true</div>
+
+    <h4>A generic Set[T comparable]</h4>
+    <p>A set needs its elements as map keys, so the constraint must be <code>comparable</code>, not <code>any</code>.</p>
+<pre>package main
+
+import "fmt"
+
+type Set[T comparable] map[T]struct{}
+
+func (s Set[T]) Add(v T)           { s[v] = struct{}{} }
+func (s Set[T]) Contains(v T) bool { _, ok := s[v]; return ok }
+
+func (s Set[T]) Union(other Set[T]) Set[T] {
+    out := Set[T]{}
+    for v := range s {
+        out.Add(v)
+    }
+    for v := range other {
+        out.Add(v)
+    }
+    return out
+}
+
+func main() {
+    a := Set[string]{}
+    a.Add("x")
+    a.Add("y")
+    b := Set[string]{}
+    b.Add("y")
+    b.Add("z")
+    fmt.Println(len(a.Union(b)), a.Contains("x"))
+}</pre>
+    <div class="output-label">Output</div>
+    <div class="output">3 true</div>
+
+    <h4>Constraints for ordering</h4>
+    <p>To use <code>&lt;</code> on a generic type (e.g., a sorted insert), constrain it with <code>constraints.Ordered</code> from <code>golang.org/x/exp/constraints</code> (or <code>cmp.Ordered</code> in the standard library since Go 1.21).</p>
+<pre>package main
+
+import (
+    "cmp"
+    "fmt"
+)
+
+func Max[T cmp.Ordered](a, b T) T {
+    if a &gt; b {
+        return a
+    }
+    return b
+}
+
+func main() {
+    fmt.Println(Max(3, 9))
+    fmt.Println(Max("apple", "banana"))
+}</pre>
+    <div class="output-label">Output</div>
+    <div class="output">9
+banana</div>
+
+    <h4>Common Mistakes</h4>
+    <div class="do-dont">
+      <div class="dont-box">
+        <div class="label">Wrong</div>
+<pre>type Set[T any] map[T]struct{}
+// compile error: T (any) is not
+// comparable, cannot be a map key</pre>
+      </div>
+      <div class="do-box">
+        <div class="label">Right</div>
+<pre>type Set[T comparable] map[T]struct{}
+// comparable allows == and use as map key</pre>
+      </div>
+    </div>
+
+    <h4>Key Rules</h4>
+    <ul class="rules-list">
+      <li>Use <code>comparable</code> when the type must be a map key or compared with <code>==</code>.</li>
+      <li>Use <code>cmp.Ordered</code> (1.21+) / <code>constraints.Ordered</code> when you need <code>&lt;</code>, <code>&gt;</code>, sorting.</li>
+      <li>Return the zero value with <code>var zero T</code> for "empty" results from generic methods.</li>
+      <li>Generics vs codegen vs interfaces: generics give type safety + one source; interfaces add runtime dispatch; codegen is a last resort.</li>
+    </ul>
+
+    <div class="exercise">
+      <div class="exercise-label">Practice Exercise</div>
+      <p>Implement a generic <code>Queue[T any]</code> backed by a slice with <code>Enqueue</code>, <code>Dequeue</code> (returning <code>(T, bool)</code>), and <code>Len</code>. Then add an <code>Intersection</code> method to the <code>Set[T comparable]</code> above. Finally, build an <code>OrderedMap[K comparable, V any]</code> that remembers insertion order by keeping a parallel <code>[]K</code> of keys alongside the map &mdash; expose <code>Set</code>, <code>Get</code>, and an in-order <code>Keys()</code>.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>Pitfall:</strong> Trying to use <code>&lt;</code>, <code>&gt;</code>, or <code>+</code> on a value of a type parameter constrained only by <code>any</code>. The compiler rejects it because not all types support those operators. Add <code>cmp.Ordered</code> (for comparison) or a custom constraint with the right operations.
+    </div>
+
+    <div class="connection">
+      <strong>Connections:</strong> Builds directly on <a href="#sort_package">sort</a> (ordered constraints mirror comparator logic) and the generics fundamentals reviewed earlier. The dispatch trade-offs continue in <a href="#type_switch_generics">type switches &amp; any</a>.
+    </div>
+  </div>
+
+  <!-- New 5: Type Switches & Generics -->
+  <div class="concept" id="type_switch_generics">
+    <div class="concept-header">
+      <h3>Type Switches &amp; any with Generics</h3>
+      <span class="topic-badge">Generics</span>
+    </div>
+    <p class="why-matters">Why it matters: Generics and type switches solve different problems &mdash; one resolves types at compile time, the other inspects them at runtime. Knowing which to reach for (and how to combine them) unlocks clean, flexible dispatch.</p>
+
+    <h4>Type switches operate on any, not on T</h4>
+    <p>You <em>cannot</em> type-switch on a constrained type parameter <code>T</code> directly &mdash; the compiler has already resolved <code>T</code> to a single concrete type per instantiation, so there is nothing to switch on. Instead, accept <code>any</code> and switch on the dynamic type.</p>
+<pre>package main
+
+import "fmt"
+
+func describe(x any) string {
+    switch v := x.(type) {
+    case int:
+        return fmt.Sprintf("int doubled: %d", v*2)
+    case string:
+        return fmt.Sprintf("string of len %d", len(v))
+    case nil:
+        return "nil"
+    default:
+        return fmt.Sprintf("unhandled %T", v)
+    }
+}
+
+func main() {
+    fmt.Println(describe(21))
+    fmt.Println(describe("hello"))
+    fmt.Println(describe(3.14))
+}</pre>
+    <div class="output-label">Output</div>
+    <div class="output">int doubled: 42
+string of len 5
+unhandled float64</div>
+
+    <h4>Pattern: generic wrapper, type-switch inside</h4>
+    <p>A common hybrid: a generic function for ergonomics and inference, which converts <code>T</code> to <code>any</code> and dispatches on the runtime type for type-specific logic.</p>
+<pre>package main
+
+import "fmt"
+
+func Format[T any](v T) string {
+    switch x := any(v).(type) { // bridge T -> any to inspect it
+    case fmt.Stringer:
+        return x.String()
+    case error:
+        return "error: " + x.Error()
+    default:
+        return fmt.Sprintf("%v", x)
+    }
+}
+
+type Point struct{ X, Y int }
+
+func (p Point) String() string { return fmt.Sprintf("(%d,%d)", p.X, p.Y) }
+
+func main() {
+    fmt.Println(Format(Point{1, 2}))
+    fmt.Println(Format(42))
+}</pre>
+    <div class="output-label">Output</div>
+    <div class="output">(1,2)
+42</div>
+
+    <h4>comparable has no ordering</h4>
+    <p>The <code>comparable</code> constraint permits <code>==</code> and <code>!=</code> only &mdash; it does <em>not</em> give you <code>&lt;</code>. If you need ordering, use <code>cmp.Ordered</code> instead.</p>
+<pre>package main
+
+import "fmt"
+
+func AllEqual[T comparable](items []T) bool {
+    for i := 1; i &lt; len(items); i++ {
+        if items[i] != items[0] { // == / != allowed; &lt; would NOT compile
+            return false
+        }
+    }
+    return true
+}
+
+func main() {
+    fmt.Println(AllEqual([]string{"a", "a", "a"}))
+    fmt.Println(AllEqual([]int{1, 1, 2}))
+}</pre>
+    <div class="output-label">Output</div>
+    <div class="output">true
+false</div>
+
+    <h4>Common Mistakes</h4>
+    <div class="do-dont">
+      <div class="dont-box">
+        <div class="label">Wrong</div>
+<pre>func f[T any](v T) {
+    switch v.(type) { // compile error:
+        // cannot type-switch on T
+    case int:
+    }
+}</pre>
+      </div>
+      <div class="do-box">
+        <div class="label">Right</div>
+<pre>func f[T any](v T) {
+    switch any(v).(type) { // bridge to any
+    case int:
+    }
+}</pre>
+      </div>
+    </div>
+
+    <h4>Key Rules</h4>
+    <ul class="rules-list">
+      <li>Type-switch on <code>any</code> (or an interface) &mdash; never on a bare type parameter <code>T</code>.</li>
+      <li>Convert with <code>any(v)</code> to bridge a generic value into a type switch.</li>
+      <li><code>comparable</code> gives <code>==</code>/<code>!=</code> only; use <code>cmp.Ordered</code> for <code>&lt;</code>/<code>&gt;</code>.</li>
+      <li>Choose generics for compile-time type safety, interfaces for open-ended dynamic dispatch, type switches for a closed set of known types.</li>
+    </ul>
+
+    <div class="exercise">
+      <div class="exercise-label">Practice Exercise</div>
+      <p>Write a generic <code>Encode[T any](v T) string</code> that converts <code>T</code> to <code>any</code> and type-switches: render <code>int</code>/<code>float64</code> as numbers, <code>bool</code> as <code>true</code>/<code>false</code>, anything implementing <code>fmt.Stringer</code> via its <code>String()</code>, and fall back to <code>%v</code>. Then explain in a comment why you could <em>not</em> write the same dispatch by switching on <code>T</code> directly, and what the <code>any(v)</code> conversion costs (hint: it may force an allocation).</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>Pitfall:</strong> Expecting <code>switch v.(type)</code> to work on a type parameter <code>T</code>. It won't compile &mdash; within a generic function <code>T</code> is one fixed type per instantiation, not a runtime union. You must convert with <code>any(v)</code> (or constrain <code>T</code> to an interface) before switching.
+    </div>
+
+    <div class="connection">
+      <strong>Connections:</strong> Extends the constraint reasoning from <a href="#generic_data_structures">generic data structures</a> and complements the runtime <code>fmt.Stringer</code> / interface dispatch seen across earlier guides. The <code>any(v)</code> bridge ties back to <a href="#escape_analysis">escape analysis</a> &mdash; interface conversions can allocate.
+    </div>
+  </div>
+
+</div><!-- end New Concepts section -->
+
+
+<!-- ============================================================ -->
+<!-- FOOTER -->
+<!-- ============================================================ -->
+<footer class="footer">
+  <h4>All Go Guides</h4>
+  <ul>
+    <li><a href="golang-guides/golang-guide-2026-07-09.html">Day 34 &mdash; 2026-07-09</a></li>
+    <li><a href="golang-guides/golang-guide-2026-07-08.html">Day 33 &mdash; 2026-07-08</a></li>
+    <li><a href="golang-guides/golang-guide-2026-07-07.html">Day 32 &mdash; 2026-07-07</a></li>
+    <li><a href="golang-guides/golang-guide-2026-07-06.html">Day 31 &mdash; 2026-07-06</a></li>
+    <li><a href="golang-guides/golang-guide-2026-07-05.html">Day 30 &mdash; 2026-07-05</a></li>
+    <li><a href="golang-guides/golang-guide-2026-07-04.html">Day 29 &mdash; 2026-07-04</a></li>
+    <li><a href="golang-guides/golang-guide-2026-07-03.html">Day 28 &mdash; 2026-07-03</a></li>
+    <li><a href="golang-guides/golang-guide-2026-07-02.html">Day 27 &mdash; 2026-07-02</a></li>
+    <li><a href="golang-guides/golang-guide-2026-07-01.html">Day 26 &mdash; 2026-07-01</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-30.html">Day 25 &mdash; 2026-06-30</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-29.html">Day 24 &mdash; 2026-06-29</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-28.html">Day 23 &mdash; 2026-06-28</a></li>
+    <li class="current">Day 22 &mdash; 2026-06-27 (current)</li>
+    <li><a href="golang-guides/golang-guide-2026-06-26.html">Day 21 &mdash; 2026-06-26</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-25.html">Day 20 &mdash; 2026-06-25</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-24.html">Day 19 &mdash; 2026-06-24</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-23.html">Day 18 &mdash; 2026-06-23</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-22.html">Day 17 &mdash; 2026-06-22</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-21.html">Day 16 &mdash; 2026-06-21</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-19.html">Day 15 &mdash; 2026-06-19</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-18.html">Day 14 &mdash; 2026-06-18</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-17.html">Day 13 &mdash; 2026-06-17</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-15.html">Day 12 &mdash; 2026-06-15</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-13.html">Day 11 &mdash; 2026-06-13</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-12.html">Day 10 &mdash; 2026-06-12</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-11.html">Day 9 &mdash; 2026-06-11</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-10.html">Day 8 &mdash; 2026-06-10</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-09.html">Day 7 &mdash; 2026-06-09</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-08.html">Day 6 &mdash; 2026-06-08</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-07.html">Day 5 &mdash; 2026-06-07</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-05.html">Day 4 &mdash; 2026-06-05</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-04.html">Day 3 &mdash; 2026-06-04</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-03.html">Day 2 &mdash; 2026-06-03</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-02.html">Day 1 &mdash; 2026-06-02</a></li>
+  </ul>
+
+  <h4 style="margin-top: 20px;">All Guides</h4>
+  <ul>
+    <li><a href="guide.html">LeetCode Study Guide</a></li>
+    <li><a href="lang-guide.html">Multi-Language Guide</a></li>
+    <li><a href="python-guide.html">Python Guide</a></li>
+    <li><a href="typescript-guide.html">TypeScript Guide</a></li>
+    <li><a href="javascript-guide.html">JavaScript Guide</a></li>
+    <li><a href="golang-guide.html">Go Guide (current)</a></li>
+    <li><a href="report.html">Performance Report</a></li>
+  </ul>
+</footer>
+
+</div><!-- end main -->
+
+<script>
+// ===== Theme Toggle =====
+(function() {
+  var KEY = 'lc-goguide-theme';
+  var toggle = document.getElementById('theme-toggle');
+  var html = document.documentElement;
+
+  function setTheme(theme) {
+    html.setAttribute('data-theme', theme);
+    localStorage.setItem(KEY, theme);
+    toggle.textContent = theme === 'dark' ? '☽' : '☀';
+  }
+
+  var saved = localStorage.getItem(KEY) || 'dark';
+  setTheme(saved);
+
+  toggle.addEventListener('click', function() {
+    setTheme(html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
+  });
+})();
+
+// ===== Mobile Sidebar Toggle =====
+(function() {
+  var btn = document.getElementById('sidebar-toggle');
+  var sidebar = document.getElementById('sidebar');
+
+  btn.addEventListener('click', function() {
+    sidebar.classList.toggle('open');
+  });
+
+  // Close sidebar when clicking a link (mobile)
+  sidebar.querySelectorAll('.sidebar-link').forEach(function(link) {
+    link.addEventListener('click', function() {
+      if (window.innerWidth <= 900) {
+        sidebar.classList.remove('open');
+      }
+    });
+  });
+})();
+
+// ===== Active Sidebar Link on Scroll =====
+(function() {
+  var links = document.querySelectorAll('.sidebar-link');
+  var sections = [];
+
+  links.forEach(function(link) {
+    var id = link.getAttribute('href').replace('#', '');
+    var el = document.getElementById(id);
+    if (el) sections.push({ id: id, el: el, link: link });
+  });
+
+  function onScroll() {
+    var scrollTop = window.scrollY + 120;
+    var current = null;
+
+    for (var i = sections.length - 1; i >= 0; i--) {
+      if (sections[i].el.offsetTop <= scrollTop) {
+        current = sections[i];
+        break;
+      }
+    }
+
+    links.forEach(function(l) { l.classList.remove('active'); });
+    if (current) current.link.classList.add('active');
+  }
+
+  window.addEventListener('scroll', onScroll);
+  onScroll();
+})();
+</script>
+</body>
+</html>

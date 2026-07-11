@@ -1,0 +1,1950 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Python Study Guide &mdash; Day 16 (2026-06-13)</title>
+<style>
+/* ===== CSS Variables ===== */
+:root {
+  --bg: #0d1117;
+  --surface1: #161b22;
+  --surface2: #1c2333;
+  --border: #30363d;
+  --text: #e6edf3;
+  --muted: #8b949e;
+  --accent: #58a6ff;
+  --accent-dim: #1f6feb33;
+  --green: #3fb950;
+  --green-dim: #23863633;
+  --yellow: #d29922;
+  --yellow-dim: #d2992233;
+  --red: #f85149;
+  --red-dim: #f8514933;
+  --purple: #bc8cff;
+  --purple-dim: #bc8cff22;
+  --orange: #f0883e;
+  --orange-dim: #f0883e22;
+  --code-bg: #0d1117;
+  --sidebar-w: 300px;
+  --font-mono: 'SF Mono', 'Cascadia Code', 'Fira Code', Consolas, monospace;
+  --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+  --radius: 8px;
+  --shadow: 0 1px 3px rgba(0,0,0,0.4);
+}
+
+[data-theme="light"] {
+  --bg: #ffffff;
+  --surface1: #f6f8fa;
+  --surface2: #f0f3f6;
+  --border: #d0d7de;
+  --text: #1f2328;
+  --muted: #656d76;
+  --accent: #0969da;
+  --accent-dim: #0969da1a;
+  --green: #1a7f37;
+  --green-dim: #1a7f3718;
+  --yellow: #9a6700;
+  --yellow-dim: #9a670018;
+  --red: #cf222e;
+  --red-dim: #cf222e18;
+  --purple: #8250df;
+  --purple-dim: #8250df18;
+  --orange: #bc4c00;
+  --orange-dim: #bc4c0018;
+  --code-bg: #f6f8fa;
+  --shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+/* ===== Reset & Base ===== */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: var(--font-sans);
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.7;
+  font-size: 15px;
+  transition: background 0.2s, color 0.2s;
+}
+
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+/* ===== Theme Toggle ===== */
+#theme-toggle {
+  position: fixed;
+  top: 16px;
+  right: 20px;
+  z-index: 1000;
+  background: var(--surface1);
+  border: 1px solid var(--border);
+  color: var(--text);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+  box-shadow: var(--shadow);
+}
+#theme-toggle:hover { background: var(--surface2); border-color: var(--accent); }
+
+/* ===== Sidebar ===== */
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: var(--sidebar-w);
+  height: 100vh;
+  background: var(--surface1);
+  border-right: 1px solid var(--border);
+  overflow-y: auto;
+  padding: 20px 0;
+  z-index: 100;
+  transition: transform 0.3s;
+}
+
+.sidebar-header {
+  padding: 0 20px 16px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 12px;
+}
+
+.sidebar-header h2 {
+  font-size: 16px;
+  color: var(--text);
+  font-weight: 700;
+}
+
+.sidebar-header .subtitle {
+  font-size: 12px;
+  color: var(--muted);
+  margin-top: 2px;
+}
+
+.sidebar-section {
+  margin-bottom: 8px;
+}
+
+.sidebar-section-title {
+  padding: 6px 20px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+}
+
+.sidebar-link {
+  display: block;
+  padding: 5px 20px 5px 28px;
+  font-size: 13px;
+  color: var(--muted);
+  text-decoration: none;
+  border-left: 2px solid transparent;
+  transition: all 0.15s;
+  line-height: 1.4;
+}
+
+.sidebar-link:hover {
+  color: var(--text);
+  background: var(--accent-dim);
+  border-left-color: var(--accent);
+  text-decoration: none;
+}
+
+.sidebar-link.active {
+  color: var(--accent);
+  border-left-color: var(--accent);
+  background: var(--accent-dim);
+}
+
+/* ===== Mobile sidebar toggle ===== */
+#sidebar-toggle {
+  display: none;
+  position: fixed;
+  top: 16px;
+  left: 16px;
+  z-index: 200;
+  background: var(--surface1);
+  border: 1px solid var(--border);
+  color: var(--text);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 20px;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--shadow);
+}
+
+/* ===== Main Content ===== */
+.main {
+  margin-left: var(--sidebar-w);
+  padding: 40px 48px 80px;
+  max-width: calc(860px + var(--sidebar-w) + 96px);
+}
+
+.page-title {
+  font-size: 32px;
+  font-weight: 800;
+  margin-bottom: 4px;
+  color: var(--text);
+}
+
+.page-subtitle {
+  font-size: 15px;
+  color: var(--muted);
+  margin-bottom: 36px;
+}
+
+/* ===== How to Use ===== */
+.how-to {
+  background: var(--surface1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px 24px;
+  margin-bottom: 36px;
+}
+
+.how-to h3 {
+  font-size: 15px;
+  font-weight: 700;
+  margin-bottom: 8px;
+  color: var(--muted);
+}
+
+.how-to ul {
+  padding-left: 22px;
+  margin: 0;
+}
+
+.how-to li {
+  font-size: 14px;
+  color: var(--muted);
+  margin-bottom: 3px;
+}
+
+/* ===== Sections ===== */
+.section {
+  margin-bottom: 48px;
+}
+
+.section-label {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  padding: 3px 10px;
+  border-radius: 4px;
+  margin-bottom: 12px;
+}
+
+.section-label.review { background: var(--yellow-dim); color: var(--yellow); }
+.section-label.new { background: var(--green-dim); color: var(--green); }
+
+.section-title {
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 24px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--border);
+}
+
+/* ===== Concept Cards ===== */
+.concept {
+  background: var(--surface1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 28px;
+  margin-bottom: 28px;
+  box-shadow: var(--shadow);
+}
+
+.concept.review-card {
+  background: linear-gradient(135deg, var(--purple-dim), var(--surface1));
+  border-color: var(--purple);
+}
+
+.concept-header {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  margin-bottom: 6px;
+  flex-wrap: wrap;
+}
+
+.concept h3 {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.concept-meta {
+  font-size: 12px;
+  color: var(--muted);
+  background: var(--surface2);
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
+.concept h4 {
+  font-size: 15px;
+  font-weight: 600;
+  margin: 20px 0 8px;
+  color: var(--text);
+}
+
+.concept p, .concept li {
+  color: var(--text);
+  line-height: 1.7;
+}
+
+.concept ul, .concept ol {
+  padding-left: 22px;
+  margin: 8px 0;
+}
+
+.concept li {
+  margin-bottom: 4px;
+}
+
+/* ===== Code Blocks ===== */
+pre {
+  background: var(--code-bg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 16px 18px;
+  overflow-x: auto;
+  margin: 10px 0 14px;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--text);
+  position: relative;
+}
+
+code {
+  font-family: var(--font-mono);
+  font-size: 0.9em;
+}
+
+:not(pre) > code {
+  background: var(--surface2);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.88em;
+}
+
+.output {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 12px 18px;
+  margin: -8px 0 14px;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  line-height: 1.6;
+  white-space: pre-wrap;
+  color: var(--muted);
+}
+
+/* ===== Good/Bad Examples ===== */
+.do-dont {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin: 10px 0;
+}
+
+.do-box, .dont-box {
+  border-radius: 6px;
+  padding: 14px;
+  border: 1px solid;
+}
+
+.do-box {
+  background: var(--green-dim);
+  border-color: var(--green);
+}
+
+.dont-box {
+  background: var(--red-dim);
+  border-color: var(--red);
+}
+
+.do-box .label, .dont-box .label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 6px;
+}
+
+.do-box .label { color: var(--green); }
+.dont-box .label { color: var(--red); }
+
+.do-box pre, .dont-box pre {
+  margin: 0;
+  border: none;
+  background: transparent;
+  padding: 0;
+  font-size: 12.5px;
+}
+
+/* ===== Key Rules ===== */
+.rules-list {
+  list-style: none;
+  padding: 0;
+  margin: 8px 0;
+}
+
+.rules-list li {
+  padding: 6px 0 6px 24px;
+  position: relative;
+}
+
+.rules-list li::before {
+  content: "\2192";
+  position: absolute;
+  left: 2px;
+  color: var(--accent);
+  font-weight: 700;
+}
+
+/* ===== Exercises ===== */
+.exercise {
+  background: var(--purple-dim);
+  border: 1px solid var(--purple);
+  border-radius: 6px;
+  padding: 14px 18px;
+  margin: 8px 0;
+}
+
+.exercise .exercise-label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--purple);
+  margin-bottom: 4px;
+}
+
+/* ===== Challenge (Review) ===== */
+.challenge {
+  background: var(--orange-dim);
+  border: 1px solid var(--orange);
+  border-radius: 6px;
+  padding: 14px 18px;
+  margin: 10px 0;
+}
+
+.challenge .challenge-label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--orange);
+  margin-bottom: 4px;
+}
+
+/* ===== Pitfall ===== */
+.pitfall {
+  background: var(--red-dim);
+  border-left: 3px solid var(--red);
+  border-radius: 0 6px 6px 0;
+  padding: 10px 14px;
+  margin: 10px 0;
+  font-size: 14px;
+}
+
+.pitfall strong {
+  color: var(--red);
+}
+
+/* ===== Connection ===== */
+.connection {
+  background: var(--accent-dim);
+  border-left: 3px solid var(--accent);
+  border-radius: 0 6px 6px 0;
+  padding: 10px 14px;
+  margin: 10px 0;
+  font-size: 14px;
+  color: var(--muted);
+}
+
+/* ===== Footer ===== */
+.footer {
+  margin-top: 60px;
+  padding: 24px 0;
+  border-top: 1px solid var(--border);
+}
+
+.footer h4 {
+  font-size: 14px;
+  color: var(--muted);
+  margin-bottom: 10px;
+}
+
+.footer ul {
+  list-style: none;
+  padding: 0;
+}
+
+.footer li {
+  margin-bottom: 4px;
+  font-size: 14px;
+}
+
+.footer li a { color: var(--accent); }
+.footer .current { color: var(--green); font-weight: 600; }
+
+/* ===== Responsive ===== */
+@media (max-width: 900px) {
+  .sidebar {
+    transform: translateX(-100%);
+  }
+  .sidebar.open {
+    transform: translateX(0);
+    box-shadow: 4px 0 20px rgba(0,0,0,0.5);
+  }
+  #sidebar-toggle {
+    display: flex;
+  }
+  .main {
+    margin-left: 0;
+    padding: 60px 20px 60px;
+    max-width: 100%;
+  }
+  .do-dont {
+    grid-template-columns: 1fr;
+  }
+  #theme-toggle {
+    right: 14px;
+    top: 16px;
+  }
+}
+</style>
+</head>
+<body>
+
+<!-- Theme Toggle -->
+<button id="theme-toggle" aria-label="Toggle theme" title="Toggle light/dark theme">&#9789;</button>
+
+<!-- Mobile Sidebar Toggle -->
+<button id="sidebar-toggle" aria-label="Toggle sidebar">&#9776;</button>
+
+<!-- Sidebar -->
+<nav class="sidebar" id="sidebar">
+  <div class="sidebar-header">
+    <h2>Python Guide</h2>
+    <div class="subtitle">Day 16 &mdash; 2026-06-13</div>
+  </div>
+
+  <div class="sidebar-section">
+    <div class="sidebar-section-title">Review (6 concepts)</div>
+    <a href="#review-generator-expressions" class="sidebar-link">Generator Expressions</a>
+    <a href="#review-namedtuple" class="sidebar-link">namedtuple</a>
+    <a href="#review-type-hints-basic" class="sidebar-link">Type Hints &mdash; Basic</a>
+    <a href="#review-classes-init-repr-str" class="sidebar-link">Classes: __init__, __repr__, __str__</a>
+    <a href="#review-copy-deep-shallow" class="sidebar-link">copy: Shallow vs Deep</a>
+    <a href="#review-mocking-basics" class="sidebar-link">Mocking with unittest.mock</a>
+  </div>
+
+  <div class="sidebar-section">
+    <div class="sidebar-section-title">New Concepts (5 topics)</div>
+    <a href="#asyncio-internals" class="sidebar-link">asyncio Internals</a>
+    <a href="#typing-runtime-protocol" class="sidebar-link">Typing: Protocol, NewType &amp; TypeAlias</a>
+    <a href="#gc-module" class="sidebar-link">gc Module: Garbage Collection</a>
+    <a href="#ast-module" class="sidebar-link">ast Module: Parsing Python Code</a>
+    <a href="#inspect-module" class="sidebar-link">inspect Module: Introspection</a>
+  </div>
+</nav>
+
+<!-- Main Content -->
+<div class="main">
+
+<h1 class="page-title">Python Daily Guide</h1>
+<p class="page-subtitle">Day 16 &mdash; Friday, June 13, 2026 &bull; 11 concepts (6 review + 5 new)</p>
+
+<!-- How to Use -->
+<div class="how-to">
+  <h3>How to Use This Guide</h3>
+  <ul>
+    <li><strong>Review cards</strong> &mdash; skim the reminder, write the key pattern from memory, then try the challenge.</li>
+    <li><strong>New concepts</strong> &mdash; read the explanation, run every code example in a REPL, then do the exercises.</li>
+    <li><strong>Don't peek at solutions</strong> &mdash; struggle for at least 10 minutes before looking things up.</li>
+    <li><strong>Connections</strong> &mdash; pay attention to how concepts link together across days.</li>
+  </ul>
+</div>
+
+
+<!-- ============================================================ -->
+<!-- REVIEW SECTION -->
+<!-- ============================================================ -->
+<div class="section">
+  <span class="section-label review">Review</span>
+  <h2 class="section-title">Review &mdash; 6 Concepts</h2>
+
+  <!-- Review 1: Generator Expressions -->
+  <div class="concept review-card" id="review-generator-expressions">
+    <div class="concept-header">
+      <h3>Generator Expressions</h3>
+      <span class="concept-meta">Generators &bull; 6 days overdue &bull; rep 2</span>
+    </div>
+
+    <h4>Quick Reminder</h4>
+    <p>Generator expressions use <code>()</code> instead of <code>[]</code> and produce items lazily &mdash; one at a time, without storing the whole sequence in memory. They are single-use iterators that can be passed directly to consuming functions without extra parentheses.</p>
+
+    <h4>Key Pattern</h4>
+<pre># Genexp vs listcomp
+squares_gen  = (x**2 for x in range(10))   # lazy, single-use
+squares_list = [x**2 for x in range(10)]   # eager, reusable
+
+# Pass directly to functions (no extra parens needed)
+total = sum(x**2 for x in range(10))
+print(total)  # 285</pre>
+    <div class="output">285</div>
+
+    <div class="challenge">
+      <div class="challenge-label">Challenge</div>
+      <p>Write a single expression using a generator that finds the first filename in a list that ends with <code>.py</code> and contains more than 20 characters. Use <code>next()</code> with a default of <code>None</code>. Do not convert to a list.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>#1 Pitfall:</strong> A generator is exhausted after one pass &mdash; iterating it a second time yields nothing silently. If you assign a genexp to a variable and iterate it twice, the second loop produces zero items with no error.
+    </div>
+  </div>
+
+  <!-- Review 2: namedtuple -->
+  <div class="concept review-card" id="review-namedtuple">
+    <div class="concept-header">
+      <h3>namedtuple</h3>
+      <span class="concept-meta">Collections &bull; 6 days overdue &bull; rep 2</span>
+    </div>
+
+    <h4>Quick Reminder</h4>
+    <p><code>namedtuple</code> creates lightweight, immutable tuple subclasses with named fields. They support indexing, unpacking, and iteration like regular tuples, plus provide <code>_asdict()</code>, <code>_replace()</code>, and <code>_make()</code> helper methods.</p>
+
+    <h4>Key Pattern</h4>
+<pre>from collections import namedtuple
+
+Point = namedtuple('Point', ['x', 'y'])
+p = Point(3, 4)
+
+print(p.x, p.y)          # named access
+print(p[0], p[1])         # index access
+print(p._asdict())        # OrderedDict
+print(p._replace(x=10))   # new instance with x=10</pre>
+    <div class="output">3 4
+3 4
+{'x': 3, 'y': 4}
+Point(x=10, y=4)</div>
+
+    <div class="challenge">
+      <div class="challenge-label">Challenge</div>
+      <p>Create a <code>Color</code> namedtuple with fields <code>r</code>, <code>g</code>, <code>b</code> and a default of 0 for all. Write a function that takes a list of <code>Color</code> instances and returns the one with the highest luminance using the formula <code>0.299*r + 0.587*g + 0.114*b</code>.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>#1 Pitfall:</strong> <code>_replace()</code> returns a <em>new</em> instance &mdash; it does not mutate in place. Writing <code>p._replace(x=10)</code> without assigning the result is a no-op. namedtuples are immutable; you cannot do <code>p.x = 10</code>.
+    </div>
+  </div>
+
+  <!-- Review 3: Type Hints - Basic Annotations -->
+  <div class="concept review-card" id="review-type-hints-basic">
+    <div class="concept-header">
+      <h3>Type Hints &mdash; Basic Annotations</h3>
+      <span class="concept-meta">Type System &bull; due today &bull; rep 2</span>
+    </div>
+
+    <h4>Quick Reminder</h4>
+    <p>Type hints annotate function parameters and return types without affecting runtime behavior. Since Python 3.9+, built-in types like <code>list[int]</code> and <code>dict[str, int]</code> can be used directly. Use <code>Optional[X]</code> (or <code>X | None</code> in 3.10+) for nullable types, and <code>tuple[int, ...]</code> for variable-length homogeneous tuples.</p>
+
+    <h4>Key Pattern</h4>
+<pre>def greet(name: str) -> str:
+    return f"Hello, {name}!"
+
+def process(items: list[int], lookup: dict[str, int]) -> tuple[int, ...]:
+    return tuple(lookup.get(str(i), 0) for i in items)
+
+# Type hints are metadata only - no runtime enforcement
+result: int = "not an int"  # runs fine, mypy catches it</pre>
+
+    <div class="challenge">
+      <div class="challenge-label">Challenge</div>
+      <p>Write a fully type-annotated function <code>merge_dicts(a: dict[str, list[int]], b: dict[str, list[int]]) -&gt; dict[str, list[int]]</code> that merges two dictionaries, concatenating lists for shared keys. Include a return type and annotate any local variables.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>#1 Pitfall:</strong> Type hints are <em>not enforced at runtime</em>. Passing <code>"hello"</code> to a function annotated <code>x: int</code> raises no error. You need a static checker like <code>mypy</code> or <code>pyright</code> to catch violations.
+    </div>
+  </div>
+
+  <!-- Review 4: Classes - __init__, __repr__, __str__ -->
+  <div class="concept review-card" id="review-classes-init-repr-str">
+    <div class="concept-header">
+      <h3>Classes &mdash; __init__, __repr__, __str__</h3>
+      <span class="concept-meta">OOP &bull; due today &bull; rep 2</span>
+    </div>
+
+    <h4>Quick Reminder</h4>
+    <p><code>__repr__</code> targets developers (unambiguous, ideally <code>eval()</code>-able), while <code>__str__</code> targets end users (readable, human-friendly). If only <code>__repr__</code> is defined, <code>str()</code> falls back to it. Always implement <code>__repr__</code>; add <code>__str__</code> only when a different user-facing format is needed.</p>
+
+    <h4>Key Pattern</h4>
+<pre>class Temperature:
+    def __init__(self, celsius: float):
+        self.celsius = celsius
+
+    def __repr__(self) -> str:
+        return f"Temperature(celsius={self.celsius!r})"
+
+    def __str__(self) -> str:
+        return f"{self.celsius:.1f}°C"
+
+t = Temperature(36.6)
+print(repr(t))  # Temperature(celsius=36.6)
+print(str(t))   # 36.6°C
+print(t)        # 36.6°C  (print calls __str__)</pre>
+    <div class="output">Temperature(celsius=36.6)
+36.6°C
+36.6°C</div>
+
+    <div class="challenge">
+      <div class="challenge-label">Challenge</div>
+      <p>Create a <code>Duration</code> class that stores seconds internally. <code>__repr__</code> should return <code>Duration(seconds=3661)</code>. <code>__str__</code> should return <code>"1h 1m 1s"</code>. Handle zero components gracefully (omit <code>0h</code>, <code>0m</code> when appropriate).</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>#1 Pitfall:</strong> Implementing <code>__str__</code> but not <code>__repr__</code>. In the REPL and debuggers, Python uses <code>__repr__</code>, so you get the unhelpful default <code>&lt;Temperature object at 0x...&gt;</code>. Always define <code>__repr__</code> first.
+    </div>
+  </div>
+
+  <!-- Review 5: copy: Shallow vs Deep -->
+  <div class="concept review-card" id="review-copy-deep-shallow">
+    <div class="concept-header">
+      <h3>copy: Shallow vs Deep Copy</h3>
+      <span class="concept-meta">Advanced stdlib &bull; due today &bull; rep 0</span>
+    </div>
+
+    <h4>Quick Reminder</h4>
+    <p><code>copy.copy()</code> creates a new container but shares references to nested objects. <code>copy.deepcopy()</code> recursively clones everything, including nested mutables. Use shallow copy for flat structures with immutable elements; use deep copy when nested mutables must be independent.</p>
+
+    <h4>Key Pattern</h4>
+<pre>import copy
+
+original = {"users": [{"name": "Alice"}, {"name": "Bob"}]}
+shallow = copy.copy(original)
+deep    = copy.deepcopy(original)
+
+original["users"][0]["name"] = "CHANGED"
+print(shallow["users"][0]["name"])  # CHANGED (shared inner ref)
+print(deep["users"][0]["name"])     # Alice   (fully independent)</pre>
+    <div class="output">CHANGED
+Alice</div>
+
+    <div class="challenge">
+      <div class="challenge-label">Challenge</div>
+      <p>Create a class <code>Config</code> with nested dict <code>settings</code>. Implement <code>__copy__</code> and <code>__deepcopy__</code> manually. Demonstrate that shallow-copying shares the nested dict while deep-copying does not.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>#1 Pitfall:</strong> <code>dict.copy()</code> and <code>list.copy()</code> are shallow copies, not deep. Developers often assume <code>my_dict.copy()</code> is safe for nested structures, but modifications to nested values propagate to the original.
+    </div>
+  </div>
+
+  <!-- Review 6: Mocking with unittest.mock -->
+  <div class="concept review-card" id="review-mocking-basics">
+    <div class="concept-header">
+      <h3>Mocking with unittest.mock</h3>
+      <span class="concept-meta">Testing &bull; due today &bull; rep 1</span>
+    </div>
+
+    <h4>Quick Reminder</h4>
+    <p><code>@patch('module.ClassName')</code> replaces an object with a <code>MagicMock</code> for the duration of a test. Use <code>return_value</code> to set what the mock returns, <code>side_effect</code> for exceptions or multiple return values, and <code>assert_called_once_with()</code> to verify call arguments.</p>
+
+    <h4>Key Pattern</h4>
+<pre>from unittest.mock import patch, MagicMock
+
+# Patch where the object is USED, not where it's defined
+@patch('myapp.service.requests.get')
+def test_fetch_data(mock_get):
+    mock_get.return_value = MagicMock(
+        status_code=200,
+        json=lambda: {"key": "value"}
+    )
+    # ... call function under test ...
+    mock_get.assert_called_once_with("https://api.example.com/data")</pre>
+
+    <div class="challenge">
+      <div class="challenge-label">Challenge</div>
+      <p>Write a test for a function <code>send_email(to, subject, body)</code> that calls <code>smtplib.SMTP</code>. Mock the SMTP connection so no real email is sent. Use <code>side_effect</code> to simulate a connection timeout on the second call. Verify the first call succeeded and the second raised.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>#1 Pitfall:</strong> Patching at the wrong location. <code>@patch('smtplib.SMTP')</code> patches the definition site, but if your module does <code>from smtplib import SMTP</code>, you must patch <code>'mymodule.SMTP'</code> instead &mdash; patch where it's <em>looked up</em>, not where it's defined.
+    </div>
+  </div>
+
+</div><!-- end review section -->
+
+
+<!-- ============================================================ -->
+<!-- NEW CONCEPTS SECTION -->
+<!-- ============================================================ -->
+<div class="section">
+  <span class="section-label new">New</span>
+  <h2 class="section-title">New Concepts &mdash; 5 Topics</h2>
+
+  <!-- New 1: asyncio Internals: Event Loop, Tasks & Futures -->
+  <div class="concept" id="asyncio-internals">
+    <div class="concept-header">
+      <h3>asyncio Internals: Event Loop, Tasks &amp; Futures</h3>
+      <span class="concept-meta">Advanced asyncio &bull; concept_id: asyncio_internals</span>
+    </div>
+
+    <p>The <code>asyncio</code> event loop is a single-threaded scheduler that multiplexes I/O using OS-level selectors (<code>epoll</code> on Linux, <code>kqueue</code> on macOS). It continuously calls <code>_run_once()</code> in a loop: polling for I/O readiness, executing callbacks, and advancing coroutines. Understanding the distinction between coroutines, Tasks, and Futures is essential for writing efficient async code.</p>
+
+    <h4>Example 1 &mdash; Coroutine vs Task vs Future</h4>
+<pre>import asyncio
+
+async def compute(x: int) -> int:
+    await asyncio.sleep(0.1)
+    return x * x
+
+async def main():
+    # A coroutine object: not scheduled until awaited or wrapped in a Task
+    coro = compute(5)
+    print(f"Coroutine: {coro}")
+
+    # A Task: wraps a coroutine and schedules it on the event loop
+    task = asyncio.create_task(compute(7))
+    print(f"Task: {task}")
+
+    # A Future: low-level promise of a result
+    loop = asyncio.get_running_loop()
+    future = loop.create_future()
+    future.set_result(42)
+    print(f"Future result: {future.result()}")
+
+    # Await the task
+    result = await task
+    print(f"Task result: {result}")
+
+    # Clean up unawaited coroutine
+    await coro
+
+asyncio.run(main())</pre>
+    <div class="output">Coroutine: &lt;coroutine object compute at 0x...&gt;
+Task: &lt;Task pending name='Task-2' coro=&lt;compute() running at ...&gt;&gt;
+Future result: 42
+Task result: 49</div>
+
+    <h4>Example 2 &mdash; TaskGroup for Structured Concurrency (3.11+)</h4>
+<pre>import asyncio
+
+async def fetch(name: str, delay: float) -> str:
+    await asyncio.sleep(delay)
+    return f"{name} done"
+
+async def main():
+    results = []
+    async with asyncio.TaskGroup() as tg:
+        # All tasks must complete (or one raises, cancelling the rest)
+        t1 = tg.create_task(fetch("API-1", 0.2))
+        t2 = tg.create_task(fetch("API-2", 0.1))
+        t3 = tg.create_task(fetch("DB",    0.15))
+
+    # After the block, all tasks are done
+    print(t1.result())
+    print(t2.result())
+    print(t3.result())
+
+asyncio.run(main())</pre>
+    <div class="output">API-1 done
+API-2 done
+DB done</div>
+
+    <h4>Example 3 &mdash; asyncio.to_thread: Bridging Sync Code</h4>
+<pre>import asyncio
+import time
+
+def blocking_io(name: str) -> str:
+    """Simulate blocking I/O (e.g., file read, legacy library call)."""
+    time.sleep(0.5)  # blocks the thread, NOT the event loop
+    return f"{name}: finished blocking work"
+
+async def main():
+    start = time.perf_counter()
+
+    # Run blocking functions in separate threads concurrently
+    results = await asyncio.gather(
+        asyncio.to_thread(blocking_io, "Task-A"),
+        asyncio.to_thread(blocking_io, "Task-B"),
+        asyncio.to_thread(blocking_io, "Task-C"),
+    )
+
+    elapsed = time.perf_counter() - start
+    for r in results:
+        print(r)
+    print(f"Total: {elapsed:.2f}s (not 1.5s!)")
+
+asyncio.run(main())</pre>
+    <div class="output">Task-A: finished blocking work
+Task-B: finished blocking work
+Task-C: finished blocking work
+Total: 0.50s (not 1.5s!)</div>
+
+    <h4>Example 4 &mdash; Custom Event Loop Inspection</h4>
+<pre>import asyncio
+
+async def show_loop_internals():
+    loop = asyncio.get_running_loop()
+    print(f"Loop class: {type(loop).__name__}")
+    print(f"Loop time:  {loop.time():.6f}")
+    print(f"Is running: {loop.is_running()}")
+    print(f"Is closed:  {loop.is_closed()}")
+
+    # Schedule a callback on the loop
+    def my_callback():
+        print("Callback executed on next iteration!")
+
+    loop.call_soon(my_callback)
+    await asyncio.sleep(0)  # yield to loop to run the callback
+
+asyncio.run(show_loop_internals())</pre>
+    <div class="output">Loop class: _UnixSelectorEventLoop
+Loop time:  0.000123
+Is running: True
+Is closed:  False
+Callback executed on next iteration!</div>
+
+    <h4>Example 5 &mdash; Error Handling with TaskGroup</h4>
+<pre>import asyncio
+
+async def risky(name: str, fail: bool) -> str:
+    await asyncio.sleep(0.1)
+    if fail:
+        raise ValueError(f"{name} failed!")
+    return f"{name} OK"
+
+async def main():
+    try:
+        async with asyncio.TaskGroup() as tg:
+            tg.create_task(risky("A", fail=False))
+            tg.create_task(risky("B", fail=True))   # will fail
+            tg.create_task(risky("C", fail=False))
+    except* ValueError as eg:
+        # ExceptionGroup (3.11+) catches multiple errors
+        for exc in eg.exceptions:
+            print(f"Caught: {exc}")
+
+asyncio.run(main())</pre>
+    <div class="output">Caught: B failed!</div>
+
+    <div class="do-dont">
+      <div class="do-box">
+        <div class="label">DO</div>
+<pre># Use TaskGroup for structured concurrency
+async with asyncio.TaskGroup() as tg:
+    tg.create_task(coro1())
+    tg.create_task(coro2())
+# All tasks guaranteed done here</pre>
+      </div>
+      <div class="dont-box">
+        <div class="label">DON'T</div>
+<pre># Fire-and-forget tasks (easy to lose errors)
+asyncio.create_task(coro1())
+asyncio.create_task(coro2())
+# Tasks may still be running at shutdown</pre>
+      </div>
+    </div>
+
+    <div class="exercise">
+      <div class="exercise-label">Exercise 1</div>
+      <p>Write an async function <code>parallel_fetch(urls: list[str]) -&gt; list[str]</code> using <code>TaskGroup</code> that simulates fetching multiple URLs concurrently (use <code>asyncio.sleep</code> with random delays). Return results in the original URL order, not completion order.</p>
+    </div>
+
+    <div class="exercise">
+      <div class="exercise-label">Exercise 2</div>
+      <p>Create a rate limiter using <code>asyncio.Semaphore</code> that allows at most 3 concurrent tasks. Wrap 10 tasks in the semaphore and print timestamps to prove only 3 run simultaneously.</p>
+    </div>
+
+    <div class="exercise">
+      <div class="exercise-label">Exercise 3</div>
+      <p>Write a function that uses <code>asyncio.to_thread()</code> to run three CPU-bound calculations in parallel and compare the wall-clock time against running them sequentially with <code>await</code>.</p>
+    </div>
+
+    <div class="connection">
+      <strong>Connection:</strong> Tasks build on <strong>async/await basics</strong> (coroutine syntax). <code>asyncio.to_thread()</code> uses <code>concurrent.futures.ThreadPoolExecutor</code> under the hood &mdash; review that module for finer control over thread pools. <code>TaskGroup</code> brings structured concurrency similar to Trio's nurseries.
+    </div>
+  </div>
+
+  <!-- New 2: Typing: runtime-checkable Protocol, NewType & TypeAlias -->
+  <div class="concept" id="typing-runtime-protocol">
+    <div class="concept-header">
+      <h3>Typing: Protocol, NewType &amp; TypeAlias</h3>
+      <span class="concept-meta">Advanced Type System &bull; concept_id: typing_runtime_protocol</span>
+    </div>
+
+    <p>Python's <code>typing</code> module provides advanced tools for precise type specifications beyond basic annotations. <code>Protocol</code> enables structural subtyping (duck typing with static checking), <code>NewType</code> creates distinct types at zero runtime cost, <code>TypeAlias</code> makes alias declarations explicit, and <code>TypedDict</code> types dictionaries with specific key-value schemas.</p>
+
+    <h4>Example 1 &mdash; @runtime_checkable Protocol</h4>
+<pre>from typing import Protocol, runtime_checkable
+
+@runtime_checkable
+class Renderable(Protocol):
+    def render(self) -> str: ...
+
+class HTMLWidget:
+    def render(self) -> str:
+        return "&lt;div&gt;Widget&lt;/div&gt;"
+
+class JSONResponse:
+    def render(self) -> str:
+        return '{"status": "ok"}'
+
+class PlainText:
+    pass  # no render method
+
+def display(item: Renderable) -> None:
+    print(item.render())
+
+# Structural typing: no inheritance needed
+display(HTMLWidget())
+display(JSONResponse())
+
+# Runtime isinstance checks work with @runtime_checkable
+print(isinstance(HTMLWidget(), Renderable))   # True
+print(isinstance(PlainText(), Renderable))    # False</pre>
+    <div class="output">&lt;div&gt;Widget&lt;/div&gt;
+{"status": "ok"}
+True
+False</div>
+
+    <h4>Example 2 &mdash; NewType for Type-Safe IDs</h4>
+<pre>from typing import NewType
+
+UserId = NewType('UserId', int)
+OrderId = NewType('OrderId', int)
+
+def get_user(uid: UserId) -> str:
+    return f"User#{uid}"
+
+def get_order(oid: OrderId) -> str:
+    return f"Order#{oid}"
+
+# At runtime, NewType is just the base type
+uid = UserId(42)
+oid = OrderId(42)
+
+print(get_user(uid))     # User#42
+print(type(uid))         # &lt;class 'int'&gt; (zero runtime overhead)
+
+# mypy would catch this mistake:
+# get_user(oid)  # error: Argument 1 has incompatible type "OrderId"
+
+# NewType values work like their base type
+print(uid + 1)           # 43 (still an int at runtime)</pre>
+    <div class="output">User#42
+&lt;class 'int'&gt;
+43</div>
+
+    <h4>Example 3 &mdash; TypeAlias (3.10+)</h4>
+<pre>from typing import TypeAlias
+
+# Explicit type alias declaration
+Vector: TypeAlias = list[float]
+Matrix: TypeAlias = list[Vector]
+Callback: TypeAlias = callable  # simplified
+
+# Without TypeAlias, this looks like a regular assignment
+# and static checkers might treat it differently
+UserScores: TypeAlias = dict[str, list[int]]
+
+def normalize(matrix: Matrix) -> Matrix:
+    max_val = max(val for row in matrix for val in row)
+    return [[v / max_val for v in row] for row in matrix]
+
+m: Matrix = [[1.0, 2.0], [3.0, 4.0]]
+print(normalize(m))
+
+scores: UserScores = {"alice": [90, 85], "bob": [78, 92]}
+print(scores)</pre>
+    <div class="output">[[0.25, 0.5], [0.75, 1.0]]
+{'alice': [90, 85], 'bob': [78, 92]}</div>
+
+    <h4>Example 4 &mdash; TypedDict for Structured Dictionaries</h4>
+<pre>from typing import TypedDict, Required, NotRequired
+
+class UserProfile(TypedDict):
+    name: str
+    email: str
+    age: int
+    bio: NotRequired[str]  # optional key (3.11+)
+
+class APIResponse(TypedDict, total=False):
+    # total=False makes all keys optional by default
+    data: Required[dict]    # but this one is required
+    error: str
+    status_code: int
+
+def greet_user(user: UserProfile) -> str:
+    bio = user.get("bio", "No bio")
+    return f"Hello {user['name']} ({user['email']}), age {user['age']}. Bio: {bio}"
+
+user: UserProfile = {"name": "Alice", "email": "alice@test.com", "age": 30}
+print(greet_user(user))
+
+# TypedDicts are regular dicts at runtime
+print(type(user))
+print(isinstance(user, dict))</pre>
+    <div class="output">Hello Alice (alice@test.com), age 30. Bio: No bio
+&lt;class 'dict'&gt;
+True</div>
+
+    <h4>Example 5 &mdash; Combining Protocol with Generic</h4>
+<pre>from typing import Protocol, TypeVar, runtime_checkable
+
+T = TypeVar('T')
+
+@runtime_checkable
+class Comparable(Protocol):
+    def __lt__(self, other: object) -> bool: ...
+    def __eq__(self, other: object) -> bool: ...
+
+CT = TypeVar('CT', bound=Comparable)
+
+def min_max(items: list[CT]) -> tuple[CT, CT]:
+    """Works with any type that supports &lt; and ==."""
+    return min(items), max(items)
+
+# Works with ints, strings, or any Comparable
+print(min_max([3, 1, 4, 1, 5]))
+print(min_max(["banana", "apple", "cherry"]))
+print(isinstance(42, Comparable))      # True (int has __lt__ and __eq__)
+print(isinstance("hi", Comparable))    # True</pre>
+    <div class="output">(1, 5)
+('apple', 'cherry')
+True
+True</div>
+
+    <div class="do-dont">
+      <div class="do-box">
+        <div class="label">DO</div>
+<pre># Use Protocol for duck typing
+class Saveable(Protocol):
+    def save(self) -> None: ...
+
+# Any class with save() matches</pre>
+      </div>
+      <div class="dont-box">
+        <div class="label">DON'T</div>
+<pre># Force inheritance just for type checking
+class Saveable(ABC):
+    @abstractmethod
+    def save(self) -> None: ...
+
+# Every class MUST inherit Saveable</pre>
+      </div>
+    </div>
+
+    <div class="exercise">
+      <div class="exercise-label">Exercise 1</div>
+      <p>Define a <code>@runtime_checkable</code> Protocol called <code>Serializable</code> with methods <code>to_json(self) -&gt; str</code> and <code>from_json(cls, data: str) -&gt; "Serializable"</code>. Create two unrelated classes that satisfy it. Write a function that accepts <code>Serializable</code> and round-trips the data.</p>
+    </div>
+
+    <div class="exercise">
+      <div class="exercise-label">Exercise 2</div>
+      <p>Use <code>NewType</code> to create <code>Celsius</code> and <code>Fahrenheit</code> types (both based on <code>float</code>). Write conversion functions that accept only the correct type. Verify that <code>mypy</code> (or <code>pyright</code>) would flag passing <code>Celsius</code> where <code>Fahrenheit</code> is expected.</p>
+    </div>
+
+    <div class="exercise">
+      <div class="exercise-label">Exercise 3</div>
+      <p>Create a <code>TypedDict</code> for a blog post with required fields (<code>title</code>, <code>body</code>, <code>author</code>) and optional fields (<code>tags</code>, <code>published_at</code>). Write a validation function that checks the dict has all required fields and returns a typed result.</p>
+    </div>
+
+    <div class="connection">
+      <strong>Connection:</strong> Builds on <strong>Type Hints &mdash; Basic</strong> (Day 5). Protocols complement <strong>ABC &amp; Protocol</strong> (Day 9) &mdash; use ABC when you want to enforce inheritance, Protocol when you want structural typing. <code>TypedDict</code> is especially useful with JSON APIs and configuration objects.
+    </div>
+  </div>
+
+  <!-- New 3: gc Module: Garbage Collection & Reference Cycles -->
+  <div class="concept" id="gc-module">
+    <div class="concept-header">
+      <h3>gc Module: Garbage Collection &amp; Reference Cycles</h3>
+      <span class="concept-meta">Python Internals &bull; concept_id: gc_module</span>
+    </div>
+
+    <p>CPython uses <strong>reference counting</strong> as its primary memory management strategy: each object has a count of references to it, and when that count reaches zero, the object is freed immediately. However, reference counting cannot detect <strong>reference cycles</strong> (A references B, B references A). The <code>gc</code> module provides a cyclic garbage collector that periodically detects and collects such cycles.</p>
+
+    <h4>Example 1 &mdash; Reference Counting in Action</h4>
+<pre>import sys
+
+a = [1, 2, 3]
+print(f"refcount after creation: {sys.getrefcount(a) - 1}")  # -1 for getrefcount's own ref
+
+b = a  # another reference
+print(f"refcount after b = a:   {sys.getrefcount(a) - 1}")
+
+c = [a, a, a]  # three more references
+print(f"refcount after c = [...]: {sys.getrefcount(a) - 1}")
+
+del b
+print(f"refcount after del b:   {sys.getrefcount(a) - 1}")
+
+del c
+print(f"refcount after del c:   {sys.getrefcount(a) - 1}")</pre>
+    <div class="output">refcount after creation: 1
+refcount after b = a:   2
+refcount after c = [...]: 5
+refcount after del b:   4
+refcount after del c:   1</div>
+
+    <h4>Example 2 &mdash; Detecting Reference Cycles</h4>
+<pre>import gc
+
+class Node:
+    def __init__(self, name):
+        self.name = name
+        self.ref = None
+    def __repr__(self):
+        return f"Node({self.name!r})"
+
+# Disable GC to observe cycles manually
+gc.disable()
+
+# Create a reference cycle
+a = Node("A")
+b = Node("B")
+a.ref = b
+b.ref = a  # cycle: A -> B -> A
+
+# Delete external references
+del a, b
+# Objects still exist in memory (cycle prevents refcount from reaching 0)
+
+# Manually collect
+collected = gc.collect()
+print(f"Objects collected: {collected}")
+
+gc.enable()  # re-enable</pre>
+    <div class="output">Objects collected: 2</div>
+
+    <h4>Example 3 &mdash; Inspecting the GC Generations</h4>
+<pre>import gc
+
+# GC uses three generations (0, 1, 2)
+# Objects start in gen 0; survivors get promoted
+thresholds = gc.get_threshold()
+print(f"Thresholds (gen0, gen1, gen2): {thresholds}")
+
+counts = gc.get_count()
+print(f"Current counts (gen0, gen1, gen2): {counts}")
+
+# Get stats for each generation
+stats = gc.get_stats()
+for i, s in enumerate(stats):
+    print(f"Gen {i}: collections={s['collections']}, "
+          f"collected={s['collected']}, uncollectable={s['uncollectable']}")</pre>
+    <div class="output">Thresholds (gen0, gen1, gen2): (700, 10, 10)
+Current counts (gen0, gen1, gen2): (87, 1, 1)
+Gen 0: collections=15, collected=120, uncollectable=0
+Gen 1: collections=1, collected=0, uncollectable=0
+Gen 2: collections=0, collected=0, uncollectable=0</div>
+
+    <h4>Example 4 &mdash; Finding Memory Leaks with gc.get_referrers</h4>
+<pre>import gc
+
+class LeakyCache:
+    _cache = {}  # class-level dict holds references forever
+
+    def store(self, key, value):
+        LeakyCache._cache[key] = value
+
+cache = LeakyCache()
+big_data = [0] * 1_000_000
+cache.store("data", big_data)
+
+# Find what's holding a reference to big_data
+referrers = gc.get_referrers(big_data)
+for ref in referrers:
+    if isinstance(ref, dict):
+        # Check if it's a class dict or instance dict
+        for key, val in ref.items():
+            if val is big_data:
+                print(f"Found reference in dict with key: {key!r}")
+                break
+
+# How many objects does GC track?
+all_objects = gc.get_objects()
+print(f"Total tracked objects: {len(all_objects)}")
+
+# Find specific types
+node_count = sum(1 for obj in all_objects if isinstance(obj, LeakyCache))
+print(f"LeakyCache instances: {node_count}")</pre>
+    <div class="output">Found reference in dict with key: 'data'
+Total tracked objects: 8432
+LeakyCache instances: 1</div>
+
+    <h4>Example 5 &mdash; __del__ Pitfalls and weakref Connection</h4>
+<pre>import gc
+import weakref
+
+class Resource:
+    def __init__(self, name):
+        self.name = name
+        print(f"Resource({name}) created")
+
+    def __del__(self):
+        print(f"Resource({self.name}) finalized")
+
+# Normal cleanup
+r = Resource("A")
+del r  # __del__ called immediately (refcount -> 0)
+
+# With cycles, __del__ makes objects uncollectable in Python < 3.4
+# Python 3.4+ handles it, but order of __del__ calls is undefined
+
+# Use weakref to avoid cycles entirely
+class Parent:
+    def __init__(self):
+        self.child = None
+
+class Child:
+    def __init__(self, parent):
+        self.parent = weakref.ref(parent)  # weak ref: doesn't increment refcount
+
+p = Parent()
+c = Child(p)
+p.child = c
+
+print(f"Parent alive: {c.parent() is not None}")
+del p
+print(f"Parent alive: {c.parent() is not None}")</pre>
+    <div class="output">Resource(A) created
+Resource(A) finalized
+Parent alive: True
+Parent alive: False</div>
+
+    <div class="do-dont">
+      <div class="do-box">
+        <div class="label">DO</div>
+<pre># Use weakref for back-references
+import weakref
+class Child:
+    def __init__(self, parent):
+        self._parent = weakref.ref(parent)</pre>
+      </div>
+      <div class="dont-box">
+        <div class="label">DON'T</div>
+<pre># Create strong reference cycles
+class Child:
+    def __init__(self, parent):
+        self._parent = parent  # strong ref
+        parent.child = self    # cycle!</pre>
+      </div>
+    </div>
+
+    <div class="exercise">
+      <div class="exercise-label">Exercise 1</div>
+      <p>Create a doubly-linked list with <code>prev</code>/<code>next</code> pointers. Disable the GC, create 100 nodes in a cycle, delete all external references, then manually call <code>gc.collect()</code> and report how many objects were collected.</p>
+    </div>
+
+    <div class="exercise">
+      <div class="exercise-label">Exercise 2</div>
+      <p>Write a memory leak detector: a context manager that snapshots <code>gc.get_objects()</code> on entry and exit, then reports new objects of each type that survived. Test it by intentionally leaking objects inside the block.</p>
+    </div>
+
+    <div class="exercise">
+      <div class="exercise-label">Exercise 3</div>
+      <p>Refactor a parent-child class hierarchy that uses strong back-references to use <code>weakref.ref()</code>. Verify with <code>sys.getrefcount()</code> that the cycle is broken and objects are freed immediately on <code>del</code>.</p>
+    </div>
+
+    <div class="connection">
+      <strong>Connection:</strong> The GC's generational strategy interacts with <strong>CPython internals</strong> &mdash; understanding reference counting explains why <code>__del__</code> is unreliable. <code>weakref</code> is the clean solution to cycles, especially relevant in caches, observer patterns, and parent-child hierarchies. See also <strong>copy: Shallow vs Deep</strong> (Day 15) for <code>deepcopy</code>'s <code>memo</code> dict that handles cycles similarly.
+    </div>
+  </div>
+
+  <!-- New 4: ast Module: Parsing & Transforming Python Code -->
+  <div class="concept" id="ast-module">
+    <div class="concept-header">
+      <h3>ast Module: Parsing &amp; Transforming Python Code</h3>
+      <span class="concept-meta">Python Internals &bull; concept_id: ast_module</span>
+    </div>
+
+    <p>The <code>ast</code> module parses Python source code into an Abstract Syntax Tree &mdash; a tree of node objects representing the syntactic structure. You can walk, analyze, and even transform the tree before compiling it back to executable code. This is the foundation for linters, code formatters, security analyzers, and metaprogramming tools.</p>
+
+    <h4>Example 1 &mdash; Parsing and Inspecting an AST</h4>
+<pre>import ast
+
+source = """
+def greet(name):
+    return f"Hello, {name}!"
+
+x = greet("World")
+"""
+
+tree = ast.parse(source)
+print(ast.dump(tree, indent=2)[:300])  # truncated for readability
+print()
+
+# Top-level structure
+for node in ast.iter_child_nodes(tree):
+    print(f"{type(node).__name__}: line {node.lineno}")</pre>
+    <div class="output">Module(
+  body=[
+    FunctionDef(
+      name='greet',
+      args=arguments(
+        posonlyargs=[],
+        args=[
+          arg(arg='name')],
+        ...
+      ),
+      body=[
+        Return(
+          value=JoinedStr(...
+
+FunctionDef: line 2
+Assign: line 5</div>
+
+    <h4>Example 2 &mdash; Walking the AST to Find All Function Calls</h4>
+<pre>import ast
+
+source = """
+import os
+result = os.path.join("a", "b")
+length = len(result)
+print(f"Path: {result}, length: {length}")
+"""
+
+tree = ast.parse(source)
+
+class CallFinder(ast.NodeVisitor):
+    def visit_Call(self, node):
+        # Extract the function name from the call
+        if isinstance(node.func, ast.Name):
+            print(f"Line {node.lineno}: {node.func.id}({len(node.args)} args)")
+        elif isinstance(node.func, ast.Attribute):
+            print(f"Line {node.lineno}: ...{node.func.attr}({len(node.args)} args)")
+        self.generic_visit(node)  # continue walking child nodes
+
+CallFinder().visit(tree)</pre>
+    <div class="output">Line 3: ...join(2 args)
+Line 4: len(1 args)
+Line 5: print(1 args)</div>
+
+    <h4>Example 3 &mdash; Transforming the AST with NodeTransformer</h4>
+<pre>import ast
+
+source = "result = 2 + 3 * 4"
+
+class ConstantFolder(ast.NodeTransformer):
+    """Replace constant arithmetic expressions with their results."""
+    def visit_BinOp(self, node):
+        self.generic_visit(node)  # transform children first
+
+        if isinstance(node.left, ast.Constant) and isinstance(node.right, ast.Constant):
+            # Evaluate the constant expression
+            code = compile(ast.Expression(body=node), "&lt;fold&gt;", "eval")
+            value = eval(code)
+            return ast.Constant(value=value)
+        return node
+
+tree = ast.parse(source)
+print(f"Before: {ast.dump(tree.body[0].value)}")
+
+transformed = ConstantFolder().visit(tree)
+ast.fix_missing_locations(transformed)
+print(f"After:  {ast.dump(transformed.body[0].value)}")
+
+# Compile and execute the transformed AST
+code = compile(transformed, "&lt;transformed&gt;", "exec")
+exec(code)
+print(f"result = {result}")</pre>
+    <div class="output">Before: BinOp(left=Constant(value=2), op=Add(), right=BinOp(left=Constant(value=3), op=Mult(), right=Constant(value=4)))
+After:  Constant(value=14)
+result = 14</div>
+
+    <h4>Example 4 &mdash; Security: Detecting Dangerous Calls</h4>
+<pre>import ast
+
+source = """
+import os
+user_input = input("Enter command: ")
+os.system(user_input)        # DANGEROUS
+eval(user_input)             # DANGEROUS
+subprocess.run(user_input)   # DANGEROUS
+len(user_input)              # safe
+"""
+
+DANGEROUS_FUNCTIONS = {"eval", "exec", "compile", "system", "popen", "run"}
+
+class SecurityChecker(ast.NodeVisitor):
+    def __init__(self):
+        self.warnings = []
+
+    def visit_Call(self, node):
+        name = None
+        if isinstance(node.func, ast.Name):
+            name = node.func.id
+        elif isinstance(node.func, ast.Attribute):
+            name = node.func.attr
+
+        if name in DANGEROUS_FUNCTIONS:
+            self.warnings.append(
+                f"Line {node.lineno}: potentially dangerous call to '{name}'"
+            )
+        self.generic_visit(node)
+
+checker = SecurityChecker()
+checker.visit(ast.parse(source))
+for w in checker.warnings:
+    print(f"  WARNING: {w}")</pre>
+    <div class="output">  WARNING: Line 4: potentially dangerous call to 'system'
+  WARNING: Line 5: potentially dangerous call to 'eval'
+  WARNING: Line 6: potentially dangerous call to 'run'</div>
+
+    <h4>Example 5 &mdash; ast.literal_eval for Safe Parsing</h4>
+<pre>import ast
+
+# ast.literal_eval: safely evaluate strings containing Python literals
+safe_data = ast.literal_eval("{'name': 'Alice', 'scores': [95, 87, 92]}")
+print(f"Parsed: {safe_data}")
+print(f"Type:   {type(safe_data)}")
+
+# Supports: strings, bytes, numbers, tuples, lists, dicts, sets, bools, None
+print(ast.literal_eval("[1, 2, 3]"))
+print(ast.literal_eval("(True, None, 3.14)"))
+
+# Rejects anything that's not a literal
+try:
+    ast.literal_eval("os.system('rm -rf /')")
+except (ValueError, SyntaxError) as e:
+    print(f"Blocked: {type(e).__name__}: {e}")</pre>
+    <div class="output">Parsed: {'name': 'Alice', 'scores': [95, 87, 92]}
+Type:   &lt;class 'dict'&gt;
+[1, 2, 3]
+(True, None, 3.14)
+Blocked: ValueError: malformed node or string on line 1: &lt;ast.Call object at 0x...&gt;</div>
+
+    <div class="do-dont">
+      <div class="do-box">
+        <div class="label">DO</div>
+<pre># Use ast.literal_eval for untrusted data
+config = ast.literal_eval(user_string)
+# Only allows literals - safe!</pre>
+      </div>
+      <div class="dont-box">
+        <div class="label">DON'T</div>
+<pre># Use eval() on untrusted data
+config = eval(user_string)
+# Arbitrary code execution!</pre>
+      </div>
+    </div>
+
+    <div class="exercise">
+      <div class="exercise-label">Exercise 1</div>
+      <p>Write a <code>NodeVisitor</code> subclass that collects all variable names assigned in a source file (from <code>ast.Assign</code> and <code>ast.AnnAssign</code> nodes). Test it on a multi-line source string and print the discovered names.</p>
+    </div>
+
+    <div class="exercise">
+      <div class="exercise-label">Exercise 2</div>
+      <p>Create a <code>NodeTransformer</code> that renames all occurrences of a function (both definition and calls). Transform <code>def foo(): ...</code> into <code>def bar(): ...</code> and all <code>foo()</code> calls into <code>bar()</code>. Compile and execute the result.</p>
+    </div>
+
+    <div class="exercise">
+      <div class="exercise-label">Exercise 3</div>
+      <p>Build a simple "complexity" analyzer: walk the AST and count the number of <code>if</code>/<code>for</code>/<code>while</code>/<code>try</code> nodes inside each function, reporting a rough cyclomatic complexity score per function.</p>
+    </div>
+
+    <div class="connection">
+      <strong>Connection:</strong> The AST is the first step of Python's compilation pipeline; the next step is <strong>dis &amp; bytecode</strong> (Day 15) where the AST gets compiled to bytecode instructions. <code>ast.literal_eval</code> is the safe alternative to <code>eval()</code>. Metaprogramming tools and decorators often use AST analysis under the hood.
+    </div>
+  </div>
+
+  <!-- New 5: inspect Module: Introspecting Live Objects -->
+  <div class="concept" id="inspect-module">
+    <div class="concept-header">
+      <h3>inspect Module: Introspecting Live Objects</h3>
+      <span class="concept-meta">Python Internals &bull; concept_id: inspect_module</span>
+    </div>
+
+    <p>The <code>inspect</code> module provides tools to examine live Python objects: functions, classes, modules, frames, and code objects. It can retrieve source code, function signatures, call stacks, and class hierarchies at runtime. This is indispensable for debugging tools, documentation generators, and advanced decorators.</p>
+
+    <h4>Example 1 &mdash; Function Signature Introspection</h4>
+<pre>import inspect
+
+def create_user(
+    name: str,
+    email: str,
+    *,
+    admin: bool = False,
+    role: str = "viewer"
+) -> dict:
+    """Create a new user with the given parameters."""
+    return {"name": name, "email": email, "admin": admin, "role": role}
+
+sig = inspect.signature(create_user)
+print(f"Signature: {sig}")
+print(f"Return annotation: {sig.return_annotation}")
+print()
+
+for param_name, param in sig.parameters.items():
+    print(f"  {param_name}:")
+    print(f"    kind:    {param.kind.name}")
+    print(f"    default: {param.default}")
+    print(f"    annotation: {param.annotation}")</pre>
+    <div class="output">Signature: (name: str, email: str, *, admin: bool = False, role: str = 'viewer') -> dict
+Return annotation: &lt;class 'dict'&gt;
+
+  name:
+    kind:    POSITIONAL_OR_KEYWORD
+    default: &lt;class 'inspect._empty'&gt;
+    annotation: &lt;class 'str'&gt;
+  email:
+    kind:    POSITIONAL_OR_KEYWORD
+    default: &lt;class 'inspect._empty'&gt;
+    annotation: &lt;class 'str'&gt;
+  admin:
+    kind:    KEYWORD_ONLY
+    default: False
+    annotation: &lt;class 'bool'&gt;
+  role:
+    kind:    KEYWORD_ONLY
+    default: viewer
+    annotation: &lt;class 'str'&gt;</div>
+
+    <h4>Example 2 &mdash; Retrieving Source Code at Runtime</h4>
+<pre>import inspect
+
+class Calculator:
+    def add(self, a: int, b: int) -> int:
+        """Add two numbers."""
+        return a + b
+
+    def multiply(self, a: int, b: int) -> int:
+        """Multiply two numbers."""
+        return a * b
+
+# Get the source code of a method
+source = inspect.getsource(Calculator.add)
+print("Source of add():")
+print(source)
+
+# Get just the docstring
+print(f"Docstring: {inspect.getdoc(Calculator.add)}")
+
+# Get the file and line number
+try:
+    file = inspect.getfile(Calculator)
+    print(f"Defined in: {file}")
+except TypeError:
+    print("Defined in: &lt;interactive&gt;")</pre>
+    <div class="output">Source of add():
+    def add(self, a: int, b: int) -> int:
+        """Add two numbers."""
+        return a + b
+
+Docstring: Add two numbers.
+Defined in: example.py</div>
+
+    <h4>Example 3 &mdash; Enumerating Class Members</h4>
+<pre>import inspect
+
+class Animal:
+    species = "Unknown"
+
+    def __init__(self, name: str):
+        self.name = name
+
+    def speak(self) -> str:
+        return "..."
+
+    @classmethod
+    def create(cls, name: str) -> "Animal":
+        return cls(name)
+
+    @staticmethod
+    def is_valid_name(name: str) -> bool:
+        return len(name) > 0
+
+    @property
+    def display_name(self) -> str:
+        return f"{self.name} ({self.species})"
+
+# Get all members, categorized
+members = inspect.getmembers(Animal)
+print("Methods:")
+for name, val in inspect.getmembers(Animal, predicate=inspect.isfunction):
+    print(f"  {name}: {inspect.signature(val)}")
+
+print("\nClass methods:")
+for name, val in inspect.getmembers(Animal, predicate=inspect.ismethod):
+    print(f"  {name}: {inspect.signature(val)}")
+
+print(f"\nIs Animal a class? {inspect.isclass(Animal)}")
+print(f"Is speak a function? {inspect.isfunction(Animal.speak)}")</pre>
+    <div class="output">Methods:
+  __init__: (self, name: str)
+  is_valid_name: (name: str) -> bool
+  speak: (self) -> str
+
+Class methods:
+  create: (name: str) -> 'Animal'
+
+Is Animal a class? True
+Is speak a function? True</div>
+
+    <h4>Example 4 &mdash; Call Stack Inspection</h4>
+<pre>import inspect
+
+def inner_function():
+    """Print the call stack from inside."""
+    stack = inspect.stack()
+    print(f"Call stack depth: {len(stack)}")
+    for i, frame_info in enumerate(stack[:4]):  # show top 4 frames
+        print(f"  Frame {i}: {frame_info.function} "
+              f"(line {frame_info.lineno})")
+    print()
+
+    # Get the caller's local variables
+    caller_frame = inspect.currentframe().f_back
+    print(f"Caller's locals: {list(caller_frame.f_locals.keys())}")
+    # IMPORTANT: always delete frame references to avoid leaks
+    del caller_frame
+
+def middle_function():
+    secret = 42
+    message = "hello"
+    inner_function()
+
+def outer_function():
+    middle_function()
+
+outer_function()</pre>
+    <div class="output">Call stack depth: 4
+  Frame 0: inner_function (line 5)
+  Frame 1: middle_function (line 18)
+  Frame 2: outer_function (line 21)
+  Frame 3: &lt;module&gt; (line 23)
+
+Caller's locals: ['secret', 'message']</div>
+
+    <h4>Example 5 &mdash; Building a Decorator with inspect</h4>
+<pre>import inspect
+import functools
+import time
+
+def auto_log(func):
+    """Decorator that auto-logs function calls with argument names."""
+    sig = inspect.signature(func)
+
+    @functools.wraps(func)
+    def wrapper(*args, **kwargs):
+        # Bind arguments to parameter names
+        bound = sig.bind(*args, **kwargs)
+        bound.apply_defaults()
+
+        params_str = ", ".join(
+            f"{k}={v!r}" for k, v in bound.arguments.items()
+        )
+        print(f"CALL: {func.__name__}({params_str})")
+
+        start = time.perf_counter()
+        result = func(*args, **kwargs)
+        elapsed = time.perf_counter() - start
+
+        print(f"RETURN: {func.__name__} -> {result!r} [{elapsed:.4f}s]")
+        return result
+
+    return wrapper
+
+@auto_log
+def calculate(x: int, y: int, operation: str = "add") -> int:
+    if operation == "add":
+        return x + y
+    return x * y
+
+calculate(3, 7)
+print()
+calculate(5, 4, operation="multiply")</pre>
+    <div class="output">CALL: calculate(x=3, y=7, operation='add')
+RETURN: calculate -> 10 [0.0000s]
+
+CALL: calculate(x=5, y=4, operation='multiply')
+RETURN: calculate -> 20 [0.0000s]</div>
+
+    <div class="do-dont">
+      <div class="do-box">
+        <div class="label">DO</div>
+<pre># Clean up frame references
+frame = inspect.currentframe()
+try:
+    # use frame...
+    pass
+finally:
+    del frame  # prevent reference cycles</pre>
+      </div>
+      <div class="dont-box">
+        <div class="label">DON'T</div>
+<pre># Hold frame references indefinitely
+frames = inspect.stack()
+self.saved_frames = frames  # memory leak!
+# Frame objects hold all locals alive</pre>
+      </div>
+    </div>
+
+    <div class="exercise">
+      <div class="exercise-label">Exercise 1</div>
+      <p>Write a function <code>describe_class(cls)</code> that uses <code>inspect</code> to print: (1) all public methods with their signatures, (2) all properties, (3) the class hierarchy (MRO). Test with a multi-level class hierarchy.</p>
+    </div>
+
+    <div class="exercise">
+      <div class="exercise-label">Exercise 2</div>
+      <p>Create a <code>@validate_types</code> decorator that uses <code>inspect.signature()</code> to check argument types against annotations at runtime. It should raise <code>TypeError</code> with a clear message for mismatches. Handle <code>*args</code> and <code>**kwargs</code> gracefully.</p>
+    </div>
+
+    <div class="exercise">
+      <div class="exercise-label">Exercise 3</div>
+      <p>Build a mini documentation generator: given a module, use <code>inspect.getmembers()</code>, <code>inspect.getsource()</code>, and <code>inspect.getdoc()</code> to produce a formatted summary of all public functions and classes with their signatures and docstrings.</p>
+    </div>
+
+    <div class="connection">
+      <strong>Connection:</strong> <code>inspect.signature()</code> is essential for writing robust <strong>decorators</strong> (Day 3) that preserve parameter information. The stack inspection capabilities tie into <strong>gc &amp; weakref</strong> (today) &mdash; frame references can create cycles. The <code>ast</code> module (today) works on source text while <code>inspect</code> works on live objects; together they cover both static and dynamic analysis.
+    </div>
+  </div>
+
+</div><!-- end new concepts section -->
+
+
+<!-- ============================================================ -->
+<!-- FOOTER -->
+<!-- ============================================================ -->
+<div class="footer">
+  <h4>All Python Study Guides</h4>
+    <ul>
+    <li><a href="python-guides/python-guide-2026-07-09.html">2026-07-09</a> (Day 39)</li>
+    <li><a href="python-guides/python-guide-2026-07-08.html">2026-07-08</a> (Day 38)</li>
+    <li><a href="python-guides/python-guide-2026-07-07.html">2026-07-07</a> (Day 37)</li>
+    <li><a href="python-guides/python-guide-2026-07-06.html">2026-07-06</a> (Day 36)</li>
+    <li><a href="python-guides/python-guide-2026-07-05.html">2026-07-05</a> (Day 35)</li>
+    <li><a href="python-guides/python-guide-2026-07-04.html">2026-07-04</a> (Day 34)</li>
+    <li><a href="python-guides/python-guide-2026-07-03.html">2026-07-03</a> (Day 33)</li>
+    <li><a href="python-guides/python-guide-2026-07-02.html">2026-07-02</a> (Day 32)</li>
+    <li><a href="python-guides/python-guide-2026-07-01.html">2026-07-01</a> (Day 31)</li>
+    <li><a href="python-guides/python-guide-2026-06-30.html">2026-06-30</a> (Day 30)</li>
+    <li><a href="python-guides/python-guide-2026-06-29.html">2026-06-29</a> (Day 29)</li>
+    <li><a href="python-guides/python-guide-2026-06-28.html">2026-06-28</a> (Day 28)</li>
+    <li><a href="python-guides/python-guide-2026-06-27.html">2026-06-27</a> (Day 27)</li>
+    <li><a href="python-guides/python-guide-2026-06-26.html">2026-06-26</a> (Day 26)</li>
+    <li><a href="python-guides/python-guide-2026-06-25.html">2026-06-25</a> (Day 25)</li>
+    <li><a href="python-guides/python-guide-2026-06-24.html">2026-06-24</a> (Day 24)</li>
+    <li><a href="python-guides/python-guide-2026-06-23.html">2026-06-23</a> (Day 23)</li>
+    <li><a href="python-guides/python-guide-2026-06-22.html">2026-06-22</a> (Day 22)</li>
+    <li><a href="python-guides/python-guide-2026-06-21.html">2026-06-21</a> (Day 21)</li>
+    <li><a href="python-guides/python-guide-2026-06-19.html">2026-06-19</a> (Day 20)</li>
+    <li><a href="python-guides/python-guide-2026-06-18.html">2026-06-18</a> (Day 19)</li>
+    <li><a href="python-guides/python-guide-2026-06-17.html">2026-06-17</a> (Day 18)</li>
+    <li><a href="python-guides/python-guide-2026-06-15.html">2026-06-15</a> (Day 17)</li>
+    <li class="current"><a href="python-guides/python-guide-2026-06-13.html">2026-06-13</a> </li>
+    <li><a href="python-guides/python-guide-2026-06-12.html">2026-06-12</a> (Day 15)</li>
+    <li><a href="python-guides/python-guide-2026-06-11.html">2026-06-11</a> (Day 14)</li>
+    <li><a href="python-guides/python-guide-2026-06-10.html">2026-06-10</a> (Day 13)</li>
+    <li><a href="python-guides/python-guide-2026-06-09.html">2026-06-09</a> (Day 12)</li>
+    <li><a href="python-guides/python-guide-2026-06-08.html">2026-06-08</a> (Day 11)</li>
+    <li><a href="python-guides/python-guide-2026-06-07.html">2026-06-07</a> (Day 10)</li>
+    <li><a href="python-guides/python-guide-2026-06-05.html">2026-06-05</a> (Day 9)</li>
+    <li><a href="python-guides/python-guide-2026-06-04.html">2026-06-04</a> (Day 8)</li>
+    <li><a href="python-guides/python-guide-2026-06-03.html">2026-06-03</a> (Day 7)</li>
+    <li><a href="python-guides/python-guide-2026-06-02.html">2026-06-02</a> (Day 6)</li>
+    <li><a href="python-guides/python-guide-2026-06-01.html">2026-06-01</a> (Day 5)</li>
+    <li><a href="python-guides/python-guide-2026-05-31.html">2026-05-31</a> (Day 4)</li>
+    <li><a href="python-guides/python-guide-2026-05-30.html">2026-05-30</a> (Day 3)</li>
+    <li><a href="python-guides/python-guide-2026-05-29.html">2026-05-29</a> (Day 2)</li>
+    <li><a href="python-guides/python-guide-2026-05-28.html">2026-05-28</a> (Day 1)</li>
+  </ul>
+</div>
+
+</div><!-- end main -->
+
+<script>
+(function() {
+  // ===== Theme Toggle =====
+  var THEME_KEY = 'lc-pyguide-theme';
+  var toggle = document.getElementById('theme-toggle');
+  var html = document.documentElement;
+
+  function setTheme(theme) {
+    html.setAttribute('data-theme', theme);
+    localStorage.setItem(THEME_KEY, theme);
+    toggle.textContent = theme === 'dark' ? '☽' : '☀';
+    toggle.title = theme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme';
+  }
+
+  var saved = localStorage.getItem(THEME_KEY) || 'dark';
+  setTheme(saved);
+
+  toggle.addEventListener('click', function() {
+    var current = html.getAttribute('data-theme');
+    setTheme;
+  });
+
+  // ===== Mobile Sidebar Toggle =====
+  var sidebarToggle = document.getElementById('sidebar-toggle');
+  var sidebar = document.getElementById('sidebar');
+
+  sidebarToggle.addEventListener('click', function() {
+    sidebar.classList.toggle('open');
+  });
+
+  // Close sidebar when clicking a link on mobile
+  sidebar.querySelectorAll('.sidebar-link').forEach(function(link) {
+    link.addEventListener('click', function() {
+      if (window.innerWidth <= 900) {
+        sidebar.classList.remove('open');
+      }
+    });
+  });
+
+  // ===== Active Sidebar Link on Scroll =====
+  var links = document.querySelectorAll('.sidebar-link');
+  var sections = [];
+
+  links.forEach(function(link) {
+    var id = link.getAttribute('href').slice(1);
+    var el = document.getElementById(id);
+    if (el) sections.push({ id: id, el: el, link: link });
+  });
+
+  function updateActive() {
+    var current = null;
+    var scrollY = window.scrollY + 100;
+
+    for (var i = sections.length - 1; i >= 0; i--) {
+      if (sections[i].el.offsetTop <= scrollY) {
+        current = sections[i];
+        break;
+      }
+    }
+
+    links.forEach(function(l) { l.classList.remove('active'); });
+    if  current.link.classList.add('active');
+  }
+
+  window.addEventListener('scroll', updateActive, { passive: true });
+  updateActive();
+})();
+</script>
+
+</body>
+</html>

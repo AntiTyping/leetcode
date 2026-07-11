@@ -1,0 +1,1448 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TypeScript Daily Guide — 2026-06-18 (Day 16)</title>
+<style>
+:root {
+  --bg: #0d1117;
+  --surface: #161b22;
+  --surface2: #1c2129;
+  --border: #30363d;
+  --text: #e6edf3;
+  --text-muted: #8b949e;
+  --accent: #58a6ff;
+  --accent-bg: rgba(56,139,253,0.15);
+  --green: #3fb950;
+  --green-bg: rgba(63,185,80,0.08);
+  --red: #f85149;
+  --red-bg: rgba(248,81,73,0.08);
+  --yellow: #d29922;
+  --yellow-bg: rgba(210,153,34,0.1);
+  --orange: #db6d28;
+  --purple: #bc8cff;
+  --purple-bg: rgba(188,140,255,0.08);
+  --purple-border: rgba(188,140,255,0.2);
+  --link: #58a6ff;
+  --code-bg: #1c2129;
+  --output-bg: #0e1c0e;
+  --output-border: #1a3a1a;
+  --sidebar-bg: #161b22;
+  --sidebar-active: rgba(56,139,253,0.15);
+  --exercise-border: #30363d;
+}
+[data-theme="light"] {
+  --bg: #ffffff;
+  --surface: #f6f8fa;
+  --surface2: #eef1f5;
+  --border: #d0d7de;
+  --text: #1f2328;
+  --text-muted: #656d76;
+  --accent: #0969da;
+  --accent-bg: rgba(9,105,218,0.1);
+  --green: #1a7f37;
+  --green-bg: rgba(26,127,55,0.06);
+  --red: #cf222e;
+  --red-bg: rgba(207,34,46,0.06);
+  --yellow: #9a6700;
+  --yellow-bg: rgba(154,103,0,0.06);
+  --orange: #bc4c00;
+  --purple: #8250df;
+  --purple-bg: rgba(130,80,223,0.06);
+  --purple-border: rgba(130,80,223,0.15);
+  --link: #0969da;
+  --code-bg: #eef1f5;
+  --output-bg: #f0faf0;
+  --output-border: #c6e6c6;
+  --sidebar-bg: #f6f8fa;
+  --sidebar-active: rgba(9,105,218,0.1);
+  --exercise-border: #d0d7de;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;font-size:16px;line-height:1.7;color:var(--text);background:var(--bg);display:flex;min-height:100vh}
+a{color:var(--link);text-decoration:none}
+a:hover{text-decoration:underline}
+
+/* Sidebar */
+.sidebar{position:fixed;top:0;left:0;width:300px;height:100vh;background:var(--sidebar-bg);border-right:1px solid var(--border);overflow-y:auto;padding:20px 0;z-index:100}
+.sidebar-header{padding:16px 20px;border-bottom:1px solid var(--border);margin-bottom:12px}
+.sidebar-header h2{font-size:15px;font-weight:600;color:var(--text)}
+.sidebar-header .date{font-size:13px;color:var(--text-muted);margin-top:2px}
+.sidebar-section{padding:8px 20px 4px;font-size:12px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px}
+.sidebar-section.review-label{color:var(--purple)}
+.sidebar-nav{list-style:none;padding:0}
+.sidebar-nav li a{display:block;padding:6px 20px 6px 28px;font-size:14px;color:var(--text-muted);transition:all 0.15s}
+.sidebar-nav li a:hover,.sidebar-nav li a.active{color:var(--accent);background:var(--sidebar-active);text-decoration:none}
+.sidebar-nav li a .nav-id{font-size:11px;color:var(--text-muted);opacity:0.6;margin-left:6px}
+
+/* Main */
+.main{margin-left:300px;flex:1;padding:40px;max-width:1160px}
+.content{max-width:860px;margin:0 auto}
+
+/* Theme Toggle */
+.theme-toggle{position:fixed;top:16px;right:20px;z-index:200;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:8px 12px;cursor:pointer;color:var(--text);font-size:18px;line-height:1;transition:all 0.15s}
+.theme-toggle:hover{border-color:var(--accent)}
+
+/* Header */
+.guide-header{text-align:center;padding:32px 0 40px;border-bottom:1px solid var(--border);margin-bottom:40px}
+.guide-header h1{font-size:28px;font-weight:700;margin-bottom:8px}
+.guide-header .meta{font-size:15px;color:var(--text-muted)}
+.guide-header .meta span{margin:0 8px}
+.badge{display:inline-block;padding:2px 10px;border-radius:12px;font-size:13px;font-weight:500}
+.badge-blue{background:var(--accent-bg);color:var(--accent)}
+.badge-purple{background:var(--purple-bg);color:var(--purple)}
+
+/* How To Use */
+.how-to-use{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:24px 28px;margin-bottom:40px}
+.how-to-use h2{font-size:18px;margin-bottom:12px}
+.how-to-use ol{padding-left:24px}
+.how-to-use li{margin-bottom:6px;color:var(--text-muted)}
+
+/* Review Section */
+.review-section{margin-bottom:48px}
+.review-section-header{font-size:22px;font-weight:700;padding-bottom:12px;border-bottom:2px solid var(--purple);margin-bottom:28px;display:flex;align-items:center;gap:12px;color:var(--purple)}
+
+/* Review Card */
+.review-card{background:var(--purple-bg);border:1px solid var(--purple-border);border-left:4px solid var(--purple);border-radius:10px;padding:28px;margin-bottom:24px}
+.review-card .review-header{display:flex;align-items:center;gap:12px;margin-bottom:12px;flex-wrap:wrap}
+.review-card .review-title{font-size:18px;font-weight:700;color:var(--purple)}
+.review-card .review-meta{font-size:13px;color:var(--text-muted)}
+.review-card .review-reminder{color:var(--text-muted);font-style:italic;margin-bottom:16px;padding-left:14px;border-left:3px solid var(--purple)}
+.review-card .review-pattern{margin-bottom:16px}
+.review-card .review-pattern strong{display:block;margin-bottom:8px;font-size:14px;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px}
+.review-card .review-challenge{margin-bottom:12px}
+.review-card .review-challenge strong{display:block;margin-bottom:8px;font-size:14px;color:var(--yellow);text-transform:uppercase;letter-spacing:0.5px}
+.review-card .review-challenge p{line-height:1.6}
+.review-card .review-pitfall{background:var(--red-bg);border:1px solid rgba(248,81,73,0.15);border-radius:6px;padding:12px 16px;font-size:14px;line-height:1.6}
+.review-card .review-pitfall strong{color:var(--red);margin-right:4px}
+.review-card code{background:var(--code-bg);padding:2px 6px;border-radius:4px;font-family:'SF Mono','Fira Code','Consolas',monospace;font-size:13px}
+
+/* Topic Section */
+.topic-section{margin-bottom:48px}
+.topic-section-header{font-size:22px;font-weight:700;padding-bottom:12px;border-bottom:2px solid var(--accent);margin-bottom:28px;display:flex;align-items:center;gap:12px}
+.topic-section-header .section-num{background:var(--accent);color:#fff;width:32px;height:32px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:15px;font-weight:700;flex-shrink:0}
+
+/* Concept Card */
+.concept-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:28px;margin-bottom:32px}
+.concept-header{display:flex;align-items:center;gap:12px;margin-bottom:16px;flex-wrap:wrap}
+.concept-title{font-size:20px;font-weight:700}
+.ttag{display:inline-block;padding:2px 10px;border-radius:12px;font-size:12px;font-weight:500;background:var(--accent-bg);color:var(--accent)}
+
+.why-matters{color:var(--text-muted);font-style:italic;margin-bottom:20px;padding-left:14px;border-left:3px solid var(--accent)}
+.explanation{margin-bottom:20px;line-height:1.8}
+.explanation p{margin-bottom:12px}
+.explanation ul,.explanation ol{padding-left:24px;margin-bottom:12px}
+.explanation li{margin-bottom:4px}
+.explanation code{background:var(--code-bg);padding:2px 6px;border-radius:4px;font-family:'SF Mono','Fira Code','Consolas',monospace;font-size:14px}
+
+/* Code Examples */
+.code-example{margin-bottom:20px;border:1px solid var(--border);border-radius:8px;overflow:hidden}
+.lang-badge{background:var(--surface2);color:var(--text-muted);font-size:12px;font-weight:600;padding:6px 14px;border-bottom:1px solid var(--border);font-family:'SF Mono','Fira Code','Consolas',monospace}
+pre{margin:0;padding:16px;overflow-x:auto;background:var(--code-bg);font-family:'SF Mono','Fira Code','Consolas',monospace;font-size:13.5px;line-height:1.6;white-space:pre-wrap}
+pre code{background:none;padding:0;font-size:inherit}
+.output{background:var(--output-bg);border-top:1px solid var(--output-border);padding:12px 16px;font-family:'SF Mono','Fira Code','Consolas',monospace;font-size:13px;color:var(--green);white-space:pre-wrap}
+.output::before{content:"Output:";display:block;font-size:11px;font-weight:600;color:var(--text-muted);margin-bottom:4px;text-transform:uppercase;letter-spacing:0.5px}
+.type-result{background:var(--output-bg);border-top:1px solid var(--output-border);padding:12px 16px;font-family:'SF Mono','Fira Code','Consolas',monospace;font-size:13px;color:var(--green);white-space:pre-wrap}
+.type-result::before{content:"Type Result:";display:block;font-size:11px;font-weight:600;color:var(--text-muted);margin-bottom:4px;text-transform:uppercase;letter-spacing:0.5px}
+.type-error{background:var(--red-bg);border-top:1px solid rgba(248,81,73,0.2);padding:12px 16px;font-family:'SF Mono','Fira Code','Consolas',monospace;font-size:13px;color:var(--red);white-space:pre-wrap}
+.type-error::before{content:"Type Error:";display:block;font-size:11px;font-weight:600;color:var(--red);margin-bottom:4px;text-transform:uppercase;letter-spacing:0.5px}
+
+/* Callouts */
+.callout-warning{background:var(--yellow-bg);border:1px solid rgba(210,153,34,0.2);border-radius:8px;padding:20px;margin-bottom:20px}
+.callout-warning strong{color:var(--yellow);display:block;margin-bottom:12px;font-size:16px}
+.mistake,.correct{padding:10px 14px;border-radius:6px;margin-bottom:10px;font-size:14px;line-height:1.6}
+.mistake{background:var(--red-bg);border-left:3px solid var(--red)}
+.mistake code,.correct code{background:var(--code-bg);padding:2px 6px;border-radius:4px;font-family:'SF Mono','Fira Code','Consolas',monospace;font-size:13px}
+.correct{background:var(--green-bg);border-left:3px solid var(--green)}
+
+/* Key Rules */
+.key-rules{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:20px;margin-bottom:20px}
+.key-rules strong{display:block;margin-bottom:10px;font-size:16px}
+.key-rules ul{padding-left:20px}
+.key-rules li{margin-bottom:6px}
+.key-rules code{background:var(--code-bg);padding:2px 6px;border-radius:4px;font-family:'SF Mono','Fira Code','Consolas',monospace;font-size:13px}
+
+/* Exercises */
+.exercises{border:2px dashed var(--exercise-border);border-radius:8px;padding:20px;margin-bottom:20px;margin-left:12px}
+.exercises strong{display:block;margin-bottom:14px;font-size:16px;color:var(--purple)}
+.exercise{margin-bottom:14px;padding-left:38px;position:relative;line-height:1.6}
+.exercise:last-child{margin-bottom:0}
+.exercise-num{position:absolute;left:0;top:2px;background:var(--purple);color:#fff;width:24px;height:24px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:12px;font-weight:700}
+.exercise code{background:var(--code-bg);padding:2px 6px;border-radius:4px;font-family:'SF Mono','Fira Code','Consolas',monospace;font-size:13px}
+
+/* Connections */
+.connections{background:var(--accent-bg);border:1px solid rgba(56,139,253,0.2);border-radius:8px;padding:16px 20px;font-size:14px;color:var(--text-muted)}
+.connections strong{color:var(--accent);margin-right:6px}
+
+/* Footer */
+.guide-footer{border-top:1px solid var(--border);padding-top:32px;margin-top:48px}
+.guide-footer h2{font-size:18px;margin-bottom:16px}
+.guide-footer ul{list-style:none;padding:0}
+.guide-footer li{padding:6px 0}
+.guide-footer li a{font-weight:500}
+
+/* Responsive */
+@media(max-width:900px){
+  .sidebar{display:none}
+  .main{margin-left:0}
+  .theme-toggle{top:12px;right:12px}
+}
+</style>
+</head>
+<body>
+
+<!-- Theme Toggle -->
+<button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">&#x1F319;</button>
+
+<!-- Sidebar -->
+<nav class="sidebar">
+  <div class="sidebar-header">
+    <h2>TypeScript Daily Guide</h2>
+    <div class="date">2026-06-18 &mdash; Day 16</div>
+  </div>
+
+  <div class="sidebar-section review-label">Review (6 concepts)</div>
+  <ul class="sidebar-nav">
+    <li><a href="#review_type_level_programming">Type-Level Programming <span class="nav-id">R1</span></a></li>
+    <li><a href="#review_function_overloads">Function Overloads <span class="nav-id">R2</span></a></li>
+    <li><a href="#review_class_patterns">Class Patterns <span class="nav-id">R3</span></a></li>
+    <li><a href="#review_proxy_reflect">Proxy &amp; Reflect Typing <span class="nav-id">R4</span></a></li>
+    <li><a href="#review_variance">Covariance &amp; Contravariance <span class="nav-id">R5</span></a></li>
+    <li><a href="#review_template_literals">Template Literal Types &mdash; Advanced <span class="nav-id">R6</span></a></li>
+  </ul>
+
+  <div class="sidebar-section">Advanced Practical Patterns</div>
+  <ul class="sidebar-nav">
+    <li><a href="#middleware_chains_ts">Type-Safe Middleware Chains <span class="nav-id">#1</span></a></li>
+    <li><a href="#recursive_type_utilities">Recursive Type Utilities <span class="nav-id">#2</span></a></li>
+    <li><a href="#sql_query_builder_ts">Type-Safe SQL Query Builders <span class="nav-id">#3</span></a></li>
+  </ul>
+
+  <div class="sidebar-section">Build &amp; Ship</div>
+  <ul class="sidebar-nav">
+    <li><a href="#module_boundary_types">Module Boundary Types &amp; Opaque Exports <span class="nav-id">#4</span></a></li>
+    <li><a href="#dual_package_esm_cjs">ESM/CJS Dual Package Patterns <span class="nav-id">#5</span></a></li>
+  </ul>
+</nav>
+
+<!-- Main Content -->
+<div class="main">
+<div class="content">
+
+<!-- Header -->
+<header class="guide-header">
+  <h1>TypeScript Daily Guide &mdash; Day 16</h1>
+  <div class="meta">
+    <span>2026-06-18</span>
+    <span>&middot;</span>
+    <span>Day 16 of 16</span>
+    <span>&middot;</span>
+    <span class="badge badge-purple">6 reviews</span>
+    <span class="badge badge-blue">5 new concepts</span>
+  </div>
+</header>
+
+<!-- How to Use -->
+<div class="how-to-use">
+  <h2>How to Use This Guide</h2>
+  <ol>
+    <li><strong>Review first</strong> &mdash; scan each purple review card; if the concept feels solid, move on; if fuzzy, re-read the code pattern</li>
+    <li><strong>Attempt the challenge exercise</strong> on any review card that felt shaky &mdash; this is your best reinforcement signal</li>
+    <li><strong>Work through new concepts</strong> top to bottom &mdash; each builds on the previous</li>
+    <li><strong>Type every code example</strong> yourself in a .ts or .tsx file &mdash; hover over types in your editor to build intuition</li>
+    <li><strong>Do at least 2 exercises per concept</strong> before moving to the next one</li>
+  </ol>
+</div>
+
+<!-- ============================================================ -->
+<!-- REVIEW SECTION                                                -->
+<!-- ============================================================ -->
+<div class="review-section">
+<div class="review-section-header">Review &mdash; 6 Concepts</div>
+
+<!-- R1: Type-Level Programming -->
+<div class="review-card" id="review_type_level_programming">
+  <div class="review-header">
+    <span class="review-title">R1. Type-Level Programming</span>
+    <span class="badge badge-purple">Advanced Patterns &amp; Performance</span>
+    <span class="review-meta">rep 2 &middot; 9 days since review</span>
+  </div>
+  <div class="review-reminder">TypeScript's type system is Turing-complete. Recursive types, conditional types, and mapped types combine to create type-level algorithms. Use recursive conditional types for string parsing, tuple manipulation, and deep transforms.</div>
+
+  <div class="review-pattern">
+    <strong>Key Pattern</strong>
+    <div class="code-example">
+<pre><code>// Recursive type: Deep Readonly
+type DeepReadonly&lt;T&gt; = T extends object
+  ? { readonly [K in keyof T]: DeepReadonly&lt;T[K]&gt; }
+  : T;
+
+// Type-level string split
+type Split&lt;S extends string, D extends string&gt; =
+  S extends `${infer H}${D}${infer T}` ? [H, ...Split&lt;T, D&gt;] : [S];
+
+type Parts = Split&lt;"a.b.c", "."&gt;; // ["a", "b", "c"]</code></pre>
+<div class="type-result">type Parts = ["a", "b", "c"]
+DeepReadonly recurses through nested object properties</div>
+    </div>
+  </div>
+
+  <div class="review-challenge">
+    <strong>Challenge Exercise</strong>
+    <p>Create a type <code>FlattenObject&lt;T&gt;</code> that flattens nested object types into dot-notation keys: <code>{ a: { b: number, c: { d: string } } }</code> &rarr; <code>{ "a.b": number, "a.c.d": string }</code>.</p>
+  </div>
+
+  <div class="review-pitfall">
+    <strong>Pitfall:</strong> TypeScript has a recursion depth limit (~50 levels) &mdash; deeply recursive types can cause &ldquo;Type instantiation is excessively deep and possibly infinite&rdquo; errors.
+  </div>
+</div>
+
+<!-- R2: Function Overloads -->
+<div class="review-card" id="review_function_overloads">
+  <div class="review-header">
+    <span class="review-title">R2. Function Overloads</span>
+    <span class="badge badge-purple">Functions &amp; Patterns</span>
+    <span class="review-meta">rep 3 &middot; 13 days since review</span>
+  </div>
+  <div class="review-reminder">Function overloads provide multiple call signatures for a single function. Declare overload signatures first (what callers see), then the implementation signature (wider, handles all cases). The implementation signature is NOT directly callable &mdash; it only guides the implementation.</div>
+
+  <div class="review-pattern">
+    <strong>Key Pattern</strong>
+    <div class="code-example">
+<pre><code>function createElement(tag: "a"): HTMLAnchorElement;
+function createElement(tag: "canvas"): HTMLCanvasElement;
+function createElement(tag: string): HTMLElement;
+function createElement(tag: string): HTMLElement {
+  return document.createElement(tag);
+}
+
+const link = createElement("a"); // HTMLAnchorElement</code></pre>
+<div class="type-result">const link: HTMLAnchorElement
+Callers only see the three overload signatures, not the implementation</div>
+    </div>
+  </div>
+
+  <div class="review-challenge">
+    <strong>Challenge Exercise</strong>
+    <p>Write overloaded signatures for a <code>fetch</code> wrapper where <code>fetch(url, { json: true })</code> returns <code>Promise&lt;unknown&gt;</code> and <code>fetch(url)</code> returns <code>Promise&lt;Response&gt;</code>.</p>
+  </div>
+
+  <div class="review-pitfall">
+    <strong>Pitfall:</strong> The implementation signature must be compatible with ALL overload signatures &mdash; a common mistake is making it too narrow.
+  </div>
+</div>
+
+<!-- R3: Class Patterns -->
+<div class="review-card" id="review_class_patterns">
+  <div class="review-header">
+    <span class="review-title">R3. Class Patterns</span>
+    <span class="badge badge-purple">Runtime Patterns</span>
+    <span class="review-meta">rep 2 &middot; 8 days since review</span>
+  </div>
+  <div class="review-reminder">TypeScript classes support abstract classes (can't instantiate, define contracts), mixins (compose behaviors via functions), private fields (<code>#field</code> for runtime privacy vs <code>private</code> for compile-time only), and static blocks for initialization.</div>
+
+  <div class="review-pattern">
+    <strong>Key Pattern</strong>
+    <div class="code-example">
+<pre><code>abstract class Shape {
+  abstract area(): number;
+  describe() { return `Area: ${this.area()}`; }
+}
+
+// Mixin pattern
+type Constructor&lt;T = {}&gt; = new (...args: any[]) =&gt; T;
+function Timestamped&lt;TBase extends Constructor&gt;(Base: TBase) {
+  return class extends Base {
+    createdAt = new Date();
+  };
+}
+
+class Circle extends Timestamped(Shape) {
+  constructor(private radius: number) { super(); }
+  area() { return Math.PI * this.radius ** 2; }
+}</code></pre>
+<div class="type-result">Circle has: area(), describe(), createdAt
+Mixin composes Timestamped behavior onto Shape</div>
+    </div>
+  </div>
+
+  <div class="review-challenge">
+    <strong>Challenge Exercise</strong>
+    <p>Create a mixin <code>Serializable</code> that adds <code>toJSON()</code> and <code>static fromJSON(data)</code> methods to any class. Use a generic constraint so <code>fromJSON</code> returns the correct type.</p>
+  </div>
+
+  <div class="review-pitfall">
+    <strong>Pitfall:</strong> TypeScript's <code>private</code> keyword doesn't enforce privacy at runtime &mdash; use <code>#field</code> for true encapsulation.
+  </div>
+</div>
+
+<!-- R4: Proxy & Reflect Typing -->
+<div class="review-card" id="review_proxy_reflect">
+  <div class="review-header">
+    <span class="review-title">R4. Proxy &amp; Reflect Typing</span>
+    <span class="badge badge-purple">Runtime Patterns</span>
+    <span class="review-meta">rep 2 &middot; 8 days since review</span>
+  </div>
+  <div class="review-reminder"><code>Proxy</code> intercepts object operations (get, set, has, deleteProperty, etc.). TypeScript types Proxy handlers via <code>ProxyHandler&lt;T&gt;</code>. <code>Reflect</code> provides the default behavior for each trap. Common patterns: validation proxies, logging proxies, reactive state.</div>
+
+  <div class="review-pattern">
+    <strong>Key Pattern</strong>
+    <div class="code-example">
+<pre><code>function createValidator&lt;T extends object&gt;(target: T, validators: {
+  [K in keyof T]?: (value: T[K]) =&gt; boolean
+}): T {
+  return new Proxy(target, {
+    set(obj, prop, value) {
+      const key = prop as keyof T;
+      if (validators[key] &amp;&amp; !validators[key]!(value)) {
+        throw new Error(`Invalid value for ${String(key)}`);
+      }
+      return Reflect.set(obj, prop, value);
+    }
+  });
+}</code></pre>
+<div class="type-result">Returns Proxy&lt;T&gt; typed as T — transparent to callers
+set trap validates before delegating to Reflect.set</div>
+    </div>
+  </div>
+
+  <div class="review-challenge">
+    <strong>Challenge Exercise</strong>
+    <p>Create a <code>createReadonlyDeep&lt;T&gt;(obj: T)</code> function using Proxy that intercepts both <code>set</code> and <code>deleteProperty</code> and also wraps returned objects in their own readonly proxy.</p>
+  </div>
+
+  <div class="review-pitfall">
+    <strong>Pitfall:</strong> Proxy traps must return the correct type &mdash; <code>set</code> must return boolean, <code>get</code> can return anything. Forgetting <code>return true</code> from <code>set</code> causes silent failures in strict mode.
+  </div>
+</div>
+
+<!-- R5: Covariance & Contravariance -->
+<div class="review-card" id="review_variance">
+  <div class="review-header">
+    <span class="review-title">R5. Covariance &amp; Contravariance</span>
+    <span class="badge badge-purple">Advanced Patterns &amp; Performance</span>
+    <span class="review-meta">rep 2 &middot; 7 days since review</span>
+  </div>
+  <div class="review-reminder">Covariance (out): subtypes can be used where supertypes are expected (return types, readonly properties). Contravariance (in): supertypes can be used where subtypes are expected (function parameters). TypeScript 4.7+ supports explicit <code>in</code>/<code>out</code> variance annotations on generics.</div>
+
+  <div class="review-pattern">
+    <strong>Key Pattern</strong>
+    <div class="code-example">
+<pre><code>interface Producer&lt;out T&gt; { produce(): T; }
+interface Consumer&lt;in T&gt; { consume(item: T): void; }
+
+// Producer&lt;Dog&gt; assignable to Producer&lt;Animal&gt; (covariant)
+// Consumer&lt;Animal&gt; assignable to Consumer&lt;Dog&gt; (contravariant)
+
+type Fn&lt;in A, out R&gt; = (arg: A) =&gt; R;
+// Fn&lt;Animal, Dog&gt; assignable to Fn&lt;Dog, Animal&gt;
+// Parameters are contravariant, return types are covariant</code></pre>
+<div class="type-result">out = covariant (produces/returns T)
+in = contravariant (consumes/accepts T)</div>
+    </div>
+  </div>
+
+  <div class="review-challenge">
+    <strong>Challenge Exercise</strong>
+    <p>Define a typed <code>EventBus&lt;Events&gt;</code> where <code>emit</code> is contravariant in the event type (accepts broader events) and <code>subscribe</code> callback's parameter is covariant (provides specific events).</p>
+  </div>
+
+  <div class="review-pitfall">
+    <strong>Pitfall:</strong> Without <code>in</code>/<code>out</code> annotations, TypeScript infers variance &mdash; which can be wrong for complex generics with multiple uses of the type parameter.
+  </div>
+</div>
+
+<!-- R6: Template Literal Types — Advanced -->
+<div class="review-card" id="review_template_literals">
+  <div class="review-header">
+    <span class="review-title">R6. Template Literal Types &mdash; Advanced</span>
+    <span class="badge badge-purple">Advanced Patterns &amp; Performance</span>
+    <span class="review-meta">rep 2 &middot; 7 days since review</span>
+  </div>
+  <div class="review-reminder">Template literal types combine string literals at the type level. Combined with conditional types and <code>infer</code>, they can parse, validate, and transform string types. Built-in utilities: <code>Uppercase</code>, <code>Lowercase</code>, <code>Capitalize</code>, <code>Uncapitalize</code>.</div>
+
+  <div class="review-pattern">
+    <strong>Key Pattern</strong>
+    <div class="code-example">
+<pre><code>type Route = `/${string}`;
+type EventName = `on${Capitalize&lt;string&gt;}`;
+
+// Parse route params
+type ExtractParams&lt;S extends string&gt; =
+  S extends `${string}:${infer Param}/${infer Rest}`
+    ? Param | ExtractParams&lt;`/${Rest}`&gt;
+    : S extends `${string}:${infer Param}`
+    ? Param
+    : never;
+
+type Params = ExtractParams&lt;"/users/:id/posts/:postId"&gt;;
+// "id" | "postId"</code></pre>
+<div class="type-result">type Params = "id" | "postId"
+infer captures path segments between delimiters</div>
+    </div>
+  </div>
+
+  <div class="review-challenge">
+    <strong>Challenge Exercise</strong>
+    <p>Create a type <code>CamelToSnake&lt;S&gt;</code> that converts <code>"myVariableName"</code> &rarr; <code>"my_variable_name"</code> at the type level, handling consecutive uppercase letters.</p>
+  </div>
+
+  <div class="review-pitfall">
+    <strong>Pitfall:</strong> Template literal types with unions can cause combinatorial explosion &mdash; <code>A | B</code> combined with <code>C | D</code> produces all combinations. Watch for &ldquo;Expression produces a union type that is too complex to represent.&rdquo;
+  </div>
+</div>
+
+</div><!-- end review-section -->
+
+<!-- ============================================================ -->
+<!-- TOPIC SECTION 1: Advanced Practical Patterns                  -->
+<!-- ============================================================ -->
+<div class="topic-section">
+<div class="topic-section-header"><span class="section-num">1</span>Advanced Practical Patterns</div>
+
+<!-- Concept 1: Type-Safe Middleware Chains -->
+<div class="concept-card" id="middleware_chains_ts">
+  <div class="concept-header">
+    <span class="concept-title">1. Type-Safe Middleware Chains</span>
+    <span class="ttag">Patterns</span>
+  </div>
+  <div class="why-matters">Middleware is everywhere &mdash; Express/Koa servers, Redux, data pipelines. Making middleware chains type-safe ensures context flows correctly and each middleware's additions to the context are visible to downstream handlers.</div>
+
+  <div class="explanation">
+    <p>A middleware function receives a context object and a <code>next</code> callback, does work, then either calls <code>next()</code> to continue the chain or short-circuits. The interesting part for TypeScript is <strong>context augmentation</strong>: an auth middleware adds <code>user</code> to the context, and every middleware that runs <em>after</em> it should see <code>user</code> in the type.</p>
+    <p>The core technique is to make each middleware generic over its input context <code>In</code> and declare an output context <code>Out extends In</code>. A <code>compose</code> function then accumulates the output types through the chain so the final handler receives the union of every middleware's additions.</p>
+    <ul>
+    <li><a href="typescript-guides/typescript-guide-2026-07-04.html">2026-07-04</a> (Day 31)</li>
+      <li><strong>Basic middleware type:</strong> <code>(ctx: Ctx, next: () =&gt; Promise&lt;void&gt;) =&gt; Promise&lt;void&gt;</code></li>
+      <li><strong>Context augmentation:</strong> each middleware widens the context type via intersection</li>
+      <li><strong>Composition:</strong> accumulate <code>In &amp; Added1 &amp; Added2 &amp; ...</code> through the chain</li>
+      <li><strong>Express-style</strong> mutates a shared <code>req</code> object; <strong>Koa-style</strong> threads a single <code>ctx</code> with <code>await next()</code></li>
+    </ul>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &mdash; Example 1: Basic middleware type</div>
+<pre><code>// A middleware operates over a context and can call next()
+type Middleware&lt;Ctx&gt; = (
+  ctx: Ctx,
+  next: () =&gt; Promise&lt;void&gt;
+) =&gt; Promise&lt;void&gt;;
+
+interface RequestContext {
+  url: string;
+  method: "GET" | "POST";
+}
+
+const logger: Middleware&lt;RequestContext&gt; = async (ctx, next) =&gt; {
+  console.log(`-&gt; ${ctx.method} ${ctx.url}`);
+  await next();
+  console.log(`&lt;- done ${ctx.url}`);
+};
+
+await logger({ url: "/api", method: "GET" }, async () =&gt; {});</code></pre>
+<div class="output">-&gt; GET /api
+&lt;- done /api</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &mdash; Example 2: Middleware that augments context</div>
+<pre><code>interface User { id: string; role: "admin" | "user"; }
+
+// Input context has no user; output context adds it.
+type AuthMiddleware&lt;In&gt; = (
+  ctx: In,
+  next: (ctx: In &amp; { user: User }) =&gt; Promise&lt;void&gt;
+) =&gt; Promise&lt;void&gt;;
+
+const auth: AuthMiddleware&lt;{ token: string }&gt; = async (ctx, next) =&gt; {
+  if (ctx.token !== "secret") throw new Error("401");
+  const user: User = { id: "u1", role: "admin" };
+  await next({ ...ctx, user }); // downstream now sees user
+};
+
+await auth({ token: "secret" }, async (ctx) =&gt; {
+  console.log(ctx.user.role); // ctx.user is typed!
+});</code></pre>
+<div class="type-result">Inside next callback: ctx is { token: string } &amp; { user: User }
+ctx.user.role is "admin" | "user" — fully typed</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &mdash; Example 3: Compose with type accumulation</div>
+<pre><code>// Each middleware is generic over In and declares what it Adds.
+type Mw&lt;In, Add&gt; = (
+  ctx: In,
+  next: (ctx: In &amp; Add) =&gt; Promise&lt;void&gt;
+) =&gt; Promise&lt;void&gt;;
+
+// Compose two middleware: the result's downstream sees both additions.
+function compose&lt;In, A1, A2&gt;(
+  m1: Mw&lt;In, A1&gt;,
+  m2: Mw&lt;In &amp; A1, A2&gt;
+): Mw&lt;In, A1 &amp; A2&gt; {
+  return (ctx, next) =&gt;
+    m1(ctx, (c1) =&gt; m2(c1, (c2) =&gt; next(c2)));
+}
+
+const withUser: Mw&lt;{ token: string }, { user: string }&gt; =
+  async (ctx, next) =&gt; next({ ...ctx, user: "alice" });
+
+const withLog: Mw&lt;{ token: string; user: string }, { ts: number }&gt; =
+  async (ctx, next) =&gt; next({ ...ctx, ts: Date.now() });
+
+const chain = compose(withUser, withLog);
+await chain({ token: "t" }, async (ctx) =&gt; {
+  console.log(ctx.user, ctx.ts); // both visible
+});</code></pre>
+<div class="type-result">chain: Mw&lt;{ token: string }, { user: string } &amp; { ts: number }&gt;
+Final ctx: { token: string; user: string; ts: number }</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &mdash; Example 4: Express-style typed middleware (real-world)</div>
+<pre><code>import type { Request, Response, NextFunction } from "express";
+
+interface User { id: string; email: string; }
+
+// Augment Express's Request so req.user is known after auth runs.
+interface AuthedRequest extends Request {
+  user: User;
+}
+
+// A guard middleware narrows Request -&gt; AuthedRequest for handlers.
+function requireAuth(
+  req: Request,
+  res: Response,
+  next: NextFunction
+): void {
+  const token = req.headers.authorization;
+  if (!token) { res.status(401).end(); return; }
+  (req as AuthedRequest).user = { id: "u1", email: "a@b.com" };
+  next();
+}
+
+// Handlers downstream declare AuthedRequest to get req.user typed.
+function profile(req: AuthedRequest, res: Response): void {
+  res.json({ email: req.user.email }); // req.user guaranteed
+}
+
+// app.get("/me", requireAuth, profile as any);</code></pre>
+<div class="type-result">profile receives AuthedRequest — req.user.email is string, no optional chaining
+requireAuth establishes the invariant the handler relies on</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &mdash; Bonus: branded context proves a check ran</div>
+<pre><code>// A plain { user: User } says nothing about *how* user got there.
+// A branded context proves the auth middleware was applied.
+declare const authed: unique symbol;
+type Authenticated&lt;Ctx&gt; = Ctx &amp; { readonly [authed]: true };
+
+function authenticate&lt;Ctx extends { token: string }&gt;(
+  ctx: Ctx
+): Authenticated&lt;Ctx &amp; { user: { id: string } }&gt; {
+  if (ctx.token !== "secret") throw new Error("401");
+  return { ...ctx, user: { id: "u1" } } as Authenticated&lt;
+    Ctx &amp; { user: { id: string } }
+  &gt;;
+}
+
+// Downstream handlers can REQUIRE proof of authentication in the type.
+function adminOnly(ctx: Authenticated&lt;{ user: { id: string } }&gt;) {
+  return ctx.user.id;
+}
+
+const ctx = authenticate({ token: "secret" });
+adminOnly(ctx);                 // OK — ctx carries the brand
+// adminOnly({ user: { id: "x" } }); // ERROR: missing brand</code></pre>
+<div class="type-error">adminOnly({ user: { id: "x" } })
+  Property '[authed]' is missing — an un-authenticated context can't reach adminOnly</div>
+  </div>
+
+  <div class="callout-warning">
+    <strong>Common Mistakes</strong>
+    <div class="mistake">Using <code>any</code> for the context (<code>ctx: any</code>) &mdash; this defeats the entire purpose; downstream handlers lose all type information about what was added.</div>
+    <div class="correct">Make each middleware generic over its input context and use an intersection (<code>In &amp; Add</code>) for what it contributes.</div>
+    <div class="mistake">Hardcoding a single concrete context type in <code>compose</code>, so it can't accumulate additions across the chain.</div>
+    <div class="correct">Parameterize <code>compose</code> over each middleware's <code>Add</code> type and thread the accumulated intersection forward.</div>
+    <div class="mistake">Mutating <code>req</code> with a cast but never declaring the augmented type, so handlers still see the un-augmented <code>Request</code>.</div>
+    <div class="correct">Declare an augmented interface (<code>AuthedRequest extends Request</code>) and type the downstream handler with it.</div>
+  </div>
+
+  <div class="key-rules">
+    <strong>Key Rules</strong>
+    <ul>
+      <li>Each middleware should be generic over its input context and declare what it adds.</li>
+      <li>Use intersection types (<code>In &amp; Add</code>) for context accumulation.</li>
+      <li>Consider branded types for verified context (e.g., <code>AuthenticatedContext</code>) so the type itself proves a check ran.</li>
+      <li>Koa-style (single threaded <code>ctx</code> with <code>await next()</code>) composes more cleanly in types than Express-style mutation.</li>
+    </ul>
+  </div>
+
+  <div class="exercises">
+    <strong>Exercises</strong>
+    <div class="exercise"><span class="exercise-num">1</span>Define a <code>Middleware&lt;In, Out&gt;</code> type where <code>In</code> is the input context and <code>Out extends In</code> is the output context with additions. Write a <code>compose</code> function that chains two middleware so the second one's input is the first one's output.</div>
+    <div class="exercise"><span class="exercise-num">2</span>Create an auth middleware type that transforms <code>{ req: Request }</code> into <code>{ req: Request, user: User }</code>, and a logger middleware that adds <code>{ log: Logger }</code>. Compose them so the final handler has all three (<code>req</code>, <code>user</code>, <code>log</code>) fully typed.</div>
+  </div>
+
+  <div class="connections">
+    <strong>Connections:</strong> Builds on intersection types and generic inference. Relates to <code>discriminated_unions_practice</code> (modeling request state) and branded types (verified context). The same accumulation pattern powers typed Redux middleware and tRPC procedure chains.
+  </div>
+</div>
+
+<!-- Concept 2: Recursive Type Utilities -->
+<div class="concept-card" id="recursive_type_utilities">
+  <div class="concept-header">
+    <span class="concept-title">2. Recursive Type Utilities</span>
+    <span class="ttag">Advanced Type System</span>
+  </div>
+  <div class="why-matters">Many real-world type transformations require recursion: deep partial, deep readonly, path-based access, flatten nested structures. Understanding recursive types unlocks powerful type-level programming for library and framework authors.</div>
+
+  <div class="explanation">
+    <p>A recursive type refers to itself in its own definition, typically guarded by a conditional that stops recursion at primitives. The two essentials are a <strong>base case</strong> (<code>T extends object ? ... : T</code>) and a <strong>recursive case</strong> that re-applies the transform to each property's type.</p>
+    <p>The most useful family: <code>DeepPartial</code>, <code>DeepRequired</code>, <code>DeepReadonly</code>, and <strong>path types</strong> &mdash; generating every valid dot-notation path through an object and looking up the type at a given path. TypeScript 4.5+ added tail-call optimization for recursive conditional types, raising the practical recursion ceiling.</p>
+    <ul>
+      <li><code>DeepPartial&lt;T&gt;</code> &mdash; makes all nested properties optional</li>
+      <li><code>Path&lt;T&gt;</code> &mdash; union of all valid dot-notation paths</li>
+      <li><code>PathValue&lt;T, P&gt;</code> &mdash; the type located at a given path</li>
+      <li>Recursion limits (~50 levels) and the TS 4.5 tail-call workaround</li>
+    </ul>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &mdash; Example 1: DeepPartial</div>
+<pre><code>type DeepPartial&lt;T&gt; = T extends object
+  ? { [K in keyof T]?: DeepPartial&lt;T[K]&gt; }
+  : T;
+
+interface Config {
+  server: { host: string; port: number };
+  features: { auth: { enabled: boolean } };
+}
+
+// Every nested field becomes optional — great for overrides.
+const override: DeepPartial&lt;Config&gt; = {
+  server: { port: 8080 }, // host omitted, OK
+};</code></pre>
+<div class="type-result">DeepPartial&lt;Config&gt; = {
+  server?: { host?: string; port?: number };
+  features?: { auth?: { enabled?: boolean } };
+}</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &mdash; Example 2: Path&lt;T&gt; (all dot-notation paths)</div>
+<pre><code>type Path&lt;T&gt; = T extends object
+  ? {
+      [K in keyof T &amp; string]: T[K] extends object
+        ? K | `${K}.${Path&lt;T[K]&gt;}`
+        : K;
+    }[keyof T &amp; string]
+  : never;
+
+interface Settings {
+  ui: { theme: string; layout: { columns: number } };
+  debug: boolean;
+}
+
+type Keys = Path&lt;Settings&gt;;
+// "ui" | "ui.theme" | "ui.layout" | "ui.layout.columns" | "debug"</code></pre>
+<div class="type-result">type Keys =
+  | "ui" | "ui.theme" | "ui.layout"
+  | "ui.layout.columns" | "debug"</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &mdash; Example 3: PathValue&lt;T, P&gt;</div>
+<pre><code>type PathValue&lt;T, P extends string&gt; =
+  P extends `${infer Head}.${infer Rest}`
+    ? Head extends keyof T
+      ? PathValue&lt;T[Head], Rest&gt;
+      : never
+    : P extends keyof T
+    ? T[P]
+    : never;
+
+interface Settings {
+  ui: { theme: string; layout: { columns: number } };
+}
+
+type Theme = PathValue&lt;Settings, "ui.theme"&gt;;        // string
+type Cols  = PathValue&lt;Settings, "ui.layout.columns"&gt;; // number</code></pre>
+<div class="type-result">type Theme = string
+type Cols = number
+Invalid paths resolve to never</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &mdash; WRONG vs RIGHT: missing base case</div>
+<pre><code>// WRONG: no base case — recurses into string's index signature,
+// number's methods, etc. Causes "excessively deep" errors.
+type BadReadonly&lt;T&gt; = {
+  readonly [K in keyof T]: BadReadonly&lt;T[K]&gt;;
+};
+
+// RIGHT: guard with `extends object` and special-case arrays first.
+type GoodReadonly&lt;T&gt; =
+  T extends (infer U)[]
+    ? ReadonlyArray&lt;GoodReadonly&lt;U&gt;&gt;
+    : T extends object
+    ? { readonly [K in keyof T]: GoodReadonly&lt;T[K]&gt; }
+    : T; // primitives stop here
+
+type R = GoodReadonly&lt;{ tags: string[]; meta: { x: number } }&gt;;</code></pre>
+<div class="type-result">type R = {
+  readonly tags: readonly string[];
+  readonly meta: { readonly x: number };
+}</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &mdash; Example 4: Type-safe get() (real-world lodash.get)</div>
+<pre><code>type Path&lt;T&gt; = T extends object
+  ? { [K in keyof T &amp; string]: T[K] extends object
+      ? K | `${K}.${Path&lt;T[K]&gt;}` : K }[keyof T &amp; string]
+  : never;
+
+type PathValue&lt;T, P extends string&gt; =
+  P extends `${infer H}.${infer R}`
+    ? H extends keyof T ? PathValue&lt;T[H], R&gt; : never
+    : P extends keyof T ? T[P] : never;
+
+function get&lt;T, P extends Path&lt;T&gt;&gt;(obj: T, path: P): PathValue&lt;T, P&gt; {
+  return path.split(".").reduce(
+    (acc: any, key) =&gt; acc?.[key], obj
+  );
+}
+
+const cfg = { ui: { theme: "dark", layout: { columns: 3 } } };
+const theme = get(cfg, "ui.theme");            // string
+const cols  = get(cfg, "ui.layout.columns");   // number
+// get(cfg, "ui.nope"); // ERROR: not assignable to Path</code></pre>
+<div class="type-result">const theme: string = "dark"
+const cols: number = 3
+Autocomplete suggests only valid paths; typos are compile errors</div>
+  </div>
+
+  <div class="callout-warning">
+    <strong>Common Mistakes</strong>
+    <div class="mistake">Infinite recursion from a missing base case &mdash; <code>type Bad&lt;T&gt; = { [K in keyof T]: Bad&lt;T[K]&gt; }</code> never stops at primitives.</div>
+    <div class="correct">Always guard with <code>T extends object ? ... : T</code> so primitives terminate the recursion.</div>
+    <div class="mistake">Not handling arrays/tuples &mdash; <code>T extends object</code> is true for arrays, so a naive <code>DeepReadonly</code> may map over <code>length</code>, <code>push</code>, etc.</div>
+    <div class="correct">Special-case arrays first: <code>T extends Array&lt;infer U&gt; ? ReadonlyArray&lt;DeepReadonly&lt;U&gt;&gt; : ...</code></div>
+    <div class="mistake">Forgetting to distribute over unions, so <code>Path&lt;A | B&gt;</code> behaves unexpectedly.</div>
+    <div class="correct">Be deliberate about distribution &mdash; wrap in a tuple <code>[T] extends [object]</code> to prevent it, or rely on it intentionally.</div>
+  </div>
+
+  <div class="key-rules">
+    <strong>Key Rules</strong>
+    <ul>
+      <li>Always have a base case &mdash; primitives must stop the recursion.</li>
+      <li>Use the <code>T extends object</code> guard to halt at non-object types.</li>
+      <li>Handle arrays, tuples, <code>Map</code>, and <code>Set</code> explicitly &mdash; they are objects but need different treatment.</li>
+      <li>Test recursive types with <code>tsd</code> / <code>expect-type</code> to verify boundary behavior (empty objects, optional fields, unions).</li>
+    </ul>
+  </div>
+
+  <div class="exercises">
+    <strong>Exercises</strong>
+    <div class="exercise"><span class="exercise-num">1</span>Implement <code>DeepReadonly&lt;T&gt;</code> that handles objects, arrays, <code>Map</code>, and <code>Set</code> &mdash; making their contents readonly too (<code>ReadonlyArray</code>, <code>ReadonlyMap</code>, <code>ReadonlySet</code>).</div>
+    <div class="exercise"><span class="exercise-num">2</span>Create <code>Paths&lt;T&gt;</code> that generates a union of all valid dot-notation paths for an object type, including nested paths that descend through arrays (e.g. <code>"items.0.name"</code> or a numeric index segment).</div>
+  </div>
+
+  <div class="connections">
+    <strong>Connections:</strong> Direct application of <code>review_type_level_programming</code> and template literal types (R6). <code>PathValue</code> reuses the <code>infer</code> string-splitting pattern. Powers form libraries (react-hook-form field paths), i18n key typing, and ORM column references.
+  </div>
+</div>
+
+<!-- Concept 3: Type-Safe SQL Query Builders -->
+<div class="concept-card" id="sql_query_builder_ts">
+  <div class="concept-header">
+    <span class="concept-title">3. Type-Safe SQL Query Builders</span>
+    <span class="ttag">Database Patterns</span>
+  </div>
+  <div class="why-matters">Raw SQL strings lose type safety. Query builders like Drizzle, Kysely, and knex use TypeScript's type system to validate queries at compile time &mdash; ensuring column names exist, join conditions match, and return types are correct.</div>
+
+  <div class="explanation">
+    <p>The whole approach starts with describing your schema <strong>once</strong> as TypeScript types, then deriving everything else from it. A <code>select</code> builder narrows the return type to only the columns you pick. A <code>where</code> clause restricts you to valid column names with matching value types. A <code>join</code> combines two table schemas into one result type.</p>
+    <p>The subtle part is <strong>nullability</strong>: an <code>INNER JOIN</code> produces the intersection of both row types, but a <code>LEFT JOIN</code> can leave the right side unmatched, so every right-hand column becomes <code>T | null</code> (or the whole right row becomes <code>Partial</code>/nullable).</p>
+    <ul>
+      <li>Table schema as a type; derive column unions with <code>keyof</code></li>
+      <li>Select narrows the return via <code>Pick&lt;Row, Cols&gt;</code></li>
+      <li><code>where</code> uses a mapped type so values match their column type</li>
+      <li>Joins: <code>INNER</code> &rarr; <code>L &amp; R</code>, <code>LEFT</code> &rarr; <code>L &amp; Partial&lt;R&gt;</code></li>
+    </ul>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &mdash; Example 1: Schema type + select narrowing</div>
+<pre><code>interface UsersTable {
+  id: number;
+  name: string;
+  email: string;
+  age: number;
+}
+
+// Select narrows the row to only the chosen columns.
+type Select&lt;Row, Cols extends keyof Row&gt; = Pick&lt;Row, Cols&gt;;
+
+declare function select&lt;Row, const Cols extends readonly (keyof Row)[]&gt;(
+  cols: Cols
+): Select&lt;Row, Cols[number]&gt;[];
+
+const rows = select&lt;UsersTable, ["id", "name"]&gt;(["id", "name"]);
+// rows: { id: number; name: string }[]</code></pre>
+<div class="type-result">rows: { id: number; name: string }[]
+email and age are excluded from the result type</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &mdash; Example 2: Type-safe where clause</div>
+<pre><code>interface UsersTable { id: number; name: string; age: number; }
+
+// Each key is optional; its value must match the column's type.
+type Where&lt;Row&gt; = {
+  [K in keyof Row]?: Row[K] | { gt?: Row[K]; lt?: Row[K] };
+};
+
+declare function where&lt;Row&gt;(cond: Where&lt;Row&gt;): Row[];
+
+where&lt;UsersTable&gt;({ age: { gt: 18 }, name: "Alice" }); // OK
+// where&lt;UsersTable&gt;({ age: "old" });   // ERROR: string not number
+// where&lt;UsersTable&gt;({ nope: 1 });      // ERROR: unknown column</code></pre>
+<div class="type-error">where&lt;UsersTable&gt;({ age: "old" })
+  Type 'string' is not assignable to type 'number | { gt?: number; ... }'
+where&lt;UsersTable&gt;({ nope: 1 })
+  Object literal may only specify known properties</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &mdash; Example 3: Joins — INNER vs LEFT nullability</div>
+<pre><code>interface Users { id: number; name: string; }
+interface Posts { id: number; userId: number; title: string; }
+
+// INNER JOIN: both rows always present -&gt; intersection.
+// LEFT JOIN: right side may be missing -&gt; nullable.
+type JoinResult&lt;L, R, J extends "inner" | "left"&gt; =
+  J extends "inner"
+    ? L &amp; R
+    : L &amp; { [K in keyof R]: R[K] | null };
+
+type Inner = JoinResult&lt;Users, Posts, "inner"&gt;;
+type Left  = JoinResult&lt;Users, Posts, "left"&gt;;</code></pre>
+<div class="type-result">type Inner = { id: number; name: string; userId: number; title: string }
+type Left  = { id: number; name: string;
+               id: number | null; ...; title: string | null }</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &mdash; Example 4: Mini Kysely-like chained builder (real-world)</div>
+<pre><code>interface DB {
+  users: { id: number; name: string; age: number };
+  posts: { id: number; userId: number; title: string };
+}
+
+class Query&lt;Table extends keyof DB, Selected = DB[Table]&gt; {
+  constructor(private table: Table) {}
+
+  select&lt;const C extends readonly (keyof DB[Table])[]&gt;(
+    cols: C
+  ): Query&lt;Table, Pick&lt;DB[Table], C[number]&gt;&gt; {
+    return this as any;
+  }
+
+  where(cond: Partial&lt;DB[Table]&gt;): this { return this; }
+
+  execute(): Selected[] { return [] as any; }
+}
+
+const result = new Query("users")
+  .select(["id", "name"])
+  .where({ age: 30 })  // age valid even though not selected
+  .execute();
+// result: { id: number; name: string }[]</code></pre>
+<div class="type-result">result: { id: number; name: string }[]
+.where accepts any real column; .select narrows the returned shape</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &mdash; WRONG vs RIGHT: column typing</div>
+<pre><code>interface Users { id: number; name: string; age: number; }
+
+// WRONG: string columns — typos compile, results are untyped.
+declare function badSelect(cols: string[]): any[];
+const bad = badSelect(["nmae"]); // typo slips through, bad: any[]
+
+// RIGHT: keyof + const param — typos are errors, result is narrowed.
+declare function goodSelect&lt;
+  const C extends readonly (keyof Users)[]
+&gt;(cols: C): Pick&lt;Users, C[number]&gt;[];
+
+const good = goodSelect(["id", "name"]); // { id: number; name: string }[]
+// goodSelect(["nmae"]); // ERROR: "nmae" is not a column of Users</code></pre>
+<div class="type-error">goodSelect(["nmae"])
+  Type '"nmae"' is not assignable to type 'keyof Users'.</div>
+  </div>
+
+  <div class="callout-warning">
+    <strong>Common Mistakes</strong>
+    <div class="mistake">Using plain <code>string</code> for column names: <code>select(cols: string[])</code> &mdash; you lose all column checking and autocomplete.</div>
+    <div class="correct">Constrain to <code>keyof Row</code> (and use <code>const</code> type parameters) so only real columns are accepted and the literal tuple is preserved.</div>
+    <div class="mistake">Returning <code>any</code> (or <code>Record&lt;string, unknown&gt;</code>) from query execution, so callers get no result typing.</div>
+    <div class="correct">Thread the narrowed row type through to <code>execute()</code>'s return type with a <code>Selected</code> type parameter.</div>
+    <div class="mistake">Typing <code>LEFT JOIN</code> columns as non-nullable, then crashing at runtime on unmatched rows.</div>
+    <div class="correct">Make every right-hand column of a <code>LEFT JOIN</code> <code>T | null</code> (or wrap the right row in <code>Partial</code>/nullable).</div>
+  </div>
+
+  <div class="key-rules">
+    <strong>Key Rules</strong>
+    <ul>
+      <li>Define your schema once, derive everything else (columns, where, results) from it.</li>
+      <li>Use <code>const</code> type parameters / template literal types for column references to preserve literals.</li>
+      <li><code>LEFT JOIN</code> columns should be <code>T | null</code>; <code>INNER JOIN</code> produces a plain intersection.</li>
+      <li>Narrow the return type through every builder step so <code>execute()</code> reflects the exact selected shape.</li>
+    </ul>
+  </div>
+
+  <div class="exercises">
+    <strong>Exercises</strong>
+    <div class="exercise"><span class="exercise-num">1</span>Define table types for <code>users</code> and <code>posts</code>, then create a <code>Select&lt;T, Cols&gt;</code> type that narrows the return type to only the selected columns. Verify that selecting a non-existent column is a compile error.</div>
+    <div class="exercise"><span class="exercise-num">2</span>Implement a <code>JoinResult&lt;Left, Right, JoinType&gt;</code> type where <code>INNER JOIN</code> produces <code>Left &amp; Right</code> but <code>LEFT JOIN</code> produces <code>Left &amp; Partial&lt;Right&gt;</code> (or with each right column made nullable).</div>
+  </div>
+
+  <div class="connections">
+    <strong>Connections:</strong> Combines mapped types (<code>where</code>), <code>Pick</code> (select), and conditional types (join nullability). Builds on <code>review_database_typing</code> (Prisma/Drizzle). The chained-builder return-type threading mirrors the phantom-type builder pattern from Day 15.
+  </div>
+</div>
+
+</div><!-- end topic-section 1 -->
+
+<!-- ============================================================ -->
+<!-- TOPIC SECTION 2: Build & Ship                                 -->
+<!-- ============================================================ -->
+<div class="topic-section">
+<div class="topic-section-header"><span class="section-num">2</span>Build &amp; Ship</div>
+
+<!-- Concept 4: Module Boundary Types & Opaque Exports -->
+<div class="concept-card" id="module_boundary_types">
+  <div class="concept-header">
+    <span class="concept-title">4. Module Boundary Types &amp; Opaque Exports</span>
+    <span class="ttag">Architecture</span>
+  </div>
+  <div class="why-matters">In large codebases, exposing internal types creates coupling. Opaque types (branded exports) let modules expose a type that callers can use but can't construct or inspect &mdash; enforcing invariants at module boundaries.</div>
+
+  <div class="explanation">
+    <p>An <strong>opaque type</strong> is a type whose underlying structure is hidden from consumers. The classic technique is a <strong>branded intersection</strong>: the public type is <code>string &amp; { readonly __brand: unique symbol }</code>, where the brand lives in a value the module never exports. Consumers can hold and pass the value, but cannot create one from a plain string &mdash; only the module's factory function can.</p>
+    <p>This pairs with disciplined export hygiene: <code>export type</code> for type-only re-exports (so they're erased and can't be instantiated), keeping the public surface minimal, and <strong>module augmentation</strong> for controlled extension points.</p>
+    <ul>
+      <li>Public API types vs internal implementation types</li>
+      <li>Opaque types via branded intersection + a private brand</li>
+      <li><code>export type</code> vs <code>export</code> for re-exports</li>
+      <li>Module augmentation as a sanctioned extension mechanism</li>
+    </ul>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &mdash; Example 1: Branded UserId</div>
+<pre><code>// The brand symbol is never exported -&gt; callers can't forge a UserId.
+declare const brand: unique symbol;
+export type UserId = string &amp; { readonly [brand]: "UserId" };
+
+export function toUserId(raw: string): UserId {
+  // validation here...
+  return raw as UserId;
+}
+
+function loadUser(id: UserId) { /* ... */ }
+
+const id = toUserId("u_123");
+loadUser(id);          // OK
+// loadUser("u_123");  // ERROR: string not assignable to UserId</code></pre>
+<div class="type-error">loadUser("u_123")
+  Argument of type 'string' is not assignable to parameter of type 'UserId'.</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &mdash; Example 2: Opaque config with factory</div>
+<pre><code>declare const configBrand: unique symbol;
+export type ValidatedConfig = {
+  readonly port: number;
+  readonly host: string;
+} &amp; { readonly [configBrand]: true };
+
+export function defineConfig(input: {
+  port: number; host: string;
+}): ValidatedConfig {
+  if (input.port &lt; 1 || input.port &gt; 65535) {
+    throw new Error("invalid port");
+  }
+  return input as ValidatedConfig;
+}
+
+// Consumers can read it but can't fabricate one bypassing validation.
+function startServer(cfg: ValidatedConfig) {
+  console.log(`listening on ${cfg.host}:${cfg.port}`);
+}</code></pre>
+<div class="type-result">ValidatedConfig is usable (read .port/.host) but only defineConfig can mint one
+A raw { port, host } object is NOT assignable to ValidatedConfig</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &mdash; Example 3: Module exporting opaque type + constructor</div>
+<pre><code>// safe-html.ts
+declare const htmlBrand: unique symbol;
+export type SafeHtml = string &amp; { readonly [htmlBrand]: true };
+
+export function sanitize(raw: string): SafeHtml {
+  const clean = raw.replace(/&lt;script[\s\S]*?&lt;\/script&gt;/gi, "");
+  return clean as SafeHtml;
+}
+
+export function render(html: SafeHtml): void {
+  document.body.innerHTML = html; // only sanitized strings reach here
+}
+
+// consumer.ts
+import { sanitize, render } from "./safe-html";
+render(sanitize("&lt;b&gt;hi&lt;/b&gt;&lt;script&gt;evil()&lt;/script&gt;")); // OK
+// render("&lt;b&gt;hi&lt;/b&gt;"); // ERROR: plain string is not SafeHtml</code></pre>
+<div class="type-result">render only accepts SafeHtml — the type system proves every rendered
+string passed through sanitize(). A raw string is a compile error.</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &mdash; Example 4: export type vs export (re-exports)</div>
+<pre><code>// types.ts
+export interface InternalRow { id: number; secret: string; }
+
+// public.ts — re-export the TYPE only, never the value-level shape.
+export type { InternalRow as Row } from "./types";
+
+// With isolatedModules / verbatimModuleSyntax, mixing these is caught:
+// export { InternalRow } from "./types";
+//   -&gt; ERROR if InternalRow is a type and you used a value export.
+
+// Use plain `export` only for things that exist at runtime (functions,
+// classes, consts). Use `export type` for type-only surface.</code></pre>
+<div class="type-result">export type { ... } is fully erased at build time — zero runtime footprint
+verbatimModuleSyntax forces you to mark type-only exports explicitly</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &mdash; WRONG vs RIGHT: forgeable vs opaque IDs</div>
+<pre><code>// WRONG: a bare alias is structurally identical to string.
+type WeakUserId = string;
+function loadUserWeak(id: WeakUserId) {}
+loadUserWeak("literally anything"); // compiles — no protection
+
+// RIGHT: brand makes the type un-forgeable outside the module.
+declare const brand: unique symbol;
+type UserId = string &amp; { readonly [brand]: "UserId" };
+function loadUser(id: UserId) {}
+// loadUser("anything"); // ERROR
+// Two different brands also can't be swapped:
+type OrderId = string &amp; { readonly [brand]: "OrderId" };
+declare const o: OrderId;
+// loadUser(o); // ERROR: OrderId is not UserId</code></pre>
+<div class="type-error">loadUser("anything")  -> string not assignable to UserId
+loadUser(o)           -> OrderId not assignable to UserId (different brand)</div>
+  </div>
+
+  <div class="callout-warning">
+    <strong>Common Mistakes</strong>
+    <div class="mistake">Exporting internal types that should be opaque, letting consumers depend on (and break against) implementation details.</div>
+    <div class="correct">Export the minimum surface; brand IDs and validated data so consumers can't reconstruct them.</div>
+    <div class="mistake">Using <code>export</code> for a type-only symbol when <code>verbatimModuleSyntax</code> requires <code>export type</code> (or vice versa).</div>
+    <div class="correct">Use <code>export type</code> for types that shouldn't be instantiated outside the module; reserve <code>export</code> for runtime values.</div>
+    <div class="mistake">Exporting the brand symbol or factory's internals, which lets callers forge opaque values.</div>
+    <div class="correct">Keep the brand <code>declare const ... : unique symbol</code> private to the module &mdash; only the factory can produce the branded type.</div>
+  </div>
+
+  <div class="key-rules">
+    <strong>Key Rules</strong>
+    <ul>
+      <li>Export the minimum type surface &mdash; every exported type is a contract you must maintain.</li>
+      <li>Use branded types for IDs and validated data to enforce invariants at the boundary.</li>
+      <li>Prefer <code>export type</code> for types that shouldn't be instantiated outside the module.</li>
+      <li>Turn on <code>isolatedModules</code> / <code>verbatimModuleSyntax</code> to catch ambiguous type-vs-value exports.</li>
+    </ul>
+  </div>
+
+  <div class="exercises">
+    <strong>Exercises</strong>
+    <div class="exercise"><span class="exercise-num">1</span>Create a module that exports an opaque <code>SafeHtml</code> type. Only the module's <code>sanitize(raw: string): SafeHtml</code> function can create it. Consumer code should be able to <em>use</em> <code>SafeHtml</code> (pass it around, render it) but not create it from a plain string.</div>
+    <div class="exercise"><span class="exercise-num">2</span>Design a &ldquo;token&rdquo; module with opaque <code>AccessToken</code> and <code>RefreshToken</code> types that can't be accidentally swapped &mdash; passing a <code>RefreshToken</code> where an <code>AccessToken</code> is expected should be a compile error.</div>
+  </div>
+
+  <div class="connections">
+    <strong>Connections:</strong> Generalizes branded types into a module-boundary discipline. Pairs with the phantom-type builder (Day 15) and <code>SafeHtml</code> mirrors the validation-proxy idea from R4. Underpins how libraries like <code>zod</code> brand parsed output.
+  </div>
+</div>
+
+<!-- Concept 5: ESM/CJS Dual Package Patterns -->
+<div class="concept-card" id="dual_package_esm_cjs">
+  <div class="concept-header">
+    <span class="concept-title">5. ESM/CJS Dual Package Patterns</span>
+    <span class="ttag">Build &amp; Ship</span>
+  </div>
+  <div class="why-matters">The Node.js ecosystem is migrating from CommonJS to ESM, but many consumers still need CJS. Publishing a package that works in both systems requires understanding the <code>exports</code> field, conditional exports, and TypeScript's <code>moduleResolution</code> settings.</div>
+
+  <div class="explanation">
+    <p>A <strong>dual package</strong> ships both an ESM build and a CJS build and routes consumers to the right one via the <code>package.json</code> <code>"exports"</code> field. The <code>"import"</code> condition serves ESM (<code>.mjs</code>), <code>"require"</code> serves CJS (<code>.cjs</code>), and &mdash; critically &mdash; a <code>"types"</code> condition tells TypeScript where the declarations are for <em>each</em> module system.</p>
+    <p>Modern TypeScript resolution (<code>"node16"</code>/<code>"nodenext"</code> vs <code>"bundler"</code>) follows these conditions. The biggest footgun is shipping a single <code>.d.ts</code> when the runtime has two module formats &mdash; you generally want both <code>.d.mts</code> and <code>.d.cts</code>. Tools like <code>tsup</code> or <code>unbuild</code> generate all four outputs (<code>.mjs</code>, <code>.cjs</code>, <code>.d.mts</code>, <code>.d.cts</code>) for you.</p>
+    <ul>
+      <li><code>"exports"</code> with conditional <code>"import"</code> / <code>"require"</code> / <code>"types"</code></li>
+      <li>Separate <code>.d.cts</code> and <code>.d.mts</code> declaration files</li>
+      <li><code>tsconfig</code>: <code>module</code>, <code>"moduleResolution": "bundler"</code> vs <code>"node16"</code></li>
+      <li><code>attw</code> (&ldquo;Are The Types Wrong?&rdquo;) to verify resolution</li>
+    </ul>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">JSON &mdash; Example 1: package.json conditional exports</div>
+<pre><code>{
+  "name": "my-lib",
+  "version": "1.0.0",
+  "type": "module",
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./dist/index.d.mts",
+        "default": "./dist/index.mjs"
+      },
+      "require": {
+        "types": "./dist/index.d.cts",
+        "default": "./dist/index.cjs"
+      }
+    }
+  }
+}</code></pre>
+<div class="output">import "my-lib"   -&gt; ./dist/index.mjs  (types: index.d.mts)
+require("my-lib") -&gt; ./dist/index.cjs  (types: index.d.cts)</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &mdash; Example 2: separate .d.cts / .d.mts declarations</div>
+<pre><code>// dist/index.d.mts  (ESM declarations)
+export declare function greet(name: string): string;
+export default greet;
+
+// dist/index.d.cts  (CJS declarations)
+export declare function greet(name: string): string;
+export = greet; // CJS-style export form
+
+// Why two files? Under moduleResolution "node16"/"nodenext",
+// TypeScript treats a .d.ts differently per the resolving
+// import vs require condition. `export =` is only valid for CJS.</code></pre>
+<div class="type-result">ESM consumers see `export default` / named exports
+CJS consumers see `export =` — matching `const greet = require("my-lib")`</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &mdash; Example 3: tsup config for dual output</div>
+<pre><code>// tsup.config.ts
+import { defineConfig } from "tsup";
+
+export default defineConfig({
+  entry: ["src/index.ts"],
+  format: ["esm", "cjs"], // emits index.mjs + index.cjs
+  dts: true,              // emits index.d.mts + index.d.cts
+  clean: true,
+  sourcemap: true,
+  outDir: "dist",
+});
+
+// Run: tsup
+// dist/index.mjs, dist/index.cjs, dist/index.d.mts, dist/index.d.cts</code></pre>
+<div class="output">CLI dist/index.mjs     1.2 KB
+CLI dist/index.cjs     1.4 KB
+DTS dist/index.d.mts   0.3 KB
+DTS dist/index.d.cts   0.3 KB</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">Text &mdash; Example 4: complete dual package structure (real-world)</div>
+<pre><code>my-lib/
+├─ src/
+│  └─ index.ts          # single TS source of truth
+├─ dist/                # generated by tsup
+│  ├─ index.mjs         # ESM runtime
+│  ├─ index.cjs         # CJS runtime
+│  ├─ index.d.mts       # ESM types
+│  └─ index.d.cts       # CJS types
+├─ package.json         # "exports" maps conditions -&gt; dist files
+├─ tsup.config.ts
+└─ tsconfig.json        # "module": "NodeNext",
+                        # "moduleResolution": "NodeNext"
+
+# Verify before publishing:
+#   npx @arethetypeswrong/cli --pack
+#   node -e "require('my-lib')"        # CJS works
+#   node --input-type=module -e "import 'my-lib'"  # ESM works</code></pre>
+<div class="output">attw: No problems found 🎉
+require('my-lib') -&gt; OK
+import 'my-lib'   -&gt; OK</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">JSON &mdash; WRONG vs RIGHT: exports field</div>
+<pre><code>// WRONG: single .d.ts, no per-condition types, legacy "main" only.
+{
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts"
+  // require() works; modern ESM + "node16" resolution may break,
+  // and attw flags "masquerading" / wrong-format type errors.
+}
+
+// RIGHT: explicit conditions, types co-located per format.
+{
+  "type": "module",
+  "main": "./dist/index.cjs",   // fallback for old tooling
+  "exports": {
+    ".": {
+      "import": { "types": "./dist/index.d.mts", "default": "./dist/index.mjs" },
+      "require": { "types": "./dist/index.d.cts", "default": "./dist/index.cjs" }
+    }
+  }
+}</code></pre>
+<div class="output">attw on RIGHT: No problems found
+attw on WRONG: often "Masquerading as ESM" / missing types under require</div>
+  </div>
+
+  <div class="callout-warning">
+    <strong>Common Mistakes</strong>
+    <div class="mistake">Forgetting the <code>"types"</code> condition inside <code>"exports"</code>, so TypeScript can't find your declarations under modern resolution.</div>
+    <div class="correct">Always include a <code>"types"</code> condition (per <code>import</code>/<code>require</code>) pointing at the matching <code>.d.mts</code>/<code>.d.cts</code>.</div>
+    <div class="mistake">Relying only on <code>"main"</code> (legacy resolution) and assuming new bundlers/Node will pick the right format.</div>
+    <div class="correct">Use the <code>"exports"</code> field as the source of truth; <code>"main"</code> is at most a fallback for very old tooling.</div>
+    <div class="mistake">Testing only with <code>import</code> and assuming <code>require</code> works &mdash; the two resolve differently and either can break.</div>
+    <div class="correct">Test both entry points and run <code>attw</code> (&ldquo;Are The Types Wrong?&rdquo;) before publishing.</div>
+  </div>
+
+  <div class="key-rules">
+    <strong>Key Rules</strong>
+    <ul>
+      <li>Always include the <code>"types"</code> condition in conditional exports &mdash; once per format.</li>
+      <li>Test your package with <strong>both</strong> <code>import</code> and <code>require</code>.</li>
+      <li>Use <code>attw</code> (Are The Types Wrong?) to verify TypeScript compatibility across resolvers.</li>
+      <li>Behavior differs between <code>"moduleResolution": "node16"</code> and <code>"bundler"</code> &mdash; pick based on your target consumers.</li>
+    </ul>
+  </div>
+
+  <div class="exercises">
+    <strong>Exercises</strong>
+    <div class="exercise"><span class="exercise-num">1</span>Write a <code>package.json</code> <code>"exports"</code> field that provides ESM for <code>import</code>, CJS for <code>require</code>, and the correct <code>.d.mts</code> / <code>.d.cts</code> declarations for TypeScript in both cases.</div>
+    <div class="exercise"><span class="exercise-num">2</span>Given a library with a <code>src/index.ts</code> entry point, write the <code>tsup</code> config (or an <code>unbuild</code> config) to produce both <code>dist/index.mjs</code> and <code>dist/index.cjs</code> with corresponding declaration files, then list the commands you'd run to verify it.</div>
+  </div>
+
+  <div class="connections">
+    <strong>Connections:</strong> The build-and-ship counterpart to <code>module_boundary_types</code> &mdash; you decide the public surface, then package it so both module systems resolve it correctly. Ties to <code>tsconfig</code> <code>moduleResolution</code> knowledge and the <code>isolatedModules</code> discipline from Concept 4.
+  </div>
+</div>
+
+</div><!-- end topic-section 2 -->
+
+<!-- ============================================================ -->
+<!-- FOOTER                                                        -->
+<!-- ============================================================ -->
+<footer class="guide-footer">
+  <h2>All Guides</h2>
+  <ul>
+    <li><a href="typescript-guides/typescript-guide-2026-07-09.html">2026-07-09</a> (Day 36)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-07-08.html">2026-07-08</a> (Day 35)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-07-07.html">2026-07-07</a> (Day 34)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-07-06.html">2026-07-06</a> (Day 33)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-07-05.html">2026-07-05</a> (Day 32)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-07-04.html">2026-07-04</a> (Day 31)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-07-03.html">2026-07-03</a> (Day 30)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-07-02.html">2026-07-02</a> (Day 29)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-07-01.html">2026-07-01</a> (Day 28)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-30.html">2026-06-30</a> (Day 27)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-29.html">2026-06-29</a> (Day 26)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-28.html">2026-06-28</a> (Day 25)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-27.html">2026-06-27</a> (Day 24)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-26.html">2026-06-26</a> (Day 23)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-25.html">2026-06-25</a> (Day 22)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-24.html">2026-06-24</a> (Day 21)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-23.html">2026-06-23</a> (Day 20)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-22.html">2026-06-22</a> (Day 19)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-21.html">2026-06-21</a> (Day 18)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-19.html">2026-06-19</a> (Day 17)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-18.html">2026-06-18</a> (Day 16)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-17.html">2026-06-17</a> (Day 15)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-15.html">2026-06-15</a> (Day 14)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-13.html">2026-06-13</a> (Day 13)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-12.html">2026-06-12</a> (Day 12)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-11.html">2026-06-11</a> (Day 11)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-10.html">2026-06-10</a> (Day 10)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-09.html">2026-06-09</a> (Day 9)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-08.html">2026-06-08</a> (Day 8)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-07.html">2026-06-07</a> (Day 7)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-05.html">2026-06-05</a> (Day 6)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-04.html">2026-06-04</a> (Day 5)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-03.html">2026-06-03</a> (Day 4)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-02.html">2026-06-02</a> (Day 3)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-01.html">2026-06-01</a> (Day 2)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-05-31.html">2026-05-31</a> (Day 1)</li>
+  </ul>
+</footer>
+
+</div><!-- end content -->
+</div><!-- end main -->
+
+<script>
+// Theme toggle
+(function() {
+  var toggle = document.getElementById('themeToggle');
+  var html = document.documentElement;
+  var STORAGE_KEY = 'lc-tsguide-theme';
+
+  function setTheme(theme) {
+    html.setAttribute('data-theme', theme);
+    toggle.textContent = theme === 'dark' ? '\u{1F319}' : '\u{2600}\u{FE0F}';
+    try { localStorage.setItem(STORAGE_KEY, theme); } catch(e) {}
+  }
+
+  // Load saved theme
+  try {
+    var saved = localStorage.getItem(STORAGE_KEY);
+    if (saved) setTheme(saved);
+  } catch(e) {}
+
+  toggle.addEventListener('click', function() {
+    var current = html.getAttribute('data-theme') || 'dark';
+    setTheme;
+  });
+})();
+
+// Sidebar active link tracking
+(function() {
+  var links = document.querySelectorAll('.sidebar-nav a');
+  var sections = [];
+  links.forEach(function(link) {
+    var id = link.getAttribute('href').replace('#', '');
+    var el = document.getElementById(id);
+    if (el) sections.push({ link: link, el: el });
+  });
+
+  function updateActive() {
+    var current = null;
+    var scrollY = window.scrollY + 120;
+    for (var i = sections.length - 1; i >= 0; i--) {
+      if (sections[i].el.offsetTop <= scrollY) {
+        current = sections[i];
+        break;
+      }
+    }
+    links.forEach(function(l) { l.classList.remove('active'); });
+    if  current.link.classList.add('active');
+  }
+
+  window.addEventListener('scroll', updateActive);
+  updateActive();
+})();
+</script>
+
+</body>
+</html>

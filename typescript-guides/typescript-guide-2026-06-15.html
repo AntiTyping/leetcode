@@ -1,0 +1,1498 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TypeScript Daily Guide — 2026-06-15 (Day 14)</title>
+<style>
+:root {
+  --bg: #0d1117;
+  --surface: #161b22;
+  --surface2: #1c2129;
+  --border: #30363d;
+  --text: #e6edf3;
+  --text-muted: #8b949e;
+  --accent: #58a6ff;
+  --accent-bg: rgba(56,139,253,0.15);
+  --green: #3fb950;
+  --green-bg: rgba(63,185,80,0.08);
+  --red: #f85149;
+  --red-bg: rgba(248,81,73,0.08);
+  --yellow: #d29922;
+  --yellow-bg: rgba(210,153,34,0.1);
+  --orange: #db6d28;
+  --purple: #bc8cff;
+  --purple-bg: rgba(188,140,255,0.08);
+  --purple-border: rgba(188,140,255,0.2);
+  --link: #58a6ff;
+  --code-bg: #1c2129;
+  --output-bg: #0e1c0e;
+  --output-border: #1a3a1a;
+  --sidebar-bg: #161b22;
+  --sidebar-active: rgba(56,139,253,0.15);
+  --exercise-border: #30363d;
+}
+[data-theme="light"] {
+  --bg: #ffffff;
+  --surface: #f6f8fa;
+  --surface2: #eef1f5;
+  --border: #d0d7de;
+  --text: #1f2328;
+  --text-muted: #656d76;
+  --accent: #0969da;
+  --accent-bg: rgba(9,105,218,0.1);
+  --green: #1a7f37;
+  --green-bg: rgba(26,127,55,0.06);
+  --red: #cf222e;
+  --red-bg: rgba(207,34,46,0.06);
+  --yellow: #9a6700;
+  --yellow-bg: rgba(154,103,0,0.06);
+  --orange: #bc4c00;
+  --purple: #8250df;
+  --purple-bg: rgba(130,80,223,0.06);
+  --purple-border: rgba(130,80,223,0.15);
+  --link: #0969da;
+  --code-bg: #eef1f5;
+  --output-bg: #f0faf0;
+  --output-border: #c6e6c6;
+  --sidebar-bg: #f6f8fa;
+  --sidebar-active: rgba(9,105,218,0.1);
+  --exercise-border: #d0d7de;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;font-size:16px;line-height:1.7;color:var(--text);background:var(--bg);display:flex;min-height:100vh}
+a{color:var(--link);text-decoration:none}
+a:hover{text-decoration:underline}
+
+/* Sidebar */
+.sidebar{position:fixed;top:0;left:0;width:300px;height:100vh;background:var(--sidebar-bg);border-right:1px solid var(--border);overflow-y:auto;padding:20px 0;z-index:100}
+.sidebar-header{padding:16px 20px;border-bottom:1px solid var(--border);margin-bottom:12px}
+.sidebar-header h2{font-size:15px;font-weight:600;color:var(--text)}
+.sidebar-header .date{font-size:13px;color:var(--text-muted);margin-top:2px}
+.sidebar-section{padding:8px 20px 4px;font-size:12px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px}
+.sidebar-section.review-label{color:var(--purple)}
+.sidebar-nav{list-style:none;padding:0}
+.sidebar-nav li a{display:block;padding:6px 20px 6px 28px;font-size:14px;color:var(--text-muted);transition:all 0.15s}
+.sidebar-nav li a:hover,.sidebar-nav li a.active{color:var(--accent);background:var(--sidebar-active);text-decoration:none}
+.sidebar-nav li a .nav-id{font-size:11px;color:var(--text-muted);opacity:0.6;margin-left:6px}
+
+/* Main */
+.main{margin-left:300px;flex:1;padding:40px;max-width:1160px}
+.content{max-width:860px;margin:0 auto}
+
+/* Theme Toggle */
+.theme-toggle{position:fixed;top:16px;right:20px;z-index:200;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:8px 12px;cursor:pointer;color:var(--text);font-size:18px;line-height:1;transition:all 0.15s}
+.theme-toggle:hover{border-color:var(--accent)}
+
+/* Header */
+.guide-header{text-align:center;padding:32px 0 40px;border-bottom:1px solid var(--border);margin-bottom:40px}
+.guide-header h1{font-size:28px;font-weight:700;margin-bottom:8px}
+.guide-header .meta{font-size:15px;color:var(--text-muted)}
+.guide-header .meta span{margin:0 8px}
+.badge{display:inline-block;padding:2px 10px;border-radius:12px;font-size:13px;font-weight:500}
+.badge-blue{background:var(--accent-bg);color:var(--accent)}
+.badge-purple{background:var(--purple-bg);color:var(--purple)}
+
+/* How To Use */
+.how-to-use{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:24px 28px;margin-bottom:40px}
+.how-to-use h2{font-size:18px;margin-bottom:12px}
+.how-to-use ol{padding-left:24px}
+.how-to-use li{margin-bottom:6px;color:var(--text-muted)}
+
+/* Review Section */
+.review-section{margin-bottom:48px}
+.review-section-header{font-size:22px;font-weight:700;padding-bottom:12px;border-bottom:2px solid var(--purple);margin-bottom:28px;display:flex;align-items:center;gap:12px;color:var(--purple)}
+
+/* Review Card */
+.review-card{background:var(--purple-bg);border:1px solid var(--purple-border);border-radius:10px;padding:28px;margin-bottom:24px}
+.review-card .review-header{display:flex;align-items:center;gap:12px;margin-bottom:12px;flex-wrap:wrap}
+.review-card .review-title{font-size:18px;font-weight:700;color:var(--purple)}
+.review-card .review-meta{font-size:13px;color:var(--text-muted)}
+.review-card .review-reminder{color:var(--text-muted);font-style:italic;margin-bottom:16px;padding-left:14px;border-left:3px solid var(--purple)}
+.review-card .review-pattern{margin-bottom:16px}
+.review-card .review-pattern strong{display:block;margin-bottom:8px;font-size:14px;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px}
+.review-card .review-challenge{margin-bottom:12px}
+.review-card .review-challenge strong{display:block;margin-bottom:8px;font-size:14px;color:var(--yellow);text-transform:uppercase;letter-spacing:0.5px}
+.review-card .review-challenge p{line-height:1.6}
+.review-card .review-pitfall{background:var(--red-bg);border:1px solid rgba(248,81,73,0.15);border-radius:6px;padding:12px 16px;font-size:14px;line-height:1.6}
+.review-card .review-pitfall strong{color:var(--red);margin-right:4px}
+.review-card code{background:var(--code-bg);padding:2px 6px;border-radius:4px;font-family:'SF Mono','Fira Code','Consolas',monospace;font-size:13px}
+
+/* Topic Section */
+.topic-section{margin-bottom:48px}
+.topic-section-header{font-size:22px;font-weight:700;padding-bottom:12px;border-bottom:2px solid var(--accent);margin-bottom:28px;display:flex;align-items:center;gap:12px}
+.topic-section-header .section-num{background:var(--accent);color:#fff;width:32px;height:32px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:15px;font-weight:700;flex-shrink:0}
+
+/* Concept Card */
+.concept-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:28px;margin-bottom:32px}
+.concept-header{display:flex;align-items:center;gap:12px;margin-bottom:16px;flex-wrap:wrap}
+.concept-title{font-size:20px;font-weight:700}
+.ttag{display:inline-block;padding:2px 10px;border-radius:12px;font-size:12px;font-weight:500;background:var(--accent-bg);color:var(--accent)}
+
+.why-matters{color:var(--text-muted);font-style:italic;margin-bottom:20px;padding-left:14px;border-left:3px solid var(--accent)}
+.explanation{margin-bottom:20px;line-height:1.8}
+.explanation p{margin-bottom:12px}
+.explanation ul,.explanation ol{padding-left:24px;margin-bottom:12px}
+.explanation li{margin-bottom:4px}
+.explanation code{background:var(--code-bg);padding:2px 6px;border-radius:4px;font-family:'SF Mono','Fira Code','Consolas',monospace;font-size:14px}
+
+/* Code Examples */
+.code-example{margin-bottom:20px;border:1px solid var(--border);border-radius:8px;overflow:hidden}
+.lang-badge{background:var(--surface2);color:var(--text-muted);font-size:12px;font-weight:600;padding:6px 14px;border-bottom:1px solid var(--border);font-family:'SF Mono','Fira Code','Consolas',monospace}
+pre{margin:0;padding:16px;overflow-x:auto;background:var(--code-bg);font-family:'SF Mono','Fira Code','Consolas',monospace;font-size:13.5px;line-height:1.6;white-space:pre-wrap}
+pre code{background:none;padding:0;font-size:inherit}
+.output{background:var(--output-bg);border-top:1px solid var(--output-border);padding:12px 16px;font-family:'SF Mono','Fira Code','Consolas',monospace;font-size:13px;color:var(--green);white-space:pre-wrap}
+.output::before{content:"Output:";display:block;font-size:11px;font-weight:600;color:var(--text-muted);margin-bottom:4px;text-transform:uppercase;letter-spacing:0.5px}
+.type-result{background:var(--output-bg);border-top:1px solid var(--output-border);padding:12px 16px;font-family:'SF Mono','Fira Code','Consolas',monospace;font-size:13px;color:var(--green);white-space:pre-wrap}
+.type-result::before{content:"Type Result:";display:block;font-size:11px;font-weight:600;color:var(--text-muted);margin-bottom:4px;text-transform:uppercase;letter-spacing:0.5px}
+.type-error{background:var(--red-bg);border-top:1px solid rgba(248,81,73,0.2);padding:12px 16px;font-family:'SF Mono','Fira Code','Consolas',monospace;font-size:13px;color:var(--red);white-space:pre-wrap}
+.type-error::before{content:"Type Error:";display:block;font-size:11px;font-weight:600;color:var(--red);margin-bottom:4px;text-transform:uppercase;letter-spacing:0.5px}
+
+/* Callouts */
+.callout-warning{background:var(--yellow-bg);border:1px solid rgba(210,153,34,0.2);border-radius:8px;padding:20px;margin-bottom:20px}
+.callout-warning strong{color:var(--yellow);display:block;margin-bottom:12px;font-size:16px}
+.mistake,.correct{padding:10px 14px;border-radius:6px;margin-bottom:10px;font-size:14px;line-height:1.6}
+.mistake{background:var(--red-bg);border-left:3px solid var(--red)}
+.mistake code,.correct code{background:var(--code-bg);padding:2px 6px;border-radius:4px;font-family:'SF Mono','Fira Code','Consolas',monospace;font-size:13px}
+.correct{background:var(--green-bg);border-left:3px solid var(--green)}
+
+/* Key Rules */
+.key-rules{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:20px;margin-bottom:20px}
+.key-rules strong{display:block;margin-bottom:10px;font-size:16px}
+.key-rules ul{padding-left:20px}
+.key-rules li{margin-bottom:6px}
+.key-rules code{background:var(--code-bg);padding:2px 6px;border-radius:4px;font-family:'SF Mono','Fira Code','Consolas',monospace;font-size:13px}
+
+/* Exercises */
+.exercises{border:2px dashed var(--exercise-border);border-radius:8px;padding:20px;margin-bottom:20px;margin-left:12px}
+.exercises strong{display:block;margin-bottom:14px;font-size:16px;color:var(--purple)}
+.exercise{margin-bottom:14px;padding-left:38px;position:relative;line-height:1.6}
+.exercise:last-child{margin-bottom:0}
+.exercise-num{position:absolute;left:0;top:2px;background:var(--purple);color:#fff;width:24px;height:24px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:12px;font-weight:700}
+.exercise code{background:var(--code-bg);padding:2px 6px;border-radius:4px;font-family:'SF Mono','Fira Code','Consolas',monospace;font-size:13px}
+
+/* Connections */
+.connections{background:var(--accent-bg);border:1px solid rgba(56,139,253,0.2);border-radius:8px;padding:16px 20px;font-size:14px;color:var(--text-muted)}
+.connections strong{color:var(--accent);margin-right:6px}
+
+/* Footer */
+.guide-footer{border-top:1px solid var(--border);padding-top:32px;margin-top:48px}
+.guide-footer h2{font-size:18px;margin-bottom:16px}
+.guide-footer ul{list-style:none;padding:0}
+.guide-footer li{padding:6px 0}
+.guide-footer li a{font-weight:500}
+
+/* Responsive */
+@media(max-width:900px){
+  .sidebar{display:none}
+  .main{margin-left:0}
+  .theme-toggle{top:12px;right:12px}
+}
+</style>
+</head>
+<body>
+
+<!-- Theme Toggle -->
+<button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">&#x1F319;</button>
+
+<!-- Sidebar -->
+<nav class="sidebar">
+  <div class="sidebar-header">
+    <h2>TypeScript Daily Guide</h2>
+    <div class="date">2026-06-15 &mdash; Day 14</div>
+  </div>
+
+  <div class="sidebar-section review-label">Review (6 concepts)</div>
+  <ul class="sidebar-nav">
+    <li><a href="#review_satisfies_operator">satisfies Operator <span class="nav-id">R1</span></a></li>
+    <li><a href="#review_react_generic_components">React Generic Components <span class="nav-id">R2</span></a></li>
+    <li><a href="#review_nodejs_typescript">Node.js + TypeScript <span class="nav-id">R3</span></a></li>
+    <li><a href="#review_api_typing_trpc">API Typing: tRPC &amp; OpenAPI <span class="nav-id">R4</span></a></li>
+    <li><a href="#review_never_exhaustiveness">never &amp; Exhaustiveness <span class="nav-id">R5</span></a></li>
+    <li><a href="#review_package_publishing">Package Publishing <span class="nav-id">R6</span></a></li>
+  </ul>
+
+  <div class="sidebar-section">TypeScript Compiler &amp; Tooling</div>
+  <ul class="sidebar-nav">
+    <li><a href="#ts_compiler_api">TypeScript Compiler API <span class="nav-id">#1</span></a></li>
+    <li><a href="#custom_eslint_rules">Custom ESLint Rules with TypeScript <span class="nav-id">#2</span></a></li>
+  </ul>
+
+  <div class="sidebar-section">Advanced Application Patterns</div>
+  <ul class="sidebar-nav">
+    <li><a href="#typesafe_di">Type-Safe Dependency Injection <span class="nav-id">#3</span></a></li>
+    <li><a href="#typesafe_routing">Type-Safe Routing Patterns <span class="nav-id">#4</span></a></li>
+    <li><a href="#effect_pattern">Effect Pattern &amp; Functional Error Handling <span class="nav-id">#5</span></a></li>
+  </ul>
+</nav>
+
+<!-- Main Content -->
+<div class="main">
+<div class="content">
+
+<!-- Header -->
+<header class="guide-header">
+  <h1>TypeScript Daily Guide &mdash; Day 14</h1>
+  <div class="meta">
+    <span>2026-06-15</span>
+    <span>&middot;</span>
+    <span>Day 14 of 14</span>
+    <span>&middot;</span>
+    <span class="badge badge-purple">6 reviews</span>
+    <span class="badge badge-blue">5 new concepts</span>
+  </div>
+</header>
+
+<!-- How to Use -->
+<div class="how-to-use">
+  <h2>How to Use This Guide</h2>
+  <ol>
+    <li><strong>Review first</strong> &mdash; scan each purple review card; if the concept feels solid, move on; if fuzzy, re-read the code pattern</li>
+    <li><strong>Attempt the challenge exercise</strong> on any review card that felt shaky &mdash; this is your best reinforcement signal</li>
+    <li><strong>Work through new concepts</strong> top to bottom &mdash; each builds on the previous</li>
+    <li><strong>Type every code example</strong> yourself in a .ts or .tsx file &mdash; hover over types in your editor to build intuition</li>
+    <li><strong>Do at least 2 exercises per concept</strong> before moving to the next one</li>
+  </ol>
+</div>
+
+<!-- ============================================================ -->
+<!-- REVIEW SECTION                                                -->
+<!-- ============================================================ -->
+<div class="review-section">
+<div class="review-section-header">Review &mdash; 6 Concepts</div>
+
+<!-- R1: satisfies Operator -->
+<div class="review-card" id="review_satisfies_operator">
+  <div class="review-header">
+    <span class="review-title">R1. satisfies Operator</span>
+    <span class="badge badge-purple">Advanced Type System</span>
+    <span class="review-meta">rep 2 &middot; 12 days ago</span>
+  </div>
+  <div class="review-reminder"><code>satisfies</code> checks a value matches a type without widening it &mdash; you keep the narrower literal type while validating the shape.</div>
+
+  <div class="review-pattern">
+    <strong>Key Pattern</strong>
+    <div class="code-example">
+<pre><code>type Colors = Record&lt;string, [number, number, number] | string&gt;;
+const palette = {
+  red: [255, 0, 0],
+  green: "#00ff00",  // string, not tuple
+} satisfies Colors;
+
+// palette.red is still [number, number, number], not string | [number, number, number]
+const r = palette.red[0]; // number (not possible with `as Colors`)</code></pre>
+<div class="type-result">palette.red: [number, number, number]
+r: number
+palette.green: string</div>
+    </div>
+  </div>
+
+  <div class="review-challenge">
+    <strong>Challenge Exercise</strong>
+    <p>Define a config object with <code>satisfies</code> that validates it matches <code>Record&lt;string, { url: string; timeout: number }&gt;</code> while preserving literal key types so you can access <code>config.api</code> without a type assertion.</p>
+  </div>
+
+  <div class="review-pitfall">
+    <strong>#1 Pitfall:</strong> Confusing <code>satisfies</code> with <code>as</code> &mdash; <code>as</code> widens/overrides the type, <code>satisfies</code> validates without widening.
+  </div>
+</div>
+
+<!-- R2: React + TypeScript: Generic Components -->
+<div class="review-card" id="review_react_generic_components">
+  <div class="review-header">
+    <span class="review-title">R2. React + TypeScript: Generic Components</span>
+    <span class="badge badge-purple">React + TypeScript</span>
+    <span class="review-meta">rep 0 &middot; 7 days ago</span>
+  </div>
+  <div class="review-reminder">Generic components let you create reusable UI components that preserve the type of data they receive &mdash; e.g., a <code>&lt;List&lt;T&gt;&gt;</code> that knows the type of each item.</div>
+
+  <div class="review-pattern">
+    <strong>Key Pattern</strong>
+    <div class="code-example">
+<pre><code>interface ListProps&lt;T&gt; {
+  items: T[];
+  renderItem: (item: T, index: number) =&gt; React.ReactNode;
+  keyExtractor: (item: T) =&gt; string;
+}
+
+function List&lt;T&gt;({ items, renderItem, keyExtractor }: ListProps&lt;T&gt;) {
+  return &lt;ul&gt;{items.map((item, i) =&gt; &lt;li key={keyExtractor(item)}&gt;{renderItem(item, i)}&lt;/li&gt;)}&lt;/ul&gt;;
+}
+
+// Usage &mdash; T is inferred as { id: number; name: string }
+&lt;List items={users} renderItem={u =&gt; &lt;span&gt;{u.name}&lt;/span&gt;} keyExtractor={u =&gt; String(u.id)} /&gt;</code></pre>
+<div class="type-result">T inferred as { id: number; name: string }
+u: { id: number; name: string }</div>
+    </div>
+  </div>
+
+  <div class="review-challenge">
+    <strong>Challenge Exercise</strong>
+    <p>Create a generic <code>&lt;Select&lt;T&gt;&gt;</code> component that takes <code>items: T[]</code>, <code>value: T</code>, <code>onChange: (item: T) =&gt; void</code>, and <code>getLabel: (item: T) =&gt; string</code>. The component should infer T from usage.</p>
+  </div>
+
+  <div class="review-pitfall">
+    <strong>#1 Pitfall:</strong> Using <code>React.FC</code> with generics &mdash; it doesn't support them; use a plain function declaration instead.
+  </div>
+</div>
+
+<!-- R3: Node.js + TypeScript -->
+<div class="review-card" id="review_nodejs_typescript">
+  <div class="review-header">
+    <span class="review-title">R3. Node.js + TypeScript</span>
+    <span class="badge badge-purple">Node.js &amp; APIs</span>
+    <span class="review-meta">rep 0 &middot; 7 days ago</span>
+  </div>
+  <div class="review-reminder">Use <code>@types/node</code> for Node.js types. Key areas: <code>fs/promises</code> with proper types, <code>path</code> module, <code>process.env</code> typing, and native ESM with <code>"type": "module"</code> in package.json.</div>
+
+  <div class="review-pattern">
+    <strong>Key Pattern</strong>
+    <div class="code-example">
+<pre><code>import { readFile, writeFile } from "node:fs/promises";
+import { join } from "node:path";
+
+// Typed env
+declare global {
+  namespace NodeJS {
+    interface ProcessEnv {
+      DATABASE_URL: string;
+      PORT?: string;
+    }
+  }
+}
+
+const port = parseInt(process.env.PORT ?? "3000", 10);</code></pre>
+<div class="type-result">port: number
+process.env.DATABASE_URL: string
+process.env.PORT: string | undefined</div>
+    </div>
+  </div>
+
+  <div class="review-challenge">
+    <strong>Challenge Exercise</strong>
+    <p>Write a typed Node.js script that reads a JSON config file with <code>fs/promises</code>, parses it with a Zod schema, and exports a typed <code>getConfig()</code> function.</p>
+  </div>
+
+  <div class="review-pitfall">
+    <strong>#1 Pitfall:</strong> Forgetting <code>"type": "module"</code> in package.json when using ESM imports, or using <code>.js</code> extensions in import paths (required even for <code>.ts</code> files with ESM).
+  </div>
+</div>
+
+<!-- R4: API Typing: tRPC & OpenAPI -->
+<div class="review-card" id="review_api_typing_trpc">
+  <div class="review-header">
+    <span class="review-title">R4. API Typing: tRPC &amp; OpenAPI</span>
+    <span class="badge badge-purple">Node.js &amp; APIs</span>
+    <span class="review-meta">rep 0 &middot; 7 days ago</span>
+  </div>
+  <div class="review-reminder">tRPC provides end-to-end type safety between client and server without code generation. OpenAPI uses codegen (<code>openapi-typescript</code>) to produce types from a spec. Both eliminate type drift.</div>
+
+  <div class="review-pattern">
+    <strong>Key Pattern</strong>
+    <div class="code-example">
+<pre><code>// tRPC router (server)
+const appRouter = router({
+  getUser: publicProcedure
+    .input(z.object({ id: z.string() }))
+    .query(async ({ input }) =&gt; {
+      return { id: input.id, name: "Alice" }; // return type inferred
+    }),
+});
+type AppRouter = typeof appRouter;
+
+// Client &mdash; fully typed, no codegen
+const user = await trpc.getUser.query({ id: "1" });
+// user is { id: string; name: string }</code></pre>
+<div class="type-result">input: { id: string }
+user: { id: string; name: string }</div>
+    </div>
+  </div>
+
+  <div class="review-challenge">
+    <strong>Challenge Exercise</strong>
+    <p>Define a tRPC router with a <code>createPost</code> mutation that validates input with Zod (title: string, body: string, tags: string[]) and returns <code>{ id: string; createdAt: Date }</code>. Show the client-side call.</p>
+  </div>
+
+  <div class="review-pitfall">
+    <strong>#1 Pitfall:</strong> Importing server types on the client (bundle bloat) &mdash; only import the <code>AppRouter</code> type, never runtime code.
+  </div>
+</div>
+
+<!-- R5: never & Exhaustiveness -->
+<div class="review-card" id="review_never_exhaustiveness">
+  <div class="review-header">
+    <span class="review-title">R5. never &amp; Exhaustiveness</span>
+    <span class="badge badge-purple">Advanced Type System</span>
+    <span class="review-meta">rep 2 &middot; 11 days ago</span>
+  </div>
+  <div class="review-reminder"><code>never</code> is the bottom type &mdash; no value can be assigned to it. Use it for exhaustive switch/if-else checking: if a variable narrows to <code>never</code>, all cases are handled.</div>
+
+  <div class="review-pattern">
+    <strong>Key Pattern</strong>
+    <div class="code-example">
+<pre><code>type Shape = { kind: "circle"; r: number } | { kind: "square"; s: number };
+
+function area(shape: Shape): number {
+  switch (shape.kind) {
+    case "circle": return Math.PI * shape.r ** 2;
+    case "square": return shape.s ** 2;
+    default: {
+      const _exhaustive: never = shape; // compile error if a case is missing
+      return _exhaustive;
+    }
+  }
+}</code></pre>
+<div class="type-result">area({ kind: "circle", r: 5 }): number
+Adding a new variant to Shape without handling it causes:
+  Type '{ kind: "triangle"; ... }' is not assignable to type 'never'</div>
+    </div>
+  </div>
+
+  <div class="review-challenge">
+    <strong>Challenge Exercise</strong>
+    <p>Create a <code>handleEvent</code> function for a discriminated union of <code>{ type: "click"; x: number; y: number } | { type: "keypress"; key: string } | { type: "scroll"; delta: number }</code> with an exhaustive switch. Then add a 4th event type and verify the compiler catches the missing case.</p>
+  </div>
+
+  <div class="review-pitfall">
+    <strong>#1 Pitfall:</strong> Forgetting the <code>default</code> exhaustiveness check &mdash; the code compiles fine but silently ignores new union members.
+  </div>
+</div>
+
+<!-- R6: Package Publishing -->
+<div class="review-card" id="review_package_publishing">
+  <div class="review-header">
+    <span class="review-title">R6. Package Publishing</span>
+    <span class="badge badge-purple">Modules &amp; Project Structure</span>
+    <span class="review-meta">rep 1 &middot; 6 days ago</span>
+  </div>
+  <div class="review-reminder">Modern TS packages use the <code>exports</code> field in package.json for dual CJS/ESM, <code>types</code> for type resolution, and <code>tsconfig.json</code> with <code>declaration: true</code> to emit <code>.d.ts</code> files.</div>
+
+  <div class="review-pattern">
+    <strong>Key Pattern</strong>
+    <div class="code-example">
+<pre><code>{
+  "name": "my-lib",
+  "exports": {
+    ".": {
+      "import": { "types": "./dist/index.d.mts", "default": "./dist/index.mjs" },
+      "require": { "types": "./dist/index.d.cts", "default": "./dist/index.cjs" }
+    }
+  },
+  "types": "./dist/index.d.ts",
+  "files": ["dist"]
+}</code></pre>
+    </div>
+  </div>
+
+  <div class="review-challenge">
+    <strong>Challenge Exercise</strong>
+    <p>Write a complete <code>package.json</code> + <code>tsconfig.json</code> for a library named <code>@myorg/utils</code> that publishes dual CJS/ESM with separate type declarations for each format.</p>
+  </div>
+
+  <div class="review-pitfall">
+    <strong>#1 Pitfall:</strong> Putting <code>"types"</code> outside the <code>"exports"</code> conditions &mdash; modern bundlers use <code>"exports"</code> first, so types must be nested inside each condition.
+  </div>
+</div>
+
+</div><!-- end review-section -->
+
+<!-- ============================================================ -->
+<!-- SECTION 1: TypeScript Compiler & Tooling                      -->
+<!-- ============================================================ -->
+<div class="topic-section">
+<div class="topic-section-header"><span class="section-num">1</span> TypeScript Compiler &amp; Tooling</div>
+
+<!-- Concept 1: TypeScript Compiler API -->
+<div class="concept-card" id="ts_compiler_api">
+  <div class="concept-header">
+    <span class="concept-title">TypeScript Compiler API</span>
+    <span class="ttag">Tooling &amp; Compiler</span>
+  </div>
+
+  <div class="why-matters">The TypeScript Compiler API lets you programmatically analyze, type-check, and transform TypeScript code &mdash; essential for building custom linters, codemods, documentation generators, and IDE plugins.</div>
+
+  <div class="explanation">
+    <p><strong>Example 1 &mdash; Creating a program and listing source files:</strong></p>
+  </div>
+  <div class="code-example">
+    <div class="lang-badge">TypeScript</div>
+<pre><code>import * as ts from "typescript";
+
+// Create a program from tsconfig
+const configPath = ts.findConfigFile("./", ts.sys.fileExists, "tsconfig.json")!;
+const configFile = ts.readConfigFile(configPath, ts.sys.readFile);
+const parsedConfig = ts.parseJsonConfigFileContent(configFile.config, ts.sys, "./");
+
+const program = ts.createProgram(parsedConfig.fileNames, parsedConfig.options);
+const sourceFiles = program.getSourceFiles().filter(sf =&gt; !sf.isDeclarationFile);
+
+console.log("Source files:");
+sourceFiles.forEach(sf =&gt; console.log(`  ${sf.fileName}`));</code></pre>
+<div class="output">Source files:
+  /project/src/index.ts
+  /project/src/utils.ts</div>
+  </div>
+
+  <div class="explanation">
+    <p><strong>Example 2 &mdash; Walking the AST:</strong></p>
+  </div>
+  <div class="code-example">
+    <div class="lang-badge">TypeScript</div>
+<pre><code>import * as ts from "typescript";
+
+const source = `
+  const greeting: string = "hello";
+  function add(a: number, b: number): number {
+    return a + b;
+  }
+`;
+
+const sourceFile = ts.createSourceFile("example.ts", source, ts.ScriptTarget.Latest, true);
+
+function visit(node: ts.Node, depth = 0) {
+  const indent = "  ".repeat(depth);
+  console.log(`${indent}${ts.SyntaxKind[node.kind]}`);
+  ts.forEachChild(node, child =&gt; visit(child, depth + 1));
+}
+
+visit(sourceFile);</code></pre>
+<div class="output">SourceFile
+  FirstStatement (VariableStatement)
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier
+        StringKeyword
+        StringLiteral
+  FunctionDeclaration
+    Identifier
+    Parameter ...
+</div>
+  </div>
+
+  <div class="explanation">
+    <p><strong>Example 3 &mdash; Extracting type information:</strong></p>
+  </div>
+  <div class="code-example">
+    <div class="lang-badge">TypeScript</div>
+<pre><code>import * as ts from "typescript";
+
+const source = `
+  interface User { name: string; age: number; }
+  const users: User[] = [];
+  const firstUser = users[0];
+`;
+
+const sourceFile = ts.createSourceFile("demo.ts", source, ts.ScriptTarget.Latest, true);
+const host = ts.createCompilerHost({ strict: true });
+const originalGetSourceFile = host.getSourceFile;
+host.getSourceFile = (fileName, target) =&gt;
+  fileName === "demo.ts" ? sourceFile : originalGetSourceFile(fileName, target);
+
+const program = ts.createProgram(["demo.ts"], { strict: true }, host);
+const checker = program.getTypeChecker();
+
+// Find the 'firstUser' variable and get its type
+ts.forEachChild(sourceFile, node =&gt; {
+  if (ts.isVariableStatement(node)) {
+    for (const decl of node.declarationList.declarations) {
+      if (ts.isIdentifier(decl.name) &amp;&amp; decl.name.text === "firstUser") {
+        const type = checker.getTypeAtLocation(decl);
+        console.log(`firstUser type: ${checker.typeToString(type)}`);
+        // firstUser type: User
+      }
+    }
+  }
+});</code></pre>
+<div class="output">firstUser type: User</div>
+  </div>
+
+  <div class="explanation">
+    <p><strong>Example 4 &mdash; Simple code transformer:</strong></p>
+  </div>
+  <div class="code-example">
+    <div class="lang-badge">TypeScript</div>
+<pre><code>import * as ts from "typescript";
+
+// Transformer: replace all string literals with uppercase versions
+const uppercaseStrings: ts.TransformerFactory&lt;ts.SourceFile&gt; = context =&gt; {
+  return sourceFile =&gt; {
+    function visit(node: ts.Node): ts.Node {
+      if (ts.isStringLiteral(node)) {
+        return ts.factory.createStringLiteral(node.text.toUpperCase());
+      }
+      return ts.visitEachChild(node, visit, context);
+    }
+    return ts.visitNode(sourceFile, visit) as ts.SourceFile;
+  };
+};
+
+const source = `const msg = "hello world";`;
+const sourceFile = ts.createSourceFile("test.ts", source, ts.ScriptTarget.Latest);
+const result = ts.transform(sourceFile, [uppercaseStrings]);
+const printer = ts.createPrinter();
+console.log(printer.printFile(result.transformed[0]));</code></pre>
+<div class="output">const msg = "HELLO WORLD";</div>
+  </div>
+
+  <div class="callout-warning">
+    <strong>Common Mistakes</strong>
+    <div class="mistake">Creating a new <code>ts.Program</code> for every file &mdash; expensive!</div>
+    <div class="correct">Create one program and reuse it: <code>program.getSourceFile(fileName)</code></div>
+    <div class="mistake">Using string comparison for node types: <code>node.kind === "FunctionDeclaration"</code></div>
+    <div class="correct">Use the type guards: <code>ts.isFunctionDeclaration(node)</code></div>
+    <div class="mistake">Mutating AST nodes directly (they're immutable)</div>
+    <div class="correct">Use <code>ts.factory.update*</code> or <code>ts.factory.create*</code> to build new nodes</div>
+  </div>
+
+  <div class="key-rules">
+    <strong>Key Rules</strong>
+    <ul>
+    <li><a href="typescript-guides/typescript-guide-2026-07-04.html">2026-07-04</a> (Day 31)</li>
+      <li>Use <code>ts.createProgram</code> for type-checking, <code>ts.createSourceFile</code> for syntax-only analysis.</li>
+      <li>AST nodes are immutable &mdash; use the factory API and transformers to modify code.</li>
+      <li>The type checker (<code>program.getTypeChecker()</code>) is the bridge between syntax and semantics.</li>
+    </ul>
+  </div>
+
+  <div class="exercises">
+    <strong>Exercises</strong>
+    <div class="exercise"><span class="exercise-num">1</span>Write a script that uses the Compiler API to find all exported functions in a <code>.ts</code> file and print their names and return types.</div>
+    <div class="exercise"><span class="exercise-num">2</span>Create an AST visitor that counts the number of <code>if</code> statements, <code>for</code> loops, and <code>while</code> loops in a source file.</div>
+    <div class="exercise"><span class="exercise-num">3</span>Write a transformer that adds <code>console.log</code> at the beginning of every function body with the function name (for debugging purposes).</div>
+  </div>
+
+  <div class="connections">
+    <strong>Connections:</strong> Builds on <code>declaration_files</code> (<code>.d.ts</code> generation) and <code>tsconfig_deep_dive</code>. The AST concepts parallel Python's <code>ast</code> module (from the Python guide).
+  </div>
+</div>
+
+<!-- Concept 2: Custom ESLint Rules with TypeScript -->
+<div class="concept-card" id="custom_eslint_rules">
+  <div class="concept-header">
+    <span class="concept-title">Custom ESLint Rules with TypeScript</span>
+    <span class="ttag">Tooling &amp; Quality</span>
+  </div>
+
+  <div class="why-matters">Custom ESLint rules enforce project-specific conventions at scale &mdash; no-banned-imports, naming patterns, architecture boundaries. With <code>@typescript-eslint/utils</code>, rules can access TypeScript type information.</div>
+
+  <div class="explanation">
+    <p><strong>Example 1 &mdash; Basic rule structure:</strong></p>
+  </div>
+  <div class="code-example">
+    <div class="lang-badge">TypeScript</div>
+<pre><code>import { ESLintUtils } from "@typescript-eslint/utils";
+
+const createRule = ESLintUtils.RuleCreator(
+  name =&gt; `https://myorg.dev/rules/${name}`
+);
+
+// Rule: ban console.log (but allow console.warn/error)
+export const noBannedConsole = createRule({
+  name: "no-console-log",
+  meta: {
+    type: "suggestion",
+    docs: { description: "Disallow console.log" },
+    messages: {
+      noConsoleLog: "Use a logger instead of console.log",
+    },
+    schema: [],
+  },
+  defaultOptions: [],
+  create(context) {
+    return {
+      MemberExpression(node) {
+        if (
+          node.object.type === "Identifier" &amp;&amp;
+          node.object.name === "console" &amp;&amp;
+          node.property.type === "Identifier" &amp;&amp;
+          node.property.name === "log"
+        ) {
+          context.report({ node, messageId: "noConsoleLog" });
+        }
+      },
+    };
+  },
+});</code></pre>
+  </div>
+
+  <div class="explanation">
+    <p><strong>Example 2 &mdash; Type-aware rule:</strong></p>
+  </div>
+  <div class="code-example">
+    <div class="lang-badge">TypeScript</div>
+<pre><code>import { ESLintUtils } from "@typescript-eslint/utils";
+import * as tsutils from "ts-api-utils";
+
+const createRule = ESLintUtils.RuleCreator(name =&gt; `https://myorg.dev/rules/${name}`);
+
+// Rule: warn when a Promise is not awaited or returned
+export const noFloatingPromises = createRule({
+  name: "no-floating-promises",
+  meta: {
+    type: "problem",
+    docs: { description: "Require Promises to be awaited or returned" },
+    messages: { floating: "This Promise must be awaited, returned, or voided." },
+    schema: [],
+  },
+  defaultOptions: [],
+  create(context) {
+    const services = ESLintUtils.getParserServices(context);
+    const checker = services.program.getTypeChecker();
+
+    return {
+      ExpressionStatement(node) {
+        const tsNode = services.esTreeNodeToTSNodeMap.get(node.expression);
+        const type = checker.getTypeAtLocation(tsNode);
+
+        if (tsutils.isThenableType(checker, tsNode, type)) {
+          context.report({ node, messageId: "floating" });
+        }
+      },
+    };
+  },
+});</code></pre>
+  </div>
+
+  <div class="explanation">
+    <p><strong>Example 3 &mdash; Rule with auto-fix:</strong></p>
+  </div>
+  <div class="code-example">
+    <div class="lang-badge">TypeScript</div>
+<pre><code>import { ESLintUtils, AST_NODE_TYPES } from "@typescript-eslint/utils";
+
+const createRule = ESLintUtils.RuleCreator(name =&gt; `https://myorg.dev/rules/${name}`);
+
+// Rule: prefer 'interface' over 'type' for object types (with autofix)
+export const preferInterface = createRule({
+  name: "prefer-interface",
+  meta: {
+    type: "suggestion",
+    docs: { description: "Prefer interface over type alias for object shapes" },
+    fixable: "code",
+    messages: { useInterface: "Use an interface instead of a type alias for object types." },
+    schema: [],
+  },
+  defaultOptions: [],
+  create(context) {
+    return {
+      TSTypeAliasDeclaration(node) {
+        if (node.typeAnnotation.type === AST_NODE_TYPES.TSTypeLiteral) {
+          context.report({
+            node,
+            messageId: "useInterface",
+            fix(fixer) {
+              const sourceCode = context.getSourceCode();
+              const text = sourceCode.getText(node);
+              const name = node.id.name;
+              const body = sourceCode.getText(node.typeAnnotation);
+              return fixer.replaceText(node, `interface ${name} ${body}`);
+            },
+          });
+        }
+      },
+    };
+  },
+});</code></pre>
+  </div>
+
+  <div class="explanation">
+    <p><strong>Example 4 &mdash; Testing rules:</strong></p>
+  </div>
+  <div class="code-example">
+    <div class="lang-badge">TypeScript</div>
+<pre><code>import { RuleTester } from "@typescript-eslint/rule-tester";
+import { noBannedConsole } from "./no-console-log";
+
+const ruleTester = new RuleTester({
+  parser: "@typescript-eslint/parser",
+});
+
+ruleTester.run("no-console-log", noBannedConsole, {
+  valid: [
+    "console.warn('warning');",
+    "console.error('error');",
+    "logger.log('ok');",
+  ],
+  invalid: [
+    {
+      code: "console.log('debug');",
+      errors: [{ messageId: "noConsoleLog" }],
+    },
+  ],
+});</code></pre>
+  </div>
+
+  <div class="callout-warning">
+    <strong>Common Mistakes</strong>
+    <div class="mistake">Accessing TypeScript types without <code>parserOptions.project</code> in ESLint config</div>
+    <div class="correct">Set <code>parserOptions: { project: "./tsconfig.json" }</code> for type-aware rules</div>
+    <div class="mistake">Testing rules with plain strings when they need type information</div>
+    <div class="correct">Configure the rule tester with <code>parserOptions.project</code> for type-aware tests</div>
+    <div class="mistake">Forgetting <code>meta.fixable: "code"</code> when providing a <code>fix</code> function</div>
+    <div class="correct">Always declare fixability in <code>meta</code> &mdash; ESLint silently ignores fixes otherwise</div>
+  </div>
+
+  <div class="key-rules">
+    <strong>Key Rules</strong>
+    <ul>
+      <li>Use <code>ESLintUtils.RuleCreator</code> from <code>@typescript-eslint/utils</code> for type-safe rule creation.</li>
+      <li>Type-aware rules (<code>getParserServices</code>) are powerful but slower &mdash; use them only when type info is needed.</li>
+      <li>Always test with <code>RuleTester</code> &mdash; cover both valid and invalid cases, verify fix output.</li>
+    </ul>
+  </div>
+
+  <div class="exercises">
+    <strong>Exercises</strong>
+    <div class="exercise"><span class="exercise-num">1</span>Write a rule <code>no-any</code> that reports any explicit use of the <code>any</code> type annotation. It should flag <code>const x: any</code> but not <code>const x: unknown</code>.</div>
+    <div class="exercise"><span class="exercise-num">2</span>Create a type-aware rule that warns when a function returns <code>Promise&lt;any&gt;</code> &mdash; it should check the return type via the type checker.</div>
+    <div class="exercise"><span class="exercise-num">3</span>Write a rule with autofix that converts <code>type Foo = { ... }</code> to <code>interface Foo { ... }</code> only when the type alias is a simple object literal (not a union or intersection).</div>
+  </div>
+
+  <div class="connections">
+    <strong>Connections:</strong> Uses <code>ts_compiler_api</code> concepts (AST nodes, type checker). Relates to <code>testing_types</code> (both enforce type-level correctness at build time).
+  </div>
+</div>
+
+</div><!-- end topic-section 1 -->
+
+<!-- ============================================================ -->
+<!-- SECTION 2: Advanced Application Patterns                      -->
+<!-- ============================================================ -->
+<div class="topic-section">
+<div class="topic-section-header"><span class="section-num">2</span> Advanced Application Patterns</div>
+
+<!-- Concept 3: Type-Safe Dependency Injection -->
+<div class="concept-card" id="typesafe_di">
+  <div class="concept-header">
+    <span class="concept-title">Type-Safe Dependency Injection</span>
+    <span class="ttag">Architecture</span>
+  </div>
+
+  <div class="why-matters">DI decouples components from their dependencies, making code testable and configurable. TypeScript's type system can guarantee all dependencies are provided at compile time &mdash; no runtime "service not found" errors.</div>
+
+  <div class="explanation">
+    <p><strong>Example 1 &mdash; Manual DI with interfaces:</strong></p>
+  </div>
+  <div class="code-example">
+    <div class="lang-badge">TypeScript</div>
+<pre><code>interface Logger {
+  log(msg: string): void;
+}
+interface Database {
+  query(sql: string): Promise&lt;unknown[]&gt;;
+}
+
+class UserService {
+  constructor(
+    private logger: Logger,
+    private db: Database
+  ) {}
+
+  async getUser(id: string) {
+    this.logger.log(`Fetching user ${id}`);
+    const rows = await this.db.query(`SELECT * FROM users WHERE id = '${id}'`);
+    return rows[0];
+  }
+}
+
+// Production
+const service = new UserService(console, realDb);
+// Testing
+const service2 = new UserService(mockLogger, mockDb);</code></pre>
+  </div>
+
+  <div class="explanation">
+    <p><strong>Example 2 &mdash; Token-based container:</strong></p>
+  </div>
+  <div class="code-example">
+    <div class="lang-badge">TypeScript</div>
+<pre><code>// Type-safe DI container using symbols as tokens
+const tokens = {
+  Logger: Symbol("Logger") as symbol &amp; { __type: Logger },
+  Database: Symbol("Database") as symbol &amp; { __type: Database },
+  UserService: Symbol("UserService") as symbol &amp; { __type: UserService },
+};
+
+type TokenType&lt;T&gt; = T extends { __type: infer U } ? U : never;
+
+class Container {
+  private services = new Map&lt;symbol, unknown&gt;();
+
+  register&lt;T extends keyof typeof tokens&gt;(
+    token: (typeof tokens)[T],
+    factory: () =&gt; TokenType&lt;(typeof tokens)[T]&gt;
+  ): void {
+    this.services.set(token, factory());
+  }
+
+  resolve&lt;T extends symbol &amp; { __type: unknown }&gt;(token: T): TokenType&lt;T&gt; {
+    const service = this.services.get(token);
+    if (!service) throw new Error(`Service not registered: ${token.toString()}`);
+    return service as TokenType&lt;T&gt;;
+  }
+}
+
+const container = new Container();
+container.register("Logger", () =&gt; console);
+// container.resolve(tokens.Logger) &mdash; returns Logger type</code></pre>
+  </div>
+
+  <div class="explanation">
+    <p><strong>Example 3 &mdash; Functional DI with a context map:</strong></p>
+  </div>
+  <div class="code-example">
+    <div class="lang-badge">TypeScript</div>
+<pre><code>// Dependencies as a typed record &mdash; simple and effective
+interface Deps {
+  logger: Logger;
+  db: Database;
+  cache: Cache;
+}
+
+function createUserService(deps: Pick&lt;Deps, "logger" | "db"&gt;) {
+  return {
+    async getUser(id: string) {
+      deps.logger.log(`Fetching user ${id}`);
+      return deps.db.query(`SELECT * FROM users WHERE id = '${id}'`);
+    },
+  };
+}
+
+function createOrderService(deps: Pick&lt;Deps, "logger" | "db" | "cache"&gt;) {
+  return {
+    async getOrder(id: string) {
+      const cached = await deps.cache.get(id);
+      if (cached) return cached;
+      return deps.db.query(`SELECT * FROM orders WHERE id = '${id}'`);
+    },
+  };
+}
+
+// Wire up &mdash; TypeScript ensures all deps are provided
+const deps: Deps = { logger: console, db: realDb, cache: redisCache };
+const userService = createUserService(deps);
+const orderService = createOrderService(deps);</code></pre>
+  </div>
+
+  <div class="explanation">
+    <p><strong>Example 4 &mdash; Generic context pattern (React-style):</strong></p>
+  </div>
+  <div class="code-example">
+    <div class="lang-badge">TypeScript</div>
+<pre><code>// A typed "context" for dependency injection
+type ServiceFactory&lt;TDeps, TService&gt; = (deps: TDeps) =&gt; TService;
+
+function createApp&lt;TDeps&gt;(deps: TDeps) {
+  return {
+    use&lt;TService&gt;(factory: ServiceFactory&lt;TDeps, TService&gt;): TService {
+      return factory(deps);
+    },
+  };
+}
+
+const app = createApp({ logger: console, db: realDb });
+const users = app.use(({ logger, db }) =&gt; ({
+  find: (id: string) =&gt; { logger.log(id); return db.query("..."); },
+}));
+// users.find is fully typed</code></pre>
+  </div>
+
+  <div class="callout-warning">
+    <strong>Common Mistakes</strong>
+    <div class="mistake">Using string keys for DI tokens: <code>container.get("UserService")</code> &mdash; no type safety</div>
+    <div class="correct">Use branded symbols or a typed map for compile-time safety</div>
+    <div class="mistake">Circular dependencies: ServiceA depends on ServiceB which depends on ServiceA</div>
+    <div class="correct">Break cycles with interfaces/factories or lazy resolution</div>
+    <div class="mistake">Over-abstracting simple apps with heavyweight DI frameworks</div>
+    <div class="correct">For most apps, <code>Pick&lt;Deps, "needed" | "services"&gt;</code> is sufficient</div>
+  </div>
+
+  <div class="key-rules">
+    <strong>Key Rules</strong>
+    <ul>
+      <li>Functional DI (<code>Pick&lt;Deps, ...&gt;</code>) is the simplest approach &mdash; use it for most TypeScript projects.</li>
+      <li>Token-based DI is needed when you have multiple implementations of the same interface.</li>
+      <li>The goal is testability &mdash; if you can swap dependencies in tests, you have enough DI.</li>
+    </ul>
+  </div>
+
+  <div class="exercises">
+    <strong>Exercises</strong>
+    <div class="exercise"><span class="exercise-num">1</span>Create a <code>Deps</code> type with <code>logger</code>, <code>http</code>, and <code>config</code> fields. Write <code>createApiClient(deps: Pick&lt;Deps, "http" | "config"&gt;)</code> that returns a typed API client.</div>
+    <div class="exercise"><span class="exercise-num">2</span>Implement a minimal type-safe Container class where <code>register&lt;T&gt;(token: Token&lt;T&gt;, instance: T)</code> and <code>resolve&lt;T&gt;(token: Token&lt;T&gt;): T</code> preserve the type through branded symbols.</div>
+    <div class="exercise"><span class="exercise-num">3</span>Write a test that creates a <code>UserService</code> with mock dependencies using the functional DI pattern. The mock <code>db</code> should return a hardcoded user.</div>
+  </div>
+
+  <div class="connections">
+    <strong>Connections:</strong> Relates to <code>class_patterns</code> (constructor injection), <code>branded_types</code> (token typing), and <code>zod_validation</code> (dependency validation).
+  </div>
+</div>
+
+<!-- Concept 4: Type-Safe Routing Patterns -->
+<div class="concept-card" id="typesafe_routing">
+  <div class="concept-header">
+    <span class="concept-title">Type-Safe Routing Patterns</span>
+    <span class="ttag">Application Patterns</span>
+  </div>
+
+  <div class="why-matters">Routes are strings at runtime but structured data at compile time. Type-safe routing catches broken links, missing parameters, and wrong handler signatures before deployment.</div>
+
+  <div class="explanation">
+    <p><strong>Example 1 &mdash; Basic route typing:</strong></p>
+  </div>
+  <div class="code-example">
+    <div class="lang-badge">TypeScript</div>
+<pre><code>// Define route shapes
+type Routes = {
+  "/": {};
+  "/users": {};
+  "/users/:id": { id: string };
+  "/users/:id/posts/:postId": { id: string; postId: string };
+};
+
+type RoutePath = keyof Routes;
+type RouteParams&lt;T extends RoutePath&gt; = Routes[T];
+
+// Type-safe link builder
+function buildPath&lt;T extends RoutePath&gt;(
+  path: T,
+  ...args: RouteParams&lt;T&gt; extends Record&lt;string, never&gt;
+    ? []
+    : [params: RouteParams&lt;T&gt;]
+): string {
+  const [params] = args;
+  if (!params) return path;
+  return Object.entries(params).reduce(
+    (p, [k, v]) =&gt; p.replace(`:${k}`, v as string),
+    path as string
+  );
+}
+
+console.log(buildPath("/"));                                    // "/"
+console.log(buildPath("/users/:id", { id: "42" }));            // "/users/42"
+console.log(buildPath("/users/:id/posts/:postId", { id: "1", postId: "5" })); // "/users/1/posts/5"
+// buildPath("/users/:id");  // Error: expected params argument
+// buildPath("/users/:id", { wrong: "x" }); // Error: 'wrong' not in params</code></pre>
+<div class="output">/
+/users/42
+/users/1/posts/5</div>
+  </div>
+
+  <div class="explanation">
+    <p><strong>Example 2 &mdash; Extract params from path template:</strong></p>
+  </div>
+  <div class="code-example">
+    <div class="lang-badge">TypeScript</div>
+<pre><code>// Automatically extract param names from a path string
+type ExtractParams&lt;T extends string&gt; =
+  T extends `${string}:${infer Param}/${infer Rest}`
+    ? { [K in Param | keyof ExtractParams&lt;Rest&gt;]: string }
+    : T extends `${string}:${infer Param}`
+    ? { [K in Param]: string }
+    : {};
+
+// Test it
+type P1 = ExtractParams&lt;"/users/:id"&gt;;
+// { id: string }
+
+type P2 = ExtractParams&lt;"/users/:id/posts/:postId"&gt;;
+// { id: string; postId: string }
+
+type P3 = ExtractParams&lt;"/about"&gt;;
+// {}</code></pre>
+<div class="type-result">P1 = { id: string }
+P2 = { id: string; postId: string }
+P3 = {}</div>
+  </div>
+
+  <div class="explanation">
+    <p><strong>Example 3 &mdash; Type-safe route handler registry:</strong></p>
+  </div>
+  <div class="code-example">
+    <div class="lang-badge">TypeScript</div>
+<pre><code>type Handler&lt;TParams&gt; = (params: TParams, req: Request) =&gt; Response | Promise&lt;Response&gt;;
+
+class Router&lt;TRoutes extends Record&lt;string, Record&lt;string, string&gt;&gt;&gt; {
+  private handlers = new Map&lt;string, Handler&lt;any&gt;&gt;();
+
+  on&lt;T extends keyof TRoutes &amp; string&gt;(
+    path: T,
+    handler: Handler&lt;TRoutes[T]&gt;
+  ): this {
+    this.handlers.set(path, handler);
+    return this;
+  }
+
+  handle(path: string, params: Record&lt;string, string&gt;, req: Request): Response | Promise&lt;Response&gt; {
+    const handler = this.handlers.get(path);
+    if (!handler) return new Response("Not Found", { status: 404 });
+    return handler(params, req);
+  }
+}
+
+const router = new Router&lt;Routes&gt;()
+  .on("/users/:id", (params, req) =&gt; {
+    // params.id is string
+    // params.foo &mdash; Error: 'foo' does not exist
+    return new Response(`User ${params.id}`);
+  })
+  .on("/", (_params, _req) =&gt; new Response("Home"));</code></pre>
+  </div>
+
+  <div class="explanation">
+    <p><strong>Example 4 &mdash; Next.js App Router typing:</strong></p>
+  </div>
+  <div class="code-example">
+    <div class="lang-badge">TypeScript (Next.js)</div>
+<pre><code>// Next.js automatically types params from folder structure
+// app/users/[id]/page.tsx
+
+interface PageProps {
+  params: Promise&lt;{ id: string }&gt;;
+  searchParams: Promise&lt;{ [key: string]: string | string[] | undefined }&gt;;
+}
+
+export default async function UserPage({ params, searchParams }: PageProps) {
+  const { id } = await params;
+  const { tab } = await searchParams;
+  // id is string, tab is string | string[] | undefined
+  return &lt;div&gt;User {id}, Tab: {tab}&lt;/div&gt;;
+}
+
+// Type-safe Link
+import Link from "next/link";
+&lt;Link href={`/users/${userId}`}&gt;Profile&lt;/Link&gt;</code></pre>
+  </div>
+
+  <div class="callout-warning">
+    <strong>Common Mistakes</strong>
+    <div class="mistake">Using plain <code>string</code> for route paths &mdash; no validation of params</div>
+    <div class="correct">Define a routes type map and use it to constrain path functions</div>
+    <div class="mistake">Hardcoding route strings throughout the app &mdash; fragile to changes</div>
+    <div class="correct">Use a centralized <code>buildPath()</code> or route constants</div>
+    <div class="mistake">Forgetting to handle <code>undefined</code> searchParams</div>
+    <div class="correct">Always type searchParams as <code>string | string[] | undefined</code></div>
+  </div>
+
+  <div class="key-rules">
+    <strong>Key Rules</strong>
+    <ul>
+      <li>Define routes in one place as a type map &mdash; all route utilities derive from it.</li>
+      <li>Template literal types can auto-extract params from path strings at the type level.</li>
+      <li>For Next.js/React Router, lean on the framework's built-in typing rather than rolling your own.</li>
+    </ul>
+  </div>
+
+  <div class="exercises">
+    <strong>Exercises</strong>
+    <div class="exercise"><span class="exercise-num">1</span>Implement <code>ExtractParams&lt;T&gt;</code> that extracts parameter names from a route string like <code>"/api/:version/users/:userId"</code> and produces <code>{ version: string; userId: string }</code>.</div>
+    <div class="exercise"><span class="exercise-num">2</span>Build a <code>createLink&lt;T extends RoutePath&gt;(path: T, params: RouteParams&lt;T&gt;): string</code> function that is fully type-safe &mdash; it must error at compile time if params are missing or extra.</div>
+    <div class="exercise"><span class="exercise-num">3</span>Create a <code>Router</code> class with <code>.get()</code> and <code>.post()</code> methods where each route's handler receives correctly typed params based on the route path template.</div>
+  </div>
+
+  <div class="connections">
+    <strong>Connections:</strong> Heavy use of <code>template_literal_advanced</code> and <code>infer_mastery</code> for param extraction. Connects to <code>branded_types</code> (route strings as branded types for extra safety).
+  </div>
+</div>
+
+<!-- Concept 5: Effect Pattern & Functional Error Handling -->
+<div class="concept-card" id="effect_pattern">
+  <div class="concept-header">
+    <span class="concept-title">Effect Pattern &amp; Functional Error Handling</span>
+    <span class="ttag">Functional Patterns</span>
+  </div>
+
+  <div class="why-matters">The Effect pattern (inspired by Effect-TS/fp-ts) replaces exceptions with typed, composable error channels. Every function declares what can go wrong in its return type &mdash; no surprise <code>throw</code> at runtime.</div>
+
+  <div class="explanation">
+    <p><strong>Example 1 &mdash; Basic Result type:</strong></p>
+  </div>
+  <div class="code-example">
+    <div class="lang-badge">TypeScript</div>
+<pre><code>type Result&lt;T, E = Error&gt; =
+  | { ok: true; value: T }
+  | { ok: false; error: E };
+
+function ok&lt;T&gt;(value: T): Result&lt;T, never&gt; {
+  return { ok: true, value };
+}
+
+function err&lt;E&gt;(error: E): Result&lt;never, E&gt; {
+  return { ok: false, error };
+}
+
+// Usage
+function divide(a: number, b: number): Result&lt;number, "division_by_zero"&gt; {
+  if (b === 0) return err("division_by_zero");
+  return ok(a / b);
+}
+
+const result = divide(10, 0);
+if (result.ok) {
+  console.log(result.value); // number
+} else {
+  console.log(result.error); // "division_by_zero"
+}</code></pre>
+<div class="output">division_by_zero</div>
+  </div>
+
+  <div class="explanation">
+    <p><strong>Example 2 &mdash; Chaining with map/flatMap:</strong></p>
+  </div>
+  <div class="code-example">
+    <div class="lang-badge">TypeScript</div>
+<pre><code>type Result&lt;T, E = Error&gt; =
+  | { ok: true; value: T }
+  | { ok: false; error: E };
+
+function map&lt;T, U, E&gt;(result: Result&lt;T, E&gt;, fn: (value: T) =&gt; U): Result&lt;U, E&gt; {
+  return result.ok ? ok(fn(result.value)) : result;
+}
+
+function flatMap&lt;T, U, E1, E2&gt;(
+  result: Result&lt;T, E1&gt;,
+  fn: (value: T) =&gt; Result&lt;U, E2&gt;
+): Result&lt;U, E1 | E2&gt; {
+  return result.ok ? fn(result.value) : result;
+}
+
+// Chain operations &mdash; errors accumulate in the union
+type ParseError = { type: "parse"; input: string };
+type ValidationError = { type: "validation"; field: string };
+
+function parseNumber(input: string): Result&lt;number, ParseError&gt; {
+  const n = Number(input);
+  return isNaN(n) ? err({ type: "parse", input }) : ok(n);
+}
+
+function validatePositive(n: number): Result&lt;number, ValidationError&gt; {
+  return n &gt; 0 ? ok(n) : err({ type: "validation", field: "must be positive" });
+}
+
+const result2 = flatMap(parseNumber("42"), validatePositive);
+// Result&lt;number, ParseError | ValidationError&gt;</code></pre>
+<div class="type-result">result2: Result&lt;number, ParseError | ValidationError&gt;</div>
+  </div>
+
+  <div class="explanation">
+    <p><strong>Example 3 &mdash; Async Result (TaskResult):</strong></p>
+  </div>
+  <div class="code-example">
+    <div class="lang-badge">TypeScript</div>
+<pre><code>type AsyncResult&lt;T, E&gt; = Promise&lt;Result&lt;T, E&gt;&gt;;
+
+async function fetchUser(id: string): AsyncResult&lt;User, "not_found" | "network_error"&gt; {
+  try {
+    const res = await fetch(`/api/users/${id}`);
+    if (res.status === 404) return err("not_found" as const);
+    return ok(await res.json() as User);
+  } catch {
+    return err("network_error" as const);
+  }
+}
+
+async function getUserName(id: string): AsyncResult&lt;string, "not_found" | "network_error"&gt; {
+  const userResult = await fetchUser(id);
+  return map(userResult, user =&gt; user.name);
+}
+
+// Caller knows EXACTLY what can go wrong
+const nameResult = await getUserName("123");
+if (!nameResult.ok) {
+  switch (nameResult.error) {
+    case "not_found": console.log("User not found"); break;
+    case "network_error": console.log("Network failed"); break;
+    // TypeScript ensures all cases handled
+  }
+}</code></pre>
+  </div>
+
+  <div class="explanation">
+    <p><strong>Example 4 &mdash; Collecting multiple errors:</strong></p>
+  </div>
+  <div class="code-example">
+    <div class="lang-badge">TypeScript</div>
+<pre><code>function validate(input: { name: string; age: string; email: string }):
+  Result&lt;{ name: string; age: number; email: string }, ValidationError[]&gt; {
+
+  const errors: ValidationError[] = [];
+
+  if (!input.name.trim()) errors.push({ type: "validation", field: "name" });
+
+  const age = Number(input.age);
+  if (isNaN(age) || age &lt; 0) errors.push({ type: "validation", field: "age" });
+
+  if (!input.email.includes("@")) errors.push({ type: "validation", field: "email" });
+
+  return errors.length &gt; 0
+    ? err(errors)
+    : ok({ name: input.name.trim(), age, email: input.email });
+}
+
+const valid = validate({ name: "Alice", age: "30", email: "a@b.com" });
+// Result&lt;{ name: string; age: number; email: string }, ValidationError[]&gt;</code></pre>
+<div class="type-result">valid: Result&lt;{ name: string; age: number; email: string }, ValidationError[]&gt;</div>
+  </div>
+
+  <div class="explanation">
+    <p><strong>Example 5 &mdash; Pattern matching with exhaustive handling:</strong></p>
+  </div>
+  <div class="code-example">
+    <div class="lang-badge">TypeScript</div>
+<pre><code>type AppError =
+  | { type: "not_found"; resource: string }
+  | { type: "unauthorized"; reason: string }
+  | { type: "validation"; fields: string[] };
+
+function handleError(error: AppError): Response {
+  switch (error.type) {
+    case "not_found":
+      return new Response(`${error.resource} not found`, { status: 404 });
+    case "unauthorized":
+      return new Response(`Unauthorized: ${error.reason}`, { status: 401 });
+    case "validation":
+      return new Response(`Invalid: ${error.fields.join(", ")}`, { status: 400 });
+    default: {
+      const _: never = error; // exhaustiveness check
+      return new Response("Unknown error", { status: 500 });
+    }
+  }
+}</code></pre>
+  </div>
+
+  <div class="callout-warning">
+    <strong>Common Mistakes</strong>
+    <div class="mistake">Mixing Result types with thrown exceptions &mdash; inconsistent error handling</div>
+    <div class="correct">Choose one approach per layer: Result for business logic, try/catch at boundaries</div>
+    <div class="mistake">Using <code>Result&lt;T, string&gt;</code> &mdash; stringly-typed errors lose discrimination</div>
+    <div class="correct">Use discriminated unions: <code>Result&lt;T, { type: "not_found" } | { type: "auth" }&gt;</code></div>
+    <div class="mistake">Deeply nesting <code>if (result.ok)</code> checks</div>
+    <div class="correct">Use <code>map</code>/<code>flatMap</code> to chain operations cleanly</div>
+  </div>
+
+  <div class="key-rules">
+    <strong>Key Rules</strong>
+    <ul>
+      <li>Use Result types for business logic where you want callers to handle errors explicitly.</li>
+      <li>Keep <code>try/catch</code> at system boundaries (I/O, third-party libs) and convert to Result immediately.</li>
+      <li>Error types should be discriminated unions &mdash; enables exhaustive switch and precise handling.</li>
+    </ul>
+  </div>
+
+  <div class="exercises">
+    <strong>Exercises</strong>
+    <div class="exercise"><span class="exercise-num">1</span>Implement <code>Result&lt;T, E&gt;</code> with <code>ok()</code>, <code>err()</code>, <code>map()</code>, <code>flatMap()</code>, and <code>unwrapOr(defaultValue)</code> functions. Test with a chain of <code>parseJSON</code> &rarr; <code>extractField</code> &rarr; <code>validate</code>.</div>
+    <div class="exercise"><span class="exercise-num">2</span>Write an async <code>trySafe&lt;T&gt;(fn: () =&gt; Promise&lt;T&gt;): AsyncResult&lt;T, Error&gt;</code> wrapper that converts any thrown error into a Result.</div>
+    <div class="exercise"><span class="exercise-num">3</span>Build a form validator using Result that validates <code>username</code> (3-20 chars, alphanumeric), <code>email</code> (contains @), and <code>age</code> (18-120). Return either the validated data or an array of field errors.</div>
+  </div>
+
+  <div class="connections">
+    <strong>Connections:</strong> Directly extends <code>error_handling_patterns</code> and <code>discriminated_unions_practice</code>. Uses <code>never_exhaustiveness</code> for error handling switches. The <code>map</code>/<code>flatMap</code> pattern mirrors Rust's <code>Result&lt;T, E&gt;</code> from the multi-language guide.
+  </div>
+</div>
+
+</div><!-- end topic-section 2 -->
+
+<!-- ============================================================ -->
+<!-- FOOTER                                                        -->
+<!-- ============================================================ -->
+<footer class="guide-footer">
+  <h2>All Guides</h2>
+  <ul>
+    <li><a href="typescript-guides/typescript-guide-2026-07-09.html">2026-07-09</a> (Day 36)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-07-08.html">2026-07-08</a> (Day 35)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-07-07.html">2026-07-07</a> (Day 34)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-07-06.html">2026-07-06</a> (Day 33)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-07-05.html">2026-07-05</a> (Day 32)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-07-04.html">2026-07-04</a> (Day 31)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-07-03.html">2026-07-03</a> (Day 30)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-07-02.html">2026-07-02</a> (Day 29)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-07-01.html">2026-07-01</a> (Day 28)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-30.html">2026-06-30</a> (Day 27)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-29.html">2026-06-29</a> (Day 26)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-28.html">2026-06-28</a> (Day 25)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-27.html">2026-06-27</a> (Day 24)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-26.html">2026-06-26</a> (Day 23)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-25.html">2026-06-25</a> (Day 22)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-24.html">2026-06-24</a> (Day 21)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-23.html">2026-06-23</a> (Day 20)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-22.html">2026-06-22</a> (Day 19)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-21.html">2026-06-21</a> (Day 18)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-19.html">2026-06-19</a> (Day 17)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-18.html">2026-06-18</a> (Day 16)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-17.html">2026-06-17</a> (Day 15)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-15.html">2026-06-15</a> (Day 14)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-13.html">2026-06-13</a> (Day 13)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-12.html">2026-06-12</a> (Day 12)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-11.html">2026-06-11</a> (Day 11)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-10.html">2026-06-10</a> (Day 10)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-09.html">2026-06-09</a> (Day 9)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-08.html">2026-06-08</a> (Day 8)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-07.html">2026-06-07</a> (Day 7)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-05.html">2026-06-05</a> (Day 6)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-04.html">2026-06-04</a> (Day 5)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-03.html">2026-06-03</a> (Day 4)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-02.html">2026-06-02</a> (Day 3)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-01.html">2026-06-01</a> (Day 2)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-05-31.html">2026-05-31</a> (Day 1)</li>
+  </ul>
+</footer>
+
+</div><!-- end content -->
+</div><!-- end main -->
+
+<script>
+// Theme toggle
+(function() {
+  var toggle = document.getElementById('themeToggle');
+  var html = document.documentElement;
+  var STORAGE_KEY = 'lc-tsguide-theme';
+
+  function setTheme(theme) {
+    html.setAttribute('data-theme', theme);
+    toggle.textContent = theme === 'dark' ? '\u{1F319}' : '\u{2600}\u{FE0F}';
+    try { localStorage.setItem(STORAGE_KEY, theme); } catch(e) {}
+  }
+
+  // Load saved theme
+  try {
+    var saved = localStorage.getItem(STORAGE_KEY);
+    if (saved) setTheme(saved);
+  } catch(e) {}
+
+  toggle.addEventListener('click', function() {
+    var current = html.getAttribute('data-theme') || 'dark';
+    setTheme;
+  });
+})();
+
+// Sidebar active link tracking
+(function() {
+  var links = document.querySelectorAll('.sidebar-nav a');
+  var sections = [];
+  links.forEach(function(link) {
+    var id = link.getAttribute('href').replace('#', '');
+    var el = document.getElementById(id);
+    if (el) sections.push({ link: link, el: el });
+  });
+
+  function updateActive() {
+    var current = null;
+    var scrollY = window.scrollY + 120;
+    for (var i = sections.length - 1; i >= 0; i--) {
+      if (sections[i].el.offsetTop <= scrollY) {
+        current = sections[i];
+        break;
+      }
+    }
+    links.forEach(function(l) { l.classList.remove('active'); });
+    if  current.link.classList.add('active');
+  }
+
+  window.addEventListener('scroll', updateActive);
+  updateActive();
+})();
+</script>
+
+</body>
+</html>

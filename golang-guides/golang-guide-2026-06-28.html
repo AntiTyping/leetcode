@@ -1,0 +1,1668 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Go Study Guide &mdash; Day 23 (2026-06-28)</title>
+<style>
+/* ===== CSS Variables ===== */
+:root {
+  --bg: #0d1117;
+  --surface1: #161b22;
+  --surface2: #1c2129;
+  --border: #30363d;
+  --text: #e6edf3;
+  --muted: #8b949e;
+  --accent: #58a6ff;
+  --accent-dim: #1f6feb33;
+  --green: #3fb950;
+  --green-dim: #23863633;
+  --yellow: #d29922;
+  --yellow-dim: #d2992233;
+  --red: #f85149;
+  --red-dim: #f8514933;
+  --purple: #bc8cff;
+  --purple-dim: #bc8cff22;
+  --orange: #f0883e;
+  --orange-dim: #f0883e22;
+  --code-bg: #0d1117;
+  --sidebar-w: 300px;
+  --font-mono: 'SF Mono', 'Cascadia Code', 'Fira Code', Consolas, monospace;
+  --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+  --radius: 8px;
+  --shadow: 0 1px 3px rgba(0,0,0,0.4);
+}
+
+[data-theme="light"] {
+  --bg: #ffffff;
+  --surface1: #f6f8fa;
+  --surface2: #f0f3f6;
+  --border: #d0d7de;
+  --text: #1f2328;
+  --muted: #656d76;
+  --accent: #0969da;
+  --accent-dim: #0969da1a;
+  --green: #1a7f37;
+  --green-dim: #1a7f3718;
+  --yellow: #9a6700;
+  --yellow-dim: #9a670018;
+  --red: #cf222e;
+  --red-dim: #cf222e18;
+  --purple: #8250df;
+  --purple-dim: #8250df18;
+  --orange: #bc4c00;
+  --orange-dim: #bc4c0018;
+  --code-bg: #f6f8fa;
+  --shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+/* ===== Reset & Base ===== */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: var(--font-sans);
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.7;
+  font-size: 16px;
+  transition: background 0.2s, color 0.2s;
+}
+
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+/* ===== Theme Toggle ===== */
+#theme-toggle {
+  position: fixed;
+  top: 16px;
+  right: 20px;
+  z-index: 1000;
+  background: var(--surface1);
+  border: 1px solid var(--border);
+  color: var(--text);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+  box-shadow: var(--shadow);
+}
+#theme-toggle:hover { background: var(--surface2); border-color: var(--accent); }
+
+/* ===== Sidebar ===== */
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: var(--sidebar-w);
+  height: 100vh;
+  background: var(--surface1);
+  border-right: 1px solid var(--border);
+  overflow-y: auto;
+  padding: 20px 0;
+  z-index: 100;
+  transition: transform 0.3s;
+}
+
+.sidebar-header {
+  padding: 0 20px 16px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 12px;
+}
+
+.sidebar-header h2 {
+  font-size: 16px;
+  color: var(--text);
+  font-weight: 700;
+}
+
+.sidebar-header .subtitle {
+  font-size: 12px;
+  color: var(--muted);
+  margin-top: 2px;
+}
+
+.sidebar-section {
+  margin-bottom: 8px;
+}
+
+.sidebar-section-title {
+  padding: 6px 20px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+}
+
+.sidebar-link {
+  display: block;
+  padding: 5px 20px 5px 28px;
+  font-size: 13px;
+  color: var(--muted);
+  text-decoration: none;
+  border-left: 2px solid transparent;
+  transition: all 0.15s;
+  line-height: 1.4;
+}
+
+.sidebar-link:hover {
+  color: var(--text);
+  background: var(--accent-dim);
+  border-left-color: var(--accent);
+  text-decoration: none;
+}
+
+.sidebar-link.active {
+  color: var(--accent);
+  border-left-color: var(--accent);
+  background: var(--accent-dim);
+}
+
+/* ===== Mobile sidebar toggle ===== */
+#sidebar-toggle {
+  display: none;
+  position: fixed;
+  top: 16px;
+  left: 16px;
+  z-index: 200;
+  background: var(--surface1);
+  border: 1px solid var(--border);
+  color: var(--text);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 20px;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--shadow);
+}
+
+/* ===== Main Content ===== */
+.main {
+  margin-left: var(--sidebar-w);
+  padding: 40px 48px 80px;
+  max-width: calc(860px + var(--sidebar-w) + 96px);
+}
+
+.page-title {
+  font-size: 32px;
+  font-weight: 800;
+  margin-bottom: 4px;
+  color: var(--text);
+}
+
+.page-subtitle {
+  font-size: 15px;
+  color: var(--muted);
+  margin-bottom: 36px;
+}
+
+/* ===== Sections ===== */
+.section {
+  margin-bottom: 48px;
+}
+
+.section-label {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  padding: 3px 10px;
+  border-radius: 4px;
+  margin-bottom: 12px;
+}
+
+.section-label.review { background: var(--yellow-dim); color: var(--yellow); }
+.section-label.new { background: var(--green-dim); color: var(--green); }
+
+.section-title {
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 24px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--border);
+}
+
+/* ===== How To Use ===== */
+.how-to-use {
+  background: var(--surface1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px 24px;
+  margin-bottom: 36px;
+}
+
+.how-to-use h3 {
+  font-size: 16px;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.how-to-use ul {
+  padding-left: 22px;
+  margin: 0;
+}
+
+.how-to-use li {
+  font-size: 14px;
+  color: var(--muted);
+  margin-bottom: 4px;
+}
+
+/* ===== Concept Cards ===== */
+.concept {
+  background: var(--surface1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 28px;
+  margin-bottom: 28px;
+  box-shadow: var(--shadow);
+}
+
+.concept-header {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  margin-bottom: 6px;
+  flex-wrap: wrap;
+}
+
+.concept h3 {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.concept-meta {
+  font-size: 12px;
+  color: var(--muted);
+  background: var(--surface2);
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
+.concept h4 {
+  font-size: 15px;
+  font-weight: 600;
+  margin: 20px 0 8px;
+  color: var(--text);
+}
+
+.concept p, .concept li {
+  color: var(--text);
+  line-height: 1.7;
+}
+
+.concept ul, .concept ol {
+  padding-left: 22px;
+  margin: 8px 0;
+}
+
+.concept li {
+  margin-bottom: 4px;
+}
+
+.concept .why-matters {
+  font-style: italic;
+  color: var(--muted);
+  margin: 6px 0 16px;
+  font-size: 15px;
+}
+
+/* ===== Code Blocks ===== */
+pre {
+  background: var(--code-bg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 16px 18px;
+  overflow-x: auto;
+  margin: 10px 0 14px;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--text);
+  position: relative;
+}
+
+pre::after {
+  content: 'Go';
+  position: absolute;
+  top: 6px;
+  right: 10px;
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  opacity: 0.6;
+}
+
+code {
+  font-family: var(--font-mono);
+  font-size: 0.9em;
+}
+
+:not(pre) > code {
+  background: var(--surface2);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.88em;
+}
+
+/* ===== Output Blocks ===== */
+.output {
+  background: var(--green-dim);
+  border: 1px solid var(--green);
+  border-radius: 6px;
+  padding: 12px 16px;
+  margin: 6px 0 14px;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--text);
+  white-space: pre-wrap;
+}
+
+.output::after { content: none; }
+
+.output-label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--green);
+  margin-bottom: 4px;
+}
+
+/* ===== Good/Bad Examples ===== */
+.do-dont {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin: 10px 0;
+}
+
+.do-box, .dont-box {
+  border-radius: 6px;
+  padding: 14px;
+  border: 1px solid;
+}
+
+.do-box {
+  background: var(--green-dim);
+  border-color: var(--green);
+}
+
+.dont-box {
+  background: var(--red-dim);
+  border-color: var(--red);
+}
+
+.do-box .label, .dont-box .label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 6px;
+}
+
+.do-box .label { color: var(--green); }
+.dont-box .label { color: var(--red); }
+
+.do-box pre, .dont-box pre {
+  margin: 0;
+  border: none;
+  background: transparent;
+  padding: 0;
+  font-size: 12.5px;
+}
+
+.do-box pre::after, .dont-box pre::after { content: none; }
+
+/* ===== Key Rules ===== */
+.rules-list {
+  list-style: none;
+  padding: 0;
+  margin: 8px 0;
+}
+
+.rules-list li {
+  padding: 6px 0 6px 24px;
+  position: relative;
+}
+
+.rules-list li::before {
+  content: "\2192";
+  position: absolute;
+  left: 2px;
+  color: var(--accent);
+  font-weight: 700;
+}
+
+/* ===== Exercises ===== */
+.exercise {
+  background: var(--purple-dim);
+  border: 1px solid var(--purple);
+  border-radius: 6px;
+  padding: 14px 18px;
+  margin: 8px 0;
+}
+
+.exercise .exercise-label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--purple);
+  margin-bottom: 4px;
+}
+
+/* ===== Pitfall ===== */
+.pitfall {
+  background: var(--red-dim);
+  border-left: 3px solid var(--red);
+  border-radius: 0 6px 6px 0;
+  padding: 10px 14px;
+  margin: 10px 0;
+  font-size: 14px;
+}
+
+.pitfall strong {
+  color: var(--red);
+}
+
+/* ===== Connection ===== */
+.connection {
+  background: var(--accent-dim);
+  border-left: 3px solid var(--accent);
+  border-radius: 0 6px 6px 0;
+  padding: 10px 14px;
+  margin: 10px 0;
+  font-size: 14px;
+  color: var(--muted);
+}
+
+/* ===== Review Cards ===== */
+.review-card {
+  background: var(--surface1);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--purple);
+  border-radius: var(--radius);
+  padding: 20px 24px;
+  margin-bottom: 16px;
+  box-shadow: var(--shadow);
+}
+
+.review-card .review-header {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  margin-bottom: 6px;
+  flex-wrap: wrap;
+}
+
+.review-card h3 {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.review-card .review-meta {
+  font-size: 12px;
+  color: var(--muted);
+  background: var(--surface2);
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
+.review-card h4 {
+  font-size: 14px;
+  font-weight: 600;
+  margin: 14px 0 6px;
+  color: var(--text);
+}
+
+.review-card p, .review-card li {
+  color: var(--text);
+  line-height: 1.6;
+  font-size: 14px;
+}
+
+.review-card pre {
+  font-size: 12.5px;
+  padding: 12px 14px;
+  margin: 6px 0 10px;
+}
+
+.review-card .pitfall {
+  font-size: 13px;
+  padding: 8px 12px;
+}
+
+/* ===== Topic Badge ===== */
+.topic-badge {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 2px 8px;
+  border-radius: 4px;
+  background: var(--accent-dim);
+  color: var(--accent);
+  margin-left: 4px;
+}
+
+/* ===== Footer ===== */
+.footer {
+  margin-top: 60px;
+  padding: 24px 0;
+  border-top: 1px solid var(--border);
+}
+
+.footer h4 {
+  font-size: 14px;
+  color: var(--muted);
+  margin-bottom: 10px;
+}
+
+.footer ul {
+  list-style: none;
+  padding: 0;
+}
+
+.footer li {
+  margin-bottom: 4px;
+  font-size: 14px;
+}
+
+.footer li a { color: var(--accent); }
+.footer .current { color: var(--green); font-weight: 600; }
+
+/* ===== Bash code blocks ===== */
+pre.bash::after {
+  content: 'Bash';
+}
+
+/* ===== YAML code blocks ===== */
+pre.yaml-code::after {
+  content: 'YAML';
+}
+
+/* ===== Responsive ===== */
+@media (max-width: 900px) {
+  .sidebar {
+    transform: translateX(-100%);
+  }
+  .sidebar.open {
+    transform: translateX(0);
+    box-shadow: 4px 0 20px rgba(0,0,0,0.5);
+  }
+  #sidebar-toggle {
+    display: flex;
+  }
+  .main {
+    margin-left: 0;
+    padding: 60px 20px 60px;
+    max-width: 100%;
+  }
+  .do-dont {
+    grid-template-columns: 1fr;
+  }
+  #theme-toggle {
+    right: 14px;
+    top: 16px;
+  }
+}
+</style>
+</head>
+<body>
+
+<!-- Theme Toggle -->
+<button id="theme-toggle" aria-label="Toggle theme" title="Toggle light/dark theme">&#9789;</button>
+
+<!-- Mobile Sidebar Toggle -->
+<button id="sidebar-toggle" aria-label="Toggle sidebar">&#9776;</button>
+
+<!-- Sidebar -->
+<nav class="sidebar" id="sidebar">
+  <div class="sidebar-header">
+    <h2>Go Guide</h2>
+    <div class="subtitle">Day 23 &mdash; 2026-06-28</div>
+  </div>
+
+  <div class="sidebar-section">
+    <div class="sidebar-section-title">Review (6 concepts)</div>
+    <a href="#slices_deep_dive" class="sidebar-link">Slices Deep Dive</a>
+    <a href="#interfaces" class="sidebar-link">Interfaces</a>
+    <a href="#fmt_package" class="sidebar-link">fmt Package</a>
+    <a href="#io_package" class="sidebar-link">io Package</a>
+    <a href="#encoding_json" class="sidebar-link">encoding/json</a>
+    <a href="#time_package" class="sidebar-link">time Package</a>
+  </div>
+
+  <div class="sidebar-section">
+    <div class="sidebar-section-title">CLI &amp; Web Std Lib (3)</div>
+    <a href="#flag_package" class="sidebar-link">flag Package</a>
+    <a href="#net_url" class="sidebar-link">net/url</a>
+    <a href="#encoding_base64" class="sidebar-link">encoding/base64</a>
+  </div>
+
+  <div class="sidebar-section">
+    <div class="sidebar-section-title">Serialization &amp; Data Structures (2)</div>
+    <a href="#encoding_gob" class="sidebar-link">encoding/gob</a>
+    <a href="#container_ring" class="sidebar-link">container/ring</a>
+  </div>
+</nav>
+
+<!-- Main Content -->
+<div class="main">
+
+<h1 class="page-title">Go Daily Guide &mdash; 2026-06-28 (Day 23)</h1>
+<p class="page-subtitle">Day 23 &mdash; Sunday, June 28, 2026 &bull; 11 concepts (6 review + 5 new)</p>
+
+<!-- How to Use -->
+<div class="how-to-use">
+  <h3>How to Use This Guide</h3>
+  <ul>
+    <li>Start with the <strong>Review</strong> section &mdash; try to recall each concept before reading the refresher</li>
+    <li>Complete the challenge exercise for each review card without looking back at previous days</li>
+    <li>Then work through the <strong>New Concepts</strong> section, typing out every code example yourself</li>
+    <li>Pay special attention to the common mistakes sections (they highlight real Go gotchas)</li>
+    <li>Complete the exercises at the bottom of each concept without looking at solutions</li>
+    <li>Use <code>go run main.go</code> to test your code locally, or use the <a href="https://go.dev/play/" target="_blank">Go Playground</a></li>
+  </ul>
+</div>
+
+<!-- ============================================================ -->
+<!-- REVIEW SECTION -->
+<!-- ============================================================ -->
+<div class="section">
+  <span class="section-label review">Review</span>
+  <h2 class="section-title">Spaced Repetition Review &mdash; 6 Concepts</h2>
+
+  <!-- Review 1: Slices Deep Dive -->
+  <div class="review-card" id="slices_deep_dive">
+    <div class="review-header">
+      <h3>Slices Deep Dive</h3>
+      <span class="review-meta">Go Foundations &bull; due today &bull; rep 3</span>
+    </div>
+
+    <h4>Quick Reminder</h4>
+    <p>A slice is a three-word header &mdash; <em>pointer</em>, <em>length</em>, <em>capacity</em> &mdash; over a backing array. Sub-slicing shares that array, so an <code>append</code> that stays within <code>cap</code> silently overwrites data still visible through another slice. The full-slice expression <code>a[low:high:max]</code> caps capacity to force the next <code>append</code> into a fresh array.</p>
+
+    <h4>Key Pattern</h4>
+<pre>package main
+
+import "fmt"
+
+func main() {
+    a := []int{1, 2, 3, 4, 5}
+    s := a[1:3]             // len 2, cap 4 (shares backing array)
+    fmt.Println(s, len(s), cap(s))
+
+    s = append(s, 99)      // fits in cap -&gt; overwrites a[3]!
+    fmt.Println("a now:", a)
+
+    // Full-slice expression caps growth, forcing a copy on next append.
+    safe := a[1:3:3]
+    safe = append(safe, 42) // cap exceeded -&gt; new array, a untouched
+    fmt.Println("a still:", a)
+
+    // Delete index 2 by shifting the tail down.
+    b := []int{10, 20, 30, 40}
+    b = append(b[:2], b[3:]...)
+    fmt.Println("deleted:", b)
+}</pre>
+    <div class="output-label">Output</div>
+    <div class="output">[2 3] 2 4
+a now: [1 2 3 99 5]
+a still: [1 2 3 99 5]
+deleted: [10 20 40]</div>
+
+    <div class="exercise">
+      <div class="exercise-label">Challenge Exercise</div>
+      <p>Write <code>filterInPlace(xs []int, keep func(int) bool) []int</code> that reuses <code>xs</code>'s backing array (zero allocations) and returns the shortened slice. Then demonstrate the aliasing bug: create two slices over one array, append through the first, and show the second slice's values changed. Finally, use the three-index form to hand out a "read-only" sub-slice whose appends can never corrupt the parent, and explain how <code>slices.Clip</code> relates.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>Pitfall:</strong> Returning <code>s[:0]</code> and appending to it while the caller still holds the original slice &mdash; both share one array, so your writes clobber the caller's data. When a function must not alter its input, copy first (<code>append([]T(nil), s...)</code>) or use the three-index form to bound capacity.
+    </div>
+  </div>
+
+  <!-- Review 2: Interfaces -->
+  <div class="review-card" id="interfaces">
+    <div class="review-header">
+      <h3>Interfaces</h3>
+      <span class="review-meta">Go Foundations &bull; due today &bull; rep 3</span>
+    </div>
+
+    <h4>Quick Reminder</h4>
+    <p>An interface value is a pair: a <em>dynamic type</em> and a <em>value</em>. A type satisfies an interface implicitly by having its methods &mdash; no <code>implements</code> keyword. A <em>type switch</em> recovers the concrete type at runtime, and the empty interface <code>any</code> holds anything. Keep interfaces small and define them where they are <em>consumed</em>, not where the implementation lives.</p>
+
+    <h4>Key Pattern</h4>
+<pre>package main
+
+import "fmt"
+
+type Stringer interface {
+    String() string
+}
+
+type Temp float64
+
+func (t Temp) String() string { return fmt.Sprintf("%.1f C", float64(t)) }
+
+func describe(v any) {
+    switch x := v.(type) { // recover the dynamic type
+    case Stringer:
+        fmt.Println("stringer:", x.String())
+    case int:
+        fmt.Println("int:", x)
+    default:
+        fmt.Printf("other: %T\n", x)
+    }
+}
+
+func main() {
+    describe(Temp(21.5))
+    describe(42)
+    describe(true)
+
+    var s Stringer = Temp(0)
+    fmt.Println("nil check:", s == nil) // false: has a concrete type
+}</pre>
+    <div class="output-label">Output</div>
+    <div class="output">stringer: 21.5 C
+int: 42
+other: bool
+nil check: false</div>
+
+    <div class="exercise">
+      <div class="exercise-label">Challenge Exercise</div>
+      <p>Define a small <code>Shape</code> interface (<code>Area() float64</code>) with <code>Rect</code> and <code>Circle</code> implementations, then write <code>totalArea(shapes []Shape) float64</code>. Next, reproduce the classic "typed nil in an interface" trap: return a <code>(*MyError)(nil)</code> as an <code>error</code> and show <code>err != nil</code> is <em>true</em>. Finally, explain when to accept an interface but return a concrete type ("accept interfaces, return structs").</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>Pitfall:</strong> Storing a nil pointer in an interface and comparing to <code>nil</code>. The interface holds a non-nil <em>type</em> (<code>*T</code>) with a nil value, so <code>iface == nil</code> is <code>false</code>. This is the #1 source of "my error check never fires" bugs &mdash; return a literal <code>nil</code>, never a typed nil pointer, from functions declared to return <code>error</code>.
+    </div>
+  </div>
+
+  <!-- Review 3: fmt Package -->
+  <div class="review-card" id="fmt_package">
+    <div class="review-header">
+      <h3>fmt Package</h3>
+      <span class="review-meta">Standard Library &bull; overdue 5d &bull; rep 2</span>
+    </div>
+
+    <h4>Quick Reminder</h4>
+    <p>Verbs drive formatting: <code>%v</code> (default), <code>%+v</code> (with field names), <code>%#v</code> (Go syntax), <code>%T</code> (type), <code>%q</code> (quoted), <code>%d/%s/%f</code> (typed). Width and precision (<code>%8.3f</code>, <code>%-5d</code>) pad and truncate. A type's <code>String() string</code> method is used by <code>%v</code>/<code>%s</code>, and <code>Errorf</code> with <code>%w</code> wraps an error for later <code>errors.Is</code>/<code>As</code>.</p>
+
+    <h4>Key Pattern</h4>
+<pre>package main
+
+import "fmt"
+
+type Point struct{ X, Y int }
+
+func main() {
+    p := Point{1, 2}
+    fmt.Printf("%v\n", p)   // {1 2}
+    fmt.Printf("%+v\n", p)  // {X:1 Y:2}
+    fmt.Printf("%#v\n", p)  // main.Point{X:1, Y:2}
+    fmt.Printf("%T\n", p)   // main.Point
+
+    // Width, left-align, zero-pad + precision.
+    fmt.Printf("%5d|%-5d|%08.3f\n", 42, 42, 3.14159)
+
+    fmt.Println(fmt.Sprintf("%q", "hi\n")) // quoted, escapes shown
+}</pre>
+    <div class="output-label">Output</div>
+    <div class="output">{1 2}
+{X:1 Y:2}
+main.Point{X:1, Y:2}
+main.Point
+   42|42   |0003.142
+"hi\n"</div>
+
+    <div class="exercise">
+      <div class="exercise-label">Challenge Exercise</div>
+      <p>Implement <code>String()</code> on a <code>Money</code> type so <code>fmt.Println</code> prints <code>$12.50</code>, then verify <code>%v</code> and <code>%s</code> both use it but <code>%d</code> does not. Build an error chain with <code>fmt.Errorf("load config: %w", err)</code> and recover the root with <code>errors.Is</code>. Finally, explain why implementing <code>String()</code> that itself calls <code>fmt.Sprintf("%v", t)</code> causes infinite recursion, and how to avoid it (convert to the underlying type first).</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>Pitfall:</strong> A <code>String()</code> or <code>Error()</code> method that formats the receiver with <code>%v</code>/<code>%s</code> re-invokes itself &mdash; infinite recursion and a stack overflow. Convert to the base type (<code>fmt.Sprintf("%d", int(t))</code>) or format individual fields instead of the whole value.
+    </div>
+  </div>
+
+  <!-- Review 4: io Package -->
+  <div class="review-card" id="io_package">
+    <div class="review-header">
+      <h3>io Package</h3>
+      <span class="review-meta">Standard Library &bull; overdue 5d &bull; rep 2</span>
+    </div>
+
+    <h4>Quick Reminder</h4>
+    <p><code>io.Reader</code> and <code>io.Writer</code> are the two-method interfaces that make Go's I/O composable. <code>io.Copy(dst, src)</code> streams without buffering the whole payload; <code>io.ReadAll</code> slurps to a <code>[]byte</code>; <code>TeeReader</code> mirrors reads into a second writer; <code>MultiReader</code>/<code>MultiWriter</code> fan in and out. Everything from files to HTTP bodies to <code>strings.Reader</code> plugs into the same plumbing.</p>
+
+    <h4>Key Pattern</h4>
+<pre>package main
+
+import (
+    "fmt"
+    "io"
+    "strings"
+)
+
+func main() {
+    // Copy streams from any Reader to any Writer.
+    var sb strings.Builder
+    n, _ := io.Copy(&amp;sb, strings.NewReader("hello world"))
+    fmt.Println(n, sb.String())
+
+    // TeeReader mirrors everything read into a second writer.
+    var seen strings.Builder
+    tee := io.TeeReader(strings.NewReader("abc"), &amp;seen)
+    io.ReadAll(tee)
+    fmt.Println("teed:", seen.String())
+
+    // MultiReader concatenates sources into one stream.
+    mr := io.MultiReader(strings.NewReader("foo"), strings.NewReader("bar"))
+    out, _ := io.ReadAll(mr)
+    fmt.Println(string(out))
+}</pre>
+    <div class="output-label">Output</div>
+    <div class="output">11 hello world
+teed: abc
+foobar</div>
+
+    <div class="exercise">
+      <div class="exercise-label">Challenge Exercise</div>
+      <p>Write a function that copies a reader to a writer while computing its SHA-256 in a single pass, using <code>io.MultiWriter(dst, hasher)</code>. Then use <code>io.LimitReader</code> to cap how many bytes you accept from an untrusted source. Finally, implement your own <code>io.Reader</code> that yields an infinite stream of a repeated byte and feed it to <code>io.CopyN</code>, explaining why <code>Read</code> must return <code>(n, nil)</code> with <code>n &gt; 0</code> rather than blocking.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>Pitfall:</strong> Ignoring the <em>byte count</em> or <code>io.EOF</code> contract when writing a custom <code>Reader</code>. <code>Read</code> may return <code>n &gt; 0</code> <em>and</em> <code>io.EOF</code> in the same call; callers that only check the error before processing the bytes will silently drop the final chunk. Always process the returned <code>n</code> bytes first, then handle the error.
+    </div>
+  </div>
+
+  <!-- Review 5: encoding/json -->
+  <div class="review-card" id="encoding_json">
+    <div class="review-header">
+      <h3>encoding/json</h3>
+      <span class="review-meta">Standard Library &bull; overdue 5d &bull; rep 2</span>
+    </div>
+
+    <h4>Quick Reminder</h4>
+    <p><code>json.Marshal</code>/<code>Unmarshal</code> map structs to JSON via <em>exported</em> fields and struct tags: <code>json:"name"</code> renames, <code>,omitempty</code> drops zero values, and <code>-</code> skips a field entirely. Decoding into <code>map[string]any</code> handles unknown shapes &mdash; but all numbers arrive as <code>float64</code>. Use <code>json.Decoder</code> for streams and <code>MarshalIndent</code> for pretty output.</p>
+
+    <h4>Key Pattern</h4>
+<pre>package main
+
+import (
+    "encoding/json"
+    "fmt"
+)
+
+type User struct {
+    Name  string `json:"name"`
+    Email string `json:"email,omitempty"` // dropped when empty
+    Age   int    `json:"-"`               // never serialized
+}
+
+func main() {
+    b, _ := json.Marshal(User{Name: "Ada", Age: 36})
+    fmt.Println(string(b))
+
+    var back User
+    json.Unmarshal([]byte(`{"name":"Bo","email":"bo@x.io"}`), &amp;back)
+    fmt.Printf("%+v\n", back)
+
+    // Unknown shape decodes into map[string]any; numbers become float64.
+    var m map[string]any
+    json.Unmarshal([]byte(`{"n":1,"ok":true}`), &amp;m)
+    fmt.Println(m["n"], m["ok"])
+}</pre>
+    <div class="output-label">Output</div>
+    <div class="output">{"name":"Ada"}
+{Name:Bo Email:bo@x.io Age:0}
+1 true</div>
+
+    <div class="exercise">
+      <div class="exercise-label">Challenge Exercise</div>
+      <p>Add a <code>time.Time</code> field and a custom <code>MarshalJSON</code>/<code>UnmarshalJSON</code> pair on a wrapper type to emit a Unix timestamp instead of RFC 3339. Then decode a large JSON array with a streaming <code>json.Decoder</code> and <code>Token()</code> so you never hold the whole document in memory. Finally, explain why unexported fields are invisible to the encoder and why decoding a JSON number into an <code>int</code> field works but into an <code>any</code> yields <code>float64</code>.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>Pitfall:</strong> Assuming <code>omitempty</code> omits "empty" structs or slices the way it does scalars. It only checks for the type's <em>zero value</em> &mdash; an empty-but-non-nil slice (<code>[]int{}</code>) and a zero-valued nested struct are <em>not</em> omitted. For structs, use a pointer field (<code>*T</code>) so <code>nil</code> triggers <code>omitempty</code>.
+    </div>
+  </div>
+
+  <!-- Review 6: time Package -->
+  <div class="review-card" id="time_package">
+    <div class="review-header">
+      <h3>time Package</h3>
+      <span class="review-meta">Standard Library &bull; overdue 3d &bull; rep 2</span>
+    </div>
+
+    <h4>Quick Reminder</h4>
+    <p>Layouts in Go use the <em>reference time</em> <code>Mon Jan 2 15:04:05 MST 2006</code> (01/02 03:04:05PM '06) &mdash; you write the format by example, not with <code>%Y</code>. <code>Duration</code> is a typed <code>int64</code> of nanoseconds with helpful constants (<code>time.Hour</code>). <code>Add</code>, <code>Sub</code>, and <code>Since</code> do arithmetic; always compare and store times in a known zone (usually UTC).</p>
+
+    <h4>Key Pattern</h4>
+<pre>package main
+
+import (
+    "fmt"
+    "time"
+)
+
+func main() {
+    // Reference layout: Mon Jan 2 15:04:05 MST 2006.
+    t := time.Date(2026, time.July, 2, 9, 30, 0, 0, time.UTC)
+    fmt.Println(t.Format("2006-01-02 15:04"))
+
+    d := 90 * time.Minute
+    fmt.Println(d, d.Hours())
+
+    later := t.Add(48 * time.Hour)
+    fmt.Println(later.Sub(t)) // duration between two times
+    fmt.Println(later.Weekday())
+
+    parsed, _ := time.Parse("2006-01-02", "2026-12-25")
+    fmt.Println(parsed.YearDay())
+}</pre>
+    <div class="output-label">Output</div>
+    <div class="output">2026-07-02 09:30
+1h30m0s 1.5
+48h0m0s
+Saturday
+359</div>
+
+    <div class="exercise">
+      <div class="exercise-label">Challenge Exercise</div>
+      <p>Parse an RFC 3339 timestamp with <code>time.Parse(time.RFC3339, ...)</code>, convert it to a named zone with <code>LoadLocation("America/New_York")</code>, and format it back. Then write a <code>time.Ticker</code> loop that stops after N ticks (remember <code>defer ticker.Stop()</code>). Finally, explain the difference between a <em>wall clock</em> and the <em>monotonic</em> reading Go attaches to <code>time.Now()</code>, and why you should use <code>time.Since</code> for measuring elapsed time.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>Pitfall:</strong> Writing the layout string with the wrong reference numbers (e.g. <code>"YYYY-MM-DD"</code> or <code>"2020-01-01"</code>). Only the exact reference values &mdash; year <code>2006</code>, month <code>01</code>, day <code>02</code>, hour <code>15</code> (or <code>03</code>), minute <code>04</code>, second <code>05</code> &mdash; are recognized; any other digits are copied literally, so your dates format as garbage with no error.
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- NEW CONCEPTS SECTION -->
+<!-- ============================================================ -->
+<div class="section">
+  <span class="section-label new">New</span>
+  <h2 class="section-title">New Concepts &mdash; 5 in 2 Sections</h2>
+
+  <h3 style="font-size:18px;margin:8px 0 18px;color:var(--muted);">Section 1 &mdash; CLI &amp; Web Standard Library</h3>
+
+  <!-- New 1: flag -->
+  <div class="concept" id="flag_package">
+    <div class="concept-header">
+      <h3>flag: Command-Line Flag Parsing</h3>
+      <span class="topic-badge">Std Lib</span>
+    </div>
+    <p class="why-matters">Why it matters: <code>flag</code> is the standard-library way to give a program typed command-line options with automatic <code>-h</code>/<code>-help</code> usage text &mdash; no external dependency. It parses <code>-name=value</code> and <code>-flag</code> forms, coerces to the right type, applies defaults, and leaves the non-flag arguments in <code>flag.Args()</code>. For anything beyond a full subcommand CLI, it is all you need.</p>
+
+    <h4>Define, parse, and read flags</h4>
+    <p>Each <code>flag.Type(name, default, usage)</code> call returns a <em>pointer</em> you dereference after <code>flag.Parse()</code>. Parsing stops at the first non-flag argument, which then appears in <code>flag.Args()</code>.</p>
+<pre>package main
+
+import (
+    "flag"
+    "fmt"
+)
+
+func main() {
+    verbose := flag.Bool("v", false, "verbose output")
+    name := flag.String("name", "world", "name to greet")
+    count := flag.Int("n", 1, "number of greetings")
+    flag.Parse() // reads os.Args[1:]
+
+    for i := 0; i &lt; *count; i++ {
+        fmt.Printf("hello %s\n", *name)
+    }
+    if *verbose {
+        fmt.Println("leftover args:", flag.Args())
+    }
+}</pre>
+    <div class="output-label">Output (go run main.go -name=Ada -n=2 -v extra)</div>
+    <div class="output">hello Ada
+hello Ada
+leftover args: [extra]</div>
+
+    <h4>Bind into a struct with Var and a custom FlagSet</h4>
+    <p><code>flag.IntVar</code>/<code>StringVar</code> write straight into existing variables, and a private <code>flag.NewFlagSet</code> lets a subcommand parse its own slice of arguments without touching the global set.</p>
+<pre>package main
+
+import (
+    "flag"
+    "fmt"
+)
+
+type Config struct {
+    Port    int
+    Host    string
+}
+
+func main() {
+    var cfg Config
+    fs := flag.NewFlagSet("serve", flag.ExitOnError)
+    fs.IntVar(&amp;cfg.Port, "port", 8080, "listen port")
+    fs.StringVar(&amp;cfg.Host, "host", "localhost", "bind host")
+
+    // In a real CLI these come from os.Args; hard-coded here for the demo.
+    fs.Parse([]string{"-port", "9090"})
+
+    fmt.Printf("%s:%d\n", cfg.Host, cfg.Port)
+}</pre>
+    <div class="output-label">Output</div>
+    <div class="output">localhost:9090</div>
+
+    <h4>Common Mistakes</h4>
+    <div class="do-dont">
+      <div class="dont-box">
+        <div class="label">Wrong</div>
+<pre>port := flag.Int("port", 80, "port")
+// Read before Parse: always the default!
+fmt.Println(*port) // 80, flags not parsed
+flag.Parse()</pre>
+      </div>
+      <div class="do-box">
+        <div class="label">Right</div>
+<pre>port := flag.Int("port", 80, "port")
+flag.Parse()          // parse first
+fmt.Println(*port)    // now reflects -port</pre>
+      </div>
+    </div>
+
+    <h4>Key Rules</h4>
+    <ul class="rules-list">
+      <li><code>flag.Bool/Int/String(...)</code> return pointers; dereference them only <em>after</em> <code>flag.Parse()</code>.</li>
+      <li><code>flag.XxxVar(&amp;dst, ...)</code> binds into an existing variable &mdash; ideal for populating a config struct.</li>
+      <li>Parsing halts at the first non-flag token; the rest are in <code>flag.Args()</code> / <code>flag.NArg()</code>.</li>
+      <li>Use a dedicated <code>flag.NewFlagSet</code> per subcommand; <code>flag.ExitOnError</code> auto-prints usage and exits on a bad flag.</li>
+    </ul>
+
+    <div class="exercise">
+      <div class="exercise-label">Practice Exercise</div>
+      <p>Build a tiny <code>wc</code>-style tool with <code>-l</code> (lines), <code>-w</code> (words), and <code>-c</code> (bytes) flags that reads the filenames left in <code>flag.Args()</code>. Then add a subcommand dispatcher: read <code>os.Args[1]</code> ("add" / "list"), and hand the remaining args to a per-command <code>FlagSet</code>. Finally, implement a custom flag type by satisfying <code>flag.Value</code> (<code>String()</code> + <code>Set(string) error</code>) that accepts a comma-separated list into a <code>[]string</code>.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>Pitfall:</strong> Go's <code>flag</code> package does <em>not</em> accept the GNU double-dash long form as a group (<code>--verbose</code> works, but <code>-abc</code> is a single flag named <code>abc</code>, not <code>-a -b -c</code>), and flags must come <em>before</em> positional args &mdash; <code>tool file.txt -v</code> leaves <code>-v</code> unparsed in <code>Args()</code>. If you need bundled short flags or interspersed args, reach for <code>cobra</code>/<code>pflag</code>.
+    </div>
+
+    <div class="connection">
+      <strong>Connections:</strong> The standard-library baseline that the <code>cobra</code> CLI framework builds on; pairs with environment-variable configuration for the classic "flags override env override defaults" precedence chain.
+    </div>
+  </div>
+
+  <!-- New 2: net/url -->
+  <div class="concept" id="net_url">
+    <div class="concept-header">
+      <h3>net/url: Parsing &amp; Building URLs</h3>
+      <span class="topic-badge">Std Lib</span>
+    </div>
+    <p class="why-matters">Why it matters: hand-splitting URLs on <code>/</code> and <code>?</code> breaks the moment a value contains an encoded space, ampersand, or unicode. <code>net/url</code> parses a URL into typed components, decodes percent-escapes for you, and &mdash; crucially &mdash; <em>re-encodes</em> query values safely when you build one. It is the correct tool anywhere you assemble an API request or route on a path.</p>
+
+    <h4>Parse and inspect a URL</h4>
+    <p><code>url.Parse</code> returns a <code>*url.URL</code> with typed fields. <code>u.Query()</code> decodes the query string into <code>url.Values</code> (a <code>map[string][]string</code>) &mdash; values arrive already unescaped.</p>
+<pre>package main
+
+import (
+    "fmt"
+    "net/url"
+)
+
+func main() {
+    raw := "https://api.example.com:8443/v1/search?q=go+lang&amp;page=2#results"
+    u, err := url.Parse(raw)
+    if err != nil {
+        fmt.Println("parse:", err)
+        return
+    }
+    fmt.Println("scheme:", u.Scheme)
+    fmt.Println("host:", u.Host)         // host:port
+    fmt.Println("hostname:", u.Hostname())
+    fmt.Println("path:", u.Path)
+    fmt.Println("fragment:", u.Fragment)
+
+    q := u.Query()                       // url.Values
+    fmt.Println("q:", q.Get("q"))        // "+" decoded to a space
+}</pre>
+    <div class="output-label">Output</div>
+    <div class="output">scheme: https
+host: api.example.com:8443
+hostname: api.example.com
+path: /v1/search
+fragment: results
+q: go lang</div>
+
+    <h4>Build a URL with safe encoding</h4>
+    <p>Construct a <code>url.URL</code> and let <code>url.Values.Encode()</code> percent-escape special characters. <code>Encode</code> also sorts keys, so the output is deterministic.</p>
+<pre>package main
+
+import (
+    "fmt"
+    "net/url"
+)
+
+func main() {
+    base := &amp;url.URL{
+        Scheme: "https",
+        Host:   "example.com",
+        Path:   "/search",
+    }
+    v := url.Values{}
+    v.Set("q", "a b&amp;c")  // space -&gt; +, ampersand -&gt; %26
+    v.Add("tag", "go")
+    v.Add("tag", "cli")   // repeated key -&gt; two params
+    base.RawQuery = v.Encode()
+
+    fmt.Println(base.String())
+
+    ref, _ := url.Parse("../v2/status")
+    fmt.Println(base.ResolveReference(ref)) // join relative to base
+}</pre>
+    <div class="output-label">Output</div>
+    <div class="output">https://example.com/search?q=a+b%26c&amp;tag=go&amp;tag=cli
+https://example.com/v2/status</div>
+
+    <h4>Common Mistakes</h4>
+    <div class="do-dont">
+      <div class="dont-box">
+        <div class="label">Wrong</div>
+<pre>// String concat: breaks on special chars.
+u := "https://x.io/s?q=" + userInput
+// userInput "a&amp;b" injects a bogus param</pre>
+      </div>
+      <div class="do-box">
+        <div class="label">Right</div>
+<pre>v := url.Values{}
+v.Set("q", userInput) // escaped for you
+u := "https://x.io/s?" + v.Encode()</pre>
+      </div>
+    </div>
+
+    <h4>Key Rules</h4>
+    <ul class="rules-list">
+      <li><code>url.Parse</code> gives typed fields; use <code>Hostname()</code>/<code>Port()</code> to split <code>Host</code>, and <code>u.Query()</code> to decode params.</li>
+      <li>Build query strings with <code>url.Values</code> + <code>Encode()</code> &mdash; never concatenate untrusted strings into a URL.</li>
+      <li><code>url.QueryEscape</code>/<code>PathEscape</code> (and their <code>Unescape</code> partners) handle single components.</li>
+      <li><code>ResolveReference</code> implements RFC 3986 relative resolution &mdash; the right way to follow a redirect or join a base and a link.</li>
+    </ul>
+
+    <div class="exercise">
+      <div class="exercise-label">Practice Exercise</div>
+      <p>Write <code>addQuery(rawURL string, params map[string]string) (string, error)</code> that parses the URL, merges the new params into the existing query (preserving any already present), and returns the re-encoded string. Then parse a batch of user-supplied links and reject any whose <code>Scheme</code> is not <code>http</code>/<code>https</code> (an open-redirect guard). Finally, show how <code>url.Parse</code> vs <code>url.ParseRequestURI</code> differ on a relative path like <code>/foo</code>.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>Pitfall:</strong> Reading <code>u.Path</code> when you need the <em>raw, still-encoded</em> path for routing. <code>u.Path</code> is decoded, so a literal <code>%2F</code> in a segment becomes <code>/</code> and can collapse two path segments into one &mdash; a real source of routing and security bugs. Use <code>u.EscapedPath()</code> (or <code>u.RawPath</code>) when the encoded form matters.
+    </div>
+
+    <div class="connection">
+      <strong>Connections:</strong> Feeds directly into <code>net/http</code> client requests (<code>http.NewRequest</code> takes a URL string) and the enhanced <code>ServeMux</code> routing; the encoding discipline mirrors the escaping concerns of <a href="#encoding_base64">encoding/base64</a>.
+    </div>
+  </div>
+
+  <!-- New 3: encoding/base64 -->
+  <div class="concept" id="encoding_base64">
+    <div class="concept-header">
+      <h3>encoding/base64: Binary-Safe Text</h3>
+      <span class="topic-badge">Std Lib</span>
+    </div>
+    <p class="why-matters">Why it matters: base64 turns arbitrary bytes into an ASCII-safe string so binary data can ride through text-only channels &mdash; JSON fields, URLs, HTTP headers, email, data URIs. Go ships four ready encodings: standard and URL-safe alphabets, each with a padded and a raw (no <code>=</code>) variant. Picking the right one is the whole game: <code>+</code>/<code>/</code> are unsafe in URLs and filenames.</p>
+
+    <h4>Encode and decode a round-trip</h4>
+    <p><code>EncodeToString</code> and <code>DecodeString</code> are the convenience helpers on a preconfigured <code>*base64.Encoding</code>. Decoding validates the input and returns an error on a corrupt payload.</p>
+<pre>package main
+
+import (
+    "encoding/base64"
+    "fmt"
+)
+
+func main() {
+    data := []byte("Hello, Go!")
+
+    encoded := base64.StdEncoding.EncodeToString(data)
+    fmt.Println("encoded:", encoded)
+
+    decoded, err := base64.StdEncoding.DecodeString(encoded)
+    if err != nil {
+        fmt.Println("decode:", err)
+        return
+    }
+    fmt.Println("decoded:", string(decoded))
+}</pre>
+    <div class="output-label">Output</div>
+    <div class="output">encoded: SGVsbG8sIEdvIQ==
+decoded: Hello, Go!</div>
+
+    <h4>Standard vs URL-safe vs raw (no padding)</h4>
+    <p>The URL alphabet swaps <code>+ /</code> for <code>- _</code>; the <code>Raw*</code> encodings omit trailing <code>=</code> padding. Use <code>RawURLEncoding</code> for tokens that appear in URLs, cookies, or JWTs.</p>
+<pre>package main
+
+import (
+    "encoding/base64"
+    "fmt"
+)
+
+func main() {
+    data := []byte{0xff, 0xe0} // bytes that force + / in the output
+
+    fmt.Println("std:", base64.StdEncoding.EncodeToString(data))    // + / , padded
+    fmt.Println("url:", base64.URLEncoding.EncodeToString(data))    // - _ , padded
+    fmt.Println("raw:", base64.RawURLEncoding.EncodeToString(data)) // - _ , no =
+}</pre>
+    <div class="output-label">Output</div>
+    <div class="output">std: /+A=
+url: _-A=
+raw: _-A</div>
+
+    <h4>Common Mistakes</h4>
+    <div class="do-dont">
+      <div class="dont-box">
+        <div class="label">Wrong</div>
+<pre>// Encoded with URLEncoding, decoded
+// with StdEncoding -&gt; illegal char error
+tok := base64.URLEncoding.EncodeToString(b)
+base64.StdEncoding.DecodeString(tok)</pre>
+      </div>
+      <div class="do-box">
+        <div class="label">Right</div>
+<pre>// Encode and decode with the SAME encoding.
+tok := base64.URLEncoding.EncodeToString(b)
+base64.URLEncoding.DecodeString(tok)</pre>
+      </div>
+    </div>
+
+    <h4>Key Rules</h4>
+    <ul class="rules-list">
+      <li>Four encodings: <code>StdEncoding</code>, <code>URLEncoding</code>, <code>RawStdEncoding</code>, <code>RawURLEncoding</code> &mdash; decode with the exact one you encoded with.</li>
+      <li>Output length is <code>4 * ceil(n/3)</code> (padded); base64 is <em>not</em> compression &mdash; it inflates size by ~33%.</li>
+      <li>Base64 is <em>encoding, not encryption</em> &mdash; it hides nothing; anyone can decode it.</li>
+      <li>For streaming large data use <code>base64.NewEncoder</code>/<code>NewDecoder</code> over an <code>io.Writer</code>/<code>Reader</code> instead of buffering the whole payload.</li>
+    </ul>
+
+    <div class="exercise">
+      <div class="exercise-label">Practice Exercise</div>
+      <p>Build a minimal, unsigned JWT-style token: JSON-encode a small header and payload, <code>RawURLEncoding</code>-encode each, and join with dots &mdash; then split and decode it back. Next, stream-encode a large file to base64 using <code>base64.NewEncoder</code> wrapping an <code>os.File</code>, confirming constant memory. Finally, decode a deliberately truncated string and show the specific <code>CorruptInputError</code> you get.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>Pitfall:</strong> Putting <code>StdEncoding</code> output into a URL or filename. The <code>+</code>, <code>/</code>, and <code>=</code> characters are reserved/awkward there &mdash; <code>/</code> becomes a path separator, <code>+</code> can decode to a space, and <code>=</code> needs escaping. Always use <code>URLEncoding</code> (or <code>RawURLEncoding</code>) for anything that travels in a URL, cookie, or header.
+    </div>
+
+    <div class="connection">
+      <strong>Connections:</strong> Complements <a href="#net_url">net/url</a> escaping (both make bytes travel safely through text channels) and <a href="#encoding_gob">encoding/gob</a> / JSON when you need to embed a binary blob inside a text format.
+    </div>
+  </div>
+
+  <h3 style="font-size:18px;margin:28px 0 18px;color:var(--muted);">Section 2 &mdash; Serialization &amp; Data Structures</h3>
+
+  <!-- New 4: encoding/gob -->
+  <div class="concept" id="encoding_gob">
+    <div class="concept-header">
+      <h3>encoding/gob: Go's Native Serialization</h3>
+      <span class="topic-badge">Std Lib</span>
+    </div>
+    <p class="why-matters">Why it matters: <code>gob</code> is Go's self-describing binary format for streaming Go values between Go programs &mdash; RPC payloads, on-disk caches, snapshots. It is more compact and faster than JSON and preserves Go types (including nested structs, maps, and slices) without hand-written tags, at the cost of being Go-only. When both ends of the wire are Go, gob is the path of least friction.</p>
+
+    <h4>Encode and decode a value</h4>
+    <p>A <code>gob.Encoder</code> writes to any <code>io.Writer</code>; a <code>gob.Decoder</code> reads from any <code>io.Reader</code>. The stream is self-describing &mdash; the decoder learns the field layout from the data itself.</p>
+<pre>package main
+
+import (
+    "bytes"
+    "encoding/gob"
+    "fmt"
+)
+
+type Point struct {
+    X, Y int
+    Tags []string
+}
+
+func main() {
+    var buf bytes.Buffer
+
+    enc := gob.NewEncoder(&amp;buf)
+    if err := enc.Encode(Point{X: 1, Y: 2, Tags: []string{"a", "b"}}); err != nil {
+        fmt.Println("encode:", err)
+        return
+    }
+
+    var p Point
+    dec := gob.NewDecoder(&amp;buf)
+    if err := dec.Decode(&amp;p); err != nil {
+        fmt.Println("decode:", err)
+        return
+    }
+    fmt.Printf("%+v\n", p)
+    fmt.Println("wrote bytes:", buf.Len() &gt; 0)
+}</pre>
+    <div class="output-label">Output</div>
+    <div class="output">{X:1 Y:2 Tags:[a b]}
+wrote bytes: true</div>
+
+    <h4>Interface values need registration</h4>
+    <p>To send a value through an <em>interface</em> field, register each concrete type with <code>gob.Register</code> so the decoder can reconstruct it. Without it, decoding fails with "name not registered for interface".</p>
+<pre>package main
+
+import (
+    "bytes"
+    "encoding/gob"
+    "fmt"
+)
+
+type Shape interface{ Area() float64 }
+
+type Circle struct{ R float64 }
+
+func (c Circle) Area() float64 { return 3.14 * c.R * c.R }
+
+func main() {
+    gob.Register(Circle{}) // concrete type behind the interface
+
+    var buf bytes.Buffer
+    var in Shape = Circle{R: 2}
+    gob.NewEncoder(&amp;buf).Encode(&amp;in)
+
+    var out Shape
+    gob.NewDecoder(&amp;buf).Decode(&amp;out)
+    fmt.Printf("%.2f\n", out.Area())
+}</pre>
+    <div class="output-label">Output</div>
+    <div class="output">12.56</div>
+
+    <h4>Common Mistakes</h4>
+    <div class="do-dont">
+      <div class="dont-box">
+        <div class="label">Wrong</div>
+<pre>// Only exported fields are encoded;
+// 'secret' is silently dropped.
+type T struct{ ID int; secret string }
+// decoded T always has secret == ""</pre>
+      </div>
+      <div class="do-box">
+        <div class="label">Right</div>
+<pre>// Export every field you need on the wire.
+type T struct{ ID int; Secret string }
+// Secret now survives the round-trip</pre>
+      </div>
+    </div>
+
+    <h4>Key Rules</h4>
+    <ul class="rules-list">
+      <li>Only <em>exported</em> fields are transmitted; unexported fields are silently ignored on both ends.</li>
+      <li>The decoder is tolerant: missing fields keep their zero value and unknown fields are skipped &mdash; enabling loose schema evolution.</li>
+      <li>Call <code>gob.Register(T{})</code> for every concrete type sent through an interface value.</li>
+      <li>Gob is Go-to-Go only and <em>not</em> a stable cross-language format &mdash; use JSON or protobuf when the other side isn't Go.</li>
+    </ul>
+
+    <div class="exercise">
+      <div class="exercise-label">Practice Exercise</div>
+      <p>Persist an in-memory cache: gob-encode a <code>map[string]User</code> to a file, then reload it on startup and verify equality. Next, demonstrate schema evolution &mdash; encode with a struct that has 2 fields, decode into a struct that adds a 3rd, and confirm the new field is its zero value with no error. Finally, benchmark gob vs <code>encoding/json</code> on the same 10k-element slice and compare both encoded size and time.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>Pitfall:</strong> Treating gob as a durable, versioned archive format. It has no schema version, isn't guaranteed byte-stable across Go releases, and can't be read by non-Go tools. For long-term storage or public APIs prefer a self-describing, cross-language format (JSON, protobuf); reserve gob for ephemeral Go-to-Go transfer where speed and convenience win.
+    </div>
+
+    <div class="connection">
+      <strong>Connections:</strong> The serialization sibling of <a href="#encoding_json">encoding/json</a> (same encoder/decoder shape, different trade-offs) and the classic payload format for <code>net/rpc</code>; combine with <a href="#encoding_base64">encoding/base64</a> to embed a gob blob inside a text field.
+    </div>
+  </div>
+
+  <!-- New 5: container/ring -->
+  <div class="concept" id="container_ring">
+    <div class="concept-header">
+      <h3>container/ring: Circular Lists</h3>
+      <span class="topic-badge">Data Structures</span>
+    </div>
+    <p class="why-matters">Why it matters: <code>container/ring</code> is a fixed-size <em>circular</em> doubly linked list &mdash; every element has a <code>Next()</code> and <code>Prev()</code>, and the last wraps to the first. That makes it a natural fit for ring buffers: the "last N samples", round-robin scheduling over a fixed set of workers, or a rolling window where writing a new value overwrites the oldest with zero allocation and no shifting.</p>
+
+    <h4>Fill a ring and walk it</h4>
+    <p><code>ring.New(n)</code> allocates a ring of <code>n</code> linked elements. Assign to <code>.Value</code> and step with <code>.Next()</code>; <code>Do</code> visits every element once, starting from the current one.</p>
+<pre>package main
+
+import (
+    "container/ring"
+    "fmt"
+)
+
+func main() {
+    r := ring.New(5) // circular list of 5 elements
+
+    for i := 0; i &lt; r.Len(); i++ {
+        r.Value = i
+        r = r.Next() // after r.Len() steps we're back at the start
+    }
+
+    sum := 0
+    r.Do(func(v any) { // walk the whole ring in order
+        sum += v.(int)
+    })
+    fmt.Println("sum:", sum)
+
+    fmt.Println("start:", r.Value)          // back at element 0
+    fmt.Println("two ahead:", r.Move(2).Value)
+}</pre>
+    <div class="output-label">Output</div>
+    <div class="output">sum: 10
+start: 0
+two ahead: 2</div>
+
+    <h4>A fixed-memory "last N samples" buffer</h4>
+    <p>Because the ring never grows, feeding a stream through it keeps only the most recent <code>window</code> values &mdash; the oldest is overwritten automatically.</p>
+<pre>package main
+
+import (
+    "container/ring"
+    "fmt"
+)
+
+func main() {
+    const window = 3
+    r := ring.New(window)
+
+    for _, sample := range []int{10, 20, 30, 40, 50} {
+        r.Value = sample
+        r = r.Next() // overwrite oldest as new samples arrive
+    }
+
+    // Ring now holds only the last 3 samples, oldest-first from here.
+    r.Do(func(v any) {
+        if v != nil {
+            fmt.Print(v, " ")
+        }
+    })
+    fmt.Println()
+}</pre>
+    <div class="output-label">Output</div>
+    <div class="output">30 40 50 </div>
+
+    <h4>Common Mistakes</h4>
+    <div class="do-dont">
+      <div class="dont-box">
+        <div class="label">Wrong</div>
+<pre>// Ignoring the return of Next/Move:
+// these do NOT mutate r in place.
+r.Next()          // result discarded
+fmt.Println(r.Value) // still the old node</pre>
+      </div>
+      <div class="do-box">
+        <div class="label">Right</div>
+<pre>// Reassign: navigation returns a new node.
+r = r.Next()
+fmt.Println(r.Value) // the next node's value</pre>
+      </div>
+    </div>
+
+    <h4>Key Rules</h4>
+    <ul class="rules-list">
+      <li><code>ring.New(n)</code> builds an <code>n</code>-element circular list; there is no separate "list" handle &mdash; every node <em>is</em> the ring.</li>
+      <li><code>Next()</code>, <code>Prev()</code>, and <code>Move(n)</code> <em>return</em> a node &mdash; reassign, they don't mutate the receiver's position.</li>
+      <li><code>Do(f)</code> iterates all elements forward from the current one; <code>Len()</code> is O(n) &mdash; cache it if you loop on it.</li>
+      <li><code>Link</code> and <code>Unlink</code> splice rings together and remove runs of elements when you need a resizable circular structure.</li>
+    </ul>
+
+    <div class="exercise">
+      <div class="exercise-label">Practice Exercise</div>
+      <p>Implement a <code>MovingAverage</code> over the last <code>k</code> readings backed by a <code>ring.Ring</code>, with an <code>Add(x float64)</code> method and an <code>Avg() float64</code> that walks the ring. Then build a round-robin load balancer: a ring of backend addresses where each request advances the cursor with <code>Next()</code>. Finally, contrast the ring approach with a plain slice + modulo index, and explain when the linked structure actually pays off (hint: cheap <code>Link</code>/<code>Unlink</code>).</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>Pitfall:</strong> Assuming <code>ring.New(n)</code> zeroes <code>Value</code> to something meaningful &mdash; every element's <code>Value</code> starts as <code>nil</code> (<code>any</code>). If you read the ring before fully populating it, <code>Do</code> hands you <code>nil</code> values and a type assertion like <code>v.(int)</code> panics. Guard with a <code>nil</code> check, or track how many slots you've actually written.
+    </div>
+
+    <div class="connection">
+      <strong>Connections:</strong> Completes the <code>container</code> trio alongside <code>container/list</code> (recency/insertion order) and <code>container/heap</code> (priority order) &mdash; ring covers fixed-size cyclic access that a plain slice handles only with manual modulo bookkeeping.
+    </div>
+  </div>
+
+</div><!-- end New Concepts section -->
+
+
+<!-- ============================================================ -->
+<!-- FOOTER -->
+<!-- ============================================================ -->
+<footer class="footer">
+  <h4>All Go Guides</h4>
+  <ul>
+    <li><a href="golang-guides/golang-guide-2026-07-09.html">Day 34 &mdash; 2026-07-09</a></li>
+    <li><a href="golang-guides/golang-guide-2026-07-08.html">Day 33 &mdash; 2026-07-08</a></li>
+    <li><a href="golang-guides/golang-guide-2026-07-07.html">Day 32 &mdash; 2026-07-07</a></li>
+    <li><a href="golang-guides/golang-guide-2026-07-06.html">Day 31 &mdash; 2026-07-06</a></li>
+    <li><a href="golang-guides/golang-guide-2026-07-05.html">Day 30 &mdash; 2026-07-05</a></li>
+    <li><a href="golang-guides/golang-guide-2026-07-04.html">Day 29 &mdash; 2026-07-04</a></li>
+    <li><a href="golang-guides/golang-guide-2026-07-03.html">Day 28 &mdash; 2026-07-03</a></li>
+    <li><a href="golang-guides/golang-guide-2026-07-02.html">Day 27 &mdash; 2026-07-02</a></li>
+    <li><a href="golang-guides/golang-guide-2026-07-01.html">Day 26 &mdash; 2026-07-01</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-30.html">Day 25 &mdash; 2026-06-30</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-29.html">Day 24 &mdash; 2026-06-29</a></li>
+    <li class="current">Day 23 &mdash; 2026-06-28 (current)</li>
+    <li><a href="golang-guides/golang-guide-2026-06-27.html">Day 22 &mdash; 2026-06-27</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-26.html">Day 21 &mdash; 2026-06-26</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-25.html">Day 20 &mdash; 2026-06-25</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-24.html">Day 19 &mdash; 2026-06-24</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-23.html">Day 18 &mdash; 2026-06-23</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-22.html">Day 17 &mdash; 2026-06-22</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-21.html">Day 16 &mdash; 2026-06-21</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-19.html">Day 15 &mdash; 2026-06-19</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-18.html">Day 14 &mdash; 2026-06-18</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-17.html">Day 13 &mdash; 2026-06-17</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-15.html">Day 12 &mdash; 2026-06-15</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-13.html">Day 11 &mdash; 2026-06-13</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-12.html">Day 10 &mdash; 2026-06-12</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-11.html">Day 9 &mdash; 2026-06-11</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-10.html">Day 8 &mdash; 2026-06-10</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-09.html">Day 7 &mdash; 2026-06-09</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-08.html">Day 6 &mdash; 2026-06-08</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-07.html">Day 5 &mdash; 2026-06-07</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-05.html">Day 4 &mdash; 2026-06-05</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-04.html">Day 3 &mdash; 2026-06-04</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-03.html">Day 2 &mdash; 2026-06-03</a></li>
+    <li><a href="golang-guides/golang-guide-2026-06-02.html">Day 1 &mdash; 2026-06-02</a></li>
+  </ul>
+
+  <h4 style="margin-top: 20px;">All Guides</h4>
+  <ul>
+    <li><a href="guide.html">LeetCode Study Guide</a></li>
+    <li><a href="lang-guide.html">Multi-Language Guide</a></li>
+    <li><a href="python-guide.html">Python Guide</a></li>
+    <li><a href="typescript-guide.html">TypeScript Guide</a></li>
+    <li><a href="javascript-guide.html">JavaScript Guide</a></li>
+    <li><a href="golang-guide.html">Go Guide (current)</a></li>
+    <li><a href="report.html">Performance Report</a></li>
+  </ul>
+</footer>
+
+</div><!-- end main -->
+
+<script>
+// ===== Theme Toggle =====
+(function() {
+  var KEY = 'lc-goguide-theme';
+  var toggle = document.getElementById('theme-toggle');
+  var html = document.documentElement;
+
+  function setTheme(theme) {
+    html.setAttribute('data-theme', theme);
+    localStorage.setItem(KEY, theme);
+    toggle.textContent = theme === 'dark' ? '☽' : '☀';
+  }
+
+  var saved = localStorage.getItem(KEY) || 'dark';
+  setTheme(saved);
+
+  toggle.addEventListener('click', function() {
+    setTheme(html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
+  });
+})();
+
+// ===== Mobile Sidebar Toggle =====
+(function() {
+  var btn = document.getElementById('sidebar-toggle');
+  var sidebar = document.getElementById('sidebar');
+
+  btn.addEventListener('click', function() {
+    sidebar.classList.toggle('open');
+  });
+
+  // Close sidebar when clicking a link (mobile)
+  sidebar.querySelectorAll('.sidebar-link').forEach(function(link) {
+    link.addEventListener('click', function() {
+      if (window.innerWidth <= 900) {
+        sidebar.classList.remove('open');
+      }
+    });
+  });
+})();
+
+// ===== Active Sidebar Link on Scroll =====
+(function() {
+  var links = document.querySelectorAll('.sidebar-link');
+  var sections = [];
+
+  links.forEach(function(link) {
+    var id = link.getAttribute('href').replace('#', '');
+    var el = document.getElementById(id);
+    if (el) sections.push({ id: id, el: el, link: link });
+  });
+
+  function onScroll() {
+    var scrollTop = window.scrollY + 120;
+    var current = null;
+
+    for (var i = sections.length - 1; i >= 0; i--) {
+      if (sections[i].el.offsetTop <= scrollTop) {
+        current = sections[i];
+        break;
+      }
+    }
+
+    links.forEach(function(l) { l.classList.remove('active'); });
+    if (current) current.link.classList.add('active');
+  }
+
+  window.addEventListener('scroll', onScroll);
+  onScroll();
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,2486 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Go Study Guide &mdash; Day 10 (2026-06-12)</title>
+<style>
+/* ===== CSS Variables ===== */
+:root {
+  --bg: #0d1117;
+  --surface1: #161b22;
+  --surface2: #1c2333;
+  --border: #30363d;
+  --text: #e6edf3;
+  --muted: #8b949e;
+  --accent: #58a6ff;
+  --accent-dim: #1f6feb33;
+  --green: #3fb950;
+  --green-dim: #23863633;
+  --yellow: #d29922;
+  --yellow-dim: #d2992233;
+  --red: #f85149;
+  --red-dim: #f8514933;
+  --purple: #bc8cff;
+  --purple-dim: #bc8cff22;
+  --orange: #f0883e;
+  --orange-dim: #f0883e22;
+  --code-bg: #0d1117;
+  --sidebar-w: 300px;
+  --font-mono: 'SF Mono', 'Cascadia Code', 'Fira Code', Consolas, monospace;
+  --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+  --radius: 8px;
+  --shadow: 0 1px 3px rgba(0,0,0,0.4);
+}
+
+[data-theme="light"] {
+  --bg: #ffffff;
+  --surface1: #f6f8fa;
+  --surface2: #f0f3f6;
+  --border: #d0d7de;
+  --text: #1f2328;
+  --muted: #656d76;
+  --accent: #0969da;
+  --accent-dim: #0969da1a;
+  --green: #1a7f37;
+  --green-dim: #1a7f3718;
+  --yellow: #9a6700;
+  --yellow-dim: #9a670018;
+  --red: #cf222e;
+  --red-dim: #cf222e18;
+  --purple: #8250df;
+  --purple-dim: #8250df18;
+  --orange: #bc4c00;
+  --orange-dim: #bc4c0018;
+  --code-bg: #f6f8fa;
+  --shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+/* ===== Reset & Base ===== */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: var(--font-sans);
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.7;
+  font-size: 16px;
+  transition: background 0.2s, color 0.2s;
+}
+
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+/* ===== Theme Toggle ===== */
+#theme-toggle {
+  position: fixed;
+  top: 16px;
+  right: 20px;
+  z-index: 1000;
+  background: var(--surface1);
+  border: 1px solid var(--border);
+  color: var(--text);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+  box-shadow: var(--shadow);
+}
+#theme-toggle:hover { background: var(--surface2); border-color: var(--accent); }
+
+/* ===== Sidebar ===== */
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: var(--sidebar-w);
+  height: 100vh;
+  background: var(--surface1);
+  border-right: 1px solid var(--border);
+  overflow-y: auto;
+  padding: 20px 0;
+  z-index: 100;
+  transition: transform 0.3s;
+}
+
+.sidebar-header {
+  padding: 0 20px 16px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 12px;
+}
+
+.sidebar-header h2 {
+  font-size: 16px;
+  color: var(--text);
+  font-weight: 700;
+}
+
+.sidebar-header .subtitle {
+  font-size: 12px;
+  color: var(--muted);
+  margin-top: 2px;
+}
+
+.sidebar-section {
+  margin-bottom: 8px;
+}
+
+.sidebar-section-title {
+  padding: 6px 20px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+}
+
+.sidebar-link {
+  display: block;
+  padding: 5px 20px 5px 28px;
+  font-size: 13px;
+  color: var(--muted);
+  text-decoration: none;
+  border-left: 2px solid transparent;
+  transition: all 0.15s;
+  line-height: 1.4;
+}
+
+.sidebar-link:hover {
+  color: var(--text);
+  background: var(--accent-dim);
+  border-left-color: var(--accent);
+  text-decoration: none;
+}
+
+.sidebar-link.active {
+  color: var(--accent);
+  border-left-color: var(--accent);
+  background: var(--accent-dim);
+}
+
+/* ===== Mobile sidebar toggle ===== */
+#sidebar-toggle {
+  display: none;
+  position: fixed;
+  top: 16px;
+  left: 16px;
+  z-index: 200;
+  background: var(--surface1);
+  border: 1px solid var(--border);
+  color: var(--text);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 20px;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--shadow);
+}
+
+/* ===== Main Content ===== */
+.main {
+  margin-left: var(--sidebar-w);
+  padding: 40px 48px 80px;
+  max-width: calc(860px + var(--sidebar-w) + 96px);
+}
+
+.page-title {
+  font-size: 32px;
+  font-weight: 800;
+  margin-bottom: 4px;
+  color: var(--text);
+}
+
+.page-subtitle {
+  font-size: 15px;
+  color: var(--muted);
+  margin-bottom: 36px;
+}
+
+/* ===== Sections ===== */
+.section {
+  margin-bottom: 48px;
+}
+
+.section-label {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  padding: 3px 10px;
+  border-radius: 4px;
+  margin-bottom: 12px;
+}
+
+.section-label.review { background: var(--yellow-dim); color: var(--yellow); }
+.section-label.new { background: var(--green-dim); color: var(--green); }
+
+.section-title {
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 24px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--border);
+}
+
+/* ===== How To Use ===== */
+.how-to-use {
+  background: var(--surface1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px 24px;
+  margin-bottom: 36px;
+}
+
+.how-to-use h3 {
+  font-size: 16px;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.how-to-use ul {
+  padding-left: 22px;
+  margin: 0;
+}
+
+.how-to-use li {
+  font-size: 14px;
+  color: var(--muted);
+  margin-bottom: 4px;
+}
+
+/* ===== Concept Cards ===== */
+.concept {
+  background: var(--surface1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 28px;
+  margin-bottom: 28px;
+  box-shadow: var(--shadow);
+}
+
+.concept-header {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  margin-bottom: 6px;
+  flex-wrap: wrap;
+}
+
+.concept h3 {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.concept-meta {
+  font-size: 12px;
+  color: var(--muted);
+  background: var(--surface2);
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
+.concept h4 {
+  font-size: 15px;
+  font-weight: 600;
+  margin: 20px 0 8px;
+  color: var(--text);
+}
+
+.concept p, .concept li {
+  color: var(--text);
+  line-height: 1.7;
+}
+
+.concept ul, .concept ol {
+  padding-left: 22px;
+  margin: 8px 0;
+}
+
+.concept li {
+  margin-bottom: 4px;
+}
+
+/* ===== Code Blocks ===== */
+pre {
+  background: var(--code-bg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 16px 18px;
+  overflow-x: auto;
+  margin: 10px 0 14px;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--text);
+  position: relative;
+}
+
+pre::after {
+  content: 'Go';
+  position: absolute;
+  top: 6px;
+  right: 10px;
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  opacity: 0.6;
+}
+
+code {
+  font-family: var(--font-mono);
+  font-size: 0.9em;
+}
+
+:not(pre) > code {
+  background: var(--surface2);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.88em;
+}
+
+/* ===== Output Blocks ===== */
+.output {
+  background: var(--green-dim);
+  border: 1px solid var(--green);
+  border-radius: 6px;
+  padding: 12px 16px;
+  margin: 6px 0 14px;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--text);
+  white-space: pre-wrap;
+}
+
+.output::after { content: none; }
+
+.output-label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--green);
+  margin-bottom: 4px;
+}
+
+/* ===== Good/Bad Examples ===== */
+.do-dont {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin: 10px 0;
+}
+
+.do-box, .dont-box {
+  border-radius: 6px;
+  padding: 14px;
+  border: 1px solid;
+}
+
+.do-box {
+  background: var(--green-dim);
+  border-color: var(--green);
+}
+
+.dont-box {
+  background: var(--red-dim);
+  border-color: var(--red);
+}
+
+.do-box .label, .dont-box .label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 6px;
+}
+
+.do-box .label { color: var(--green); }
+.dont-box .label { color: var(--red); }
+
+.do-box pre, .dont-box pre {
+  margin: 0;
+  border: none;
+  background: transparent;
+  padding: 0;
+  font-size: 12.5px;
+}
+
+.do-box pre::after, .dont-box pre::after { content: none; }
+
+/* ===== Key Rules ===== */
+.rules-list {
+  list-style: none;
+  padding: 0;
+  margin: 8px 0;
+}
+
+.rules-list li {
+  padding: 6px 0 6px 24px;
+  position: relative;
+}
+
+.rules-list li::before {
+  content: "\2192";
+  position: absolute;
+  left: 2px;
+  color: var(--accent);
+  font-weight: 700;
+}
+
+/* ===== Exercises ===== */
+.exercise {
+  background: var(--purple-dim);
+  border: 1px solid var(--purple);
+  border-radius: 6px;
+  padding: 14px 18px;
+  margin: 8px 0;
+}
+
+.exercise .exercise-label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--purple);
+  margin-bottom: 4px;
+}
+
+/* ===== Pitfall ===== */
+.pitfall {
+  background: var(--red-dim);
+  border-left: 3px solid var(--red);
+  border-radius: 0 6px 6px 0;
+  padding: 10px 14px;
+  margin: 10px 0;
+  font-size: 14px;
+}
+
+.pitfall strong {
+  color: var(--red);
+}
+
+/* ===== Connection ===== */
+.connection {
+  background: var(--accent-dim);
+  border-left: 3px solid var(--accent);
+  border-radius: 0 6px 6px 0;
+  padding: 10px 14px;
+  margin: 10px 0;
+  font-size: 14px;
+  color: var(--muted);
+}
+
+/* ===== Review Cards ===== */
+.review-card {
+  background: var(--surface1);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--purple);
+  border-radius: var(--radius);
+  padding: 20px 24px;
+  margin-bottom: 16px;
+  box-shadow: var(--shadow);
+}
+
+.review-card .review-header {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  margin-bottom: 6px;
+  flex-wrap: wrap;
+}
+
+.review-card h3 {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.review-card .review-meta {
+  font-size: 12px;
+  color: var(--muted);
+  background: var(--surface2);
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
+.review-card h4 {
+  font-size: 14px;
+  font-weight: 600;
+  margin: 14px 0 6px;
+  color: var(--text);
+}
+
+.review-card p, .review-card li {
+  color: var(--text);
+  line-height: 1.6;
+  font-size: 14px;
+}
+
+.review-card pre {
+  font-size: 12.5px;
+  padding: 12px 14px;
+  margin: 6px 0 10px;
+}
+
+.review-card .pitfall {
+  font-size: 13px;
+  padding: 8px 12px;
+}
+
+/* ===== Footer ===== */
+.footer {
+  margin-top: 60px;
+  padding: 24px 0;
+  border-top: 1px solid var(--border);
+}
+
+.footer h4 {
+  font-size: 14px;
+  color: var(--muted);
+  margin-bottom: 10px;
+}
+
+.footer ul {
+  list-style: none;
+  padding: 0;
+}
+
+.footer li {
+  margin-bottom: 4px;
+  font-size: 14px;
+}
+
+.footer li a { color: var(--accent); }
+.footer .current { color: var(--green); font-weight: 600; }
+
+/* ===== Responsive ===== */
+@media (max-width: 900px) {
+  .sidebar {
+    transform: translateX(-100%);
+  }
+  .sidebar.open {
+    transform: translateX(0);
+    box-shadow: 4px 0 20px rgba(0,0,0,0.5);
+  }
+  #sidebar-toggle {
+    display: flex;
+  }
+  .main {
+    margin-left: 0;
+    padding: 60px 20px 60px;
+    max-width: 100%;
+  }
+  .do-dont {
+    grid-template-columns: 1fr;
+  }
+  #theme-toggle {
+    right: 14px;
+    top: 16px;
+  }
+}
+</style>
+</head>
+<body>
+
+<!-- Theme Toggle -->
+<button id="theme-toggle" aria-label="Toggle theme" title="Toggle light/dark theme">&#9789;</button>
+
+<!-- Mobile Sidebar Toggle -->
+<button id="sidebar-toggle" aria-label="Toggle sidebar">&#9776;</button>
+
+<!-- Sidebar -->
+<nav class="sidebar" id="sidebar">
+  <div class="sidebar-header">
+    <h2>Go Guide</h2>
+    <div class="subtitle">Day 10 &mdash; 2026-06-12</div>
+  </div>
+
+  <div class="sidebar-section">
+    <div class="sidebar-section-title">Review (6 concepts)</div>
+    <a href="#review-functional-options" class="sidebar-link">Functional Options</a>
+    <a href="#review-httptest" class="sidebar-link">httptest</a>
+    <a href="#review-middleware-chains" class="sidebar-link">Middleware Chains</a>
+    <a href="#review-concurrency-patterns" class="sidebar-link">Concurrency Patterns</a>
+    <a href="#review-context-package" class="sidebar-link">Context</a>
+    <a href="#review-reflect-package" class="sidebar-link">reflect Package</a>
+  </div>
+
+  <div class="sidebar-section">
+    <div class="sidebar-section-title">Advanced Networking (2)</div>
+    <a href="#grpc-protobuf" class="sidebar-link">gRPC &amp; Protocol Buffers</a>
+    <a href="#websocket-go" class="sidebar-link">WebSocket in Go</a>
+  </div>
+
+  <div class="sidebar-section">
+    <div class="sidebar-section-title">Observability &amp; Profiling (3)</div>
+    <a href="#profiling-pprof" class="sidebar-link">Profiling with pprof</a>
+    <a href="#otel-tracing" class="sidebar-link">OpenTelemetry &amp; Tracing</a>
+    <a href="#go-embed" class="sidebar-link">Embedding &amp; go:embed</a>
+  </div>
+</nav>
+
+<!-- Main Content -->
+<div class="main">
+
+<h1 class="page-title">Go Daily Guide</h1>
+<p class="page-subtitle">Day 10 &mdash; Friday, June 12, 2026 &bull; 11 concepts (6 review + 5 new)</p>
+
+<!-- How to Use -->
+<div class="how-to-use">
+  <h3>How to Use This Guide</h3>
+  <ul>
+    <li>Start with the <strong>Review</strong> section &mdash; try to recall each concept before reading the refresher</li>
+    <li>Complete the challenge exercise for each review card without looking back at previous days</li>
+    <li>Then work through the <strong>New Concepts</strong> section, typing out every code example yourself</li>
+    <li>Pay special attention to the common mistakes sections (they highlight real Go gotchas)</li>
+    <li>Complete the exercises at the bottom of each concept without looking at solutions</li>
+    <li>Use <code>go run main.go</code> to test your code locally, or use the <a href="https://go.dev/play/" target="_blank">Go Playground</a></li>
+  </ul>
+</div>
+
+<!-- ============================================================ -->
+<!-- REVIEW SECTION -->
+<!-- ============================================================ -->
+<div class="section">
+  <span class="section-label review">Review</span>
+  <h2 class="section-title">Spaced Repetition Review &mdash; 6 Concepts</h2>
+
+  <!-- Review 1: Functional Options -->
+  <div class="review-card" id="review-functional-options">
+    <div class="review-header">
+      <h3>Functional Options Pattern</h3>
+      <span class="review-meta">Advanced Patterns &bull; 3 days overdue &bull; rep 0</span>
+    </div>
+
+    <h4>Quick Reminder</h4>
+    <p>Option functions that configure a struct, applied in the constructor. Define <code>type Option func(*Config)</code> and create <code>WithXxx</code> functions that return an <code>Option</code>. The constructor iterates over options and applies each one, allowing callers to customize only what they need while defaults handle the rest.</p>
+
+    <h4>Key Pattern</h4>
+<pre>type Option func(*Server)
+
+func WithTimeout(d time.Duration) Option {
+    return func(s *Server) { s.timeout = d }
+}
+
+func WithMaxConns(n int) Option {
+    return func(s *Server) { s.maxConns = n }
+}
+
+func NewServer(addr string, opts ...Option) *Server {
+    s := &amp;Server{
+        addr:     addr,
+        timeout:  30 * time.Second, // default
+        maxConns: 100,              // default
+    }
+    for _, opt := range opts {
+        opt(s)
+    }
+    return s
+}
+
+// Usage: clean, self-documenting API
+srv := NewServer(":8080",
+    WithTimeout(10*time.Second),
+    WithMaxConns(500),
+)</pre>
+
+    <div class="exercise">
+      <div class="exercise-label">Challenge Exercise</div>
+      <p>Create a <code>NewHTTPClient</code> constructor using the functional options pattern. Support options for <code>WithBaseURL(string)</code>, <code>WithRetries(int)</code>, and <code>WithHeader(key, value string)</code> (which should be additive &mdash; multiple calls add multiple headers). Defaults: no base URL, 0 retries, empty headers map.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>#1 Pitfall:</strong> Forgetting to initialize the config struct with sensible defaults before applying options. If you skip defaults, zero-values (0 for ints, "" for strings) become the "configured" values when no option is provided, leading to subtle bugs like 0-second timeouts.
+    </div>
+  </div>
+
+  <!-- Review 2: httptest -->
+  <div class="review-card" id="review-httptest">
+    <div class="review-header">
+      <h3>httptest</h3>
+      <span class="review-meta">Testing &amp; Tooling &bull; 3 days overdue &bull; rep 0</span>
+    </div>
+
+    <h4>Quick Reminder</h4>
+    <p><code>httptest.NewRecorder()</code> captures handler responses without starting a server. <code>httptest.NewServer(handler)</code> starts a real local HTTP server for integration tests. The recorder approach is fast and deterministic; the server approach tests the full HTTP stack including middleware.</p>
+
+    <h4>Key Pattern</h4>
+<pre>func TestHealthHandler(t *testing.T) {
+    req := httptest.NewRequest("GET", "/health", nil)
+    w := httptest.NewRecorder()
+
+    healthHandler(w, req)
+
+    resp := w.Result()
+    if resp.StatusCode != http.StatusOK {
+        t.Errorf("got %d, want 200", resp.StatusCode)
+    }
+
+    body, _ := io.ReadAll(resp.Body)
+    if string(body) != `{"status":"ok"}` {
+        t.Errorf("unexpected body: %s", body)
+    }
+}
+
+// Full server test
+func TestAPI(t *testing.T) {
+    srv := httptest.NewServer(myRouter())
+    defer srv.Close()
+
+    resp, err := http.Get(srv.URL + "/api/users")
+    // ...assertions...
+}</pre>
+
+    <div class="exercise">
+      <div class="exercise-label">Challenge Exercise</div>
+      <p>Write a handler that returns JSON <code>{"count": N}</code> where N increments on each call (use a closure). Test it with <code>httptest.NewRecorder</code> &mdash; call the handler 3 times and verify the count increments correctly.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>#1 Pitfall:</strong> Forgetting <code>defer srv.Close()</code> when using <code>httptest.NewServer</code>. Leaked test servers hold open ports and goroutines, causing flaky tests and resource exhaustion in CI. Use <code>t.Cleanup(srv.Close)</code> as an alternative.
+    </div>
+  </div>
+
+  <!-- Review 3: Middleware Chains -->
+  <div class="review-card" id="review-middleware-chains">
+    <div class="review-header">
+      <h3>Middleware Chains</h3>
+      <span class="review-meta">Advanced Patterns &bull; 3 days overdue &bull; rep 0</span>
+    </div>
+
+    <h4>Quick Reminder</h4>
+    <p>Middleware wraps an <code>http.Handler</code> to add cross-cutting behavior (logging, auth, CORS, recovery). The signature <code>func(http.Handler) http.Handler</code> makes middleware composable. Each middleware calls the next handler in the chain, with pre-processing before and post-processing after.</p>
+
+    <h4>Key Pattern</h4>
+<pre>func logging(next http.Handler) http.Handler {
+    return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+        start := time.Now()
+        next.ServeHTTP(w, r)
+        slog.Info("request",
+            "method", r.Method,
+            "path", r.URL.Path,
+            "duration", time.Since(start),
+        )
+    })
+}
+
+func recovery(next http.Handler) http.Handler {
+    return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+        defer func() {
+            if err := recover(); err != nil {
+                http.Error(w, "Internal Server Error", 500)
+            }
+        }()
+        next.ServeHTTP(w, r)
+    })
+}
+
+// Chain: recovery -> logging -> handler
+mux := http.NewServeMux()
+mux.HandleFunc("/", homeHandler)
+wrapped := recovery(logging(mux))</pre>
+
+    <div class="exercise">
+      <div class="exercise-label">Challenge Exercise</div>
+      <p>Write a <code>requireAuth</code> middleware that checks for an <code>Authorization</code> header. If missing, return 401 with <code>{"error":"unauthorized"}</code>. If present, call the next handler. Chain it with a logging middleware and test both paths with <code>httptest</code>.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>#1 Pitfall:</strong> Writing to <code>http.ResponseWriter</code> after calling <code>next.ServeHTTP(w, r)</code> when the inner handler has already written headers. Once <code>WriteHeader</code> is called, subsequent calls are silently ignored, and writing headers after the body has started causes a superfluous <code>WriteHeader</code> warning.
+    </div>
+  </div>
+
+  <!-- Review 4: Concurrency Patterns -->
+  <div class="review-card" id="review-concurrency-patterns">
+    <div class="review-header">
+      <h3>Concurrency Patterns</h3>
+      <span class="review-meta">Concurrency &bull; 3 days overdue &bull; rep 1</span>
+    </div>
+
+    <h4>Quick Reminder</h4>
+    <p>Fan-out/fan-in splits work across goroutines and merges results. Pipelines chain stages via channels. Worker pools use a fixed number of goroutines reading from a shared job channel. Rate limiting uses <code>time.Ticker</code> or <code>golang.org/x/time/rate</code> to throttle throughput.</p>
+
+    <h4>Key Pattern</h4>
+<pre>// Worker pool with buffered job channel
+func workerPool(jobs &lt;-chan int, results chan&lt;- int, numWorkers int) {
+    var wg sync.WaitGroup
+    for w := 0; w &lt; numWorkers; w++ {
+        wg.Add(1)
+        go func() {
+            defer wg.Done()
+            for j := range jobs {
+                results &lt;- j * j // process job
+            }
+        }()
+    }
+    go func() {
+        wg.Wait()
+        close(results)
+    }()
+}
+
+jobs := make(chan int, 100)
+results := make(chan int, 100)
+workerPool(jobs, results, 5)
+
+for i := 1; i &lt;= 20; i++ {
+    jobs &lt;- i
+}
+close(jobs)
+
+for r := range results {
+    fmt.Println(r)
+}</pre>
+
+    <div class="exercise">
+      <div class="exercise-label">Challenge Exercise</div>
+      <p>Build a pipeline with three stages: (1) generate URLs, (2) fan-out to 3 workers that simulate HTTP fetches with <code>time.Sleep</code>, (3) fan-in results and print them. Use channels and <code>sync.WaitGroup</code> to coordinate.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>#1 Pitfall:</strong> Closing the results channel in the wrong goroutine or before all workers finish. Always close in a separate goroutine that waits on the <code>WaitGroup</code>, never from the main goroutine that is still reading results (that causes deadlock or premature termination).
+    </div>
+  </div>
+
+  <!-- Review 5: Context -->
+  <div class="review-card" id="review-context-package">
+    <div class="review-header">
+      <h3>Context</h3>
+      <span class="review-meta">Concurrency &bull; 3 days overdue &bull; rep 1</span>
+    </div>
+
+    <h4>Quick Reminder</h4>
+    <p><code>context.WithCancel</code> for manual cancellation, <code>context.WithTimeout</code> for deadline propagation, <code>context.WithValue</code> for request-scoped data (use sparingly). Always pass <code>ctx</code> as the first parameter. Cancellation propagates to all child contexts. Check <code>ctx.Err()</code> or <code>&lt;-ctx.Done()</code> in long-running operations.</p>
+
+    <h4>Key Pattern</h4>
+<pre>func fetchData(ctx context.Context, url string) ([]byte, error) {
+    req, err := http.NewRequestWithContext(ctx, "GET", url, nil)
+    if err != nil {
+        return nil, err
+    }
+    resp, err := http.DefaultClient.Do(req)
+    if err != nil {
+        return nil, err // includes context cancellation
+    }
+    defer resp.Body.Close()
+    return io.ReadAll(resp.Body)
+}
+
+// Caller controls the timeout
+ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+defer cancel()
+
+data, err := fetchData(ctx, "https://api.example.com/data")
+if errors.Is(err, context.DeadlineExceeded) {
+    log.Println("request timed out")
+}</pre>
+
+    <div class="exercise">
+      <div class="exercise-label">Challenge Exercise</div>
+      <p>Write a function that launches 3 goroutines, each simulating work for a random duration (1-5 seconds). Use <code>context.WithTimeout</code> set to 3 seconds. Print which goroutines completed vs. which were cancelled. Use <code>select</code> with <code>ctx.Done()</code>.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>#1 Pitfall:</strong> Forgetting to call <code>cancel()</code> from <code>WithCancel</code> or <code>WithTimeout</code>. Even if the timeout fires, the cancel function must still be called to release resources. Always <code>defer cancel()</code> immediately after creating the context.
+    </div>
+  </div>
+
+  <!-- Review 6: reflect Package -->
+  <div class="review-card" id="review-reflect-package">
+    <div class="review-header">
+      <h3>reflect Package</h3>
+      <span class="review-meta">Advanced Patterns &bull; 2 days overdue &bull; rep 0</span>
+    </div>
+
+    <h4>Quick Reminder</h4>
+    <p><code>reflect.TypeOf(v)</code> returns the type, <code>reflect.ValueOf(v)</code> returns the value. Use <code>.Kind()</code> to check the underlying kind (struct, slice, map, etc.). Iterate struct fields with <code>NumField()</code> and <code>Field(i)</code>. Parse struct tags with <code>field.Tag.Get("json")</code>. Reflection is powerful but slow &mdash; prefer code generation for hot paths.</p>
+
+    <h4>Key Pattern</h4>
+<pre>func printFields(v interface{}) {
+    val := reflect.ValueOf(v)
+    typ := val.Type()
+
+    for i := 0; i &lt; val.NumField(); i++ {
+        field := typ.Field(i)
+        value := val.Field(i)
+        tag := field.Tag.Get("json")
+        fmt.Printf("%s (%s) = %v [json:%q]\n",
+            field.Name, field.Type, value, tag)
+    }
+}
+
+type User struct {
+    Name  string `json:"name"`
+    Age   int    `json:"age"`
+    Email string `json:"email,omitempty"`
+}
+
+printFields(User{"Alice", 30, "alice@example.com"})
+// Name (string) = Alice [json:"name"]
+// Age (int) = 30 [json:"age"]
+// Email (string) = alice@example.com [json:"email,omitempty"]</pre>
+
+    <div class="exercise">
+      <div class="exercise-label">Challenge Exercise</div>
+      <p>Write a function <code>toMap(v interface{}) map[string]interface{}</code> that uses reflection to convert any struct into a map. Use the <code>json</code> struct tag as the map key (fall back to the field name if no tag). Skip fields tagged with <code>json:"-"</code>.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>#1 Pitfall:</strong> Calling <code>reflect.ValueOf(&amp;v).Elem()</code> vs. <code>reflect.ValueOf(v)</code>. If you pass a non-pointer, you get a non-settable value &mdash; calling <code>.Set()</code> panics. To modify a struct through reflection, you must pass a pointer and call <code>.Elem()</code> to get the underlying settable value.
+    </div>
+  </div>
+
+</div><!-- end review section -->
+
+<!-- ============================================================ -->
+<!-- NEW CONCEPTS: ADVANCED NETWORKING -->
+<!-- ============================================================ -->
+<div class="section">
+  <span class="section-label new">New</span>
+  <h2 class="section-title">Advanced Networking</h2>
+
+  <!-- New 1: gRPC & Protocol Buffers -->
+  <div class="concept" id="grpc-protobuf">
+    <div class="concept-header">
+      <h3>gRPC &amp; Protocol Buffers</h3>
+      <span class="concept-meta">Advanced Networking &bull; New</span>
+    </div>
+
+    <h4>Why It Matters</h4>
+    <p>gRPC is the dominant RPC framework for microservice communication. It uses Protocol Buffers (protobuf) for efficient binary serialization, HTTP/2 for multiplexed streams, and code generation for type-safe client/server stubs. Compared to REST+JSON, gRPC offers smaller payloads, bidirectional streaming, and strongly-typed contracts that catch integration errors at compile time rather than runtime.</p>
+
+    <h4>Core Concepts</h4>
+    <ul>
+      <li><code>.proto</code> files &mdash; define messages (data) and services (RPCs) in a language-neutral schema</li>
+      <li><code>protoc</code> compiler &mdash; generates Go code with <code>protoc-gen-go</code> and <code>protoc-gen-go-grpc</code></li>
+      <li>Unary RPC &mdash; single request, single response (like a function call)</li>
+      <li>Server streaming &mdash; single request, stream of responses</li>
+      <li>Client streaming &mdash; stream of requests, single response</li>
+      <li>Bidirectional streaming &mdash; both sides send streams simultaneously</li>
+      <li>Interceptors &mdash; middleware for gRPC (auth, logging, metrics)</li>
+    </ul>
+
+    <h4>Defining a Proto File</h4>
+<pre>// user.proto
+syntax = "proto3";
+
+package user;
+option go_package = "myapp/proto/user";
+
+message User {
+    string id = 1;
+    string name = 2;
+    string email = 3;
+    int32 age = 4;
+}
+
+message GetUserRequest {
+    string id = 1;
+}
+
+message ListUsersRequest {
+    int32 page_size = 1;
+    string page_token = 2;
+}
+
+message ListUsersResponse {
+    repeated User users = 1;
+    string next_page_token = 2;
+}
+
+service UserService {
+    // Unary RPC
+    rpc GetUser(GetUserRequest) returns (User);
+
+    // Server streaming RPC
+    rpc ListUsers(ListUsersRequest) returns (stream User);
+}</pre>
+
+    <h4>Generating Go Code</h4>
+<pre>// Install the tools:
+// go install google.golang.org/protobuf/cmd/protoc-gen-go@latest
+// go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest
+
+// Generate code:
+// protoc --go_out=. --go-grpc_out=. proto/user.proto
+
+// This generates two files:
+//   proto/user/user.pb.go       - message types
+//   proto/user/user_grpc.pb.go  - service client/server stubs</pre>
+
+    <h4>Implementing the Server</h4>
+<pre>package main
+
+import (
+    "context"
+    "fmt"
+    "log"
+    "net"
+
+    pb "myapp/proto/user"
+
+    "google.golang.org/grpc"
+    "google.golang.org/grpc/codes"
+    "google.golang.org/grpc/status"
+)
+
+type userServer struct {
+    pb.UnimplementedUserServiceServer
+    users map[string]*pb.User
+}
+
+func (s *userServer) GetUser(ctx context.Context, req *pb.GetUserRequest) (*pb.User, error) {
+    user, ok := s.users[req.Id]
+    if !ok {
+        return nil, status.Errorf(codes.NotFound, "user %s not found", req.Id)
+    }
+    return user, nil
+}
+
+func (s *userServer) ListUsers(req *pb.ListUsersRequest, stream pb.UserService_ListUsersServer) error {
+    for _, user := range s.users {
+        if err := stream.Send(user); err != nil {
+            return err
+        }
+    }
+    return nil
+}
+
+func main() {
+    lis, err := net.Listen("tcp", ":50051")
+    if err != nil {
+        log.Fatalf("failed to listen: %v", err)
+    }
+
+    srv := grpc.NewServer()
+    pb.RegisterUserServiceServer(srv, &amp;userServer{
+        users: map[string]*pb.User{
+            "1": {Id: "1", Name: "Alice", Email: "alice@example.com", Age: 30},
+            "2": {Id: "2", Name: "Bob", Email: "bob@example.com", Age: 25},
+        },
+    })
+
+    fmt.Println("gRPC server listening on :50051")
+    if err := srv.Serve(lis); err != nil {
+        log.Fatalf("failed to serve: %v", err)
+    }
+}</pre>
+
+    <h4>Implementing the Client</h4>
+<pre>package main
+
+import (
+    "context"
+    "fmt"
+    "io"
+    "log"
+    "time"
+
+    pb "myapp/proto/user"
+
+    "google.golang.org/grpc"
+    "google.golang.org/grpc/credentials/insecure"
+)
+
+func main() {
+    conn, err := grpc.NewClient("localhost:50051",
+        grpc.WithTransportCredentials(insecure.NewCredentials()),
+    )
+    if err != nil {
+        log.Fatalf("failed to connect: %v", err)
+    }
+    defer conn.Close()
+
+    client := pb.NewUserServiceClient(conn)
+
+    // Unary call
+    ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+    defer cancel()
+
+    user, err := client.GetUser(ctx, &amp;pb.GetUserRequest{Id: "1"})
+    if err != nil {
+        log.Fatalf("GetUser failed: %v", err)
+    }
+    fmt.Printf("User: %s (%s)\n", user.Name, user.Email)
+
+    // Server streaming
+    stream, err := client.ListUsers(ctx, &amp;pb.ListUsersRequest{PageSize: 10})
+    if err != nil {
+        log.Fatalf("ListUsers failed: %v", err)
+    }
+
+    for {
+        user, err := stream.Recv()
+        if err == io.EOF {
+            break
+        }
+        if err != nil {
+            log.Fatalf("stream error: %v", err)
+        }
+        fmt.Printf("  - %s (%s)\n", user.Name, user.Email)
+    }
+}</pre>
+
+    <h4>Interceptors (Middleware for gRPC)</h4>
+<pre>// Unary server interceptor for logging
+func loggingInterceptor(
+    ctx context.Context,
+    req interface{},
+    info *grpc.UnaryServerInfo,
+    handler grpc.UnaryHandler,
+) (interface{}, error) {
+    start := time.Now()
+    resp, err := handler(ctx, req)
+    slog.Info("gRPC call",
+        "method", info.FullMethod,
+        "duration", time.Since(start),
+        "error", err,
+    )
+    return resp, err
+}
+
+// Apply interceptor when creating the server
+srv := grpc.NewServer(
+    grpc.UnaryInterceptor(loggingInterceptor),
+)
+
+// Chain multiple interceptors
+srv := grpc.NewServer(
+    grpc.ChainUnaryInterceptor(
+        loggingInterceptor,
+        authInterceptor,
+        recoveryInterceptor,
+    ),
+)</pre>
+
+    <h4>Common Mistakes</h4>
+    <div class="do-dont">
+      <div class="do-box">
+        <div class="label">Do: Use status codes correctly</div>
+<pre>return nil, status.Errorf(
+    codes.NotFound,
+    "user %s not found", id,
+)
+// Client checks:
+// status.Code(err) == codes.NotFound</pre>
+      </div>
+      <div class="dont-box">
+        <div class="label">Don't: Return plain errors</div>
+<pre>return nil, fmt.Errorf("user not found")
+// Client gets codes.Unknown,
+// loses semantic meaning</pre>
+      </div>
+    </div>
+    <div class="do-dont">
+      <div class="do-box">
+        <div class="label">Do: Embed UnimplementedServer</div>
+<pre>type myServer struct {
+    pb.UnimplementedUserServiceServer
+}
+// Forward-compatible: new RPCs
+// get a default "unimplemented" response</pre>
+      </div>
+      <div class="dont-box">
+        <div class="label">Don't: Implement interface directly</div>
+<pre>type myServer struct{}
+// Adding new RPCs to the .proto
+// breaks compilation immediately</pre>
+      </div>
+    </div>
+
+    <h4>Key Rules</h4>
+    <ul class="rules-list">
+      <li>Always embed <code>Unimplemented*Server</code> for forward compatibility when new RPCs are added to the proto</li>
+      <li>Use gRPC status codes (<code>codes.NotFound</code>, <code>codes.InvalidArgument</code>) instead of plain errors for semantic error handling</li>
+      <li>Pass <code>context.Context</code> through all RPC calls &mdash; it carries deadlines, cancellation, and metadata</li>
+      <li>Use interceptors for cross-cutting concerns (auth, logging, tracing) &mdash; they are the gRPC equivalent of HTTP middleware</li>
+      <li>Prefer gRPC over REST for internal service-to-service communication; use REST/gRPC-Gateway for public-facing APIs</li>
+    </ul>
+
+    <div class="connection">
+      <strong>Connection:</strong> gRPC interceptors are the direct equivalent of <em>Middleware Chains</em> from HTTP. The <em>Context</em> package carries deadlines and metadata across gRPC boundaries. <em>Protobuf</em> code generation connects to the <em>Code Generation</em> concept. <em>OpenTelemetry</em> (later in this guide) integrates with gRPC interceptors for distributed tracing.
+    </div>
+
+    <div class="exercise">
+      <div class="exercise-label">Exercise 1</div>
+      <p>Define a <code>todo.proto</code> file with a <code>TodoService</code> containing <code>CreateTodo</code>, <code>GetTodo</code>, and <code>ListTodos</code> RPCs. Include proper message types with field numbers. Write the <code>protoc</code> command to generate Go code.</p>
+    </div>
+    <div class="exercise">
+      <div class="exercise-label">Exercise 2</div>
+      <p>Implement a gRPC server for your <code>TodoService</code> with an in-memory store (map). Implement all three RPCs with proper status codes for error cases (NotFound, InvalidArgument for empty title).</p>
+    </div>
+    <div class="exercise">
+      <div class="exercise-label">Exercise 3</div>
+      <p>Write a unary interceptor that enforces a maximum request duration of 5 seconds. If the context deadline is not set or exceeds 5 seconds, wrap the handler call with <code>context.WithTimeout</code>. Log a warning when the timeout is enforced.</p>
+    </div>
+  </div>
+
+  <!-- New 2: WebSocket in Go -->
+  <div class="concept" id="websocket-go">
+    <div class="concept-header">
+      <h3>WebSocket in Go</h3>
+      <span class="concept-meta">Advanced Networking &bull; New</span>
+    </div>
+
+    <h4>Why It Matters</h4>
+    <p>WebSockets enable full-duplex, persistent connections between client and server &mdash; essential for real-time features like chat, live dashboards, notifications, and collaborative editing. Unlike HTTP request/response, a WebSocket connection stays open for bidirectional streaming, eliminating the overhead of repeated connection setup and enabling server-initiated pushes.</p>
+
+    <h4>Core Concepts</h4>
+    <ul>
+      <li>HTTP Upgrade &mdash; WebSocket starts as an HTTP request that "upgrades" to the WebSocket protocol</li>
+      <li><code>gorilla/websocket</code> &mdash; the most widely used Go WebSocket library</li>
+      <li>Upgrader &mdash; configures the HTTP-to-WebSocket upgrade (buffer sizes, origin check)</li>
+      <li>Message types &mdash; text (<code>TextMessage</code>) and binary (<code>BinaryMessage</code>)</li>
+      <li>Concurrent access &mdash; one reader goroutine + one writer goroutine per connection</li>
+      <li>Ping/pong &mdash; keep-alive mechanism to detect dead connections</li>
+      <li>Hub pattern &mdash; central coordinator for broadcasting to multiple clients</li>
+    </ul>
+
+    <h4>Basic WebSocket Server</h4>
+<pre>package main
+
+import (
+    "fmt"
+    "log"
+    "net/http"
+
+    "github.com/gorilla/websocket"
+)
+
+var upgrader = websocket.Upgrader{
+    ReadBufferSize:  1024,
+    WriteBufferSize: 1024,
+    CheckOrigin: func(r *http.Request) bool {
+        return true // In production, validate the origin!
+    },
+}
+
+func wsHandler(w http.ResponseWriter, r *http.Request) {
+    conn, err := upgrader.Upgrade(w, r, nil)
+    if err != nil {
+        log.Println("upgrade error:", err)
+        return
+    }
+    defer conn.Close()
+
+    for {
+        msgType, msg, err := conn.ReadMessage()
+        if err != nil {
+            log.Println("read error:", err)
+            break
+        }
+        fmt.Printf("received: %s\n", msg)
+
+        // Echo the message back
+        if err := conn.WriteMessage(msgType, msg); err != nil {
+            log.Println("write error:", err)
+            break
+        }
+    }
+}
+
+func main() {
+    http.HandleFunc("/ws", wsHandler)
+    fmt.Println("WebSocket server on :8080")
+    log.Fatal(http.ListenAndServe(":8080", nil))
+}</pre>
+
+    <h4>Concurrent Read/Write with Goroutines</h4>
+<pre>package main
+
+import (
+    "fmt"
+    "log"
+    "sync"
+    "time"
+
+    "github.com/gorilla/websocket"
+)
+
+type Client struct {
+    conn    *websocket.Conn
+    send    chan []byte
+    mu      sync.Mutex // protects conn.WriteMessage
+}
+
+func (c *Client) readPump() {
+    defer c.conn.Close()
+
+    c.conn.SetReadDeadline(time.Now().Add(60 * time.Second))
+    c.conn.SetPongHandler(func(string) error {
+        c.conn.SetReadDeadline(time.Now().Add(60 * time.Second))
+        return nil
+    })
+
+    for {
+        _, msg, err := c.conn.ReadMessage()
+        if err != nil {
+            if websocket.IsUnexpectedCloseError(err,
+                websocket.CloseGoingAway,
+                websocket.CloseNormalClosure,
+            ) {
+                log.Printf("unexpected close: %v", err)
+            }
+            break
+        }
+        fmt.Printf("received: %s\n", msg)
+    }
+}
+
+func (c *Client) writePump() {
+    ticker := time.NewTicker(30 * time.Second)
+    defer func() {
+        ticker.Stop()
+        c.conn.Close()
+    }()
+
+    for {
+        select {
+        case msg, ok := &lt;-c.send:
+            if !ok {
+                // Channel closed
+                c.conn.WriteMessage(websocket.CloseMessage, []byte{})
+                return
+            }
+            c.mu.Lock()
+            err := c.conn.WriteMessage(websocket.TextMessage, msg)
+            c.mu.Unlock()
+            if err != nil {
+                return
+            }
+        case &lt;-ticker.C:
+            // Send ping to keep connection alive
+            c.mu.Lock()
+            err := c.conn.WriteMessage(websocket.PingMessage, nil)
+            c.mu.Unlock()
+            if err != nil {
+                return
+            }
+        }
+    }
+}</pre>
+
+    <h4>Hub Pattern for Broadcasting</h4>
+<pre>package main
+
+import "sync"
+
+type Hub struct {
+    clients    map[*Client]bool
+    broadcast  chan []byte
+    register   chan *Client
+    unregister chan *Client
+    mu         sync.RWMutex
+}
+
+func NewHub() *Hub {
+    return &amp;Hub{
+        clients:    make(map[*Client]bool),
+        broadcast:  make(chan []byte, 256),
+        register:   make(chan *Client),
+        unregister: make(chan *Client),
+    }
+}
+
+func (h *Hub) Run() {
+    for {
+        select {
+        case client := &lt;-h.register:
+            h.mu.Lock()
+            h.clients[client] = true
+            h.mu.Unlock()
+
+        case client := &lt;-h.unregister:
+            h.mu.Lock()
+            if _, ok := h.clients[client]; ok {
+                delete(h.clients, client)
+                close(client.send)
+            }
+            h.mu.Unlock()
+
+        case msg := &lt;-h.broadcast:
+            h.mu.RLock()
+            for client := range h.clients {
+                select {
+                case client.send &lt;- msg:
+                default:
+                    // Client buffer full, disconnect
+                    close(client.send)
+                    delete(h.clients, client)
+                }
+            }
+            h.mu.RUnlock()
+        }
+    }
+}
+
+// In handler:
+// hub.register &lt;- client
+// go client.readPump()
+// go client.writePump()</pre>
+
+    <h4>Testing WebSocket Handlers</h4>
+<pre>package main
+
+import (
+    "net/http"
+    "net/http/httptest"
+    "strings"
+    "testing"
+
+    "github.com/gorilla/websocket"
+)
+
+func TestWebSocketEcho(t *testing.T) {
+    // Create test server
+    srv := httptest.NewServer(http.HandlerFunc(wsHandler))
+    defer srv.Close()
+
+    // Convert http:// to ws://
+    wsURL := "ws" + strings.TrimPrefix(srv.URL, "http") + "/ws"
+
+    // Connect
+    ws, _, err := websocket.DefaultDialer.Dial(wsURL, nil)
+    if err != nil {
+        t.Fatalf("dial error: %v", err)
+    }
+    defer ws.Close()
+
+    // Send message
+    msg := "hello, websocket!"
+    if err := ws.WriteMessage(websocket.TextMessage, []byte(msg)); err != nil {
+        t.Fatalf("write error: %v", err)
+    }
+
+    // Read echo
+    _, got, err := ws.ReadMessage()
+    if err != nil {
+        t.Fatalf("read error: %v", err)
+    }
+
+    if string(got) != msg {
+        t.Errorf("got %q, want %q", got, msg)
+    }
+}</pre>
+
+    <h4>Common Mistakes</h4>
+    <div class="do-dont">
+      <div class="do-box">
+        <div class="label">Do: One reader + one writer goroutine</div>
+<pre>go client.readPump()   // reads
+go client.writePump()  // writes
+// WebSocket connections are NOT
+// safe for concurrent writes</pre>
+      </div>
+      <div class="dont-box">
+        <div class="label">Don't: Write from multiple goroutines</div>
+<pre>// Multiple goroutines calling WriteMessage
+// concurrently causes data corruption
+go func() { conn.WriteMessage(...) }()
+go func() { conn.WriteMessage(...) }()</pre>
+      </div>
+    </div>
+    <div class="do-dont">
+      <div class="do-box">
+        <div class="label">Do: Validate origin in production</div>
+<pre>upgrader := websocket.Upgrader{
+    CheckOrigin: func(r *http.Request) bool {
+        origin := r.Header.Get("Origin")
+        return origin == "https://myapp.com"
+    },
+}</pre>
+      </div>
+      <div class="dont-box">
+        <div class="label">Don't: Accept all origins</div>
+<pre>CheckOrigin: func(r *http.Request) bool {
+    return true // CSRF vulnerability!
+}</pre>
+      </div>
+    </div>
+
+    <h4>Key Rules</h4>
+    <ul class="rules-list">
+      <li>Use exactly one goroutine for reading and one for writing per WebSocket connection &mdash; never write from multiple goroutines</li>
+      <li>Implement ping/pong keepalives to detect dead connections and avoid resource leaks</li>
+      <li>Always validate the <code>CheckOrigin</code> function in production to prevent cross-site WebSocket hijacking</li>
+      <li>Use a buffered <code>send</code> channel per client and disconnect slow consumers whose buffer fills up</li>
+      <li>The Hub pattern centralizes broadcast logic &mdash; use it whenever multiple clients need the same updates</li>
+    </ul>
+
+    <div class="connection">
+      <strong>Connection:</strong> WebSocket handlers are <code>http.Handler</code> functions that upgrade the connection &mdash; they integrate with <em>Middleware Chains</em> for auth/logging before the upgrade. The Hub pattern uses <em>Goroutines</em>, <em>Channels</em>, and <em>Select</em> from the concurrency toolkit. <em>Context</em> can carry request-scoped data through the upgrade. <em>Graceful Shutdown</em> must close all active WebSocket connections.
+    </div>
+
+    <div class="exercise">
+      <div class="exercise-label">Exercise 1</div>
+      <p>Build a WebSocket echo server that uppercases every message before echoing it back. Test it with <code>httptest</code> and <code>gorilla/websocket.DefaultDialer</code>.</p>
+    </div>
+    <div class="exercise">
+      <div class="exercise-label">Exercise 2</div>
+      <p>Implement a chat room: create a Hub that tracks connected clients. When any client sends a message, broadcast it (prefixed with a timestamp) to all other connected clients. Disconnect clients whose send buffer exceeds 256 messages.</p>
+    </div>
+    <div class="exercise">
+      <div class="exercise-label">Exercise 3</div>
+      <p>Add ping/pong keepalive to your chat server. Set a read deadline of 60 seconds, send pings every 30 seconds, and reset the read deadline on every pong. Log when a client is disconnected due to a missed pong.</p>
+    </div>
+  </div>
+
+</div><!-- end Advanced Networking section -->
+
+<!-- ============================================================ -->
+<!-- NEW CONCEPTS: OBSERVABILITY & PROFILING -->
+<!-- ============================================================ -->
+<div class="section">
+  <span class="section-label new">New</span>
+  <h2 class="section-title">Observability &amp; Profiling</h2>
+
+  <!-- New 3: Profiling with pprof -->
+  <div class="concept" id="profiling-pprof">
+    <div class="concept-header">
+      <h3>Profiling with pprof</h3>
+      <span class="concept-meta">Observability &amp; Profiling &bull; New</span>
+    </div>
+
+    <h4>Why It Matters</h4>
+    <p>When your Go service is slow or using too much memory, guessing is expensive. <code>pprof</code> gives you data-driven answers: which functions consume CPU time, where heap allocations happen, and whether goroutines are leaking. Go's built-in profiling tools are production-safe with minimal overhead, making them a first-line tool for diagnosing performance issues in live systems.</p>
+
+    <h4>Core Concepts</h4>
+    <ul>
+      <li><code>net/http/pprof</code> &mdash; import for side-effect to register profiling HTTP endpoints on <code>DefaultServeMux</code></li>
+      <li><code>runtime/pprof</code> &mdash; programmatic API for writing profiles to files (benchmarks, CLI tools)</li>
+      <li>CPU profile &mdash; samples the call stack at ~100Hz to find hot paths</li>
+      <li>Memory (heap) profile &mdash; tracks allocations; <code>inuse</code> shows current memory, <code>alloc</code> shows cumulative</li>
+      <li>Goroutine profile &mdash; snapshot of all goroutines' stack traces (leak detection)</li>
+      <li>Block profile &mdash; where goroutines block on synchronization primitives</li>
+      <li><code>go tool pprof</code> &mdash; interactive CLI for analyzing profiles (top, list, web)</li>
+    </ul>
+
+    <h4>Enabling pprof in an HTTP Server</h4>
+<pre>package main
+
+import (
+    "fmt"
+    "log"
+    "net/http"
+    _ "net/http/pprof" // Register pprof handlers on DefaultServeMux
+)
+
+func main() {
+    // Your application routes
+    mux := http.NewServeMux()
+    mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+        fmt.Fprintln(w, "Hello, World!")
+    })
+
+    // Serve app on :8080
+    go func() {
+        log.Println("app server on :8080")
+        log.Fatal(http.ListenAndServe(":8080", mux))
+    }()
+
+    // Serve pprof on a separate port (not exposed publicly!)
+    log.Println("pprof server on :6060")
+    log.Fatal(http.ListenAndServe(":6060", nil)) // DefaultServeMux has pprof
+}
+
+// Available endpoints:
+// http://localhost:6060/debug/pprof/           - index page
+// http://localhost:6060/debug/pprof/profile    - CPU profile (30s default)
+// http://localhost:6060/debug/pprof/heap       - memory profile
+// http://localhost:6060/debug/pprof/goroutine  - goroutine stacks
+// http://localhost:6060/debug/pprof/block      - blocking profile
+// http://localhost:6060/debug/pprof/mutex      - mutex contention</pre>
+
+    <h4>Programmatic CPU Profiling</h4>
+<pre>package main
+
+import (
+    "fmt"
+    "os"
+    "runtime/pprof"
+)
+
+func cpuIntensiveWork() int {
+    sum := 0
+    for i := 0; i &lt; 100_000_000; i++ {
+        sum += i * i
+    }
+    return sum
+}
+
+func main() {
+    // Start CPU profiling
+    f, err := os.Create("cpu.prof")
+    if err != nil {
+        panic(err)
+    }
+    defer f.Close()
+
+    pprof.StartCPUProfile(f)
+    defer pprof.StopCPUProfile()
+
+    // Do work while profiling
+    result := cpuIntensiveWork()
+    fmt.Println("Result:", result)
+
+    // Analyze with: go tool pprof cpu.prof
+}</pre>
+
+    <h4>Memory Profiling</h4>
+<pre>package main
+
+import (
+    "fmt"
+    "os"
+    "runtime"
+    "runtime/pprof"
+)
+
+func leakyFunction() [][]byte {
+    var slices [][]byte
+    for i := 0; i &lt; 1000; i++ {
+        s := make([]byte, 10_000) // 10KB each = ~10MB total
+        slices = append(slices, s)
+    }
+    return slices
+}
+
+func main() {
+    _ = leakyFunction()
+
+    // Force GC so heap profile is accurate
+    runtime.GC()
+
+    f, err := os.Create("mem.prof")
+    if err != nil {
+        panic(err)
+    }
+    defer f.Close()
+
+    pprof.WriteHeapProfile(f)
+    fmt.Println("Heap profile written to mem.prof")
+
+    // Analyze with:
+    // go tool pprof mem.prof
+    // (pprof) top          - top memory consumers
+    // (pprof) list leaky   - line-by-line allocation
+}</pre>
+
+    <h4>Goroutine Leak Detection</h4>
+<pre>package main
+
+import (
+    "fmt"
+    "net/http"
+    _ "net/http/pprof"
+    "runtime"
+    "time"
+)
+
+func leakyServer() {
+    for i := 0; i &lt; 100; i++ {
+        go func(id int) {
+            ch := make(chan struct{}) // never closed!
+            &lt;-ch                     // blocks forever = goroutine leak
+        }(i)
+    }
+}
+
+func main() {
+    go func() {
+        http.ListenAndServe(":6060", nil) // pprof endpoint
+    }()
+
+    leakyServer()
+
+    time.Sleep(time.Second)
+    fmt.Printf("Goroutines: %d\n", runtime.NumGoroutine())
+    // Output: Goroutines: 103 (100 leaked + main + pprof + ...)
+
+    // Debug with:
+    // go tool pprof http://localhost:6060/debug/pprof/goroutine
+    // (pprof) top
+    // (pprof) traces
+
+    select {} // keep running for pprof
+}</pre>
+
+    <h4>Using go tool pprof</h4>
+<pre>// Capture a 30-second CPU profile from a running server:
+// go tool pprof http://localhost:6060/debug/pprof/profile?seconds=30
+
+// Interactive commands:
+// (pprof) top 10          - top 10 CPU consumers
+// (pprof) list funcName   - source-level annotation
+// (pprof) web             - open flame graph in browser
+// (pprof) png &gt; out.png   - export call graph as image
+
+// Compare two profiles (before/after optimization):
+// go tool pprof -diff_base old.prof new.prof
+
+// Analyze from benchmark tests:
+// go test -cpuprofile cpu.prof -memprofile mem.prof -bench .
+// go tool pprof cpu.prof</pre>
+
+    <h4>Common Mistakes</h4>
+    <div class="do-dont">
+      <div class="do-box">
+        <div class="label">Do: Serve pprof on a separate port</div>
+<pre>// pprof on internal port only
+go http.ListenAndServe(":6060", nil)
+
+// App on public port
+http.ListenAndServe(":8080", appMux)</pre>
+      </div>
+      <div class="dont-box">
+        <div class="label">Don't: Expose pprof publicly</div>
+<pre>import _ "net/http/pprof"
+
+// Registers on DefaultServeMux
+http.ListenAndServe(":8080", nil)
+// /debug/pprof is now public!
+// Leaks internal details, DoS risk</pre>
+      </div>
+    </div>
+    <div class="do-dont">
+      <div class="do-box">
+        <div class="label">Do: GC before heap profile</div>
+<pre>runtime.GC() // Clear unreachable objects
+pprof.WriteHeapProfile(f)
+// Shows only live allocations</pre>
+      </div>
+      <div class="dont-box">
+        <div class="label">Don't: Profile without GC</div>
+<pre>pprof.WriteHeapProfile(f)
+// May include garbage not yet collected,
+// giving misleading allocation data</pre>
+      </div>
+    </div>
+
+    <h4>Key Rules</h4>
+    <ul class="rules-list">
+      <li>Never expose <code>/debug/pprof</code> on a public-facing port &mdash; serve it on an internal-only listener or behind authentication</li>
+      <li>Call <code>runtime.GC()</code> before taking a heap profile to ensure you see only live objects, not pending garbage</li>
+      <li>Use <code>go test -bench . -cpuprofile cpu.prof</code> to profile specific benchmarks &mdash; this is the easiest way to start</li>
+      <li>For goroutine leak detection, compare <code>runtime.NumGoroutine()</code> before and after operations &mdash; it should return to baseline</li>
+      <li>The <code>web</code> command in <code>go tool pprof</code> generates a flame graph &mdash; install <code>graphviz</code> to enable graph visualization</li>
+    </ul>
+
+    <div class="connection">
+      <strong>Connection:</strong> Profiling connects to <em>Benchmarks</em> (profile specific benchmark functions), <em>Memory Management</em> (escape analysis + sync.Pool optimizations verified via pprof), and <em>Concurrency Patterns</em> (goroutine profiles catch leaked workers). Use with <em>OpenTelemetry</em> for a complete observability stack: tracing for latency, pprof for resource usage.
+    </div>
+
+    <div class="exercise">
+      <div class="exercise-label">Exercise 1</div>
+      <p>Write a program that allocates 1 million strings in a loop, captures a heap profile, and analyzes it with <code>go tool pprof</code>. Use <code>runtime.GC()</code> before the profile. Identify the allocating function in the <code>top</code> output.</p>
+    </div>
+    <div class="exercise">
+      <div class="exercise-label">Exercise 2</div>
+      <p>Create an HTTP server with a <code>/compute</code> endpoint that does heavy work. Enable pprof on port 6060. While hitting <code>/compute</code> with <code>curl</code> in a loop, capture a 10-second CPU profile. Use <code>go tool pprof</code> with <code>top</code> and <code>list</code> to find the hot function.</p>
+    </div>
+    <div class="exercise">
+      <div class="exercise-label">Exercise 3</div>
+      <p>Write a function that intentionally leaks 50 goroutines (blocked on a channel that never receives). Use <code>runtime.NumGoroutine()</code> to detect the leak. Then use <code>pprof.Lookup("goroutine").WriteTo(os.Stdout, 1)</code> to dump goroutine stacks and identify the leak source.</p>
+    </div>
+  </div>
+
+  <!-- New 4: OpenTelemetry & Tracing -->
+  <div class="concept" id="otel-tracing">
+    <div class="concept-header">
+      <h3>OpenTelemetry &amp; Tracing</h3>
+      <span class="concept-meta">Observability &amp; Profiling &bull; New</span>
+    </div>
+
+    <h4>Why It Matters</h4>
+    <p>In a microservices architecture, a single user request can traverse dozens of services. When something is slow, you need to trace the request's path across all services and identify which service or database call is the bottleneck. OpenTelemetry (OTel) is the industry-standard, vendor-neutral framework for distributed tracing, metrics, and logs. It replaces older tools like Jaeger client libraries and OpenCensus with a unified API.</p>
+
+    <h4>Core Concepts</h4>
+    <ul>
+      <li><strong>Trace</strong> &mdash; the complete journey of a request across services, identified by a trace ID</li>
+      <li><strong>Span</strong> &mdash; a single unit of work within a trace (e.g., "handle HTTP request", "query database")</li>
+      <li><strong>Span attributes</strong> &mdash; key-value metadata attached to spans (user ID, HTTP status, SQL query)</li>
+      <li><strong>Context propagation</strong> &mdash; trace/span IDs transmitted via HTTP headers or gRPC metadata</li>
+      <li><strong>Exporter</strong> &mdash; sends telemetry data to a backend (Jaeger, OTLP, Zipkin, console)</li>
+      <li><strong>TracerProvider</strong> &mdash; creates tracers; configured once at application startup</li>
+      <li><strong>Metrics</strong> &mdash; counters, histograms, and gauges for quantitative measurements</li>
+    </ul>
+
+    <h4>Setting Up the OTel SDK</h4>
+<pre>package main
+
+import (
+    "context"
+    "fmt"
+    "log"
+
+    "go.opentelemetry.io/otel"
+    "go.opentelemetry.io/otel/attribute"
+    "go.opentelemetry.io/otel/exporters/stdout/stdouttrace"
+    "go.opentelemetry.io/otel/sdk/resource"
+    sdktrace "go.opentelemetry.io/otel/sdk/trace"
+    semconv "go.opentelemetry.io/otel/semconv/v1.24.0"
+    "go.opentelemetry.io/otel/trace"
+)
+
+func initTracer() (*sdktrace.TracerProvider, error) {
+    // Console exporter for development
+    exporter, err := stdouttrace.New(stdouttrace.WithPrettyPrint())
+    if err != nil {
+        return nil, fmt.Errorf("creating exporter: %w", err)
+    }
+
+    tp := sdktrace.NewTracerProvider(
+        sdktrace.WithBatcher(exporter),
+        sdktrace.WithResource(resource.NewWithAttributes(
+            semconv.SchemaURL,
+            semconv.ServiceNameKey.String("my-service"),
+            semconv.ServiceVersionKey.String("1.0.0"),
+        )),
+    )
+
+    otel.SetTracerProvider(tp)
+    return tp, nil
+}
+
+func main() {
+    tp, err := initTracer()
+    if err != nil {
+        log.Fatal(err)
+    }
+    defer tp.Shutdown(context.Background())
+
+    // Now use otel.Tracer() anywhere in your code
+    tracer := otel.Tracer("my-service")
+    ctx, span := tracer.Start(context.Background(), "main")
+    defer span.End()
+
+    doWork(ctx)
+}
+
+func doWork(ctx context.Context) {
+    tracer := otel.Tracer("my-service")
+    _, span := tracer.Start(ctx, "doWork")
+    defer span.End()
+
+    span.SetAttributes(
+        attribute.String("work.type", "computation"),
+        attribute.Int("work.items", 42),
+    )
+
+    fmt.Println("doing work...")
+}</pre>
+
+    <h4>HTTP Middleware for Automatic Tracing</h4>
+<pre>package main
+
+import (
+    "context"
+    "fmt"
+    "net/http"
+
+    "go.opentelemetry.io/otel"
+    "go.opentelemetry.io/otel/attribute"
+    "go.opentelemetry.io/otel/propagation"
+    semconv "go.opentelemetry.io/otel/semconv/v1.24.0"
+)
+
+// Tracing middleware: creates a span for each HTTP request
+func tracingMiddleware(next http.Handler) http.Handler {
+    tracer := otel.Tracer("http-server")
+
+    return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+        // Extract trace context from incoming headers
+        ctx := otel.GetTextMapPropagator().Extract(
+            r.Context(),
+            propagation.HeaderCarrier(r.Header),
+        )
+
+        ctx, span := tracer.Start(ctx, fmt.Sprintf("%s %s", r.Method, r.URL.Path))
+        defer span.End()
+
+        // Add HTTP attributes
+        span.SetAttributes(
+            semconv.HTTPMethodKey.String(r.Method),
+            semconv.HTTPURLKey.String(r.URL.String()),
+            attribute.String("http.client_ip", r.RemoteAddr),
+        )
+
+        // Pass traced context to the next handler
+        next.ServeHTTP(w, r.WithContext(ctx))
+    })
+}
+
+func userHandler(w http.ResponseWriter, r *http.Request) {
+    ctx := r.Context()
+
+    // Child span for database query
+    tracer := otel.Tracer("http-server")
+    _, span := tracer.Start(ctx, "db.query")
+    span.SetAttributes(
+        attribute.String("db.statement", "SELECT * FROM users WHERE id = ?"),
+        attribute.String("db.system", "postgresql"),
+    )
+    // ... execute query ...
+    span.End()
+
+    fmt.Fprintln(w, `{"user": "Alice"}`)
+}</pre>
+
+    <h4>Context Propagation Across Services</h4>
+<pre>package main
+
+import (
+    "context"
+    "net/http"
+
+    "go.opentelemetry.io/otel"
+    "go.opentelemetry.io/otel/propagation"
+)
+
+func init() {
+    // Set up W3C Trace Context propagation (standard)
+    otel.SetTextMapPropagator(
+        propagation.NewCompositeTextMapPropagator(
+            propagation.TraceContext{},
+            propagation.Baggage{},
+        ),
+    )
+}
+
+// When calling another service, inject trace context into headers
+func callService(ctx context.Context, url string) (*http.Response, error) {
+    req, err := http.NewRequestWithContext(ctx, "GET", url, nil)
+    if err != nil {
+        return nil, err
+    }
+
+    // Inject trace context into outgoing request headers
+    otel.GetTextMapPropagator().Inject(ctx, propagation.HeaderCarrier(req.Header))
+
+    // The downstream service extracts these headers to continue the trace
+    return http.DefaultClient.Do(req)
+}</pre>
+
+    <h4>Metrics: Counters, Histograms, Gauges</h4>
+<pre>package main
+
+import (
+    "context"
+    "math/rand"
+    "time"
+
+    "go.opentelemetry.io/otel"
+    "go.opentelemetry.io/otel/metric"
+)
+
+func setupMetrics() {
+    meter := otel.Meter("my-service")
+
+    // Counter: total requests
+    requestCount, _ := meter.Int64Counter("http.requests.total",
+        metric.WithDescription("Total HTTP requests"),
+    )
+
+    // Histogram: request duration
+    requestDuration, _ := meter.Float64Histogram("http.request.duration_ms",
+        metric.WithDescription("HTTP request duration in milliseconds"),
+    )
+
+    // Gauge (via callback): active connections
+    meter.Int64ObservableGauge("http.active_connections",
+        metric.WithDescription("Current active connections"),
+        metric.WithInt64Callback(func(_ context.Context, o metric.Int64Observer) error {
+            o.Observe(int64(getActiveConnections()))
+            return nil
+        }),
+    )
+
+    // Usage in handler:
+    // requestCount.Add(ctx, 1, metric.WithAttributes(...))
+    // requestDuration.Record(ctx, elapsed.Milliseconds(), ...)
+    _ = requestCount
+    _ = requestDuration
+}
+
+func getActiveConnections() int {
+    return rand.Intn(100)
+}
+
+func main() {
+    setupMetrics()
+    time.Sleep(time.Second)
+}</pre>
+
+    <h4>Common Mistakes</h4>
+    <div class="do-dont">
+      <div class="do-box">
+        <div class="label">Do: End spans with defer</div>
+<pre>ctx, span := tracer.Start(ctx, "operation")
+defer span.End()
+// Span ends even if function panics</pre>
+      </div>
+      <div class="dont-box">
+        <div class="label">Don't: Forget to end spans</div>
+<pre>ctx, span := tracer.Start(ctx, "operation")
+// ... code ...
+// Forgot span.End()!
+// Span is never exported, trace is broken</pre>
+      </div>
+    </div>
+    <div class="do-dont">
+      <div class="do-box">
+        <div class="label">Do: Propagate context through calls</div>
+<pre>func getUser(ctx context.Context, id string) {
+    _, span := tracer.Start(ctx, "getUser")
+    defer span.End()
+    db.QueryContext(ctx, "SELECT ...")
+}</pre>
+      </div>
+      <div class="dont-box">
+        <div class="label">Don't: Drop the context</div>
+<pre>func getUser(id string) { // no ctx!
+    db.Query("SELECT ...")
+    // No trace propagation, orphaned span
+}</pre>
+      </div>
+    </div>
+
+    <h4>Key Rules</h4>
+    <ul class="rules-list">
+      <li>Always <code>defer span.End()</code> immediately after <code>tracer.Start()</code> &mdash; unleaked spans break trace visibility</li>
+      <li>Pass <code>context.Context</code> through every function in the call chain &mdash; it carries the active span for parent-child linking</li>
+      <li>Set up W3C Trace Context propagation (<code>propagation.TraceContext{}</code>) so traces cross service boundaries via HTTP headers</li>
+      <li>Use <code>attribute.String/Int/Bool</code> to enrich spans with searchable metadata &mdash; but avoid high-cardinality attributes (e.g., user IDs in metrics)</li>
+      <li>Call <code>TracerProvider.Shutdown(ctx)</code> on application exit to flush all pending spans to the exporter</li>
+    </ul>
+
+    <div class="connection">
+      <strong>Connection:</strong> OTel tracing middleware integrates with <em>Middleware Chains</em> and gRPC <em>Interceptors</em>. <em>Context</em> is the carrier for trace propagation. Combine with <em>pprof</em> for a complete observability stack: OTel for distributed request tracing, pprof for in-process resource profiling. <em>Structured Logging</em> with slog can include trace IDs for correlated log-trace analysis.
+    </div>
+
+    <div class="exercise">
+      <div class="exercise-label">Exercise 1</div>
+      <p>Set up an OTel <code>TracerProvider</code> with a console exporter. Create a function <code>processOrder(ctx context.Context)</code> that starts a span, adds attributes for order ID and item count, simulates work with <code>time.Sleep</code>, and creates a child span for "validate-payment". Run it and observe the console output.</p>
+    </div>
+    <div class="exercise">
+      <div class="exercise-label">Exercise 2</div>
+      <p>Write a tracing HTTP middleware that creates a span for each request, sets <code>http.method</code>, <code>http.url</code>, and <code>http.status_code</code> attributes. Use a custom <code>ResponseWriter</code> wrapper to capture the status code. Apply it to a simple handler and verify spans appear in the console exporter.</p>
+    </div>
+    <div class="exercise">
+      <div class="exercise-label">Exercise 3</div>
+      <p>Create an <code>Int64Counter</code> metric for request counts and a <code>Float64Histogram</code> for response times. Record values in your HTTP handler. Set up a <code>periodic reader</code> with a console exporter and observe the aggregated metrics output.</p>
+    </div>
+  </div>
+
+  <!-- New 5: Embedding & go:embed -->
+  <div class="concept" id="go-embed">
+    <div class="concept-header">
+      <h3>Embedding &amp; go:embed</h3>
+      <span class="concept-meta">Observability &amp; Profiling &bull; New</span>
+    </div>
+
+    <h4>Why It Matters</h4>
+    <p>Go's <code>//go:embed</code> directive (Go 1.16+) embeds files and directories into the compiled binary at build time. This enables true single-binary deployments: your web server includes its HTML templates, static assets, migration scripts, and config files with zero external dependencies. No more "file not found" errors in production because someone forgot to copy the templates directory.</p>
+
+    <h4>Core Concepts</h4>
+    <ul>
+      <li><code>//go:embed</code> &mdash; compiler directive that embeds file contents into a variable</li>
+      <li><code>embed.FS</code> &mdash; read-only filesystem interface for embedded directory trees</li>
+      <li><code>embed.String</code> / <code>embed.Byte</code> &mdash; embed single files as <code>string</code> or <code>[]byte</code></li>
+      <li>Glob patterns &mdash; <code>//go:embed static/*</code> embeds all files matching the pattern</li>
+      <li>Works with <code>net/http</code>, <code>html/template</code>, <code>io/fs</code> &mdash; standard library integration</li>
+      <li>Build-time resolution &mdash; files must exist when <code>go build</code> runs; missing files cause compile errors</li>
+    </ul>
+
+    <h4>Embedding Single Files</h4>
+<pre>package main
+
+import (
+    _ "embed"
+    "fmt"
+)
+
+// Embed a single file as a string
+//go:embed version.txt
+var version string
+
+// Embed a single file as bytes
+//go:embed config/defaults.json
+var defaultConfig []byte
+
+func main() {
+    fmt.Println("Version:", version)
+    fmt.Println("Config:", string(defaultConfig))
+}
+
+// version.txt contains: v1.2.3
+// config/defaults.json contains: {"port": 8080, "debug": false}</pre>
+    <div class="output">
+      <div class="output-label">Output</div>
+Version: v1.2.3
+Config: {"port": 8080, "debug": false}
+    </div>
+
+    <h4>Embedding Directory Trees with embed.FS</h4>
+<pre>package main
+
+import (
+    "embed"
+    "fmt"
+    "io/fs"
+)
+
+//go:embed templates/*.html
+var templateFS embed.FS
+
+//go:embed static/*
+var staticFS embed.FS
+
+func main() {
+    // List all embedded files
+    fs.WalkDir(templateFS, ".", func(path string, d fs.DirEntry, err error) error {
+        if err != nil {
+            return err
+        }
+        if !d.IsDir() {
+            fmt.Println("embedded:", path)
+        }
+        return nil
+    })
+
+    // Read a specific file
+    data, err := templateFS.ReadFile("templates/index.html")
+    if err != nil {
+        panic(err)
+    }
+    fmt.Println("index.html:", len(data), "bytes")
+}</pre>
+    <div class="output">
+      <div class="output-label">Output</div>
+embedded: templates/index.html
+embedded: templates/layout.html
+embedded: templates/404.html
+index.html: 1234 bytes
+    </div>
+
+    <h4>Serving Static Files with net/http</h4>
+<pre>package main
+
+import (
+    "embed"
+    "fmt"
+    "io/fs"
+    "log"
+    "net/http"
+)
+
+//go:embed static/*
+var staticFiles embed.FS
+
+func main() {
+    // Strip the "static" prefix so /style.css maps to static/style.css
+    staticSub, err := fs.Sub(staticFiles, "static")
+    if err != nil {
+        log.Fatal(err)
+    }
+
+    mux := http.NewServeMux()
+
+    // Serve embedded static files
+    mux.Handle("/static/", http.StripPrefix("/static/",
+        http.FileServer(http.FS(staticSub)),
+    ))
+
+    mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+        fmt.Fprintln(w, "Home page - static assets are embedded!")
+    })
+
+    fmt.Println("Server on :8080 with embedded static files")
+    log.Fatal(http.ListenAndServe(":8080", mux))
+}
+
+// Requests to /static/style.css serve the embedded static/style.css
+// Requests to /static/js/app.js serve the embedded static/js/app.js</pre>
+
+    <h4>Using with html/template</h4>
+<pre>package main
+
+import (
+    "embed"
+    "html/template"
+    "log"
+    "net/http"
+)
+
+//go:embed templates/*.html
+var templateFS embed.FS
+
+var tmpl *template.Template
+
+func init() {
+    // Parse all templates from embedded filesystem at startup
+    var err error
+    tmpl, err = template.ParseFS(templateFS, "templates/*.html")
+    if err != nil {
+        log.Fatal("parsing templates:", err)
+    }
+}
+
+type PageData struct {
+    Title string
+    Items []string
+}
+
+func homeHandler(w http.ResponseWriter, r *http.Request) {
+    data := PageData{
+        Title: "Dashboard",
+        Items: []string{"Users", "Orders", "Reports"},
+    }
+
+    if err := tmpl.ExecuteTemplate(w, "index.html", data); err != nil {
+        http.Error(w, err.Error(), 500)
+    }
+}
+
+func main() {
+    http.HandleFunc("/", homeHandler)
+    log.Println("Server on :8080 with embedded templates")
+    log.Fatal(http.ListenAndServe(":8080", nil))
+}</pre>
+
+    <h4>Embedding Multiple Patterns and Conditional Embedding</h4>
+<pre>package main
+
+import (
+    "embed"
+    "fmt"
+)
+
+// Multiple patterns on separate directives
+//go:embed migrations/*.sql
+//go:embed seeds/*.sql
+var sqlFiles embed.FS
+
+// Embed everything in a directory (including subdirectories)
+//go:embed assets
+var allAssets embed.FS
+
+// Embed specific file types
+//go:embed docs/*.md docs/*.txt
+var documentation embed.FS
+
+func main() {
+    // Read a specific migration
+    data, err := sqlFiles.ReadFile("migrations/001_create_users.sql")
+    if err != nil {
+        fmt.Println("Error:", err)
+        return
+    }
+    fmt.Println("Migration:")
+    fmt.Println(string(data))
+
+    // List all embedded SQL files
+    entries, _ := sqlFiles.ReadDir("migrations")
+    for _, e := range entries {
+        fmt.Println(" -", e.Name())
+    }
+}</pre>
+
+    <h4>Common Mistakes</h4>
+    <div class="do-dont">
+      <div class="do-box">
+        <div class="label">Do: Use fs.Sub to strip prefix</div>
+<pre>//go:embed static/*
+var staticFS embed.FS
+
+sub, _ := fs.Sub(staticFS, "static")
+http.Handle("/", http.FileServer(http.FS(sub)))
+// /style.css -> static/style.css</pre>
+      </div>
+      <div class="dont-box">
+        <div class="label">Don't: Serve with directory prefix</div>
+<pre>//go:embed static/*
+var staticFS embed.FS
+
+http.Handle("/", http.FileServer(http.FS(staticFS)))
+// URL must be /static/style.css -- awkward!</pre>
+      </div>
+    </div>
+    <div class="do-dont">
+      <div class="do-box">
+        <div class="label">Do: Import embed for string/[]byte</div>
+<pre>import _ "embed" // blank import required!
+
+//go:embed version.txt
+var version string</pre>
+      </div>
+      <div class="dont-box">
+        <div class="label">Don't: Forget the embed import</div>
+<pre>// Missing: import _ "embed"
+
+//go:embed version.txt
+var version string
+// Compile error: //go:embed requires
+// import of "embed"</pre>
+      </div>
+    </div>
+
+    <h4>Key Rules</h4>
+    <ul class="rules-list">
+      <li>The <code>//go:embed</code> directive must immediately precede the variable declaration &mdash; no blank lines between them</li>
+      <li>For <code>string</code> and <code>[]byte</code> embedding, you must have <code>import _ "embed"</code> even though the package is not referenced directly</li>
+      <li>Embedded files are read-only &mdash; <code>embed.FS</code> implements <code>fs.ReadFileFS</code> and <code>fs.ReadDirFS</code> but has no write methods</li>
+      <li>Use <code>fs.Sub()</code> to strip directory prefixes when serving files via <code>http.FileServer</code></li>
+      <li>Paths in <code>//go:embed</code> are relative to the source file's directory and cannot use <code>..</code> to escape it</li>
+    </ul>
+
+    <div class="connection">
+      <strong>Connection:</strong> <code>go:embed</code> creates single-binary deployments that simplify <em>Cross-Compilation</em> (no file dependencies to copy). Pairs with <code>html/template</code> for server-side rendering and <code>net/http</code> for serving static assets. The <code>embed.FS</code> type implements the <em>io/fs</em> interfaces, connecting to the <em>io Package</em>. Database migrations embedded this way work with the <em>database/sql</em> pattern.
+    </div>
+
+    <div class="exercise">
+      <div class="exercise-label">Exercise 1</div>
+      <p>Create a <code>version.txt</code> file containing <code>v2.0.0</code>. Embed it as a <code>string</code> variable. Write a <code>/version</code> HTTP endpoint that returns the embedded version. Verify the binary works after deleting <code>version.txt</code> (the content is baked in).</p>
+    </div>
+    <div class="exercise">
+      <div class="exercise-label">Exercise 2</div>
+      <p>Embed an entire <code>static/</code> directory containing <code>index.html</code>, <code>style.css</code>, and <code>app.js</code>. Serve them via <code>http.FileServer</code> with <code>fs.Sub</code> so that <code>/style.css</code> works (not <code>/static/style.css</code>). Add a <code>/</code> route that serves the embedded <code>index.html</code>.</p>
+    </div>
+    <div class="exercise">
+      <div class="exercise-label">Exercise 3</div>
+      <p>Embed SQL migration files from a <code>migrations/</code> directory. Write a function that reads all <code>.sql</code> files, sorts them by filename, and executes them in order (print the SQL for this exercise). Handle the case where a migration file is malformed by logging and continuing.</p>
+    </div>
+  </div>
+
+</div><!-- end Observability & Profiling section -->
+
+<!-- ============================================================ -->
+<!-- FOOTER -->
+<!-- ============================================================ -->
+<footer class="footer">
+  <h4>All Guides</h4>
+  <ul>
+    <li><a href="golang-guides/golang-guide-2026-07-09.html">2026-07-09</a> (Day 34)</li>
+    <li><a href="golang-guides/golang-guide-2026-07-08.html">2026-07-08</a> (Day 33)</li>
+    <li><a href="golang-guides/golang-guide-2026-07-07.html">2026-07-07</a> (Day 32)</li>
+    <li><a href="golang-guides/golang-guide-2026-07-06.html">2026-07-06</a> (Day 31)</li>
+    <li><a href="golang-guides/golang-guide-2026-07-05.html">2026-07-05</a> (Day 30)</li>
+    <li><a href="golang-guides/golang-guide-2026-07-04.html">2026-07-04</a> (Day 29)</li>
+    <li><a href="golang-guides/golang-guide-2026-07-03.html">2026-07-03</a> (Day 28)</li>
+    <li><a href="golang-guides/golang-guide-2026-07-02.html">2026-07-02</a> (Day 27)</li>
+    <li><a href="golang-guides/golang-guide-2026-07-01.html">2026-07-01</a> (Day 26)</li>
+    <li><a href="golang-guides/golang-guide-2026-06-30.html">2026-06-30</a> (Day 25)</li>
+    <li><a href="golang-guides/golang-guide-2026-06-29.html">2026-06-29</a> (Day 24)</li>
+    <li><a href="golang-guides/golang-guide-2026-06-28.html">2026-06-28</a> (Day 23)</li>
+    <li><a href="golang-guides/golang-guide-2026-06-27.html">2026-06-27</a> (Day 22)</li>
+    <li><a href="golang-guides/golang-guide-2026-06-26.html">2026-06-26</a> (Day 21)</li>
+    <li><a href="golang-guides/golang-guide-2026-06-25.html">2026-06-25</a> (Day 20)</li>
+    <li><a href="golang-guides/golang-guide-2026-06-24.html">2026-06-24</a> (Day 19)</li>
+    <li><a href="golang-guides/golang-guide-2026-06-23.html">2026-06-23</a> (Day 18)</li>
+    <li><a href="golang-guides/golang-guide-2026-06-22.html">2026-06-22</a> (Day 17)</li>
+    <li><a href="golang-guides/golang-guide-2026-06-19.html">2026-06-19</a> (Day 15)</li>
+    <li><a href="golang-guides/golang-guide-2026-06-18.html">2026-06-18</a> (Day 14)</li>
+    <li><a href="golang-guides/golang-guide-2026-06-17.html">2026-06-17</a> (Day 13)</li>
+    <li><a href="golang-guides/golang-guide-2026-06-15.html">2026-06-15</a> (Day 12)</li>
+    <li><a href="golang-guides/golang-guide-2026-06-13.html">2026-06-13</a> (Day 11)</li>
+    <li><a href="golang-guides/golang-guide-2026-06-12.html">2026-06-12</a> (Day 10)</li>
+    <li><a href="golang-guides/golang-guide-2026-06-11.html">2026-06-11</a> (Day 9)</li>
+    <li><a href="golang-guides/golang-guide-2026-06-10.html">2026-06-10</a> (Day 8)</li>
+    <li><a href="golang-guides/golang-guide-2026-06-09.html">2026-06-09</a> (Day 7)</li>
+    <li><a href="golang-guides/golang-guide-2026-06-08.html">2026-06-08</a> (Day 6)</li>
+    <li><a href="golang-guides/golang-guide-2026-06-07.html">2026-06-07</a> (Day 5)</li>
+    <li><a href="golang-guides/golang-guide-2026-06-05.html">2026-06-05</a> (Day 4)</li>
+    <li><a href="golang-guides/golang-guide-2026-06-04.html">2026-06-04</a> (Day 3)</li>
+    <li><a href="golang-guides/golang-guide-2026-06-03.html">2026-06-03</a> (Day 2)</li>
+    <li><a href="golang-guides/golang-guide-2026-06-02.html">2026-06-02</a> (Day 1)</li>
+  </ul>
+</footer>
+
+</div><!-- end main -->
+
+<script>
+// ===== Theme Toggle =====
+(function() {
+  const KEY = 'lc-goguide-theme';
+  const toggle = document.getElementById('theme-toggle');
+  const html = document.documentElement;
+
+  function setTheme(theme) {
+    html.setAttribute('data-theme', theme);
+    localStorage.setItem(KEY, theme);
+    toggle.textContent = theme === 'dark' ? '☽' : '☀';
+  }
+
+  const saved = localStorage.getItem(KEY) || 'dark';
+  setTheme(saved);
+
+  toggle.addEventListener('click', function() {
+    setTheme(html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
+  });
+})();
+
+// ===== Mobile Sidebar Toggle =====
+(function() {
+  const btn = document.getElementById('sidebar-toggle');
+  const sidebar = document.getElementById('sidebar');
+
+  btn.addEventListener('click', function() {
+    sidebar.classList.toggle('open');
+  });
+
+  // Close sidebar when clicking a link (mobile)
+  sidebar.querySelectorAll('.sidebar-link').forEach(function(link) {
+    link.addEventListener('click', function() {
+      if (window.innerWidth <= 900) {
+        sidebar.classList.remove('open');
+      }
+    });
+  });
+})();
+
+// ===== Active Sidebar Link on Scroll =====
+(function() {
+  const links = document.querySelectorAll('.sidebar-link');
+  const sections = [];
+
+  links.forEach(function(link) {
+    var id = link.getAttribute('href').replace('#', '');
+    var el = document.getElementById(id);
+    if (el) sections.push({ id: id, el: el, link: link });
+  });
+
+  function onScroll() {
+    var scrollTop = window.scrollY + 120;
+    var current = null;
+
+    for (var i = sections.length - 1; i >= 0; i--) {
+      if (sections[i].el.offsetTop <= scrollTop) {
+        current = sections[i];
+        break;
+      }
+    }
+
+    links.forEach(function(l) { l.classList.remove('active'); });
+    if  current.link.classList.add('active');
+  }
+
+  window.addEventListener('scroll', onScroll);
+  onScroll();
+})();
+</script>
+</body>
+</html>

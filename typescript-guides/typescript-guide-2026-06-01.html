@@ -1,0 +1,1480 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TypeScript Daily Guide — 2026-06-02 (Day 3)</title>
+<style>
+:root {
+  --bg: #0d1117;
+  --surface: #161b22;
+  --surface2: #1c2129;
+  --border: #30363d;
+  --text: #e6edf3;
+  --text-muted: #8b949e;
+  --accent: #58a6ff;
+  --accent-bg: rgba(56,139,253,0.15);
+  --green: #3fb950;
+  --green-bg: rgba(63,185,80,0.08);
+  --red: #f85149;
+  --red-bg: rgba(248,81,73,0.08);
+  --yellow: #d29922;
+  --yellow-bg: rgba(210,153,34,0.1);
+  --orange: #db6d28;
+  --purple: #bc8cff;
+  --purple-bg: rgba(188,140,255,0.08);
+  --purple-border: rgba(188,140,255,0.2);
+  --link: #58a6ff;
+  --code-bg: #1c2129;
+  --output-bg: #0e1c0e;
+  --output-border: #1a3a1a;
+  --sidebar-bg: #161b22;
+  --sidebar-active: rgba(56,139,253,0.15);
+  --exercise-border: #30363d;
+}
+[data-theme="light"] {
+  --bg: #ffffff;
+  --surface: #f6f8fa;
+  --surface2: #eef1f5;
+  --border: #d0d7de;
+  --text: #1f2328;
+  --text-muted: #656d76;
+  --accent: #0969da;
+  --accent-bg: rgba(9,105,218,0.1);
+  --green: #1a7f37;
+  --green-bg: rgba(26,127,55,0.06);
+  --red: #cf222e;
+  --red-bg: rgba(207,34,46,0.06);
+  --yellow: #9a6700;
+  --yellow-bg: rgba(154,103,0,0.06);
+  --orange: #bc4c00;
+  --purple: #8250df;
+  --purple-bg: rgba(130,80,223,0.06);
+  --purple-border: rgba(130,80,223,0.15);
+  --link: #0969da;
+  --code-bg: #eef1f5;
+  --output-bg: #f0faf0;
+  --output-border: #c6e6c6;
+  --sidebar-bg: #f6f8fa;
+  --sidebar-active: rgba(9,105,218,0.1);
+  --exercise-border: #d0d7de;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;font-size:16px;line-height:1.7;color:var(--text);background:var(--bg);display:flex;min-height:100vh}
+a{color:var(--link);text-decoration:none}
+a:hover{text-decoration:underline}
+
+/* Sidebar */
+.sidebar{position:fixed;top:0;left:0;width:300px;height:100vh;background:var(--sidebar-bg);border-right:1px solid var(--border);overflow-y:auto;padding:20px 0;z-index:100}
+.sidebar-header{padding:16px 20px;border-bottom:1px solid var(--border);margin-bottom:12px}
+.sidebar-header h2{font-size:15px;font-weight:600;color:var(--text)}
+.sidebar-header .date{font-size:13px;color:var(--text-muted);margin-top:2px}
+.sidebar-section{padding:8px 20px 4px;font-size:12px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px}
+.sidebar-section.review-label{color:var(--purple)}
+.sidebar-nav{list-style:none;padding:0}
+.sidebar-nav li a{display:block;padding:6px 20px 6px 28px;font-size:14px;color:var(--text-muted);transition:all 0.15s}
+.sidebar-nav li a:hover,.sidebar-nav li a.active{color:var(--accent);background:var(--sidebar-active);text-decoration:none}
+.sidebar-nav li a .nav-id{font-size:11px;color:var(--text-muted);opacity:0.6;margin-left:6px}
+
+/* Main */
+.main{margin-left:300px;flex:1;padding:40px;max-width:1160px}
+.content{max-width:860px;margin:0 auto}
+
+/* Theme Toggle */
+.theme-toggle{position:fixed;top:16px;right:20px;z-index:200;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:8px 12px;cursor:pointer;color:var(--text);font-size:18px;line-height:1;transition:all 0.15s}
+.theme-toggle:hover{border-color:var(--accent)}
+
+/* Header */
+.guide-header{text-align:center;padding:32px 0 40px;border-bottom:1px solid var(--border);margin-bottom:40px}
+.guide-header h1{font-size:28px;font-weight:700;margin-bottom:8px}
+.guide-header .meta{font-size:15px;color:var(--text-muted)}
+.guide-header .meta span{margin:0 8px}
+.badge{display:inline-block;padding:2px 10px;border-radius:12px;font-size:13px;font-weight:500}
+.badge-blue{background:var(--accent-bg);color:var(--accent)}
+.badge-purple{background:var(--purple-bg);color:var(--purple)}
+
+/* How To Use */
+.how-to-use{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:24px 28px;margin-bottom:40px}
+.how-to-use h2{font-size:18px;margin-bottom:12px}
+.how-to-use ol{padding-left:24px}
+.how-to-use li{margin-bottom:6px;color:var(--text-muted)}
+
+/* Review Section */
+.review-section{margin-bottom:48px}
+.review-section-header{font-size:22px;font-weight:700;padding-bottom:12px;border-bottom:2px solid var(--purple);margin-bottom:28px;display:flex;align-items:center;gap:12px;color:var(--purple)}
+
+/* Review Card */
+.review-card{background:var(--purple-bg);border:1px solid var(--purple-border);border-radius:10px;padding:28px;margin-bottom:24px}
+.review-card .review-header{display:flex;align-items:center;gap:12px;margin-bottom:12px;flex-wrap:wrap}
+.review-card .review-title{font-size:18px;font-weight:700;color:var(--purple)}
+.review-card .review-meta{font-size:13px;color:var(--text-muted)}
+.review-card .review-reminder{color:var(--text-muted);font-style:italic;margin-bottom:16px;padding-left:14px;border-left:3px solid var(--purple)}
+.review-card .review-pattern{margin-bottom:16px}
+.review-card .review-pattern strong{display:block;margin-bottom:8px;font-size:14px;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px}
+.review-card .review-challenge{margin-bottom:12px}
+.review-card .review-challenge strong{display:block;margin-bottom:8px;font-size:14px;color:var(--yellow);text-transform:uppercase;letter-spacing:0.5px}
+.review-card .review-challenge p{line-height:1.6}
+.review-card .review-pitfall{background:var(--red-bg);border:1px solid rgba(248,81,73,0.15);border-radius:6px;padding:12px 16px;font-size:14px;line-height:1.6}
+.review-card .review-pitfall strong{color:var(--red);margin-right:4px}
+.review-card code{background:var(--code-bg);padding:2px 6px;border-radius:4px;font-family:'SF Mono','Fira Code','Consolas',monospace;font-size:13px}
+
+/* Topic Section */
+.topic-section{margin-bottom:48px}
+.topic-section-header{font-size:22px;font-weight:700;padding-bottom:12px;border-bottom:2px solid var(--accent);margin-bottom:28px;display:flex;align-items:center;gap:12px}
+.topic-section-header .section-num{background:var(--accent);color:#fff;width:32px;height:32px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:15px;font-weight:700;flex-shrink:0}
+
+/* Concept Card */
+.concept-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:28px;margin-bottom:32px}
+.concept-header{display:flex;align-items:center;gap:12px;margin-bottom:16px;flex-wrap:wrap}
+.concept-title{font-size:20px;font-weight:700}
+.ttag{display:inline-block;padding:2px 10px;border-radius:12px;font-size:12px;font-weight:500;background:var(--accent-bg);color:var(--accent)}
+.why-matters{color:var(--text-muted);font-style:italic;margin-bottom:20px;padding-left:14px;border-left:3px solid var(--accent)}
+.explanation{margin-bottom:20px;line-height:1.8}
+.explanation p{margin-bottom:12px}
+.explanation ul,.explanation ol{padding-left:24px;margin-bottom:12px}
+.explanation li{margin-bottom:4px}
+.explanation code{background:var(--code-bg);padding:2px 6px;border-radius:4px;font-family:'SF Mono','Fira Code','Consolas',monospace;font-size:14px}
+
+/* Code Examples */
+.code-example{margin-bottom:20px;border:1px solid var(--border);border-radius:8px;overflow:hidden}
+.lang-badge{background:var(--surface2);color:var(--text-muted);font-size:12px;font-weight:600;padding:6px 14px;border-bottom:1px solid var(--border);font-family:'SF Mono','Fira Code','Consolas',monospace}
+pre{margin:0;padding:16px;overflow-x:auto;background:var(--code-bg);font-family:'SF Mono','Fira Code','Consolas',monospace;font-size:13.5px;line-height:1.6}
+pre code{background:none;padding:0;font-size:inherit}
+.output{background:var(--output-bg);border-top:1px solid var(--output-border);padding:12px 16px;font-family:'SF Mono','Fira Code','Consolas',monospace;font-size:13px;color:var(--green)}
+.output::before{content:"Output:";display:block;font-size:11px;font-weight:600;color:var(--text-muted);margin-bottom:4px;text-transform:uppercase;letter-spacing:0.5px}
+.type-result{background:var(--output-bg);border-top:1px solid var(--output-border);padding:12px 16px;font-family:'SF Mono','Fira Code','Consolas',monospace;font-size:13px;color:var(--green)}
+.type-result::before{content:"Type Result:";display:block;font-size:11px;font-weight:600;color:var(--text-muted);margin-bottom:4px;text-transform:uppercase;letter-spacing:0.5px}
+.type-error{background:var(--red-bg);border-top:1px solid rgba(248,81,73,0.2);padding:12px 16px;font-family:'SF Mono','Fira Code','Consolas',monospace;font-size:13px;color:var(--red)}
+.type-error::before{content:"Type Error:";display:block;font-size:11px;font-weight:600;color:var(--red);margin-bottom:4px;text-transform:uppercase;letter-spacing:0.5px}
+
+/* Callouts */
+.callout-warning{background:var(--yellow-bg);border:1px solid rgba(210,153,34,0.2);border-radius:8px;padding:20px;margin-bottom:20px}
+.callout-warning strong{color:var(--yellow);display:block;margin-bottom:12px;font-size:16px}
+.mistake,.correct{padding:10px 14px;border-radius:6px;margin-bottom:10px;font-size:14px;line-height:1.6}
+.mistake{background:var(--red-bg);border-left:3px solid var(--red)}
+.mistake code,.correct code{background:var(--code-bg);padding:2px 6px;border-radius:4px;font-family:'SF Mono','Fira Code','Consolas',monospace;font-size:13px}
+.correct{background:var(--green-bg);border-left:3px solid var(--green)}
+
+/* Key Rules */
+.key-rules{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:20px;margin-bottom:20px}
+.key-rules strong{display:block;margin-bottom:10px;font-size:16px}
+.key-rules ul{padding-left:20px}
+.key-rules li{margin-bottom:6px}
+.key-rules code{background:var(--code-bg);padding:2px 6px;border-radius:4px;font-family:'SF Mono','Fira Code','Consolas',monospace;font-size:13px}
+
+/* Exercises */
+.exercises{border:2px dashed var(--exercise-border);border-radius:8px;padding:20px;margin-bottom:20px;margin-left:12px}
+.exercises strong{display:block;margin-bottom:14px;font-size:16px;color:var(--purple)}
+.exercise{margin-bottom:14px;padding-left:38px;position:relative;line-height:1.6}
+.exercise:last-child{margin-bottom:0}
+.exercise-num{position:absolute;left:0;top:2px;background:var(--purple);color:#fff;width:24px;height:24px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:12px;font-weight:700}
+.exercise code{background:var(--code-bg);padding:2px 6px;border-radius:4px;font-family:'SF Mono','Fira Code','Consolas',monospace;font-size:13px}
+
+/* Connections */
+.connections{background:var(--accent-bg);border:1px solid rgba(56,139,253,0.2);border-radius:8px;padding:16px 20px;font-size:14px;color:var(--text-muted)}
+.connections strong{color:var(--accent);margin-right:6px}
+
+/* Footer */
+.guide-footer{border-top:1px solid var(--border);padding-top:32px;margin-top:48px}
+.guide-footer h2{font-size:18px;margin-bottom:16px}
+.guide-footer ul{list-style:none;padding:0}
+.guide-footer li{padding:6px 0}
+.guide-footer li a{font-weight:500}
+
+/* Responsive */
+@media(max-width:900px){
+  .sidebar{display:none}
+  .main{margin-left:0}
+  .theme-toggle{top:12px;right:12px}
+}
+</style>
+</head>
+<body>
+
+<!-- Theme Toggle -->
+<button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">&#x1F319;</button>
+
+<!-- Sidebar -->
+<nav class="sidebar">
+  <div class="sidebar-header">
+    <h2>TypeScript Daily Guide</h2>
+    <div class="date">2026-06-02 &mdash; Day 3</div>
+  </div>
+
+  <div class="sidebar-section review-label">Review (6 concepts)</div>
+  <ul class="sidebar-nav">
+    <li><a href="#review_enums">Enums <span class="nav-id">R1</span></a></li>
+    <li><a href="#review_conditional_types">Conditional Types <span class="nav-id">R2</span></a></li>
+    <li><a href="#review_mapped_types">Mapped Types <span class="nav-id">R3</span></a></li>
+    <li><a href="#review_keyof_indexed">keyof &amp; Indexed Access <span class="nav-id">R4</span></a></li>
+    <li><a href="#review_type_predicates">Type Predicates <span class="nav-id">R5</span></a></li>
+    <li><a href="#review_satisfies">satisfies Operator <span class="nav-id">R6</span></a></li>
+  </ul>
+
+  <div class="sidebar-section">Functions &amp; Patterns</div>
+  <ul class="sidebar-nav">
+    <li><a href="#function_overloads">Function Overloads <span class="nav-id">#1</span></a></li>
+    <li><a href="#generic_constraints">Generic Constraints &amp; Defaults <span class="nav-id">#2</span></a></li>
+    <li><a href="#branded_types">Branded/Opaque Types <span class="nav-id">#3</span></a></li>
+    <li><a href="#this_types">this Types &amp; Fluent Interfaces <span class="nav-id">#4</span></a></li>
+    <li><a href="#async_patterns">Async Patterns &amp; Promise Typing <span class="nav-id">#5</span></a></li>
+  </ul>
+</nav>
+
+<!-- Main Content -->
+<div class="main">
+<div class="content">
+
+<!-- Header -->
+<header class="guide-header">
+  <h1>TypeScript Daily Guide &mdash; Day 3</h1>
+  <div class="meta">
+    <span>2026-06-02</span>
+    <span>&middot;</span>
+    <span>Day 3</span>
+    <span>&middot;</span>
+    <span class="badge badge-purple">6 reviews</span>
+    <span class="badge badge-blue">5 new concepts</span>
+  </div>
+</header>
+
+<!-- How to Use -->
+<div class="how-to-use">
+  <h2>How to Use This Guide</h2>
+  <ol>
+    <li><strong>Review first</strong> &mdash; scan each purple review card; if the concept feels solid, move on; if fuzzy, re-read the code pattern</li>
+    <li><strong>Attempt the challenge exercise</strong> on any review card that felt shaky &mdash; this is your best reinforcement signal</li>
+    <li><strong>Work through new concepts</strong> top to bottom &mdash; each builds on the previous</li>
+    <li><strong>Type every code example</strong> yourself in a .ts file &mdash; hover over types in your editor to build intuition</li>
+    <li><strong>Do at least 2 exercises per concept</strong> before moving to the next one</li>
+  </ol>
+</div>
+
+<!-- ============================================================ -->
+<!-- REVIEW SECTION                                                -->
+<!-- ============================================================ -->
+<div class="review-section">
+<div class="review-section-header">Review &mdash; 6 Concepts</div>
+
+<!-- R1: Enums -->
+<div class="review-card" id="review_enums">
+  <div class="review-header">
+    <span class="review-title">R1. Enums</span>
+    <span class="badge badge-purple">Structuring Types</span>
+    <span class="review-meta">rep 1 &middot; last reviewed 2026-05-31 &middot; 2 days ago</span>
+  </div>
+  <div class="review-reminder">TypeScript enums: numeric (auto-increment from 0), string (explicit values), const enums (inlined at compile time). Prefer literal union types (<code>type Dir = "up" | "down"</code>) over enums for most cases &mdash; they're simpler and tree-shake better. Use enums when you need reverse mapping or runtime iteration.</div>
+
+  <div class="review-pattern">
+    <strong>Key Pattern</strong>
+    <div class="code-example">
+<pre><code>// const enum &mdash; inlined at compile time, no runtime object
+const enum Direction { Up = "UP", Down = "DOWN" }
+let d = Direction.Up; // compiles to: let d = "UP";
+
+// Literal union &mdash; preferred for most use cases
+type Direction2 = "up" | "down";
+function move(dir: Direction2) { /* ... */ }</code></pre>
+    </div>
+  </div>
+
+  <div class="review-challenge">
+    <strong>Challenge Exercise</strong>
+    <p>Create a numeric enum <code>HttpStatus</code> starting at 200 (with Ok, Created, BadRequest=400, NotFound=404). Then write a <code>isSuccess(status: HttpStatus): boolean</code> that returns true for 2xx codes. What happens if you pass <code>999</code> as <code>HttpStatus</code>? Why?</p>
+  </div>
+
+  <div class="review-pitfall">
+    <strong>#1 Pitfall:</strong> Numeric enums allow <em>any</em> number assignment at runtime &mdash; <code>let s: HttpStatus = 999</code> compiles without error. String enums are safer because only declared values are allowed.
+  </div>
+</div>
+
+<!-- R2: Conditional Types -->
+<div class="review-card" id="review_conditional_types">
+  <div class="review-header">
+    <span class="review-title">R2. Conditional Types</span>
+    <span class="badge badge-purple">Advanced Type System</span>
+    <span class="review-meta">rep 0 &middot; last reviewed 2026-06-01 &middot; 1 day ago</span>
+  </div>
+  <div class="review-reminder"><code>T extends U ? X : Y</code> &mdash; type-level if/else. Distributive over unions when T is a naked type parameter. Use <code>infer</code> to extract types from complex structures.</div>
+
+  <div class="review-pattern">
+    <strong>Key Pattern</strong>
+    <div class="code-example">
+<pre><code>type IsString&lt;T&gt; = T extends string ? true : false;
+
+type A = IsString&lt;string&gt;;         // true
+type B = IsString&lt;number&gt;;         // false
+type C = IsString&lt;string | number&gt;; // true | false (distributive!)
+
+// Extract with infer
+type Flatten&lt;T&gt; = T extends Array&lt;infer U&gt; ? U : T;
+type D = Flatten&lt;string[]&gt;;  // string
+type E = Flatten&lt;number&gt;;    // number</code></pre>
+    </div>
+  </div>
+
+  <div class="review-challenge">
+    <strong>Challenge Exercise</strong>
+    <p>Write <code>type ReturnOf&lt;T&gt;</code> that extracts the return type of a function type using <code>infer</code>. Test with <code>ReturnOf&lt;() =&gt; string&gt;</code> (should be <code>string</code>) and <code>ReturnOf&lt;(x: number) =&gt; boolean&gt;</code> (should be <code>boolean</code>).</p>
+  </div>
+
+  <div class="review-pitfall">
+    <strong>#1 Pitfall:</strong> Forgetting distributive behavior &mdash; <code>IsString&lt;string | number&gt;</code> evaluates to <code>true | false</code> (distributes over each union member), not <code>false</code>. Wrap in <code>[T] extends [string]</code> to prevent distribution.
+  </div>
+</div>
+
+<!-- R3: Mapped Types -->
+<div class="review-card" id="review_mapped_types">
+  <div class="review-header">
+    <span class="review-title">R3. Mapped Types</span>
+    <span class="badge badge-purple">Advanced Type System</span>
+    <span class="review-meta">rep 0 &middot; last reviewed 2026-06-01 &middot; 1 day ago</span>
+  </div>
+  <div class="review-reminder">Transform all properties of a type: <code>{ [K in keyof T]: NewType }</code>. Use <code>as</code> for key remapping. Add/remove <code>readonly</code> and <code>?</code> modifiers with <code>+</code>/<code>-</code>.</div>
+
+  <div class="review-pattern">
+    <strong>Key Pattern</strong>
+    <div class="code-example">
+<pre><code>// Remap keys with template literal types
+type Getters&lt;T&gt; = {
+  [K in keyof T as `get${Capitalize&lt;string &amp; K&gt;}`]: () =&gt; T[K]
+};
+
+interface Person { name: string; age: number }
+type PersonGetters = Getters&lt;Person&gt;;
+// { getName: () =&gt; string; getAge: () =&gt; number }</code></pre>
+    </div>
+  </div>
+
+  <div class="review-challenge">
+    <strong>Challenge Exercise</strong>
+    <p>Write <code>type Mutable&lt;T&gt;</code> that removes <code>readonly</code> from every property of T. Test with <code>Mutable&lt;{ readonly x: number; readonly y: string }&gt;</code> which should become <code>{ x: number; y: string }</code>.</p>
+  </div>
+
+  <div class="review-pitfall">
+    <strong>#1 Pitfall:</strong> Forgetting <code>string &amp; K</code> when using template literals with keyof &mdash; <code>keyof</code> includes <code>number | symbol</code>, but template literals only work with <code>string</code>. Without the intersection, you get a type error.
+  </div>
+</div>
+
+<!-- R4: keyof & Indexed Access Types -->
+<div class="review-card" id="review_keyof_indexed">
+  <div class="review-header">
+    <span class="review-title">R4. keyof &amp; Indexed Access Types</span>
+    <span class="badge badge-purple">Advanced Type System</span>
+    <span class="review-meta">rep 0 &middot; last reviewed 2026-06-01 &middot; 1 day ago</span>
+  </div>
+  <div class="review-reminder"><code>keyof T</code> gets union of property names. <code>T[K]</code> accesses the type at key K. Combine for type-safe property access patterns.</div>
+
+  <div class="review-pattern">
+    <strong>Key Pattern</strong>
+    <div class="code-example">
+<pre><code>function getProperty&lt;T, K extends keyof T&gt;(obj: T, key: K): T[K] {
+  return obj[key];
+}
+
+const user = { name: "Alice", age: 30 };
+const name = getProperty(user, "name"); // type: string
+const age = getProperty(user, "age");   // type: number
+// getProperty(user, "email");          // Error: "email" not in keyof</code></pre>
+    </div>
+  </div>
+
+  <div class="review-challenge">
+    <strong>Challenge Exercise</strong>
+    <p>Write a type-safe <code>pick</code> function: <code>function pick&lt;T, K extends keyof T&gt;(obj: T, ...keys: K[]): Pick&lt;T, K&gt;</code>. Implement the body and test it &mdash; the return type should narrow correctly based on the keys passed.</p>
+  </div>
+
+  <div class="review-pitfall">
+    <strong>#1 Pitfall:</strong> <code>keyof</code> returns <code>string | number | symbol</code>. If you need to use the result in string operations (e.g., template literals, <code>Object.keys</code>), narrow it with <code>&amp; string</code>.
+  </div>
+</div>
+
+<!-- R5: Type Predicates & Assertion Functions -->
+<div class="review-card" id="review_type_predicates">
+  <div class="review-header">
+    <span class="review-title">R5. Type Predicates &amp; Assertion Functions</span>
+    <span class="badge badge-purple">Advanced Type System</span>
+    <span class="review-meta">rep 0 &middot; last reviewed 2026-06-01 &middot; 1 day ago</span>
+  </div>
+  <div class="review-reminder"><code>param is Type</code> for custom type guards in return type. <code>asserts param is Type</code> for assertion functions that throw on failure. Both narrow types in subsequent code.</div>
+
+  <div class="review-pattern">
+    <strong>Key Pattern</strong>
+    <div class="code-example">
+<pre><code>function isString(x: unknown): x is string {
+  return typeof x === "string";
+}
+
+function assertString(x: unknown): asserts x is string {
+  if (typeof x !== "string") throw new Error("Not a string");
+}
+
+const val: unknown = "hello";
+if (isString(val)) {
+  val.toUpperCase(); // narrowed to string
+}
+assertString(val);
+val.toUpperCase(); // narrowed to string after assertion</code></pre>
+    </div>
+  </div>
+
+  <div class="review-challenge">
+    <strong>Challenge Exercise</strong>
+    <p>Write a type guard <code>isNonNull&lt;T&gt;(val: T): val is NonNullable&lt;T&gt;</code> and use it to filter an array: <code>[1, null, 2, undefined, 3].filter(isNonNull)</code> &mdash; the result should be typed as <code>number[]</code>.</p>
+  </div>
+
+  <div class="review-pitfall">
+    <strong>#1 Pitfall:</strong> The compiler <em>trusts</em> your predicate unconditionally. If your runtime check doesn't match the type assertion, you get silent type mismatches. Always ensure the check logic truly validates the type.
+  </div>
+</div>
+
+<!-- R6: satisfies Operator -->
+<div class="review-card" id="review_satisfies">
+  <div class="review-header">
+    <span class="review-title">R6. satisfies Operator</span>
+    <span class="badge badge-purple">Advanced Type System</span>
+    <span class="review-meta">rep 0 &middot; last reviewed 2026-06-01 &middot; 1 day ago</span>
+  </div>
+  <div class="review-reminder"><code>expr satisfies Type</code> validates type compatibility without widening. Preserves literal types and specific method availability while ensuring the value conforms to a type.</div>
+
+  <div class="review-pattern">
+    <strong>Key Pattern</strong>
+    <div class="code-example">
+<pre><code>const config = {
+  port: 3000,
+  host: "localhost"
+} satisfies Record&lt;string, string | number&gt;;
+
+// config.port is still number (not string | number)
+// config.host is still string (not string | number)
+config.port.toFixed(2); // works &mdash; type is number
+config.host.toUpperCase(); // works &mdash; type is string</code></pre>
+    </div>
+  </div>
+
+  <div class="review-challenge">
+    <strong>Challenge Exercise</strong>
+    <p>Define a <code>type Route = { path: string; method: "GET" | "POST" }</code>. Create a routes object <code>{ home: ..., submit: ... }</code> using <code>satisfies Record&lt;string, Route&gt;</code>. Verify that <code>routes.home.method</code> retains the literal type <code>"GET"</code> rather than widening to <code>"GET" | "POST"</code>.</p>
+  </div>
+
+  <div class="review-pitfall">
+    <strong>#1 Pitfall:</strong> Confusing <code>satisfies</code> with <code>as</code>. <code>as</code> <em>overrides</em> the inferred type (unsafe &mdash; can lie to the compiler). <code>satisfies</code> <em>validates</em> without changing the inferred type (safe).
+  </div>
+</div>
+
+</div><!-- end review-section -->
+
+<!-- ============================================================ -->
+<!-- NEW CONCEPTS: Functions & Patterns                           -->
+<!-- ============================================================ -->
+<div class="topic-section">
+<div class="topic-section-header">
+  <span class="section-num">3</span>
+  Week 3: Functions &amp; Patterns
+</div>
+
+<!-- ============================================================ -->
+<!-- #1 Function Overloads                                        -->
+<!-- ============================================================ -->
+<div class="concept-card" id="function_overloads">
+  <div class="concept-header">
+    <span class="concept-title">1. Function Overloads</span>
+    <span class="ttag">Functions &amp; Patterns</span>
+  </div>
+
+  <div class="why-matters">TypeScript function overloads let you describe functions that accept different argument shapes and return different types accordingly &mdash; essential for DOM APIs, parsers, and any function with polymorphic behavior.</div>
+
+  <div class="explanation">
+    <p>Unlike Java or C#, TypeScript overloads are <strong>not</strong> separate implementations. You write multiple <em>overload signatures</em> (the public API) followed by a single <em>implementation signature</em> (the actual function body). The implementation signature is invisible to callers &mdash; only the overload signatures are callable.</p>
+    <ul>
+    <li><a href="typescript-guides/typescript-guide-2026-07-04.html">2026-07-04</a> (Day 31)</li>
+      <li>Overload signatures appear first, each with their own parameter and return types</li>
+      <li>The implementation signature must be <strong>compatible</strong> with all overloads (usually wider types)</li>
+      <li>TypeScript resolves overloads top-to-bottom &mdash; put the most specific signature first</li>
+      <li>Only the overload signatures are visible to callers; the implementation signature is hidden</li>
+    </ul>
+  </div>
+
+  <!-- Simple Example -->
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &mdash; Basic Overload</div>
+<pre><code>// Overload signatures (public API)
+function greet(name: string): string;
+function greet(names: string[]): string[];
+
+// Implementation signature (hidden from callers)
+function greet(input: string | string[]): string | string[] {
+  if (typeof input === "string") {
+    return `Hello, ${input}!`;
+  }
+  return input.map(name =&gt; `Hello, ${name}!`);
+}
+
+const single = greet("Alice");    // type: string
+const multi = greet(["A", "B"]);  // type: string[]
+// greet(42);                     // Error: no matching overload</code></pre>
+  </div>
+
+  <!-- Intermediate: createElement-style -->
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &mdash; DOM-style Overload (different return types based on input)</div>
+<pre><code>function createElement(tag: "input"): HTMLInputElement;
+function createElement(tag: "canvas"): HTMLCanvasElement;
+function createElement(tag: "div"): HTMLDivElement;
+function createElement(tag: string): HTMLElement;
+
+function createElement(tag: string): HTMLElement {
+  return document.createElement(tag);
+}
+
+const input = createElement("input");   // HTMLInputElement
+const canvas = createElement("canvas"); // HTMLCanvasElement
+const div = createElement("div");       // HTMLDivElement
+const span = createElement("span");     // HTMLElement (generic fallback)
+
+// input.value is available &mdash; compiler knows it's HTMLInputElement
+input.value = "typed correctly";</code></pre>
+  </div>
+
+  <!-- Real-world: event handler overload -->
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &mdash; Event Handler Overload</div>
+<pre><code>interface ClickEvent { type: "click"; x: number; y: number }
+interface KeyEvent { type: "key"; key: string; code: number }
+
+function on(event: "click", handler: (e: ClickEvent) =&gt; void): void;
+function on(event: "key", handler: (e: KeyEvent) =&gt; void): void;
+
+function on(
+  event: string,
+  handler: (e: ClickEvent | KeyEvent) =&gt; void
+): void {
+  // register handler...
+}
+
+on("click", (e) =&gt; {
+  console.log(e.x, e.y);   // e is ClickEvent, x/y available
+});
+on("key", (e) =&gt; {
+  console.log(e.key);       // e is KeyEvent, key available
+});</code></pre>
+  </div>
+
+  <!-- When NOT to use overloads -->
+  <div class="callout-warning">
+    <strong>When NOT to Use Overloads</strong>
+    <p>If all overload signatures have the same return type, use a union parameter instead. If the relationship between input and output is mechanical, a generic or conditional type is cleaner.</p>
+    <div class="mistake">&#10060; Unnecessary overload &mdash; same return type:<br><code>function len(s: string): number;</code><br><code>function len(a: unknown[]): number;</code><br><code>function len(x: string | unknown[]): number { return x.length; }</code></div>
+    <div class="correct">&#9989; Simple union parameter:<br><code>function len(x: string | unknown[]): number { return x.length; }</code></div>
+  </div>
+
+  <!-- Overloads vs Conditional Return Types -->
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &mdash; Overloads vs Conditional Return Types</div>
+<pre><code>// Approach 1: Overloads (explicit, readable)
+function parse(input: string): object;
+function parse(input: Buffer): object;
+function parse(input: string | Buffer): object {
+  return JSON.parse(typeof input === "string" ? input : input.toString());
+}
+
+// Approach 2: Conditional return type (one signature, type-level logic)
+function format&lt;T extends string | number&gt;(
+  value: T
+): T extends string ? string : number {
+  if (typeof value === "string") {
+    return value.toUpperCase() as any; // need assertion inside
+  }
+  return (value * 100) as any;
+}
+
+// Overloads: better when signatures are very different
+// Conditionals: better when there's a systematic input/output mapping</code></pre>
+  </div>
+
+  <div class="callout-warning">
+    <strong>Common Mistakes</strong>
+    <div class="mistake">&#10060; Implementation signature too narrow &mdash; must handle all overloads:<br><code>function foo(x: string): string;</code><br><code>function foo(x: number): number;</code><br><code>function foo(x: string): string | number { ... }</code> // Error!</div>
+    <div class="correct">&#9989; Implementation signature wide enough:<br><code>function foo(x: string | number): string | number { ... }</code></div>
+    <div class="mistake">&#10060; Different parameter count without optional params:<br><code>function bar(a: string): void;</code><br><code>function bar(a: string, b: number): void;</code><br><code>function bar(a: string, b: number): void { ... }</code> // Missing overload for 1-arg case</div>
+    <div class="correct">&#9989; Implementation handles all arities:<br><code>function bar(a: string, b?: number): void { ... }</code></div>
+  </div>
+
+  <div class="key-rules">
+    <strong>Key Rules</strong>
+    <ul>
+      <li>Overload signatures must appear directly before the implementation &mdash; no other code in between</li>
+      <li>The implementation signature is <strong>not callable</strong> directly &mdash; callers only see overload signatures</li>
+      <li>Order matters: put the most specific overload first (TypeScript resolves top-down)</li>
+      <li>Use overloads when return types differ based on input; use unions/generics for simpler cases</li>
+      <li>Method overloads in classes and interfaces follow the same pattern</li>
+    </ul>
+  </div>
+
+  <div class="exercises">
+    <strong>Exercises</strong>
+    <div class="exercise"><span class="exercise-num">1</span> Write an overloaded <code>fetchData</code> function: when called with <code>"json"</code>, it returns <code>Promise&lt;object&gt;</code>; when called with <code>"text"</code>, it returns <code>Promise&lt;string&gt;</code>; when called with <code>"blob"</code>, it returns <code>Promise&lt;Blob&gt;</code>. Write all signatures and an implementation body.</div>
+    <div class="exercise"><span class="exercise-num">2</span> Write an overloaded <code>parse</code> function: <code>parse(input: string, asArray: true)</code> returns <code>string[]</code>, <code>parse(input: string, asArray: false)</code> returns <code>string</code>, <code>parse(input: string)</code> returns <code>string</code>. The function splits on commas when <code>asArray</code> is true.</div>
+    <div class="exercise"><span class="exercise-num">3</span> Refactor a set of overloads into a single generic with conditional return type: <code>function convert(x: string): number; function convert(x: number): string;</code> &mdash; write it as one generic signature using <code>T extends string | number</code> with a conditional return type.</div>
+  </div>
+
+  <div class="connections">
+    <strong>Connections:</strong> Function overloads pair naturally with <a href="#review_conditional_types">Conditional Types</a> &mdash; sometimes one replaces the other. The <code>createElement</code> pattern connects to <a href="#review_keyof_indexed">keyof &amp; Indexed Access</a> for looking up return types from a tag map. <a href="#generic_constraints">Generic Constraints</a> (next) offer an alternative approach for polymorphic functions.
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- #2 Generic Constraints & Defaults                            -->
+<!-- ============================================================ -->
+<div class="concept-card" id="generic_constraints">
+  <div class="concept-header">
+    <span class="concept-title">2. Generic Constraints &amp; Defaults</span>
+    <span class="ttag">Functions &amp; Patterns</span>
+  </div>
+
+  <div class="why-matters">Raw generics accept anything. Constraints let you require specific shapes from type parameters &mdash; enabling you to write functions that are both flexible and type-safe. Default type parameters make generics easier to use when a common case exists.</div>
+
+  <div class="explanation">
+    <p>You already know <code>&lt;T&gt;</code> from Generics Basics (Day 1). Now we add <strong>constraints</strong> (<code>extends</code>) to require T to have certain properties, <strong>defaults</strong> (<code>= SomeType</code>) to provide fallbacks, and <strong>multiple constraints</strong> using intersections.</p>
+    <ul>
+      <li><code>&lt;T extends SomeType&gt;</code> &mdash; T must be assignable to SomeType</li>
+      <li><code>&lt;T = DefaultType&gt;</code> &mdash; if T is not provided, it defaults to DefaultType</li>
+      <li><code>&lt;T extends A &amp; B&gt;</code> &mdash; T must satisfy both A and B simultaneously</li>
+      <li>Constraints work with <code>infer</code> in conditional types to extract nested structures</li>
+    </ul>
+  </div>
+
+  <!-- Simple: extends constraint -->
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &mdash; Basic Constraint</div>
+<pre><code>// Without constraint &mdash; T could be anything
+function getIdUnsafe&lt;T&gt;(item: T): string {
+  return item.id; // Error: Property 'id' does not exist on type 'T'
+}
+
+// With constraint &mdash; T must have an id property
+function getId&lt;T extends { id: string }&gt;(item: T): string {
+  return item.id; // works: T guaranteed to have id
+}
+
+getId({ id: "abc", name: "Alice" }); // OK &mdash; has id
+getId({ name: "Bob" });               // Error: missing 'id'</code></pre>
+  </div>
+
+  <!-- Intermediate: Multiple constraints with intersection -->
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &mdash; Multiple Constraints &amp; Defaults</div>
+<pre><code>interface Serializable {
+  serialize(): string;
+}
+
+interface Loggable {
+  log(level: string): void;
+}
+
+// T must satisfy BOTH interfaces
+function process&lt;T extends Serializable &amp; Loggable&gt;(item: T): string {
+  item.log("info");
+  return item.serialize();
+}
+
+// Default type parameter
+interface ApiResponse&lt;TData = unknown, TError = Error&gt; {
+  data: TData | null;
+  error: TError | null;
+  status: number;
+}
+
+// All three usages are valid:
+type UserResponse = ApiResponse&lt;{ name: string }&gt;;       // TError defaults to Error
+type SimpleResponse = ApiResponse;                        // both default
+type CustomResponse = ApiResponse&lt;string, CustomError&gt;;   // both explicit</code></pre>
+  </div>
+
+  <!-- Real-world: type-safe merge function -->
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &mdash; Type-Safe Merge Function</div>
+<pre><code>function merge&lt;
+  T extends Record&lt;string, unknown&gt;,
+  U extends Record&lt;string, unknown&gt;
+&gt;(target: T, source: U): T &amp; U {
+  return { ...target, ...source };
+}
+
+const result = merge(
+  { name: "Alice", age: 30 },
+  { email: "alice@example.com", active: true }
+);
+// type: { name: string; age: number } &amp; { email: string; active: boolean }
+
+result.name;   // string
+result.email;  // string
+result.active; // boolean</code></pre>
+  </div>
+
+  <!-- Real-world: generic repository -->
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &mdash; Generic Repository Pattern</div>
+<pre><code>interface Entity {
+  id: string;
+  createdAt: Date;
+}
+
+class Repository&lt;T extends Entity&gt; {
+  private items = new Map&lt;string, T&gt;();
+
+  save(item: T): void {
+    this.items.set(item.id, item);
+  }
+
+  findById(id: string): T | undefined {
+    return this.items.get(id);
+  }
+
+  findAll(): T[] {
+    return [...this.items.values()];
+  }
+
+  // Constraint lets us access id and createdAt on any T
+  findRecent(since: Date): T[] {
+    return this.findAll().filter(item =&gt; item.createdAt &gt; since);
+  }
+}
+
+interface User extends Entity { name: string; email: string }
+const userRepo = new Repository&lt;User&gt;();
+userRepo.save({ id: "1", name: "Alice", email: "a@b.com", createdAt: new Date() });
+
+const user = userRepo.findById("1");
+// type: User | undefined &mdash; full User type preserved</code></pre>
+  </div>
+
+  <!-- infer in constraints -->
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &mdash; infer in Constraint Position</div>
+<pre><code>// Extract the resolved type from a Promise
+type UnwrapPromise&lt;T&gt; = T extends Promise&lt;infer U&gt; ? U : T;
+
+type A = UnwrapPromise&lt;Promise&lt;string&gt;&gt;;   // string
+type B = UnwrapPromise&lt;Promise&lt;number[]&gt;&gt;; // number[]
+type C = UnwrapPromise&lt;boolean&gt;;            // boolean (not a Promise)
+
+// Extract function argument types
+type FirstArg&lt;T&gt; = T extends (first: infer A, ...rest: any[]) =&gt; any ? A : never;
+type D = FirstArg&lt;(x: string, y: number) =&gt; void&gt;; // string</code></pre>
+  </div>
+
+  <div class="callout-warning">
+    <strong>Common Mistakes</strong>
+    <div class="mistake">&#10060; Over-constraining &mdash; too specific, limits reusability:<br><code>function first&lt;T extends string[]&gt;(arr: T): string</code> &mdash; only works with string arrays</div>
+    <div class="correct">&#9989; Constraint just enough:<br><code>function first&lt;T&gt;(arr: T[]): T</code> &mdash; works with any array type</div>
+    <div class="mistake">&#10060; Under-constraining &mdash; need methods but don't require them:<br><code>function serialize&lt;T&gt;(item: T) { return item.toJSON(); }</code> // Error</div>
+    <div class="correct">&#9989; Add the constraint you need:<br><code>function serialize&lt;T extends { toJSON(): string }&gt;(item: T) { return item.toJSON(); }</code></div>
+  </div>
+
+  <div class="key-rules">
+    <strong>Key Rules</strong>
+    <ul>
+      <li><code>extends</code> in generics means "is assignable to" &mdash; the constraint is the minimum shape required</li>
+      <li>Default type parameters must come after non-default ones: <code>&lt;T, U = string&gt;</code> is valid, <code>&lt;T = string, U&gt;</code> is not</li>
+      <li>Constraints propagate: if <code>T extends { id: string }</code>, then <code>T["id"]</code> resolves to <code>string</code></li>
+      <li>Use <code>keyof T</code> in constraints for dynamic key access: <code>&lt;T, K extends keyof T&gt;</code></li>
+      <li>The constraint <code>T extends object</code> excludes primitives; <code>T extends Record&lt;string, unknown&gt;</code> requires plain objects</li>
+    </ul>
+  </div>
+
+  <div class="exercises">
+    <strong>Exercises</strong>
+    <div class="exercise"><span class="exercise-num">1</span> Write a <code>function pluck&lt;T, K extends keyof T&gt;(items: T[], key: K): T[K][]</code> that extracts a single property from an array of objects. Test: <code>pluck([{name: "A", age: 1}, {name: "B", age: 2}], "name")</code> should return <code>string[]</code>.</div>
+    <div class="exercise"><span class="exercise-num">2</span> Create a generic <code>Cache&lt;T extends { id: string }, TTL = number&gt;</code> class with <code>set(item: T, ttl?: TTL)</code> and <code>get(id: string): T | undefined</code> methods. The default TTL type should allow <code>number</code> but let users constrain it to specific literal values.</div>
+    <div class="exercise"><span class="exercise-num">3</span> Write a <code>type DeepReadonly&lt;T&gt;</code> that recursively makes all properties readonly. It should handle nested objects: <code>DeepReadonly&lt;{ a: { b: number } }&gt;</code> should make both levels readonly. Use conditional types to check if a property value is an object.</div>
+  </div>
+
+  <div class="connections">
+    <strong>Connections:</strong> Builds directly on <a href="#review_keyof_indexed">keyof &amp; Indexed Access</a> for the <code>K extends keyof T</code> pattern. Constraints + <code>infer</code> tie into <a href="#review_conditional_types">Conditional Types</a>. The repository pattern leads naturally to <a href="#branded_types">Branded Types</a> (next) for distinguishing entity IDs at the type level.
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- #3 Branded/Opaque Types                                      -->
+<!-- ============================================================ -->
+<div class="concept-card" id="branded_types">
+  <div class="concept-header">
+    <span class="concept-title">3. Branded/Opaque Types</span>
+    <span class="ttag">Functions &amp; Patterns</span>
+  </div>
+
+  <div class="why-matters">TypeScript uses structural typing &mdash; two types with the same shape are interchangeable. Branded types add a phantom tag to create nominal-like typing, preventing you from accidentally swapping a UserId for an Email even though both are strings.</div>
+
+  <div class="explanation">
+    <p>The core problem: <code>string</code> is <code>string</code>. A function that takes a <code>userId: string</code> will happily accept an email address, a URL, or any other string. In large codebases, this causes subtle bugs. Branded types solve this by intersecting a base type with a phantom tag that exists only at compile time.</p>
+    <ul>
+      <li>A <strong>brand</strong> is a property that never exists at runtime &mdash; it's purely for the type checker</li>
+      <li>Use <code>unique symbol</code> or a literal string for the brand property</li>
+      <li>Constructor functions validate at runtime and cast to the branded type</li>
+      <li>Branded types are zero-cost at runtime &mdash; no extra memory or overhead</li>
+    </ul>
+  </div>
+
+  <!-- Simple: the problem -->
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &mdash; The Problem (No Branding)</div>
+<pre><code>// Both are just strings &mdash; easily confused
+function sendEmail(to: string, userId: string) { /* ... */ }
+
+const email = "alice@example.com";
+const userId = "usr_12345";
+
+// Oops! Arguments swapped &mdash; compiles fine, breaks at runtime
+sendEmail(userId, email); // no error, but wrong!</code></pre>
+  </div>
+
+  <!-- Solution: branded types -->
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &mdash; Branded Types with unique symbol</div>
+<pre><code>// Declare branded types
+declare const EmailBrand: unique symbol;
+declare const UserIdBrand: unique symbol;
+
+type Email = string &amp; { readonly [EmailBrand]: typeof EmailBrand };
+type UserId = string &amp; { readonly [UserIdBrand]: typeof UserIdBrand };
+
+// Constructor functions &mdash; validate and brand
+function Email(value: string): Email {
+  if (!value.includes("@")) throw new Error(`Invalid email: ${value}`);
+  return value as Email;
+}
+
+function UserId(value: string): UserId {
+  if (!value.startsWith("usr_")) throw new Error(`Invalid user ID: ${value}`);
+  return value as UserId;
+}
+
+// Now the function is type-safe
+function sendEmail(to: Email, userId: UserId) { /* ... */ }
+
+const email = Email("alice@example.com");
+const userId = UserId("usr_12345");
+
+sendEmail(email, userId);    // OK
+sendEmail(userId, email);    // Error: UserId not assignable to Email
+sendEmail("raw@string", userId); // Error: string not assignable to Email</code></pre>
+  </div>
+
+  <!-- Alternative: simpler brand pattern -->
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &mdash; Simpler Brand Pattern (string literal)</div>
+<pre><code>// Lighter-weight pattern using a string literal brand
+type Brand&lt;T, B extends string&gt; = T &amp; { readonly __brand: B };
+
+type Meters = Brand&lt;number, "Meters"&gt;;
+type Feet = Brand&lt;number, "Feet"&gt;;
+
+function metersToFeet(m: Meters): Feet {
+  return (m * 3.28084) as Feet;
+}
+
+function feetToMeters(f: Feet): Meters {
+  return (f / 3.28084) as Meters;
+}
+
+const height = 1.8 as Meters;
+const inFeet = metersToFeet(height);   // OK: Feet
+
+// metersToFeet(inFeet);  // Error: Feet not assignable to Meters
+// metersToFeet(42);       // Error: number not assignable to Meters</code></pre>
+  </div>
+
+  <!-- Real-world: validated types with Zod-like pattern -->
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &mdash; Validated Branded Types (Production Pattern)</div>
+<pre><code>type Brand&lt;T, B extends string&gt; = T &amp; { readonly __brand: B };
+
+type PositiveNumber = Brand&lt;number, "PositiveNumber"&gt;;
+type NonEmptyString = Brand&lt;string, "NonEmptyString"&gt;;
+type Percentage = Brand&lt;number, "Percentage"&gt;;
+
+// Smart constructors with validation
+function PositiveNumber(n: number): PositiveNumber {
+  if (n &lt;= 0) throw new RangeError(`Expected positive, got ${n}`);
+  return n as PositiveNumber;
+}
+
+function Percentage(n: number): Percentage {
+  if (n &lt; 0 || n &gt; 100) throw new RangeError(`Expected 0-100, got ${n}`);
+  return n as Percentage;
+}
+
+// Type-safe calculations
+function calculateDiscount(price: PositiveNumber, pct: Percentage): PositiveNumber {
+  return PositiveNumber(price * (1 - pct / 100));
+}
+
+const price = PositiveNumber(49.99);
+const discount = Percentage(15);
+const final = calculateDiscount(price, discount);
+
+// calculateDiscount(49.99, 15);          // Error: number not assignable
+// calculateDiscount(discount, price);    // Error: types swapped</code></pre>
+  </div>
+
+  <div class="callout-warning">
+    <strong>Common Mistakes</strong>
+    <div class="mistake">&#10060; Forgetting runtime validation &mdash; the brand is compile-time only:<br><code>const bad = "not-an-email" as Email;</code> // compiles but no validation!</div>
+    <div class="correct">&#9989; Always use constructor functions that validate:<br><code>const good = Email("user@example.com");</code> // throws if invalid</div>
+    <div class="mistake">&#10060; Expecting brand to exist at runtime:<br><code>if (value.__brand === "Email") { ... }</code> // __brand is undefined at runtime</div>
+    <div class="correct">&#9989; Use type guards for runtime checks:<br><code>function isEmail(v: string): v is Email { return v.includes("@"); }</code></div>
+  </div>
+
+  <div class="key-rules">
+    <strong>Key Rules</strong>
+    <ul>
+      <li>Branded types are <strong>purely compile-time</strong> &mdash; no runtime overhead, no extra properties</li>
+      <li>Always pair a branded type with a constructor function that validates the value</li>
+      <li><code>as BrandedType</code> should only appear inside the constructor function, never in application code</li>
+      <li>Branded types compose: <code>type ValidatedUserId = UserId &amp; { readonly __validated: true }</code></li>
+      <li>Libraries like Zod, io-ts, and Effect use branded types extensively for validation</li>
+    </ul>
+  </div>
+
+  <div class="exercises">
+    <strong>Exercises</strong>
+    <div class="exercise"><span class="exercise-num">1</span> Create branded types for <code>Email</code>, <code>Password</code> (min 8 chars, at least one number), and <code>Username</code> (alphanumeric, 3-20 chars). Write constructor functions with proper validation for each. Write a <code>registerUser(email: Email, password: Password, username: Username)</code> function.</div>
+    <div class="exercise"><span class="exercise-num">2</span> Create <code>type USD = Brand&lt;number, "USD"&gt;</code> and <code>type EUR = Brand&lt;number, "EUR"&gt;</code>. Write a <code>convert(amount: USD, rate: PositiveNumber): EUR</code> function. Verify that <code>convert(eurAmount, rate)</code> produces a type error.</div>
+    <div class="exercise"><span class="exercise-num">3</span> Combine branded types with <a href="#review_type_predicates">type predicates</a>: write <code>isPositiveNumber(n: number): n is PositiveNumber</code> and use it with <code>Array.filter</code> to get a <code>PositiveNumber[]</code> from a <code>number[]</code>.</div>
+  </div>
+
+  <div class="connections">
+    <strong>Connections:</strong> Branded types rely on <a href="#review_type_predicates">Type Predicates</a> for runtime narrowing and <a href="#review_satisfies">satisfies</a> for validating branded values inline. The <code>Brand&lt;T, B&gt;</code> utility type uses the same intersection patterns from <a href="#review_mapped_types">Mapped Types</a>. Constructor functions are a natural use case for <a href="#function_overloads">Function Overloads</a> when you want to accept multiple input formats.
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- #4 this Types & Fluent Interfaces                            -->
+<!-- ============================================================ -->
+<div class="concept-card" id="this_types">
+  <div class="concept-header">
+    <span class="concept-title">4. <code>this</code> Types &amp; Fluent Interfaces</span>
+    <span class="ttag">Functions &amp; Patterns</span>
+  </div>
+
+  <div class="why-matters">The polymorphic <code>this</code> type in TypeScript refers to the type of the current class &mdash; including subclasses. It enables the fluent interface pattern (method chaining) where each method returns <code>this</code>, and subclass methods automatically return the correct subclass type.</div>
+
+  <div class="explanation">
+    <p>When a method returns <code>this</code>, TypeScript understands that the return type is the actual concrete class &mdash; not just the base class. This means inherited methods in subclasses return the subclass type automatically, enabling seamless chaining across inheritance hierarchies.</p>
+    <ul>
+      <li><code>this</code> as a type &mdash; polymorphic, changes meaning based on the concrete class</li>
+      <li>Fluent interface: every mutating method returns <code>this</code> for chaining</li>
+      <li><code>ThisParameterType&lt;T&gt;</code> &mdash; extracts the <code>this</code> type from a function type</li>
+      <li><code>OmitThisParameter&lt;T&gt;</code> &mdash; removes the <code>this</code> parameter from a function type</li>
+      <li>Arrow functions don't have their own <code>this</code> &mdash; they capture it from the enclosing scope</li>
+    </ul>
+  </div>
+
+  <!-- Simple: returning this for chaining -->
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &mdash; Basic Fluent Interface</div>
+<pre><code>class QueryBuilder {
+  private conditions: string[] = [];
+  private sortField?: string;
+  private maxResults?: number;
+
+  where(condition: string): this {
+    this.conditions.push(condition);
+    return this;
+  }
+
+  orderBy(field: string): this {
+    this.sortField = field;
+    return this;
+  }
+
+  limit(n: number): this {
+    this.maxResults = n;
+    return this;
+  }
+
+  build(): string {
+    let query = "SELECT * FROM table";
+    if (this.conditions.length) {
+      query += " WHERE " + this.conditions.join(" AND ");
+    }
+    if (this.sortField) query += ` ORDER BY ${this.sortField}`;
+    if (this.maxResults) query += ` LIMIT ${this.maxResults}`;
+    return query;
+  }
+}
+
+// Fluent chaining
+const query = new QueryBuilder()
+  .where("age &gt; 18")
+  .where("active = true")
+  .orderBy("name")
+  .limit(10)
+  .build();
+// "SELECT * FROM table WHERE age &gt; 18 AND active = true ORDER BY name LIMIT 10"</code></pre>
+  </div>
+
+  <!-- Intermediate: this type preserves subclass -->
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &mdash; this Type with Inheritance</div>
+<pre><code>class BasicBuilder {
+  protected data: Record&lt;string, unknown&gt; = {};
+
+  set(key: string, value: unknown): this {
+    this.data[key] = value;
+    return this;
+  }
+
+  toJSON(): string {
+    return JSON.stringify(this.data);
+  }
+}
+
+class TimestampedBuilder extends BasicBuilder {
+  withTimestamp(): this {
+    this.data.createdAt = new Date().toISOString();
+    return this;
+  }
+}
+
+// Because set() returns 'this', chaining works correctly on the subclass
+const json = new TimestampedBuilder()
+  .set("name", "Alice")       // returns TimestampedBuilder (not BasicBuilder!)
+  .withTimestamp()             // still TimestampedBuilder &mdash; this method is available
+  .set("role", "admin")       // still TimestampedBuilder
+  .toJSON();
+
+// Without 'this' return type, .set() would return BasicBuilder,
+// and .withTimestamp() would cause a type error</code></pre>
+  </div>
+
+  <!-- Real-world: Builder pattern with typed steps -->
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &mdash; Explicit this Parameter</div>
+<pre><code>// You can declare 'this' as a parameter for functions
+function logName(this: { name: string }) {
+  console.log(this.name);
+}
+
+const obj = { name: "Alice", logName };
+obj.logName(); // "Alice"
+
+// const fn = obj.logName;
+// fn(); // Error: 'this' context of type 'void' is not assignable
+
+// Utility types for this
+type LogNameFn = typeof logName;
+type ThisType = ThisParameterType&lt;LogNameFn&gt;; // { name: string }
+type Bare = OmitThisParameter&lt;LogNameFn&gt;;     // () =&gt; void</code></pre>
+  </div>
+
+  <!-- Real-world: chainable validation builder -->
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &mdash; Chainable Validation Builder</div>
+<pre><code>class Validator&lt;T&gt; {
+  private checks: Array&lt;(value: T) =&gt; string | null&gt; = [];
+
+  addCheck(fn: (value: T) =&gt; string | null): this {
+    this.checks.push(fn);
+    return this;
+  }
+
+  validate(value: T): { valid: boolean; errors: string[] } {
+    const errors = this.checks
+      .map(check =&gt; check(value))
+      .filter((e): e is string =&gt; e !== null);
+    return { valid: errors.length === 0, errors };
+  }
+}
+
+class StringValidator extends Validator&lt;string&gt; {
+  minLength(n: number): this {
+    return this.addCheck(v =&gt;
+      v.length &lt; n ? `Must be at least ${n} characters` : null
+    );
+  }
+
+  matches(pattern: RegExp): this {
+    return this.addCheck(v =&gt;
+      !pattern.test(v) ? `Must match ${pattern}` : null
+    );
+  }
+}
+
+const passwordValidator = new StringValidator()
+  .minLength(8)
+  .matches(/[0-9]/)
+  .matches(/[A-Z]/)
+  .addCheck(v =&gt; v.includes(" ") ? "Must not contain spaces" : null);
+
+const result = passwordValidator.validate("Hello1");
+// { valid: false, errors: ["Must be at least 8 characters"] }</code></pre>
+  </div>
+
+  <div class="callout-warning">
+    <strong>Common Mistakes</strong>
+    <div class="mistake">&#10060; Forgetting <code>return this</code> in fluent methods:<br><code>where(cond: string): this { this.conditions.push(cond); }</code> // returns undefined</div>
+    <div class="correct">&#9989; Always return this:<br><code>where(cond: string): this { this.conditions.push(cond); return this; }</code></div>
+    <div class="mistake">&#10060; Using arrow functions for methods that need <code>this</code>:<br><code>class Foo { bar = () =&gt; { return this; } }</code> // this type is Foo, not polymorphic this</div>
+    <div class="correct">&#9989; Use regular methods for polymorphic this:<br><code>class Foo { bar(): this { return this; } }</code></div>
+  </div>
+
+  <div class="key-rules">
+    <strong>Key Rules</strong>
+    <ul>
+      <li><code>this</code> as a return type is polymorphic &mdash; it refers to the <em>concrete</em> class, not the declaring class</li>
+      <li>Arrow functions capture <code>this</code> lexically &mdash; they don't have their own polymorphic <code>this</code></li>
+      <li>You can declare <code>this</code> as a first parameter: <code>function foo(this: MyType)</code> &mdash; it's erased at compile time</li>
+      <li><code>ThisParameterType&lt;T&gt;</code> extracts and <code>OmitThisParameter&lt;T&gt;</code> removes the <code>this</code> parameter type</li>
+      <li>The fluent/builder pattern works best when all methods return <code>this</code>, not a specific class name</li>
+    </ul>
+  </div>
+
+  <div class="exercises">
+    <strong>Exercises</strong>
+    <div class="exercise"><span class="exercise-num">1</span> Build a fluent <code>EventEmitter</code> class with <code>on(event: string, handler: Function): this</code>, <code>off(event: string, handler: Function): this</code>, and <code>emit(event: string, ...args: unknown[]): this</code>. Create a subclass <code>TypedEmitter</code> that adds a <code>once(event: string, handler: Function): this</code> method. Verify that chaining works across both classes.</div>
+    <div class="exercise"><span class="exercise-num">2</span> Write a <code>HttpRequest</code> builder: <code>new HttpRequest().url("/api").method("POST").header("Content-Type", "json").body({ data: 1 }).send()</code>. Each method except <code>send()</code> returns <code>this</code>. Create a subclass <code>AuthenticatedRequest</code> with <code>.bearerToken(token: string): this</code>.</div>
+    <div class="exercise"><span class="exercise-num">3</span> Use the explicit <code>this</code> parameter to write a function <code>function describe(this: { name: string; age: number }): string</code> that returns a formatted description. Call it using <code>.call()</code> with a matching object. Then use <code>OmitThisParameter</code> to create a version without the <code>this</code> requirement.</div>
+  </div>
+
+  <div class="connections">
+    <strong>Connections:</strong> The <code>this</code> return type works like a special case of <a href="#generic_constraints">Generic Constraints</a> &mdash; the type is implicitly constrained to the current class. The builder pattern benefits from <a href="#branded_types">Branded Types</a> for ensuring required fields are set. Fluent methods connect to <a href="#async_patterns">Async Patterns</a> (next) when you need to chain <code>Promise</code>-returning builder steps.
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- #5 Async Patterns & Promise Typing                           -->
+<!-- ============================================================ -->
+<div class="concept-card" id="async_patterns">
+  <div class="concept-header">
+    <span class="concept-title">5. Async Patterns &amp; Promise Typing</span>
+    <span class="ttag">Functions &amp; Patterns</span>
+  </div>
+
+  <div class="why-matters">Nearly every TypeScript application deals with async operations &mdash; API calls, file I/O, timers. Understanding how TypeScript types Promises, async/await, and async iteration prevents an entire class of bugs where you accidentally work with Promise&lt;T&gt; instead of T.</div>
+
+  <div class="explanation">
+    <p><code>async</code> functions always return <code>Promise&lt;T&gt;</code>. TypeScript infers the inner type from your <code>return</code> statements. <code>await</code> unwraps a <code>Promise&lt;T&gt;</code> to <code>T</code>. The <code>Awaited&lt;T&gt;</code> utility type (built-in since TS 4.5) recursively unwraps nested Promises at the type level.</p>
+    <ul>
+      <li><code>async function f(): Promise&lt;T&gt;</code> &mdash; return type is always a Promise</li>
+      <li><code>await</code> unwraps one level of Promise; <code>Awaited&lt;T&gt;</code> unwraps all levels</li>
+      <li><code>Promise.all</code> preserves tuple types: <code>[Promise&lt;A&gt;, Promise&lt;B&gt;]</code> becomes <code>[A, B]</code></li>
+      <li><code>Promise.allSettled</code> returns <code>PromiseSettledResult&lt;T&gt;[]</code> with <code>status</code> discriminant</li>
+      <li>Async iterators: <code>AsyncIterable&lt;T&gt;</code> and <code>for await...of</code> for streaming data</li>
+    </ul>
+  </div>
+
+  <!-- Simple: basic Promise typing -->
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &mdash; Promise Basics</div>
+<pre><code>// Explicit return type
+async function fetchUser(id: string): Promise&lt;{ name: string; age: number }&gt; {
+  const response = await fetch(`/api/users/${id}`);
+  return response.json(); // inferred as Promise&lt;any&gt; from json()
+}
+
+// TypeScript infers the return type from the function body
+async function getGreeting() {
+  return "hello"; // inferred: Promise&lt;string&gt;
+}
+
+// await unwraps the Promise
+async function main() {
+  const user = await fetchUser("1");  // type: { name: string; age: number }
+  const greeting = await getGreeting(); // type: string
+
+  // Common mistake: forgetting await
+  const oops = fetchUser("1"); // type: Promise&lt;{ name: string; age: number }&gt;
+  // oops.name; // Error: Property 'name' does not exist on type 'Promise&lt;...&gt;'
+}</code></pre>
+  </div>
+
+  <!-- Intermediate: Awaited<T> and Promise.all -->
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &mdash; Awaited&lt;T&gt; and Promise.all</div>
+<pre><code>// Awaited recursively unwraps Promises
+type A = Awaited&lt;Promise&lt;string&gt;&gt;;            // string
+type B = Awaited&lt;Promise&lt;Promise&lt;number&gt;&gt;&gt;;   // number (recursive!)
+type C = Awaited&lt;string&gt;;                      // string (non-Promise passes through)
+
+// Promise.all preserves tuple types
+async function loadDashboard() {
+  const [user, posts, settings] = await Promise.all([
+    fetchUser("1"),                              // Promise&lt;User&gt;
+    fetch("/api/posts").then(r =&gt; r.json()),     // Promise&lt;any&gt;
+    fetch("/api/settings").then(r =&gt; r.json()),  // Promise&lt;any&gt;
+  ]);
+  // user: User, posts: any, settings: any
+  // Tuple type preserved &mdash; not flattened to a union
+
+  return { user, posts, settings };
+}
+
+// Promise.allSettled &mdash; never rejects
+async function loadWithFallbacks() {
+  const results = await Promise.allSettled([
+    fetchUser("1"),
+    fetchUser("2"),
+  ]);
+  // type: PromiseSettledResult&lt;{ name: string; age: number }&gt;[]
+
+  for (const result of results) {
+    if (result.status === "fulfilled") {
+      console.log(result.value.name); // narrowed: value is User
+    } else {
+      console.log(result.reason);      // narrowed: reason is any
+    }
+  }
+}</code></pre>
+  </div>
+
+  <!-- Real-world: typed API client -->
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &mdash; Type-Safe API Client</div>
+<pre><code>interface ApiEndpoints {
+  "/users": { response: { id: string; name: string }[] };
+  "/users/:id": { response: { id: string; name: string; email: string } };
+  "/posts": { response: { id: string; title: string }[] };
+}
+
+async function apiGet&lt;T extends keyof ApiEndpoints&gt;(
+  endpoint: T
+): Promise&lt;ApiEndpoints[T]["response"]&gt; {
+  const response = await fetch(endpoint);
+  return response.json();
+}
+
+// Return types are inferred from the endpoint map
+const users = await apiGet("/users");
+// type: { id: string; name: string }[]
+
+const posts = await apiGet("/posts");
+// type: { id: string; title: string }[]
+
+// apiGet("/unknown"); // Error: "/unknown" not in keyof ApiEndpoints</code></pre>
+  </div>
+
+  <!-- Advanced: async iterators -->
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &mdash; Async Generators for Pagination</div>
+<pre><code>interface Page&lt;T&gt; {
+  items: T[];
+  nextCursor?: string;
+}
+
+async function* paginate&lt;T&gt;(
+  fetchPage: (cursor?: string) =&gt; Promise&lt;Page&lt;T&gt;&gt;
+): AsyncGenerator&lt;T[], void, undefined&gt; {
+  let cursor: string | undefined;
+  do {
+    const page = await fetchPage(cursor);
+    yield page.items;
+    cursor = page.nextCursor;
+  } while (cursor);
+}
+
+// Usage with for-await-of
+async function getAllUsers() {
+  const allUsers: { name: string }[] = [];
+
+  for await (const batch of paginate&lt;{ name: string }&gt;(
+    async (cursor) =&gt; {
+      const res = await fetch(`/api/users?cursor=${cursor ?? ""}`);
+      return res.json();
+    }
+  )) {
+    allUsers.push(...batch); // batch is { name: string }[]
+  }
+
+  return allUsers;
+}</code></pre>
+  </div>
+
+  <!-- Error handling -->
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &mdash; Typed Async Error Handling</div>
+<pre><code>// TypeScript catch blocks always type error as 'unknown' (since TS 4.4)
+class ApiError extends Error {
+  constructor(
+    message: string,
+    public statusCode: number,
+    public endpoint: string
+  ) {
+    super(message);
+    this.name = "ApiError";
+  }
+}
+
+async function fetchSafe&lt;T&gt;(url: string): Promise&lt;T&gt; {
+  try {
+    const res = await fetch(url);
+    if (!res.ok) {
+      throw new ApiError(`HTTP ${res.status}`, res.status, url);
+    }
+    return await res.json();
+  } catch (error: unknown) {
+    // Must narrow 'unknown' before using
+    if (error instanceof ApiError) {
+      console.log(`API error at ${error.endpoint}: ${error.statusCode}`);
+      throw error;
+    }
+    if (error instanceof Error) {
+      console.log(`Network error: ${error.message}`);
+    }
+    throw new ApiError("Unknown error", 500, url);
+  }
+}
+
+// Result type pattern for avoiding try/catch
+type Result&lt;T, E = Error&gt; =
+  | { ok: true; value: T }
+  | { ok: false; error: E };
+
+async function fetchResult&lt;T&gt;(url: string): Promise&lt;Result&lt;T, ApiError&gt;&gt; {
+  try {
+    const data = await fetchSafe&lt;T&gt;(url);
+    return { ok: true, value: data };
+  } catch (error) {
+    return { ok: false, error: error as ApiError };
+  }
+}</code></pre>
+  </div>
+
+  <div class="callout-warning">
+    <strong>Common Mistakes</strong>
+    <div class="mistake">&#10060; Forgetting to <code>await</code> &mdash; getting <code>Promise&lt;T&gt;</code> instead of <code>T</code>:<br><code>const user = fetchUser("1"); user.name;</code> // Error: name not on Promise</div>
+    <div class="correct">&#9989; Always await async calls when you need the value:<br><code>const user = await fetchUser("1"); user.name;</code></div>
+    <div class="mistake">&#10060; Returning <code>await</code> unnecessarily in a non-try/catch:<br><code>async function get() { return await fetchUser("1"); }</code> // redundant await</div>
+    <div class="correct">&#9989; Return the Promise directly (unless inside try/catch):<br><code>async function get() { return fetchUser("1"); }</code></div>
+    <div class="mistake">&#10060; Using <code>error: Error</code> in catch block:<br><code>catch (e: Error) { ... }</code> // Error: only 'unknown' or 'any' allowed</div>
+    <div class="correct">&#9989; Use <code>unknown</code> and narrow:<br><code>catch (e: unknown) { if (e instanceof Error) { ... } }</code></div>
+  </div>
+
+  <div class="key-rules">
+    <strong>Key Rules</strong>
+    <ul>
+      <li><code>async</code> functions always return <code>Promise&lt;T&gt;</code> even if you return <code>T</code> directly</li>
+      <li><code>Awaited&lt;T&gt;</code> recursively unwraps: <code>Awaited&lt;Promise&lt;Promise&lt;string&gt;&gt;&gt;</code> is <code>string</code></li>
+      <li><code>Promise.all</code> with a tuple literal preserves each element's type; with an array, types are unioned</li>
+      <li>Catch blocks type errors as <code>unknown</code> &mdash; always narrow before accessing properties</li>
+      <li>Prefer <code>Promise.allSettled</code> over <code>Promise.all</code> when you need all results regardless of individual failures</li>
+      <li>Async generators (<code>async function*</code>) yield <code>AsyncGenerator&lt;Yield, Return, Next&gt;</code></li>
+    </ul>
+  </div>
+
+  <div class="exercises">
+    <strong>Exercises</strong>
+    <div class="exercise"><span class="exercise-num">1</span> Write a typed <code>retry&lt;T&gt;(fn: () =&gt; Promise&lt;T&gt;, attempts: number): Promise&lt;T&gt;</code> function that retries a failed async operation up to N times. It should rethrow the last error if all attempts fail. Add a <code>delay</code> parameter with exponential backoff.</div>
+    <div class="exercise"><span class="exercise-num">2</span> Write a <code>timeout&lt;T&gt;(promise: Promise&lt;T&gt;, ms: number): Promise&lt;T&gt;</code> that rejects with a custom <code>TimeoutError</code> if the promise doesn't resolve within <code>ms</code> milliseconds. Use <code>Promise.race</code>.</div>
+    <div class="exercise"><span class="exercise-num">3</span> Create an async generator <code>pollEndpoint&lt;T&gt;(url: string, intervalMs: number): AsyncGenerator&lt;T&gt;</code> that fetches a URL at intervals and yields the result each time. Use it with <code>for await...of</code> to print updates until a <code>status === "complete"</code> field appears in the response.</div>
+  </div>
+
+  <div class="connections">
+    <strong>Connections:</strong> Async error handling connects directly to <a href="#review_type_predicates">Type Predicates</a> for narrowing <code>unknown</code> errors. The <code>Result</code> type is a discriminated union pattern from Day 2. The typed API client uses <a href="#review_keyof_indexed">keyof &amp; Indexed Access</a> to map endpoints to response types. <code>Awaited&lt;T&gt;</code> is a built-in <a href="#review_conditional_types">Conditional Type</a> using <code>infer</code>.
+  </div>
+</div>
+
+</div><!-- end topic-section -->
+
+<!-- Footer -->
+<footer class="guide-footer">
+  <h2>All Guides</h2>
+  <ul>
+    <li><a href="typescript-guides/typescript-guide-2026-07-09.html">2026-07-09</a> (Day 36)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-07-08.html">2026-07-08</a> (Day 35)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-07-07.html">2026-07-07</a> (Day 34)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-07-06.html">2026-07-06</a> (Day 33)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-07-05.html">2026-07-05</a> (Day 32)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-07-04.html">2026-07-04</a> (Day 31)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-07-03.html">2026-07-03</a> (Day 30)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-07-02.html">2026-07-02</a> (Day 29)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-07-01.html">2026-07-01</a> (Day 28)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-30.html">2026-06-30</a> (Day 27)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-29.html">2026-06-29</a> (Day 26)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-28.html">2026-06-28</a> (Day 25)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-27.html">2026-06-27</a> (Day 24)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-26.html">2026-06-26</a> (Day 23)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-25.html">2026-06-25</a> (Day 22)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-24.html">2026-06-24</a> (Day 21)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-23.html">2026-06-23</a> (Day 20)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-22.html">2026-06-22</a> (Day 19)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-21.html">2026-06-21</a> (Day 18)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-19.html">2026-06-19</a> (Day 17)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-18.html">2026-06-18</a> (Day 16)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-17.html">2026-06-17</a> (Day 15)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-15.html">2026-06-15</a> (Day 14)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-13.html">2026-06-13</a> (Day 13)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-12.html">2026-06-12</a> (Day 12)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-11.html">2026-06-11</a> (Day 11)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-10.html">2026-06-10</a> (Day 10)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-09.html">2026-06-09</a> (Day 9)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-08.html">2026-06-08</a> (Day 8)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-07.html">2026-06-07</a> (Day 7)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-05.html">2026-06-05</a> (Day 6)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-04.html">2026-06-04</a> (Day 5)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-03.html">2026-06-03</a> (Day 4)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-02.html">2026-06-02</a> (Day 3)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-01.html">2026-06-01</a> (Day 2)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-05-31.html">2026-05-31</a> (Day 1)</li>
+  </ul>
+</footer>
+
+</div><!-- end content -->
+</div><!-- end main -->
+
+<script>
+// Theme toggle
+(function() {
+  var toggle = document.getElementById('themeToggle');
+  var html = document.documentElement;
+  var STORAGE_KEY = 'lc-tsguide-theme';
+
+  function setTheme(theme) {
+    html.setAttribute('data-theme', theme);
+    toggle.textContent = theme === 'dark' ? '\u{1F319}' : '\u{2600}\u{FE0F}';
+    try { localStorage.setItem(STORAGE_KEY, theme); } catch(e) {}
+  }
+
+  // Load saved theme
+  try {
+    var saved = localStorage.getItem(STORAGE_KEY);
+    if (saved) setTheme(saved);
+  } catch(e) {}
+
+  toggle.addEventListener('click', function() {
+    var current = html.getAttribute('data-theme') || 'dark';
+    setTheme;
+  });
+})();
+
+// Sidebar active link tracking
+(function() {
+  var links = document.querySelectorAll('.sidebar-nav a');
+  var sections = [];
+  links.forEach(function(link) {
+    var id = link.getAttribute('href').replace('#', '');
+    var el = document.getElementById(id);
+    if (el) sections.push({ link: link, el: el });
+  });
+
+  function updateActive() {
+    var current = null;
+    var scrollY = window.scrollY + 120;
+    for (var i = sections.length - 1; i >= 0; i--) {
+      if (sections[i].el.offsetTop <= scrollY) {
+        current = sections[i];
+        break;
+      }
+    }
+    links.forEach(function(l) { l.classList.remove('active'); });
+    if  current.link.classList.add('active');
+  }
+
+  window.addEventListener('scroll', updateActive);
+  updateActive();
+})();
+</script>
+
+</body>
+</html>

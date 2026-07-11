@@ -1,0 +1,1138 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TypeScript Daily Guide — 2026-07-01 (Day 28)</title>
+<style>
+:root {
+  --bg: #0d1117;
+  --surface: #161b22;
+  --surface2: #1c2129;
+  --border: #30363d;
+  --text: #e6edf3;
+  --text-muted: #8b949e;
+  --accent: #58a6ff;
+  --accent-bg: rgba(56,139,253,0.15);
+  --green: #3fb950;
+  --green-bg: rgba(63,185,80,0.08);
+  --red: #f85149;
+  --red-bg: rgba(248,81,73,0.08);
+  --yellow: #d29922;
+  --yellow-bg: rgba(210,153,34,0.1);
+  --orange: #db6d28;
+  --purple: #bc8cff;
+  --purple-bg: rgba(188,140,255,0.08);
+  --purple-border: rgba(188,140,255,0.2);
+  --link: #58a6ff;
+  --code-bg: #1c2129;
+  --output-bg: #0e1c0e;
+  --output-border: #1a3a1a;
+  --sidebar-bg: #161b22;
+  --sidebar-active: rgba(56,139,253,0.15);
+  --exercise-border: #30363d;
+}
+[data-theme="light"] {
+  --bg: #ffffff;
+  --surface: #f6f8fa;
+  --surface2: #eef1f5;
+  --border: #d0d7de;
+  --text: #1f2328;
+  --text-muted: #656d76;
+  --accent: #0969da;
+  --accent-bg: rgba(9,105,218,0.1);
+  --green: #1a7f37;
+  --green-bg: rgba(26,127,55,0.06);
+  --red: #cf222e;
+  --red-bg: rgba(207,34,46,0.06);
+  --yellow: #9a6700;
+  --yellow-bg: rgba(154,103,0,0.06);
+  --orange: #bc4c00;
+  --purple: #8250df;
+  --purple-bg: rgba(130,80,223,0.06);
+  --purple-border: rgba(130,80,223,0.15);
+  --link: #0969da;
+  --code-bg: #eef1f5;
+  --output-bg: #f0faf0;
+  --output-border: #c6e6c6;
+  --sidebar-bg: #f6f8fa;
+  --sidebar-active: rgba(9,105,218,0.1);
+  --exercise-border: #d0d7de;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;font-size:16px;line-height:1.7;color:var(--text);background:var(--bg);display:flex;min-height:100vh}
+a{color:var(--link);text-decoration:none}
+a:hover{text-decoration:underline}
+
+/* Sidebar */
+.sidebar{position:fixed;top:0;left:0;width:300px;height:100vh;background:var(--sidebar-bg);border-right:1px solid var(--border);overflow-y:auto;padding:20px 0;z-index:100}
+.sidebar-header{padding:16px 20px;border-bottom:1px solid var(--border);margin-bottom:12px}
+.sidebar-header h2{font-size:15px;font-weight:600;color:var(--text)}
+.sidebar-header .date{font-size:13px;color:var(--text-muted);margin-top:2px}
+.sidebar-section{padding:8px 20px 4px;font-size:12px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px}
+.sidebar-section.review-label{color:var(--purple)}
+.sidebar-nav{list-style:none;padding:0}
+.sidebar-nav li a{display:block;padding:6px 20px 6px 28px;font-size:14px;color:var(--text-muted);transition:all 0.15s}
+.sidebar-nav li a:hover,.sidebar-nav li a.active{color:var(--accent);background:var(--sidebar-active);text-decoration:none}
+.sidebar-nav li a .nav-id{font-size:11px;color:var(--text-muted);opacity:0.6;margin-left:6px}
+
+/* Main */
+.main{margin-left:300px;flex:1;padding:40px;max-width:1160px}
+.content{max-width:860px;margin:0 auto}
+
+/* Theme Toggle */
+.theme-toggle{position:fixed;top:16px;right:20px;z-index:200;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:8px 12px;cursor:pointer;color:var(--text);font-size:18px;line-height:1;transition:all 0.15s}
+.theme-toggle:hover{border-color:var(--accent)}
+
+/* Header */
+.guide-header{text-align:center;padding:32px 0 40px;border-bottom:1px solid var(--border);margin-bottom:40px}
+.guide-header h1{font-size:28px;font-weight:700;margin-bottom:8px}
+.guide-header .meta{font-size:15px;color:var(--text-muted)}
+.guide-header .meta span{margin:0 8px}
+.badge{display:inline-block;padding:2px 10px;border-radius:12px;font-size:13px;font-weight:500}
+.badge-blue{background:var(--accent-bg);color:var(--accent)}
+.badge-purple{background:var(--purple-bg);color:var(--purple)}
+
+/* How To Use */
+.how-to-use{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:24px 28px;margin-bottom:40px}
+.how-to-use h2{font-size:18px;margin-bottom:12px}
+.how-to-use ol{padding-left:24px}
+.how-to-use li{margin-bottom:6px;color:var(--text-muted)}
+
+/* Review Section */
+.review-section{margin-bottom:48px}
+.review-section-header{font-size:22px;font-weight:700;padding-bottom:12px;border-bottom:2px solid var(--purple);margin-bottom:28px;display:flex;align-items:center;gap:12px;color:var(--purple)}
+
+/* Review Card */
+.review-card{background:var(--purple-bg);border:1px solid var(--purple-border);border-left:4px solid var(--purple);border-radius:10px;padding:28px;margin-bottom:24px}
+.review-card .review-header{display:flex;align-items:center;gap:12px;margin-bottom:12px;flex-wrap:wrap}
+.review-card .review-title{font-size:18px;font-weight:700;color:var(--purple)}
+.review-card .review-meta{font-size:13px;color:var(--text-muted)}
+.review-card .review-reminder{color:var(--text-muted);font-style:italic;margin-bottom:16px;padding-left:14px;border-left:3px solid var(--purple)}
+.review-card .review-pattern{margin-bottom:16px}
+.review-card .review-pattern strong{display:block;margin-bottom:8px;font-size:14px;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px}
+.review-card .review-challenge{margin-bottom:12px}
+.review-card .review-challenge strong{display:block;margin-bottom:8px;font-size:14px;color:var(--yellow);text-transform:uppercase;letter-spacing:0.5px}
+.review-card .review-challenge p{line-height:1.6}
+.review-card .review-pitfall{background:var(--red-bg);border:1px solid rgba(248,81,73,0.15);border-radius:6px;padding:12px 16px;font-size:14px;line-height:1.6}
+.review-card .review-pitfall strong{color:var(--red);margin-right:4px}
+.review-card code{background:var(--code-bg);padding:2px 6px;border-radius:4px;font-family:'SF Mono','Fira Code','Consolas',monospace;font-size:13px}
+
+/* Topic Section */
+.topic-section{margin-bottom:48px}
+.topic-section-header{font-size:22px;font-weight:700;padding-bottom:12px;border-bottom:2px solid var(--accent);margin-bottom:28px;display:flex;align-items:center;gap:12px}
+.topic-section-header .section-num{background:var(--accent);color:#fff;width:32px;height:32px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:15px;font-weight:700;flex-shrink:0}
+
+/* Concept Card */
+.concept-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:28px;margin-bottom:32px}
+.concept-header{display:flex;align-items:center;gap:12px;margin-bottom:16px;flex-wrap:wrap}
+.concept-title{font-size:20px;font-weight:700}
+.ttag{display:inline-block;padding:2px 10px;border-radius:12px;font-size:12px;font-weight:500;background:var(--accent-bg);color:var(--accent)}
+
+.why-matters{color:var(--text-muted);font-style:italic;margin-bottom:20px;padding-left:14px;border-left:3px solid var(--accent)}
+.explanation{margin-bottom:20px;line-height:1.8}
+.explanation p{margin-bottom:12px}
+.explanation ul,.explanation ol{padding-left:24px;margin-bottom:12px}
+.explanation li{margin-bottom:4px}
+.explanation code{background:var(--code-bg);padding:2px 6px;border-radius:4px;font-family:'SF Mono','Fira Code','Consolas',monospace;font-size:14px}
+.step{display:flex;gap:12px;margin-bottom:10px;align-items:flex-start}
+.step-num{background:var(--accent-bg);color:var(--accent);width:24px;height:24px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;margin-top:3px}
+
+/* Code Examples */
+.code-example{margin-bottom:20px;border:1px solid var(--border);border-radius:8px;overflow:hidden}
+.lang-badge{background:var(--surface2);color:var(--text-muted);font-size:12px;font-weight:600;padding:6px 14px;border-bottom:1px solid var(--border);font-family:'SF Mono','Fira Code','Consolas',monospace}
+pre{margin:0;padding:16px;overflow-x:auto;background:var(--code-bg);font-family:'SF Mono','Fira Code','Consolas',monospace;font-size:13.5px;line-height:1.6;white-space:pre-wrap}
+pre code{background:none;padding:0;font-size:inherit}
+.output{background:var(--output-bg);border-top:1px solid var(--output-border);padding:12px 16px;font-family:'SF Mono','Fira Code','Consolas',monospace;font-size:13px;color:var(--green);white-space:pre-wrap}
+.output::before{content:"Output:";display:block;font-size:11px;font-weight:600;color:var(--text-muted);margin-bottom:4px;text-transform:uppercase;letter-spacing:0.5px}
+.type-result{background:var(--output-bg);border-top:1px solid var(--output-border);padding:12px 16px;font-family:'SF Mono','Fira Code','Consolas',monospace;font-size:13px;color:var(--green);white-space:pre-wrap}
+.type-result::before{content:"Type Result:";display:block;font-size:11px;font-weight:600;color:var(--text-muted);margin-bottom:4px;text-transform:uppercase;letter-spacing:0.5px}
+.type-error{background:var(--red-bg);border-top:1px solid rgba(248,81,73,0.2);padding:12px 16px;font-family:'SF Mono','Fira Code','Consolas',monospace;font-size:13px;color:var(--red);white-space:pre-wrap}
+.type-error::before{content:"Type Error:";display:block;font-size:11px;font-weight:600;color:var(--red);margin-bottom:4px;text-transform:uppercase;letter-spacing:0.5px}
+
+/* Callouts */
+.callout-warning{background:var(--yellow-bg);border:1px solid rgba(210,153,34,0.2);border-radius:8px;padding:20px;margin-bottom:20px}
+.callout-warning strong{color:var(--yellow);display:block;margin-bottom:12px;font-size:16px}
+.mistake,.correct{padding:10px 14px;border-radius:6px;margin-bottom:10px;font-size:14px;line-height:1.6}
+.mistake{background:var(--red-bg);border-left:3px solid var(--red)}
+.mistake code,.correct code{background:var(--code-bg);padding:2px 6px;border-radius:4px;font-family:'SF Mono','Fira Code','Consolas',monospace;font-size:13px}
+.correct{background:var(--green-bg);border-left:3px solid var(--green)}
+
+/* Key Rules */
+.key-rules{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:20px;margin-bottom:20px}
+.key-rules strong{display:block;margin-bottom:10px;font-size:16px}
+.key-rules ul{padding-left:20px}
+.key-rules li{margin-bottom:6px}
+.key-rules code{background:var(--code-bg);padding:2px 6px;border-radius:4px;font-family:'SF Mono','Fira Code','Consolas',monospace;font-size:13px}
+
+/* Exercises */
+.exercises{border:2px dashed var(--exercise-border);border-radius:8px;padding:20px;margin-bottom:20px;margin-left:12px}
+.exercises strong{display:block;margin-bottom:14px;font-size:16px;color:var(--purple)}
+.exercise{margin-bottom:14px;padding-left:38px;position:relative;line-height:1.6}
+.exercise:last-child{margin-bottom:0}
+.exercise-num{position:absolute;left:0;top:2px;background:var(--purple);color:#fff;width:24px;height:24px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:12px;font-weight:700}
+.exercise code{background:var(--code-bg);padding:2px 6px;border-radius:4px;font-family:'SF Mono','Fira Code','Consolas',monospace;font-size:13px}
+
+/* Connections */
+.connections{background:var(--accent-bg);border:1px solid rgba(56,139,253,0.2);border-radius:8px;padding:16px 20px;font-size:14px;color:var(--text-muted)}
+.connections strong{color:var(--accent);margin-right:6px}
+
+/* Cross-links */
+.cross-links{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:20px 24px;margin-bottom:40px;text-align:center}
+.cross-links a{margin:0 10px;font-weight:500}
+
+/* Footer */
+.guide-footer{border-top:1px solid var(--border);padding-top:32px;margin-top:48px}
+.guide-footer h2{font-size:18px;margin-bottom:16px}
+.guide-footer ul{list-style:none;padding:0}
+.guide-footer li{padding:6px 0}
+.guide-footer li a{font-weight:500}
+
+/* Responsive */
+@media(max-width:900px){
+  .sidebar{display:none}
+  .main{margin-left:0}
+  .theme-toggle{top:12px;right:12px}
+}
+</style>
+</head>
+<body>
+
+<!-- Theme Toggle -->
+<button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">&#x1F319;</button>
+
+<!-- Sidebar -->
+<nav class="sidebar">
+  <div class="sidebar-header">
+    <h2>TypeScript Daily Guide</h2>
+    <div class="date">2026-07-01 &mdash; Day 28</div>
+  </div>
+
+  <div class="sidebar-section review-label">Review (6 concepts)</div>
+  <ul class="sidebar-nav">
+    <li><a href="#review_discriminated">Discriminated Unions in Practice <span class="nav-id">R1</span></a></li>
+    <li><a href="#review_immutability">Immutability Patterns <span class="nav-id">R2</span></a></li>
+    <li><a href="#review_infer"><code>infer</code> Mastery <span class="nav-id">R3</span></a></li>
+    <li><a href="#review_workers">Worker Threads Typing <span class="nav-id">R4</span></a></li>
+    <li><a href="#review_migration">Migration: JS &rarr; TS <span class="nav-id">R5</span></a></li>
+    <li><a href="#review_recipes">Advanced Utility Recipes <span class="nav-id">R6</span></a></li>
+  </ul>
+
+  <div class="sidebar-section">Node.js + TS: Data &amp; Persistence</div>
+  <ul class="sidebar-nav">
+    <li><a href="#repository">Repository Pattern &amp; Data Access <span class="nav-id">#1</span></a></li>
+    <li><a href="#redis">Type-Safe Redis Caching <span class="nav-id">#2</span></a></li>
+    <li><a href="#bullmq">Job Queues: BullMQ <span class="nav-id">#3</span></a></li>
+  </ul>
+
+  <div class="sidebar-section">Node.js + TS: Observability &amp; Services</div>
+  <ul class="sidebar-nav">
+    <li><a href="#pino">Structured Logging with pino <span class="nav-id">#4</span></a></li>
+    <li><a href="#grpc">gRPC + TypeScript <span class="nav-id">#5</span></a></li>
+  </ul>
+</nav>
+
+<!-- Main Content -->
+<div class="main">
+<div class="content">
+
+<!-- Header -->
+<header class="guide-header">
+  <h1>TypeScript Daily Guide &mdash; Day 28</h1>
+  <div class="meta">
+    <span>2026-07-01</span>
+    <span>&middot;</span>
+    <span>Day 28 of 28</span>
+    <span>&middot;</span>
+    <span class="badge badge-purple">6 reviews</span>
+    <span class="badge badge-blue">5 new concepts</span>
+  </div>
+</header>
+
+<!-- How to Use -->
+<div class="how-to-use">
+  <h2>How to Use This Guide</h2>
+  <ol>
+    <li><strong>Review first</strong> &mdash; scan each purple review card; if the concept feels solid, move on; if fuzzy, re-read the code pattern</li>
+    <li><strong>Attempt the challenge exercise</strong> on any review card that felt shaky &mdash; this is your best reinforcement signal</li>
+    <li><strong>Work through new concepts</strong> top to bottom &mdash; each builds on the previous</li>
+    <li><strong>Type every code example</strong> yourself and run it with <code>node</code>/<code>tsx</code> &mdash; hover over inferred types in your editor to build intuition</li>
+    <li><strong>Do at least 2 exercises per concept</strong> before moving to the next one</li>
+  </ol>
+</div>
+
+<!-- Cross-links -->
+<div class="cross-links">
+  <a href="guide.html">LeetCode Guide</a>
+  <a href="lang-guide.html">Lang Guide</a>
+  <a href="python-guide.html">Python Guide</a>
+  <a href="golang-guide.html">Go Guide</a>
+  <a href="javascript-guide.html">JS Guide</a>
+  <a href="report.html">Report</a>
+</div>
+
+<!-- ============================================================ -->
+<!-- REVIEW SECTION                                                -->
+<!-- ============================================================ -->
+<div class="review-section">
+<div class="review-section-header">Review &mdash; 6 Concepts</div>
+
+<!-- R1: Discriminated Unions in Practice -->
+<div class="review-card" id="review_discriminated">
+  <div class="review-header">
+    <span class="review-title">R1. Discriminated Unions in Practice</span>
+    <span class="badge badge-purple">Runtime Patterns</span>
+    <span class="review-meta">14 days since review &middot; rep 2 &rarr; 3</span>
+  </div>
+  <div class="review-reminder">A discriminated (tagged) union gives every member a common <em>literal</em> property &mdash; the discriminant. Switching (or branching) on that tag narrows the value to exactly one member, and the compiler then knows precisely which other fields exist. It is the everyday workhorse for modelling states, events, and results.</div>
+
+  <div class="review-pattern">
+    <strong>Key Pattern</strong>
+    <div class="code-example">
+<pre><code>type Msg =
+  | { type: "text";   body: string }
+  | { type: "image";  url: string; alt: string }
+  | { type: "system"; code: number };
+
+function render(m: Msg): string {
+  switch (m.type) {
+    case "text":   return m.body;            // only body is here
+    case "image":  return `[img ${m.alt}]`;  // url/alt available
+    case "system": return `#${m.code}`;
+  }
+}</code></pre>
+<div class="type-result">each case narrows to one member; wrong-branch field access is an error</div>
+    </div>
+  </div>
+
+  <div class="review-challenge">
+    <strong>Challenge Exercise</strong>
+    <p>Model a <code>FetchState&lt;T&gt;</code> union with <code>{ status: "idle" } | { status: "loading" } | { status: "success"; data: T } | { status: "error"; error: string }</code>. Write a reducer that transitions between them and a <code>render</code> that reads <code>data</code> only in the <code>success</code> branch. Confirm reading <code>state.data</code> in the <code>loading</code> branch is a compile error, and add an <code>assertNever</code> default so a new status forces a new case.</p>
+  </div>
+
+  <div class="review-pitfall">
+    <strong>Pitfall:</strong> Using a non-literal discriminant (a <code>boolean</code> flag, or overlapping shapes distinguished only by an optional field). The compiler can only narrow a union cleanly when the tag is a <em>literal</em> present on <em>every</em> member; otherwise you fall back to fragile <code>in</code> checks.
+  </div>
+</div>
+
+<!-- R2: Immutability Patterns -->
+<div class="review-card" id="review_immutability">
+  <div class="review-header">
+    <span class="review-title">R2. Immutability Patterns</span>
+    <span class="badge badge-purple">Runtime Patterns</span>
+    <span class="review-meta">14 days since review &middot; rep 2 &rarr; 3</span>
+  </div>
+  <div class="review-reminder"><code>readonly</code> properties, <code>readonly T[]</code> / <code>ReadonlyArray&lt;T&gt;</code>, <code>Readonly&lt;T&gt;</code>, and <code>as const</code> express immutability <em>at compile time only</em> &mdash; they are erased at runtime and are <em>shallow</em>. For real runtime protection you still need <code>Object.freeze</code> or structural copies; to &ldquo;update&rdquo;, build a new value with spreads.</div>
+
+  <div class="review-pattern">
+    <strong>Key Pattern</strong>
+    <div class="code-example">
+<pre><code>interface State {
+  readonly id: string;
+  readonly tags: readonly string[];
+}
+
+const s: State = { id: "1", tags: ["a"] };
+// s.tags.push("b");          // error: push doesn't exist on readonly array
+const next = { ...s, tags: [...s.tags, "b"] };   // immutable "update"
+
+const CONFIG = { retries: 3, mode: "fast" } as const;
+// CONFIG.retries = 5;        // error: readonly; mode is "fast", not string</code></pre>
+<div class="type-result">readonly blocks mutation at compile time; spread produces a fresh value</div>
+    </div>
+  </div>
+
+  <div class="review-challenge">
+    <strong>Challenge Exercise</strong>
+    <p>Write <code>type DeepReadonly&lt;T&gt;</code> that recursively marks every nested property <code>readonly</code>, and apply it to a nested config object. Then show that plain <code>Readonly&lt;T&gt;</code> leaves <code>config.nested.value</code> writable while <code>DeepReadonly&lt;T&gt;</code> does not. Bonus: explain why <code>Object.freeze</code> is also shallow and what a runtime deep-freeze must do.</p>
+  </div>
+
+  <div class="review-pitfall">
+    <strong>Pitfall:</strong> Trusting <code>readonly</code> for runtime safety &mdash; it vanishes after compilation, so a value handed to untyped JS can still be mutated. And <code>Readonly&lt;T&gt;</code> is one level deep: nested objects/arrays stay mutable unless you recurse.
+  </div>
+</div>
+
+<!-- R3: infer Mastery -->
+<div class="review-card" id="review_infer">
+  <div class="review-header">
+    <span class="review-title">R3. <code>infer</code> Mastery</span>
+    <span class="badge badge-purple">Advanced Patterns &amp; Performance</span>
+    <span class="review-meta">14 days since review &middot; rep 2 &rarr; 3</span>
+  </div>
+  <div class="review-reminder"><code>infer X</code> appears only inside the <code>extends</code> clause of a conditional type; it captures part of the matched type into a fresh variable usable in the true branch. Multiple <code>infer</code>s, recursion, and <code>infer&nbsp;X&nbsp;extends&nbsp;C</code> constraints let you deconstruct arrays, tuples, functions, and promises.</div>
+
+  <div class="review-pattern">
+    <strong>Key Pattern</strong>
+    <div class="code-example">
+<pre><code>type ElementOf&lt;T&gt;   = T extends (infer U)[] ? U : never;
+type ReturnOf&lt;F&gt;    = F extends (...a: any[]) =&gt; infer R ? R : never;
+type First&lt;T extends any[]&gt; = T extends [infer H, ...any[]] ? H : never;
+type Unwrap&lt;T&gt;      = T extends Promise&lt;infer V&gt; ? Unwrap&lt;V&gt; : T;
+
+type A = ElementOf&lt;number[]&gt;;          // number
+type B = ReturnOf&lt;() =&gt; string&gt;;       // string
+type C = First&lt;[1, 2, 3]&gt;;             // 1
+type D = Unwrap&lt;Promise&lt;Promise&lt;boolean&gt;&gt;&gt;; // boolean</code></pre>
+<div class="type-result">infer extracts the piece you matched; recursion unwraps nested shapes</div>
+    </div>
+  </div>
+
+  <div class="review-challenge">
+    <strong>Challenge Exercise</strong>
+    <p>Write <code>Parameters2&lt;F&gt;</code> that infers a function&rsquo;s parameter <em>tuple</em>, and <code>LastParam&lt;F&gt;</code> that infers just the last one using <code>[...any[], infer L]</code>. Then build <code>PathParams&lt;S&gt;</code> that, given a route literal like <code>"/users/:id/posts/:postId"</code>, infers <code>{ id: string; postId: string }</code> via recursive template-literal <code>infer</code>.</p>
+  </div>
+
+  <div class="review-pitfall">
+    <strong>Pitfall:</strong> Writing <code>infer</code> outside a conditional&rsquo;s <code>extends</code> position (it&rsquo;s a syntax error), or forgetting that a conditional over a <em>naked</em> union type parameter distributes &mdash; so your single <code>infer</code> can yield a <em>union</em> of results rather than one type.
+  </div>
+</div>
+
+<!-- R4: Worker Threads Typing -->
+<div class="review-card" id="review_workers">
+  <div class="review-header">
+    <span class="review-title">R4. Worker Threads Typing</span>
+    <span class="badge badge-purple">Ecosystem Deep Dives</span>
+    <span class="review-meta">10 days since review &middot; rep 2 &rarr; 3</span>
+  </div>
+  <div class="review-reminder"><code>node:worker_threads</code> runs CPU-bound work off the event loop, but <code>postMessage</code> / <code>on("message", &hellip;)</code> are effectively untyped (the payload is <code>any</code>). Define a message protocol as a discriminated union and wrap both ends so the request/response types are enforced across the boundary.</div>
+
+  <div class="review-pattern">
+    <strong>Key Pattern</strong>
+    <div class="code-example">
+<pre><code>// protocol.ts — shared by main + worker
+export type Req = { id: number; kind: "fib"; n: number };
+export type Res = { id: number; value: number };
+
+// worker.ts
+import { parentPort } from "node:worker_threads";
+parentPort!.on("message", (msg: Req) =&gt; {
+  const value = fib(msg.n);
+  parentPort!.postMessage({ id: msg.id, value } satisfies Res);
+});
+
+// main.ts
+worker.postMessage({ id: 1, kind: "fib", n: 40 } satisfies Req);
+worker.on("message", (r: Res) =&gt; console.log(r.value));</code></pre>
+<div class="type-result">a shared protocol + satisfies makes both ends type-check the same shapes</div>
+    </div>
+  </div>
+
+  <div class="review-challenge">
+    <strong>Challenge Exercise</strong>
+    <p>Define a <code>Req</code> union with two kinds (<code>"hash"</code> and <code>"compress"</code>) and a matching <code>Res</code> union keyed by the same <code>id</code>. Wrap the worker in a typed <code>call(req): Promise&lt;Res&gt;</code> that resolves the right pending promise by <code>id</code>. Explain why the wrapper &mdash; not raw <code>postMessage</code> &mdash; is where the type safety actually lives.</p>
+  </div>
+
+  <div class="review-pitfall">
+    <strong>Pitfall:</strong> Typing messages as if class instances or functions survive the trip. Values cross via the <em>structured clone</em> algorithm &mdash; methods, prototypes, and closures are dropped &mdash; so a type claiming a <code>Date</code> method or a callback made it through is a lie that crashes at runtime.
+  </div>
+</div>
+
+<!-- R5: Migration JS to TS -->
+<div class="review-card" id="review_migration">
+  <div class="review-header">
+    <span class="review-title">R5. Migration Strategies: JS &rarr; TS</span>
+    <span class="badge badge-purple">Ecosystem Deep Dives</span>
+    <span class="review-meta">10 days since review &middot; rep 2 &rarr; 3</span>
+  </div>
+  <div class="review-reminder">Migrate incrementally: turn on <code>allowJs</code> + <code>checkJs</code> (or <code>// @ts-check</code> per file) to type-check plain JS with JSDoc first, rename leaf modules to <code>.ts</code> before their dependents, and ratchet strictness one flag / one directory at a time rather than flipping <code>strict</code> everywhere on day one.</div>
+
+  <div class="review-pattern">
+    <strong>Key Pattern</strong>
+    <div class="code-example">
+<pre><code>// tsconfig.json — the on-ramp
+{ "compilerOptions": {
+    "allowJs": true, "checkJs": true,
+    "noImplicitAny": false,   // loosen first, tighten later
+    "strict": false
+} }
+
+// legacy.js — typed via JSDoc, no rename needed yet
+// @ts-check
+/** @param {string} name @returns {string} */
+function greet(name) { return `hi ${name}`; }
+// greet(42);  // now flagged even in a .js file</code></pre>
+<div class="type-result">JSDoc + checkJs catches bugs in JS before you commit to renaming</div>
+    </div>
+  </div>
+
+  <div class="review-challenge">
+    <strong>Challenge Exercise</strong>
+    <p>Take a two-file JS module (a util imported by an entrypoint) and migrate it: (1) add <code>allowJs</code>/<code>checkJs</code> and annotate the util with JSDoc; (2) rename the <em>leaf</em> util to <code>.ts</code> and fix the surfaced errors; (3) enable <code>noImplicitAny</code>, then <code>strictNullChecks</code>, noting how many errors each flag adds. Explain why leaf-first ordering minimizes churn.</p>
+  </div>
+
+  <div class="review-pitfall">
+    <strong>Pitfall:</strong> Setting <code>"strict": true</code> on a large JS codebase immediately &mdash; you drown in thousands of errors and stall. Ratchet: enable one strictness flag at a time, or scope strict settings to already-migrated directories, so the error count stays reviewable.
+  </div>
+</div>
+
+<!-- R6: Advanced Utility Recipes -->
+<div class="review-card" id="review_recipes">
+  <div class="review-header">
+    <span class="review-title">R6. Advanced Utility Type Recipes</span>
+    <span class="badge badge-purple">Type-Level Programming</span>
+    <span class="review-meta">10 days since review &middot; rep 2 &rarr; 3</span>
+  </div>
+  <div class="review-reminder">The built-in utilities are a floor, not a ceiling. Compose mapped + conditional + <code>infer</code> to build reusable helpers &mdash; <code>DeepPartial</code>, <code>RequireAtLeastOne</code>, <code>Mutable</code>, <code>PickByValue</code> &mdash; that encode real constraints from your domain in one named type.</div>
+
+  <div class="review-pattern">
+    <strong>Key Pattern</strong>
+    <div class="code-example">
+<pre><code>type DeepPartial&lt;T&gt; = {
+  [K in keyof T]?: T[K] extends object ? DeepPartial&lt;T[K]&gt; : T[K];
+};
+
+type RequireAtLeastOne&lt;T, K extends keyof T = keyof T&gt; =
+  Omit&lt;T, K&gt; &amp; { [P in K]-?: Required&lt;Pick&lt;T, P&gt;&gt; &amp; Partial&lt;Pick&lt;T, Exclude&lt;K, P&gt;&gt;&gt; }[K];
+
+type PickByValue&lt;T, V&gt; =
+  { [K in keyof T as T[K] extends V ? K : never]: T[K] };</code></pre>
+<div class="type-result">DeepPartial recurses; RequireAtLeastOne forces &ge;1 key; PickByValue filters by type</div>
+    </div>
+  </div>
+
+  <div class="review-challenge">
+    <strong>Challenge Exercise</strong>
+    <p>Implement <code>Mutable&lt;T&gt;</code> (strips <code>readonly</code> via the <code>-readonly</code> modifier) and <code>RequireOnlyOne&lt;T, K&gt;</code> (exactly one of <code>K</code>). Then write <code>PickByValue&lt;T, Function&gt;</code> to extract only the method keys of an interface, and verify it drops the data properties. Bonus: guard <code>DeepPartial</code> so it does <em>not</em> recurse into arrays or <code>Date</code>.</p>
+  </div>
+
+  <div class="review-pitfall">
+    <strong>Pitfall:</strong> Recursive utilities that recurse into <code>Function</code>, <code>Date</code>, or arrays without a base case &mdash; <code>DeepPartial</code> will happily make a <code>Date</code>&rsquo;s methods optional or turn <code>T[]</code> into a strange partial. Add guards (<code>T extends (infer U)[]</code>, <code>T extends Function</code>) before the general object branch.
+  </div>
+</div>
+
+</div><!-- end review-section -->
+
+<!-- ============================================================ -->
+<!-- TOPIC SECTION 1: Node.js + TS: Data & Persistence             -->
+<!-- ============================================================ -->
+<div class="topic-section">
+<div class="topic-section-header"><span class="section-num">1</span>Node.js + TS: Data &amp; Persistence</div>
+
+<!-- Concept 1: Repository Pattern -->
+<div class="concept-card" id="repository">
+  <div class="concept-header">
+    <span class="concept-title">1. Repository Pattern &amp; Typed Data Access Layer</span>
+    <span class="ttag">Node.js + TypeScript</span>
+  </div>
+
+  <div class="why-matters">Sprinkling raw ORM/SQL calls through your handlers couples business logic to a specific database and leaks persistence shapes into the domain. A <em>repository</em> is a typed interface (<code>find</code>, <code>save</code>, <code>delete</code>&hellip;) that hides the store behind a domain-shaped contract &mdash; so you can swap Prisma for an in-memory fake in tests, and the compiler enforces the boundary.</div>
+
+  <div class="explanation">
+    <p>Model the contract as a generic <code>Repository&lt;T, ID&gt;</code>. Callers depend on the interface, not the implementation, so a Postgres-backed class and an in-memory test double are interchangeable. Keep the <em>domain</em> type separate from the <em>row</em> type and map between them at the repository edge &mdash; that mapping is the one place database columns turn into domain fields.</p>
+    <p>Return types matter: <code>findById</code> should return <code>T | null</code> (a miss is expected), while <code>save</code> returns the persisted <code>T</code> (with generated id/timestamps filled in). A tiny <code>NewEntity&lt;T&gt;</code> helper (<code>Omit&lt;T, "id"&gt;</code>) types the &ldquo;not yet saved&rdquo; shape so you can&rsquo;t forget an id or invent one.</p>
+    <div class="step"><span class="step-num">1</span><div>Define <code>interface Repository&lt;T, ID&gt;</code> with <code>findById</code>, <code>findAll</code>, <code>save</code>, <code>delete</code> &mdash; the contract every store honors.</div></div>
+    <div class="step"><span class="step-num">2</span><div>Map row &harr; domain at the repository edge; keep persistence shapes out of the domain type.</div></div>
+    <div class="step"><span class="step-num">3</span><div>Provide a real impl (Prisma) and an in-memory fake that share the interface, and inject whichever you need.</div></div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 1 of 4 &mdash; the generic contract</div>
+<pre><code>interface Repository&lt;T, ID&gt; {
+  findById(id: ID): Promise&lt;T | null&gt;;
+  findAll(): Promise&lt;T[]&gt;;
+  save(entity: NewEntity&lt;T&gt;): Promise&lt;T&gt;;
+  delete(id: ID): Promise&lt;void&gt;;
+}
+
+interface User { id: string; name: string; email: string }
+type NewEntity&lt;T&gt; = Omit&lt;T, "id"&gt;;   // "not yet persisted" shape
+
+type UserRepository = Repository&lt;User, string&gt;;</code></pre>
+<div class="type-result">save() takes a User without id; findById() may miss and return null</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 2 of 4 &mdash; an in-memory fake for tests</div>
+<pre><code>class InMemoryUserRepo implements UserRepository {
+  private store = new Map&lt;string, User&gt;();
+
+  async findById(id: string)  { return this.store.get(id) ?? null; }
+  async findAll()             { return [...this.store.values()]; }
+  async save(u: NewEntity&lt;User&gt;) {
+    const user: User = { id: crypto.randomUUID(), ...u };
+    this.store.set(user.id, user);
+    return user;
+  }
+  async delete(id: string)    { this.store.delete(id); }
+}</code></pre>
+<div class="type-result">implements forces every method + signature to match the interface</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 3 of 4 &mdash; a Prisma-backed impl mapping row &rarr; domain</div>
+<pre><code>class PrismaUserRepo implements UserRepository {
+  constructor(private db: PrismaClient) {}
+
+  async findById(id: string) {
+    const row = await this.db.user.findUnique({ where: { id } });
+    return row ? this.toDomain(row) : null;
+  }
+  async save(u: NewEntity&lt;User&gt;) {
+    const row = await this.db.user.create({ data: u });
+    return this.toDomain(row);
+  }
+  // ...findAll / delete
+  private toDomain(r: { id: string; name: string; email: string }): User {
+    return { id: r.id, name: r.name, email: r.email };
+  }
+}</code></pre>
+<div class="type-result">the DB row shape is converted to the domain User in one place</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 4 of 4 &mdash; a service depends on the interface, not the store</div>
+<pre><code>class UserService {
+  constructor(private users: UserRepository) {}   // interface, not a class
+
+  async register(name: string, email: string): Promise&lt;User&gt; {
+    return this.users.save({ name, email });      // id filled by the repo
+  }
+}
+
+// prod:  new UserService(new PrismaUserRepo(db));
+// test:  new UserService(new InMemoryUserRepo());   // no database needed</code></pre>
+<div class="type-result">swap implementations with zero changes to UserService</div>
+  </div>
+
+  <div class="callout-warning">
+    <strong>Common Mistakes:</strong>
+    <div class="mistake">&#10060; Returning the raw ORM row (with DB-only columns, relations, <code>Date</code> vs string drift) straight out of the repository as if it were the domain type.</div>
+    <div class="correct">&#9989; Map row &rarr; domain at the edge so the rest of the app depends on a stable, DB-agnostic <code>User</code>.</div>
+    <div class="mistake">&#10060; Having services <code>new PrismaUserRepo(db)</code> internally &mdash; now they can&rsquo;t be tested without a real database.</div>
+    <div class="correct">&#9989; Depend on <code>Repository&lt;T, ID&gt;</code> and inject the implementation; tests pass an in-memory fake.</div>
+  </div>
+
+  <div class="key-rules">
+    <strong>Key Rules:</strong>
+    <ul>
+    <li><a href="typescript-guides/typescript-guide-2026-07-04.html">2026-07-04</a> (Day 31)</li>
+      <li>A repository is a typed <em>interface</em>; concrete stores <code>implements</code> it so signatures can&rsquo;t drift.</li>
+      <li>Keep the domain type separate from the row type; convert at the repository boundary.</li>
+      <li><code>findById</code> returns <code>T | null</code> (misses are expected); use <code>Omit&lt;T, "id"&gt;</code> for unsaved entities.</li>
+      <li>Depend on the interface and inject the impl &mdash; that&rsquo;s what makes an in-memory fake possible.</li>
+    </ul>
+  </div>
+
+  <div class="exercises">
+    <strong>Practice Exercises:</strong>
+    <div class="exercise"><span class="exercise-num">1</span>Add a <code>findBy(pred: (t: T) =&gt; boolean): Promise&lt;T[]&gt;</code> method to the interface and implement it in the in-memory repo. Confirm forgetting it in a class that <code>implements</code> the interface is a compile error.</div>
+    <div class="exercise"><span class="exercise-num">2</span>Introduce a <code>UserRow</code> type with an extra <code>created_at: Date</code> column and a domain <code>User</code> without it; write the <code>toDomain</code> mapper and show the service never sees <code>created_at</code>.</div>
+    <div class="exercise"><span class="exercise-num">3</span>Write a generic <code>InMemoryRepo&lt;T extends { id: string }&gt;</code> so the same fake works for any entity; explain the constraint <code>T extends { id: string }</code>.</div>
+  </div>
+
+  <div class="connections"><strong>Connections:</strong> This is <em>Generics Basics</em> + <em>interfaces</em> + <em>dependency injection</em> made concrete, and it leans on <em>module boundary types</em> to keep persistence shapes out of the domain. It pairs directly with Prisma/Drizzle typing and sets up the caching layer in Concept 2, which often wraps a repository.</div>
+</div>
+
+<!-- Concept 2: Redis Caching -->
+<div class="concept-card" id="redis">
+  <div class="concept-header">
+    <span class="concept-title">2. Type-Safe Redis Caching (ioredis)</span>
+    <span class="ttag">Node.js + TypeScript</span>
+  </div>
+
+  <div class="why-matters">Redis stores bytes: every value comes back as a <code>string</code> (or <code>null</code>), with no idea what you put in. A thin typed cache wrapper &mdash; serialize on write, parse (and optionally validate) on read &mdash; turns that stringly-typed API into <code>get&lt;T&gt;(key): Promise&lt;T | null&gt;</code>, so the rest of your code sees real domain types instead of raw strings.</div>
+
+  <div class="explanation">
+    <p>Wrap the client so callers never touch raw commands. <code>set</code> JSON-serializes and attaches a TTL; <code>get</code> returns <code>null</code> for a miss and otherwise <code>JSON.parse</code>s into <code>T</code>. Because the string &rarr; <code>T</code> step is an <em>assertion</em> (the bytes could be anything), validate with a schema (Zod) on read when the data crosses a trust boundary &mdash; then <code>T</code> is a guarantee, not a hope.</p>
+    <p>A <em>namespaced key builder</em> keeps keys collision-free and typed, and a <code>getOrSet(key, ttl, loader)</code> helper captures the cache-aside pattern in one typed place: return the cached value if present, otherwise run the loader, cache it, and return it &mdash; with the loader&rsquo;s return type flowing through as <code>T</code>.</p>
+    <div class="step"><span class="step-num">1</span><div>Wrap ioredis: <code>set</code> serializes + sets TTL; <code>get&lt;T&gt;</code> returns <code>T | null</code> after parsing.</div></div>
+    <div class="step"><span class="step-num">2</span><div>Validate parsed values with a schema on read when the source isn&rsquo;t fully trusted.</div></div>
+    <div class="step"><span class="step-num">3</span><div>Expose a typed <code>getOrSet</code> (cache-aside) so the loader&rsquo;s return type becomes the cached type.</div></div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 1 of 4 &mdash; a typed cache wrapper</div>
+<pre><code>import Redis from "ioredis";
+
+class Cache {
+  constructor(private redis: Redis) {}
+
+  async get&lt;T&gt;(key: string): Promise&lt;T | null&gt; {
+    const raw = await this.redis.get(key);   // string | null
+    return raw === null ? null : (JSON.parse(raw) as T);
+  }
+  async set&lt;T&gt;(key: string, value: T, ttlSeconds: number): Promise&lt;void&gt; {
+    await this.redis.set(key, JSON.stringify(value), "EX", ttlSeconds);
+  }
+}</code></pre>
+<div class="type-result">get&lt;User&gt;("u:1") is Promise&lt;User | null&gt;; the raw string never escapes</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 2 of 4 &mdash; validate on read (parse, don&rsquo;t assert)</div>
+<pre><code>import { z } from "zod";
+
+const UserSchema = z.object({ id: z.string(), name: z.string() });
+type User = z.infer&lt;typeof UserSchema&gt;;
+
+async function getUser(cache: Redis, id: string): Promise&lt;User | null&gt; {
+  const raw = await cache.get(`user:${id}`);
+  if (raw === null) return null;
+  return UserSchema.parse(JSON.parse(raw));   // throws if shape drifted
+}</code></pre>
+<div class="type-result">the returned User is verified at runtime, not just cast</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 3 of 4 &mdash; namespaced, typed key builder</div>
+<pre><code>const keys = {
+  user:      (id: string) =&gt; `user:${id}` as const,
+  userPosts: (id: string) =&gt; `user:${id}:posts` as const,
+};
+
+await cache.set(keys.user("u1"), { id: "u1", name: "Ada" }, 60);
+// keys.user(42);   // error: id must be a string</code></pre>
+<div class="type-result">key construction is centralized and its arguments are type-checked</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 4 of 4 &mdash; typed cache-aside getOrSet</div>
+<pre><code>class Cache {
+  // ...get/set from example 1
+  async getOrSet&lt;T&gt;(
+    key: string, ttl: number, loader: () =&gt; Promise&lt;T&gt;,
+  ): Promise&lt;T&gt; {
+    const hit = await this.get&lt;T&gt;(key);
+    if (hit !== null) return hit;
+    const value = await loader();     // T inferred from the loader
+    await this.set(key, value, ttl);
+    return value;
+  }
+}
+
+const user = await cache.getOrSet(keys.user("u1"), 60, () =&gt; repo.findById("u1"));</code></pre>
+<div class="type-result">user is Promise&lt;User | null&gt; — the loader's return type flows through as T</div>
+  </div>
+
+  <div class="callout-warning">
+    <strong>Common Mistakes:</strong>
+    <div class="mistake">&#10060; Casting <code>JSON.parse(raw) as User</code> and treating it as verified &mdash; a stale or malformed cache entry silently violates the type.</div>
+    <div class="correct">&#9989; <code>parse</code> with a schema on read for untrusted sources; reserve the bare cast for data you control end-to-end.</div>
+    <div class="mistake">&#10060; Building keys inline as template strings everywhere &mdash; typos and collisions slip in and nothing checks the arguments.</div>
+    <div class="correct">&#9989; Centralize keys in a typed builder so both the format and its inputs are checked.</div>
+  </div>
+
+  <div class="key-rules">
+    <strong>Key Rules:</strong>
+    <ul>
+      <li>Redis returns <code>string | null</code>; a wrapper is where serialization and the <code>T</code> type live.</li>
+      <li><code>get&lt;T&gt;</code> should return <code>T | null</code> &mdash; a miss is <code>null</code>, not an error.</li>
+      <li>Parsing is an assertion unless you validate; use a schema on read across trust boundaries.</li>
+      <li><code>getOrSet</code> captures cache-aside once and infers the cached type from the loader.</li>
+    </ul>
+  </div>
+
+  <div class="exercises">
+    <strong>Practice Exercises:</strong>
+    <div class="exercise"><span class="exercise-num">1</span>Add <code>del(key: string)</code> and <code>getMany&lt;T&gt;(keys: string[]): Promise&lt;(T | null)[]&gt;</code> using <code>mget</code>; keep the per-element <code>null</code> for misses.</div>
+    <div class="exercise"><span class="exercise-num">2</span>Make <code>getOrSet</code> take a Zod schema and <code>parse</code> both cached and freshly-loaded values, so the return type is <code>z.infer&lt;typeof schema&gt;</code>.</div>
+    <div class="exercise"><span class="exercise-num">3</span>Type the key builder so <code>keys.userPosts</code> returns the literal template type <code>`user:${string}:posts`</code>; explain what <code>as const</code> buys you here.</div>
+  </div>
+
+  <div class="connections"><strong>Connections:</strong> This is <em>Zod &amp; runtime validation</em> guarding a byte-oriented boundary, plus <em>generics</em> to thread the value type through <code>get</code>/<code>getOrSet</code>. It commonly wraps the repository from Concept 1 (cache-aside over <code>findById</code>) and the key builder reuses <em>template literal types</em>.</div>
+</div>
+
+<!-- Concept 3: BullMQ -->
+<div class="concept-card" id="bullmq">
+  <div class="concept-header">
+    <span class="concept-title">3. Job Queues: BullMQ with TypeScript</span>
+    <span class="ttag">Node.js + TypeScript</span>
+  </div>
+
+  <div class="why-matters">Background work &mdash; sending email, resizing images, running reports &mdash; belongs off the request path. BullMQ (Redis-backed) is the standard Node queue, and its generics let you type a job&rsquo;s <em>payload</em>, its <em>return value</em>, and its <em>name</em>, so producers and the worker that consumes them can&rsquo;t disagree about the shape of a job.</div>
+
+  <div class="explanation">
+    <p><code>Queue&lt;Data, Result, Name&gt;</code> and <code>Worker&lt;Data, Result, Name&gt;</code> share the same three type parameters: the data you enqueue, the value your processor returns, and a union of job names. Parameterize both from one shared type and <code>queue.add(name, data)</code> is checked against the processor that will run it &mdash; one source of truth for the job contract.</p>
+    <p>For a queue that carries <em>several</em> job kinds, make <code>Data</code> a discriminated union keyed by the job <code>name</code>, then narrow inside the worker with a switch on <code>job.name</code>. Typed queue events (<code>completed</code>, <code>failed</code>) round it out, though note the <code>failed</code> callback&rsquo;s error is a plain <code>Error</code> &mdash; the boundary where your typed <code>Result</code> stops.</p>
+    <div class="step"><span class="step-num">1</span><div>Define the job contract once: <code>Data</code>, <code>Result</code>, and a <code>Name</code> union.</div></div>
+    <div class="step"><span class="step-num">2</span><div>Parameterize both <code>Queue</code> and <code>Worker</code> with it so <code>add</code> and the processor agree.</div></div>
+    <div class="step"><span class="step-num">3</span><div>For multi-kind queues, make <code>Data</code> a discriminated union and switch on <code>job.name</code> in the worker.</div></div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 1 of 4 &mdash; a single-purpose typed queue</div>
+<pre><code>import { Queue, Worker } from "bullmq";
+
+interface EmailJob { to: string; subject: string; body: string }
+type EmailResult = { messageId: string };
+
+const emailQueue = new Queue&lt;EmailJob, EmailResult, "send"&gt;(
+  "email", { connection: { host: "localhost", port: 6379 } });
+
+await emailQueue.add("send", { to: "a@b.com", subject: "Hi", body: "..." });
+// emailQueue.add("send", { to: "a@b.com" });  // error: subject/body missing</code></pre>
+<div class="type-result">add() checks the payload against EmailJob and the name against "send"</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 2 of 4 &mdash; a typed worker/processor</div>
+<pre><code>const worker = new Worker&lt;EmailJob, EmailResult, "send"&gt;(
+  "email",
+  async (job) =&gt; {
+    job.data.to;       // string — typed from EmailJob
+    const messageId = await sendEmail(job.data);
+    return { messageId };   // must match EmailResult
+  },
+  { connection: { host: "localhost", port: 6379 } },
+);</code></pre>
+<div class="type-result">job.data is EmailJob; the return value is checked against EmailResult</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 3 of 4 &mdash; a multi-kind queue as a discriminated union</div>
+<pre><code>type Job =
+  | { kind: "email";  to: string; subject: string }
+  | { kind: "resize"; url: string; width: number };
+
+const jobs = new Queue&lt;Job&gt;("work");
+
+const w = new Worker&lt;Job&gt;("work", async (job) =&gt; {
+  switch (job.data.kind) {
+    case "email":  return sendEmail(job.data);        // to/subject here
+    case "resize": return resize(job.data.url, job.data.width);
+  }
+});</code></pre>
+<div class="type-result">job.data narrows by kind; each branch sees only its own fields</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 4 of 4 &mdash; typed queue events</div>
+<pre><code>import { QueueEvents } from "bullmq";
+
+worker.on("completed", (job, result: EmailResult) =&gt; {
+  console.log(`sent ${result.messageId}`);   // result is typed
+});
+worker.on("failed", (job, err: Error) =&gt; {
+  console.error(job?.id, err.message);        // err is a plain Error
+});</code></pre>
+<div class="type-result">completed carries the typed Result; failed's error is Error, not your type</div>
+  </div>
+
+  <div class="callout-warning">
+    <strong>Common Mistakes:</strong>
+    <div class="mistake">&#10060; Creating <code>new Queue("email")</code> untyped, so <code>add("send", anything)</code> compiles and the worker discovers the mismatch at runtime.</div>
+    <div class="correct">&#9989; Parameterize <code>Queue</code>/<code>Worker</code> from one shared job type so producer and consumer share the contract.</div>
+    <div class="mistake">&#10060; Assuming the payload arrives as rich objects &mdash; jobs are JSON-serialized into Redis, so <code>Date</code>/<code>Map</code>/class instances don&rsquo;t survive.</div>
+    <div class="correct">&#9989; Type payloads as plain JSON-safe data (strings, numbers, arrays, plain objects) and rehydrate in the worker.</div>
+  </div>
+
+  <div class="key-rules">
+    <strong>Key Rules:</strong>
+    <ul>
+      <li><code>Queue&lt;Data, Result, Name&gt;</code> and <code>Worker&lt;Data, Result, Name&gt;</code> share three type parameters &mdash; keep them in sync.</li>
+      <li>Drive both from one shared job type so <code>add</code> and the processor can&rsquo;t drift.</li>
+      <li>Multi-kind queue? Make <code>Data</code> a discriminated union and switch on <code>job.name</code>/<code>kind</code>.</li>
+      <li>Payloads are JSON-serialized through Redis &mdash; keep them plain and JSON-safe.</li>
+    </ul>
+  </div>
+
+  <div class="exercises">
+    <strong>Practice Exercises:</strong>
+    <div class="exercise"><span class="exercise-num">1</span>Type a <code>reportQueue</code> whose <code>Data</code> is <code>{ userId: string; range: [string, string] }</code> and <code>Result</code> is <code>{ rows: number }</code>; confirm returning <code>{}</code> from the processor is a type error.</div>
+    <div class="exercise"><span class="exercise-num">2</span>Convert a two-kind queue to a discriminated union and add an <code>assertNever</code> default in the worker&rsquo;s switch; add a third kind and confirm it&rsquo;s flagged.</div>
+    <div class="exercise"><span class="exercise-num">3</span>Wrap <code>queue.add</code> in a typed <code>enqueue(job: Job)</code> helper that derives the name from <code>job.kind</code>; explain what type safety the wrapper adds over calling <code>add</code> directly.</div>
+  </div>
+
+  <div class="connections"><strong>Connections:</strong> The multi-kind queue is <em>discriminated unions</em> (R1) applied to job payloads, and the three-parameter generics echo the schema-as-single-source idea from Fastify. Payloads crossing Redis have the same structured-serialization caveat as <em>worker threads</em> (R4). A worker often calls the repository (Concept 1) and warms the cache (Concept 2).</div>
+</div>
+
+</div><!-- end topic-section 1 -->
+
+<!-- ============================================================ -->
+<!-- TOPIC SECTION 2: Node.js + TS: Observability & Services       -->
+<!-- ============================================================ -->
+<div class="topic-section">
+<div class="topic-section-header"><span class="section-num">2</span>Node.js + TS: Observability &amp; Services</div>
+
+<!-- Concept 4: pino -->
+<div class="concept-card" id="pino">
+  <div class="concept-header">
+    <span class="concept-title">4. Structured Logging with pino</span>
+    <span class="ttag">Node.js + TypeScript</span>
+  </div>
+
+  <div class="why-matters"><code>console.log</code> emits unstructured strings that are painful to query in production. pino writes fast, structured JSON logs; typed with <code>@types/pino</code> (bundled), it gives you a <code>Logger</code> whose levels, <em>child</em> loggers (per-request context), redaction, and serializers are all checked &mdash; so your log <em>shape</em> is as intentional as your API shape.</div>
+
+  <div class="explanation">
+    <p>A pino <code>Logger</code> exposes <code>info</code>/<code>warn</code>/<code>error</code>&hellip; that accept a <em>merge object</em> first, then a message: <code>log.info({ userId }, "loaded")</code> emits structured fields alongside the text. <code>logger.child(bindings)</code> returns a logger that stamps those bindings on every line &mdash; the idiomatic way to attach a <code>requestId</code> or <code>userId</code> to all logs for one request without threading it through every call.</p>
+    <p><code>redact</code> removes sensitive paths (<code>req.headers.authorization</code>, <code>password</code>) from output, and <em>serializers</em> map known objects (an <code>Error</code>, a <code>req</code>) to a compact, consistent shape. Both are typed via pino&rsquo;s <code>LoggerOptions</code>, so a mistyped option is caught at config time rather than swallowed.</p>
+    <div class="step"><span class="step-num">1</span><div>Create a typed <code>Logger</code> with <code>pino(options)</code>; call <code>log.info({ fields }, "message")</code>.</div></div>
+    <div class="step"><span class="step-num">2</span><div>Use <code>logger.child({ requestId })</code> to bind per-request context onto every subsequent line.</div></div>
+    <div class="step"><span class="step-num">3</span><div>Configure <code>redact</code> for secrets and <code>serializers</code> for errors/requests &mdash; all type-checked options.</div></div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 1 of 4 &mdash; a typed logger with structured fields</div>
+<pre><code>import pino, { Logger } from "pino";
+
+const log: Logger = pino({ level: "info" });
+
+log.info({ userId: "u1", durationMs: 42 }, "user loaded");
+// log.info("just a message");            // also valid
+// log.wrong("oops");                     // error: no such method</code></pre>
+<div class="type-result">merge-object-then-message is typed; unknown level methods are errors</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 2 of 4 &mdash; child loggers for per-request context</div>
+<pre><code>function handler(req: { id: string }, base: Logger) {
+  const log = base.child({ requestId: req.id });   // Logger
+  log.info("handling request");     // includes requestId automatically
+  log.info({ step: "db" }, "query");// requestId + step both emitted
+}</code></pre>
+<div class="type-result">child() returns a Logger; bindings appear on every line it writes</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 3 of 4 &mdash; redaction &amp; serializers (typed options)</div>
+<pre><code>const log = pino({
+  redact: ["req.headers.authorization", "password"],
+  serializers: {
+    err: pino.stdSerializers.err,
+    req: (r: { method: string; url: string }) =&gt; ({ method: r.method, url: r.url }),
+  },
+});
+
+log.error({ err: new Error("boom") }, "request failed");</code></pre>
+<div class="type-result">LoggerOptions type-checks redact paths and serializer signatures</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 4 of 4 &mdash; a typed context shape for bindings</div>
+<pre><code>interface LogContext { requestId: string; userId?: string }
+
+function withContext(base: Logger, ctx: LogContext): Logger {
+  return base.child(ctx);   // ctx shape is enforced by the caller
+}
+
+const reqLog = withContext(log, { requestId: "r1" });
+// withContext(log, { userId: "u1" });   // error: requestId required</code></pre>
+<div class="type-result">wrapping child() with a typed context makes bindings a real contract</div>
+  </div>
+
+  <div class="callout-warning">
+    <strong>Common Mistakes:</strong>
+    <div class="mistake">&#10060; Putting the message first and data second (<code>log.info("loaded", { userId })</code>) &mdash; pino&rsquo;s order is <em>merge object, then message</em>, so the fields end up ignored.</div>
+    <div class="correct">&#9989; Call <code>log.info({ userId }, "loaded")</code> &mdash; object first &mdash; so the fields are structured, not stringified into the text.</div>
+    <div class="mistake">&#10060; Logging whole request/error objects raw &mdash; you leak secrets and emit huge, inconsistent payloads.</div>
+    <div class="correct">&#9989; Configure <code>redact</code> and <code>serializers</code> so sensitive paths are stripped and known objects log a compact shape.</div>
+  </div>
+
+  <div class="key-rules">
+    <strong>Key Rules:</strong>
+    <ul>
+      <li>Log call signature is <code>(mergeObject?, message?)</code> &mdash; object <em>first</em>, message second.</li>
+      <li><code>logger.child(bindings)</code> stamps context on every line &mdash; the right tool for per-request fields.</li>
+      <li><code>redact</code> and <code>serializers</code> are typed <code>LoggerOptions</code>; mistakes surface at config time.</li>
+      <li>Wrap <code>child()</code> behind a typed context interface to make your log fields a real contract.</li>
+    </ul>
+  </div>
+
+  <div class="exercises">
+    <strong>Practice Exercises:</strong>
+    <div class="exercise"><span class="exercise-num">1</span>Create a base logger and a request-scoped child with <code>{ requestId }</code>; log two lines and confirm both carry the id. Then log with an extra <code>{ step }</code> field and observe both fields appear.</div>
+    <div class="exercise"><span class="exercise-num">2</span>Add a <code>redact</code> path for <code>headers.cookie</code> and confirm the value is replaced with <code>[Redacted]</code> in output.</div>
+    <div class="exercise"><span class="exercise-num">3</span>Define a <code>LogContext</code> interface with <code>requestId</code> and optional <code>userId</code>, write a <code>withContext</code> helper, and confirm omitting <code>requestId</code> is a compile error.</div>
+  </div>
+
+  <div class="connections"><strong>Connections:</strong> Child-logger bindings are the observability counterpart to Express <em>request augmentation</em> (attach a <code>requestId</code> in middleware, log it everywhere), and the typed <code>LogContext</code> reuses <em>interfaces</em> + optional properties. Serializers echo the row&rarr;domain <em>mapping</em> idea from Concept 1 &mdash; convert a rich object to a stable shape at the boundary.</div>
+</div>
+
+<!-- Concept 5: gRPC -->
+<div class="concept-card" id="grpc">
+  <div class="concept-header">
+    <span class="concept-title">5. gRPC + TypeScript: Schema-First Services</span>
+    <span class="ttag">Node.js + TypeScript</span>
+  </div>
+
+  <div class="why-matters">gRPC defines services in a <code>.proto</code> file &mdash; one language-neutral contract for messages and RPCs. A code generator like <code>ts-proto</code> turns that schema into TypeScript interfaces and typed service stubs, so client and server share the <em>same</em> generated types: the schema is the single source of truth, and drift between caller and callee becomes a compile error.</div>
+
+  <div class="explanation">
+    <p>Write the contract in <code>.proto</code>, then run <code>protoc</code> with the <code>ts-proto</code> plugin to emit request/response <code>interface</code>s and a strongly-typed service definition. You implement the server against the generated <code>ServiceServer</code> type (each RPC is a typed handler), and you call the server through a generated client whose method signatures match the RPCs &mdash; no hand-written DTOs to keep in sync.</p>
+    <p>Streaming RPCs (server-, client-, and bi-directional) are typed too, but mind the boundary: proto <code>int64</code> maps to <code>string</code> or <code>bigint</code> (not JS <code>number</code>) to avoid precision loss, and proto3 scalar fields are non-optional with defaults, so an &ldquo;absent&rdquo; field arrives as <code>0</code>/<code>""</code> rather than <code>undefined</code> unless declared <code>optional</code>.</p>
+    <div class="step"><span class="step-num">1</span><div>Define messages + service in <code>.proto</code> &mdash; the neutral contract.</div></div>
+    <div class="step"><span class="step-num">2</span><div>Generate TS with <code>protoc</code> + <code>ts-proto</code>: interfaces for messages, a typed service definition.</div></div>
+    <div class="step"><span class="step-num">3</span><div>Implement the server against the generated handler types; call it via the generated typed client.</div></div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">protobuf &middot; example 1 of 4 &mdash; the .proto contract</div>
+<pre><code>syntax = "proto3";
+package users.v1;
+
+message GetUserRequest  { string id = 1; }
+message User            { string id = 1; string name = 2; }
+
+service UserService {
+  rpc GetUser (GetUserRequest) returns (User);
+}</code></pre>
+<div class="type-result">one schema; both client and server generate from it</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 2 of 4 &mdash; generated types (ts-proto output, simplified)</div>
+<pre><code>// users.ts — GENERATED, do not edit
+export interface GetUserRequest { id: string }
+export interface User { id: string; name: string }
+
+export interface UserServiceServer {
+  getUser(call: { request: GetUserRequest }): Promise&lt;User&gt;;
+}</code></pre>
+<div class="type-result">messages become interfaces; the service becomes a typed contract</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 3 of 4 &mdash; a typed server implementation</div>
+<pre><code>import type { UserServiceServer } from "./users";
+
+const impl: UserServiceServer = {
+  async getUser({ request }) {
+    request.id;                         // string — from the schema
+    return { id: request.id, name: "Ada" };   // must match User
+    // return { id: request.id };       // error: name is missing
+  },
+};</code></pre>
+<div class="type-result">the handler's request + return type are enforced by the generated type</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 4 of 4 &mdash; a typed client call</div>
+<pre><code>import { UserServiceClient } from "./users";
+
+const client = new UserServiceClient(/* addr, creds */);
+const user = await client.getUser({ id: "u1" });   // User
+console.log(user.name);
+// client.getUser({});         // error: id is required by GetUserRequest</code></pre>
+<div class="type-result">client method signatures mirror the RPCs; request/response are typed</div>
+  </div>
+
+  <div class="callout-warning">
+    <strong>Common Mistakes:</strong>
+    <div class="mistake">&#10060; Hand-writing TS interfaces to mirror the <code>.proto</code> &mdash; they drift the instant someone edits the schema without regenerating.</div>
+    <div class="correct">&#9989; Generate types from the <code>.proto</code> (ts-proto) and treat the output as read-only; regenerate on every schema change.</div>
+    <div class="mistake">&#10060; Typing proto <code>int64</code> as <code>number</code> &mdash; values beyond 2^53 lose precision silently.</div>
+    <div class="correct">&#9989; Let the generator map <code>int64</code> to <code>string</code>/<code>bigint</code>, and remember proto3 scalars default (to <code>0</code>/<code>""</code>) rather than being <code>undefined</code>.</div>
+  </div>
+
+  <div class="key-rules">
+    <strong>Key Rules:</strong>
+    <ul>
+      <li>The <code>.proto</code> is the single source of truth; TS types are generated, not hand-written.</li>
+      <li>Server implements a generated service type; the client&rsquo;s methods mirror the RPCs &mdash; no manual DTOs.</li>
+      <li><code>int64</code> &rarr; <code>string</code>/<code>bigint</code> (not <code>number</code>); proto3 scalars carry defaults, not <code>undefined</code>, unless <code>optional</code>.</li>
+      <li>Streaming RPCs are typed too &mdash; the generated types describe uni- and bi-directional streams.</li>
+    </ul>
+  </div>
+
+  <div class="exercises">
+    <strong>Practice Exercises:</strong>
+    <div class="exercise"><span class="exercise-num">1</span>Add a <code>ListUsers</code> RPC returning <code>repeated User</code>; regenerate (or hand-simulate the output) and confirm the response type is <code>User[]</code>.</div>
+    <div class="exercise"><span class="exercise-num">2</span>Add an <code>optional string email = 3;</code> field and show the generated type makes <code>email</code> <code>string | undefined</code>, unlike the non-optional scalars.</div>
+    <div class="exercise"><span class="exercise-num">3</span>Implement the server handler and a client call, then change the <code>.proto</code> (rename a field) <em>without</em> regenerating; explain exactly which line now fails to compile and why that&rsquo;s the point.</div>
+  </div>
+
+  <div class="connections"><strong>Connections:</strong> This is the schema-as-single-source theme from Fastify/TypeBox and GraphQL codegen, generalized across service boundaries &mdash; the generated <code>User</code> is the same domain type your repository (Concept 1) returns. The <code>int64</code>/default caveats mirror the serialization boundaries seen in caching (Concept 2) and job queues (Concept 3).</div>
+</div>
+
+</div><!-- end topic-section 2 -->
+
+<!-- Footer -->
+<footer class="guide-footer">
+  <h2>All Guides</h2>
+  <ul>
+    <li><a href="typescript-guides/typescript-guide-2026-07-09.html">2026-07-09</a> (Day 36)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-07-08.html">2026-07-08</a> (Day 35)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-07-07.html">2026-07-07</a> (Day 34)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-07-06.html">2026-07-06</a> (Day 33)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-07-05.html">2026-07-05</a> (Day 32)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-07-04.html">2026-07-04</a> (Day 31)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-07-03.html">2026-07-03</a> (Day 30)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-07-02.html">2026-07-02</a> (Day 29)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-07-01.html">2026-07-01</a> (Day 28)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-30.html">2026-06-30</a> (Day 27)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-29.html">2026-06-29</a> (Day 26)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-28.html">2026-06-28</a> (Day 25)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-27.html">2026-06-27</a> (Day 24)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-26.html">2026-06-26</a> (Day 23)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-25.html">2026-06-25</a> (Day 22)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-24.html">2026-06-24</a> (Day 21)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-23.html">2026-06-23</a> (Day 20)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-22.html">2026-06-22</a> (Day 19)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-21.html">2026-06-21</a> (Day 18)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-19.html">2026-06-19</a> (Day 17)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-18.html">2026-06-18</a> (Day 16)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-17.html">2026-06-17</a> (Day 15)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-15.html">2026-06-15</a> (Day 14)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-13.html">2026-06-13</a> (Day 13)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-12.html">2026-06-12</a> (Day 12)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-11.html">2026-06-11</a> (Day 11)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-10.html">2026-06-10</a> (Day 10)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-09.html">2026-06-09</a> (Day 9)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-08.html">2026-06-08</a> (Day 8)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-07.html">2026-06-07</a> (Day 7)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-05.html">2026-06-05</a> (Day 6)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-04.html">2026-06-04</a> (Day 5)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-03.html">2026-06-03</a> (Day 4)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-02.html">2026-06-02</a> (Day 3)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-01.html">2026-06-01</a> (Day 2)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-05-31.html">2026-05-31</a> (Day 1)</li>
+  </ul>
+</footer>
+
+</div><!-- end content -->
+</div><!-- end main -->
+
+<script>
+// Theme toggle
+(function() {
+  var toggle = document.getElementById('themeToggle');
+  var html = document.documentElement;
+  var STORAGE_KEY = 'lc-tsguide-theme';
+
+  function setTheme(theme) {
+    html.setAttribute('data-theme', theme);
+    toggle.textContent = theme === 'dark' ? '\u{1F319}' : '\u{2600}\u{FE0F}';
+    try { localStorage.setItem(STORAGE_KEY, theme); } catch(e) {}
+  }
+
+  try {
+    var saved = localStorage.getItem(STORAGE_KEY);
+    if (saved) setTheme(saved);
+  } catch(e) {}
+
+  toggle.addEventListener('click', function() {
+    var current = html.getAttribute('data-theme') || 'dark';
+    setTheme(current === 'dark' ? 'light' : 'dark');
+  });
+})();
+
+// Sidebar active link tracking
+(function() {
+  var links = document.querySelectorAll('.sidebar-nav a');
+  var sections = [];
+  links.forEach(function(link) {
+    var id = link.getAttribute('href').replace('#', '');
+    var el = document.getElementById(id);
+    if (el) sections.push({ link: link, el: el });
+  });
+
+  function updateActive() {
+    var current = null;
+    var scrollY = window.scrollY + 120;
+    for (var i = sections.length - 1; i >= 0; i--) {
+      if (sections[i].el.offsetTop <= scrollY) {
+        current = sections[i];
+        break;
+      }
+    }
+    links.forEach(function(l) { l.classList.remove('active'); });
+    if (current) current.link.classList.add('active');
+  }
+
+  window.addEventListener('scroll', updateActive);
+  updateActive();
+})();
+</script>
+
+</body>
+</html>

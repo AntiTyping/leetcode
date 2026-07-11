@@ -1,0 +1,3099 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Go Study Guide &mdash; Day 4 (2026-06-05)</title>
+<style>
+/* ===== CSS Variables ===== */
+:root {
+  --bg: #0d1117;
+  --surface1: #161b22;
+  --surface2: #1c2333;
+  --border: #30363d;
+  --text: #e6edf3;
+  --muted: #8b949e;
+  --accent: #58a6ff;
+  --accent-dim: #1f6feb33;
+  --green: #3fb950;
+  --green-dim: #23863633;
+  --yellow: #d29922;
+  --yellow-dim: #d2992233;
+  --red: #f85149;
+  --red-dim: #f8514933;
+  --purple: #bc8cff;
+  --purple-dim: #bc8cff22;
+  --orange: #f0883e;
+  --orange-dim: #f0883e22;
+  --code-bg: #0d1117;
+  --sidebar-w: 300px;
+  --font-mono: 'SF Mono', 'Cascadia Code', 'Fira Code', Consolas, monospace;
+  --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+  --radius: 8px;
+  --shadow: 0 1px 3px rgba(0,0,0,0.4);
+}
+
+[data-theme="light"] {
+  --bg: #ffffff;
+  --surface1: #f6f8fa;
+  --surface2: #f0f3f6;
+  --border: #d0d7de;
+  --text: #1f2328;
+  --muted: #656d76;
+  --accent: #0969da;
+  --accent-dim: #0969da1a;
+  --green: #1a7f37;
+  --green-dim: #1a7f3718;
+  --yellow: #9a6700;
+  --yellow-dim: #9a670018;
+  --red: #cf222e;
+  --red-dim: #cf222e18;
+  --purple: #8250df;
+  --purple-dim: #8250df18;
+  --orange: #bc4c00;
+  --orange-dim: #bc4c0018;
+  --code-bg: #f6f8fa;
+  --shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+/* ===== Reset & Base ===== */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: var(--font-sans);
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.7;
+  font-size: 16px;
+  transition: background 0.2s, color 0.2s;
+}
+
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+/* ===== Theme Toggle ===== */
+#theme-toggle {
+  position: fixed;
+  top: 16px;
+  right: 20px;
+  z-index: 1000;
+  background: var(--surface1);
+  border: 1px solid var(--border);
+  color: var(--text);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+  box-shadow: var(--shadow);
+}
+#theme-toggle:hover { background: var(--surface2); border-color: var(--accent); }
+
+/* ===== Sidebar ===== */
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: var(--sidebar-w);
+  height: 100vh;
+  background: var(--surface1);
+  border-right: 1px solid var(--border);
+  overflow-y: auto;
+  padding: 20px 0;
+  z-index: 100;
+  transition: transform 0.3s;
+}
+
+.sidebar-header {
+  padding: 0 20px 16px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 12px;
+}
+
+.sidebar-header h2 {
+  font-size: 16px;
+  color: var(--text);
+  font-weight: 700;
+}
+
+.sidebar-header .subtitle {
+  font-size: 12px;
+  color: var(--muted);
+  margin-top: 2px;
+}
+
+.sidebar-section {
+  margin-bottom: 8px;
+}
+
+.sidebar-section-title {
+  padding: 6px 20px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+}
+
+.sidebar-link {
+  display: block;
+  padding: 5px 20px 5px 28px;
+  font-size: 13px;
+  color: var(--muted);
+  text-decoration: none;
+  border-left: 2px solid transparent;
+  transition: all 0.15s;
+  line-height: 1.4;
+}
+
+.sidebar-link:hover {
+  color: var(--text);
+  background: var(--accent-dim);
+  border-left-color: var(--accent);
+  text-decoration: none;
+}
+
+.sidebar-link.active {
+  color: var(--accent);
+  border-left-color: var(--accent);
+  background: var(--accent-dim);
+}
+
+/* ===== Mobile sidebar toggle ===== */
+#sidebar-toggle {
+  display: none;
+  position: fixed;
+  top: 16px;
+  left: 16px;
+  z-index: 200;
+  background: var(--surface1);
+  border: 1px solid var(--border);
+  color: var(--text);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 20px;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--shadow);
+}
+
+/* ===== Main Content ===== */
+.main {
+  margin-left: var(--sidebar-w);
+  padding: 40px 48px 80px;
+  max-width: calc(860px + var(--sidebar-w) + 96px);
+}
+
+.page-title {
+  font-size: 32px;
+  font-weight: 800;
+  margin-bottom: 4px;
+  color: var(--text);
+}
+
+.page-subtitle {
+  font-size: 15px;
+  color: var(--muted);
+  margin-bottom: 36px;
+}
+
+/* ===== Sections ===== */
+.section {
+  margin-bottom: 48px;
+}
+
+.section-label {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  padding: 3px 10px;
+  border-radius: 4px;
+  margin-bottom: 12px;
+}
+
+.section-label.review { background: var(--yellow-dim); color: var(--yellow); }
+.section-label.new { background: var(--green-dim); color: var(--green); }
+
+.section-title {
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 24px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--border);
+}
+
+/* ===== How To Use ===== */
+.how-to-use {
+  background: var(--surface1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px 24px;
+  margin-bottom: 36px;
+}
+
+.how-to-use h3 {
+  font-size: 16px;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.how-to-use ul {
+  padding-left: 22px;
+  margin: 0;
+}
+
+.how-to-use li {
+  font-size: 14px;
+  color: var(--muted);
+  margin-bottom: 4px;
+}
+
+/* ===== Concept Cards ===== */
+.concept {
+  background: var(--surface1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 28px;
+  margin-bottom: 28px;
+  box-shadow: var(--shadow);
+}
+
+.concept-header {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  margin-bottom: 6px;
+  flex-wrap: wrap;
+}
+
+.concept h3 {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.concept-meta {
+  font-size: 12px;
+  color: var(--muted);
+  background: var(--surface2);
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
+.concept h4 {
+  font-size: 15px;
+  font-weight: 600;
+  margin: 20px 0 8px;
+  color: var(--text);
+}
+
+.concept p, .concept li {
+  color: var(--text);
+  line-height: 1.7;
+}
+
+.concept ul, .concept ol {
+  padding-left: 22px;
+  margin: 8px 0;
+}
+
+.concept li {
+  margin-bottom: 4px;
+}
+
+/* ===== Code Blocks ===== */
+pre {
+  background: var(--code-bg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 16px 18px;
+  overflow-x: auto;
+  margin: 10px 0 14px;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--text);
+  position: relative;
+}
+
+code {
+  font-family: var(--font-mono);
+  font-size: 0.9em;
+}
+
+:not(pre) > code {
+  background: var(--surface2);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.88em;
+}
+
+/* ===== Output Blocks ===== */
+.output {
+  background: var(--green-dim);
+  border: 1px solid var(--green);
+  border-radius: 6px;
+  padding: 12px 16px;
+  margin: 6px 0 14px;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--text);
+  white-space: pre-wrap;
+}
+
+.output-label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--green);
+  margin-bottom: 4px;
+}
+
+/* ===== Good/Bad Examples ===== */
+.do-dont {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin: 10px 0;
+}
+
+.do-box, .dont-box {
+  border-radius: 6px;
+  padding: 14px;
+  border: 1px solid;
+}
+
+.do-box {
+  background: var(--green-dim);
+  border-color: var(--green);
+}
+
+.dont-box {
+  background: var(--red-dim);
+  border-color: var(--red);
+}
+
+.do-box .label, .dont-box .label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 6px;
+}
+
+.do-box .label { color: var(--green); }
+.dont-box .label { color: var(--red); }
+
+.do-box pre, .dont-box pre {
+  margin: 0;
+  border: none;
+  background: transparent;
+  padding: 0;
+  font-size: 12.5px;
+}
+
+/* ===== Key Rules ===== */
+.rules-list {
+  list-style: none;
+  padding: 0;
+  margin: 8px 0;
+}
+
+.rules-list li {
+  padding: 6px 0 6px 24px;
+  position: relative;
+}
+
+.rules-list li::before {
+  content: "\2192";
+  position: absolute;
+  left: 2px;
+  color: var(--accent);
+  font-weight: 700;
+}
+
+/* ===== Exercises ===== */
+.exercise {
+  background: var(--purple-dim);
+  border: 1px solid var(--purple);
+  border-radius: 6px;
+  padding: 14px 18px;
+  margin: 8px 0;
+}
+
+.exercise .exercise-label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--purple);
+  margin-bottom: 4px;
+}
+
+/* ===== Pitfall ===== */
+.pitfall {
+  background: var(--red-dim);
+  border-left: 3px solid var(--red);
+  border-radius: 0 6px 6px 0;
+  padding: 10px 14px;
+  margin: 10px 0;
+  font-size: 14px;
+}
+
+.pitfall strong {
+  color: var(--red);
+}
+
+/* ===== Connection ===== */
+.connection {
+  background: var(--accent-dim);
+  border-left: 3px solid var(--accent);
+  border-radius: 0 6px 6px 0;
+  padding: 10px 14px;
+  margin: 10px 0;
+  font-size: 14px;
+  color: var(--muted);
+}
+
+/* ===== Review Cards ===== */
+.review-card {
+  background: var(--surface1);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--yellow);
+  border-radius: var(--radius);
+  padding: 20px 24px;
+  margin-bottom: 16px;
+  box-shadow: var(--shadow);
+}
+
+.review-card .review-header {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  margin-bottom: 6px;
+  flex-wrap: wrap;
+}
+
+.review-card h3 {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.review-card .review-meta {
+  font-size: 12px;
+  color: var(--muted);
+  background: var(--surface2);
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
+.review-card h4 {
+  font-size: 14px;
+  font-weight: 600;
+  margin: 14px 0 6px;
+  color: var(--text);
+}
+
+.review-card p, .review-card li {
+  color: var(--text);
+  line-height: 1.6;
+  font-size: 14px;
+}
+
+.review-card pre {
+  font-size: 12.5px;
+  padding: 12px 14px;
+  margin: 6px 0 10px;
+}
+
+.review-card .pitfall {
+  font-size: 13px;
+  padding: 8px 12px;
+}
+
+/* ===== Footer ===== */
+.footer {
+  margin-top: 60px;
+  padding: 24px 0;
+  border-top: 1px solid var(--border);
+}
+
+.footer h4 {
+  font-size: 14px;
+  color: var(--muted);
+  margin-bottom: 10px;
+}
+
+.footer ul {
+  list-style: none;
+  padding: 0;
+}
+
+.footer li {
+  margin-bottom: 4px;
+  font-size: 14px;
+}
+
+.footer li a { color: var(--accent); }
+.footer .current { color: var(--green); font-weight: 600; }
+
+/* ===== Responsive ===== */
+@media (max-width: 900px) {
+  .sidebar {
+    transform: translateX(-100%);
+  }
+  .sidebar.open {
+    transform: translateX(0);
+    box-shadow: 4px 0 20px rgba(0,0,0,0.5);
+  }
+  #sidebar-toggle {
+    display: flex;
+  }
+  .main {
+    margin-left: 0;
+    padding: 60px 20px 60px;
+    max-width: 100%;
+  }
+  .do-dont {
+    grid-template-columns: 1fr;
+  }
+  #theme-toggle {
+    right: 14px;
+    top: 16px;
+  }
+}
+</style>
+</head>
+<body>
+
+<!-- Theme Toggle -->
+<button id="theme-toggle" aria-label="Toggle theme" title="Toggle light/dark theme">&#9789;</button>
+
+<!-- Mobile Sidebar Toggle -->
+<button id="sidebar-toggle" aria-label="Toggle sidebar">&#9776;</button>
+
+<!-- Sidebar -->
+<nav class="sidebar" id="sidebar">
+  <div class="sidebar-header">
+    <h2>Go Guide</h2>
+    <div class="subtitle">Day 4 &mdash; 2026-06-05</div>
+  </div>
+
+  <div class="sidebar-section">
+    <div class="sidebar-section-title">Review (6 concepts)</div>
+    <a href="#review-error-handling" class="sidebar-link">Error Handling</a>
+    <a href="#review-first-class-functions" class="sidebar-link">First-class Functions</a>
+    <a href="#review-defer-panic-recover" class="sidebar-link">Defer, Panic, Recover</a>
+    <a href="#review-init-functions" class="sidebar-link">Init Functions</a>
+    <a href="#review-variadic-functions" class="sidebar-link">Variadic Functions</a>
+    <a href="#review-generics-basics" class="sidebar-link">Type Parameters (Generics)</a>
+  </div>
+
+  <div class="sidebar-section">
+    <div class="sidebar-section-title">New: Concurrency &amp; Std Lib (6)</div>
+    <a href="#concurrency-patterns" class="sidebar-link">Concurrency Patterns</a>
+    <a href="#errgroup" class="sidebar-link">errgroup</a>
+    <a href="#fmt-package" class="sidebar-link">fmt Package</a>
+    <a href="#io-package" class="sidebar-link">io Package</a>
+    <a href="#os-filepath" class="sidebar-link">os &amp; filepath</a>
+    <a href="#encoding-json" class="sidebar-link">encoding/json</a>
+  </div>
+</nav>
+
+<!-- Main Content -->
+<div class="main">
+
+<h1 class="page-title">Go Daily Guide</h1>
+<p class="page-subtitle">Day 4 &mdash; Thursday, June 5, 2026 &bull; 6 review + 6 new concepts</p>
+
+<!-- How to Use -->
+<div class="how-to-use">
+  <h3>How to Use This Guide</h3>
+  <ul>
+    <li>Start with the <strong>Review</strong> section &mdash; try to recall each concept before reading the refresher</li>
+    <li>Complete the challenge exercise for each review card without looking back at previous days</li>
+    <li>Then work through the <strong>New Concepts</strong> section, typing out every code example yourself</li>
+    <li>Pay special attention to the common mistakes sections (they highlight real Go gotchas)</li>
+    <li>Complete the exercises at the bottom of each concept without looking at solutions</li>
+    <li>Use <code>go run main.go</code> to test your code locally, or use the <a href="https://go.dev/play/" target="_blank">Go Playground</a></li>
+  </ul>
+</div>
+
+<!-- ============================================================ -->
+<!-- REVIEW SECTION -->
+<!-- ============================================================ -->
+<div class="section">
+  <span class="section-label review">Review</span>
+  <h2 class="section-title">Spaced Repetition Review &mdash; 6 Concepts</h2>
+
+  <!-- Review 1: Error Handling -->
+  <div class="review-card" id="review-error-handling">
+    <div class="review-header">
+      <h3>Error Handling</h3>
+      <span class="review-meta">Go Foundations &bull; 2 days ago &bull; rep 1</span>
+    </div>
+
+    <h4>Quick Reminder</h4>
+    <p>Go handles errors as values returned from functions, not exceptions. The <code>error</code> interface has a single <code>Error() string</code> method. Use <code>fmt.Errorf</code> with <code>%w</code> to wrap errors, <code>errors.Is</code> to compare sentinel errors, and <code>errors.As</code> to extract typed errors. Always check returned errors immediately.</p>
+
+    <h4>Key Pattern</h4>
+<pre>// Wrap errors with context
+result, err := doSomething()
+if err != nil {
+    return fmt.Errorf("doSomething failed: %w", err)
+}
+
+// Sentinel error checking
+if errors.Is(err, os.ErrNotExist) {
+    // handle file not found
+}
+
+// Type assertion on errors
+var pathErr *os.PathError
+if errors.As(err, &amp;pathErr) {
+    fmt.Println("failed path:", pathErr.Path)
+}</pre>
+
+    <div class="exercise">
+      <div class="exercise-label">Challenge Exercise</div>
+      <p>Create a <code>ValidationError</code> type that holds a field name and a message. Implement the <code>error</code> interface. Write a <code>ValidateUser(name, email string) error</code> function that returns a wrapped <code>ValidationError</code>. In the caller, use <code>errors.As</code> to extract the field name and print a user-friendly message.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>#1 Pitfall:</strong> Using <code>==</code> to compare errors instead of <code>errors.Is</code> &mdash; this breaks when errors are wrapped with <code>%w</code>. Always use <code>errors.Is</code> for sentinel errors and <code>errors.As</code> for typed errors.
+    </div>
+  </div>
+
+  <!-- Review 2: First-class Functions -->
+  <div class="review-card" id="review-first-class-functions">
+    <div class="review-header">
+      <h3>First-class Functions</h3>
+      <span class="review-meta">Functions &amp; Control Flow &bull; 2 days ago &bull; rep 0</span>
+    </div>
+
+    <h4>Quick Reminder</h4>
+    <p>Functions in Go are first-class values &mdash; they can be assigned to variables, passed as arguments, returned from other functions, and stored in data structures. Closures capture variables from their enclosing scope by reference. Function types are declared with <code>type HandlerFunc func(args) returns</code>.</p>
+
+    <h4>Key Pattern</h4>
+<pre>// Function as parameter (strategy pattern)
+func Apply(nums []int, fn func(int) int) []int {
+    result := make([]int, len(nums))
+    for i, n := range nums {
+        result[i] = fn(n)
+    }
+    return result
+}
+
+// Closure capturing external state
+func Counter() func() int {
+    count := 0
+    return func() int {
+        count++
+        return count
+    }
+}
+
+// Middleware pattern
+func WithLogging(next http.HandlerFunc) http.HandlerFunc {
+    return func(w http.ResponseWriter, r *http.Request) {
+        log.Println(r.Method, r.URL.Path)
+        next(w, r)
+    }
+}</pre>
+
+    <div class="exercise">
+      <div class="exercise-label">Challenge Exercise</div>
+      <p>Write a <code>Compose[T any](fns ...func(T) T) func(T) T</code> function that returns a single function applying all <code>fns</code> in left-to-right order. Test by composing <code>double</code>, <code>addOne</code>, and <code>square</code> on integers. Verify that <code>Compose(double, addOne, square)(3)</code> returns <code>49</code> (3*2=6, 6+1=7, 7*7=49).</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>#1 Pitfall:</strong> Closures capture variables by reference, not by value. In a loop, all closures may share the same variable unless you shadow it or pass it as a parameter (critical in pre-Go 1.22 code).
+    </div>
+  </div>
+
+  <!-- Review 3: Defer, Panic, Recover -->
+  <div class="review-card" id="review-defer-panic-recover">
+    <div class="review-header">
+      <h3>Defer, Panic, Recover</h3>
+      <span class="review-meta">Functions &amp; Control Flow &bull; 2 days ago &bull; rep 0</span>
+    </div>
+
+    <h4>Quick Reminder</h4>
+    <p><code>defer</code> schedules a function call to run when the surrounding function returns (LIFO order). <code>panic</code> triggers a runtime error that unwinds the stack. <code>recover</code> catches a panic &mdash; it only works inside a <code>defer</code>. Use defer for cleanup (files, locks, connections). Panic only for truly unrecoverable situations.</p>
+
+    <h4>Key Pattern</h4>
+<pre>// Defer for cleanup (LIFO order)
+func processFile(path string) error {
+    f, err := os.Open(path)
+    if err != nil {
+        return err
+    }
+    defer f.Close() // guaranteed cleanup
+
+    // ... process file
+    return nil
+}
+
+// Recover from panic in deferred function
+func safeDiv(a, b int) (result int, err error) {
+    defer func() {
+        if r := recover(); r != nil {
+            err = fmt.Errorf("recovered: %v", r)
+        }
+    }()
+    return a / b, nil
+}</pre>
+
+    <div class="exercise">
+      <div class="exercise-label">Challenge Exercise</div>
+      <p>Write a <code>SafeExecute(fn func()) (panicked bool, value interface{})</code> function that runs <code>fn</code> and returns whether it panicked plus the panic value. Use it to safely execute a series of functions, collecting which ones panicked. Print a summary like "3/5 functions completed successfully."</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>#1 Pitfall:</strong> Deferred function arguments are evaluated immediately, not at execution time. <code>defer fmt.Println(x)</code> captures the current value of <code>x</code>. To capture the final value, use a closure: <code>defer func() { fmt.Println(x) }()</code>.
+    </div>
+  </div>
+
+  <!-- Review 4: Init Functions -->
+  <div class="review-card" id="review-init-functions">
+    <div class="review-header">
+      <h3>Init Functions</h3>
+      <span class="review-meta">Functions &amp; Control Flow &bull; 2 days ago &bull; rep 0</span>
+    </div>
+
+    <h4>Quick Reminder</h4>
+    <p><code>init()</code> functions run automatically before <code>main()</code>, in dependency order (imported packages first). A single file can have multiple <code>init()</code> functions. They take no arguments and return nothing. Use them for setup that cannot be done with variable declarations. Prefer explicit initialization when possible for testability.</p>
+
+    <h4>Key Pattern</h4>
+<pre>package config
+
+import "os"
+
+var DatabaseURL string
+var Debug bool
+
+func init() {
+    DatabaseURL = os.Getenv("DATABASE_URL")
+    if DatabaseURL == "" {
+        DatabaseURL = "localhost:5432"
+    }
+    Debug = os.Getenv("DEBUG") == "true"
+}
+
+// Multiple inits run in source order
+func init() {
+    // validate configuration
+    if DatabaseURL == "" {
+        panic("DATABASE_URL must not be empty after init")
+    }
+}</pre>
+
+    <div class="exercise">
+      <div class="exercise-label">Challenge Exercise</div>
+      <p>Create a mini plugin registry: define a <code>registry</code> package with <code>Register(name string, fn func())</code> and <code>List() []string</code>. Create three separate files (in the same package), each with an <code>init()</code> that registers a different plugin. In <code>main</code>, import the registry and print all registered plugin names.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>#1 Pitfall:</strong> Relying on <code>init()</code> for heavy or fallible setup makes testing hard because you cannot control when or whether it runs. Prefer explicit <code>Setup()</code> functions that return errors.
+    </div>
+  </div>
+
+  <!-- Review 5: Variadic Functions -->
+  <div class="review-card" id="review-variadic-functions">
+    <div class="review-header">
+      <h3>Variadic Functions</h3>
+      <span class="review-meta">Functions &amp; Control Flow &bull; 2 days ago &bull; rep 0</span>
+    </div>
+
+    <h4>Quick Reminder</h4>
+    <p>Variadic functions accept a variable number of arguments using <code>...</code> syntax. The variadic parameter is received as a slice. Use <code>s...</code> to expand a slice into variadic arguments. Only the last parameter can be variadic. Common in <code>fmt.Println</code>, <code>append</code>, and option patterns.</p>
+
+    <h4>Key Pattern</h4>
+<pre>// Basic variadic
+func Sum(nums ...int) int {
+    total := 0
+    for _, n := range nums {
+        total += n
+    }
+    return total
+}
+
+// Expanding a slice with ...
+values := []int{1, 2, 3}
+Sum(values...) // expands slice into individual args
+
+// Functional options pattern
+type Server struct { port int; timeout time.Duration }
+type Option func(*Server)
+func WithPort(p int) Option { return func(s *Server) { s.port = p } }
+func NewServer(opts ...Option) *Server {
+    s := &amp;Server{port: 8080}
+    for _, opt := range opts {
+        opt(s)
+    }
+    return s
+}</pre>
+
+    <div class="exercise">
+      <div class="exercise-label">Challenge Exercise</div>
+      <p>Write a <code>Pipeline(input string, transforms ...func(string) string) string</code> function that applies transforms left-to-right. Create transforms: <code>ToUpper</code>, <code>TrimSpace</code>, <code>AddBrackets</code> (wraps in <code>[]</code>). Verify <code>Pipeline("  hello  ", TrimSpace, ToUpper, AddBrackets)</code> returns <code>"[HELLO]"</code>.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>#1 Pitfall:</strong> Passing a slice to a variadic function without <code>...</code> &mdash; <code>Sum(mySlice)</code> fails to compile. You must write <code>Sum(mySlice...)</code> to expand the slice.
+    </div>
+  </div>
+
+  <!-- Review 6: Type Parameters (Generics) -->
+  <div class="review-card" id="review-generics-basics">
+    <div class="review-header">
+      <h3>Type Parameters (Generics)</h3>
+      <span class="review-meta">Functions &amp; Control Flow &bull; 2 days ago &bull; rep 0</span>
+    </div>
+
+    <h4>Quick Reminder</h4>
+    <p>Go 1.18+ supports generics via type parameters in square brackets. Constraints restrict which types are allowed: <code>any</code> for all types, <code>comparable</code> for types supporting <code>==</code>/<code>!=</code>, and custom interface constraints for operator requirements. Type inference often allows omitting explicit type arguments.</p>
+
+    <h4>Key Pattern</h4>
+<pre>// Generic function with constraint
+func Filter[T any](s []T, predicate func(T) bool) []T {
+    var result []T
+    for _, v := range s {
+        if predicate(v) {
+            result = append(result, v)
+        }
+    }
+    return result
+}
+
+// Generic type
+type Stack[T any] struct {
+    items []T
+}
+func (s *Stack[T]) Push(val T) { s.items = append(s.items, val) }
+func (s *Stack[T]) Pop() (T, bool) {
+    if len(s.items) == 0 {
+        var zero T
+        return zero, false
+    }
+    val := s.items[len(s.items)-1]
+    s.items = s.items[:len(s.items)-1]
+    return val, true
+}</pre>
+
+    <div class="exercise">
+      <div class="exercise-label">Challenge Exercise</div>
+      <p>Write a generic <code>Set[T comparable]</code> type with methods <code>Add(T)</code>, <code>Remove(T)</code>, <code>Contains(T) bool</code>, <code>Union(Set[T]) Set[T]</code>, and <code>Intersection(Set[T]) Set[T]</code>. Use a <code>map[T]struct{}</code> internally. Test with both <code>int</code> and <code>string</code> sets.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>#1 Pitfall:</strong> Trying to use operators like <code>&lt;</code> or <code>+</code> with <code>any</code> constraint &mdash; you need <code>cmp.Ordered</code> or a custom constraint that includes the required types. The <code>any</code> constraint only supports assignment and interface method calls.
+    </div>
+  </div>
+
+</div><!-- end review section -->
+
+<!-- ============================================================ -->
+<!-- NEW CONCEPTS -->
+<!-- ============================================================ -->
+<div class="section">
+  <span class="section-label new">New</span>
+  <h2 class="section-title">Concurrency &amp; Standard Library &mdash; 6 Concepts</h2>
+
+  <!-- ========== CONCEPT 1: Concurrency Patterns ========== -->
+  <div class="concept" id="concurrency-patterns">
+    <div class="concept-header">
+      <h3>Concurrency Patterns</h3>
+      <span class="concept-meta">Concurrency &bull; New</span>
+    </div>
+
+    <p>Go's concurrency primitives (goroutines, channels, select) combine into powerful, reusable patterns. These patterns solve real-world problems like distributing work, collecting results, limiting throughput, and managing resource access. Mastering them is what separates Go beginners from proficient Go programmers.</p>
+
+    <h4>Why It Matters</h4>
+    <p>Production systems need more than raw goroutines and channels. You need structured ways to distribute work across cores, collect results safely, limit concurrency to avoid overwhelming downstream services, and control throughput. These patterns are the building blocks of every serious Go server, CLI tool, and data pipeline.</p>
+
+    <h4>Fan-out/Fan-in: Distribute Work, Collect Results</h4>
+<pre>package main
+
+import (
+    "fmt"
+    "sync"
+)
+
+// producer sends jobs to the jobs channel
+func producer(jobs chan&lt;- int, count int) {
+    for i := 1; i &lt;= count; i++ {
+        jobs &lt;- i
+    }
+    close(jobs)
+}
+
+// worker reads from jobs, writes results
+func worker(id int, jobs &lt;-chan int, results chan&lt;- string, wg *sync.WaitGroup) {
+    defer wg.Done()
+    for job := range jobs {
+        result := fmt.Sprintf("worker %d processed job %d (squared=%d)", id, job, job*job)
+        results &lt;- result
+    }
+}
+
+func main() {
+    const numWorkers = 3
+    const numJobs = 9
+
+    jobs := make(chan int, numJobs)
+    results := make(chan string, numJobs)
+
+    // Fan-out: launch multiple workers reading from the same channel
+    var wg sync.WaitGroup
+    for w := 1; w &lt;= numWorkers; w++ {
+        wg.Add(1)
+        go worker(w, jobs, results, &amp;wg)
+    }
+
+    // Producer sends jobs
+    go producer(jobs, numJobs)
+
+    // Close results when all workers are done
+    go func() {
+        wg.Wait()
+        close(results)
+    }()
+
+    // Fan-in: collect all results from the single results channel
+    for r := range results {
+        fmt.Println(r)
+    }
+    fmt.Println("All done!")
+}</pre>
+    <div class="output">
+      <div class="output-label">Output (order varies)</div>
+worker 3 processed job 2 (squared=4)
+worker 1 processed job 1 (squared=1)
+worker 2 processed job 3 (squared=9)
+worker 1 processed job 5 (squared=25)
+worker 3 processed job 4 (squared=16)
+worker 2 processed job 6 (squared=36)
+worker 1 processed job 7 (squared=49)
+worker 3 processed job 8 (squared=64)
+worker 2 processed job 9 (squared=81)
+All done!
+    </div>
+
+    <h4>Pipeline: Chain Stages with Channels</h4>
+<pre>package main
+
+import "fmt"
+
+// Stage 1: source generates numbers
+func source(nums ...int) &lt;-chan int {
+    out := make(chan int)
+    go func() {
+        for _, n := range nums {
+            out &lt;- n
+        }
+        close(out)
+    }()
+    return out
+}
+
+// Stage 2: transform doubles each number
+func transform(in &lt;-chan int) &lt;-chan int {
+    out := make(chan int)
+    go func() {
+        for n := range in {
+            out &lt;- n * 2
+        }
+        close(out)
+    }()
+    return out
+}
+
+// Stage 3: sink formats as strings
+func sink(in &lt;-chan int) &lt;-chan string {
+    out := make(chan string)
+    go func() {
+        for n := range in {
+            out &lt;- fmt.Sprintf("result: %d", n)
+        }
+        close(out)
+    }()
+    return out
+}
+
+func main() {
+    // Chain: source -> transform -> sink
+    numbers := source(1, 2, 3, 4, 5)
+    doubled := transform(numbers)
+    formatted := sink(doubled)
+
+    for s := range formatted {
+        fmt.Println(s)
+    }
+}</pre>
+    <div class="output">
+      <div class="output-label">Output</div>
+result: 2
+result: 4
+result: 6
+result: 8
+result: 10
+    </div>
+
+    <h4>Worker Pool: Fixed Number of Goroutines</h4>
+<pre>package main
+
+import (
+    "fmt"
+    "math/rand"
+    "sync"
+    "time"
+)
+
+type Job struct {
+    ID   int
+    Data string
+}
+
+type Result struct {
+    JobID    int
+    Output   string
+    Duration time.Duration
+}
+
+func workerPool(numWorkers int, jobs []Job) []Result {
+    jobCh := make(chan Job, len(jobs))
+    resultCh := make(chan Result, len(jobs))
+
+    // Start fixed number of workers
+    var wg sync.WaitGroup
+    for w := 0; w &lt; numWorkers; w++ {
+        wg.Add(1)
+        go func(id int) {
+            defer wg.Done()
+            for job := range jobCh {
+                start := time.Now()
+                // Simulate variable-length work
+                time.Sleep(time.Duration(rand.Intn(50)) * time.Millisecond)
+                resultCh &lt;- Result{
+                    JobID:    job.ID,
+                    Output:   fmt.Sprintf("worker-%d processed %q", id, job.Data),
+                    Duration: time.Since(start),
+                }
+            }
+        }(w)
+    }
+
+    // Send all jobs
+    for _, j := range jobs {
+        jobCh &lt;- j
+    }
+    close(jobCh)
+
+    // Close results when workers finish
+    go func() {
+        wg.Wait()
+        close(resultCh)
+    }()
+
+    // Collect results
+    var results []Result
+    for r := range resultCh {
+        results = append(results, r)
+    }
+    return results
+}
+
+func main() {
+    jobs := []Job{
+        {1, "alpha"}, {2, "beta"}, {3, "gamma"},
+        {4, "delta"}, {5, "epsilon"}, {6, "zeta"},
+    }
+
+    results := workerPool(3, jobs)
+    for _, r := range results {
+        fmt.Printf("Job %d: %s (%v)\n", r.JobID, r.Output, r.Duration.Round(time.Millisecond))
+    }
+}</pre>
+    <div class="output">
+      <div class="output-label">Output (order and durations vary)</div>
+Job 1: worker-0 processed "alpha" (12ms)
+Job 2: worker-1 processed "beta" (35ms)
+Job 3: worker-2 processed "gamma" (8ms)
+Job 4: worker-2 processed "delta" (27ms)
+Job 5: worker-0 processed "epsilon" (41ms)
+Job 6: worker-1 processed "zeta" (19ms)
+    </div>
+
+    <h4>Rate Limiting with time.Ticker</h4>
+<pre>package main
+
+import (
+    "fmt"
+    "time"
+)
+
+func main() {
+    // Steady rate limiter: 1 event per 200ms
+    requests := []string{"req-1", "req-2", "req-3", "req-4", "req-5"}
+
+    // Steady rate: use a ticker
+    limiter := time.NewTicker(200 * time.Millisecond)
+    defer limiter.Stop()
+
+    start := time.Now()
+    for _, req := range requests {
+        &lt;-limiter.C // wait for the next tick
+        fmt.Printf("[%6dms] handled %s\n",
+            time.Since(start).Milliseconds(), req)
+    }
+
+    fmt.Println()
+
+    // Bursty rate limiter: allow 3 immediate, then 1/200ms
+    bursty := make(chan time.Time, 3)
+    // Pre-fill burst capacity
+    for i := 0; i &lt; 3; i++ {
+        bursty &lt;- time.Now()
+    }
+    // Refill at steady rate
+    go func() {
+        for t := range time.NewTicker(200 * time.Millisecond).C {
+            bursty &lt;- t
+        }
+    }()
+
+    moreRequests := []string{"burst-1", "burst-2", "burst-3", "burst-4", "burst-5"}
+    start = time.Now()
+    for _, req := range moreRequests {
+        &lt;-bursty
+        fmt.Printf("[%6dms] handled %s\n",
+            time.Since(start).Milliseconds(), req)
+    }
+}</pre>
+    <div class="output">
+      <div class="output-label">Output (times approximate)</div>
+[   200ms] handled req-1
+[   400ms] handled req-2
+[   600ms] handled req-3
+[   800ms] handled req-4
+[  1000ms] handled req-5
+
+[     0ms] handled burst-1
+[     0ms] handled burst-2
+[     0ms] handled burst-3
+[   200ms] handled burst-4
+[   400ms] handled burst-5
+    </div>
+
+    <h4>Semaphore: Buffered Channel as Counting Semaphore</h4>
+<pre>package main
+
+import (
+    "fmt"
+    "sync"
+    "time"
+)
+
+type Semaphore chan struct{}
+
+func NewSemaphore(max int) Semaphore {
+    return make(Semaphore, max)
+}
+
+func (s Semaphore) Acquire() {
+    s &lt;- struct{}{} // blocks when buffer is full
+}
+
+func (s Semaphore) Release() {
+    &lt;-s // frees a slot
+}
+
+func main() {
+    sem := NewSemaphore(3) // max 3 concurrent operations
+    var wg sync.WaitGroup
+
+    for i := 1; i &lt;= 8; i++ {
+        wg.Add(1)
+        go func(id int) {
+            defer wg.Done()
+
+            sem.Acquire()
+            defer sem.Release()
+
+            fmt.Printf("[%s] task %d started\n",
+                time.Now().Format("15:04:05.000"), id)
+            time.Sleep(300 * time.Millisecond)
+            fmt.Printf("[%s] task %d done\n",
+                time.Now().Format("15:04:05.000"), id)
+        }(i)
+    }
+
+    wg.Wait()
+    fmt.Println("All tasks complete")
+}</pre>
+    <div class="output">
+      <div class="output-label">Output (timestamps vary, at most 3 concurrent)</div>
+[14:30:00.001] task 3 started
+[14:30:00.001] task 1 started
+[14:30:00.001] task 2 started
+[14:30:00.301] task 3 done
+[14:30:00.301] task 2 done
+[14:30:00.301] task 1 done
+[14:30:00.301] task 4 started
+[14:30:00.301] task 5 started
+[14:30:00.301] task 6 started
+[14:30:00.601] task 4 done
+[14:30:00.601] task 5 done
+[14:30:00.601] task 6 done
+[14:30:00.601] task 7 started
+[14:30:00.601] task 8 started
+[14:30:00.901] task 7 done
+[14:30:00.901] task 8 done
+All tasks complete
+    </div>
+
+    <h4>Common Mistakes</h4>
+    <div class="do-dont">
+      <div class="do-box">
+        <div class="label">Do: Close results channel after all workers finish</div>
+<pre>go func() {
+    wg.Wait()
+    close(results)
+}()
+for r := range results { ... }</pre>
+      </div>
+      <div class="dont-box">
+        <div class="label">Don't: Close results before workers are done</div>
+<pre>close(results) // workers may still be sending!
+// panic: send on closed channel
+for r := range results { ... }</pre>
+      </div>
+    </div>
+    <div class="do-dont">
+      <div class="do-box">
+        <div class="label">Do: Use buffered channels for known work sizes</div>
+<pre>jobs := make(chan Job, len(allJobs))
+// prevents blocking when sending jobs</pre>
+      </div>
+      <div class="dont-box">
+        <div class="label">Don't: Use unbuffered when producer is synchronous</div>
+<pre>jobs := make(chan Job) // blocks on each send
+// deadlock if no worker is reading yet!</pre>
+      </div>
+    </div>
+
+    <h4>Key Rules</h4>
+    <ul class="rules-list">
+      <li>Fan-out: multiple goroutines reading from the same channel distributes work automatically</li>
+      <li>Fan-in: multiple goroutines writing to the same channel collects results into one stream</li>
+      <li>Pipelines: each stage is a function that takes <code>&lt;-chan T</code> and returns <code>&lt;-chan U</code></li>
+      <li>Worker pools: launch N goroutines reading from a jobs channel for bounded concurrency</li>
+      <li>A buffered channel of <code>struct{}</code> makes an efficient counting semaphore</li>
+      <li>Rate limiting: <code>time.Ticker</code> for steady rate; pre-filled buffered channel for burst + steady</li>
+    </ul>
+
+    <div class="connection">
+      <strong>Connection:</strong> These patterns build on <em>Goroutines</em>, <em>Channels</em>, and <em>Select Statement</em> from Day 3. The worker pool pattern extends into <em>errgroup</em> (next) for error-aware concurrency. The semaphore pattern is what <code>errgroup.SetLimit</code> uses internally. Pipelines compose well with the <em>io Package</em> (later today) for streaming data processing.
+    </div>
+
+    <div class="exercise">
+      <div class="exercise-label">Exercise 1</div>
+      <p>Build a fan-out/fan-in image processing simulator. Generate 20 "images" (represented as ints 1-20). Fan out to 4 workers that "process" each image (multiply by a random factor). Fan in results and print them sorted by original image ID.</p>
+    </div>
+    <div class="exercise">
+      <div class="exercise-label">Exercise 2</div>
+      <p>Create a 3-stage pipeline: (1) read lines from a string slice, (2) count words in each line, (3) accumulate a running total. Each stage runs as a goroutine connected by channels. Print the word count for each line and the grand total.</p>
+    </div>
+    <div class="exercise">
+      <div class="exercise-label">Exercise 3</div>
+      <p>Implement a rate-limited API caller. Given 15 "API requests," process them at a rate of 5 per second using a ticker-based rate limiter. Print timestamps showing the rate is respected. Then modify it to allow an initial burst of 3.</p>
+    </div>
+  </div>
+
+  <!-- ========== CONCEPT 2: errgroup ========== -->
+  <div class="concept" id="errgroup">
+    <div class="concept-header">
+      <h3>errgroup</h3>
+      <span class="concept-meta">Concurrency &bull; New</span>
+    </div>
+
+    <p>The <code>golang.org/x/sync/errgroup</code> package provides a higher-level abstraction for managing groups of goroutines that can fail. It combines <code>sync.WaitGroup</code> functionality with error propagation and context-based cancellation, solving the most common concurrent error-handling pattern in one clean API.</p>
+
+    <h4>Why It Matters</h4>
+    <p><code>sync.WaitGroup</code> has a critical gap: it cannot propagate errors. When launching multiple goroutines, you need to know if any failed and typically want to cancel remaining work when one fails. <code>errgroup</code> solves this elegantly, making it the go-to choice for production concurrent code.</p>
+
+    <h4>Basic errgroup Usage</h4>
+<pre>package main
+
+import (
+    "fmt"
+    "math/rand"
+    "time"
+
+    "golang.org/x/sync/errgroup"
+)
+
+func fetchURL(url string) (string, error) {
+    // Simulate network latency
+    time.Sleep(time.Duration(rand.Intn(100)) * time.Millisecond)
+    if url == "https://bad.example.com" {
+        return "", fmt.Errorf("failed to fetch %s: connection refused", url)
+    }
+    return fmt.Sprintf("content from %s", url), nil
+}
+
+func main() {
+    urls := []string{
+        "https://api.example.com/users",
+        "https://api.example.com/posts",
+        "https://api.example.com/comments",
+    }
+
+    var g errgroup.Group
+    results := make([]string, len(urls))
+
+    for i, url := range urls {
+        i, url := i, url // capture for goroutine
+        g.Go(func() error {
+            content, err := fetchURL(url)
+            if err != nil {
+                return err
+            }
+            results[i] = content // safe: each goroutine writes to its own index
+            return nil
+        })
+    }
+
+    // Wait for all goroutines; returns the first error (or nil)
+    if err := g.Wait(); err != nil {
+        fmt.Println("Error:", err)
+    } else {
+        for _, r := range results {
+            fmt.Println(r)
+        }
+    }
+}</pre>
+    <div class="output">
+      <div class="output-label">Output</div>
+content from https://api.example.com/users
+content from https://api.example.com/posts
+content from https://api.example.com/comments
+    </div>
+
+    <h4>errgroup with Context Cancellation</h4>
+<pre>package main
+
+import (
+    "context"
+    "fmt"
+    "time"
+
+    "golang.org/x/sync/errgroup"
+)
+
+func fetchData(ctx context.Context, source string, delay time.Duration) (string, error) {
+    select {
+    case &lt;-time.After(delay):
+        return fmt.Sprintf("data from %s", source), nil
+    case &lt;-ctx.Done():
+        return "", fmt.Errorf("%s cancelled: %w", source, ctx.Err())
+    }
+}
+
+func main() {
+    // WithContext: if any goroutine returns an error, ctx is cancelled
+    g, ctx := errgroup.WithContext(context.Background())
+
+    sources := map[string]time.Duration{
+        "database":    50 * time.Millisecond,
+        "cache":       20 * time.Millisecond,
+        "bad-service": 0, // will fail immediately
+    }
+
+    results := make(map[string]string)
+    var mu sync.Mutex // protect the map — or use a slice
+
+    for name, delay := range sources {
+        name, delay := name, delay
+        g.Go(func() error {
+            if name == "bad-service" {
+                return fmt.Errorf("bad-service: connection timeout")
+            }
+            data, err := fetchData(ctx, name, delay)
+            if err != nil {
+                return err
+            }
+            mu.Lock()
+            results[name] = data
+            mu.Unlock()
+            return nil
+        })
+    }
+
+    if err := g.Wait(); err != nil {
+        fmt.Println("Pipeline failed:", err)
+        fmt.Println("Partial results collected:", len(results))
+    }
+}</pre>
+    <p><em>Note:</em> Add <code>import "sync"</code> to the imports. The context cancellation means goroutines still running when one fails will see <code>ctx.Done()</code> fire and can exit early.</p>
+    <div class="output">
+      <div class="output-label">Output</div>
+Pipeline failed: bad-service: connection timeout
+Partial results collected: 1
+    </div>
+
+    <h4>errgroup.SetLimit for Bounded Concurrency</h4>
+<pre>package main
+
+import (
+    "fmt"
+    "time"
+
+    "golang.org/x/sync/errgroup"
+)
+
+func processItem(id int) error {
+    fmt.Printf("[%s] processing item %d\n",
+        time.Now().Format("15:04:05.000"), id)
+    time.Sleep(200 * time.Millisecond) // simulate work
+    return nil
+}
+
+func main() {
+    var g errgroup.Group
+    g.SetLimit(3) // at most 3 goroutines run concurrently
+
+    for i := 1; i &lt;= 9; i++ {
+        i := i
+        g.Go(func() error { // blocks if 3 already running
+            return processItem(i)
+        })
+    }
+
+    if err := g.Wait(); err != nil {
+        fmt.Println("Error:", err)
+    } else {
+        fmt.Println("All items processed!")
+    }
+}</pre>
+    <div class="output">
+      <div class="output-label">Output (timestamps show batches of 3)</div>
+[14:30:00.001] processing item 1
+[14:30:00.001] processing item 2
+[14:30:00.001] processing item 3
+[14:30:00.201] processing item 4
+[14:30:00.201] processing item 5
+[14:30:00.201] processing item 6
+[14:30:00.401] processing item 7
+[14:30:00.401] processing item 8
+[14:30:00.401] processing item 9
+All items processed!
+    </div>
+
+    <h4>Comparison: sync.WaitGroup vs errgroup</h4>
+<pre>package main
+
+import (
+    "fmt"
+    "sync"
+
+    "golang.org/x/sync/errgroup"
+)
+
+// With sync.WaitGroup — manual error handling, no cancellation
+func withWaitGroup() error {
+    var wg sync.WaitGroup
+    errCh := make(chan error, 3) // must size correctly
+
+    for i := 0; i &lt; 3; i++ {
+        wg.Add(1)
+        go func(id int) {
+            defer wg.Done()
+            if id == 1 {
+                errCh &lt;- fmt.Errorf("task %d failed", id)
+                return
+            }
+            fmt.Printf("WG: task %d ok\n", id)
+        }(i)
+    }
+
+    wg.Wait()
+    close(errCh)
+
+    for err := range errCh {
+        return err // return first error
+    }
+    return nil
+}
+
+// With errgroup — clean and automatic
+func withErrgroup() error {
+    var g errgroup.Group
+
+    for i := 0; i &lt; 3; i++ {
+        i := i
+        g.Go(func() error {
+            if i == 1 {
+                return fmt.Errorf("task %d failed", i)
+            }
+            fmt.Printf("EG: task %d ok\n", i)
+            return nil
+        })
+    }
+
+    return g.Wait() // returns first error automatically
+}
+
+func main() {
+    fmt.Println("--- WaitGroup ---")
+    if err := withWaitGroup(); err != nil {
+        fmt.Println("WG error:", err)
+    }
+
+    fmt.Println("\n--- errgroup ---")
+    if err := withErrgroup(); err != nil {
+        fmt.Println("EG error:", err)
+    }
+}</pre>
+    <div class="output">
+      <div class="output-label">Output (order varies)</div>
+--- WaitGroup ---
+WG: task 0 ok
+WG: task 2 ok
+WG error: task 1 failed
+
+--- errgroup ---
+EG: task 0 ok
+EG: task 2 ok
+EG error: task 1 failed
+    </div>
+
+    <h4>Common Mistakes</h4>
+    <div class="do-dont">
+      <div class="do-box">
+        <div class="label">Do: Use WithContext for cancellation</div>
+<pre>g, ctx := errgroup.WithContext(ctx)
+g.Go(func() error {
+    // check ctx.Done() for early exit
+    select {
+    case &lt;-ctx.Done():
+        return ctx.Err()
+    default:
+        return doWork()
+    }
+})</pre>
+      </div>
+      <div class="dont-box">
+        <div class="label">Don't: Ignore the context from WithContext</div>
+<pre>g, _ := errgroup.WithContext(ctx)
+g.Go(func() error {
+    return doExpensiveWork()
+    // ignores cancellation, wastes resources
+})</pre>
+      </div>
+    </div>
+    <div class="do-dont">
+      <div class="do-box">
+        <div class="label">Do: Capture loop variables</div>
+<pre>for i, url := range urls {
+    i, url := i, url // shadow!
+    g.Go(func() error {
+        results[i] = fetch(url)
+        return nil
+    })
+}</pre>
+      </div>
+      <div class="dont-box">
+        <div class="label">Don't: Share loop variable (pre-Go 1.22)</div>
+<pre>for i, url := range urls {
+    g.Go(func() error {
+        results[i] = fetch(url) // race!
+        return nil
+    })
+}</pre>
+      </div>
+    </div>
+
+    <h4>Key Rules</h4>
+    <ul class="rules-list">
+      <li><code>g.Go()</code> launches a goroutine; <code>g.Wait()</code> blocks until all finish and returns the first non-nil error</li>
+      <li><code>errgroup.WithContext</code> cancels the derived context on the first error &mdash; remaining goroutines should check <code>ctx.Done()</code></li>
+      <li><code>g.SetLimit(n)</code> bounds concurrent goroutines &mdash; <code>g.Go</code> blocks when the limit is reached</li>
+      <li>Each goroutine writes to its own slice index (safe) or uses a mutex for shared maps</li>
+      <li>Only the first error is returned; if you need all errors, collect them with a mutex</li>
+    </ul>
+
+    <div class="connection">
+      <strong>Connection:</strong> <code>errgroup</code> is the production-ready evolution of the <em>Concurrency Patterns</em> (worker pool, fan-out) combined with the <em>Context</em> package's cancellation. It replaces the manual <code>sync.WaitGroup</code> + error channel pattern from <em>sync Package</em>. The <code>SetLimit</code> method is equivalent to the semaphore pattern.
+    </div>
+
+    <div class="exercise">
+      <div class="exercise-label">Exercise 1</div>
+      <p>Write a function that uses <code>errgroup</code> to concurrently "validate" 5 items (simulate with sleep). One item should fail validation. Use <code>WithContext</code> so that when validation fails, remaining goroutines cancel early. Print which items completed vs cancelled.</p>
+    </div>
+    <div class="exercise">
+      <div class="exercise-label">Exercise 2</div>
+      <p>Use <code>errgroup.SetLimit(2)</code> to process 10 files concurrently with at most 2 at a time. Each "file" takes 100ms to process. Print start/end timestamps to verify only 2 run simultaneously. If any file fails, all remaining should be skipped.</p>
+    </div>
+    <div class="exercise">
+      <div class="exercise-label">Exercise 3</div>
+      <p>Rewrite the worker pool from Concurrency Patterns using <code>errgroup</code> instead of <code>sync.WaitGroup</code>. Add error handling: if any job fails (simulate random failures), the pool should stop accepting new work. Compare the code complexity with the manual approach.</p>
+    </div>
+  </div>
+
+  <!-- ========== CONCEPT 3: fmt Package ========== -->
+  <div class="concept" id="fmt-package">
+    <div class="concept-header">
+      <h3>fmt Package</h3>
+      <span class="concept-meta">Standard Library Mastery &bull; New</span>
+    </div>
+
+    <p>The <code>fmt</code> package implements formatted I/O with functions analogous to C's <code>printf</code> and <code>scanf</code>. It handles printing, string formatting, error creation, and scanning. Every Go program uses it, and understanding its verbs and interfaces unlocks powerful custom formatting.</p>
+
+    <h4>Why It Matters</h4>
+    <p>Effective debugging, logging, and output all depend on <code>fmt</code>. The package's verb system is consistent across <code>Printf</code>, <code>Sprintf</code>, <code>Fprintf</code>, and <code>Errorf</code>. Implementing the <code>Stringer</code> and <code>GoStringer</code> interfaces gives your types first-class formatting support. The <code>%w</code> verb in <code>Errorf</code> is essential for error wrapping.</p>
+
+    <h4>Print Verbs: The Complete Reference</h4>
+<pre>package main
+
+import "fmt"
+
+type Point struct {
+    X, Y int
+}
+
+func main() {
+    p := Point{3, 7}
+    s := "hello, world"
+    n := 42
+    f := 3.14159
+
+    // General verbs
+    fmt.Printf("%%v   (default):     %v\n", p)
+    fmt.Printf("%%+v  (with fields): %+v\n", p)
+    fmt.Printf("%%#v  (Go syntax):   %#v\n", p)
+    fmt.Printf("%%T   (type):        %T\n", p)
+    fmt.Printf("%%%%   (literal %%):   %%\n")
+
+    fmt.Println()
+
+    // Integer verbs
+    fmt.Printf("%%d   (decimal):     %d\n", n)
+    fmt.Printf("%%b   (binary):      %b\n", n)
+    fmt.Printf("%%o   (octal):       %o\n", n)
+    fmt.Printf("%%x   (hex lower):   %x\n", n)
+    fmt.Printf("%%X   (hex upper):   %X\n", n)
+    fmt.Printf("%%c   (character):   %c\n", 65) // 'A'
+
+    fmt.Println()
+
+    // String verbs
+    fmt.Printf("%%s   (plain):       %s\n", s)
+    fmt.Printf("%%q   (quoted):      %q\n", s)
+
+    fmt.Println()
+
+    // Float verbs
+    fmt.Printf("%%f   (decimal):     %f\n", f)
+    fmt.Printf("%%e   (scientific):  %e\n", f)
+    fmt.Printf("%%g   (compact):     %g\n", f)
+
+    fmt.Println()
+
+    // Pointer
+    fmt.Printf("%%p   (pointer):     %p\n", &amp;p)
+}</pre>
+    <div class="output">
+      <div class="output-label">Output</div>
+%v   (default):     {3 7}
+%+v  (with fields): {X:3 Y:7}
+%#v  (Go syntax):   main.Point{X:3, Y:7}
+%T   (type):        main.Point
+%%   (literal %):   %
+
+%d   (decimal):     42
+%b   (binary):      101010
+%o   (octal):       52
+%x   (hex lower):   2a
+%X   (hex upper):   2A
+%c   (character):   A
+
+%s   (plain):       hello, world
+%q   (quoted):      "hello, world"
+
+%f   (decimal):     3.141590
+%e   (scientific):  3.141590e+00
+%g   (compact):     3.14159
+
+%p   (pointer):     0xc0000b4000
+    </div>
+
+    <h4>Width, Precision, and Padding</h4>
+<pre>package main
+
+import "fmt"
+
+func main() {
+    // Width: minimum characters (right-aligned by default)
+    fmt.Printf("[%10d]\n", 42)      // right-aligned
+    fmt.Printf("[%-10d]\n", 42)     // left-aligned
+    fmt.Printf("[%010d]\n", 42)     // zero-padded
+
+    // Strings
+    fmt.Printf("[%20s]\n", "hello")  // right-aligned
+    fmt.Printf("[%-20s]\n", "hello") // left-aligned
+    fmt.Printf("[%.3s]\n", "hello")  // truncate to 3 chars
+
+    // Floats: width.precision
+    fmt.Printf("[%10.2f]\n", 3.14159) // 10 wide, 2 decimal
+    fmt.Printf("[%-10.2f]\n", 3.14159)
+    fmt.Printf("[%010.2f]\n", 3.14159)
+
+    // Table formatting
+    fmt.Println("\n--- Price Table ---")
+    fmt.Printf("%-15s %8s %10s\n", "Item", "Qty", "Price")
+    fmt.Printf("%-15s %8s %10s\n", "---", "---", "---")
+    fmt.Printf("%-15s %8d %10.2f\n", "Widget", 100, 9.99)
+    fmt.Printf("%-15s %8d %10.2f\n", "Gadget Pro", 25, 49.95)
+    fmt.Printf("%-15s %8d %10.2f\n", "Thingamajig", 3, 199.00)
+}</pre>
+    <div class="output">
+      <div class="output-label">Output</div>
+[        42]
+[42        ]
+[0000000042]
+[               hello]
+[hello               ]
+[hel]
+[      3.14]
+[3.14      ]
+[0000003.14]
+
+--- Price Table ---
+Item                 Qty      Price
+---                  ---        ---
+Widget               100       9.99
+Gadget Pro            25      49.95
+Thingamajig            3     199.00
+    </div>
+
+    <h4>Stringer and GoStringer Interfaces</h4>
+<pre>package main
+
+import "fmt"
+
+type Color struct {
+    R, G, B uint8
+}
+
+// Stringer interface: controls %v and %s output
+func (c Color) String() string {
+    return fmt.Sprintf("rgb(%d, %d, %d)", c.R, c.G, c.B)
+}
+
+// GoStringer interface: controls %#v output
+func (c Color) GoString() string {
+    return fmt.Sprintf("Color{R: 0x%02X, G: 0x%02X, B: 0x%02X}", c.R, c.G, c.B)
+}
+
+type IPAddr [4]byte
+
+func (ip IPAddr) String() string {
+    return fmt.Sprintf("%d.%d.%d.%d", ip[0], ip[1], ip[2], ip[3])
+}
+
+func main() {
+    red := Color{255, 0, 0}
+    teal := Color{0, 128, 128}
+
+    fmt.Println(red)              // uses String()
+    fmt.Printf("Color: %v\n", teal)  // uses String()
+    fmt.Printf("Debug: %#v\n", red)  // uses GoString()
+
+    ip := IPAddr{192, 168, 1, 1}
+    fmt.Printf("Connect to %v\n", ip)
+}</pre>
+    <div class="output">
+      <div class="output-label">Output</div>
+rgb(255, 0, 0)
+Color: rgb(0, 128, 128)
+Debug: Color{R: 0xFF, G: 0x00, B: 0x00}
+Connect to 192.168.1.1
+    </div>
+
+    <h4>Sprintf, Fprintf, and Errorf</h4>
+<pre>package main
+
+import (
+    "errors"
+    "fmt"
+    "os"
+    "strings"
+)
+
+var ErrNotFound = errors.New("not found")
+
+func findUser(id int) (string, error) {
+    if id &lt;= 0 {
+        // %w wraps the error — allows errors.Is/As to unwrap
+        return "", fmt.Errorf("findUser(id=%d): %w", id, ErrNotFound)
+    }
+    return fmt.Sprintf("User_%d", id), nil
+}
+
+func main() {
+    // Sprintf: format to string
+    greeting := fmt.Sprintf("Hello, %s! You have %d messages.", "Alice", 3)
+    fmt.Println(greeting)
+
+    // Fprintf: format to any io.Writer
+    fmt.Fprintf(os.Stderr, "Warning: %s\n", "disk almost full")
+
+    // Write to a strings.Builder
+    var b strings.Builder
+    fmt.Fprintf(&amp;b, "(%d, %d)", 10, 20)
+    fmt.Fprintf(&amp;b, " + (%d, %d)", 30, 40)
+    fmt.Println(b.String())
+
+    // Errorf with %w for error wrapping
+    _, err := findUser(-1)
+    if err != nil {
+        fmt.Println("Error:", err)
+        fmt.Println("Is ErrNotFound?", errors.Is(err, ErrNotFound))
+    }
+}</pre>
+    <div class="output">
+      <div class="output-label">Output</div>
+Hello, Alice! You have 3 messages.
+Warning: disk almost full
+(10, 20) + (30, 40)
+Error: findUser(id=-1): not found
+Is ErrNotFound? true
+    </div>
+
+    <h4>Common Mistakes</h4>
+    <div class="do-dont">
+      <div class="do-box">
+        <div class="label">Do: Use %w to wrap errors</div>
+<pre>return fmt.Errorf("open config: %w", err)
+// errors.Is and errors.As work through the chain</pre>
+      </div>
+      <div class="dont-box">
+        <div class="label">Don't: Use %v for error wrapping</div>
+<pre>return fmt.Errorf("open config: %v", err)
+// loses the error chain! errors.Is returns false</pre>
+      </div>
+    </div>
+    <div class="do-dont">
+      <div class="do-box">
+        <div class="label">Do: Use %+v for struct debugging</div>
+<pre>fmt.Printf("config: %+v\n", cfg)
+// shows field names: {Port:8080 Host:localhost}</pre>
+      </div>
+      <div class="dont-box">
+        <div class="label">Don't: Rely on %v for debugging structs</div>
+<pre>fmt.Printf("config: %v\n", cfg)
+// just shows values: {8080 localhost}
+// which field is which?</pre>
+      </div>
+    </div>
+
+    <h4>Key Rules</h4>
+    <ul class="rules-list">
+      <li><code>%v</code> is the default format; <code>%+v</code> adds field names; <code>%#v</code> gives Go syntax</li>
+      <li><code>%T</code> prints the type &mdash; invaluable for debugging interfaces</li>
+      <li>Implement <code>String() string</code> (the <code>Stringer</code> interface) for human-readable output of your types</li>
+      <li>Use <code>%w</code> in <code>Errorf</code> to wrap errors; <code>%v</code> loses the error chain</li>
+      <li>Width and precision: <code>%10d</code> (width 10), <code>%-10s</code> (left-align), <code>%.2f</code> (2 decimal places), <code>%05d</code> (zero-pad)</li>
+    </ul>
+
+    <div class="connection">
+      <strong>Connection:</strong> The <code>Stringer</code> interface connects to <em>Interfaces</em> (implicit satisfaction). <code>Fprintf</code> writes to any <code>io.Writer</code>, linking directly to the <em>io Package</em> (next). <code>Errorf</code> with <code>%w</code> is the primary tool for the <em>Error Handling</em> pattern. Width/precision formatting is essential for CLI tools using <em>os &amp; filepath</em>.
+    </div>
+
+    <div class="exercise">
+      <div class="exercise-label">Exercise 1</div>
+      <p>Create a <code>Duration</code> type (underlying <code>int64</code> representing seconds) that implements <code>Stringer</code> to display as <code>"2h 15m 30s"</code>. Also implement <code>GoStringer</code> to show <code>"Duration(8130s)"</code>. Test with <code>%v</code>, <code>%s</code>, and <code>%#v</code>.</p>
+    </div>
+    <div class="exercise">
+      <div class="exercise-label">Exercise 2</div>
+      <p>Write a <code>TablePrinter</code> that takes column headers and rows of <code>[]interface{}</code>. Auto-calculate column widths from the data. Use <code>fmt.Sprintf</code> with dynamic width formatting (<code>%*s</code>). Print a nicely aligned table with a header separator line.</p>
+    </div>
+    <div class="exercise">
+      <div class="exercise-label">Exercise 3</div>
+      <p>Implement a <code>ColoredFormatter</code> type that wraps a value and implements the <code>fmt.Formatter</code> interface. When printed with <code>%v</code>, it outputs the value. When printed with <code>%s</code>, it wraps the value in ANSI color codes (<code>\033[31m</code> for red, <code>\033[0m</code> to reset).</p>
+    </div>
+  </div>
+
+  <!-- ========== CONCEPT 4: io Package ========== -->
+  <div class="concept" id="io-package">
+    <div class="concept-header">
+      <h3>io Package</h3>
+      <span class="concept-meta">Standard Library Mastery &bull; New</span>
+    </div>
+
+    <p>The <code>io</code> package defines the fundamental I/O interfaces: <code>Reader</code> and <code>Writer</code>. These two interfaces are the backbone of Go's I/O model &mdash; files, network connections, HTTP bodies, buffers, compressors, and encryptors all implement them. Understanding <code>io.Reader</code> and <code>io.Writer</code> unlocks composable, efficient streaming.</p>
+
+    <h4>Why It Matters</h4>
+    <p>Nearly every Go program reads or writes data. The <code>io.Reader</code>/<code>io.Writer</code> abstraction means you can write code that works with files, network streams, in-memory buffers, or compressed data &mdash; all without changing a line. Composition of readers and writers is how Go achieves powerful data pipelines without heavy frameworks.</p>
+
+    <h4>io.Reader and io.Writer: The Fundamental Interfaces</h4>
+<pre>package main
+
+import (
+    "fmt"
+    "io"
+    "strings"
+)
+
+func main() {
+    // strings.NewReader creates an io.Reader from a string
+    reader := strings.NewReader("Hello, Go I/O!")
+
+    // Read in chunks
+    buf := make([]byte, 5)
+    for {
+        n, err := reader.Read(buf)
+        if n > 0 {
+            fmt.Printf("Read %d bytes: %q\n", n, buf[:n])
+        }
+        if err == io.EOF {
+            fmt.Println("Reached end of input")
+            break
+        }
+        if err != nil {
+            fmt.Println("Error:", err)
+            break
+        }
+    }
+}</pre>
+    <div class="output">
+      <div class="output-label">Output</div>
+Read 5 bytes: "Hello"
+Read 5 bytes: ", Go "
+Read 4 bytes: "I/O!"
+Reached end of input
+    </div>
+
+    <h4>io.Copy: Stream Data Between Reader and Writer</h4>
+<pre>package main
+
+import (
+    "fmt"
+    "io"
+    "os"
+    "strings"
+)
+
+func main() {
+    src := strings.NewReader("Streaming data with io.Copy!\n")
+
+    // Copy from reader to stdout (an io.Writer)
+    n, err := io.Copy(os.Stdout, src)
+    if err != nil {
+        fmt.Fprintln(os.Stderr, "copy error:", err)
+        return
+    }
+    fmt.Printf("(copied %d bytes)\n", n)
+}</pre>
+    <div class="output">
+      <div class="output-label">Output</div>
+Streaming data with io.Copy!
+(copied 29 bytes)
+    </div>
+
+    <h4>io.TeeReader: Read While Copying</h4>
+<pre>package main
+
+import (
+    "fmt"
+    "io"
+    "os"
+    "strings"
+)
+
+func main() {
+    src := strings.NewReader("Tee captures data as it flows through.\n")
+
+    // TeeReader: everything read from tee is also written to os.Stdout
+    tee := io.TeeReader(src, os.Stdout)
+
+    // Read all data — this also writes to stdout via the tee
+    data, err := io.ReadAll(tee)
+    if err != nil {
+        fmt.Println("error:", err)
+        return
+    }
+    fmt.Printf("(captured %d bytes in memory)\n", len(data))
+}</pre>
+    <div class="output">
+      <div class="output-label">Output</div>
+Tee captures data as it flows through.
+(captured 39 bytes in memory)
+    </div>
+
+    <h4>io.MultiReader and io.MultiWriter</h4>
+<pre>package main
+
+import (
+    "bytes"
+    "fmt"
+    "io"
+    "os"
+    "strings"
+)
+
+func main() {
+    // MultiReader: concatenate multiple readers
+    r1 := strings.NewReader("Part 1. ")
+    r2 := strings.NewReader("Part 2. ")
+    r3 := strings.NewReader("Part 3.\n")
+    combined := io.MultiReader(r1, r2, r3)
+
+    data, _ := io.ReadAll(combined)
+    fmt.Print(string(data))
+
+    // MultiWriter: write to multiple destinations at once
+    var buf bytes.Buffer
+    multi := io.MultiWriter(os.Stdout, &amp;buf)
+
+    fmt.Fprintln(multi, "This goes to both stdout and buffer")
+    fmt.Printf("Buffer contains: %q\n", buf.String())
+}</pre>
+    <div class="output">
+      <div class="output-label">Output</div>
+Part 1. Part 2. Part 3.
+This goes to both stdout and buffer
+Buffer contains: "This goes to both stdout and buffer\n"
+    </div>
+
+    <h4>io.LimitReader and io.Pipe</h4>
+<pre>package main
+
+import (
+    "fmt"
+    "io"
+    "strings"
+)
+
+func main() {
+    // LimitReader: restrict how many bytes can be read
+    src := strings.NewReader("This is a very long string that we want to limit")
+    limited := io.LimitReader(src, 10)
+
+    data, _ := io.ReadAll(limited)
+    fmt.Printf("Limited read: %q (%d bytes)\n", data, len(data))
+
+    // Pipe: in-memory pipe connecting a writer to a reader
+    pr, pw := io.Pipe()
+
+    // Writer goroutine
+    go func() {
+        defer pw.Close()
+        for i := 1; i &lt;= 3; i++ {
+            fmt.Fprintf(pw, "message %d\n", i)
+        }
+    }()
+
+    // Reader (main goroutine)
+    received, _ := io.ReadAll(pr)
+    fmt.Print("Pipe received:\n", string(received))
+}</pre>
+    <div class="output">
+      <div class="output-label">Output</div>
+Limited read: "This is a " (10 bytes)
+Pipe received:
+message 1
+message 2
+message 3
+    </div>
+
+    <h4>Composing Readers: A Counting Reader</h4>
+<pre>package main
+
+import (
+    "fmt"
+    "io"
+    "strings"
+)
+
+// CountingReader wraps an io.Reader and counts bytes read
+type CountingReader struct {
+    reader    io.Reader
+    BytesRead int64
+}
+
+func NewCountingReader(r io.Reader) *CountingReader {
+    return &amp;CountingReader{reader: r}
+}
+
+func (cr *CountingReader) Read(p []byte) (int, error) {
+    n, err := cr.reader.Read(p)
+    cr.BytesRead += int64(n)
+    return n, err
+}
+
+func main() {
+    src := strings.NewReader("Hello, composed readers! This is efficient.")
+    counter := NewCountingReader(src)
+
+    // Use the counting reader as a regular reader
+    data, _ := io.ReadAll(counter)
+    fmt.Printf("Data: %q\n", string(data))
+    fmt.Printf("Total bytes read: %d\n", counter.BytesRead)
+}</pre>
+    <div class="output">
+      <div class="output-label">Output</div>
+Data: "Hello, composed readers! This is efficient."
+Total bytes read: 44
+    </div>
+
+    <h4>Common Mistakes</h4>
+    <div class="do-dont">
+      <div class="do-box">
+        <div class="label">Do: Check for io.EOF properly</div>
+<pre>n, err := r.Read(buf)
+if n > 0 {
+    process(buf[:n]) // process data first!
+}
+if err == io.EOF {
+    break // then check for EOF
+}</pre>
+      </div>
+      <div class="dont-box">
+        <div class="label">Don't: Ignore data on EOF read</div>
+<pre>n, err := r.Read(buf)
+if err != nil {
+    break // may discard last chunk!
+}
+process(buf[:n])</pre>
+      </div>
+    </div>
+    <div class="do-dont">
+      <div class="do-box">
+        <div class="label">Do: Use io.ReadAll for small data</div>
+<pre>data, err := io.ReadAll(resp.Body)
+// appropriate for known-small responses</pre>
+      </div>
+      <div class="dont-box">
+        <div class="label">Don't: ReadAll unbounded data</div>
+<pre>data, _ := io.ReadAll(untrustedReader)
+// could consume all memory!
+// Use io.LimitReader first</pre>
+      </div>
+    </div>
+
+    <h4>Key Rules</h4>
+    <ul class="rules-list">
+      <li><code>io.Reader</code> has one method: <code>Read(p []byte) (n int, err error)</code>. Always process <code>n</code> bytes before checking <code>err</code></li>
+      <li><code>io.Writer</code> has one method: <code>Write(p []byte) (n int, err error)</code>. An error means not all bytes were written</li>
+      <li><code>io.Copy</code> streams data efficiently without buffering the entire content in memory</li>
+      <li>Compose readers by wrapping: <code>LimitReader</code>, <code>TeeReader</code>, or your own decorator</li>
+      <li><code>io.Pipe</code> creates a synchronous in-memory pipe &mdash; a write blocks until a corresponding read occurs</li>
+      <li>Always close writers/pipes when done to signal EOF to the reader side</li>
+    </ul>
+
+    <div class="connection">
+      <strong>Connection:</strong> <code>io.Reader</code>/<code>io.Writer</code> are the interfaces that <em>os &amp; filepath</em> (next) builds on &mdash; files implement both. <code>fmt.Fprintf</code> writes to any <code>io.Writer</code>, connecting to the <em>fmt Package</em>. <code>encoding/json</code> (later) uses <code>NewEncoder(w io.Writer)</code> and <code>NewDecoder(r io.Reader)</code> for streaming JSON. Custom readers compose the same way <em>Interfaces</em> compose.
+    </div>
+
+    <div class="exercise">
+      <div class="exercise-label">Exercise 1</div>
+      <p>Write a <code>UppercaseReader</code> that wraps an <code>io.Reader</code> and converts all bytes to uppercase. Chain it: <code>strings.NewReader</code> &rarr; <code>UppercaseReader</code> &rarr; <code>io.Copy(os.Stdout, ...)</code>. Verify "hello world" becomes "HELLO WORLD".</p>
+    </div>
+    <div class="exercise">
+      <div class="exercise-label">Exercise 2</div>
+      <p>Use <code>io.Pipe</code> to connect a producer goroutine (writing JSON objects with <code>json.NewEncoder</code>) to a consumer goroutine (reading with <code>json.NewDecoder</code>). Send 5 structs through the pipe and print them on the consumer side.</p>
+    </div>
+    <div class="exercise">
+      <div class="exercise-label">Exercise 3</div>
+      <p>Build a <code>ProgressReader</code> that wraps an <code>io.Reader</code> and prints progress every N bytes read (e.g., "1024/4096 bytes (25%)"). The total must be provided at construction. Use it with <code>io.Copy</code> to copy data from a <code>strings.NewReader</code> to <code>io.Discard</code>.</p>
+    </div>
+  </div>
+
+  <!-- ========== CONCEPT 5: os & filepath ========== -->
+  <div class="concept" id="os-filepath">
+    <div class="concept-header">
+      <h3>os &amp; filepath</h3>
+      <span class="concept-meta">Standard Library Mastery &bull; New</span>
+    </div>
+
+    <p>The <code>os</code> package provides platform-independent operating system functionality: file I/O, environment variables, process management. The <code>path/filepath</code> package handles file path manipulation in a way that works across operating systems. Together they are essential for any program that interacts with the filesystem.</p>
+
+    <h4>Why It Matters</h4>
+    <p>File operations, directory management, and path handling are fundamental to CLIs, build tools, configuration loaders, log rotators, and data processors. Go's standard library makes these operations safe and portable. Understanding the difference between one-shot I/O and streaming I/O is key to writing efficient programs.</p>
+
+    <h4>File Operations: Open, Create, ReadFile, WriteFile</h4>
+<pre>package main
+
+import (
+    "fmt"
+    "os"
+)
+
+func main() {
+    // One-shot write (Go 1.16+)
+    content := []byte("Hello from Go!\nLine 2\nLine 3\n")
+    err := os.WriteFile("/tmp/go-demo.txt", content, 0644)
+    if err != nil {
+        fmt.Println("write error:", err)
+        return
+    }
+    fmt.Println("File written successfully")
+
+    // One-shot read (Go 1.16+)
+    data, err := os.ReadFile("/tmp/go-demo.txt")
+    if err != nil {
+        fmt.Println("read error:", err)
+        return
+    }
+    fmt.Printf("Read %d bytes:\n%s", len(data), data)
+
+    // Streaming read with os.Open
+    f, err := os.Open("/tmp/go-demo.txt")
+    if err != nil {
+        fmt.Println("open error:", err)
+        return
+    }
+    defer f.Close()
+
+    buf := make([]byte, 10)
+    n, _ := f.Read(buf)
+    fmt.Printf("\nFirst %d bytes: %q\n", n, buf[:n])
+
+    // File info
+    info, _ := f.Stat()
+    fmt.Printf("Name: %s, Size: %d bytes, Mode: %s\n",
+        info.Name(), info.Size(), info.Mode())
+
+    // Cleanup
+    os.Remove("/tmp/go-demo.txt")
+}</pre>
+    <div class="output">
+      <div class="output-label">Output</div>
+File written successfully
+Read 29 bytes:
+Hello from Go!
+Line 2
+Line 3
+
+First 10 bytes: "Hello from"
+Name: go-demo.txt, Size: 29 bytes, Mode: -rw-r--r--
+    </div>
+
+    <h4>os.OpenFile: Fine-Grained Control</h4>
+<pre>package main
+
+import (
+    "fmt"
+    "os"
+)
+
+func main() {
+    // OpenFile with flags: create, write-only, append
+    f, err := os.OpenFile("/tmp/go-log.txt",
+        os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0644)
+    if err != nil {
+        fmt.Println("error:", err)
+        return
+    }
+
+    // Write multiple lines (simulating log entries)
+    for i := 1; i &lt;= 3; i++ {
+        fmt.Fprintf(f, "Log entry #%d\n", i)
+    }
+    f.Close()
+
+    // Append more
+    f, _ = os.OpenFile("/tmp/go-log.txt",
+        os.O_WRONLY|os.O_APPEND, 0644)
+    fmt.Fprintln(f, "Log entry #4 (appended)")
+    f.Close()
+
+    // Read back
+    data, _ := os.ReadFile("/tmp/go-log.txt")
+    fmt.Print(string(data))
+
+    os.Remove("/tmp/go-log.txt")
+}</pre>
+    <div class="output">
+      <div class="output-label">Output</div>
+Log entry #1
+Log entry #2
+Log entry #3
+Log entry #4 (appended)
+    </div>
+
+    <h4>Directory Operations</h4>
+<pre>package main
+
+import (
+    "fmt"
+    "os"
+)
+
+func main() {
+    // Create nested directories
+    err := os.MkdirAll("/tmp/go-demo/sub1/sub2", 0755)
+    if err != nil {
+        fmt.Println("mkdir error:", err)
+        return
+    }
+    fmt.Println("Directories created")
+
+    // Create some files
+    os.WriteFile("/tmp/go-demo/file1.txt", []byte("first"), 0644)
+    os.WriteFile("/tmp/go-demo/sub1/file2.txt", []byte("second"), 0644)
+    os.WriteFile("/tmp/go-demo/sub1/sub2/file3.txt", []byte("third"), 0644)
+
+    // List directory contents
+    entries, _ := os.ReadDir("/tmp/go-demo")
+    fmt.Println("\n/tmp/go-demo contents:")
+    for _, e := range entries {
+        info, _ := e.Info()
+        fmt.Printf("  %-15s %5d bytes  dir=%v\n",
+            e.Name(), info.Size(), e.IsDir())
+    }
+
+    // Check if path exists
+    if _, err := os.Stat("/tmp/go-demo/file1.txt"); err == nil {
+        fmt.Println("\nfile1.txt exists")
+    }
+
+    if _, err := os.Stat("/tmp/go-demo/nope.txt"); os.IsNotExist(err) {
+        fmt.Println("nope.txt does not exist")
+    }
+
+    // Cleanup
+    os.RemoveAll("/tmp/go-demo")
+    fmt.Println("\nCleaned up /tmp/go-demo")
+}</pre>
+    <div class="output">
+      <div class="output-label">Output</div>
+Directories created
+
+/tmp/go-demo contents:
+  file1.txt            5 bytes  dir=false
+  sub1                64 bytes  dir=true
+
+file1.txt exists
+nope.txt does not exist
+
+Cleaned up /tmp/go-demo
+    </div>
+
+    <h4>Environment Variables</h4>
+<pre>package main
+
+import (
+    "fmt"
+    "os"
+    "strings"
+)
+
+func main() {
+    // Set and get
+    os.Setenv("APP_MODE", "production")
+    mode := os.Getenv("APP_MODE")
+    fmt.Println("APP_MODE:", mode)
+
+    // LookupEnv distinguishes "empty" from "not set"
+    val, exists := os.LookupEnv("APP_MODE")
+    fmt.Printf("APP_MODE: value=%q exists=%v\n", val, exists)
+
+    val, exists = os.LookupEnv("NONEXISTENT_VAR")
+    fmt.Printf("NONEXISTENT: value=%q exists=%v\n", val, exists)
+
+    // List all env vars starting with "APP_"
+    for _, env := range os.Environ() {
+        if strings.HasPrefix(env, "APP_") {
+            fmt.Println("Found:", env)
+        }
+    }
+
+    os.Unsetenv("APP_MODE")
+}</pre>
+    <div class="output">
+      <div class="output-label">Output</div>
+APP_MODE: production
+APP_MODE: value="production" exists=true
+NONEXISTENT: value="" exists=false
+Found: APP_MODE=production
+    </div>
+
+    <h4>filepath: Path Manipulation &amp; Walking</h4>
+<pre>package main
+
+import (
+    "fmt"
+    "os"
+    "path/filepath"
+)
+
+func main() {
+    // Path manipulation
+    p := filepath.Join("home", "user", "docs", "file.tar.gz")
+    fmt.Println("Join:   ", p)
+    fmt.Println("Dir:    ", filepath.Dir(p))
+    fmt.Println("Base:   ", filepath.Base(p))
+    fmt.Println("Ext:    ", filepath.Ext(p))
+
+    // Clean normalizes paths
+    messy := "/home/user/../user/./docs//file.txt"
+    fmt.Println("Clean:  ", filepath.Clean(messy))
+
+    // Abs converts relative to absolute
+    abs, _ := filepath.Abs(".")
+    fmt.Println("Abs(.): ", abs)
+
+    // WalkDir: recursive traversal
+    os.MkdirAll("/tmp/walk-demo/src", 0755)
+    os.WriteFile("/tmp/walk-demo/main.go", []byte("package main"), 0644)
+    os.WriteFile("/tmp/walk-demo/src/lib.go", []byte("package src"), 0644)
+    os.WriteFile("/tmp/walk-demo/README.md", []byte("# Demo"), 0644)
+
+    fmt.Println("\nWalking /tmp/walk-demo:")
+    filepath.WalkDir("/tmp/walk-demo", func(path string, d os.DirEntry, err error) error {
+        if err != nil {
+            return err
+        }
+        rel, _ := filepath.Rel("/tmp/walk-demo", path)
+        if d.IsDir() {
+            fmt.Printf("  [DIR]  %s\n", rel)
+        } else {
+            fmt.Printf("  [FILE] %s (ext: %s)\n", rel, filepath.Ext(rel))
+        }
+        return nil
+    })
+
+    // Glob: pattern matching
+    matches, _ := filepath.Glob("/tmp/walk-demo/*.go")
+    fmt.Println("\n*.go files:", matches)
+
+    os.RemoveAll("/tmp/walk-demo")
+}</pre>
+    <div class="output">
+      <div class="output-label">Output</div>
+Join:    home/user/docs/file.tar.gz
+Dir:     home/user/docs
+Base:    file.tar.gz
+Ext:     .gz
+Clean:   /home/user/docs/file.txt
+Abs(.):  /Users/you/project
+
+Walking /tmp/walk-demo:
+  [DIR]  .
+  [FILE] README.md (ext: .md)
+  [FILE] main.go (ext: .go)
+  [DIR]  src
+  [FILE] src/lib.go (ext: .go)
+
+*.go files: [/tmp/walk-demo/main.go]
+    </div>
+
+    <h4>Common Mistakes</h4>
+    <div class="do-dont">
+      <div class="do-box">
+        <div class="label">Do: Use filepath.Join for paths</div>
+<pre>path := filepath.Join(dir, "sub", "file.txt")
+// correct separator on every OS</pre>
+      </div>
+      <div class="dont-box">
+        <div class="label">Don't: Concatenate paths with "/"</div>
+<pre>path := dir + "/" + "sub" + "/" + "file.txt"
+// breaks on Windows!</pre>
+      </div>
+    </div>
+    <div class="do-dont">
+      <div class="do-box">
+        <div class="label">Do: Check errors from file operations</div>
+<pre>data, err := os.ReadFile(path)
+if err != nil {
+    return fmt.Errorf("read %s: %w", path, err)
+}</pre>
+      </div>
+      <div class="dont-box">
+        <div class="label">Don't: Ignore file operation errors</div>
+<pre>data, _ := os.ReadFile(path)
+// data may be nil — crash ahead!</pre>
+      </div>
+    </div>
+
+    <h4>Key Rules</h4>
+    <ul class="rules-list">
+      <li><code>os.ReadFile</code>/<code>os.WriteFile</code> for small, one-shot file I/O (Go 1.16+)</li>
+      <li><code>os.Open</code>/<code>os.Create</code>/<code>os.OpenFile</code> for streaming or fine-grained control &mdash; always <code>defer f.Close()</code></li>
+      <li>Use <code>filepath.Join</code> for portable path construction &mdash; never concatenate with <code>"/"</code></li>
+      <li><code>filepath.WalkDir</code> (Go 1.16+) is faster than <code>filepath.Walk</code> and should be preferred</li>
+      <li>Check existence with <code>os.Stat</code> + <code>os.IsNotExist(err)</code>, not by trying to open the file</li>
+      <li>Use <code>os.LookupEnv</code> to distinguish "not set" from "set to empty string"</li>
+    </ul>
+
+    <div class="connection">
+      <strong>Connection:</strong> <code>os.File</code> implements both <code>io.Reader</code> and <code>io.Writer</code>, connecting directly to the <em>io Package</em>. File paths parsed by <code>filepath</code> are used by <code>os.Open</code> and <code>os.Create</code>. Environment variables loaded by <code>os.Getenv</code> often feed into <em>encoding/json</em> (next) for config parsing. The <em>Error Handling</em> patterns (sentinel errors, wrapping) are essential for robust file operations.
+    </div>
+
+    <div class="exercise">
+      <div class="exercise-label">Exercise 1</div>
+      <p>Write a <code>FindFiles(root, pattern string) ([]string, error)</code> function using <code>filepath.WalkDir</code> that returns all file paths matching a glob pattern (e.g., <code>"*.go"</code>). Test by creating a temp directory tree with mixed file types and verifying only matching files are returned.</p>
+    </div>
+    <div class="exercise">
+      <div class="exercise-label">Exercise 2</div>
+      <p>Build a <code>ConfigLoader</code> that reads configuration from environment variables with fallback to a JSON file. Use <code>os.LookupEnv</code> for env vars and <code>os.ReadFile</code> + <code>json.Unmarshal</code> for the file. If neither source has a value, use a default. Test with <code>PORT</code>, <code>HOST</code>, and <code>DEBUG</code> settings.</p>
+    </div>
+    <div class="exercise">
+      <div class="exercise-label">Exercise 3</div>
+      <p>Implement a simple <code>LogRotator</code> that writes log lines to a file. When the file exceeds a given size (e.g., 1 KB), rename it with a timestamp suffix and create a new file. Use <code>os.OpenFile</code> with append mode, <code>os.Rename</code>, and <code>os.Stat</code> to check file size.</p>
+    </div>
+  </div>
+
+  <!-- ========== CONCEPT 6: encoding/json ========== -->
+  <div class="concept" id="encoding-json">
+    <div class="concept-header">
+      <h3>encoding/json</h3>
+      <span class="concept-meta">Standard Library Mastery &bull; New</span>
+    </div>
+
+    <p>The <code>encoding/json</code> package provides efficient JSON encoding and decoding. It maps between Go structs and JSON using struct tags, supports custom marshal/unmarshal behavior, and offers both in-memory (<code>Marshal</code>/<code>Unmarshal</code>) and streaming (<code>Encoder</code>/<code>Decoder</code>) APIs.</p>
+
+    <h4>Why It Matters</h4>
+    <p>JSON is the lingua franca of web APIs, configuration files, and data interchange. Every Go web service, CLI tool that talks to REST APIs, or program that reads JSON configs needs this package. Understanding struct tags, custom marshalers, and streaming decode is essential for production Go code.</p>
+
+    <h4>Marshal and Unmarshal: Basic Usage</h4>
+<pre>package main
+
+import (
+    "encoding/json"
+    "fmt"
+)
+
+type User struct {
+    Name    string `json:"name"`
+    Email   string `json:"email"`
+    Age     int    `json:"age"`
+    Active  bool   `json:"active"`
+}
+
+func main() {
+    // Marshal: struct -> JSON
+    user := User{
+        Name:   "Alice",
+        Email:  "alice@example.com",
+        Age:    30,
+        Active: true,
+    }
+
+    data, err := json.Marshal(user)
+    if err != nil {
+        fmt.Println("marshal error:", err)
+        return
+    }
+    fmt.Println("JSON:", string(data))
+
+    // Pretty print
+    pretty, _ := json.MarshalIndent(user, "", "  ")
+    fmt.Println("\nPretty:\n" + string(pretty))
+
+    // Unmarshal: JSON -> struct
+    jsonStr := `{"name":"Bob","email":"bob@example.com","age":25,"active":false}`
+    var bob User
+    err = json.Unmarshal([]byte(jsonStr), &amp;bob)
+    if err != nil {
+        fmt.Println("unmarshal error:", err)
+        return
+    }
+    fmt.Printf("\nParsed: %+v\n", bob)
+}</pre>
+    <div class="output">
+      <div class="output-label">Output</div>
+JSON: {"name":"Alice","email":"alice@example.com","age":30,"active":true}
+
+Pretty:
+{
+  "name": "Alice",
+  "email": "alice@example.com",
+  "age": 30,
+  "active": true
+}
+
+Parsed: {Name:Bob Email:bob@example.com Age:25 Active:false}
+    </div>
+
+    <h4>Struct Tags: omitempty, "-", and Naming</h4>
+<pre>package main
+
+import (
+    "encoding/json"
+    "fmt"
+)
+
+type Product struct {
+    ID       int      `json:"id"`
+    Name     string   `json:"name"`
+    Price    float64  `json:"price"`
+    Discount float64  `json:"discount,omitempty"` // omit if zero value
+    Internal string   `json:"-"`                   // never include in JSON
+    Tags     []string `json:"tags,omitempty"`      // omit if nil/empty
+}
+
+func main() {
+    // With all fields set
+    p1 := Product{
+        ID: 1, Name: "Widget", Price: 9.99,
+        Discount: 2.50, Internal: "secret", Tags: []string{"sale", "new"},
+    }
+    j1, _ := json.MarshalIndent(p1, "", "  ")
+    fmt.Println("Full product:")
+    fmt.Println(string(j1))
+
+    // With zero-value fields (omitempty in action)
+    p2 := Product{ID: 2, Name: "Gadget", Price: 19.99}
+    j2, _ := json.MarshalIndent(p2, "", "  ")
+    fmt.Println("\nMinimal product:")
+    fmt.Println(string(j2))
+}</pre>
+    <div class="output">
+      <div class="output-label">Output</div>
+Full product:
+{
+  "id": 1,
+  "name": "Widget",
+  "price": 9.99,
+  "discount": 2.5,
+  "tags": [
+    "sale",
+    "new"
+  ]
+}
+
+Minimal product:
+{
+  "id": 2,
+  "name": "Gadget",
+  "price": 19.99
+}
+    </div>
+
+    <h4>Custom MarshalJSON and UnmarshalJSON</h4>
+<pre>package main
+
+import (
+    "encoding/json"
+    "fmt"
+    "time"
+)
+
+type Event struct {
+    Name string    `json:"name"`
+    Date EventDate `json:"date"`
+}
+
+// Custom type with special JSON format
+type EventDate struct {
+    time.Time
+}
+
+func (d EventDate) MarshalJSON() ([]byte, error) {
+    formatted := d.Format("2006-01-02")
+    return json.Marshal(formatted) // wrap in quotes
+}
+
+func (d *EventDate) UnmarshalJSON(data []byte) error {
+    var s string
+    if err := json.Unmarshal(data, &amp;s); err != nil {
+        return err
+    }
+    t, err := time.Parse("2006-01-02", s)
+    if err != nil {
+        return err
+    }
+    d.Time = t
+    return nil
+}
+
+func main() {
+    // Marshal with custom date format
+    event := Event{
+        Name: "Go Conference",
+        Date: EventDate{time.Date(2026, 6, 15, 0, 0, 0, 0, time.UTC)},
+    }
+
+    data, _ := json.MarshalIndent(event, "", "  ")
+    fmt.Println("Marshaled:")
+    fmt.Println(string(data))
+
+    // Unmarshal with custom date format
+    jsonStr := `{"name":"Workshop","date":"2026-07-20"}`
+    var parsed Event
+    json.Unmarshal([]byte(jsonStr), &amp;parsed)
+    fmt.Printf("\nUnmarshaled: %s on %s\n",
+        parsed.Name, parsed.Date.Format("Monday, January 2, 2006"))
+}</pre>
+    <div class="output">
+      <div class="output-label">Output</div>
+Marshaled:
+{
+  "name": "Go Conference",
+  "date": "2026-06-15"
+}
+
+Unmarshaled: Workshop on Monday, July 20, 2026
+    </div>
+
+    <h4>json.RawMessage: Delay Parsing</h4>
+<pre>package main
+
+import (
+    "encoding/json"
+    "fmt"
+)
+
+type Envelope struct {
+    Type string          `json:"type"`
+    Data json.RawMessage `json:"data"` // parse later based on Type
+}
+
+type UserData struct {
+    Name  string `json:"name"`
+    Email string `json:"email"`
+}
+
+type OrderData struct {
+    OrderID int     `json:"order_id"`
+    Total   float64 `json:"total"`
+}
+
+func main() {
+    messages := []string{
+        `{"type":"user","data":{"name":"Alice","email":"a@b.com"}}`,
+        `{"type":"order","data":{"order_id":42,"total":99.95}}`,
+    }
+
+    for _, msg := range messages {
+        var env Envelope
+        json.Unmarshal([]byte(msg), &amp;env)
+
+        switch env.Type {
+        case "user":
+            var u UserData
+            json.Unmarshal(env.Data, &amp;u)
+            fmt.Printf("User: %s (%s)\n", u.Name, u.Email)
+        case "order":
+            var o OrderData
+            json.Unmarshal(env.Data, &amp;o)
+            fmt.Printf("Order: #%d total=$%.2f\n", o.OrderID, o.Total)
+        }
+    }
+}</pre>
+    <div class="output">
+      <div class="output-label">Output</div>
+User: Alice (a@b.com)
+Order: #42 total=$99.95
+    </div>
+
+    <h4>Streaming with json.Encoder and json.Decoder</h4>
+<pre>package main
+
+import (
+    "bytes"
+    "encoding/json"
+    "fmt"
+    "strings"
+)
+
+type LogEntry struct {
+    Level   string `json:"level"`
+    Message string `json:"message"`
+}
+
+func main() {
+    // Encoder: stream JSON objects to a writer
+    var buf bytes.Buffer
+    enc := json.NewEncoder(&amp;buf)
+
+    entries := []LogEntry{
+        {"info", "server started"},
+        {"warn", "high memory usage"},
+        {"error", "connection lost"},
+    }
+
+    for _, entry := range entries {
+        enc.Encode(entry) // writes JSON + newline
+    }
+
+    fmt.Println("Encoded (newline-delimited JSON):")
+    fmt.Print(buf.String())
+
+    // Decoder: stream JSON objects from a reader
+    fmt.Println("\nDecoded:")
+    dec := json.NewDecoder(strings.NewReader(buf.String()))
+    for dec.More() {
+        var entry LogEntry
+        if err := dec.Decode(&amp;entry); err != nil {
+            fmt.Println("decode error:", err)
+            break
+        }
+        fmt.Printf("  [%s] %s\n", entry.Level, entry.Message)
+    }
+}</pre>
+    <div class="output">
+      <div class="output-label">Output</div>
+Encoded (newline-delimited JSON):
+{"level":"info","message":"server started"}
+{"level":"warn","message":"high memory usage"}
+{"level":"error","message":"connection lost"}
+
+Decoded:
+  [info] server started
+  [warn] high memory usage
+  [error] connection lost
+    </div>
+
+    <h4>Dynamic JSON with map[string]interface{}</h4>
+<pre>package main
+
+import (
+    "encoding/json"
+    "fmt"
+)
+
+func main() {
+    // Parse unknown JSON into a map
+    raw := `{
+        "name": "Alice",
+        "age": 30,
+        "scores": [95, 87, 92],
+        "address": {"city": "Portland", "state": "OR"}
+    }`
+
+    var data map[string]interface{}
+    json.Unmarshal([]byte(raw), &amp;data)
+
+    // Access fields (type assertions required)
+    name := data["name"].(string)
+    age := data["age"].(float64) // JSON numbers are float64!
+    fmt.Printf("Name: %s, Age: %.0f\n", name, age)
+
+    // Nested access
+    addr := data["address"].(map[string]interface{})
+    fmt.Printf("City: %s\n", addr["city"])
+
+    // Array access
+    scores := data["scores"].([]interface{})
+    for i, s := range scores {
+        fmt.Printf("Score %d: %.0f\n", i+1, s.(float64))
+    }
+
+    // json.Number for precise numbers
+    dec := json.NewDecoder(strings.NewReader(`{"price": 19.99}`))
+    dec.UseNumber()
+    var m map[string]interface{}
+    dec.Decode(&amp;m)
+    price, _ := m["price"].(json.Number).Float64()
+    fmt.Printf("Price: %.2f\n", price)
+}</pre>
+    <p><em>Note:</em> Add <code>"strings"</code> to the imports for the <code>json.Number</code> example.</p>
+    <div class="output">
+      <div class="output-label">Output</div>
+Name: Alice, Age: 30
+City: Portland
+Score 1: 95
+Score 2: 87
+Score 3: 92
+Price: 19.99
+    </div>
+
+    <h4>Common Mistakes</h4>
+    <div class="do-dont">
+      <div class="do-box">
+        <div class="label">Do: Export fields for JSON</div>
+<pre>type User struct {
+    Name  string `json:"name"`  // exported
+    Email string `json:"email"` // exported
+}</pre>
+      </div>
+      <div class="dont-box">
+        <div class="label">Don't: Use unexported fields</div>
+<pre>type User struct {
+    name  string `json:"name"`  // unexported!
+    email string `json:"email"` // silently ignored
+}</pre>
+      </div>
+    </div>
+    <div class="do-dont">
+      <div class="do-box">
+        <div class="label">Do: Use Decoder for streams/HTTP</div>
+<pre>dec := json.NewDecoder(resp.Body)
+var result APIResponse
+err := dec.Decode(&amp;result)
+// memory efficient: no intermediate []byte</pre>
+      </div>
+      <div class="dont-box">
+        <div class="label">Don't: ReadAll + Unmarshal for HTTP</div>
+<pre>data, _ := io.ReadAll(resp.Body) // buffered twice
+var result APIResponse
+json.Unmarshal(data, &amp;result) // wastes memory</pre>
+      </div>
+    </div>
+
+    <h4>Key Rules</h4>
+    <ul class="rules-list">
+      <li>Struct fields must be exported (capitalized) to be visible to the JSON encoder/decoder</li>
+      <li>Use <code>json:"name"</code> tags to control JSON field names; <code>omitempty</code> to skip zero values; <code>"-"</code> to exclude</li>
+      <li>Implement <code>MarshalJSON</code>/<code>UnmarshalJSON</code> for custom serialization (dates, enums, etc.)</li>
+      <li>Use <code>json.RawMessage</code> to delay parsing when the structure depends on a discriminator field</li>
+      <li>Prefer <code>json.NewDecoder</code>/<code>json.NewEncoder</code> for streaming &mdash; avoid <code>ReadAll</code> + <code>Unmarshal</code> for HTTP bodies</li>
+      <li>JSON numbers decode as <code>float64</code> in <code>interface{}</code> &mdash; use <code>json.Number</code> for precise handling</li>
+    </ul>
+
+    <div class="connection">
+      <strong>Connection:</strong> <code>json.NewEncoder</code>/<code>json.NewDecoder</code> work with the <em>io Package</em>'s <code>io.Writer</code>/<code>io.Reader</code> interfaces. Struct tags relate to <em>Structs &amp; Methods</em>. Custom marshalers use the <em>Interfaces</em> pattern (implicit satisfaction). <code>json.RawMessage</code> is powerful with the <em>Error Handling</em> pattern for progressive parsing with meaningful errors.
+    </div>
+
+    <div class="exercise">
+      <div class="exercise-label">Exercise 1</div>
+      <p>Define a <code>Config</code> struct with fields for <code>Host</code>, <code>Port</code>, <code>Features</code> (a <code>[]string</code>), and <code>Metadata</code> (a <code>map[string]string</code>). Write functions to save it as pretty-printed JSON to a file and load it back. Use <code>omitempty</code> on optional fields. Test the round-trip.</p>
+    </div>
+    <div class="exercise">
+      <div class="exercise-label">Exercise 2</div>
+      <p>Create a polymorphic message system: define a <code>Message</code> envelope with a <code>"type"</code> field and <code>json.RawMessage</code> payload. Implement <code>TextMessage</code>, <code>ImageMessage</code>, and <code>LocationMessage</code> types. Write a <code>ParseMessage([]byte) (interface{}, error)</code> function that decodes the envelope, then decodes the correct payload type.</p>
+    </div>
+    <div class="exercise">
+      <div class="exercise-label">Exercise 3</div>
+      <p>Build a newline-delimited JSON (NDJSON) log processor. Use <code>json.NewDecoder</code> to stream-read log entries from a string. Filter entries where <code>level == "error"</code> and write them to a new buffer using <code>json.NewEncoder</code>. Print the filtered output.</p>
+    </div>
+  </div>
+
+</div><!-- end section -->
+
+<!-- ============================================================ -->
+<!-- FOOTER -->
+<!-- ============================================================ -->
+<footer class="footer">
+  <h4>All Guides</h4>
+  <ul>
+    <li><a href="golang-guides/golang-guide-2026-07-09.html">2026-07-09</a> (Day 34)</li>
+    <li><a href="golang-guides/golang-guide-2026-07-08.html">2026-07-08</a> (Day 33)</li>
+    <li><a href="golang-guides/golang-guide-2026-07-07.html">2026-07-07</a> (Day 32)</li>
+    <li><a href="golang-guides/golang-guide-2026-07-06.html">2026-07-06</a> (Day 31)</li>
+    <li><a href="golang-guides/golang-guide-2026-07-05.html">2026-07-05</a> (Day 30)</li>
+    <li><a href="golang-guides/golang-guide-2026-07-04.html">2026-07-04</a> (Day 29)</li>
+    <li><a href="golang-guides/golang-guide-2026-07-03.html">2026-07-03</a> (Day 28)</li>
+    <li><a href="golang-guides/golang-guide-2026-07-02.html">2026-07-02</a> (Day 27)</li>
+    <li><a href="golang-guides/golang-guide-2026-07-01.html">2026-07-01</a> (Day 26)</li>
+    <li><a href="golang-guides/golang-guide-2026-06-30.html">2026-06-30</a> (Day 25)</li>
+    <li><a href="golang-guides/golang-guide-2026-06-29.html">2026-06-29</a> (Day 24)</li>
+    <li><a href="golang-guides/golang-guide-2026-06-28.html">2026-06-28</a> (Day 23)</li>
+    <li><a href="golang-guides/golang-guide-2026-06-27.html">2026-06-27</a> (Day 22)</li>
+    <li><a href="golang-guides/golang-guide-2026-06-26.html">2026-06-26</a> (Day 21)</li>
+    <li><a href="golang-guides/golang-guide-2026-06-25.html">2026-06-25</a> (Day 20)</li>
+    <li><a href="golang-guides/golang-guide-2026-06-24.html">2026-06-24</a> (Day 19)</li>
+    <li><a href="golang-guides/golang-guide-2026-06-23.html">2026-06-23</a> (Day 18)</li>
+    <li><a href="golang-guides/golang-guide-2026-06-22.html">2026-06-22</a> (Day 17)</li>
+    <li><a href="golang-guides/golang-guide-2026-06-19.html">2026-06-19</a> (Day 15)</li>
+    <li><a href="golang-guides/golang-guide-2026-06-18.html">2026-06-18</a> (Day 14)</li>
+    <li><a href="golang-guides/golang-guide-2026-06-17.html">2026-06-17</a> (Day 13)</li>
+    <li><a href="golang-guides/golang-guide-2026-06-15.html">2026-06-15</a> (Day 12)</li>
+    <li><a href="golang-guides/golang-guide-2026-06-13.html">2026-06-13</a> (Day 11)</li>
+    <li><a href="golang-guides/golang-guide-2026-06-12.html">2026-06-12</a> (Day 10)</li>
+    <li><a href="golang-guides/golang-guide-2026-06-11.html">2026-06-11</a> (Day 9)</li>
+    <li><a href="golang-guides/golang-guide-2026-06-10.html">2026-06-10</a> (Day 8)</li>
+    <li><a href="golang-guides/golang-guide-2026-06-09.html">2026-06-09</a> (Day 7)</li>
+    <li><a href="golang-guides/golang-guide-2026-06-08.html">2026-06-08</a> (Day 6)</li>
+    <li><a href="golang-guides/golang-guide-2026-06-07.html">2026-06-07</a> (Day 5)</li>
+    <li><a href="golang-guides/golang-guide-2026-06-05.html">2026-06-05</a> (Day 4)</li>
+    <li><a href="golang-guides/golang-guide-2026-06-04.html">2026-06-04</a> (Day 3)</li>
+    <li><a href="golang-guides/golang-guide-2026-06-03.html">2026-06-03</a> (Day 2)</li>
+    <li><a href="golang-guides/golang-guide-2026-06-02.html">2026-06-02</a> (Day 1)</li>
+  </ul>
+</footer>
+
+</div><!-- end main -->
+
+<script>
+// ===== Theme Toggle =====
+(function() {
+  const KEY = 'lc-goguide-theme';
+  const toggle = document.getElementById('theme-toggle');
+  const html = document.documentElement;
+
+  function setTheme(theme) {
+    html.setAttribute('data-theme', theme);
+    localStorage.setItem(KEY, theme);
+    toggle.textContent = theme === 'dark' ? '☽' : '☀';
+  }
+
+  const saved = localStorage.getItem(KEY) || 'dark';
+  setTheme(saved);
+
+  toggle.addEventListener('click', function() {
+    setTheme(html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
+  });
+})();
+
+// ===== Mobile Sidebar Toggle =====
+(function() {
+  const btn = document.getElementById('sidebar-toggle');
+  const sidebar = document.getElementById('sidebar');
+
+  btn.addEventListener('click', function() {
+    sidebar.classList.toggle('open');
+  });
+
+  // Close sidebar when clicking a link (mobile)
+  sidebar.querySelectorAll('.sidebar-link').forEach(function(link) {
+    link.addEventListener('click', function() {
+      if (window.innerWidth <= 900) {
+        sidebar.classList.remove('open');
+      }
+    });
+  });
+})();
+
+// ===== Active Sidebar Link on Scroll =====
+(function() {
+  const links = document.querySelectorAll('.sidebar-link');
+  const sections = [];
+
+  links.forEach(function(link) {
+    var id = link.getAttribute('href').replace('#', '');
+    var el = document.getElementById(id);
+    if (el) sections.push({ id: id, el: el, link: link });
+  });
+
+  function onScroll() {
+    var scrollTop = window.scrollY + 120;
+    var current = null;
+
+    for (var i = sections.length - 1; i >= 0; i--) {
+      if (sections[i].el.offsetTop <= scrollTop) {
+        current = sections[i];
+        break;
+      }
+    }
+
+    links.forEach(function(l) { l.classList.remove('active'); });
+    if  current.link.classList.add('active');
+  }
+
+  window.addEventListener('scroll', onScroll);
+  onScroll();
+})();
+</script>
+
+</body>
+</html>

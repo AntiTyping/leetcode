@@ -1,0 +1,1917 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Python Study Guide &mdash; Day 15 (2026-06-12)</title>
+<style>
+/* ===== CSS Variables ===== */
+:root {
+  --bg: #0d1117;
+  --surface1: #161b22;
+  --surface2: #1c2333;
+  --border: #30363d;
+  --text: #e6edf3;
+  --muted: #8b949e;
+  --accent: #58a6ff;
+  --accent-dim: #1f6feb33;
+  --green: #3fb950;
+  --green-dim: #23863633;
+  --yellow: #d29922;
+  --yellow-dim: #d2992233;
+  --red: #f85149;
+  --red-dim: #f8514933;
+  --purple: #bc8cff;
+  --purple-dim: #bc8cff22;
+  --orange: #f0883e;
+  --orange-dim: #f0883e22;
+  --code-bg: #0d1117;
+  --sidebar-w: 300px;
+  --font-mono: 'SF Mono', 'Cascadia Code', 'Fira Code', Consolas, monospace;
+  --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+  --radius: 8px;
+  --shadow: 0 1px 3px rgba(0,0,0,0.4);
+}
+
+[data-theme="light"] {
+  --bg: #ffffff;
+  --surface1: #f6f8fa;
+  --surface2: #f0f3f6;
+  --border: #d0d7de;
+  --text: #1f2328;
+  --muted: #656d76;
+  --accent: #0969da;
+  --accent-dim: #0969da1a;
+  --green: #1a7f37;
+  --green-dim: #1a7f3718;
+  --yellow: #9a6700;
+  --yellow-dim: #9a670018;
+  --red: #cf222e;
+  --red-dim: #cf222e18;
+  --purple: #8250df;
+  --purple-dim: #8250df18;
+  --orange: #bc4c00;
+  --orange-dim: #bc4c0018;
+  --code-bg: #f6f8fa;
+  --shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+/* ===== Reset & Base ===== */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: var(--font-sans);
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.7;
+  font-size: 15px;
+  transition: background 0.2s, color 0.2s;
+}
+
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+/* ===== Theme Toggle ===== */
+#theme-toggle {
+  position: fixed;
+  top: 16px;
+  right: 20px;
+  z-index: 1000;
+  background: var(--surface1);
+  border: 1px solid var(--border);
+  color: var(--text);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+  box-shadow: var(--shadow);
+}
+#theme-toggle:hover { background: var(--surface2); border-color: var(--accent); }
+
+/* ===== Sidebar ===== */
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: var(--sidebar-w);
+  height: 100vh;
+  background: var(--surface1);
+  border-right: 1px solid var(--border);
+  overflow-y: auto;
+  padding: 20px 0;
+  z-index: 100;
+  transition: transform 0.3s;
+}
+
+.sidebar-header {
+  padding: 0 20px 16px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 12px;
+}
+
+.sidebar-header h2 {
+  font-size: 16px;
+  color: var(--text);
+  font-weight: 700;
+}
+
+.sidebar-header .subtitle {
+  font-size: 12px;
+  color: var(--muted);
+  margin-top: 2px;
+}
+
+.sidebar-section {
+  margin-bottom: 8px;
+}
+
+.sidebar-section-title {
+  padding: 6px 20px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+}
+
+.sidebar-link {
+  display: block;
+  padding: 5px 20px 5px 28px;
+  font-size: 13px;
+  color: var(--muted);
+  text-decoration: none;
+  border-left: 2px solid transparent;
+  transition: all 0.15s;
+  line-height: 1.4;
+}
+
+.sidebar-link:hover {
+  color: var(--text);
+  background: var(--accent-dim);
+  border-left-color: var(--accent);
+  text-decoration: none;
+}
+
+.sidebar-link.active {
+  color: var(--accent);
+  border-left-color: var(--accent);
+  background: var(--accent-dim);
+}
+
+/* ===== Mobile sidebar toggle ===== */
+#sidebar-toggle {
+  display: none;
+  position: fixed;
+  top: 16px;
+  left: 16px;
+  z-index: 200;
+  background: var(--surface1);
+  border: 1px solid var(--border);
+  color: var(--text);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 20px;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--shadow);
+}
+
+/* ===== Main Content ===== */
+.main {
+  margin-left: var(--sidebar-w);
+  padding: 40px 48px 80px;
+  max-width: calc(860px + var(--sidebar-w) + 96px);
+}
+
+.page-title {
+  font-size: 32px;
+  font-weight: 800;
+  margin-bottom: 4px;
+  color: var(--text);
+}
+
+.page-subtitle {
+  font-size: 15px;
+  color: var(--muted);
+  margin-bottom: 36px;
+}
+
+/* ===== How to Use ===== */
+.how-to {
+  background: var(--surface1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px 24px;
+  margin-bottom: 36px;
+}
+
+.how-to h3 {
+  font-size: 15px;
+  font-weight: 700;
+  margin-bottom: 8px;
+  color: var(--muted);
+}
+
+.how-to ul {
+  padding-left: 22px;
+  margin: 0;
+}
+
+.how-to li {
+  font-size: 14px;
+  color: var(--muted);
+  margin-bottom: 3px;
+}
+
+/* ===== Sections ===== */
+.section {
+  margin-bottom: 48px;
+}
+
+.section-label {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  padding: 3px 10px;
+  border-radius: 4px;
+  margin-bottom: 12px;
+}
+
+.section-label.review { background: var(--yellow-dim); color: var(--yellow); }
+.section-label.new { background: var(--green-dim); color: var(--green); }
+
+.section-title {
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 24px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--border);
+}
+
+/* ===== Concept Cards ===== */
+.concept {
+  background: var(--surface1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 28px;
+  margin-bottom: 28px;
+  box-shadow: var(--shadow);
+}
+
+.concept.review-card {
+  background: linear-gradient(135deg, var(--purple-dim), var(--surface1));
+  border-color: var(--purple);
+}
+
+.concept-header {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  margin-bottom: 6px;
+  flex-wrap: wrap;
+}
+
+.concept h3 {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.concept-meta {
+  font-size: 12px;
+  color: var(--muted);
+  background: var(--surface2);
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
+.concept h4 {
+  font-size: 15px;
+  font-weight: 600;
+  margin: 20px 0 8px;
+  color: var(--text);
+}
+
+.concept p, .concept li {
+  color: var(--text);
+  line-height: 1.7;
+}
+
+.concept ul, .concept ol {
+  padding-left: 22px;
+  margin: 8px 0;
+}
+
+.concept li {
+  margin-bottom: 4px;
+}
+
+/* ===== Code Blocks ===== */
+pre {
+  background: var(--code-bg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 16px 18px;
+  overflow-x: auto;
+  margin: 10px 0 14px;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--text);
+  position: relative;
+}
+
+code {
+  font-family: var(--font-mono);
+  font-size: 0.9em;
+}
+
+:not(pre) > code {
+  background: var(--surface2);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.88em;
+}
+
+.output {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 12px 18px;
+  margin: -8px 0 14px;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  line-height: 1.6;
+  white-space: pre-wrap;
+  color: var(--muted);
+}
+
+/* ===== Good/Bad Examples ===== */
+.do-dont {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin: 10px 0;
+}
+
+.do-box, .dont-box {
+  border-radius: 6px;
+  padding: 14px;
+  border: 1px solid;
+}
+
+.do-box {
+  background: var(--green-dim);
+  border-color: var(--green);
+}
+
+.dont-box {
+  background: var(--red-dim);
+  border-color: var(--red);
+}
+
+.do-box .label, .dont-box .label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 6px;
+}
+
+.do-box .label { color: var(--green); }
+.dont-box .label { color: var(--red); }
+
+.do-box pre, .dont-box pre {
+  margin: 0;
+  border: none;
+  background: transparent;
+  padding: 0;
+  font-size: 12.5px;
+}
+
+/* ===== Key Rules ===== */
+.rules-list {
+  list-style: none;
+  padding: 0;
+  margin: 8px 0;
+}
+
+.rules-list li {
+  padding: 6px 0 6px 24px;
+  position: relative;
+}
+
+.rules-list li::before {
+  content: "\2192";
+  position: absolute;
+  left: 2px;
+  color: var(--accent);
+  font-weight: 700;
+}
+
+/* ===== Exercises ===== */
+.exercise {
+  background: var(--purple-dim);
+  border: 1px solid var(--purple);
+  border-radius: 6px;
+  padding: 14px 18px;
+  margin: 8px 0;
+}
+
+.exercise .exercise-label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--purple);
+  margin-bottom: 4px;
+}
+
+/* ===== Challenge (Review) ===== */
+.challenge {
+  background: var(--orange-dim);
+  border: 1px solid var(--orange);
+  border-radius: 6px;
+  padding: 14px 18px;
+  margin: 10px 0;
+}
+
+.challenge .challenge-label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--orange);
+  margin-bottom: 4px;
+}
+
+/* ===== Pitfall ===== */
+.pitfall {
+  background: var(--red-dim);
+  border-left: 3px solid var(--red);
+  border-radius: 0 6px 6px 0;
+  padding: 10px 14px;
+  margin: 10px 0;
+  font-size: 14px;
+}
+
+.pitfall strong {
+  color: var(--red);
+}
+
+/* ===== Connection ===== */
+.connection {
+  background: var(--accent-dim);
+  border-left: 3px solid var(--accent);
+  border-radius: 0 6px 6px 0;
+  padding: 10px 14px;
+  margin: 10px 0;
+  font-size: 14px;
+  color: var(--muted);
+}
+
+/* ===== Footer ===== */
+.footer {
+  margin-top: 60px;
+  padding: 24px 0;
+  border-top: 1px solid var(--border);
+}
+
+.footer h4 {
+  font-size: 14px;
+  color: var(--muted);
+  margin-bottom: 10px;
+}
+
+.footer ul {
+  list-style: none;
+  padding: 0;
+}
+
+.footer li {
+  margin-bottom: 4px;
+  font-size: 14px;
+}
+
+.footer li a { color: var(--accent); }
+.footer .current { color: var(--green); font-weight: 600; }
+
+/* ===== Responsive ===== */
+@media (max-width: 900px) {
+  .sidebar {
+    transform: translateX(-100%);
+  }
+  .sidebar.open {
+    transform: translateX(0);
+    box-shadow: 4px 0 20px rgba(0,0,0,0.5);
+  }
+  #sidebar-toggle {
+    display: flex;
+  }
+  .main {
+    margin-left: 0;
+    padding: 60px 20px 60px;
+    max-width: 100%;
+  }
+  .do-dont {
+    grid-template-columns: 1fr;
+  }
+  #theme-toggle {
+    right: 14px;
+    top: 16px;
+  }
+}
+</style>
+</head>
+<body>
+
+<!-- Theme Toggle -->
+<button id="theme-toggle" aria-label="Toggle theme" title="Toggle light/dark theme">&#9789;</button>
+
+<!-- Mobile Sidebar Toggle -->
+<button id="sidebar-toggle" aria-label="Toggle sidebar">&#9776;</button>
+
+<!-- Sidebar -->
+<nav class="sidebar" id="sidebar">
+  <div class="sidebar-header">
+    <h2>Python Guide</h2>
+    <div class="subtitle">Day 15 &mdash; 2026-06-12</div>
+  </div>
+
+  <div class="sidebar-section">
+    <div class="sidebar-section-title">Review (6 concepts)</div>
+    <a href="#review-super-deep-dive" class="sidebar-link">super() Deep Dive</a>
+    <a href="#review-abc-protocol" class="sidebar-link">ABC &amp; Protocol</a>
+    <a href="#review-dunder-container" class="sidebar-link">Dunder: __getitem__, __len__, __contains__</a>
+    <a href="#review-mocking-basics" class="sidebar-link">Mocking with unittest.mock</a>
+    <a href="#review-typing-advanced" class="sidebar-link">Advanced typing</a>
+    <a href="#review-memory-optimization" class="sidebar-link">Memory Optimization</a>
+  </div>
+
+  <div class="sidebar-section">
+    <div class="sidebar-section-title">New Concepts (5 topics)</div>
+    <a href="#copy-deep-shallow" class="sidebar-link">copy: Shallow vs Deep Copy</a>
+    <a href="#threading-patterns" class="sidebar-link">threading: Locks, Events &amp; Queues</a>
+    <a href="#functools-cached-total" class="sidebar-link">functools: cached_property &amp; total_ordering</a>
+    <a href="#dis-bytecode" class="sidebar-link">dis Module &amp; Bytecode</a>
+    <a href="#socket-basics" class="sidebar-link">socket Programming Basics</a>
+  </div>
+</nav>
+
+<!-- Main Content -->
+<div class="main">
+
+<h1 class="page-title">Python Daily Guide</h1>
+<p class="page-subtitle">Day 15 &mdash; Friday, June 12, 2026 &bull; 11 concepts (6 review + 5 new)</p>
+
+<!-- How to Use -->
+<div class="how-to">
+  <h3>How to Use This Guide</h3>
+  <ul>
+    <li><strong>Review cards</strong> &mdash; skim the reminder, write the key pattern from memory, then try the challenge.</li>
+    <li><strong>New concepts</strong> &mdash; read the explanation, run every code example in a REPL, then do the exercises.</li>
+    <li><strong>Don't peek at solutions</strong> &mdash; struggle for at least 10 minutes before looking things up.</li>
+    <li><strong>Connections</strong> &mdash; pay attention to how concepts link together across days.</li>
+  </ul>
+</div>
+
+
+<!-- ============================================================ -->
+<!-- REVIEW SECTION -->
+<!-- ============================================================ -->
+<div class="section">
+  <span class="section-label review">Review</span>
+  <h2 class="section-title">Review &mdash; 6 Concepts</h2>
+
+  <!-- Review 1: super() Deep Dive -->
+  <div class="concept review-card" id="review-super-deep-dive">
+    <div class="concept-header">
+      <h3>super() Deep Dive</h3>
+      <span class="concept-meta">OOP &bull; 6 days overdue &bull; rep 1</span>
+    </div>
+
+    <h4>Quick Reminder</h4>
+    <p><code>super()</code> follows the Method Resolution Order (MRO), not just the immediate parent class. In diamond inheritance, <code>super().__init__()</code> calls the <em>next class in the MRO chain</em>, ensuring each class's <code>__init__</code> runs exactly once. Always forward <code>**kwargs</code> in cooperative multiple inheritance so each class can consume its own arguments.</p>
+
+    <h4>Key Pattern &mdash; Cooperative Multiple Inheritance</h4>
+<pre>class Base:
+    def __init__(self, **kwargs):
+        print("Base.__init__")
+
+class Left(Base):
+    def __init__(self, left_val=0, **kwargs):
+        self.left_val = left_val
+        print(f"Left.__init__(left_val={left_val})")
+        super().__init__(**kwargs)
+
+class Right(Base):
+    def __init__(self, right_val=0, **kwargs):
+        self.right_val = right_val
+        print(f"Right.__init__(right_val={right_val})")
+        super().__init__(**kwargs)
+
+class Diamond(Left, Right):
+    def __init__(self, **kwargs):
+        print("Diamond.__init__")
+        super().__init__(**kwargs)
+
+d = Diamond(left_val=1, right_val=2)
+print(Diamond.__mro__)</pre>
+    <div class="output">Diamond.__init__
+Left.__init__(left_val=1)
+Right.__init__(right_val=2)
+Base.__init__
+(&lt;class 'Diamond'&gt;, &lt;class 'Left'&gt;, &lt;class 'Right'&gt;, &lt;class 'Base'&gt;, &lt;class 'object'&gt;)</div>
+
+    <div class="challenge">
+      <div class="challenge-label">Challenge</div>
+      <p>Create a diamond with <code>Loggable</code> and <code>Serializable</code> mixins that both inherit from <code>Base</code>. The final class <code>LoggableSerializableModel</code> should call all four <code>__init__</code> methods exactly once. Print the MRO to verify.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>#1 Pitfall:</strong> Mixing <code>super().__init__()</code> with explicit <code>ParentClass.__init__(self)</code> in a diamond breaks cooperative inheritance &mdash; the shared base may get called twice or not at all. Pick one pattern and be consistent.
+    </div>
+  </div>
+
+  <!-- Review 2: Abstract Base Classes & Protocol -->
+  <div class="concept review-card" id="review-abc-protocol">
+    <div class="concept-header">
+      <h3>Abstract Base Classes &amp; Protocol</h3>
+      <span class="concept-meta">OOP &bull; 6 days overdue &bull; rep 1</span>
+    </div>
+
+    <h4>Quick Reminder</h4>
+    <p><code>ABC</code> enforces nominal typing &mdash; subclasses <em>must</em> inherit from the ABC and implement all <code>@abstractmethod</code>s. <code>Protocol</code> (from <code>typing</code>) enforces structural typing: any class with the right methods satisfies the protocol, no inheritance required. Use <code>@runtime_checkable</code> to allow <code>isinstance()</code> checks with Protocols.</p>
+
+    <h4>Key Pattern &mdash; Protocol for Structural Typing</h4>
+<pre>from typing import Protocol, runtime_checkable
+
+@runtime_checkable
+class Drawable(Protocol):
+    def draw(self) -> str: ...
+
+class Circle:
+    def draw(self) -> str:
+        return "Drawing circle"
+
+class Square:
+    def draw(self) -> str:
+        return "Drawing square"
+
+def render(shape: Drawable) -> None:
+    print(shape.draw())
+
+render(Circle())    # Works: Circle has draw()
+render(Square())    # Works: Square has draw()
+print(isinstance(Circle(), Drawable))  # True at runtime</pre>
+    <div class="output">Drawing circle
+Drawing square
+True</div>
+
+    <div class="challenge">
+      <div class="challenge-label">Challenge</div>
+      <p>Define a <code>Cacheable</code> protocol with <code>cache_key(self) -&gt; str</code> and <code>ttl(self) -&gt; int</code> methods. Create two unrelated classes (<code>UserProfile</code> and <code>SearchResult</code>) that satisfy the protocol without inheriting from it. Write a function that accepts <code>Cacheable</code> and prints the cache key.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>#1 Pitfall:</strong> <code>@runtime_checkable</code> Protocol only checks method <em>existence</em>, not signatures. A class with <code>def draw(self, x, y)</code> still passes <code>isinstance(obj, Drawable)</code> even though calling <code>draw()</code> with no args would fail.
+    </div>
+  </div>
+
+  <!-- Review 3: Dunder Methods — __getitem__, __len__, __contains__ -->
+  <div class="concept review-card" id="review-dunder-container">
+    <div class="concept-header">
+      <h3>Dunder: __getitem__, __len__, __contains__</h3>
+      <span class="concept-meta">OOP &bull; 6 days overdue &bull; rep 1</span>
+    </div>
+
+    <h4>Quick Reminder</h4>
+    <p>Implementing <code>__getitem__</code> makes objects indexable and iterable (Python falls back to indexing with 0, 1, 2... if <code>__iter__</code> is missing). <code>__len__</code> enables <code>len(obj)</code> and truthiness testing. <code>__contains__</code> enables the <code>in</code> operator &mdash; without it, Python falls back to iterating through <code>__iter__</code> or <code>__getitem__</code>.</p>
+
+    <h4>Key Pattern &mdash; Custom Container with Slicing</h4>
+<pre>class NamedList:
+    def __init__(self, name, items):
+        self.name = name
+        self._items = list(items)
+
+    def __getitem__(self, index):
+        if isinstance(index, slice):
+            return NamedList(self.name, self._items[index])
+        return self._items[index]
+
+    def __len__(self):
+        return len(self._items)
+
+    def __contains__(self, item):
+        return item in self._items
+
+    def __repr__(self):
+        return f"NamedList({self.name!r}, {self._items})"
+
+nl = NamedList("fruits", ["apple", "banana", "cherry", "date"])
+print(nl[1])          # banana
+print(nl[1:3])        # NamedList('fruits', ['banana', 'cherry'])
+print(len(nl))        # 4
+print("cherry" in nl) # True</pre>
+    <div class="output">banana
+NamedList('fruits', ['banana', 'cherry'])
+4
+True</div>
+
+    <div class="challenge">
+      <div class="challenge-label">Challenge</div>
+      <p>Create a <code>Matrix</code> class that supports <code>m[row, col]</code> indexing (using tuple unpacking inside <code>__getitem__</code>), <code>len(m)</code> returning total element count, and <code>value in m</code> for element search.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>#1 Pitfall:</strong> Forgetting to handle <code>slice</code> objects in <code>__getitem__</code>. When a user writes <code>obj[1:3]</code>, Python passes a <code>slice(1, 3, None)</code> object &mdash; you must check <code>isinstance(index, slice)</code> and delegate to the underlying data's slicing.
+    </div>
+  </div>
+
+  <!-- Review 4: Mocking with unittest.mock -->
+  <div class="concept review-card" id="review-mocking-basics">
+    <div class="concept-header">
+      <h3>Mocking with unittest.mock</h3>
+      <span class="concept-meta">Testing &bull; 6 days overdue &bull; rep 0</span>
+    </div>
+
+    <h4>Quick Reminder</h4>
+    <p><code>patch()</code> replaces objects in the module where they are <em>looked up</em>, not where they are defined. <code>MagicMock</code> auto-creates attributes and methods on access. Use <code>spec=True</code> or <code>autospec=True</code> to restrict the mock to the real object's API. <code>side_effect</code> can be an exception, a list of return values, or a callable.</p>
+
+    <h4>Key Pattern &mdash; @patch with autospec</h4>
+<pre>from unittest.mock import patch, MagicMock
+
+# Module: myapp/service.py
+# from myapp.db import get_user
+# def greet(user_id):
+#     user = get_user(user_id)
+#     return f"Hello, {user.name}!"
+
+# Test: tests/test_service.py
+# @patch("myapp.service.get_user", autospec=True)
+# def test_greet(mock_get_user):
+#     mock_get_user.return_value = MagicMock(name="Alice")
+#     result = greet(42)
+#     assert result == "Hello, Alice!"
+#     mock_get_user.assert_called_once_with(42)
+
+# Inline demo:
+with patch("os.path.exists", return_value=True) as mock_exists:
+    import os.path
+    print(os.path.exists("/fake/path"))  # True
+    mock_exists.assert_called_once_with("/fake/path")</pre>
+    <div class="output">True</div>
+
+    <div class="challenge">
+      <div class="challenge-label">Challenge</div>
+      <p>Write a test using <code>@patch</code> that mocks <code>requests.get</code> in a function <code>fetch_status(url)</code> which returns the HTTP status code. Make the mock return a response with <code>status_code=404</code> and verify the function returns 404. Use <code>autospec=True</code>.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>#1 Pitfall:</strong> Patching where the object is <em>defined</em> instead of where it is <em>imported</em>. If <code>service.py</code> does <code>from db import get_user</code>, you must patch <code>"service.get_user"</code>, not <code>"db.get_user"</code>.
+    </div>
+  </div>
+
+  <!-- Review 5: Advanced typing -->
+  <div class="concept review-card" id="review-typing-advanced">
+    <div class="concept-header">
+      <h3>Advanced typing</h3>
+      <span class="concept-meta">Testing &bull; 6 days overdue &bull; rep 0</span>
+    </div>
+
+    <h4>Quick Reminder</h4>
+    <p><code>TypeVar</code> creates generic type variables. <code>Generic[T]</code> makes classes parameterized. <code>ParamSpec</code> captures the parameter signature of callables for decorator typing. <code>@overload</code> provides multiple type signatures for a single function.</p>
+
+    <h4>Key Pattern &mdash; Generic Class with Bound TypeVar</h4>
+<pre>from typing import TypeVar, Generic
+
+class Comparable:
+    def __lt__(self, other): ...
+
+T = TypeVar("T", bound=Comparable)
+
+class SortedList(Generic[T]):
+    def __init__(self) -> None:
+        self._items: list[T] = []
+
+    def add(self, item: T) -> None:
+        for i, existing in enumerate(self._items):
+            if item &lt; existing:
+                self._items.insert(i, item)
+                return
+        self._items.append(item)
+
+    def __repr__(self) -> str:
+        return f"SortedList({self._items})"
+
+sl: SortedList[int] = SortedList()
+sl.add(3)
+sl.add(1)
+sl.add(2)
+print(sl)  # SortedList([1, 2, 3])</pre>
+    <div class="output">SortedList([1, 2, 3])</div>
+
+    <div class="challenge">
+      <div class="challenge-label">Challenge</div>
+      <p>Write a <code>@retry</code> decorator using <code>ParamSpec</code> and <code>TypeVar</code> that preserves the wrapped function's type signature. It should retry up to 3 times on any exception, then re-raise.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>#1 Pitfall:</strong> Using <code>TypeVar("T")</code> without <code>bound=</code> when you need constrained types. An unbound <code>T</code> means "any type" &mdash; if your generic only makes sense for certain types, use <code>bound=SomeBase</code> to restrict it.
+    </div>
+  </div>
+
+  <!-- Review 6: Memory Optimization -->
+  <div class="concept review-card" id="review-memory-optimization">
+    <div class="concept-header">
+      <h3>Memory Optimization</h3>
+      <span class="concept-meta">Performance &bull; due today &bull; rep 1</span>
+    </div>
+
+    <h4>Quick Reminder</h4>
+    <p><code>__slots__</code> eliminates per-instance <code>__dict__</code>, saving 40-60% memory on data-heavy classes. <code>sys.getsizeof()</code> measures shallow size of an object. Generators process large datasets without loading everything into memory. The <code>array</code> module stores homogeneous numeric data more compactly than lists.</p>
+
+    <h4>Key Pattern &mdash; __slots__ on a Data-Heavy Class</h4>
+<pre>import sys
+
+class PointDict:
+    def __init__(self, x, y, z):
+        self.x, self.y, self.z = x, y, z
+
+class PointSlots:
+    __slots__ = ('x', 'y', 'z')
+    def __init__(self, x, y, z):
+        self.x, self.y, self.z = x, y, z
+
+pd = PointDict(1, 2, 3)
+ps = PointSlots(1, 2, 3)
+print(f"Dict-based: {sys.getsizeof(pd)} bytes")
+print(f"Slots-based: {sys.getsizeof(ps)} bytes")
+
+# Generator vs list for large data
+import tracemalloc
+tracemalloc.start()
+total = sum(x * x for x in range(1_000_000))  # generator - low memory
+print(f"Sum: {total}")
+print(f"Peak memory: {tracemalloc.get_traced_memory()[1] / 1024:.0f} KB")
+tracemalloc.stop()</pre>
+    <div class="output">Dict-based: 152 bytes
+Slots-based: 64 bytes
+Sum: 333332833333500000
+Peak memory: ~25 KB</div>
+
+    <div class="challenge">
+      <div class="challenge-label">Challenge</div>
+      <p>Create an <code>array.array('d')</code> of 100,000 floats and a regular <code>list</code> of the same floats. Compare their memory usage with <code>sys.getsizeof()</code>. Then time summing both using <code>timeit</code>.</p>
+    </div>
+
+    <div class="pitfall">
+      <strong>#1 Pitfall:</strong> <code>sys.getsizeof()</code> only measures the object's shallow size &mdash; for a list, it shows the array of pointers, not the pointed-to objects. Use <code>tracemalloc</code> or <code>pympler.asizeof()</code> for deep/recursive measurement.
+    </div>
+  </div>
+
+</div><!-- end review section -->
+
+
+<!-- ============================================================ -->
+<!-- NEW CONCEPTS SECTION -->
+<!-- ============================================================ -->
+<div class="section">
+  <span class="section-label new">New</span>
+  <h2 class="section-title">New Concepts &mdash; 5 Topics</h2>
+
+  <!-- New 1: copy Module: Shallow vs Deep Copy -->
+  <div class="concept" id="copy-deep-shallow">
+    <div class="concept-header">
+      <h3>copy Module: Shallow vs Deep Copy</h3>
+      <span class="concept-meta">Advanced Standard Library &bull; concept_id: copy_deep_shallow</span>
+    </div>
+
+    <p>Python's assignment operator (<code>=</code>) never copies objects &mdash; it creates a new reference to the same object. The <code>copy</code> module provides <code>copy()</code> for shallow copies and <code>deepcopy()</code> for recursive deep copies. Understanding when each is needed prevents subtle mutation bugs.</p>
+
+    <h4>Example 1 &mdash; Assignment vs Shallow vs Deep</h4>
+<pre>import copy
+
+original = [[1, 2, 3], [4, 5, 6]]
+
+assigned = original            # same object
+shallow  = copy.copy(original) # new outer list, same inner lists
+deep     = copy.deepcopy(original)  # everything is new
+
+original[0][0] = 999
+
+print(f"assigned: {assigned}")  # [[999, 2, 3], [4, 5, 6]] - affected!
+print(f"shallow:  {shallow}")   # [[999, 2, 3], [4, 5, 6]] - affected!
+print(f"deep:     {deep}")      # [[1, 2, 3], [4, 5, 6]]   - safe!</pre>
+    <div class="output">assigned: [[999, 2, 3], [4, 5, 6]]
+shallow:  [[999, 2, 3], [4, 5, 6]]
+deep:     [[1, 2, 3], [4, 5, 6]]</div>
+
+    <h4>Example 2 &mdash; When Shallow Copy Is Sufficient</h4>
+<pre>import copy
+
+# Shallow copy works fine for flat structures with immutable elements
+nums = [1, 2, 3, 4, 5]
+nums_copy = copy.copy(nums)
+nums_copy[0] = 999
+print(f"original: {nums}")      # [1, 2, 3, 4, 5] - safe (ints are immutable)
+print(f"copy:     {nums_copy}") # [999, 2, 3, 4, 5]
+
+# Also fine for dicts with immutable values
+config = {"host": "localhost", "port": 8080}
+config2 = copy.copy(config)
+config2["port"] = 9090
+print(f"original: {config}")    # port still 8080
+print(f"copy:     {config2}")   # port is 9090</pre>
+    <div class="output">original: [1, 2, 3, 4, 5]
+copy:     [999, 2, 3, 4, 5]
+original: {'host': 'localhost', 'port': 8080}
+copy:     {'host': 'localhost', 'port': 9090}</div>
+
+    <h4>Example 3 &mdash; Customizing Copy Behavior</h4>
+<pre>import copy
+
+class GameState:
+    def __init__(self, board, score, history):
+        self.board = board
+        self.score = score
+        self.history = history
+
+    def __copy__(self):
+        """Shallow copy: share history (append-only), copy board."""
+        cls = self.__class__
+        result = cls.__new__(cls)
+        result.board = [row[:] for row in self.board]  # copy 2D board
+        result.score = self.score
+        result.history = self.history  # shared reference (intentional)
+        return result
+
+    def __deepcopy__(self, memo):
+        """Deep copy: everything is independent."""
+        cls = self.__class__
+        result = cls.__new__(cls)
+        memo[id(self)] = result
+        result.board = copy.deepcopy(self.board, memo)
+        result.score = self.score
+        result.history = copy.deepcopy(self.history, memo)
+        return result
+
+state = GameState([[0, 0], [0, 0]], 100, ["move1"])
+shallow = copy.copy(state)
+deep = copy.deepcopy(state)
+
+state.board[0][0] = 1
+state.history.append("move2")
+
+print(f"shallow board: {shallow.board}")    # [[0, 0], [0, 0]] - board copied
+print(f"shallow history: {shallow.history}")# ["move1", "move2"] - shared!
+print(f"deep board: {deep.board}")          # [[0, 0], [0, 0]] - independent
+print(f"deep history: {deep.history}")      # ["move1"] - independent</pre>
+    <div class="output">shallow board: [[0, 0], [0, 0]]
+shallow history: ['move1', 'move2']
+deep board: [[0, 0], [0, 0]]
+deep history: ['move1']</div>
+
+    <h4>Example 4 &mdash; Deepcopy and Circular References</h4>
+<pre>import copy
+
+class Node:
+    def __init__(self, value):
+        self.value = value
+        self.next = None
+
+    def __repr__(self):
+        return f"Node({self.value})"
+
+# Create circular reference
+a = Node("A")
+b = Node("B")
+a.next = b
+b.next = a  # circular!
+
+# deepcopy handles cycles via the memo dict
+a_copy = copy.deepcopy(a)
+print(a_copy)                        # Node(A)
+print(a_copy.next)                   # Node(B)
+print(a_copy.next.next)              # Node(A) - same copy, not original
+print(a_copy.next.next is a_copy)    # True - cycle preserved correctly
+print(a_copy is a)                   # False - it's a copy</pre>
+    <div class="output">Node(A)
+Node(B)
+Node(A)
+True
+False</div>
+
+    <h4>Example 5 &mdash; Performance Comparison</h4>
+<pre>import copy
+import timeit
+
+data = {"users": [{"name": f"user_{i}", "scores": list(range(10))} for i in range(100)]}
+
+t_shallow = timeit.timeit(lambda: copy.copy(data), number=10_000)
+t_deep = timeit.timeit(lambda: copy.deepcopy(data), number=10_000)
+
+print(f"Shallow: {t_shallow:.3f}s for 10k copies")
+print(f"Deep:    {t_deep:.3f}s for 10k copies")
+print(f"Deep is {t_deep / t_shallow:.0f}x slower")</pre>
+    <div class="output">Shallow: 0.012s for 10k copies
+Deep:    3.450s for 10k copies
+Deep is ~288x slower</div>
+
+    <div class="do-dont">
+      <div class="do-box">
+        <div class="label">DO</div>
+<pre># Use deepcopy for nested mutable data
+import copy
+config = {"db": {"host": "localhost", "opts": [1, 2]}}
+safe_config = copy.deepcopy(config)</pre>
+      </div>
+      <div class="dont-box">
+        <div class="label">DON'T</div>
+<pre># Shallow copy with nested mutables
+config2 = config.copy()  # dict.copy() is shallow!
+config2["db"]["host"] = "remote"
+# Oops: config["db"]["host"] is now "remote" too</pre>
+      </div>
+    </div>
+
+    <div class="exercise">
+      <div class="exercise-label">Exercise 1</div>
+      <p>Create a <code>Spreadsheet</code> class with a 2D grid (list of lists). Implement <code>__copy__</code> that shares column headers but copies cell data, and <code>__deepcopy__</code> that copies everything. Verify mutations in the original don't leak into the deep copy.</p>
+    </div>
+
+    <div class="exercise">
+      <div class="exercise-label">Exercise 2</div>
+      <p>Write a function <code>snapshot(obj)</code> that takes any object, deep-copies it, and stores it in an undo stack. Implement <code>restore()</code> that pops the last snapshot. Test with a nested dict that gets modified between snapshots.</p>
+    </div>
+
+    <div class="connection">
+      <strong>Connection:</strong> The <code>copy</code> module interacts with <code>__slots__</code> (Day 14) &mdash; objects with <code>__slots__</code> need custom <code>__copy__</code>/<code>__deepcopy__</code> since there's no <code>__dict__</code> to copy automatically. Also ties to <strong>Memory Optimization</strong>: shallow copy is faster and uses less memory when you know your data is flat.
+    </div>
+  </div>
+
+  <!-- New 2: threading Patterns: Locks, Events & Queues -->
+  <div class="concept" id="threading-patterns">
+    <div class="concept-header">
+      <h3>threading: Locks, Events &amp; Queues</h3>
+      <span class="concept-meta">Advanced Standard Library &bull; concept_id: threading_patterns</span>
+    </div>
+
+    <p>Python's <code>threading</code> module provides OS-level threads. Due to the GIL, CPU-bound work doesn't parallelize (use <code>multiprocessing</code> instead), but I/O-bound work (network, disk, sleep) benefits greatly. The key synchronization primitives are <code>Lock</code>, <code>RLock</code>, <code>Event</code>, <code>Semaphore</code>, <code>Barrier</code>, and <code>queue.Queue</code>.</p>
+
+    <h4>Example 1 &mdash; Lock for Mutual Exclusion</h4>
+<pre>import threading
+
+counter = 0
+lock = threading.Lock()
+
+def increment(n):
+    global counter
+    for _ in range(n):
+        with lock:  # acquire and release automatically
+            counter += 1
+
+threads = [threading.Thread(target=increment, args=(100_000,)) for _ in range(4)]
+for t in threads:
+    t.start()
+for t in threads:
+    t.join()
+
+print(f"Counter: {counter}")  # Always 400000 with lock</pre>
+    <div class="output">Counter: 400000</div>
+
+    <h4>Example 2 &mdash; Event for Thread Signaling</h4>
+<pre>import threading
+import time
+
+ready = threading.Event()
+
+def worker(name):
+    print(f"{name}: waiting for signal...")
+    ready.wait()  # blocks until event is set
+    print(f"{name}: received signal, starting work!")
+
+threads = [threading.Thread(target=worker, args=(f"Worker-{i}",)) for i in range(3)]
+for t in threads:
+    t.start()
+
+time.sleep(1)
+print("Main: sending signal to all workers")
+ready.set()  # unblocks all waiting threads
+
+for t in threads:
+    t.join()</pre>
+    <div class="output">Worker-0: waiting for signal...
+Worker-1: waiting for signal...
+Worker-2: waiting for signal...
+Main: sending signal to all workers
+Worker-0: received signal, starting work!
+Worker-1: received signal, starting work!
+Worker-2: received signal, starting work!</div>
+
+    <h4>Example 3 &mdash; Queue for Producer-Consumer</h4>
+<pre>import threading
+import queue
+import time
+
+task_queue = queue.Queue(maxsize=5)
+
+def producer(items):
+    for item in items:
+        task_queue.put(item)  # blocks if queue is full
+        print(f"Produced: {item}")
+    task_queue.put(None)  # sentinel to signal done
+
+def consumer(name):
+    while True:
+        item = task_queue.get()  # blocks if queue is empty
+        if item is None:
+            task_queue.put(None)  # re-add sentinel for other consumers
+            break
+        print(f"{name} processed: {item}")
+        task_queue.task_done()
+
+p = threading.Thread(target=producer, args=(range(8),))
+c1 = threading.Thread(target=consumer, args=("Consumer-1",))
+c2 = threading.Thread(target=consumer, args=("Consumer-2",))
+
+p.start(); c1.start(); c2.start()
+p.join(); c1.join(); c2.join()
+print("All done!")</pre>
+    <div class="output">Produced: 0
+Consumer-1 processed: 0
+Produced: 1
+Consumer-2 processed: 1
+... (interleaved output)
+All done!</div>
+
+    <h4>Example 4 &mdash; Semaphore for Rate Limiting</h4>
+<pre>import threading
+import time
+
+# Allow at most 3 concurrent "connections"
+semaphore = threading.Semaphore(3)
+
+def fetch_url(url):
+    with semaphore:
+        print(f"Fetching {url} (active: {3 - semaphore._value}/3)")
+        time.sleep(0.5)  # simulate network I/O
+        print(f"Done: {url}")
+
+urls = [f"https://example.com/page/{i}" for i in range(6)]
+threads = [threading.Thread(target=fetch_url, args=(url,)) for url in urls]
+
+for t in threads:
+    t.start()
+for t in threads:
+    t.join()</pre>
+    <div class="output">Fetching .../page/0 (active: 1/3)
+Fetching .../page/1 (active: 2/3)
+Fetching .../page/2 (active: 3/3)
+Done: .../page/0
+Fetching .../page/3 (active: 3/3)
+... (at most 3 concurrent)</div>
+
+    <h4>Example 5 &mdash; Daemon Threads</h4>
+<pre>import threading
+import time
+
+def background_task():
+    while True:
+        print("Background: heartbeat")
+        time.sleep(1)
+
+# daemon=True means thread dies when main thread exits
+bg = threading.Thread(target=background_task, daemon=True)
+bg.start()
+
+time.sleep(2.5)
+print("Main thread done - daemon will be killed")
+# No need to join() daemon threads</pre>
+    <div class="output">Background: heartbeat
+Background: heartbeat
+Background: heartbeat
+Main thread done - daemon will be killed</div>
+
+    <div class="do-dont">
+      <div class="do-box">
+        <div class="label">DO</div>
+<pre># Use context manager for locks
+with lock:
+    shared_data.append(item)
+
+# Use Queue for thread communication
+task_queue.put(data)</pre>
+      </div>
+      <div class="dont-box">
+        <div class="label">DON'T</div>
+<pre># Manual acquire/release - easy to forget release
+lock.acquire()
+shared_data.append(item)
+# If exception here, lock is never released!
+lock.release()</pre>
+      </div>
+    </div>
+
+    <div class="exercise">
+      <div class="exercise-label">Exercise 1</div>
+      <p>Build a thread-safe <code>BankAccount</code> class with <code>deposit()</code>, <code>withdraw()</code>, and <code>balance</code> property, all protected by a <code>Lock</code>. Spawn 10 threads making random deposits/withdrawals and verify the final balance is correct.</p>
+    </div>
+
+    <div class="exercise">
+      <div class="exercise-label">Exercise 2</div>
+      <p>Implement a parallel URL checker using <code>queue.Queue</code>: a producer thread adds 20 URLs to the queue, and 4 consumer threads process them (simulate with <code>time.sleep(0.1)</code>). Print a summary when all URLs are processed. Use a sentinel value to signal completion.</p>
+    </div>
+
+    <div class="exercise">
+      <div class="exercise-label">Exercise 3</div>
+      <p>Create a <code>Barrier</code>-based simulation where 4 threads each prepare data, then all synchronize at the barrier before proceeding to the processing phase. Print timestamps to verify they all start processing at the same time.</p>
+    </div>
+
+    <div class="connection">
+      <strong>Connection:</strong> Ties to <strong>socket programming</strong> (later today) &mdash; real servers use threads to handle multiple clients concurrently. Also relates to <strong>queue.Queue</strong> being the thread-safe alternative to <code>collections.deque</code> (Day 8).
+    </div>
+  </div>
+
+  <!-- New 3: functools.cached_property & total_ordering -->
+  <div class="concept" id="functools-cached-total">
+    <div class="concept-header">
+      <h3>functools: cached_property &amp; total_ordering</h3>
+      <span class="concept-meta">Advanced Standard Library &bull; concept_id: functools_cached_total</span>
+    </div>
+
+    <p><code>@cached_property</code> computes a value once on first access and caches it as an instance attribute. <code>@total_ordering</code> lets you define just <code>__eq__</code> and one comparison method (<code>__lt__</code>, <code>__le__</code>, <code>__gt__</code>, or <code>__ge__</code>) and auto-generates the remaining five comparison methods.</p>
+
+    <h4>Example 1 &mdash; cached_property Basics</h4>
+<pre>from functools import cached_property
+import time
+
+class DataAnalyzer:
+    def __init__(self, data):
+        self._data = data
+
+    @cached_property
+    def statistics(self):
+        """Expensive computation, only runs once."""
+        print("Computing statistics...")
+        time.sleep(0.5)  # simulate heavy work
+        return {
+            "mean": sum(self._data) / len(self._data),
+            "min": min(self._data),
+            "max": max(self._data),
+            "count": len(self._data),
+        }
+
+analyzer = DataAnalyzer(range(1_000_000))
+print(analyzer.statistics)  # "Computing statistics..." then result
+print(analyzer.statistics)  # instant - cached!</pre>
+    <div class="output">Computing statistics...
+{'mean': 499999.5, 'min': 0, 'max': 999999, 'count': 1000000}
+{'mean': 499999.5, 'min': 0, 'max': 999999, 'count': 1000000}</div>
+
+    <h4>Example 2 &mdash; cached_property vs @property + @lru_cache</h4>
+<pre>from functools import cached_property, lru_cache
+
+class Config:
+    def __init__(self, path):
+        self.path = path
+
+    # Option 1: cached_property (preferred for instance attributes)
+    @cached_property
+    def settings(self):
+        print(f"Reading {self.path}...")
+        return {"debug": True}  # simulate file read
+
+    # Option 2: property + lru_cache (DOES NOT WORK as expected!)
+    # @property
+    # @lru_cache()  # lru_cache on a method caches per (self,) - memory leak!
+    # def settings(self):
+    #     ...
+
+c = Config("/etc/app.conf")
+print(c.settings)         # reads file
+print(c.settings)         # cached
+
+# Invalidate by deleting the cached attribute
+del c.settings
+print(c.settings)         # reads file again</pre>
+    <div class="output">Reading /etc/app.conf...
+{'debug': True}
+{'debug': True}
+Reading /etc/app.conf...
+{'debug': True}</div>
+
+    <h4>Example 3 &mdash; total_ordering Basics</h4>
+<pre>from functools import total_ordering
+
+@total_ordering
+class Version:
+    def __init__(self, major, minor, patch):
+        self.major = major
+        self.minor = minor
+        self.patch = patch
+
+    def __eq__(self, other):
+        if not isinstance(other, Version):
+            return NotImplemented
+        return (self.major, self.minor, self.patch) == (other.major, other.minor, other.patch)
+
+    def __lt__(self, other):
+        if not isinstance(other, Version):
+            return NotImplemented
+        return (self.major, self.minor, self.patch) &lt; (other.major, other.minor, other.patch)
+
+    def __repr__(self):
+        return f"v{self.major}.{self.minor}.{self.patch}"
+
+v1 = Version(1, 2, 3)
+v2 = Version(1, 3, 0)
+v3 = Version(1, 2, 3)
+
+print(f"{v1} &lt; {v2}: {v1 &lt; v2}")    # True
+print(f"{v1} &gt; {v2}: {v1 &gt; v2}")    # False (auto-generated!)
+print(f"{v1} &lt;= {v3}: {v1 &lt;= v3}")  # True (auto-generated!)
+print(f"{v1} &gt;= {v2}: {v1 &gt;= v2}")  # False (auto-generated!)
+print(f"{v1} == {v3}: {v1 == v3}")  # True
+
+# Now sorting works automatically
+versions = [Version(2, 0, 0), Version(1, 0, 1), Version(1, 2, 0)]
+print(sorted(versions))</pre>
+    <div class="output">v1.2.3 &lt; v1.3.0: True
+v1.2.3 &gt; v1.3.0: False
+v1.2.3 &lt;= v1.2.3: True
+v1.2.3 &gt;= v1.3.0: False
+v1.2.3 == v1.2.3: True
+[v1.0.1, v1.2.0, v2.0.0]</div>
+
+    <h4>Example 4 &mdash; When to Use Manual Comparisons Instead</h4>
+<pre>from functools import total_ordering
+
+# total_ordering has a small performance overhead
+# For hot code paths, define all comparisons manually:
+
+class FastPoint:
+    __slots__ = ('x', 'y')
+
+    def __init__(self, x, y):
+        self.x, self.y = x, y
+
+    def __eq__(self, other):
+        return self.x == other.x and self.y == other.y
+
+    def __lt__(self, other):
+        return (self.x, self.y) &lt; (other.x, other.y)
+
+    def __le__(self, other):
+        return (self.x, self.y) &lt;= (other.x, other.y)
+
+    def __gt__(self, other):
+        return (self.x, self.y) &gt; (other.x, other.y)
+
+    def __ge__(self, other):
+        return (self.x, self.y) &gt;= (other.x, other.y)
+
+# Use total_ordering for convenience, manual for performance-critical code
+import timeit
+
+@total_ordering
+class SlowPoint:
+    def __init__(self, x, y):
+        self.x, self.y = x, y
+    def __eq__(self, other):
+        return self.x == other.x and self.y == other.y
+    def __lt__(self, other):
+        return (self.x, self.y) &lt; (other.x, other.y)
+
+a_fast = FastPoint(1, 2); b_fast = FastPoint(3, 4)
+a_slow = SlowPoint(1, 2); b_slow = SlowPoint(3, 4)
+
+t_fast = timeit.timeit(lambda: a_fast &lt;= b_fast, number=1_000_000)
+t_slow = timeit.timeit(lambda: a_slow &lt;= b_slow, number=1_000_000)
+print(f"Manual __le__: {t_fast:.3f}s")
+print(f"total_ordering __le__: {t_slow:.3f}s")</pre>
+    <div class="output">Manual __le__: ~0.15s
+total_ordering __le__: ~0.35s</div>
+
+    <div class="do-dont">
+      <div class="do-box">
+        <div class="label">DO</div>
+<pre># cached_property for expensive, stable computations
+@cached_property
+def parsed_config(self):
+    return json.loads(self._raw)
+
+# total_ordering for convenience
+@total_ordering
+class Priority:
+    def __eq__(self, o): ...
+    def __lt__(self, o): ...</pre>
+      </div>
+      <div class="dont-box">
+        <div class="label">DON'T</div>
+<pre># Don't use cached_property on mutable data
+@cached_property
+def items(self):
+    return []  # caller appends, but it's cached!
+
+# Don't use with __slots__ without __dict__
+class Oops:
+    __slots__ = ('x',)
+    @cached_property  # needs __dict__ to cache!
+    def y(self): return 42</pre>
+      </div>
+    </div>
+
+    <div class="exercise">
+      <div class="exercise-label">Exercise 1</div>
+      <p>Create a <code>FileIndex</code> class that accepts a directory path. Use <code>@cached_property</code> to lazily build a dict mapping filename to file size. Show that accessing the property twice only scans the directory once. Demonstrate invalidation with <code>del</code>.</p>
+    </div>
+
+    <div class="exercise">
+      <div class="exercise-label">Exercise 2</div>
+      <p>Build a <code>SemVer</code> class using <code>@total_ordering</code> that parses strings like <code>"1.2.3"</code> and supports all comparison operators. Include a <code>@classmethod</code> constructor <code>from_string()</code>. Sort a list of 10 version strings.</p>
+    </div>
+
+    <div class="connection">
+      <strong>Connection:</strong> <code>@cached_property</code> relates to <strong>Memory Optimization</strong> (today's review) &mdash; it trades memory for speed. <code>@total_ordering</code> pairs with <code>heapq</code> and <code>bisect</code> (Day 14) which require comparable objects. Also extends the <code>functools</code> coverage from <code>lru_cache</code> (Day 5) and <code>singledispatch</code> (Day 14).
+    </div>
+  </div>
+
+  <!-- New 4: dis Module & Bytecode Inspection -->
+  <div class="concept" id="dis-bytecode">
+    <div class="concept-header">
+      <h3>dis Module &amp; Bytecode Inspection</h3>
+      <span class="concept-meta">Python Internals &bull; concept_id: dis_bytecode</span>
+    </div>
+
+    <p>CPython compiles Python source to bytecode, which the virtual machine executes. The <code>dis</code> module disassembles bytecode into human-readable instructions. Understanding bytecode helps you reason about performance, debug mysterious behavior, and appreciate what Python does under the hood.</p>
+
+    <h4>Example 1 &mdash; Basic Disassembly</h4>
+<pre>import dis
+
+def add(a, b):
+    return a + b
+
+dis.dis(add)</pre>
+    <div class="output">  2           0 LOAD_FAST                0 (a)
+              2 LOAD_FAST                1 (b)
+              4 BINARY_ADD
+              6 RETURN_VALUE</div>
+
+    <p><code>LOAD_FAST</code> loads a local variable onto the stack. <code>BINARY_ADD</code> pops two values, adds them, pushes the result. <code>RETURN_VALUE</code> pops the top of the stack and returns it.</p>
+
+    <h4>Example 2 &mdash; Comparing Loop Approaches</h4>
+<pre>import dis
+
+def loop_range():
+    total = 0
+    for i in range(100):
+        total += i
+    return total
+
+def loop_while():
+    total = 0
+    i = 0
+    while i &lt; 100:
+        total += i
+        i += 1
+    return total
+
+print("=== for loop ===")
+dis.dis(loop_range)
+print("\n=== while loop ===")
+dis.dis(loop_while)</pre>
+    <div class="output">=== for loop ===
+  ...
+  FOR_ITER  (to end)
+  STORE_FAST  (i)
+  ...
+=== while loop ===
+  ...
+  LOAD_FAST  (i)
+  LOAD_CONST  (100)
+  COMPARE_OP  (&lt;)
+  POP_JUMP_IF_FALSE  (to end)
+  ...</div>
+
+    <p>The <code>for</code> loop uses the optimized <code>FOR_ITER</code> instruction. The <code>while</code> loop requires explicit <code>COMPARE_OP</code> and <code>POP_JUMP_IF_FALSE</code> on every iteration &mdash; more bytecode instructions means slower execution.</p>
+
+    <h4>Example 3 &mdash; Why <code>in set</code> Beats <code>in list</code></h4>
+<pre>import dis
+
+def check_in_list(x):
+    return x in [1, 2, 3, 4, 5]
+
+def check_in_set(x):
+    return x in {1, 2, 3, 4, 5}
+
+print("=== list membership ===")
+dis.dis(check_in_list)
+print("\n=== set membership (frozenset constant) ===")
+dis.dis(check_in_set)</pre>
+    <div class="output">=== list membership ===
+  ...  BUILD_LIST  5
+       CONTAINS_OP  0
+  ...
+=== set membership (frozenset constant) ===
+  ...  LOAD_CONST  (frozenset({1, 2, 3, 4, 5}))
+       CONTAINS_OP  0
+  ...</div>
+
+    <p>The set literal is optimized to a <code>frozenset</code> constant at compile time &mdash; <code>LOAD_CONST</code> is O(1). The list version must <code>BUILD_LIST</code> on every call. Additionally, <code>CONTAINS_OP</code> on a frozenset is O(1) hash lookup vs O(n) linear scan for lists.</p>
+
+    <h4>Example 4 &mdash; Examining Code Objects</h4>
+<pre>def greet(name, greeting="Hello"):
+    message = f"{greeting}, {name}!"
+    return message
+
+code = greet.__code__
+
+print(f"co_varnames: {code.co_varnames}")   # local variable names
+print(f"co_consts:   {code.co_consts}")     # constant values
+print(f"co_argcount: {code.co_argcount}")   # number of arguments
+print(f"co_nlocals:  {code.co_nlocals}")    # number of local variables
+print(f"co_stacksize: {code.co_stacksize}") # max stack depth needed</pre>
+    <div class="output">co_varnames: ('name', 'greeting', 'message')
+co_consts:   (None, ', ', '!')
+co_argcount: 2
+co_nlocals:  3
+co_stacksize: 4</div>
+
+    <h4>Example 5 &mdash; Practical: Spotting Constant Folding</h4>
+<pre>import dis
+
+def compute():
+    x = 2 * 3 * 7     # constant expression
+    y = "hello" * 3    # constant string multiplication
+    return x + len(y)
+
+dis.dis(compute)
+# Notice: Python's peephole optimizer pre-computes
+# 2 * 3 * 7 = 42 and "hello" * 3 = "hellohellohello"
+# They appear as LOAD_CONST, not as multiplication instructions
+
+print(f"Constants: {compute.__code__.co_consts}")</pre>
+    <div class="output">  ...
+  LOAD_CONST  (42)
+  STORE_FAST  (x)
+  LOAD_CONST  ('hellohellohello')
+  STORE_FAST  (y)
+  ...
+Constants: (None, 42, 'hellohellohello')</div>
+
+    <div class="do-dont">
+      <div class="do-box">
+        <div class="label">DO</div>
+<pre># Use dis to understand performance
+import dis
+dis.dis(my_hot_function)
+
+# Check constant folding
+print(func.__code__.co_consts)</pre>
+      </div>
+      <div class="dont-box">
+        <div class="label">DON'T</div>
+<pre># Don't optimize based on bytecode alone
+# Measure with timeit first, then use dis
+# to understand WHY something is faster
+
+# Don't rely on bytecode being stable
+# across Python versions</pre>
+      </div>
+    </div>
+
+    <div class="exercise">
+      <div class="exercise-label">Exercise 1</div>
+      <p>Write three versions of a function that sums integers 0-99: (a) <code>for</code> loop, (b) <code>while</code> loop, (c) <code>sum(range(100))</code>. Disassemble all three with <code>dis.dis()</code> and count the bytecode instructions in each loop body. Time them with <code>timeit</code> to see if fewer instructions correlates with faster execution.</p>
+    </div>
+
+    <div class="exercise">
+      <div class="exercise-label">Exercise 2</div>
+      <p>Write a function with a local variable and a global variable access. Disassemble it and identify the difference between <code>LOAD_FAST</code> (local) and <code>LOAD_GLOBAL</code> (global). Then measure the timing difference between local and global variable access in a tight loop.</p>
+    </div>
+
+    <div class="exercise">
+      <div class="exercise-label">Exercise 3</div>
+      <p>Explore <code>co_consts</code> for a function that uses string concatenation (<code>"a" + "b" + "c"</code>) vs an f-string (<code>f"{'a'}{'b'}{'c'}"</code>). Which approach results in compile-time constant folding?</p>
+    </div>
+
+    <div class="connection">
+      <strong>Connection:</strong> Understanding bytecode illuminates <strong>Memory Optimization</strong> (today's review) &mdash; <code>LOAD_FAST</code> vs <code>LOAD_GLOBAL</code> explains why local variable access is faster. Relates to <code>__slots__</code> performance: slotted attribute access generates <code>LOAD_ATTR</code> that goes through a descriptor rather than <code>__dict__</code> lookup.
+    </div>
+  </div>
+
+  <!-- New 5: socket Programming Basics -->
+  <div class="concept" id="socket-basics">
+    <div class="concept-header">
+      <h3>socket Programming Basics</h3>
+      <span class="concept-meta">Advanced Standard Library &bull; concept_id: socket_basics</span>
+    </div>
+
+    <p>The <code>socket</code> module provides low-level networking. <code>AF_INET</code> + <code>SOCK_STREAM</code> = TCP (reliable, ordered). <code>AF_INET</code> + <code>SOCK_DGRAM</code> = UDP (fast, no guarantees). Server workflow: <code>bind()</code> &rarr; <code>listen()</code> &rarr; <code>accept()</code> &rarr; <code>recv()</code>/<code>send()</code>. Client: <code>connect()</code> &rarr; <code>send()</code>/<code>recv()</code>.</p>
+
+    <h4>Example 1 &mdash; Simple TCP Echo Server</h4>
+<pre>import socket
+
+def run_echo_server(host="127.0.0.1", port=65432):
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as server:
+        server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        server.bind((host, port))
+        server.listen(5)  # backlog of 5 pending connections
+        print(f"Server listening on {host}:{port}")
+
+        conn, addr = server.accept()
+        with conn:
+            print(f"Connected by {addr}")
+            while True:
+                data = conn.recv(1024)  # receive up to 1024 bytes
+                if not data:
+                    break
+                print(f"Received: {data.decode()}")
+                conn.sendall(data)  # echo it back
+
+# run_echo_server()  # uncomment to run</pre>
+
+    <h4>Example 2 &mdash; TCP Client</h4>
+<pre>import socket
+
+def echo_client(message, host="127.0.0.1", port=65432):
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as client:
+        client.connect((host, port))
+        client.sendall(message.encode())
+        data = client.recv(1024)
+        print(f"Sent:     {message}")
+        print(f"Received: {data.decode()}")
+
+# echo_client("Hello, server!")  # uncomment after starting server</pre>
+
+    <h4>Example 3 &mdash; Multi-Client Server with Threading</h4>
+<pre>import socket
+import threading
+
+def handle_client(conn, addr):
+    """Handle a single client in its own thread."""
+    with conn:
+        print(f"[{addr}] connected")
+        while True:
+            data = conn.recv(1024)
+            if not data:
+                break
+            response = data.decode().upper().encode()
+            conn.sendall(response)
+        print(f"[{addr}] disconnected")
+
+def run_threaded_server(host="127.0.0.1", port=65432):
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as server:
+        server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        server.bind((host, port))
+        server.listen()
+        print(f"Threaded server on {host}:{port}")
+
+        while True:
+            conn, addr = server.accept()
+            thread = threading.Thread(target=handle_client, args=(conn, addr))
+            thread.daemon = True
+            thread.start()
+
+# run_threaded_server()  # uncomment to run</pre>
+
+    <h4>Example 4 &mdash; UDP Client and Server</h4>
+<pre>import socket
+
+def udp_server(host="127.0.0.1", port=65433):
+    with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as server:
+        server.bind((host, port))
+        print(f"UDP server on {host}:{port}")
+        while True:
+            data, addr = server.recvfrom(1024)
+            print(f"From {addr}: {data.decode()}")
+            server.sendto(data.upper(), addr)
+
+def udp_client(message, host="127.0.0.1", port=65433):
+    with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as client:
+        client.sendto(message.encode(), (host, port))
+        data, _ = client.recvfrom(1024)
+        print(f"Response: {data.decode()}")
+
+# No connect() needed for UDP - just sendto/recvfrom</pre>
+
+    <h4>Example 5 &mdash; Health Check Server (Practical)</h4>
+<pre>import socket
+import json
+import time
+
+def health_check_server(host="127.0.0.1", port=8080):
+    """Simple HTTP health check endpoint."""
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as server:
+        server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        server.bind((host, port))
+        server.listen(1)
+        print(f"Health check on http://{host}:{port}/health")
+
+        while True:
+            conn, addr = server.accept()
+            with conn:
+                request = conn.recv(1024).decode()
+                if "GET /health" in request:
+                    body = json.dumps({
+                        "status": "healthy",
+                        "uptime": time.monotonic(),
+                    })
+                    response = (
+                        "HTTP/1.1 200 OK\r\n"
+                        "Content-Type: application/json\r\n"
+                        f"Content-Length: {len(body)}\r\n"
+                        "\r\n"
+                        f"{body}"
+                    )
+                else:
+                    response = "HTTP/1.1 404 Not Found\r\n\r\n"
+
+                conn.sendall(response.encode())
+
+# health_check_server()  # try: curl http://127.0.0.1:8080/health</pre>
+
+    <div class="do-dont">
+      <div class="do-box">
+        <div class="label">DO</div>
+<pre># Always use context managers
+with socket.socket(...) as s:
+    s.connect(...)
+
+# Use sendall() for complete delivery
+conn.sendall(data)
+
+# Set SO_REUSEADDR for dev servers
+s.setsockopt(socket.SOL_SOCKET,
+    socket.SO_REUSEADDR, 1)</pre>
+      </div>
+      <div class="dont-box">
+        <div class="label">DON'T</div>
+<pre># Don't assume recv() gets all data
+data = conn.recv(4096)  # may be partial!
+# Use a loop or protocol with length prefix
+
+# Don't forget to handle connection errors
+# conn.connect() can raise ConnectionRefusedError
+
+# Don't use send() - it may send partial data
+conn.send(data)  # use sendall() instead</pre>
+      </div>
+    </div>
+
+    <div class="exercise">
+      <div class="exercise-label">Exercise 1</div>
+      <p>Build a TCP chat server where multiple clients can connect (using threads). When any client sends a message, broadcast it to all connected clients. Maintain a list of active connections protected by a <code>Lock</code>.</p>
+    </div>
+
+    <div class="exercise">
+      <div class="exercise-label">Exercise 2</div>
+      <p>Implement a simple length-prefixed protocol: before sending a message, send a 4-byte big-endian integer with the message length (use <code>struct.pack('!I', length)</code>). Write both client and server that use this protocol to reliably transmit messages of any size.</p>
+    </div>
+
+    <div class="exercise">
+      <div class="exercise-label">Exercise 3</div>
+      <p>Create a UDP-based "ping" service: the client sends "PING" and the server responds "PONG" with a timestamp. Measure round-trip time from the client side for 100 pings and print statistics (min, max, average).</p>
+    </div>
+
+    <div class="connection">
+      <strong>Connection:</strong> Combines with <strong>threading</strong> (earlier today) for multi-client servers. The length-prefixed protocol exercise uses <code>struct.pack</code>/<code>unpack</code> from the <strong>struct &amp; Binary Data</strong> topic (Day 13). For production use, prefer <code>asyncio</code> or <code>socketserver</code> over raw sockets.
+    </div>
+  </div>
+
+</div><!-- end new concepts section -->
+
+
+<!-- ============================================================ -->
+<!-- FOOTER -->
+<!-- ============================================================ -->
+<div class="footer">
+  <h4>All Python Study Guides</h4>
+    <ul>
+    <li><a href="python-guides/python-guide-2026-07-09.html">2026-07-09</a> (Day 39)</li>
+    <li><a href="python-guides/python-guide-2026-07-08.html">2026-07-08</a> (Day 38)</li>
+    <li><a href="python-guides/python-guide-2026-07-07.html">2026-07-07</a> (Day 37)</li>
+    <li><a href="python-guides/python-guide-2026-07-06.html">2026-07-06</a> (Day 36)</li>
+    <li><a href="python-guides/python-guide-2026-07-05.html">2026-07-05</a> (Day 35)</li>
+    <li><a href="python-guides/python-guide-2026-07-04.html">2026-07-04</a> (Day 34)</li>
+    <li><a href="python-guides/python-guide-2026-07-03.html">2026-07-03</a> (Day 33)</li>
+    <li><a href="python-guides/python-guide-2026-07-02.html">2026-07-02</a> (Day 32)</li>
+    <li><a href="python-guides/python-guide-2026-07-01.html">2026-07-01</a> (Day 31)</li>
+    <li><a href="python-guides/python-guide-2026-06-30.html">2026-06-30</a> (Day 30)</li>
+    <li><a href="python-guides/python-guide-2026-06-29.html">2026-06-29</a> (Day 29)</li>
+    <li><a href="python-guides/python-guide-2026-06-28.html">2026-06-28</a> (Day 28)</li>
+    <li><a href="python-guides/python-guide-2026-06-27.html">2026-06-27</a> (Day 27)</li>
+    <li><a href="python-guides/python-guide-2026-06-26.html">2026-06-26</a> (Day 26)</li>
+    <li><a href="python-guides/python-guide-2026-06-25.html">2026-06-25</a> (Day 25)</li>
+    <li><a href="python-guides/python-guide-2026-06-24.html">2026-06-24</a> (Day 24)</li>
+    <li><a href="python-guides/python-guide-2026-06-23.html">2026-06-23</a> (Day 23)</li>
+    <li><a href="python-guides/python-guide-2026-06-22.html">2026-06-22</a> (Day 22)</li>
+    <li><a href="python-guides/python-guide-2026-06-21.html">2026-06-21</a> (Day 21)</li>
+    <li><a href="python-guides/python-guide-2026-06-19.html">2026-06-19</a> (Day 20)</li>
+    <li><a href="python-guides/python-guide-2026-06-18.html">2026-06-18</a> (Day 19)</li>
+    <li><a href="python-guides/python-guide-2026-06-17.html">2026-06-17</a> (Day 18)</li>
+    <li><a href="python-guides/python-guide-2026-06-15.html">2026-06-15</a> (Day 17)</li>
+    <li><a href="python-guides/python-guide-2026-06-13.html">2026-06-13</a> (Day 16)</li>
+    <li><a href="python-guides/python-guide-2026-06-12.html">2026-06-12</a> (Day 15)</li>
+    <li class="current"><a href="python-guides/python-guide-2026-06-11.html">2026-06-11</a> </li>
+    <li><a href="python-guides/python-guide-2026-06-10.html">2026-06-10</a> (Day 13)</li>
+    <li><a href="python-guides/python-guide-2026-06-09.html">2026-06-09</a> (Day 12)</li>
+    <li><a href="python-guides/python-guide-2026-06-08.html">2026-06-08</a> (Day 11)</li>
+    <li><a href="python-guides/python-guide-2026-06-07.html">2026-06-07</a> (Day 10)</li>
+    <li><a href="python-guides/python-guide-2026-06-05.html">2026-06-05</a> (Day 9)</li>
+    <li><a href="python-guides/python-guide-2026-06-04.html">2026-06-04</a> (Day 8)</li>
+    <li><a href="python-guides/python-guide-2026-06-03.html">2026-06-03</a> (Day 7)</li>
+    <li><a href="python-guides/python-guide-2026-06-02.html">2026-06-02</a> (Day 6)</li>
+    <li><a href="python-guides/python-guide-2026-06-01.html">2026-06-01</a> (Day 5)</li>
+    <li><a href="python-guides/python-guide-2026-05-31.html">2026-05-31</a> (Day 4)</li>
+    <li><a href="python-guides/python-guide-2026-05-30.html">2026-05-30</a> (Day 3)</li>
+    <li><a href="python-guides/python-guide-2026-05-29.html">2026-05-29</a> (Day 2)</li>
+    <li><a href="python-guides/python-guide-2026-05-28.html">2026-05-28</a> (Day 1)</li>
+  </ul>
+</div>
+
+</div><!-- end main -->
+
+<script>
+(function() {
+  // ===== Theme Toggle =====
+  var THEME_KEY = 'lc-pyguide-theme';
+  var toggle = document.getElementById('theme-toggle');
+  var html = document.documentElement;
+
+  function setTheme(theme) {
+    html.setAttribute('data-theme', theme);
+    localStorage.setItem(THEME_KEY, theme);
+    toggle.textContent = theme === 'dark' ? '☽' : '☀';
+    toggle.title = theme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme';
+  }
+
+  var saved = localStorage.getItem(THEME_KEY) || 'dark';
+  setTheme(saved);
+
+  toggle.addEventListener('click', function() {
+    var current = html.getAttribute('data-theme');
+    setTheme;
+  });
+
+  // ===== Mobile Sidebar Toggle =====
+  var sidebarToggle = document.getElementById('sidebar-toggle');
+  var sidebar = document.getElementById('sidebar');
+
+  sidebarToggle.addEventListener('click', function() {
+    sidebar.classList.toggle('open');
+  });
+
+  // Close sidebar when clicking a link on mobile
+  sidebar.querySelectorAll('.sidebar-link').forEach(function(link) {
+    link.addEventListener('click', function() {
+      if (window.innerWidth <= 900) {
+        sidebar.classList.remove('open');
+      }
+    });
+  });
+
+  // ===== Active Sidebar Link on Scroll =====
+  var links = document.querySelectorAll('.sidebar-link');
+  var sections = [];
+
+  links.forEach(function(link) {
+    var id = link.getAttribute('href').slice(1);
+    var el = document.getElementById(id);
+    if (el) sections.push({ id: id, el: el, link: link });
+  });
+
+  function updateActive() {
+    var current = null;
+    var scrollY = window.scrollY + 100;
+
+    for (var i = sections.length - 1; i >= 0; i--) {
+      if (sections[i].el.offsetTop <= scrollY) {
+        current = sections[i];
+        break;
+      }
+    }
+
+    links.forEach(function(l) { l.classList.remove('active'); });
+    if  current.link.classList.add('active');
+  }
+
+  window.addEventListener('scroll', updateActive, { passive: true });
+  updateActive();
+})();
+</script>
+
+</body>
+</html>

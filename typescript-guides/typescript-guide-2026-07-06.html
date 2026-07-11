@@ -1,0 +1,1111 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TypeScript Daily Guide — 2026-07-06 (Day 33)</title>
+<style>
+:root {
+  --bg: #0d1117;
+  --surface: #161b22;
+  --surface2: #1c2129;
+  --border: #30363d;
+  --text: #e6edf3;
+  --text-muted: #8b949e;
+  --accent: #58a6ff;
+  --accent-bg: rgba(56,139,253,0.15);
+  --green: #3fb950;
+  --green-bg: rgba(63,185,80,0.08);
+  --red: #f85149;
+  --red-bg: rgba(248,81,73,0.08);
+  --yellow: #d29922;
+  --yellow-bg: rgba(210,153,34,0.1);
+  --orange: #db6d28;
+  --purple: #bc8cff;
+  --purple-bg: rgba(188,140,255,0.08);
+  --purple-border: rgba(188,140,255,0.2);
+  --link: #58a6ff;
+  --code-bg: #1c2129;
+  --output-bg: #0e1c0e;
+  --output-border: #1a3a1a;
+  --sidebar-bg: #161b22;
+  --sidebar-active: rgba(56,139,253,0.15);
+  --exercise-border: #30363d;
+}
+[data-theme="light"] {
+  --bg: #ffffff;
+  --surface: #f6f8fa;
+  --surface2: #eef1f5;
+  --border: #d0d7de;
+  --text: #1f2328;
+  --text-muted: #656d76;
+  --accent: #0969da;
+  --accent-bg: rgba(9,105,218,0.1);
+  --green: #1a7f37;
+  --green-bg: rgba(26,127,55,0.06);
+  --red: #cf222e;
+  --red-bg: rgba(207,34,46,0.06);
+  --yellow: #9a6700;
+  --yellow-bg: rgba(154,103,0,0.06);
+  --orange: #bc4c00;
+  --purple: #8250df;
+  --purple-bg: rgba(130,80,223,0.06);
+  --purple-border: rgba(130,80,223,0.15);
+  --link: #0969da;
+  --code-bg: #eef1f5;
+  --output-bg: #f0faf0;
+  --output-border: #c6e6c6;
+  --sidebar-bg: #f6f8fa;
+  --sidebar-active: rgba(9,105,218,0.1);
+  --exercise-border: #d0d7de;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;font-size:16px;line-height:1.7;color:var(--text);background:var(--bg);display:flex;min-height:100vh}
+a{color:var(--link);text-decoration:none}
+a:hover{text-decoration:underline}
+
+/* Sidebar */
+.sidebar{position:fixed;top:0;left:0;width:300px;height:100vh;background:var(--sidebar-bg);border-right:1px solid var(--border);overflow-y:auto;padding:20px 0;z-index:100}
+.sidebar-header{padding:16px 20px;border-bottom:1px solid var(--border);margin-bottom:12px}
+.sidebar-header h2{font-size:15px;font-weight:600;color:var(--text)}
+.sidebar-header .date{font-size:13px;color:var(--text-muted);margin-top:2px}
+.sidebar-section{padding:8px 20px 4px;font-size:12px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px}
+.sidebar-section.review-label{color:var(--purple)}
+.sidebar-nav{list-style:none;padding:0}
+.sidebar-nav li a{display:block;padding:6px 20px 6px 28px;font-size:14px;color:var(--text-muted);transition:all 0.15s}
+.sidebar-nav li a:hover,.sidebar-nav li a.active{color:var(--accent);background:var(--sidebar-active);text-decoration:none}
+.sidebar-nav li a .nav-id{font-size:11px;color:var(--text-muted);opacity:0.6;margin-left:6px}
+
+/* Main */
+.main{margin-left:300px;flex:1;padding:40px;max-width:1160px}
+.content{max-width:860px;margin:0 auto}
+
+/* Theme Toggle */
+.theme-toggle{position:fixed;top:16px;right:20px;z-index:200;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:8px 12px;cursor:pointer;color:var(--text);font-size:18px;line-height:1;transition:all 0.15s}
+.theme-toggle:hover{border-color:var(--accent)}
+
+/* Header */
+.guide-header{text-align:center;padding:32px 0 40px;border-bottom:1px solid var(--border);margin-bottom:40px}
+.guide-header h1{font-size:28px;font-weight:700;margin-bottom:8px}
+.guide-header .meta{font-size:15px;color:var(--text-muted)}
+.guide-header .meta span{margin:0 8px}
+.badge{display:inline-block;padding:2px 10px;border-radius:12px;font-size:13px;font-weight:500}
+.badge-blue{background:var(--accent-bg);color:var(--accent)}
+.badge-purple{background:var(--purple-bg);color:var(--purple)}
+
+/* How To Use */
+.how-to-use{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:24px 28px;margin-bottom:40px}
+.how-to-use h2{font-size:18px;margin-bottom:12px}
+.how-to-use ol{padding-left:24px}
+.how-to-use li{margin-bottom:6px;color:var(--text-muted)}
+
+/* Review Section */
+.review-section{margin-bottom:48px}
+.review-section-header{font-size:22px;font-weight:700;padding-bottom:12px;border-bottom:2px solid var(--purple);margin-bottom:28px;display:flex;align-items:center;gap:12px;color:var(--purple)}
+
+/* Review Card */
+.review-card{background:var(--purple-bg);border:1px solid var(--purple-border);border-left:4px solid var(--purple);border-radius:10px;padding:28px;margin-bottom:24px}
+.review-card .review-header{display:flex;align-items:center;gap:12px;margin-bottom:12px;flex-wrap:wrap}
+.review-card .review-title{font-size:18px;font-weight:700;color:var(--purple)}
+.review-card .review-meta{font-size:13px;color:var(--text-muted)}
+.review-card .review-reminder{color:var(--text-muted);font-style:italic;margin-bottom:16px;padding-left:14px;border-left:3px solid var(--purple)}
+.review-card .review-pattern{margin-bottom:16px}
+.review-card .review-pattern strong{display:block;margin-bottom:8px;font-size:14px;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px}
+.review-card .review-challenge{margin-bottom:12px}
+.review-card .review-challenge strong{display:block;margin-bottom:8px;font-size:14px;color:var(--yellow);text-transform:uppercase;letter-spacing:0.5px}
+.review-card .review-challenge p{line-height:1.6}
+.review-card .review-pitfall{background:var(--red-bg);border:1px solid rgba(248,81,73,0.15);border-radius:6px;padding:12px 16px;font-size:14px;line-height:1.6}
+.review-card .review-pitfall strong{color:var(--red);margin-right:4px}
+.review-card code{background:var(--code-bg);padding:2px 6px;border-radius:4px;font-family:'SF Mono','Fira Code','Consolas',monospace;font-size:13px}
+
+/* Topic Section */
+.topic-section{margin-bottom:48px}
+.topic-section-header{font-size:22px;font-weight:700;padding-bottom:12px;border-bottom:2px solid var(--accent);margin-bottom:28px;display:flex;align-items:center;gap:12px}
+.topic-section-header .section-num{background:var(--accent);color:#fff;width:32px;height:32px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:15px;font-weight:700;flex-shrink:0}
+
+/* Concept Card */
+.concept-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:28px;margin-bottom:32px}
+.concept-header{display:flex;align-items:center;gap:12px;margin-bottom:16px;flex-wrap:wrap}
+.concept-title{font-size:20px;font-weight:700}
+.ttag{display:inline-block;padding:2px 10px;border-radius:12px;font-size:12px;font-weight:500;background:var(--accent-bg);color:var(--accent)}
+
+.why-matters{color:var(--text-muted);font-style:italic;margin-bottom:20px;padding-left:14px;border-left:3px solid var(--accent)}
+.explanation{margin-bottom:20px;line-height:1.8}
+.explanation p{margin-bottom:12px}
+.explanation ul,.explanation ol{padding-left:24px;margin-bottom:12px}
+.explanation li{margin-bottom:4px}
+.explanation code{background:var(--code-bg);padding:2px 6px;border-radius:4px;font-family:'SF Mono','Fira Code','Consolas',monospace;font-size:14px}
+.step{display:flex;gap:12px;margin-bottom:10px;align-items:flex-start}
+.step-num{background:var(--accent-bg);color:var(--accent);width:24px;height:24px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;margin-top:3px}
+
+/* Code Examples */
+.code-example{margin-bottom:20px;border:1px solid var(--border);border-radius:8px;overflow:hidden}
+.lang-badge{background:var(--surface2);color:var(--text-muted);font-size:12px;font-weight:600;padding:6px 14px;border-bottom:1px solid var(--border);font-family:'SF Mono','Fira Code','Consolas',monospace}
+pre{margin:0;padding:16px;overflow-x:auto;background:var(--code-bg);font-family:'SF Mono','Fira Code','Consolas',monospace;font-size:13.5px;line-height:1.6;white-space:pre-wrap}
+pre code{background:none;padding:0;font-size:inherit}
+.output{background:var(--output-bg);border-top:1px solid var(--output-border);padding:12px 16px;font-family:'SF Mono','Fira Code','Consolas',monospace;font-size:13px;color:var(--green);white-space:pre-wrap}
+.output::before{content:"Output:";display:block;font-size:11px;font-weight:600;color:var(--text-muted);margin-bottom:4px;text-transform:uppercase;letter-spacing:0.5px}
+.type-result{background:var(--output-bg);border-top:1px solid var(--output-border);padding:12px 16px;font-family:'SF Mono','Fira Code','Consolas',monospace;font-size:13px;color:var(--green);white-space:pre-wrap}
+.type-result::before{content:"Type Result:";display:block;font-size:11px;font-weight:600;color:var(--text-muted);margin-bottom:4px;text-transform:uppercase;letter-spacing:0.5px}
+.type-error{background:var(--red-bg);border-top:1px solid rgba(248,81,73,0.2);padding:12px 16px;font-family:'SF Mono','Fira Code','Consolas',monospace;font-size:13px;color:var(--red);white-space:pre-wrap}
+.type-error::before{content:"Type Error:";display:block;font-size:11px;font-weight:600;color:var(--red);margin-bottom:4px;text-transform:uppercase;letter-spacing:0.5px}
+
+/* Callouts */
+.callout-warning{background:var(--yellow-bg);border:1px solid rgba(210,153,34,0.2);border-radius:8px;padding:20px;margin-bottom:20px}
+.callout-warning strong{color:var(--yellow);display:block;margin-bottom:12px;font-size:16px}
+.mistake,.correct{padding:10px 14px;border-radius:6px;margin-bottom:10px;font-size:14px;line-height:1.6}
+.mistake{background:var(--red-bg);border-left:3px solid var(--red)}
+.mistake code,.correct code{background:var(--code-bg);padding:2px 6px;border-radius:4px;font-family:'SF Mono','Fira Code','Consolas',monospace;font-size:13px}
+.correct{background:var(--green-bg);border-left:3px solid var(--green)}
+
+/* Key Rules */
+.key-rules{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:20px;margin-bottom:20px}
+.key-rules strong{display:block;margin-bottom:10px;font-size:16px}
+.key-rules ul{padding-left:20px}
+.key-rules li{margin-bottom:6px}
+.key-rules code{background:var(--code-bg);padding:2px 6px;border-radius:4px;font-family:'SF Mono','Fira Code','Consolas',monospace;font-size:13px}
+
+/* Exercises */
+.exercises{border:2px dashed var(--exercise-border);border-radius:8px;padding:20px;margin-bottom:20px;margin-left:12px}
+.exercises strong{display:block;margin-bottom:14px;font-size:16px;color:var(--purple)}
+.exercise{margin-bottom:14px;padding-left:38px;position:relative;line-height:1.6}
+.exercise:last-child{margin-bottom:0}
+.exercise-num{position:absolute;left:0;top:2px;background:var(--purple);color:#fff;width:24px;height:24px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:12px;font-weight:700}
+.exercise code{background:var(--code-bg);padding:2px 6px;border-radius:4px;font-family:'SF Mono','Fira Code','Consolas',monospace;font-size:13px}
+
+/* Connections */
+.connections{background:var(--accent-bg);border:1px solid rgba(56,139,253,0.2);border-radius:8px;padding:16px 20px;font-size:14px;color:var(--text-muted)}
+.connections strong{color:var(--accent);margin-right:6px}
+
+/* Cross-links */
+.cross-links{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:20px 24px;margin-bottom:40px;text-align:center}
+.cross-links a{margin:0 10px;font-weight:500}
+
+/* Footer */
+.guide-footer{border-top:1px solid var(--border);padding-top:32px;margin-top:48px}
+.guide-footer h2{font-size:18px;margin-bottom:16px}
+.guide-footer ul{list-style:none;padding:0}
+.guide-footer li{padding:6px 0}
+.guide-footer li a{font-weight:500}
+
+/* Responsive */
+@media(max-width:900px){
+  .sidebar{display:none}
+  .main{margin-left:0}
+  .theme-toggle{top:12px;right:12px}
+}
+</style>
+</head>
+<body>
+
+<!-- Theme Toggle -->
+<button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">&#x1F319;</button>
+
+<!-- Sidebar -->
+<nav class="sidebar">
+  <div class="sidebar-header">
+    <h2>TypeScript Daily Guide</h2>
+    <div class="date">2026-07-06 &mdash; Day 33</div>
+  </div>
+
+  <div class="sidebar-section review-label">Review (6 concepts)</div>
+  <ul class="sidebar-nav">
+    <li><a href="#review_error_boundary">Type-Safe Error Boundaries <span class="nav-id">R1</span></a></li>
+    <li><a href="#review_plugin">Type-Safe Plugin Systems <span class="nav-id">R2</span></a></li>
+    <li><a href="#review_i18n">Type-Safe Internationalization <span class="nav-id">R3</span></a></li>
+    <li><a href="#review_key_remap">Mapped Type Key Remapping <span class="nav-id">R4</span></a></li>
+    <li><a href="#review_pipe">Type-Safe pipe() &amp; compose() <span class="nav-id">R5</span></a></li>
+    <li><a href="#review_drizzle">Drizzle ORM: SQL-First Types <span class="nav-id">R6</span></a></li>
+  </ul>
+
+  <div class="sidebar-section">Node.js + TS: API Security &amp; Hardening</div>
+  <ul class="sidebar-nav">
+    <li><a href="#cors">CORS &amp; Security Headers <span class="nav-id">#1</span></a></li>
+    <li><a href="#sanitization">Input Sanitization &amp; Output Encoding <span class="nav-id">#2</span></a></li>
+    <li><a href="#idempotency">Idempotency Keys for Safe Retries <span class="nav-id">#3</span></a></li>
+  </ul>
+
+  <div class="sidebar-section">Node.js + TS: Data Integrity</div>
+  <ul class="sidebar-nav">
+    <li><a href="#transactions">Type-Safe DB Transactions <span class="nav-id">#4</span></a></li>
+    <li><a href="#optimistic">Optimistic Concurrency <span class="nav-id">#5</span></a></li>
+  </ul>
+</nav>
+
+<!-- Main Content -->
+<div class="main">
+<div class="content">
+
+<!-- Header -->
+<header class="guide-header">
+  <h1>TypeScript Daily Guide &mdash; Day 33</h1>
+  <div class="meta">
+    <span>2026-07-06</span>
+    <span>&middot;</span>
+    <span>Day 33 of 33</span>
+    <span>&middot;</span>
+    <span class="badge badge-purple">6 reviews</span>
+    <span class="badge badge-blue">5 new concepts</span>
+  </div>
+</header>
+
+<!-- How to Use -->
+<div class="how-to-use">
+  <h2>How to Use This Guide</h2>
+  <ol>
+    <li><strong>Review first</strong> &mdash; scan each purple review card; if the concept feels solid, move on; if fuzzy, re-read the code pattern</li>
+    <li><strong>Attempt the challenge exercise</strong> on any review card that felt shaky &mdash; this is your best reinforcement signal</li>
+    <li><strong>Work through new concepts</strong> top to bottom &mdash; each builds on the previous</li>
+    <li><strong>Type every code example</strong> yourself and run it with <code>node</code>/<code>tsx</code> &mdash; hover over inferred types in your editor to build intuition</li>
+    <li><strong>Do at least 2 exercises per concept</strong> before moving to the next one</li>
+  </ol>
+</div>
+
+<!-- Cross-links -->
+<div class="cross-links">
+  <a href="guide.html">LeetCode Guide</a>
+  <a href="lang-guide.html">Lang Guide</a>
+  <a href="python-guide.html">Python Guide</a>
+  <a href="golang-guide.html">Go Guide</a>
+  <a href="javascript-guide.html">JS Guide</a>
+  <a href="report.html">Report</a>
+</div>
+
+<!-- ============================================================ -->
+<!-- REVIEW SECTION                                                -->
+<!-- ============================================================ -->
+<div class="review-section">
+<div class="review-section-header">Review &mdash; 6 Concepts</div>
+
+<!-- R1: Type-Safe Error Boundaries -->
+<div class="review-card" id="review_error_boundary">
+  <div class="review-header">
+    <span class="review-title">R1. Type-Safe Error Boundaries</span>
+    <span class="badge badge-purple">Runtime Type Patterns</span>
+    <span class="review-meta">17 days since review &middot; rep 1 &rarr; 2</span>
+  </div>
+  <div class="review-reminder">Instead of letting arbitrary <code>throw</code>s propagate as <code>unknown</code>, model failure as data: a <code>Result&lt;T, E&gt;</code> (a discriminated union <code>{ ok: true; value: T } | { ok: false; error: E }</code>) makes the error <em>type</em> part of the signature. A boundary function wraps risky work, catches once, and returns a typed <code>Result</code> so callers must handle both arms &mdash; the compiler stops them from using a value that might not exist.</div>
+
+  <div class="review-pattern">
+    <strong>Key Pattern</strong>
+    <div class="code-example">
+<pre><code>type Result&lt;T, E = Error&gt; = { ok: true; value: T } | { ok: false; error: E };
+
+async function attempt&lt;T&gt;(fn: () =&gt; Promise&lt;T&gt;): Promise&lt;Result&lt;T&gt;&gt; {
+  try { return { ok: true, value: await fn() }; }
+  catch (e) { return { ok: false, error: e instanceof Error ? e : new Error(String(e)) }; }
+}
+
+const r = await attempt(() =&gt; loadUser(id));
+if (!r.ok) return respond(500, r.error.message);
+console.log(r.value.name);   // r.value only exists on the ok branch</code></pre>
+<div class="type-result">the union forces both arms; r.value is unreachable until you narrow on r.ok</div>
+    </div>
+  </div>
+
+  <div class="review-challenge">
+    <strong>Challenge Exercise</strong>
+    <p>Give <code>attempt</code> a typed error channel: <code>attempt&lt;T, E&gt;(fn, mapErr: (e: unknown) =&gt; E)</code> so a caller can turn caught <code>unknown</code> into a domain error union (<code>NotFound | Forbidden</code>). Then write <code>unwrapOr(result, fallback)</code> and explain why returning a <code>Result</code> beats throwing when the caller must react to <em>specific</em> error kinds.</p>
+  </div>
+
+  <div class="review-pitfall">
+    <strong>Pitfall:</strong> Typing a <code>catch</code> binding as <code>Error</code> &mdash; in TS it is <code>unknown</code> (or <code>any</code> pre-<code>useUnknownInCatchVariables</code>), because <em>anything</em> can be thrown. Narrow with <code>e instanceof Error</code> before touching <code>.message</code>, and never let the raw <code>unknown</code> leak past the boundary.
+  </div>
+</div>
+
+<!-- R2: Type-Safe Plugin Systems -->
+<div class="review-card" id="review_plugin">
+  <div class="review-header">
+    <span class="review-title">R2. Type-Safe Plugin Systems</span>
+    <span class="badge badge-purple">Architecture Patterns</span>
+    <span class="review-meta">17 days since review &middot; rep 1 &rarr; 2</span>
+  </div>
+  <div class="review-reminder">A plugin host exposes a typed <code>hooks</code> contract; each plugin declares which hooks it implements. Model the hook registry as an interface mapping hook name &rarr; handler signature, then a <code>Plugin</code> is <code>{ [K in keyof Hooks]?: Hooks[K] }</code>. The host invokes hooks by key with typed args, so a plugin can&rsquo;t register a handler with the wrong shape or listen for a hook that doesn&rsquo;t exist.</div>
+
+  <div class="review-pattern">
+    <strong>Key Pattern</strong>
+    <div class="code-example">
+<pre><code>interface Hooks {
+  onRequest: (ctx: { url: string }) =&gt; void | Promise&lt;void&gt;;
+  transformResponse: (body: string) =&gt; string;
+}
+type Plugin = { name: string } &amp; { [K in keyof Hooks]?: Hooks[K] };
+
+function run&lt;K extends keyof Hooks&gt;(plugins: Plugin[], hook: K, ...args: Parameters&lt;Hooks[K]&gt;) {
+  for (const p of plugins) p[hook]?.(...(args as never));
+}
+
+const logger: Plugin = { name: "log", onRequest: (c) =&gt; console.log(c.url) };
+// const bad: Plugin = { name: "x", onRequest: (c) =&gt; c.method };  // ✗ 'method' missing</code></pre>
+<div class="type-result">each hook handler is pinned to Hooks[K]; unknown hook names won&rsquo;t compile</div>
+    </div>
+  </div>
+
+  <div class="review-challenge">
+    <strong>Challenge Exercise</strong>
+    <p>Add a hook whose handlers <em>reduce</em> a value in a pipeline (each receives the previous return), and type <code>run</code> so <code>transformResponse</code> plugins chain: <code>string &rarr; string &rarr; string</code>. Then let a plugin declare typed <em>options</em> via a generic <code>Plugin&lt;TOptions&gt;</code> and explain how <code>keyof Hooks</code> keeps the host and plugins in lockstep as hooks are added.</p>
+  </div>
+
+  <div class="review-pitfall">
+    <strong>Pitfall:</strong> Typing the registry as <code>Record&lt;string, Function&gt;</code> &mdash; you lose per-hook argument checking and typos in hook names compile fine. Drive everything off one <code>Hooks</code> interface with <code>keyof</code> and <code>Parameters&lt;Hooks[K]&gt;</code> so adding a hook automatically updates every call site&rsquo;s types.
+  </div>
+</div>
+
+<!-- R3: Type-Safe Internationalization -->
+<div class="review-card" id="review_i18n">
+  <div class="review-header">
+    <span class="review-title">R3. Type-Safe Internationalization</span>
+    <span class="badge badge-purple">Architecture Patterns</span>
+    <span class="review-meta">17 days since review &middot; rep 1 &rarr; 2</span>
+  </div>
+  <div class="review-reminder">Derive the set of valid message keys from the translation object with <code>keyof typeof messages</code>, and extract each key&rsquo;s <em>named placeholders</em> from its template string with a template-literal type. Then <code>t(key, params)</code> both rejects unknown keys and requires exactly the interpolation params that key&rsquo;s string mentions &mdash; a missing or extra variable is a compile error.</div>
+
+  <div class="review-pattern">
+    <strong>Key Pattern</strong>
+    <div class="code-example">
+<pre><code>const en = { greeting: "Hi {name}", cart: "{count} items" } as const;
+type Key = keyof typeof en;
+
+// pull "{x}" placeholders out of a template into a params object type
+type Params&lt;S extends string&gt; =
+  S extends `${string}{${infer P}}${infer Rest}` ? { [K in P | keyof Params&lt;Rest&gt;]: string } : {};
+
+function t&lt;K extends Key&gt;(key: K, params: Params&lt;typeof en[K]&gt;): string { /* interpolate */ return ""; }
+
+t("greeting", { name: "Ada" });      // ✓
+// t("greeting", {});                 // ✗ missing 'name'
+// t("nope", {});                     // ✗ 'nope' is not a Key</code></pre>
+<div class="type-result">placeholders are parsed from the string; params are required and checked per key</div>
+    </div>
+  </div>
+
+  <div class="review-challenge">
+    <strong>Challenge Exercise</strong>
+    <p>Add plural support: a key whose value is <code>{ one: string; other: string }</code> and a <code>t</code> overload that requires a <code>count</code> param. Then enforce at the type level that a second locale (<code>de</code>) has <em>exactly</em> the same keys as <code>en</code> using a <code>Record&lt;Key, string&gt;</code> constraint, so a missing translation fails the build.</p>
+  </div>
+
+  <div class="review-pitfall">
+    <strong>Pitfall:</strong> Losing the literal key/placeholder types by not using <code>as const</code> &mdash; without it, <code>messages</code> widens to <code>Record&lt;string, string&gt;</code>, <code>keyof</code> collapses to <code>string</code>, and the placeholder parsing has nothing to read. The whole safety net depends on preserving the literal template strings.
+  </div>
+</div>
+
+<!-- R4: Mapped Type Key Remapping -->
+<div class="review-card" id="review_key_remap">
+  <div class="review-header">
+    <span class="review-title">R4. Mapped Type Key Remapping</span>
+    <span class="badge badge-purple">Advanced Type System</span>
+    <span class="review-meta">14 days since review &middot; rep 1 &rarr; 2</span>
+  </div>
+  <div class="review-reminder">The <code>as</code> clause in a mapped type lets you <em>rename</em> or <em>filter</em> keys while mapping: <code>{ [K in keyof T as NewKey]: ... }</code>. Combine it with template-literal types to build getter names (<code>getName</code>), and remap a key to <code>never</code> to drop it entirely &mdash; the standard idiom for filtering properties by value type.</div>
+
+  <div class="review-pattern">
+    <strong>Key Pattern</strong>
+    <div class="code-example">
+<pre><code>// rename each key to a getter method
+type Getters&lt;T&gt; = { [K in keyof T &amp; string as `get${Capitalize&lt;K&gt;}`]: () =&gt; T[K] };
+type G = Getters&lt;{ name: string; age: number }&gt;;
+// { getName: () =&gt; string; getAge: () =&gt; number }
+
+// filter out function-valued props by remapping them to never
+type DataOnly&lt;T&gt; = { [K in keyof T as T[K] extends Function ? never : K]: T[K] };
+type D = DataOnly&lt;{ id: number; save(): void }&gt;;   // { id: number }</code></pre>
+<div class="type-result">`as` renames via template literals; remapping to never removes a key</div>
+    </div>
+  </div>
+
+  <div class="review-challenge">
+    <strong>Challenge Exercise</strong>
+    <p>Write <code>RenameKey&lt;T, From extends keyof T, To extends string&gt;</code> that renames exactly one key while leaving the rest. Then build <code>EventHandlers&lt;T&gt;</code> that maps <code>{ click: MouseEvent }</code> to <code>{ onClick: (e: MouseEvent) =&gt; void }</code>, and explain why <code>K in keyof T &amp; string</code> is needed before <code>Capitalize</code> (symbol/number keys can&rsquo;t be templated).</p>
+  </div>
+
+  <div class="review-pitfall">
+    <strong>Pitfall:</strong> Applying <code>Capitalize</code>/template literals to <code>keyof T</code> directly &mdash; keys can be <code>string | number | symbol</code>, and template literals only accept <code>string</code>. Intersect with <code>&amp; string</code> first. Also remember remapping to <code>never</code> <em>removes</em> the key; it doesn&rsquo;t set its type to <code>never</code>.
+  </div>
+</div>
+
+<!-- R5: Type-Safe pipe() and compose() -->
+<div class="review-card" id="review_pipe">
+  <div class="review-header">
+    <span class="review-title">R5. Type-Safe pipe() &amp; compose()</span>
+    <span class="badge badge-purple">Functional Type Patterns</span>
+    <span class="review-meta">14 days since review &middot; rep 1 &rarr; 2</span>
+  </div>
+  <div class="review-reminder">A well-typed <code>pipe</code> threads the output of each function into the input of the next, so the chain&rsquo;s overall type is inferred and a type mismatch between adjacent steps is a compile error. The classic implementation uses <em>overloads</em> per arity (2, 3, 4&hellip; functions), each pinning the intermediate types; <code>compose</code> is the same idea right-to-left.</div>
+
+  <div class="review-pattern">
+    <strong>Key Pattern</strong>
+    <div class="code-example">
+<pre><code>function pipe&lt;A, B&gt;(a: A, ab: (a: A) =&gt; B): B;
+function pipe&lt;A, B, C&gt;(a: A, ab: (a: A) =&gt; B, bc: (b: B) =&gt; C): C;
+function pipe&lt;A, B, C, D&gt;(a: A, ab: (a: A) =&gt; B, bc: (b: B) =&gt; C, cd: (c: C) =&gt; D): D;
+function pipe(a: unknown, ...fns: Array&lt;(x: unknown) =&gt; unknown&gt;) {
+  return fns.reduce((acc, fn) =&gt; fn(acc), a);
+}
+
+const out = pipe(5, (n) =&gt; n * 2, (n) =&gt; `#${n}`, (s) =&gt; s.length);  // out: number
+// pipe(5, (n) =&gt; n * 2, (s: string) =&gt; s.length);   // ✗ number not assignable to string</code></pre>
+<div class="type-result">each overload chains B→C→D; a mismatched step breaks the chain at compile time</div>
+    </div>
+  </div>
+
+  <div class="review-challenge">
+    <strong>Challenge Exercise</strong>
+    <p>Replace the overloads with a single variadic-tuple signature: <code>pipe&lt;T, Fns extends readonly Fn[]&gt;(x: T, ...fns: Fns)</code> using a recursive conditional type to validate each adjacency and infer the final output. Then write a point-free <code>flow</code> (compose-left that returns a function) and explain the tradeoff between the overload approach and the variadic-tuple approach (readability vs unbounded arity).</p>
+  </div>
+
+  <div class="review-pitfall">
+    <strong>Pitfall:</strong> Typing <code>fns</code> as <code>Array&lt;(x: any) =&gt; any&gt;</code> and calling it a day &mdash; the chain compiles but every intermediate is <code>any</code>, so a broken step is silent. The type safety lives entirely in the per-arity overloads (or the variadic-tuple recursion); the implementation signature stays loose but is never what callers see.
+  </div>
+</div>
+
+<!-- R6: Drizzle ORM -->
+<div class="review-card" id="review_drizzle">
+  <div class="review-header">
+    <span class="review-title">R6. Drizzle ORM &mdash; SQL-First Type Safety</span>
+    <span class="badge badge-purple">Database Typing</span>
+    <span class="review-meta">13 days since review &middot; rep 1 &rarr; 2</span>
+  </div>
+  <div class="review-reminder">Drizzle infers types from the <em>schema you declare in TS</em> (no codegen step): the table definition is the source of truth, and <code>$inferSelect</code>/<code>$inferInsert</code> give the row and insert types. Its query builder mirrors SQL, so <code>db.select().from(users).where(eq(users.id, id))</code> returns a fully typed row array &mdash; you write SQL-shaped code and get inference for free.</div>
+
+  <div class="review-pattern">
+    <strong>Key Pattern</strong>
+    <div class="code-example">
+<pre><code>import { pgTable, serial, text } from "drizzle-orm/pg-core";
+import { eq } from "drizzle-orm";
+
+const users = pgTable("users", {
+  id: serial("id").primaryKey(),
+  email: text("email").notNull(),
+});
+type User = typeof users.$inferSelect;      // { id: number; email: string }
+type NewUser = typeof users.$inferInsert;   // { id?: number; email: string }
+
+const rows = await db.select().from(users).where(eq(users.id, 1));  // User[]
+await db.insert(users).values({ email: "a@b.io" } satisfies NewUser);</code></pre>
+<div class="type-result">$inferSelect/$inferInsert derive row + insert types straight from the schema</div>
+    </div>
+  </div>
+
+  <div class="review-challenge">
+    <strong>Challenge Exercise</strong>
+    <p>Add a <code>posts</code> table with an <code>authorId</code> foreign key, then write a typed join (<code>db.select().from(posts).innerJoin(users, eq(posts.authorId, users.id))</code>) and inspect the inferred result shape (nested per-table). Explain how Drizzle differs from Prisma (schema-in-TS + SQL builder vs a <code>.prisma</code> file + generated client) and when the SQL-first model is easier to reason about.</p>
+  </div>
+
+  <div class="review-pitfall">
+    <strong>Pitfall:</strong> Hand-writing a <code>User</code> interface next to the table &mdash; it drifts from the schema. Always derive with <code>$inferSelect</code>/<code>$inferInsert</code>. And note insert types differ from select types (defaulted/serial columns are optional on insert) &mdash; using the select type for <code>values()</code> forces you to supply columns the DB generates.
+  </div>
+</div>
+
+</div><!-- end review-section -->
+
+<!-- ============================================================ -->
+<!-- TOPIC SECTION 1: API Security & Hardening                     -->
+<!-- ============================================================ -->
+<div class="topic-section">
+<div class="topic-section-header"><span class="section-num">1</span>Node.js + TS: API Security &amp; Hardening</div>
+
+<!-- Concept 1: CORS & Security Headers -->
+<div class="concept-card" id="cors">
+  <div class="concept-header">
+    <span class="concept-title">1. CORS &amp; Security Headers Typing</span>
+    <span class="ttag">Node.js + TypeScript</span>
+  </div>
+
+  <div class="why-matters">Your API&rsquo;s first line of defense is the browser policy it advertises: which origins may call it (CORS) and which protections the browser must enforce (CSP, HSTS, frame options). A <code>string</code>-typed allow-list invites typos and an accidental <code>"*"</code> that opens the door to every origin. Typing the config &mdash; a literal union of allowed origins, exhaustive header keys &mdash; turns a security policy into something the compiler checks.</div>
+
+  <div class="explanation">
+    <p>Model the allowed origins as a <code>readonly</code> tuple (a literal union, not <code>string[]</code>) so an <code>origin</code> either <em>is</em> one of them or is rejected; the <code>cors</code> package&rsquo;s <code>origin</code> callback narrows to that union. For response headers, declare a typed record whose keys are the exact header names you set, so a mistyped <code>"Content-Security-Poticy"</code> is a build error rather than a silently-ignored header.</p>
+    <p><code>helmet</code> sets a sane baseline (HSTS, <code>X-Content-Type-Options</code>, frameguard, a starter CSP); you then tighten the CSP with a typed directive object. Keep the origin logic a pure, testable function so it can be unit-tested with the factories from 07-05.</p>
+    <div class="step"><span class="step-num">1</span><div>Declare allowed origins as a <code>readonly</code> literal tuple &rarr; derive the union.</div></div>
+    <div class="step"><span class="step-num">2</span><div>Type the CORS <code>origin</code> callback so only known origins pass.</div></div>
+    <div class="step"><span class="step-num">3</span><div>Layer <code>helmet</code> for the baseline; type the CSP directive object.</div></div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 1 of 4 &mdash; origins as a literal union, not string[]</div>
+<pre><code>const ALLOWED = ["https://app.acme.io", "https://admin.acme.io"] as const;
+type AllowedOrigin = typeof ALLOWED[number];   // "https://app.acme.io" | "https://admin.acme.io"
+
+function isAllowed(origin: string | undefined): origin is AllowedOrigin {
+  return !!origin &amp;&amp; (ALLOWED as readonly string[]).includes(origin);
+}</code></pre>
+<div class="type-result">the type predicate narrows a raw string to a known-origin union</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 2 of 4 &mdash; the cors origin callback, typed</div>
+<pre><code>import cors, { type CorsOptions } from "cors";
+
+const options: CorsOptions = {
+  origin(origin, cb) {
+    if (origin === undefined || isAllowed(origin)) cb(null, true);   // same-origin/allowed
+    else cb(new Error(`origin not allowed: ${origin}`));
+  },
+  credentials: true,
+};
+app.use(cors(options));   // reflecting a validated origin — never a blanket "*" with credentials</code></pre>
+<div class="type-result">isAllowed gates the callback; "*" + credentials is impossible to reach here</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 3 of 4 &mdash; a typed security-headers record</div>
+<pre><code>type SecurityHeader =
+  | "Strict-Transport-Security"
+  | "X-Content-Type-Options"
+  | "Referrer-Policy";
+
+const headers: Record&lt;SecurityHeader, string&gt; = {
+  "Strict-Transport-Security": "max-age=63072000; includeSubDomains",
+  "X-Content-Type-Options": "nosniff",
+  "Referrer-Policy": "strict-origin-when-cross-origin",
+  // "X-Frmae-Options": "DENY",   // ✗ not a SecurityHeader — typo caught
+};</code></pre>
+<div class="type-result">the Record key type rejects a misspelled header name at compile time</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 4 of 4 &mdash; helmet baseline + typed CSP directives</div>
+<pre><code>import helmet from "helmet";
+
+app.use(helmet({
+  contentSecurityPolicy: {
+    directives: {
+      defaultSrc: ["'self'"],
+      scriptSrc: ["'self'", "https://cdn.acme.io"],
+      imgSrc: ["'self'", "data:"],
+    },
+  },
+}));   // directive keys/values are typed by helmet's ContentSecurityPolicyOptions</code></pre>
+<div class="type-result">helmet supplies HSTS/nosniff/frameguard defaults; the CSP object is typed</div>
+  </div>
+
+  <div class="callout-warning">
+    <strong>Common Mistakes:</strong>
+    <div class="mistake">&#10060; <code>origin: "*"</code> together with <code>credentials: true</code> &mdash; browsers reject it, and a wildcard defeats the point of an allow-list.</div>
+    <div class="correct">&#9989; Reflect a <em>validated</em> origin from a typed union; only then send <code>credentials</code>.</div>
+    <div class="mistake">&#10060; Setting headers via bare string keys (<code>res.setHeader("X-Frmae-Options", ...)</code>) &mdash; a typo is a header that never applies.</div>
+    <div class="correct">&#9989; Constrain header names to a literal union / <code>Record&lt;SecurityHeader, string&gt;</code> so typos fail the build.</div>
+  </div>
+
+  <div class="key-rules">
+    <strong>Key Rules:</strong>
+    <ul>
+      <li>Declare allowed origins as a <code>readonly</code> literal tuple and derive the union with <code>typeof arr[number]</code>.</li>
+      <li>Gate the CORS <code>origin</code> callback with a type predicate; never pair <code>"*"</code> with <code>credentials</code>.</li>
+      <li>Type response-header names as a literal union so a misspelled header is a compile error.</li>
+      <li>Use <code>helmet</code> for the baseline and tighten the CSP through its typed directive object.</li>
+    </ul>
+  </div>
+
+  <div class="exercises">
+    <strong>Practice Exercises:</strong>
+    <div class="exercise"><span class="exercise-num">1</span>Load <code>ALLOWED</code> origins from env via the type-safe <code>config</code> pattern (07-05 review) and keep the union by validating against a fixed literal set.</div>
+    <div class="exercise"><span class="exercise-num">2</span>Write a unit test (Supertest, 07-05) asserting a disallowed <code>Origin</code> header gets no <code>Access-Control-Allow-Origin</code> in the response.</div>
+    <div class="exercise"><span class="exercise-num">3</span>Type a <code>cspDirectives</code> helper as <code>Record&lt;"defaultSrc" | "scriptSrc" | "imgSrc", string[]&gt;</code> and feed it into helmet.</div>
+  </div>
+
+  <div class="connections"><strong>Connections:</strong> The literal-union-from-<code>as const</code> trick is the same one behind type-safe config and i18n keys (R3). The <code>origin is AllowedOrigin</code> predicate is type-predicate narrowing, and layering helmet as Express middleware reuses the handler/middleware typing from 06-30.</div>
+</div>
+
+<!-- Concept 2: Input Sanitization & Output Encoding -->
+<div class="concept-card" id="sanitization">
+  <div class="concept-header">
+    <span class="concept-title">2. Input Sanitization &amp; Output Encoding</span>
+    <span class="ttag">Node.js + TypeScript</span>
+  </div>
+
+  <div class="why-matters">Validation (Zod) proves data has the right <em>shape</em>; it does not prove a string is <em>safe</em> to render as HTML or embed in a query. XSS and injection live in that gap. The type-system move is a <strong>branded type</strong>: a <code>SafeHtml</code> or <code>Sanitized</code> string you can only produce by passing through a sanitizer, so the compiler guarantees no raw user string reaches a sink unescaped.</div>
+
+  <div class="explanation">
+    <p>Brand the trusted output: <code>type SafeHtml = string &amp; { readonly __safe: unique symbol }</code>. The <em>only</em> way to mint a <code>SafeHtml</code> is <code>sanitize(dirty)</code> (backed by DOMPurify or an escaper), so any function that renders HTML can demand <code>SafeHtml</code> and a raw <code>string</code> simply won&rsquo;t type-check. This pushes the &ldquo;did you sanitize?&rdquo; question from code review into the compiler.</p>
+    <p>Distinguish the two jobs: <em>sanitize</em> when you must keep some markup (rich text), <em>encode/escape</em> when the value is pure data going into HTML/attribute/URL context. For SQL, the branded-string discipline is a backstop &mdash; the real fix is parameterized queries (never string-concatenate user input).</p>
+    <div class="step"><span class="step-num">1</span><div>Define a branded <code>SafeHtml</code> that only <code>sanitize()</code> can construct.</div></div>
+    <div class="step"><span class="step-num">2</span><div>Type render sinks to accept <code>SafeHtml</code>, not raw <code>string</code>.</div></div>
+    <div class="step"><span class="step-num">3</span><div>Encode by context (HTML/attr/URL); parameterize all SQL.</div></div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 1 of 4 &mdash; a branded SafeHtml the sanitizer alone mints</div>
+<pre><code>declare const _safe: unique symbol;
+type SafeHtml = string &amp; { readonly [_safe]: true };
+
+import DOMPurify from "isomorphic-dompurify";
+function sanitize(dirty: string): SafeHtml {
+  return DOMPurify.sanitize(dirty) as SafeHtml;   // the one blessed constructor
+}</code></pre>
+<div class="type-result">SafeHtml is a nominal brand; no plain string is assignable to it</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 2 of 4 &mdash; sinks demand SafeHtml, not string</div>
+<pre><code>function renderComment(html: SafeHtml): string {
+  return `&lt;div class="comment"&gt;${html}&lt;/div&gt;`;
+}
+
+const dirty: string = req.body.comment;    // untrusted
+// renderComment(dirty);                    // ✗ string not assignable to SafeHtml
+renderComment(sanitize(dirty));             // ✓ only sanitized markup reaches the sink</code></pre>
+<div class="type-result">the compiler forces every value into sanitize() before it can be rendered</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 3 of 4 &mdash; encode by context (data, not markup)</div>
+<pre><code>const escapeHtml = (s: string): string =&gt;
+  s.replace(/[&amp;&lt;&gt;"']/g, (c) =&gt; (
+    { "&amp;": "&amp;amp;", "&lt;": "&amp;lt;", "&gt;": "&amp;gt;", '"': "&amp;quot;", "'": "&amp;#39;" }[c]!
+  ));
+
+// data into HTML text: ESCAPE (don't sanitize — you want it literal)
+const label = escapeHtml(user.displayName);
+// value into a URL: encodeURIComponent, not escapeHtml</code></pre>
+<div class="type-result">encoding is context-specific; escaping ≠ sanitizing rich markup</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 4 of 4 &mdash; SQL: parameterize, never concatenate</div>
+<pre><code>// ✗ injection: a user 'name' of "'; DROP TABLE users;--" is now SQL
+// db.query(`SELECT * FROM users WHERE name = '${name}'`);
+
+// ✓ parameterized — the driver binds values; input can't become SQL
+await db.query("SELECT * FROM users WHERE name = $1", [name]);</code></pre>
+<div class="type-result">bound parameters keep user input as data; the brand is a backstop, not the fix</div>
+  </div>
+
+  <div class="callout-warning">
+    <strong>Common Mistakes:</strong>
+    <div class="mistake">&#10060; Treating Zod-validated as safe-to-render &mdash; <code>z.string()</code> proves it&rsquo;s a string, not that it&rsquo;s free of <code>&lt;script&gt;</code>.</div>
+    <div class="correct">&#9989; Brand rendered output as <code>SafeHtml</code> so validation and sanitization are separate, both-required steps.</div>
+    <div class="mistake">&#10060; Sanitizing when you meant to <em>encode</em> (or vice-versa) &mdash; escaping rich text mangles it; sanitizing plain data is pointless.</div>
+    <div class="correct">&#9989; Encode data by output context (HTML/attr/URL); sanitize only when you must preserve markup.</div>
+  </div>
+
+  <div class="key-rules">
+    <strong>Key Rules:</strong>
+    <ul>
+      <li>Make the sanitizer the <em>only</em> constructor of a branded <code>SafeHtml</code>; type render sinks to require it.</li>
+      <li>Validation (shape) and sanitization (safety) are distinct &mdash; do both.</li>
+      <li>Encode/escape by output context; don&rsquo;t reach for a full sanitizer on pure data.</li>
+      <li>Always parameterize SQL; string interpolation of user input is the injection.</li>
+    </ul>
+  </div>
+
+  <div class="exercises">
+    <strong>Practice Exercises:</strong>
+    <div class="exercise"><span class="exercise-num">1</span>Add a <code>SafeUrl</code> brand minted only by a validator that rejects <code>javascript:</code> schemes, and require it on an <code>&lt;a href&gt;</code> builder.</div>
+    <div class="exercise"><span class="exercise-num">2</span>Write a Zod <code>.transform</code> that runs <code>sanitize</code> so the parsed output type is <code>SafeHtml</code> end-to-end.</div>
+    <div class="exercise"><span class="exercise-num">3</span>Prove the brand works: try to pass a raw request string to <code>renderComment</code> and read the exact compiler error.</div>
+  </div>
+
+  <div class="connections"><strong>Connections:</strong> The <code>SafeHtml</code> brand is branded/opaque types applied to security; the Zod <code>.transform</code> exercise reuses runtime validation from earlier days. Parameterized queries connect to the Drizzle/SQL-builder review (R6), where the builder parameterizes for you.</div>
+</div>
+
+<!-- Concept 3: Idempotency Keys -->
+<div class="concept-card" id="idempotency">
+  <div class="concept-header">
+    <span class="concept-title">3. Idempotency Keys for Safe Retries</span>
+    <span class="ttag">Node.js + TypeScript</span>
+  </div>
+
+  <div class="why-matters">Networks retry: a client that times out on <code>POST /payments</code> may resend and double-charge. An <em>idempotency key</em> &mdash; a client-supplied unique id per logical operation &mdash; lets the server recognize a replay and return the original result instead of doing the work twice. Typing the stored record (key &rarr; status + cached response) makes the replay path explicit and keeps the cached body&rsquo;s type honest.</div>
+
+  <div class="explanation">
+    <p>The client sends an <code>Idempotency-Key</code> header (a UUID) with each mutating request. On arrival the server atomically <em>reserves</em> the key: if new, mark it <code>in_progress</code> and do the work; if it already exists, return the stored response (or a <code>409</code> if still processing). Model the stored record as a discriminated union on <code>status</code> so an <code>in_progress</code> record has no <code>response</code> and a <code>completed</code> one carries a typed, cached body.</p>
+    <p>Two subtleties: scope the key by <em>user + endpoint</em> so keys can&rsquo;t collide across accounts, and reserve atomically (a unique DB constraint or Redis <code>SET NX</code>) so two concurrent replays don&rsquo;t both execute.</p>
+    <div class="step"><span class="step-num">1</span><div>Read a typed <code>Idempotency-Key</code>; validate it&rsquo;s a UUID.</div></div>
+    <div class="step"><span class="step-num">2</span><div>Atomically reserve the key (unique constraint / <code>SET NX</code>).</div></div>
+    <div class="step"><span class="step-num">3</span><div>Replay: return the cached typed response; else run and store it.</div></div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 1 of 4 &mdash; the stored record as a discriminated union</div>
+<pre><code>type IdempotencyRecord&lt;T&gt; =
+  | { status: "in_progress"; key: string }
+  | { status: "completed"; key: string; statusCode: number; response: T };
+
+// only the completed arm carries a response — the compiler enforces it
+function isDone&lt;T&gt;(r: IdempotencyRecord&lt;T&gt;): r is Extract&lt;IdempotencyRecord&lt;T&gt;, { status: "completed" }&gt; {
+  return r.status === "completed";
+}</code></pre>
+<div class="type-result">an in_progress record has no `response`; narrowing on status reveals it</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 2 of 4 &mdash; a typed store interface</div>
+<pre><code>interface IdempotencyStore {
+  reserve(key: string): Promise&lt;"reserved" | "exists"&gt;;   // atomic: SET NX / unique insert
+  get&lt;T&gt;(key: string): Promise&lt;IdempotencyRecord&lt;T&gt; | null&gt;;
+  complete&lt;T&gt;(key: string, statusCode: number, response: T): Promise&lt;void&gt;;
+}</code></pre>
+<div class="type-result">reserve() returns a two-state literal; get/complete are generic over the body type</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 3 of 4 &mdash; a generic idempotent handler wrapper</div>
+<pre><code>async function idempotent&lt;T&gt;(
+  store: IdempotencyStore, key: string, work: () =&gt; Promise&lt;{ status: number; body: T }&gt;,
+): Promise&lt;{ status: number; body: T }&gt; {
+  if (await store.reserve(key) === "exists") {
+    const prior = await store.get&lt;T&gt;(key);
+    if (prior &amp;&amp; isDone(prior)) return { status: prior.statusCode, body: prior.response };
+    return { status: 409, body: { error: "in progress" } as unknown as T };
+  }
+  const result = await work();                       // first time: do it once
+  await store.complete(key, result.status, result.body);
+  return result;
+}</code></pre>
+<div class="type-result">a replay returns the cached T; the first request is the only one that runs work()</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 4 of 4 &mdash; wiring it into a route, key scoped per user</div>
+<pre><code>app.post("/payments", async (req, res) =&gt; {
+  const key = req.header("Idempotency-Key");
+  if (!key || !isUuid(key)) return res.status(400).json({ error: "missing/invalid key" });
+
+  const scoped = `${req.user.id}:payments:${key}`;   // scope so keys can't collide across users
+  const { status, body } = await idempotent&lt;Payment&gt;(store, scoped, () =&gt; charge(req.body));
+  res.status(status).json(body);
+});</code></pre>
+<div class="type-result">the same key+user replays the original Payment; a retry never double-charges</div>
+  </div>
+
+  <div class="callout-warning">
+    <strong>Common Mistakes:</strong>
+    <div class="mistake">&#10060; Checking &ldquo;does the key exist?&rdquo; then inserting in two steps &mdash; two concurrent replays both pass the check and both execute.</div>
+    <div class="correct">&#9989; Reserve atomically (unique constraint / <code>SET NX</code>); let exactly one caller win the race.</div>
+    <div class="mistake">&#10060; Storing the cached response as <code>any</code> &mdash; the replay path returns an unchecked shape that may not match the real handler.</div>
+    <div class="correct">&#9989; Make the record generic (<code>IdempotencyRecord&lt;T&gt;</code>) so the cached body is the same type the handler produces.</div>
+  </div>
+
+  <div class="key-rules">
+    <strong>Key Rules:</strong>
+    <ul>
+      <li>Require a UUID <code>Idempotency-Key</code> on mutating requests; validate it before doing work.</li>
+      <li>Reserve the key atomically so concurrent replays can&rsquo;t both run the operation.</li>
+      <li>Model the record as a discriminated union on <code>status</code> &mdash; only <code>completed</code> carries a typed response.</li>
+      <li>Scope keys by user + endpoint so they never collide across accounts.</li>
+    </ul>
+  </div>
+
+  <div class="exercises">
+    <strong>Practice Exercises:</strong>
+    <div class="exercise"><span class="exercise-num">1</span>Implement <code>IdempotencyStore</code> over Redis using <code>SET key val NX EX 86400</code> for <code>reserve</code>, and confirm the TTL expires stale keys.</div>
+    <div class="exercise"><span class="exercise-num">2</span>Add a <code>fingerprint</code> (hash of the request body) to the record and return <code>422</code> if the same key arrives with a different body.</div>
+    <div class="exercise"><span class="exercise-num">3</span>Type the replay so <code>in_progress</code> returns <code>409</code> via the discriminated union&rsquo;s narrowing rather than a runtime string check.</div>
+  </div>
+
+  <div class="connections"><strong>Connections:</strong> The record is a discriminated union with exhaustive narrowing; the store mirrors the typed Redis caching layer, and the retry motivation pairs directly with the client-side retries/circuit breakers of 07-04. Atomic reserve is the same race-avoidance idea as optimistic concurrency (Concept 5).</div>
+</div>
+
+</div><!-- end topic-section 1 -->
+
+<!-- ============================================================ -->
+<!-- TOPIC SECTION 2: Data Integrity                               -->
+<!-- ============================================================ -->
+<div class="topic-section">
+<div class="topic-section-header"><span class="section-num">2</span>Node.js + TS: Data Integrity</div>
+
+<!-- Concept 4: Type-Safe DB Transactions -->
+<div class="concept-card" id="transactions">
+  <div class="concept-header">
+    <span class="concept-title">4. Type-Safe Database Transactions</span>
+    <span class="ttag">Node.js + TypeScript</span>
+  </div>
+
+  <div class="why-matters">Multi-step writes must be all-or-nothing: debit one account, credit another &mdash; a crash between them corrupts data. A transaction gives atomicity, but the type-safety win is making the transactional <em>boundary</em> explicit so every query inside runs on the same connection. A <code>withTransaction(fn)</code> callback that hands you a typed transactional client makes it impossible to accidentally run a step outside the transaction.</div>
+
+  <div class="explanation">
+    <p>Wrap the unit of work in a callback that receives a <code>Tx</code> handle typed identically to the base client, so the same query API is available but bound to the transaction. The wrapper <code>BEGIN</code>s, runs your function, <code>COMMIT</code>s on success, and <code>ROLLBACK</code>s on any throw &mdash; and it <em>returns</em> whatever the callback returns, fully typed. Because the queries take the passed <code>tx</code>, a step that forgets it (using the global pool) is visible: it simply isn&rsquo;t on the transactional client.</p>
+    <p>Prefer returning a value from the callback over mutating outer variables, and keep the callback free of unrelated I/O (don&rsquo;t hold a transaction open across a slow network call &mdash; it pins a connection and grows lock contention).</p>
+    <div class="step"><span class="step-num">1</span><div>Define <code>withTransaction&lt;T&gt;(fn: (tx: Tx) =&gt; Promise&lt;T&gt;): Promise&lt;T&gt;</code>.</div></div>
+    <div class="step"><span class="step-num">2</span><div>Run every step through the passed <code>tx</code> &mdash; not the global pool.</div></div>
+    <div class="step"><span class="step-num">3</span><div>Commit on return, rollback on throw; propagate the typed result.</div></div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 1 of 4 &mdash; a transactional wrapper that returns a typed result</div>
+<pre><code>import type { Pool, PoolClient } from "pg";
+export type Tx = PoolClient;   // same query API, bound to the transaction
+
+async function withTransaction&lt;T&gt;(pool: Pool, fn: (tx: Tx) =&gt; Promise&lt;T&gt;): Promise&lt;T&gt; {
+  const tx = await pool.connect();
+  try {
+    await tx.query("BEGIN");
+    const result = await fn(tx);     // T flows straight back out
+    await tx.query("COMMIT");
+    return result;
+  } catch (e) {
+    await tx.query("ROLLBACK");
+    throw e;
+  } finally {
+    tx.release();                    // always return the connection to the pool
+  }
+}</code></pre>
+<div class="type-result">the callback's return type T is the wrapper's return type; rollback on any throw</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 2 of 4 &mdash; an atomic transfer using the passed tx</div>
+<pre><code>interface TransferResult { from: number; to: number }
+
+const result = await withTransaction(pool, async (tx): Promise&lt;TransferResult&gt; =&gt; {
+  await tx.query("UPDATE accounts SET balance = balance - $1 WHERE id = $2", [amount, fromId]);
+  await tx.query("UPDATE accounts SET balance = balance + $1 WHERE id = $2", [amount, toId]);
+  return { from: fromId, to: toId };   // committed only if both succeed
+});</code></pre>
+<div class="type-result">both updates share one connection; a throw between them rolls back both</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 3 of 4 &mdash; the compiler nudges you to use tx</div>
+<pre><code>await withTransaction(pool, async (tx) =&gt; {
+  await insertOrder(tx, order);        // ✓ runs in the transaction
+  // await pool.query("UPDATE ...");   // ✗ conceptually wrong: NOT in the tx
+  await decrementStock(tx, order.items);
+});
+
+// helper signatures demand a Tx, so a caller can't pass the raw pool:
+function insertOrder(tx: Tx, o: Order): Promise&lt;void&gt; { /* tx.query(...) */ return Promise.resolve(); }</code></pre>
+<div class="type-result">typing helpers to require Tx makes "forgot the transaction" a signature mismatch</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 4 of 4 &mdash; the same shape with Drizzle / Prisma</div>
+<pre><code>// Drizzle: db.transaction gives a typed tx with the full query builder
+await db.transaction(async (tx) =&gt; {
+  await tx.update(accounts).set({ balance: sql`balance - ${amt}` }).where(eq(accounts.id, fromId));
+  await tx.update(accounts).set({ balance: sql`balance + ${amt}` }).where(eq(accounts.id, toId));
+});
+
+// Prisma: prisma.$transaction([...]) for independent ops, or an interactive callback tx
+await prisma.$transaction(async (tx) =&gt; { await tx.account.update(/* ... */); });</code></pre>
+<div class="type-result">ORMs expose the same callback shape; tx carries the full typed query API</div>
+  </div>
+
+  <div class="callout-warning">
+    <strong>Common Mistakes:</strong>
+    <div class="mistake">&#10060; Running one step on <code>tx</code> and another on the global <code>pool</code> &mdash; the second isn&rsquo;t in the transaction and won&rsquo;t roll back.</div>
+    <div class="correct">&#9989; Thread the passed <code>tx</code> through every step; type helpers to <em>require</em> a <code>Tx</code>.</div>
+    <div class="mistake">&#10060; Forgetting <code>release()</code> (or awaiting a slow HTTP call mid-transaction) &mdash; you leak/pin connections and starve the pool.</div>
+    <div class="correct">&#9989; Release in <code>finally</code>; keep transactions short and free of unrelated I/O.</div>
+  </div>
+
+  <div class="key-rules">
+    <strong>Key Rules:</strong>
+    <ul>
+      <li>Wrap units of work in <code>withTransaction(fn)</code>; the callback&rsquo;s return type is the result type.</li>
+      <li>Commit on return, rollback on any throw, and <code>release()</code> the connection in <code>finally</code>.</li>
+      <li>Run <em>every</em> step through the passed <code>tx</code>; type helpers to require a <code>Tx</code> so the pool can&rsquo;t sneak in.</li>
+      <li>Keep transactions short &mdash; no slow external I/O while holding a connection and locks.</li>
+    </ul>
+  </div>
+
+  <div class="exercises">
+    <strong>Practice Exercises:</strong>
+    <div class="exercise"><span class="exercise-num">1</span>Add a <code>savepoint</code> helper for nested transactions: <code>SAVEPOINT</code>/<code>ROLLBACK TO</code> around an inner step, typed as a nested callback.</div>
+    <div class="exercise"><span class="exercise-num">2</span>Make <code>withTransaction</code> accept an isolation level (<code>"read committed" | "serializable"</code>) as a typed option and emit the right <code>BEGIN</code>.</div>
+    <div class="exercise"><span class="exercise-num">3</span>Write an integration test (Supertest, 07-05) proving a mid-transaction throw leaves both account balances unchanged.</div>
+  </div>
+
+  <div class="connections"><strong>Connections:</strong> The callback-returns-<code>T</code> shape is the same resource-scoping idea as <code>using</code> declarations and the graceful-shutdown cleanup of 07-04. The Drizzle/Prisma <code>tx</code> carries the typed query builder from R6, and requiring a <code>Tx</code> parameter is dependency injection enforcing correctness.</div>
+</div>
+
+<!-- Concept 5: Optimistic Concurrency -->
+<div class="concept-card" id="optimistic">
+  <div class="concept-header">
+    <span class="concept-title">5. Optimistic Concurrency &amp; Versioned Updates</span>
+    <span class="ttag">Node.js + TypeScript</span>
+  </div>
+
+  <div class="why-matters">Two users load the same record, both edit, both save &mdash; the second silently overwrites the first (&ldquo;lost update&rdquo;). Optimistic concurrency avoids locking by tagging each row with a <code>version</code>: an update only succeeds if the version still matches what you read, otherwise you detect the conflict and retry or surface a <code>409</code>. Typing the version into the entity and the update result makes the conflict a value you must handle, not a silent no-op.</div>
+
+  <div class="explanation">
+    <p>Add a <code>version: number</code> (or a timestamp/etag) to the row. The update carries the version you read in its <code>WHERE</code> clause and bumps it: <code>SET ..., version = version + 1 WHERE id = $ AND version = $</code>. If <em>zero rows</em> are affected, someone else won the race &mdash; return a typed <code>{ ok: false; conflict: true }</code> rather than pretending success. Callers then reload and retry, or return <code>409 Conflict</code> to the client (often with an <code>If-Match</code> ETag on the API surface).</p>
+    <p>Model the outcome as a discriminated union so the success arm carries the new version and the conflict arm carries none &mdash; the compiler forces the caller to branch on it instead of assuming the write landed.</p>
+    <div class="step"><span class="step-num">1</span><div>Store a <code>version</code> on the row; read it with the entity.</div></div>
+    <div class="step"><span class="step-num">2</span><div>Update with <code>WHERE version = $read</code> and bump it; check rows affected.</div></div>
+    <div class="step"><span class="step-num">3</span><div>Return a typed success/conflict union; retry or <code>409</code> on conflict.</div></div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 1 of 4 &mdash; a versioned entity and a typed outcome</div>
+<pre><code>interface Doc { id: string; title: string; version: number }
+
+type SaveResult =
+  | { ok: true; version: number }        // the new version after a successful bump
+  | { ok: false; conflict: true };        // someone else updated first</code></pre>
+<div class="type-result">the union makes "conflict" a value the caller must branch on</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 2 of 4 &mdash; the compare-and-set update</div>
+<pre><code>async function save(tx: Tx, doc: Doc): Promise&lt;SaveResult&gt; {
+  const res = await tx.query(
+    `UPDATE docs SET title = $1, version = version + 1
+     WHERE id = $2 AND version = $3`,          // only if the version is unchanged
+    [doc.title, doc.id, doc.version],
+  );
+  return res.rowCount === 1
+    ? { ok: true, version: doc.version + 1 }
+    : { ok: false, conflict: true };           // 0 rows => a concurrent writer won
+}</code></pre>
+<div class="type-result">rowCount discriminates success vs conflict; no lock was held</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 3 of 4 &mdash; a typed retry loop on conflict</div>
+<pre><code>async function saveWithRetry(id: string, edit: (d: Doc) =&gt; Doc, tries = 3): Promise&lt;Doc&gt; {
+  for (let i = 0; i &lt; tries; i++) {
+    const current = await load(id);             // reads the latest version
+    const next = edit(current);
+    const r = await withTransaction(pool, (tx) =&gt; save(tx, next));
+    if (r.ok) return { ...next, version: r.version };
+  }
+  throw new Error("too many concurrent updates");
+}</code></pre>
+<div class="type-result">reload-and-retry converges; the union forces you to check r.ok before returning</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 4 of 4 &mdash; surface conflicts as HTTP 409 / ETag</div>
+<pre><code>app.put("/docs/:id", async (req, res) =&gt; {
+  const expected = Number(req.header("If-Match"));   // client sends the version it saw
+  const r = await withTransaction(pool, (tx) =&gt;
+    save(tx, { id: req.params.id, title: req.body.title, version: expected }));
+
+  if (!r.ok) return res.status(409).json({ error: "version conflict — reload and retry" });
+  res.set("ETag", String(r.version)).json({ version: r.version });
+});</code></pre>
+<div class="type-result">If-Match carries the version; a stale write gets 409, not a silent overwrite</div>
+  </div>
+
+  <div class="callout-warning">
+    <strong>Common Mistakes:</strong>
+    <div class="mistake">&#10060; Updating by <code>id</code> alone and assuming success &mdash; a concurrent write is silently clobbered (lost update).</div>
+    <div class="correct">&#9989; Include <code>WHERE version = $read</code>, bump the version, and treat <em>0 rows affected</em> as a conflict.</div>
+    <div class="mistake">&#10060; Returning <code>void</code> from <code>save</code> &mdash; the caller can&rsquo;t tell a real write from a no-op collision.</div>
+    <div class="correct">&#9989; Return a discriminated <code>SaveResult</code> so the conflict is a typed branch the caller must handle.</div>
+  </div>
+
+  <div class="key-rules">
+    <strong>Key Rules:</strong>
+    <ul>
+      <li>Carry a <code>version</code> (or ETag/timestamp) on the row; include it in the update&rsquo;s <code>WHERE</code> and bump it.</li>
+      <li>Zero rows affected means a concurrent writer won &mdash; that&rsquo;s a conflict, not success.</li>
+      <li>Return a discriminated success/conflict union so callers must branch, not assume.</li>
+      <li>On conflict, reload-and-retry a bounded number of times, or surface <code>409</code> (with <code>If-Match</code>) to the client.</li>
+    </ul>
+  </div>
+
+  <div class="exercises">
+    <strong>Practice Exercises:</strong>
+    <div class="exercise"><span class="exercise-num">1</span>Swap the numeric <code>version</code> for a <code>updatedAt</code> timestamp ETag; discuss the risk of clock resolution vs a monotonic counter.</div>
+    <div class="exercise"><span class="exercise-num">2</span>Add jittered backoff (07-04 retries) between attempts in <code>saveWithRetry</code> and cap total elapsed time.</div>
+    <div class="exercise"><span class="exercise-num">3</span>Contrast with <em>pessimistic</em> locking (<code>SELECT ... FOR UPDATE</code>) and state when each is the right call (contention level, transaction length).</div>
+  </div>
+
+  <div class="connections"><strong>Connections:</strong> The success/conflict union is another discriminated-union outcome, like the <code>Result</code> of R1 and the idempotency record of Concept 3. The compare-and-set is the same &ldquo;atomic reserve&rdquo; race-avoidance as idempotency keys, the retry loop reuses 07-04&rsquo;s backoff, and the update runs inside the <code>Tx</code> of Concept 4.</div>
+</div>
+
+</div><!-- end topic-section 2 -->
+
+<!-- Footer -->
+<footer class="guide-footer">
+  <h2>All Guides</h2>
+  <ul>
+    <li><a href="typescript-guides/typescript-guide-2026-07-09.html">2026-07-09</a> (Day 36)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-07-08.html">2026-07-08</a> (Day 35)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-07-07.html">2026-07-07</a> (Day 34)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-07-06.html">2026-07-06</a> (Day 33)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-07-05.html">2026-07-05</a> (Day 32)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-07-04.html">2026-07-04</a> (Day 31)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-07-03.html">2026-07-03</a> (Day 30)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-07-02.html">2026-07-02</a> (Day 29)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-07-01.html">2026-07-01</a> (Day 28)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-30.html">2026-06-30</a> (Day 27)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-29.html">2026-06-29</a> (Day 26)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-28.html">2026-06-28</a> (Day 25)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-27.html">2026-06-27</a> (Day 24)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-26.html">2026-06-26</a> (Day 23)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-25.html">2026-06-25</a> (Day 22)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-24.html">2026-06-24</a> (Day 21)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-23.html">2026-06-23</a> (Day 20)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-22.html">2026-06-22</a> (Day 19)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-21.html">2026-06-21</a> (Day 18)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-19.html">2026-06-19</a> (Day 17)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-18.html">2026-06-18</a> (Day 16)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-17.html">2026-06-17</a> (Day 15)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-15.html">2026-06-15</a> (Day 14)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-13.html">2026-06-13</a> (Day 13)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-12.html">2026-06-12</a> (Day 12)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-11.html">2026-06-11</a> (Day 11)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-10.html">2026-06-10</a> (Day 10)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-09.html">2026-06-09</a> (Day 9)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-08.html">2026-06-08</a> (Day 8)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-07.html">2026-06-07</a> (Day 7)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-05.html">2026-06-05</a> (Day 6)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-04.html">2026-06-04</a> (Day 5)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-03.html">2026-06-03</a> (Day 4)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-02.html">2026-06-02</a> (Day 3)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-01.html">2026-06-01</a> (Day 2)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-05-31.html">2026-05-31</a> (Day 1)</li>
+  </ul>
+</footer>
+
+</div><!-- end content -->
+</div><!-- end main -->
+
+<script>
+// Theme toggle
+(function() {
+  var toggle = document.getElementById('themeToggle');
+  var html = document.documentElement;
+  var STORAGE_KEY = 'lc-tsguide-theme';
+
+  function setTheme(theme) {
+    html.setAttribute('data-theme', theme);
+    toggle.textContent = theme === 'dark' ? '\u{1F319}' : '\u{2600}\u{FE0F}';
+    try { localStorage.setItem(STORAGE_KEY, theme); } catch(e) {}
+  }
+
+  try {
+    var saved = localStorage.getItem(STORAGE_KEY);
+    if (saved) setTheme(saved);
+  } catch(e) {}
+
+  toggle.addEventListener('click', function() {
+    var current = html.getAttribute('data-theme') || 'dark';
+    setTheme(current === 'dark' ? 'light' : 'dark');
+  });
+})();
+
+// Sidebar active link tracking
+(function() {
+  var links = document.querySelectorAll('.sidebar-nav a');
+  var sections = [];
+  links.forEach(function(link) {
+    var id = link.getAttribute('href').replace('#', '');
+    var el = document.getElementById(id);
+    if (el) sections.push({ link: link, el: el });
+  });
+
+  function updateActive() {
+    var current = null;
+    var scrollY = window.scrollY + 120;
+    for (var i = sections.length - 1; i >= 0; i--) {
+      if (sections[i].el.offsetTop <= scrollY) {
+        current = sections[i];
+        break;
+      }
+    }
+    links.forEach(function(l) { l.classList.remove('active'); });
+    if (current) current.link.classList.add('active');
+  }
+
+  window.addEventListener('scroll', updateActive);
+  updateActive();
+})();
+</script>
+
+</body>
+</html>

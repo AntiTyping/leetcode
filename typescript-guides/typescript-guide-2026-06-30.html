@@ -1,0 +1,1146 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TypeScript Daily Guide — 2026-06-30 (Day 27)</title>
+<style>
+:root {
+  --bg: #0d1117;
+  --surface: #161b22;
+  --surface2: #1c2129;
+  --border: #30363d;
+  --text: #e6edf3;
+  --text-muted: #8b949e;
+  --accent: #58a6ff;
+  --accent-bg: rgba(56,139,253,0.15);
+  --green: #3fb950;
+  --green-bg: rgba(63,185,80,0.08);
+  --red: #f85149;
+  --red-bg: rgba(248,81,73,0.08);
+  --yellow: #d29922;
+  --yellow-bg: rgba(210,153,34,0.1);
+  --orange: #db6d28;
+  --purple: #bc8cff;
+  --purple-bg: rgba(188,140,255,0.08);
+  --purple-border: rgba(188,140,255,0.2);
+  --link: #58a6ff;
+  --code-bg: #1c2129;
+  --output-bg: #0e1c0e;
+  --output-border: #1a3a1a;
+  --sidebar-bg: #161b22;
+  --sidebar-active: rgba(56,139,253,0.15);
+  --exercise-border: #30363d;
+}
+[data-theme="light"] {
+  --bg: #ffffff;
+  --surface: #f6f8fa;
+  --surface2: #eef1f5;
+  --border: #d0d7de;
+  --text: #1f2328;
+  --text-muted: #656d76;
+  --accent: #0969da;
+  --accent-bg: rgba(9,105,218,0.1);
+  --green: #1a7f37;
+  --green-bg: rgba(26,127,55,0.06);
+  --red: #cf222e;
+  --red-bg: rgba(207,34,46,0.06);
+  --yellow: #9a6700;
+  --yellow-bg: rgba(154,103,0,0.06);
+  --orange: #bc4c00;
+  --purple: #8250df;
+  --purple-bg: rgba(130,80,223,0.06);
+  --purple-border: rgba(130,80,223,0.15);
+  --link: #0969da;
+  --code-bg: #eef1f5;
+  --output-bg: #f0faf0;
+  --output-border: #c6e6c6;
+  --sidebar-bg: #f6f8fa;
+  --sidebar-active: rgba(9,105,218,0.1);
+  --exercise-border: #d0d7de;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;font-size:16px;line-height:1.7;color:var(--text);background:var(--bg);display:flex;min-height:100vh}
+a{color:var(--link);text-decoration:none}
+a:hover{text-decoration:underline}
+
+/* Sidebar */
+.sidebar{position:fixed;top:0;left:0;width:300px;height:100vh;background:var(--sidebar-bg);border-right:1px solid var(--border);overflow-y:auto;padding:20px 0;z-index:100}
+.sidebar-header{padding:16px 20px;border-bottom:1px solid var(--border);margin-bottom:12px}
+.sidebar-header h2{font-size:15px;font-weight:600;color:var(--text)}
+.sidebar-header .date{font-size:13px;color:var(--text-muted);margin-top:2px}
+.sidebar-section{padding:8px 20px 4px;font-size:12px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px}
+.sidebar-section.review-label{color:var(--purple)}
+.sidebar-nav{list-style:none;padding:0}
+.sidebar-nav li a{display:block;padding:6px 20px 6px 28px;font-size:14px;color:var(--text-muted);transition:all 0.15s}
+.sidebar-nav li a:hover,.sidebar-nav li a.active{color:var(--accent);background:var(--sidebar-active);text-decoration:none}
+.sidebar-nav li a .nav-id{font-size:11px;color:var(--text-muted);opacity:0.6;margin-left:6px}
+
+/* Main */
+.main{margin-left:300px;flex:1;padding:40px;max-width:1160px}
+.content{max-width:860px;margin:0 auto}
+
+/* Theme Toggle */
+.theme-toggle{position:fixed;top:16px;right:20px;z-index:200;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:8px 12px;cursor:pointer;color:var(--text);font-size:18px;line-height:1;transition:all 0.15s}
+.theme-toggle:hover{border-color:var(--accent)}
+
+/* Header */
+.guide-header{text-align:center;padding:32px 0 40px;border-bottom:1px solid var(--border);margin-bottom:40px}
+.guide-header h1{font-size:28px;font-weight:700;margin-bottom:8px}
+.guide-header .meta{font-size:15px;color:var(--text-muted)}
+.guide-header .meta span{margin:0 8px}
+.badge{display:inline-block;padding:2px 10px;border-radius:12px;font-size:13px;font-weight:500}
+.badge-blue{background:var(--accent-bg);color:var(--accent)}
+.badge-purple{background:var(--purple-bg);color:var(--purple)}
+
+/* How To Use */
+.how-to-use{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:24px 28px;margin-bottom:40px}
+.how-to-use h2{font-size:18px;margin-bottom:12px}
+.how-to-use ol{padding-left:24px}
+.how-to-use li{margin-bottom:6px;color:var(--text-muted)}
+
+/* Review Section */
+.review-section{margin-bottom:48px}
+.review-section-header{font-size:22px;font-weight:700;padding-bottom:12px;border-bottom:2px solid var(--purple);margin-bottom:28px;display:flex;align-items:center;gap:12px;color:var(--purple)}
+
+/* Review Card */
+.review-card{background:var(--purple-bg);border:1px solid var(--purple-border);border-left:4px solid var(--purple);border-radius:10px;padding:28px;margin-bottom:24px}
+.review-card .review-header{display:flex;align-items:center;gap:12px;margin-bottom:12px;flex-wrap:wrap}
+.review-card .review-title{font-size:18px;font-weight:700;color:var(--purple)}
+.review-card .review-meta{font-size:13px;color:var(--text-muted)}
+.review-card .review-reminder{color:var(--text-muted);font-style:italic;margin-bottom:16px;padding-left:14px;border-left:3px solid var(--purple)}
+.review-card .review-pattern{margin-bottom:16px}
+.review-card .review-pattern strong{display:block;margin-bottom:8px;font-size:14px;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px}
+.review-card .review-challenge{margin-bottom:12px}
+.review-card .review-challenge strong{display:block;margin-bottom:8px;font-size:14px;color:var(--yellow);text-transform:uppercase;letter-spacing:0.5px}
+.review-card .review-challenge p{line-height:1.6}
+.review-card .review-pitfall{background:var(--red-bg);border:1px solid rgba(248,81,73,0.15);border-radius:6px;padding:12px 16px;font-size:14px;line-height:1.6}
+.review-card .review-pitfall strong{color:var(--red);margin-right:4px}
+.review-card code{background:var(--code-bg);padding:2px 6px;border-radius:4px;font-family:'SF Mono','Fira Code','Consolas',monospace;font-size:13px}
+
+/* Topic Section */
+.topic-section{margin-bottom:48px}
+.topic-section-header{font-size:22px;font-weight:700;padding-bottom:12px;border-bottom:2px solid var(--accent);margin-bottom:28px;display:flex;align-items:center;gap:12px}
+.topic-section-header .section-num{background:var(--accent);color:#fff;width:32px;height:32px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:15px;font-weight:700;flex-shrink:0}
+
+/* Concept Card */
+.concept-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:28px;margin-bottom:32px}
+.concept-header{display:flex;align-items:center;gap:12px;margin-bottom:16px;flex-wrap:wrap}
+.concept-title{font-size:20px;font-weight:700}
+.ttag{display:inline-block;padding:2px 10px;border-radius:12px;font-size:12px;font-weight:500;background:var(--accent-bg);color:var(--accent)}
+
+.why-matters{color:var(--text-muted);font-style:italic;margin-bottom:20px;padding-left:14px;border-left:3px solid var(--accent)}
+.explanation{margin-bottom:20px;line-height:1.8}
+.explanation p{margin-bottom:12px}
+.explanation ul,.explanation ol{padding-left:24px;margin-bottom:12px}
+.explanation li{margin-bottom:4px}
+.explanation code{background:var(--code-bg);padding:2px 6px;border-radius:4px;font-family:'SF Mono','Fira Code','Consolas',monospace;font-size:14px}
+.step{display:flex;gap:12px;margin-bottom:10px;align-items:flex-start}
+.step-num{background:var(--accent-bg);color:var(--accent);width:24px;height:24px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;margin-top:3px}
+
+/* Code Examples */
+.code-example{margin-bottom:20px;border:1px solid var(--border);border-radius:8px;overflow:hidden}
+.lang-badge{background:var(--surface2);color:var(--text-muted);font-size:12px;font-weight:600;padding:6px 14px;border-bottom:1px solid var(--border);font-family:'SF Mono','Fira Code','Consolas',monospace}
+pre{margin:0;padding:16px;overflow-x:auto;background:var(--code-bg);font-family:'SF Mono','Fira Code','Consolas',monospace;font-size:13.5px;line-height:1.6;white-space:pre-wrap}
+pre code{background:none;padding:0;font-size:inherit}
+.output{background:var(--output-bg);border-top:1px solid var(--output-border);padding:12px 16px;font-family:'SF Mono','Fira Code','Consolas',monospace;font-size:13px;color:var(--green);white-space:pre-wrap}
+.output::before{content:"Output:";display:block;font-size:11px;font-weight:600;color:var(--text-muted);margin-bottom:4px;text-transform:uppercase;letter-spacing:0.5px}
+.type-result{background:var(--output-bg);border-top:1px solid var(--output-border);padding:12px 16px;font-family:'SF Mono','Fira Code','Consolas',monospace;font-size:13px;color:var(--green);white-space:pre-wrap}
+.type-result::before{content:"Type Result:";display:block;font-size:11px;font-weight:600;color:var(--text-muted);margin-bottom:4px;text-transform:uppercase;letter-spacing:0.5px}
+.type-error{background:var(--red-bg);border-top:1px solid rgba(248,81,73,0.2);padding:12px 16px;font-family:'SF Mono','Fira Code','Consolas',monospace;font-size:13px;color:var(--red);white-space:pre-wrap}
+.type-error::before{content:"Type Error:";display:block;font-size:11px;font-weight:600;color:var(--red);margin-bottom:4px;text-transform:uppercase;letter-spacing:0.5px}
+
+/* Callouts */
+.callout-warning{background:var(--yellow-bg);border:1px solid rgba(210,153,34,0.2);border-radius:8px;padding:20px;margin-bottom:20px}
+.callout-warning strong{color:var(--yellow);display:block;margin-bottom:12px;font-size:16px}
+.mistake,.correct{padding:10px 14px;border-radius:6px;margin-bottom:10px;font-size:14px;line-height:1.6}
+.mistake{background:var(--red-bg);border-left:3px solid var(--red)}
+.mistake code,.correct code{background:var(--code-bg);padding:2px 6px;border-radius:4px;font-family:'SF Mono','Fira Code','Consolas',monospace;font-size:13px}
+.correct{background:var(--green-bg);border-left:3px solid var(--green)}
+
+/* Key Rules */
+.key-rules{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:20px;margin-bottom:20px}
+.key-rules strong{display:block;margin-bottom:10px;font-size:16px}
+.key-rules ul{padding-left:20px}
+.key-rules li{margin-bottom:6px}
+.key-rules code{background:var(--code-bg);padding:2px 6px;border-radius:4px;font-family:'SF Mono','Fira Code','Consolas',monospace;font-size:13px}
+
+/* Exercises */
+.exercises{border:2px dashed var(--exercise-border);border-radius:8px;padding:20px;margin-bottom:20px;margin-left:12px}
+.exercises strong{display:block;margin-bottom:14px;font-size:16px;color:var(--purple)}
+.exercise{margin-bottom:14px;padding-left:38px;position:relative;line-height:1.6}
+.exercise:last-child{margin-bottom:0}
+.exercise-num{position:absolute;left:0;top:2px;background:var(--purple);color:#fff;width:24px;height:24px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:12px;font-weight:700}
+.exercise code{background:var(--code-bg);padding:2px 6px;border-radius:4px;font-family:'SF Mono','Fira Code','Consolas',monospace;font-size:13px}
+
+/* Connections */
+.connections{background:var(--accent-bg);border:1px solid rgba(56,139,253,0.2);border-radius:8px;padding:16px 20px;font-size:14px;color:var(--text-muted)}
+.connections strong{color:var(--accent);margin-right:6px}
+
+/* Cross-links */
+.cross-links{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:20px 24px;margin-bottom:40px;text-align:center}
+.cross-links a{margin:0 10px;font-weight:500}
+
+/* Footer */
+.guide-footer{border-top:1px solid var(--border);padding-top:32px;margin-top:48px}
+.guide-footer h2{font-size:18px;margin-bottom:16px}
+.guide-footer ul{list-style:none;padding:0}
+.guide-footer li{padding:6px 0}
+.guide-footer li a{font-weight:500}
+
+/* Responsive */
+@media(max-width:900px){
+  .sidebar{display:none}
+  .main{margin-left:0}
+  .theme-toggle{top:12px;right:12px}
+}
+</style>
+</head>
+<body>
+
+<!-- Theme Toggle -->
+<button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">&#x1F319;</button>
+
+<!-- Sidebar -->
+<nav class="sidebar">
+  <div class="sidebar-header">
+    <h2>TypeScript Daily Guide</h2>
+    <div class="date">2026-06-30 &mdash; Day 27</div>
+  </div>
+
+  <div class="sidebar-section review-label">Review (6 concepts)</div>
+  <ul class="sidebar-nav">
+    <li><a href="#review_branded">Branded/Opaque Types <span class="nav-id">R1</span></a></li>
+    <li><a href="#review_satisfies"><code>satisfies</code> Operator <span class="nav-id">R2</span></a></li>
+    <li><a href="#review_never"><code>never</code> &amp; Exhaustiveness <span class="nav-id">R3</span></a></li>
+    <li><a href="#review_project_refs">Project References <span class="nav-id">R4</span></a></li>
+    <li><a href="#review_publishing">Package Publishing <span class="nav-id">R5</span></a></li>
+    <li><a href="#review_errors">Error Handling Patterns <span class="nav-id">R6</span></a></li>
+  </ul>
+
+  <div class="sidebar-section">Node.js + TS: Server Foundations</div>
+  <ul class="sidebar-nav">
+    <li><a href="#express">Express: Handlers &amp; Request Augmentation <span class="nav-id">#1</span></a></li>
+    <li><a href="#fastify">Fastify Type Providers <span class="nav-id">#2</span></a></li>
+    <li><a href="#streams">Streams &amp; Buffers Typing <span class="nav-id">#3</span></a></li>
+  </ul>
+
+  <div class="sidebar-section">Node.js + TS: Modern Runtime &amp; Testing</div>
+  <ul class="sidebar-nav">
+    <li><a href="#esm">Native ESM &amp; <code>nodenext</code> <span class="nav-id">#4</span></a></li>
+    <li><a href="#testrunner">Built-in Test Runner <span class="nav-id">#5</span></a></li>
+  </ul>
+</nav>
+
+<!-- Main Content -->
+<div class="main">
+<div class="content">
+
+<!-- Header -->
+<header class="guide-header">
+  <h1>TypeScript Daily Guide &mdash; Day 27</h1>
+  <div class="meta">
+    <span>2026-06-30</span>
+    <span>&middot;</span>
+    <span>Day 27 of 27</span>
+    <span>&middot;</span>
+    <span class="badge badge-purple">6 reviews</span>
+    <span class="badge badge-blue">5 new concepts</span>
+  </div>
+</header>
+
+<!-- How to Use -->
+<div class="how-to-use">
+  <h2>How to Use This Guide</h2>
+  <ol>
+    <li><strong>Review first</strong> &mdash; scan each purple review card; if the concept feels solid, move on; if fuzzy, re-read the code pattern</li>
+    <li><strong>Attempt the challenge exercise</strong> on any review card that felt shaky &mdash; this is your best reinforcement signal</li>
+    <li><strong>Work through new concepts</strong> top to bottom &mdash; each builds on the previous</li>
+    <li><strong>Type every code example</strong> yourself and run it with <code>node</code>/<code>tsx</code> &mdash; hover over inferred types in your editor to build intuition</li>
+    <li><strong>Do at least 2 exercises per concept</strong> before moving to the next one</li>
+  </ol>
+</div>
+
+<!-- Cross-links -->
+<div class="cross-links">
+  <a href="guide.html">LeetCode Guide</a>
+  <a href="lang-guide.html">Lang Guide</a>
+  <a href="python-guide.html">Python Guide</a>
+  <a href="golang-guide.html">Go Guide</a>
+  <a href="javascript-guide.html">JS Guide</a>
+  <a href="report.html">Report</a>
+</div>
+
+<!-- ============================================================ -->
+<!-- REVIEW SECTION                                                -->
+<!-- ============================================================ -->
+<div class="review-section">
+<div class="review-section-header">Review &mdash; 6 Concepts</div>
+
+<!-- R1: Branded/Opaque Types -->
+<div class="review-card" id="review_branded">
+  <div class="review-header">
+    <span class="review-title">R1. Branded/Opaque Types</span>
+    <span class="badge badge-purple">Functions &amp; Patterns</span>
+    <span class="review-meta">17 days since review &middot; rep 3 &rarr; 4</span>
+  </div>
+  <div class="review-reminder">A branded type intersects a base type with a unique tag so two structurally-identical values (a raw <code>string</code>, a <code>PostId</code>) are no longer interchangeable where a <code>UserId</code> is required. The brand exists only at compile time; a <em>smart constructor</em> is the single place that mints branded values.</div>
+
+  <div class="review-pattern">
+    <strong>Key Pattern</strong>
+    <div class="code-example">
+<pre><code>declare const brand: unique symbol;
+type Brand&lt;T, B&gt; = T &amp; { readonly [brand]: B };
+
+type UserId  = Brand&lt;string, "UserId"&gt;;
+type OrderId = Brand&lt;string, "OrderId"&gt;;
+
+const asUserId = (s: string): UserId =&gt; s as UserId;   // smart constructor
+
+function loadUser(id: UserId) {/* ... */}
+loadUser(asUserId("u_1"));   // ok
+loadUser("u_1");             // error: plain string lacks the brand
+declare const o: OrderId;
+loadUser(o);                 // error: OrderId is not UserId</code></pre>
+<div class="type-result">distinct branded strings are no longer assignable to each other</div>
+    </div>
+  </div>
+
+  <div class="review-challenge">
+    <strong>Challenge Exercise</strong>
+    <p>Build <code>Brand&lt;T, B&gt;</code>, then model <code>type Cents = Brand&lt;number, "Cents"&gt;</code> and <code>type Dollars = Brand&lt;number, "Dollars"&gt;</code>. Write <code>toCents(d: Dollars): Cents</code> and confirm passing a raw <code>number</code> or a <code>Dollars</code> where <code>Cents</code> is expected is a compile error. Bonus: write a validating <code>parseEmail(raw: string): Email | null</code> smart constructor that only brands after checking the format.</p>
+  </div>
+
+  <div class="review-pitfall">
+    <strong>Pitfall:</strong> Sprinkling <code>as</code> to mint branded values everywhere defeats the purpose. Funnel creation through a single validating smart constructor &mdash; otherwise the brand asserts a guarantee that nothing actually verified.
+  </div>
+</div>
+
+<!-- R2: satisfies -->
+<div class="review-card" id="review_satisfies">
+  <div class="review-header">
+    <span class="review-title">R2. <code>satisfies</code> Operator</span>
+    <span class="badge badge-purple">Advanced Type System</span>
+    <span class="review-meta">15 days since review &middot; rep 3 &rarr; 4</span>
+  </div>
+  <div class="review-reminder"><code>expr satisfies T</code> checks that <code>expr</code> is assignable to <code>T</code> <em>without widening</em> its inferred type &mdash; you keep the precise literal type and still get an error if the shape is wrong. Contrast <code>: T</code> (annotation, widens to <code>T</code>) and <code>as T</code> (assertion, no real check).</div>
+
+  <div class="review-pattern">
+    <strong>Key Pattern</strong>
+    <div class="code-example">
+<pre><code>type Config = Record&lt;string, { url: string; retries: number }&gt;;
+
+const config = {
+  auth: { url: "/auth", retries: 3 },
+  data: { url: "/data", retries: 5 },
+} satisfies Config;
+
+config.auth.retries;   // number &mdash; and keys "auth" | "data" stay known
+// const c: Config = {...}  would widen keys to string &rarr; config.auth errors</code></pre>
+<div class="type-result">validated against Config, yet keys stay literal ("auth" | "data")</div>
+    </div>
+  </div>
+
+  <div class="review-challenge">
+    <strong>Challenge Exercise</strong>
+    <p>Type a <code>palette</code> object as <code>{ primary: "#0d1117", ... } satisfies Record&lt;string, string&gt;</code> and show <code>palette.primary</code> is still the literal hex string, not widened <code>string</code>. Then introduce a typo in one nested value and confirm <code>satisfies</code> flags it &mdash; while key autocomplete stays intact (unlike a plain <code>: Record&lt;string, string&gt;</code> annotation).</p>
+  </div>
+
+  <div class="review-pitfall">
+    <strong>Pitfall:</strong> Reaching for <code>as Config</code> when you mean <code>satisfies Config</code>. <code>as</code> silently accepts a wrong shape (it&rsquo;s an assertion, no check); <code>satisfies</code> validates the shape <em>without</em> discarding the narrow inferred type.
+  </div>
+</div>
+
+<!-- R3: never & Exhaustiveness -->
+<div class="review-card" id="review_never">
+  <div class="review-header">
+    <span class="review-title">R3. <code>never</code> &amp; Exhaustiveness</span>
+    <span class="badge badge-purple">Advanced Type System</span>
+    <span class="review-meta">15 days since review &middot; rep 3 &rarr; 4</span>
+  </div>
+  <div class="review-reminder"><code>never</code> is the bottom type (assignable to everything, nothing assignable to it). Assigning the scrutinee to a <code>never</code> variable in a <code>switch</code> <code>default</code> turns &ldquo;unhandled union member&rdquo; into a compile error &mdash; the compiler proves every case is covered.</div>
+
+  <div class="review-pattern">
+    <strong>Key Pattern</strong>
+    <div class="code-example">
+<pre><code>type Shape =
+  | { kind: "circle"; r: number }
+  | { kind: "square"; s: number };
+
+function area(sh: Shape): number {
+  switch (sh.kind) {
+    case "circle": return Math.PI * sh.r ** 2;
+    case "square": return sh.s ** 2;
+    default: {
+      const _never: never = sh;   // add a new Shape &rarr; error here
+      return _never;
+    }
+  }
+}</code></pre>
+<div class="type-result">adding a variant without a matching case fails to compile</div>
+    </div>
+  </div>
+
+  <div class="review-challenge">
+    <strong>Challenge Exercise</strong>
+    <p>Write <code>assertNever(x: never): never</code> that throws, and use it in the <code>default</code> of a discriminated <code>Event</code> union with 3+ members. Add a fourth member and confirm the single <code>assertNever</code> call site flags it. Then explain why <code>default: return x</code> (without the <code>never</code> binding) would <em>not</em> catch the missing case.</p>
+  </div>
+
+  <div class="review-pitfall">
+    <strong>Pitfall:</strong> Widening the discriminant before the check &mdash; e.g. <code>switch (sh.kind as string)</code> &mdash; erases the literal union and makes exhaustiveness impossible. Keep the scrutinee&rsquo;s narrow type intact.
+  </div>
+</div>
+
+<!-- R4: Project References -->
+<div class="review-card" id="review_project_refs">
+  <div class="review-header">
+    <span class="review-title">R4. Project References</span>
+    <span class="badge badge-purple">Modules &amp; Project Structure</span>
+    <span class="review-meta">19 days since review &middot; rep 2 &rarr; 3</span>
+  </div>
+  <div class="review-reminder"><code>references</code> + <code>composite: true</code> split a codebase into independently-built TS projects. <code>tsc --build</code> (build mode) topologically builds each referenced project, emits <code>.d.ts</code> + <code>.tsbuildinfo</code>, and skips unchanged ones for fast incremental builds.</div>
+
+  <div class="review-pattern">
+    <strong>Key Pattern</strong>
+    <div class="code-example">
+<pre><code>// packages/app/tsconfig.json
+{
+  "compilerOptions": { "composite": true, "outDir": "dist" },
+  "references": [{ "path": "../core" }]
+}
+
+// build the whole graph, incrementally:
+//   tsc --build          (a.k.a. tsc -b)</code></pre>
+<div class="type-result">core builds first; app consumes core&rsquo;s emitted .d.ts, not its source</div>
+    </div>
+  </div>
+
+  <div class="review-challenge">
+    <strong>Challenge Exercise</strong>
+    <p>Set up a two-project graph (<code>core</code> referenced by <code>web</code>), give <code>core</code> <code>"composite": true</code>, and explain what breaks if you (a) omit <code>composite</code>, (b) run plain <code>tsc</code> instead of <code>tsc -b</code>, and (c) import a <code>core</code> file that <code>core</code>&rsquo;s own <code>tsconfig</code> doesn&rsquo;t <code>include</code>.</p>
+  </div>
+
+  <div class="review-pitfall">
+    <strong>Pitfall:</strong> Expecting a referenced project&rsquo;s <em>source</em> to be recompiled from a consumer. Build mode consumes the referenced project&rsquo;s emitted <code>.d.ts</code>, so that project must set <code>composite: true</code> and be built (which <code>-b</code> does for you).
+  </div>
+</div>
+
+<!-- R5: Package Publishing -->
+<div class="review-card" id="review_publishing">
+  <div class="review-header">
+    <span class="review-title">R5. Package Publishing</span>
+    <span class="badge badge-purple">Modules &amp; Project Structure</span>
+    <span class="review-meta">15 days since review &middot; rep 2 &rarr; 3</span>
+  </div>
+  <div class="review-reminder">The <code>exports</code> map defines a package&rsquo;s public entry points and, per condition (<code>types</code>/<code>import</code>/<code>require</code>), which file resolves &mdash; replacing the single old <code>main</code>/<code>types</code>. Put <code>types</code> alongside (ideally first) so <code>node16</code>/<code>nodenext</code> consumers get correct declarations per condition.</div>
+
+  <div class="review-pattern">
+    <strong>Key Pattern</strong>
+    <div class="code-example">
+<pre><code>// package.json
+{
+  "type": "module",
+  "exports": {
+    ".": {
+      "types":   "./dist/index.d.ts",
+      "import":  "./dist/index.js",
+      "require": "./dist/index.cjs"
+    },
+    "./utils": { "types": "./dist/utils.d.ts", "import": "./dist/utils.js" }
+  }
+}</code></pre>
+<div class="type-result">"./utils" is a public subpath; everything else is encapsulated</div>
+    </div>
+  </div>
+
+  <div class="review-challenge">
+    <strong>Challenge Exercise</strong>
+    <p>Write an <code>exports</code> map exposing <code>"."</code> and <code>"./client"</code> with distinct <code>import</code>/<code>require</code>/<code>types</code> targets, and explain why (a) <code>exports</code> <em>blocks</em> deep imports the map doesn&rsquo;t list, and (b) a consumer on <code>moduleResolution: "bundler"</code> vs <code>"nodenext"</code> may resolve <code>types</code> differently. Bonus: what does a trailing <code>"default"</code> condition do?</p>
+  </div>
+
+  <div class="review-pitfall">
+    <strong>Pitfall:</strong> Shipping only <code>main</code>/<code>types</code>, or listing <code>types</code> <em>after</em> <code>import</code>/<code>require</code> &mdash; condition order matters, and <code>nodenext</code> consumers can get wrong or missing types even when the JS resolves fine.
+  </div>
+</div>
+
+<!-- R6: Error Handling Patterns -->
+<div class="review-card" id="review_errors">
+  <div class="review-header">
+    <span class="review-title">R6. Error Handling Patterns</span>
+    <span class="badge badge-purple">Runtime Patterns</span>
+    <span class="review-meta">13 days since review &middot; rep 2 &rarr; 3</span>
+  </div>
+  <div class="review-reminder">Prefer a typed <code>Result&lt;T, E&gt;</code> (a discriminated union <code>{ ok: true; value } | { ok: false; error }</code>) over throwing for <em>expected</em> failures: the error becomes part of the signature, callers must narrow before touching <code>value</code>, and exhaustiveness makes unhandled error kinds a compile error.</div>
+
+  <div class="review-pattern">
+    <strong>Key Pattern</strong>
+    <div class="code-example">
+<pre><code>type Result&lt;T, E&gt; = { ok: true; value: T } | { ok: false; error: E };
+
+type ParseError = { kind: "empty" } | { kind: "nan"; raw: string };
+
+function parseAmount(raw: string): Result&lt;number, ParseError&gt; {
+  if (!raw) return { ok: false, error: { kind: "empty" } };
+  const n = Number(raw);
+  return Number.isNaN(n)
+    ? { ok: false, error: { kind: "nan", raw } }
+    : { ok: true, value: n };
+}
+
+const r = parseAmount("12");
+if (r.ok) r.value.toFixed(2);   // value: number only inside the guard</code></pre>
+<div class="type-result">callers must check r.ok before touching value / error</div>
+    </div>
+  </div>
+
+  <div class="review-challenge">
+    <strong>Challenge Exercise</strong>
+    <p>Define <code>Result&lt;T, E&gt;</code> plus helpers <code>ok(v)</code> and <code>err(e)</code>, then write <code>map&lt;T, U, E&gt;(r: Result&lt;T, E&gt;, f: (t: T) =&gt; U): Result&lt;U, E&gt;</code> and <code>unwrapOr(r, fallback)</code>. Model a <code>ValidationError</code> union and handle every <code>error.kind</code> in an exhaustive switch with an <code>assertNever</code> default.</p>
+  </div>
+
+  <div class="review-pitfall">
+    <strong>Pitfall:</strong> Typing the error channel as <code>Error</code> or <code>any</code> &mdash; you lose the discriminant and can&rsquo;t exhaustively handle failure kinds. Give <code>E</code> a tagged union so each failure carries its own data and the compiler enforces handling.
+  </div>
+</div>
+
+</div><!-- end review-section -->
+
+<!-- ============================================================ -->
+<!-- TOPIC SECTION 1: Node.js + TS: Server Foundations             -->
+<!-- ============================================================ -->
+<div class="topic-section">
+<div class="topic-section-header"><span class="section-num">1</span>Node.js + TS: Server Foundations</div>
+
+<!-- Concept 1: Express -->
+<div class="concept-card" id="express">
+  <div class="concept-header">
+    <span class="concept-title">1. Express: Typing Handlers, Middleware &amp; Request Augmentation</span>
+    <span class="ttag">Node.js + TypeScript</span>
+  </div>
+
+  <div class="why-matters">Express is the most common Node HTTP framework, and its handlers are effectively untyped by default &mdash; one wrong <code>req.body</code> field and you ship a runtime crash. <code>@types/express</code> lets you type params, query, body, and the response, and safely augment <code>Request</code> for middleware-injected data like the authenticated user.</div>
+
+  <div class="explanation">
+    <p><code>RequestHandler&lt;Params, ResBody, ReqBody, Query&gt;</code> is the generic behind every handler; the <code>Request</code>/<code>Response</code> objects thread those parameters so <code>req.params</code>, <code>req.body</code>, and <code>res.json()</code> are all checked in one place.</p>
+    <p>Middleware that attaches data (an authenticated <code>req.user</code>, a <code>req.requestId</code>) needs <em>declaration merging</em> to extend <code>Express.Request</code> globally &mdash; otherwise the compiler doesn&rsquo;t know the property exists and you fall back to <code>any</code> casts. And because Express 4 doesn&rsquo;t <code>await</code> your handler, a rejected promise won&rsquo;t reach error middleware unless you wrap it; a tiny typed <code>asyncHandler</code> keeps the signature honest (Express 5 forwards rejections natively).</p>
+    <div class="step"><span class="step-num">1</span><div>Type a handler with <code>RequestHandler&lt;P, ResBody, ReqBody, Query&gt;</code> so params, body, query, and response are all checked.</div></div>
+    <div class="step"><span class="step-num">2</span><div>Augment <code>Express.Request</code> via <code>declare global</code> to add middleware-injected fields like <code>req.user</code> &mdash; no <code>any</code> casts.</div></div>
+    <div class="step"><span class="step-num">3</span><div>Wrap async handlers (Express 4) so rejections reach error middleware; Express 5 does this for you.</div></div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 1 of 4 &mdash; a fully typed route handler</div>
+<pre><code>import express, { RequestHandler } from "express";
+
+interface Params    { id: string }
+interface UpdateBody { name: string; email?: string }
+interface UserDTO    { id: string; name: string }
+
+const updateUser: RequestHandler&lt;Params, UserDTO, UpdateBody&gt; =
+  (req, res) =&gt; {
+    const { id }   = req.params;   // string
+    const { name } = req.body;     // string (email?: string)
+    res.json({ id, name });        // body must match UserDTO
+  };
+
+express().put("/users/:id", updateUser);</code></pre>
+<div class="type-result">req.params.id &amp; req.body.name typed; res.json checked against UserDTO</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 2 of 4 &mdash; typing the query string</div>
+<pre><code>interface ListQuery { page?: string; sort?: "asc" | "desc" }
+
+const list: RequestHandler&lt;{}, unknown, unknown, ListQuery&gt; =
+  (req, res) =&gt; {
+    const sort = req.query.sort ?? "asc";   // "asc" | "desc"
+    // res.json(undefinedVar)  // error: not assignable to ResBody
+    res.status(200).json({ sort });
+  };</code></pre>
+<div class="type-result">the 4th generic overrides the default ParsedQs; sort is "asc" | "desc" | undefined</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 3 of 4 &mdash; augment Request for req.user</div>
+<pre><code>// types/express.d.ts  — a global augmentation
+import "express";
+
+declare global {
+  namespace Express {
+    interface Request {
+      user?: { id: string; roles: string[] };
+    }
+  }
+}
+
+// now, anywhere:
+const auth: RequestHandler = (req, _res, next) =&gt; {
+  req.user = { id: "u1", roles: ["admin"] };   // typed, no `any` cast
+  next();
+};</code></pre>
+<div class="type-result">req.user is available on every handler with the declared shape</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 4 of 4 &mdash; async handler wrapper (Express 4)</div>
+<pre><code>import { RequestHandler } from "express";
+
+const asyncHandler =
+  (fn: RequestHandler): RequestHandler =&gt;
+  (req, res, next) =&gt; Promise.resolve(fn(req, res, next)).catch(next);
+
+app.get("/users/:id", asyncHandler(async (req, res) =&gt; {
+  const user = await db.users.find(req.params.id);   // may reject
+  res.json(user);
+}));</code></pre>
+<div class="type-result">a rejected promise now reaches Express error middleware</div>
+  </div>
+
+  <div class="callout-warning">
+    <strong>Common Mistakes:</strong>
+    <div class="mistake">&#10060; Reading <code>req.body</code>/<code>req.params</code> untyped (they default to loose types) and trusting the shape you assume.</div>
+    <div class="correct">&#9989; Parameterize <code>RequestHandler&lt;P, ResBody, ReqBody, Query&gt;</code> &mdash; and validate the body at runtime with a schema for real trust.</div>
+    <div class="mistake">&#10060; Writing <code>(req as any).user</code> in every handler because a middleware attached it.</div>
+    <div class="correct">&#9989; Augment <code>Express.Request</code> once via <code>declare global</code> so <code>req.user</code> is typed everywhere.</div>
+  </div>
+
+  <div class="key-rules">
+    <strong>Key Rules:</strong>
+    <ul>
+    <li><a href="typescript-guides/typescript-guide-2026-07-04.html">2026-07-04</a> (Day 31)</li>
+      <li><code>RequestHandler&lt;Params, ResBody, ReqBody, Query&gt;</code> types both <code>req</code> and <code>res</code> in one place.</li>
+      <li>The generics describe <em>intent</em>; incoming <code>req.body</code>/<code>query</code> are still unvalidated at runtime &mdash; pair with a schema validator (Zod).</li>
+      <li>Add middleware-injected properties by augmenting <code>Express.Request</code>, not by casting to <code>any</code>.</li>
+      <li>On Express 4, wrap async handlers so rejections hit error middleware; Express 5 handles this natively.</li>
+    </ul>
+  </div>
+
+  <div class="exercises">
+    <strong>Practice Exercises:</strong>
+    <div class="exercise"><span class="exercise-num">1</span>Type a <code>POST /login</code> handler whose <code>ReqBody</code> is <code>{ email: string; password: string }</code> and <code>ResBody</code> is <code>{ token: string }</code>. Confirm returning <code>res.json({})</code> is a type error.</div>
+    <div class="exercise"><span class="exercise-num">2</span>Create a global augmentation adding <code>req.requestId: string</code>, set it in a middleware, and read it in a downstream handler with no cast.</div>
+    <div class="exercise"><span class="exercise-num">3</span>Write a generic <code>typedBody&lt;T&gt;()</code> middleware factory that parses <code>req.body</code> with a validator and narrows it to <code>T</code> for later handlers; explain why runtime validation is still required even though the generic &ldquo;types&rdquo; the body.</div>
+  </div>
+
+  <div class="connections"><strong>Connections:</strong> This applies <em>Generics Basics</em> and <em>declaration merging</em> (module augmentation) to a real framework, and the Zod pairing previews <em>runtime validation</em> &mdash; the compile-time generic and the runtime schema are two halves of a trustworthy request. Contrast Fastify (Concept 2), which <em>infers</em> these types from a schema instead.</div>
+</div>
+
+<!-- Concept 2: Fastify -->
+<div class="concept-card" id="fastify">
+  <div class="concept-header">
+    <span class="concept-title">2. Fastify Type Providers: End-to-End Route Typing</span>
+    <span class="ttag">Node.js + TypeScript</span>
+  </div>
+
+  <div class="why-matters">Fastify pairs each route with a JSON Schema for validation and fast serialization; a <em>type provider</em> bridges that runtime schema to static types, so <code>request.body</code>/<code>params</code>/<code>querystring</code> are inferred from the very schema that validates them &mdash; one source of truth, zero drift.</div>
+
+  <div class="explanation">
+    <p>Register a provider (e.g. <code>@fastify/type-provider-typebox</code>) and call <code>.withTypeProvider&lt;&hellip;&gt;()</code> on the instance; every route then infers its request/reply types from its <code>schema</code>. With TypeBox you write <code>Type.Object({ &hellip; })</code>, which is <em>both</em> a runtime JSON Schema and a static type via <code>Static&lt;typeof T&gt;</code> &mdash; the provider wires the inference automatically.</p>
+    <p>Prefer no dependency? Skip the provider and pass an explicit <em>route generic</em> (<code>Body</code>, <code>Params</code>, <code>Querystring</code>, <code>Reply</code>) to <code>.get</code>/<code>.post</code>. It&rsquo;s more manual, and your types no longer come from the validator, but it needs nothing extra installed.</p>
+    <div class="step"><span class="step-num">1</span><div>Build the app and attach a provider: <code>Fastify().withTypeProvider&lt;TypeBoxTypeProvider&gt;()</code>.</div></div>
+    <div class="step"><span class="step-num">2</span><div>Give each route a <code>schema</code> built from <code>Type.Object(&hellip;)</code>; <code>request.body</code> etc. infer from it.</div></div>
+    <div class="step"><span class="step-num">3</span><div>Or, provider-free, supply a route generic to type request + reply by hand.</div></div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 1 of 4 &mdash; provider + schema-inferred body</div>
+<pre><code>import Fastify from "fastify";
+import { Type } from "@sinclair/typebox";
+import { TypeBoxTypeProvider } from "@fastify/type-provider-typebox";
+
+const app = Fastify().withTypeProvider&lt;TypeBoxTypeProvider&gt;();
+
+app.post("/users", {
+  schema: {
+    body: Type.Object({ name: Type.String(), age: Type.Number() }),
+  },
+}, (req, reply) =&gt; {
+  req.body.name;   // string  — inferred from the schema
+  req.body.age;    // number
+  reply.send({ ok: true });
+});</code></pre>
+<div class="type-result">req.body typed { name: string; age: number } straight from the schema</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 2 of 4 &mdash; Static&lt;&gt; extracts the type for reuse</div>
+<pre><code>import { Type, Static } from "@sinclair/typebox";
+
+const UserSchema = Type.Object({ id: Type.String(), name: Type.String() });
+type User = Static&lt;typeof UserSchema&gt;;   // { id: string; name: string }
+
+// one TypeBox object validates at runtime AND types your code
+function greet(u: User) { return `hi ${u.name}`; }</code></pre>
+<div class="type-result">the schema is a single source for both JSON Schema and the TS type</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 3 of 4 &mdash; params, query &amp; a typed reply</div>
+<pre><code>app.get("/users/:id", {
+  schema: {
+    params:      Type.Object({ id: Type.String() }),
+    querystring: Type.Object({ verbose: Type.Optional(Type.Boolean()) }),
+    response:    { 200: Type.Object({ id: Type.String(), name: Type.String() }) },
+  },
+}, (req, reply) =&gt; {
+  const { id } = req.params;      // string
+  const v = req.query.verbose;    // boolean | undefined
+  reply.send({ id, name: "Ada" });   // checked against the 200 schema
+});</code></pre>
+<div class="type-result">params, query, and reply.send() all inferred from the schema</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 4 of 4 &mdash; provider-free route generic</div>
+<pre><code>interface Route {
+  Params: { id: string };
+  Body:   { name: string };
+  Reply:  { updated: boolean };
+}
+
+app.put&lt;Route&gt;("/users/:id", (req, reply) =&gt; {
+  req.params.id;   // string
+  req.body.name;   // string
+  reply.send({ updated: true });   // must match Reply
+});</code></pre>
+<div class="type-result">a RouteGenericInterface types request + reply without any provider</div>
+  </div>
+
+  <div class="callout-warning">
+    <strong>Common Mistakes:</strong>
+    <div class="mistake">&#10060; Writing a JSON Schema for validation <em>and</em> a separate <code>interface</code> for types &mdash; they drift the moment someone edits one.</div>
+    <div class="correct">&#9989; Use a type provider so the validating schema <em>is</em> the type; derive extra types with <code>Static&lt;&gt;</code>.</div>
+    <div class="mistake">&#10060; Forgetting <code>.withTypeProvider&lt;&hellip;&gt;()</code>, then wondering why <code>req.body</code> is <code>unknown</code>.</div>
+    <div class="correct">&#9989; Attach the provider to the instance and reuse that typed instance so every route infers from its schema.</div>
+  </div>
+
+  <div class="key-rules">
+    <strong>Key Rules:</strong>
+    <ul>
+      <li>A type provider infers <code>body</code>/<code>params</code>/<code>querystring</code>/<code>reply</code> from each route&rsquo;s runtime <code>schema</code>.</li>
+      <li>TypeBox objects double as JSON Schema and static types; <code>Static&lt;typeof S&gt;</code> extracts the type.</li>
+      <li>No provider? Pass a route generic (<code>Body</code>, <code>Params</code>, <code>Querystring</code>, <code>Reply</code>) to the route method.</li>
+      <li>The <code>response</code> schema types <code>reply.send()</code> <em>and</em> drives fast serialization &mdash; keep it accurate.</li>
+    </ul>
+  </div>
+
+  <div class="exercises">
+    <strong>Practice Exercises:</strong>
+    <div class="exercise"><span class="exercise-num">1</span>Define a <code>POST /todos</code> route with a TypeBox <code>body</code> of <code>{ title: string; done?: boolean }</code> and confirm <code>req.body.done</code> is <code>boolean | undefined</code>.</div>
+    <div class="exercise"><span class="exercise-num">2</span>Extract <code>type Todo = Static&lt;typeof TodoSchema&gt;</code> and reuse it in a plain function; change the schema and confirm the function&rsquo;s parameter type updates with no separate edit.</div>
+    <div class="exercise"><span class="exercise-num">3</span>Re-implement the same route provider-free with a route generic, and list one advantage and one drawback versus the provider approach.</div>
+  </div>
+
+  <div class="connections"><strong>Connections:</strong> This is <em>Zod &amp; runtime validation</em> generalized &mdash; schema-first typing where validator and type share one definition &mdash; and it leans on <code>Static&lt;&gt;</code> (a conditional/mapped inference over the schema). Contrast Express (Concept 1), where types and validation are separate concerns you wire yourself.</div>
+</div>
+
+<!-- Concept 3: Streams & Buffers -->
+<div class="concept-card" id="streams">
+  <div class="concept-header">
+    <span class="concept-title">3. Node Streams &amp; Buffers Typing</span>
+    <span class="ttag">Node.js + TypeScript</span>
+  </div>
+
+  <div class="why-matters">Streams move large data (files, HTTP bodies, sockets) through Node without buffering it all in memory, and <code>Buffer</code> is its binary byte container. <code>@types/node</code> types both &mdash; including the object-mode channel and the <code>Buffer</code>/<code>Uint8Array</code> relationship that trips up encoding code.</div>
+
+  <div class="explanation">
+    <p><code>Readable</code>, <code>Writable</code>, and <code>Transform</code> are typed, but async iteration (<code>for await (const chunk of readable)</code>) yields <code>any</code> by default &mdash; so annotate the chunk (<code>Buffer</code> for binary, your element type in object mode). Reach for member access on an un-annotated chunk and the compiler won&rsquo;t save you.</p>
+    <p><code>Buffer</code> <em>extends</em> <code>Uint8Array</code>, so a <code>Buffer</code> flows into a <code>Uint8Array</code> slot but not the reverse; <code>Buffer.from(str, enc)</code> and <code>buf.toString(enc)</code> are the typed conversion points between bytes and text. For composition, the <code>pipeline</code> from <code>node:stream/promises</code> gives a typed, awaitable, self-cleaning way to wire stages together with proper error propagation.</p>
+    <div class="step"><span class="step-num">1</span><div>Consume a <code>Readable</code> with <code>for await</code>, annotating the chunk as <code>Buffer</code> (binary) or your object type (object mode).</div></div>
+    <div class="step"><span class="step-num">2</span><div>Convert bytes &harr; text through <code>Buffer</code>; remember a <code>Buffer</code> <em>is</em> a <code>Uint8Array</code>.</div></div>
+    <div class="step"><span class="step-num">3</span><div>Compose with <code>pipeline</code> from <code>node:stream/promises</code> for typed, awaitable, error-safe piping.</div></div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 1 of 4 &mdash; async-iterate a readable</div>
+<pre><code>import { createReadStream } from "node:fs";
+
+const stream = createReadStream("data.bin");   // Readable
+
+let total = 0;
+for await (const chunk of stream) {
+  const buf = chunk as Buffer;   // default chunk type is any → annotate
+  total += buf.length;
+}
+console.log(total);</code></pre>
+<div class="output">total number of bytes read</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 2 of 4 &mdash; Buffer is a Uint8Array</div>
+<pre><code>const buf = Buffer.from("héllo", "utf8");
+const bytes: Uint8Array = buf;     // ok: Buffer extends Uint8Array
+// const back: Buffer = bytes;     // error: Uint8Array is not a Buffer
+buf.toString("utf8");              // "héllo"
+buf.length;                        // 6  (é is 2 bytes in UTF-8)</code></pre>
+<div class="type-result">Buffer → Uint8Array widening ok; the reverse needs Buffer.from</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 3 of 4 &mdash; object-mode Transform carries a type</div>
+<pre><code>import { Transform } from "node:stream";
+
+interface Row { id: number; name: string }
+
+const toName = new Transform({
+  objectMode: true,
+  transform(row: Row, _enc, cb) {
+    cb(null, row.name + "\n");   // push a string downstream
+  },
+});</code></pre>
+<div class="type-result">objectMode lets chunks be objects (Row), not just Buffers</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 4 of 4 &mdash; typed, awaitable pipeline</div>
+<pre><code>import { pipeline } from "node:stream/promises";
+import { createReadStream, createWriteStream } from "node:fs";
+import { createGzip } from "node:zlib";
+
+await pipeline(
+  createReadStream("in.txt"),
+  createGzip(),
+  createWriteStream("in.txt.gz"),
+);   // resolves on success; rejects (and cleans up) on any stage error</code></pre>
+<div class="type-result">pipeline returns Promise&lt;void&gt;; errors reject instead of leaking</div>
+  </div>
+
+  <div class="callout-warning">
+    <strong>Common Mistakes:</strong>
+    <div class="mistake">&#10060; Assuming <code>for await (const chunk of stream)</code> gives a <code>Buffer</code> &mdash; it&rsquo;s <code>any</code>, so <code>chunk.toString()</code> compiles even when the chunk is an object.</div>
+    <div class="correct">&#9989; Annotate the chunk (<code>Buffer</code> in binary mode, your type in object mode) so member access is checked.</div>
+    <div class="mistake">&#10060; Typing a byte parameter as <code>Buffer</code> when a plain <code>Uint8Array</code> is passed (e.g. from a Web API) &mdash; the assignment fails.</div>
+    <div class="correct">&#9989; Accept <code>Uint8Array</code> for input and convert with <code>Buffer.from(view)</code> when you need <code>Buffer</code>-only methods.</div>
+  </div>
+
+  <div class="key-rules">
+    <strong>Key Rules:</strong>
+    <ul>
+      <li><code>Readable</code>/<code>Writable</code>/<code>Transform</code> are typed, but async-iterated chunks default to <code>any</code> &mdash; annotate them.</li>
+      <li><code>Buffer</code> extends <code>Uint8Array</code>: a <code>Buffer</code> fits a <code>Uint8Array</code> slot, not the reverse.</li>
+      <li>Convert bytes &harr; string via <code>Buffer.from(str, enc)</code> / <code>buf.toString(enc)</code>; watch multi-byte lengths.</li>
+      <li>Prefer <code>pipeline</code> from <code>node:stream/promises</code> for typed, awaitable, auto-cleaning composition.</li>
+    </ul>
+  </div>
+
+  <div class="exercises">
+    <strong>Practice Exercises:</strong>
+    <div class="exercise"><span class="exercise-num">1</span>Read a text file via <code>createReadStream</code>, annotate each chunk as <code>Buffer</code>, and accumulate the decoded string with <code>chunk.toString("utf8")</code>. Confirm omitting the annotation lets a bogus <code>chunk.foo</code> compile.</div>
+    <div class="exercise"><span class="exercise-num">2</span>Write <code>bytesToHex(data: Uint8Array): string</code> that accepts either a <code>Buffer</code> or a <code>Uint8Array</code> and returns hex; explain why the parameter is <code>Uint8Array</code>, not <code>Buffer</code>.</div>
+    <div class="exercise"><span class="exercise-num">3</span>Build an object-mode <code>Transform</code> that takes <code>{ id: number }</code> objects and emits <code>id * 2</code> as numbers, then compose it with <code>pipeline</code>; note where the object type is (and isn&rsquo;t) enforced.</div>
+  </div>
+
+  <div class="connections"><strong>Connections:</strong> This is <em>async patterns / async iterators</em> applied to Node&rsquo;s I/O, and the object-mode channel reuses <em>generics</em> over a runtime stream. <code>Buffer extends Uint8Array</code> is a live example of <em>structural subtyping</em>, and it pairs with Concept 4 &mdash; <code>node:</code> import specifiers are ESM-resolved.</div>
+</div>
+
+</div><!-- end topic-section 1 -->
+
+<!-- ============================================================ -->
+<!-- TOPIC SECTION 2: Node.js + TS: Modern Runtime & Testing       -->
+<!-- ============================================================ -->
+<div class="topic-section">
+<div class="topic-section-header"><span class="section-num">2</span>Node.js + TS: Modern Runtime &amp; Testing</div>
+
+<!-- Concept 4: Native ESM -->
+<div class="concept-card" id="esm">
+  <div class="concept-header">
+    <span class="concept-title">4. Native ESM &amp; Module Resolution: <code>nodenext</code></span>
+    <span class="ttag">Node.js + TypeScript</span>
+  </div>
+
+  <div class="why-matters">Running TypeScript as native ESM in Node is full of sharp edges &mdash; <code>"type": "module"</code>, mandatory <code>.js</code> extensions on relative imports, and the <code>nodenext</code> resolver. Getting <code>moduleResolution</code> right is the difference between clean <code>import</code>s and a cryptic <code>ERR_MODULE_NOT_FOUND</code> at runtime.</div>
+
+  <div class="explanation">
+    <p><code>package.json</code> <code>"type": "module"</code> makes your <code>.ts</code>/<code>.js</code> files ESM; set <code>"module": "nodenext"</code> and <code>"moduleResolution": "nodenext"</code> so TS resolves <em>exactly</em> like Node&rsquo;s ESM loader &mdash; honoring <code>exports</code>, conditions, and file extensions.</p>
+    <p>Under ESM, relative imports need an <em>explicit extension</em>, and you write <code>.js</code> even from a <code>.ts</code> file: TS type-checks the source but Node runs the emitted <code>.js</code>. ESM also has no <code>__dirname</code>, <code>require</code>, or <code>module.exports</code> &mdash; use <code>import.meta.url</code>, <code>createRequire</code>, and default imports of CommonJS modules. Top-level <code>await</code> is ESM-only.</p>
+    <div class="step"><span class="step-num">1</span><div>Set <code>"type": "module"</code> and <code>"module"/"moduleResolution": "nodenext"</code> so TS mirrors Node&rsquo;s ESM resolver.</div></div>
+    <div class="step"><span class="step-num">2</span><div>Write relative imports with a <code>.js</code> extension (even though the file is <code>.ts</code>).</div></div>
+    <div class="step"><span class="step-num">3</span><div>Interop with CJS via default import or <code>createRequire</code>; reserve top-level <code>await</code> for ESM.</div></div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 1 of 4 &mdash; the configuration</div>
+<pre><code>// package.json
+{ "type": "module" }
+
+// tsconfig.json
+{
+  "compilerOptions": {
+    "module": "nodenext",
+    "moduleResolution": "nodenext",
+    "target": "es2022"
+  }
+}</code></pre>
+<div class="type-result">TS now resolves imports the way Node&rsquo;s ESM loader does</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 2 of 4 &mdash; the .js extension rule</div>
+<pre><code>// src/math.ts  exports add()
+// src/main.ts:
+import { add } from "./math.js";   // ✅ .js — TS resolves it to math.ts
+add(2, 3);
+
+// import { add } from "./math";   // ✗ error under nodenext: needs extension
+// import { add } from "./math.ts";// ✗ error: don't import the .ts extension</code></pre>
+<div class="type-result">relative ESM imports require the emitted .js extension</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 3 of 4 &mdash; importing a CommonJS dependency</div>
+<pre><code>import cjsPkg from "legacy-cjs";     // default import = module.exports
+cjsPkg.parse("...");
+
+import { createRequire } from "node:module";
+const require = createRequire(import.meta.url);
+const data = require("./config.json");   // when you must use require</code></pre>
+<div class="type-result">CJS default-imports as module.exports; createRequire for require</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 4 of 4 &mdash; ESM-only capabilities</div>
+<pre><code>// top-level await works only in an ESM module
+const res  = await fetch("https://example.com/data.json");
+const json = await res.json();
+
+// __dirname doesn't exist in ESM — reconstruct it:
+import { fileURLToPath } from "node:url";
+import { dirname } from "node:path";
+const __dirname = dirname(fileURLToPath(import.meta.url));</code></pre>
+<div class="type-result">top-level await + import.meta.url replace CJS __dirname / require</div>
+  </div>
+
+  <div class="callout-warning">
+    <strong>Common Mistakes:</strong>
+    <div class="mistake">&#10060; Using <code>"moduleResolution": "node"</code> (the classic CJS algorithm) for an ESM Node project &mdash; it ignores <code>exports</code>/conditions and lets extensionless imports &ldquo;resolve&rdquo; then crash at runtime.</div>
+    <div class="correct">&#9989; Use <code>"nodenext"</code> for both <code>module</code> and <code>moduleResolution</code> so compile-time resolution matches Node&rsquo;s runtime loader.</div>
+    <div class="mistake">&#10060; Importing <code>"./util"</code> or <code>"./util.ts"</code> from an ESM module.</div>
+    <div class="correct">&#9989; Import <code>"./util.js"</code> &mdash; the extension is required and must be the emitted <code>.js</code>, even from a <code>.ts</code> source.</div>
+  </div>
+
+  <div class="key-rules">
+    <strong>Key Rules:</strong>
+    <ul>
+      <li><code>"type": "module"</code> + <code>nodenext</code> makes TS resolve like Node&rsquo;s ESM loader (extensions, <code>exports</code>, conditions).</li>
+      <li>Relative ESM imports need an explicit <code>.js</code> extension, written from the <code>.ts</code> file.</li>
+      <li>ESM has no <code>__dirname</code>/<code>require</code>/<code>module.exports</code> &mdash; use <code>import.meta.url</code>, <code>createRequire</code>, default imports.</li>
+      <li>Top-level <code>await</code> and <code>import.meta</code> are ESM-only; <code>"bundler"</code> resolution is for bundlers, <code>"nodenext"</code> is for Node.</li>
+    </ul>
+  </div>
+
+  <div class="exercises">
+    <strong>Practice Exercises:</strong>
+    <div class="exercise"><span class="exercise-num">1</span>Convert a small CJS project to ESM: add <code>"type": "module"</code>, switch to <code>nodenext</code>, and fix every relative import to carry a <code>.js</code> extension. Note each error the compiler surfaces.</div>
+    <div class="exercise"><span class="exercise-num">2</span>Reconstruct <code>__dirname</code> in an ESM module using <code>import.meta.url</code>, and read a sibling JSON file relative to it.</div>
+    <div class="exercise"><span class="exercise-num">3</span>Import one CommonJS-only dependency two ways &mdash; a default import and via <code>createRequire</code> &mdash; and explain when you&rsquo;d need the second.</div>
+  </div>
+
+  <div class="connections"><strong>Connections:</strong> This is <em>module systems</em> (ESM vs CJS) made concrete for Node, and it&rsquo;s the runtime counterpart to <em>package publishing</em> (R5): the <code>exports</code>/conditions you author are exactly what <code>nodenext</code> reads when resolving. It also underpins Concept 5, where the test runner runs your ESM <code>.ts</code> directly.</div>
+</div>
+
+<!-- Concept 5: Test Runner -->
+<div class="concept-card" id="testrunner">
+  <div class="concept-header">
+    <span class="concept-title">5. Node&rsquo;s Built-in Test Runner with TypeScript</span>
+    <span class="ttag">Node.js + TypeScript</span>
+  </div>
+
+  <div class="why-matters">Node ships a zero-dependency test runner (<code>node:test</code>) with a spec/TAP reporter and <code>node:assert</code>. Combined with Node&rsquo;s native TypeScript support (type stripping) or a loader like <code>tsx</code>, you can run typed tests with no Jest/Vitest config at all.</div>
+
+  <div class="explanation">
+    <p>Import <code>test</code>/<code>describe</code>/<code>it</code> from <code>node:test</code> and assertions from <code>node:assert/strict</code>; the whole API is typed via <code>@types/node</code>, and <code>test()</code> returns a promise so async tests just <code>await</code>. A crucial distinction: running <code>.ts</code> directly via <em>type stripping</em> (<code>node --experimental-strip-types</code>, or <code>tsx</code>) only <em>erases</em> the types &mdash; it does <strong>not</strong> type-check. Real checking still comes from a separate <code>tsc --noEmit</code>.</p>
+    <p>Structure suites with <code>describe</code>/<code>it</code>, nest subtests through the <code>t</code> context (<code>t.test(&hellip;)</code>), and create typed test doubles with <code>mock.fn</code> / <code>t.mock</code> &mdash; the mock preserves the original function&rsquo;s signature and exposes a typed <code>.mock.calls</code>.</p>
+    <div class="step"><span class="step-num">1</span><div>Write tests with <code>node:test</code> + <code>node:assert/strict</code>; <code>@types/node</code> types the whole API.</div></div>
+    <div class="step"><span class="step-num">2</span><div>Run via type-stripping (<code>node --experimental-strip-types</code>) or <code>tsx</code>; keep a separate <code>tsc --noEmit</code> for checking.</div></div>
+    <div class="step"><span class="step-num">3</span><div>Group with <code>describe</code>/<code>it</code>, nest subtests with the <code>t</code> context, and mock with <code>mock.fn</code>.</div></div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 1 of 4 &mdash; a typed test file</div>
+<pre><code>// math.test.ts
+import { test } from "node:test";
+import assert from "node:assert/strict";
+import { add } from "./math.js";
+
+test("add sums two numbers", () =&gt; {
+  const result: number = add(2, 3);
+  assert.equal(result, 5);
+});</code></pre>
+<div class="output">✔ add sums two numbers  (spec reporter)</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">bash &middot; example 2 of 4 &mdash; running it (strip vs check)</div>
+<pre><code># strip types with Node itself (newer versions):
+node --experimental-strip-types --test
+
+# or via tsx:
+npx tsx --test
+
+# type-checking is a SEPARATE step — stripping does not check:
+tsc --noEmit</code></pre>
+<div class="output">test results print; tsc --noEmit reports real type errors</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 3 of 4 &mdash; describe/it + async + subtests</div>
+<pre><code>import { describe, it } from "node:test";
+import assert from "node:assert/strict";
+
+describe("user service", () =&gt; {
+  it("loads a user", async (t) =&gt; {
+    const user = await loadUser("u1");
+    assert.equal(user.id, "u1");
+
+    await t.test("has a default role", () =&gt; {
+      assert.deepEqual(user.roles, ["member"]);
+    });
+  });
+});</code></pre>
+<div class="type-result">t is a typed TestContext; t.test creates a subtest</div>
+  </div>
+
+  <div class="code-example">
+    <div class="lang-badge">TypeScript &middot; example 4 of 4 &mdash; typed mocking</div>
+<pre><code>import { test, mock } from "node:test";
+import assert from "node:assert/strict";
+
+test("calls the notifier once", () =&gt; {
+  const notify = mock.fn((msg: string) =&gt; msg.length);
+  notify("hi");
+  assert.equal(notify.mock.callCount(), 1);
+  assert.equal(notify.mock.calls[0].arguments[0], "hi");
+});</code></pre>
+<div class="type-result">mock.fn preserves the fn signature; .mock.calls is typed</div>
+  </div>
+
+  <div class="callout-warning">
+    <strong>Common Mistakes:</strong>
+    <div class="mistake">&#10060; Assuming <code>node --experimental-strip-types</code> type-<em>checks</em> your tests &mdash; it only erases types, so type errors run anyway.</div>
+    <div class="correct">&#9989; Run <code>tsc --noEmit</code> (in CI / pre-commit) for real checking; use stripping / <code>tsx</code> purely to execute.</div>
+    <div class="mistake">&#10060; Reaching for a third-party test framework out of habit when <code>node:test</code>/<code>node:assert</code> already cover the case, adding deps and config.</div>
+    <div class="correct">&#9989; Start with the built-ins; adopt Vitest/Jest only when you need their extras (rich watch, jsdom, snapshots).</div>
+  </div>
+
+  <div class="key-rules">
+    <strong>Key Rules:</strong>
+    <ul>
+      <li><code>node:test</code> + <code>node:assert/strict</code> is a zero-dependency, fully typed testing stack via <code>@types/node</code>.</li>
+      <li>Type <em>stripping</em> (<code>--experimental-strip-types</code> / <code>tsx</code>) executes <code>.ts</code> but does NOT type-check &mdash; keep <code>tsc --noEmit</code> separate.</li>
+      <li>Use <code>describe</code>/<code>it</code>, the <code>t</code> context for subtests, and <code>mock.fn</code>/<code>t.mock</code> for typed test doubles.</li>
+      <li>Import compiled specifiers with <code>.js</code> under <code>nodenext</code>, even in test files.</li>
+    </ul>
+  </div>
+
+  <div class="exercises">
+    <strong>Practice Exercises:</strong>
+    <div class="exercise"><span class="exercise-num">1</span>Write a <code>node:test</code> file for a pure function with three <code>assert.equal</code> cases; run it with <code>--experimental-strip-types</code> (or <code>tsx</code>), then introduce a type error and confirm the run still executes but <code>tsc --noEmit</code> flags it.</div>
+    <div class="exercise"><span class="exercise-num">2</span>Add a <code>describe</code>/<code>it</code> suite with one async <code>it</code> that <code>await</code>s a promise, plus one nested <code>t.test</code> subtest.</div>
+    <div class="exercise"><span class="exercise-num">3</span>Use <code>mock.fn</code> to stand in for a dependency, assert it was called with specific arguments, and check <code>callCount()</code>; confirm the mock preserves the original function&rsquo;s parameter types.</div>
+  </div>
+
+  <div class="connections"><strong>Connections:</strong> This closes the Node arc &mdash; it runs the ESM <code>.ts</code> from Concept 4 and can test the Express/Fastify handlers from Concepts 1&ndash;2. The strip-vs-check distinction echoes the broader theme that TypeScript&rsquo;s types are erased at runtime, and <code>mock.fn</code> typing reuses <em>generics</em> + <em>function signatures</em>.</div>
+</div>
+
+</div><!-- end topic-section 2 -->
+
+<!-- Footer -->
+<footer class="guide-footer">
+  <h2>All Guides</h2>
+  <ul>
+    <li><a href="typescript-guides/typescript-guide-2026-07-09.html">2026-07-09</a> (Day 36)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-07-08.html">2026-07-08</a> (Day 35)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-07-07.html">2026-07-07</a> (Day 34)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-07-06.html">2026-07-06</a> (Day 33)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-07-05.html">2026-07-05</a> (Day 32)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-07-04.html">2026-07-04</a> (Day 31)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-07-03.html">2026-07-03</a> (Day 30)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-07-02.html">2026-07-02</a> (Day 29)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-07-01.html">2026-07-01</a> (Day 28)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-30.html">2026-06-30</a> (Day 27)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-29.html">2026-06-29</a> (Day 26)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-28.html">2026-06-28</a> (Day 25)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-27.html">2026-06-27</a> (Day 24)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-26.html">2026-06-26</a> (Day 23)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-25.html">2026-06-25</a> (Day 22)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-24.html">2026-06-24</a> (Day 21)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-23.html">2026-06-23</a> (Day 20)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-22.html">2026-06-22</a> (Day 19)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-21.html">2026-06-21</a> (Day 18)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-19.html">2026-06-19</a> (Day 17)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-18.html">2026-06-18</a> (Day 16)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-17.html">2026-06-17</a> (Day 15)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-15.html">2026-06-15</a> (Day 14)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-13.html">2026-06-13</a> (Day 13)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-12.html">2026-06-12</a> (Day 12)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-11.html">2026-06-11</a> (Day 11)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-10.html">2026-06-10</a> (Day 10)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-09.html">2026-06-09</a> (Day 9)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-08.html">2026-06-08</a> (Day 8)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-07.html">2026-06-07</a> (Day 7)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-05.html">2026-06-05</a> (Day 6)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-04.html">2026-06-04</a> (Day 5)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-03.html">2026-06-03</a> (Day 4)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-02.html">2026-06-02</a> (Day 3)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-06-01.html">2026-06-01</a> (Day 2)</li>
+    <li><a href="typescript-guides/typescript-guide-2026-05-31.html">2026-05-31</a> (Day 1)</li>
+  </ul>
+</footer>
+
+</div><!-- end content -->
+</div><!-- end main -->
+
+<script>
+// Theme toggle
+(function() {
+  var toggle = document.getElementById('themeToggle');
+  var html = document.documentElement;
+  var STORAGE_KEY = 'lc-tsguide-theme';
+
+  function setTheme(theme) {
+    html.setAttribute('data-theme', theme);
+    toggle.textContent = theme === 'dark' ? '\u{1F319}' : '\u{2600}\u{FE0F}';
+    try { localStorage.setItem(STORAGE_KEY, theme); } catch(e) {}
+  }
+
+  try {
+    var saved = localStorage.getItem(STORAGE_KEY);
+    if (saved) setTheme(saved);
+  } catch(e) {}
+
+  toggle.addEventListener('click', function() {
+    var current = html.getAttribute('data-theme') || 'dark';
+    setTheme(current === 'dark' ? 'light' : 'dark');
+  });
+})();
+
+// Sidebar active link tracking
+(function() {
+  var links = document.querySelectorAll('.sidebar-nav a');
+  var sections = [];
+  links.forEach(function(link) {
+    var id = link.getAttribute('href').replace('#', '');
+    var el = document.getElementById(id);
+    if (el) sections.push({ link: link, el: el });
+  });
+
+  function updateActive() {
+    var current = null;
+    var scrollY = window.scrollY + 120;
+    for (var i = sections.length - 1; i >= 0; i--) {
+      if (sections[i].el.offsetTop <= scrollY) {
+        current = sections[i];
+        break;
+      }
+    }
+    links.forEach(function(l) { l.classList.remove('active'); });
+    if (current) current.link.classList.add('active');
+  }
+
+  window.addEventListener('scroll', updateActive);
+  updateActive();
+})();
+</script>
+
+</body>
+</html>
