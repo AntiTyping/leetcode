@@ -13,6 +13,7 @@ class Solution(object):
             sum += float(dist[-1]) / speed
             return sum
 
+        # 10m
         for speed in range(1, 10 ** 7):
             if time(speed) <= hour:
                 return speed
