@@ -1,8 +1,8 @@
 function subsets(nums: number[]): number[][] {
-    var ans = []
-    var curr = []
+    const ans: number[][] = []
+    const curr: number[] = []
 
-    const bt = (start: number) => {
+    const bt = (start: number): void => {
         ans.push([...curr])
 
         for (let i = start; i < nums.length; i++) {
@@ -15,5 +15,4 @@ function subsets(nums: number[]): number[][] {
     bt(0)
 
     return ans;
-
 };

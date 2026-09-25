@@ -1,8 +1,8 @@
 func subsets(nums []int) [][]int {
-    ans := make([][]int, 0)
-    curr := []int{}
+    ans := make([][]int,0 , 1<<len(nums))
+    curr := make([]int, 0, len(nums))
 
-    var bt func (i int)
+    var bt func (start int)
 
     bt = func (start int) {
         ans = append(ans, slices.Clone(curr))
